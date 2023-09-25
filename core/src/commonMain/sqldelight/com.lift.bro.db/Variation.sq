@@ -1,0 +1,7 @@
+CREATE TABLE Variation (
+    id TEXT NOT NULL PRIMARY KEY,
+    liftId TEXT NOT NULL,
+    name TEXT,
+    pbWeight REAL,
+    pbUnit TEXT
+);

@@ -1,0 +1,10 @@
+CREATE TABLE LiftingSet (
+    id TEXT NOT NULL PRIMARY KEY,
+    variationId TEXT NOT NULL,
+    weight REAL,
+    unit TEXT,
+    reps INTEGER,
+    tempoDown INTEGER,
+    tempoHold INTEGER,
+    tempoUp INTEGER
+);

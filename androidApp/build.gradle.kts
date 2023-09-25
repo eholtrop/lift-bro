@@ -1,15 +1,16 @@
 plugins {
-    id("com.android.application")
     kotlin("android")
+    id("com.android.application")
+    id("org.jetbrains.compose")
 }
 
 android {
     namespace = "com.lift.bro.android"
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "com.lift.bro.android"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
     }
@@ -40,10 +41,5 @@ android {
 
 dependencies {
     implementation(project(":core"))
-    implementation("androidx.compose.ui:ui:1.4.3")
-    implementation("androidx.compose.ui:ui-tooling:1.4.3")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.4.3")
-    implementation("androidx.compose.foundation:foundation:1.4.3")
-    implementation("androidx.compose.material:material:1.4.3")
-    implementation("androidx.activity:activity-compose:1.7.1")
+    implementation("androidx.activity:activity-compose:1.7.2")
 }
