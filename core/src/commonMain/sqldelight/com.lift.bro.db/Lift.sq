@@ -1,12 +1,15 @@
 CREATE TABLE Lift (
     id TEXT NOT NULL PRIMARY KEY,
-    name TEXT
+    name TEXT NOT NULL
 );
+
+get:
+SELECT * FROM Lift WHERE id = ?;
 
 getAll:
 SELECT * FROM Lift;
 
-insert:
+save:
 INSERT OR REPLACE
 INTO Lift(id, name)
 VALUES(?, ?);
