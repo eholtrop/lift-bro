@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.lift.bro.presentation.lift.AddLiftScreen
+import com.lift.bro.presentation.lift.CreateLiftScreen
 
 class AddLiftVoyagerScreen(): Screen {
 
@@ -12,7 +12,7 @@ class AddLiftVoyagerScreen(): Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
 
-        AddLiftScreen(
+        CreateLiftScreen(
             liftSaved = {
                 navigator.pop()
             }

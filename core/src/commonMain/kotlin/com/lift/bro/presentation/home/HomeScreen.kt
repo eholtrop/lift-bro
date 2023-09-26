@@ -1,12 +1,15 @@
 package com.lift.bro.presentation.home
 
+import Spacing
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -91,11 +94,18 @@ fun EmptyHomeScreen(
     addLiftClicked: () -> Unit,
 ) {
 
-    Box(
-        modifier = Modifier.fillMaxSize()
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
+        Text(
+            "Do you even Lift Bro?",
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.headlineLarge
+        )
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
         Button(
-            modifier = Modifier.align(Alignment.Center),
             onClick = addLiftClicked
         ) {
             Text("Add Lift")
