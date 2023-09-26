@@ -12,38 +12,49 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
-import com.lift.bro.ui.Toolbar
+import com.lift.bro.ui.TopBar
 import comliftbrodb.Lift
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import spacing
 
 @Composable
-fun CreateLiftScreen(
-    database: LBDatabase = dependencies.database,
+fun EditLiftScreen(
+    liftId: String? = null,
     liftSaved: () -> Unit,
+    database: LBDatabase = dependencies.database,
 ) {
-    var liftName by remember { mutableStateOf("") }
+    val lift = database.liftDataSource.liftQueries.get(liftId ?: "").executeAsOneOrNull()
+
+    var liftName by remember { mutableStateOf(lift?.name ?: "") }
 
     Scaffold(
         topBar = {
-            Toolbar(
-                title = "Create Lift"
+            TopBar(
+                title = liftId?.let { "Edit Lift" } ?: "Create Lift",
+                showBackButton = true
             )
         },
         floatingActionButton = {
             Button(
+                enabled = liftName.isNotBlank(),
                 onClick = {
                     database.liftDataSource.save(
                         Lift(
-                            id = uuid4().toString(),
+                            id = liftId ?: uuid4().toString(),
                             name = liftName,
                         )
                     )

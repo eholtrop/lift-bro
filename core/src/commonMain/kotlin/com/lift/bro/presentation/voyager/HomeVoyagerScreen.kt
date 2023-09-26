@@ -13,9 +13,8 @@ class HomeVoyagerScreen(): Screen {
         val navigator = LocalNavigator.currentOrThrow
 
         HomeScreen(
-            addLiftClicked = {
-                navigator.push(AddLiftVoyagerScreen())
-            }
+            addLiftClicked = { navigator.push(EditLiftVoyagerScreen()) },
+            liftClicked = { navigator.push(LiftDetailsVoyagerScreen(it.id)) }
         )
     }
 }

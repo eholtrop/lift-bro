@@ -5,3 +5,14 @@ CREATE TABLE Variation (
     pbWeight REAL,
     pbUnit TEXT
 );
+
+getAll:
+SELECT * FROM Variation WHERE liftId = ?;
+
+get:
+SELECT * FROM Variation WHERE id = ?;
+
+save:
+INSERT OR REPLACE
+INTO Variation(id, liftId, name, pbWeight, pbUnit)
+VALUES(?, ?, ?, ?, ?);

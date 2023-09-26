@@ -8,3 +8,14 @@ CREATE TABLE LiftingSet (
     tempoHold INTEGER,
     tempoUp INTEGER
 );
+
+getAllByVariation:
+SELECT * FROM LiftingSet WHERE variationId = ?;
+
+get:
+SELECT * FROM LiftingSet WHERE id = ?;
+
+save:
+INSERT OR REPLACE
+INTO LiftingSet(id, variationId, weight, unit, reps, tempoDown, tempoHold, tempoUp)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?);
