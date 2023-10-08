@@ -38,9 +38,10 @@ import spacing
 @Composable
 fun LiftDetailsScreen(
     liftId: String,
+    editLiftClicked: () -> Unit,
     addVariationClicked: () -> Unit,
+    variationClicked: (String) -> Unit,
     database: LBDatabase = dependencies.database,
-    navigator: Navigator = LocalNavigator.currentOrThrow,
 ) {
     val lift by database.liftDataSource.get(liftId).collectAsState(null)
 
@@ -55,7 +56,7 @@ fun LiftDetailsScreen(
                     showBackButton = true,
                     trailingContent = {
                         IconButton(
-                            onClick = { navigator.push(EditLiftVoyagerScreen(liftId)) }
+                            onClick = editLiftClicked
                         ) {
                             Icon(
                                 Icons.Default.Edit,
@@ -79,12 +80,10 @@ fun LiftDetailsScreen(
             LazyColumn(
                 modifier = Modifier.padding(padding)
             ) {
-                items(variations) {
+                items(variations) { variation ->
                     VariationCard(
-                        variation = it,
-                        onClick = {
-                            navigator.push(EditVariationVoyagerScreen(variationId = it.id))
-                        }
+                        variation = variation,
+                        onClick = { variationClicked(variation.id) }
                     )
                 }
 

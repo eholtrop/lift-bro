@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -38,19 +39,11 @@ fun TopBar(
 
         if (showBackButton) {
             val navigator = LocalNavigator.currentOrThrow
-            IconButton(
-                modifier = Modifier.padding(
-                    start = MaterialTheme.spacing.one,
-                    top = MaterialTheme.spacing.one,
-                ),
+            TopBarIconButton(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Back",
                 onClick = { navigator.pop() },
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    tint = MaterialTheme.colorScheme.onBackground
-                )
-            }
+            )
         }
 
         ToolbarTitle(
@@ -67,7 +60,6 @@ fun TopBar(
             content = trailingContent
         )
     }
-
 }
 
 @Composable
@@ -81,5 +73,26 @@ fun ToolbarTitle(
         color = MaterialTheme.colorScheme.onBackground,
         style = MaterialTheme.typography.headlineLarge,
     )
+}
 
+@Composable
+fun TopBarIconButton(
+    imageVector: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit,
+) {
+
+    IconButton(
+        modifier = Modifier.padding(
+            start = MaterialTheme.spacing.one,
+            top = MaterialTheme.spacing.one,
+        ),
+        onClick = onClick,
+    ) {
+        Icon(
+            imageVector = imageVector,
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.onBackground
+        )
+    }
 }
