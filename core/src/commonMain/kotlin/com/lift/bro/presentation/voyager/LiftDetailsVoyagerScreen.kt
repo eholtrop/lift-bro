@@ -5,6 +5,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.lift.bro.presentation.lift.LiftDetailsScreen
+import com.lift.bro.presentation.set.EditSetVoyagerScreen
 
 class LiftDetailsVoyagerScreen(
     private val liftId: String
@@ -18,7 +19,8 @@ class LiftDetailsVoyagerScreen(
             liftId = liftId,
             addVariationClicked = { navigator.push(EditVariationVoyagerScreen(parentLiftId = liftId)) },
             variationClicked = { navigator.push(VariationDetailsVoyagerScreen(variationId = it)) },
-            editLiftClicked = { navigator.push(EditLiftVoyagerScreen(liftId)) }
+            editLiftClicked = { navigator.push(EditLiftVoyagerScreen(liftId)) },
+            addSetClicked = { navigator.push(EditSetVoyagerScreen()) }
         )
     }
 }

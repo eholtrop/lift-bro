@@ -10,8 +10,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -24,7 +27,9 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.ui.LiftCard
+import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBar
+import com.lift.bro.ui.TopBarIconButton
 import comliftbrodb.Lift
 import spacing
 
@@ -34,6 +39,7 @@ fun HomeScreen(
     database: LBDatabase = dependencies.database,
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
+    addSetClicked: () -> Unit,
 ) {
     val state by database.liftDataSource.getAll().collectAsState(null)
 
@@ -43,6 +49,7 @@ fun HomeScreen(
             lifts = state!!,
             addLiftClicked = addLiftClicked,
             liftClicked = liftClicked,
+            addSetClicked = addSetClicked,
         )
     }
 }
@@ -52,21 +59,23 @@ fun LiftListScreen(
     lifts: List<Lift>,
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
+    addSetClicked: () -> Unit,
 ) {
 
-    Scaffold(
+    LiftingScaffold(
+        fabText = "Add Set",
+        fabClicked = addSetClicked,
         topBar = {
             TopBar(
-                title = "Lift Bro"
+                title = "Lift Bro",
+                trailingContent = {
+                    TopBarIconButton(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Lift",
+                        onClick = addLiftClicked,
+                    )
+                }
             )
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-            Button(
-                onClick = addLiftClicked
-            ) {
-                Text("Create Lift")
-            }
         }
     ) { padding ->
         LazyVerticalGrid(

@@ -1,27 +1,29 @@
 package com.lift.bro.ui
 
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import comliftbrodb.Lift
+import comliftbrodb.Variation
+import spacing
 
 @Composable
-fun LiftCard(
+fun VariationCard(
     modifier: Modifier = Modifier,
-    lift: Lift,
-    onClick: (Lift) -> Unit
+    variation: Variation,
+    onClick: (Variation) -> Unit
 ) {
-
     Card(
         modifier = modifier
-            .aspectRatio(1f),
-        onClick = {  onClick(lift) }
+            .padding(MaterialTheme.spacing.half),
+        onClick = {  onClick(variation) }
     ) {
-        if (lift.name.isNotEmpty()) {
+        if (variation.name.isNullOrBlank().not()) {
             Text(
-                text = lift.name,
+                text = variation.name!!,
                 color = MaterialTheme.colorScheme.onSurface,
             )
         }
