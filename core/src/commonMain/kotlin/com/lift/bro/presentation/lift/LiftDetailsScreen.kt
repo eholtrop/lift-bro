@@ -29,7 +29,9 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.voyager.EditLiftVoyagerScreen
 import com.lift.bro.presentation.voyager.EditVariationVoyagerScreen
 import com.lift.bro.ui.Card
+import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBar
+import com.lift.bro.ui.TopBarIconButton
 import comliftbrodb.Variation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -38,53 +40,42 @@ import spacing
 @Composable
 fun LiftDetailsScreen(
     liftId: String,
+    editLiftClicked: () -> Unit,
     addVariationClicked: () -> Unit,
+    variationClicked: (String) -> Unit,
+    addSetClicked: () -> Unit,
     database: LBDatabase = dependencies.database,
-    navigator: Navigator = LocalNavigator.currentOrThrow,
 ) {
     val lift by database.liftDataSource.get(liftId).collectAsState(null)
 
     val variations by database.variantDataSource.getAll(liftId).asFlow().mapToList(Dispatchers.IO)
         .collectAsState(emptyList())
 
-    lift?.let {
-        Scaffold(
+    lift?.let { lift ->
+        LiftingScaffold(
+            fabText = "Add Set",
+            fabClicked = addSetClicked,
             topBar = {
                 TopBar(
-                    title = it.name,
+                    title = lift.name,
                     showBackButton = true,
                     trailingContent = {
-                        IconButton(
-                            onClick = { navigator.push(EditLiftVoyagerScreen(liftId)) }
-                        ) {
-                            Icon(
-                                Icons.Default.Edit,
-                                contentDescription = "Edit"
-                            )
-                        }
+                        TopBarIconButton(
+                            Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            onClick = editLiftClicked,
+                        )
                     }
                 )
-            },
-            floatingActionButton = {
-                Button(
-                    onClick = addVariationClicked,
-                ) {
-                    Text(
-                        "Create Variation"
-                    )
-                }
-            },
-            floatingActionButtonPosition = FabPosition.Center,
+            }
         ) { padding ->
             LazyColumn(
                 modifier = Modifier.padding(padding)
             ) {
-                items(variations) {
+                items(variations) { variation ->
                     VariationCard(
-                        variation = it,
-                        onClick = {
-                            navigator.push(EditVariationVoyagerScreen(variationId = it.id))
-                        }
+                        variation = variation,
+                        onClick = { variationClicked(variation.id) }
                     )
                 }
 
