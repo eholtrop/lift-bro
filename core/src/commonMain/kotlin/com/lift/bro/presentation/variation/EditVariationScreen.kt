@@ -108,6 +108,7 @@ fun EditVariationScreen(
 
             WeightSelector(
                 weight = personalBest,
+                placeholder = "One Rep Max",
                 weightChanged = { personalBest = it }
             )
         }

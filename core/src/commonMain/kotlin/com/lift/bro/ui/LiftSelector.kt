@@ -1,11 +1,14 @@
 package com.lift.bro.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +25,7 @@ import com.lift.bro.di.dependencies
 import comliftbrodb.Lift
 import spacing
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LiftSelector(
     lift: Lift?,
@@ -31,8 +35,12 @@ fun LiftSelector(
 
     if (showSelector) {
 
-        Dialog(
-            onDismissRequest = { showSelector = false }
+        AlertDialog(
+            modifier = Modifier.background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium,
+            ),
+            onDismissRequest = { showSelector = false },
         ) {
             val lifts by dependencies.database.liftDataSource.getAll().collectAsState(emptyList())
 

@@ -19,6 +19,7 @@ import spacing
 fun WeightSelector(
     modifier: Modifier = Modifier,
     weight: Pair<Double?, UOM>,
+    placeholder: String,
     weightChanged: (Pair<Double?, UOM>) -> Unit,
 ) {
     Row(
@@ -29,7 +30,7 @@ fun WeightSelector(
             value = weight.first?.toString() ?: "",
             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
             label = {
-                Text("One Rep Max")
+                Text(placeholder)
             },
             onValueChange = {
                 if (it.toDoubleOrNull() != null) {

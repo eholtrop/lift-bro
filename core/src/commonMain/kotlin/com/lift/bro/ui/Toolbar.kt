@@ -52,11 +52,7 @@ fun TopBar(
         )
 
         Row(
-            modifier = Modifier.align(Alignment.TopEnd)
-                .padding(
-                    end = MaterialTheme.spacing.one,
-                    top = MaterialTheme.spacing.one,
-                ),
+            modifier = Modifier.align(Alignment.TopEnd),
             content = trailingContent
         )
     }

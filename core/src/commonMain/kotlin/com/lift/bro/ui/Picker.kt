@@ -52,6 +52,7 @@ fun Picker(
     textModifier: Modifier = Modifier,
     textStyle: TextStyle = LocalTextStyle.current,
     dividerColor: Color = LocalContentColor.current,
+    selectedItemChanged: (String) -> Unit = {}
 ) {
 
     val visibleItemsMiddle = visibleItemsCount / 2
@@ -79,7 +80,10 @@ fun Picker(
         snapshotFlow { listState.firstVisibleItemIndex }
             .map { index -> getItem(index + visibleItemsMiddle) }
             .distinctUntilChanged()
-            .collect { item -> state.selectedItem = item }
+            .collect { item ->
+                state.selectedItem = item
+                selectedItemChanged(item)
+            }
     }
 
     Box(modifier = modifier) {

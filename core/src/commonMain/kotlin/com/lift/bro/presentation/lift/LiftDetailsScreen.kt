@@ -1,11 +1,14 @@
 package com.lift.bro.presentation.lift
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.FabPosition
@@ -61,6 +64,11 @@ fun LiftDetailsScreen(
                     showBackButton = true,
                     trailingContent = {
                         TopBarIconButton(
+                            Icons.Default.Add,
+                            contentDescription = "Add Variation",
+                            onClick = addVariationClicked,
+                        )
+                        TopBarIconButton(
                             Icons.Default.Edit,
                             contentDescription = "Edit",
                             onClick = editLiftClicked,
@@ -94,7 +102,7 @@ fun VariationCard(
         modifier = Modifier.fillMaxWidth()
             .padding(
                 horizontal = MaterialTheme.spacing.one,
-                vertical = MaterialTheme.spacing.half
+                vertical = MaterialTheme.spacing.one
             ),
         onClick = { onClick(variation) }
     ) {
@@ -102,6 +110,7 @@ fun VariationCard(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(variation.name ?: "")
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.quarter))
             if (variation.pbWeight != null && variation.pbUnit != null) {
                 Text("${variation.pbWeight} ${variation.pbUnit}")
             } else {
