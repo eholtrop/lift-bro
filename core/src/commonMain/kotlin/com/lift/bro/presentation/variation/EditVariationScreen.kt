@@ -52,15 +52,6 @@ fun EditVariationScreen(
 
     var name by remember { mutableStateOf(variation?.name ?: "") }
 
-    var personalBest by remember {
-        mutableStateOf<Pair<Double?, UOM>>(
-            Pair(
-                null,
-                UOM.POUNDS
-            )
-        )
-    }
-
     val coroutineScope = rememberCoroutineScope()
 
     LiftingScaffold(
@@ -77,8 +68,6 @@ fun EditVariationScreen(
                     id = variation?.id ?: uuid4().toString(),
                     name = name,
                     liftId = lift?.id!!,
-                    pbUnit = personalBest?.second?.value,
-                    pbWeight = personalBest?.first
                 )
                 variationSaved()
             }
@@ -105,12 +94,6 @@ fun EditVariationScreen(
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
-
-            WeightSelector(
-                weight = personalBest,
-                placeholder = "One Rep Max",
-                weightChanged = { personalBest = it }
-            )
         }
     }
 }

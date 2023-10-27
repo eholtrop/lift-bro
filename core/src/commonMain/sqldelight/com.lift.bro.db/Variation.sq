@@ -1,9 +1,7 @@
 CREATE TABLE Variation (
     id TEXT NOT NULL PRIMARY KEY,
     liftId TEXT NOT NULL,
-    name TEXT,
-    pbWeight REAL,
-    pbUnit TEXT
+    name TEXT
 );
 
 getAll:
@@ -14,5 +12,5 @@ SELECT * FROM Variation WHERE id = ?;
 
 save:
 INSERT OR REPLACE
-INTO Variation(id, liftId, name, pbWeight, pbUnit)
-VALUES(?, ?, ?, ?, ?);
+INTO Variation(id, liftId, name)
+VALUES(?, ?, ?);

@@ -2,7 +2,6 @@ CREATE TABLE LiftingSet (
     id TEXT NOT NULL PRIMARY KEY,
     variationId TEXT NOT NULL,
     weight REAL,
-    unit TEXT,
     reps INTEGER,
     tempoDown INTEGER,
     tempoHold INTEGER,
@@ -17,5 +16,5 @@ SELECT * FROM LiftingSet WHERE id = ?;
 
 save:
 INSERT OR REPLACE
-INTO LiftingSet(id, variationId, weight, unit, reps, tempoDown, tempoHold, tempoUp)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?);
+INTO LiftingSet(id, variationId, weight, reps, tempoDown, tempoHold, tempoUp)
+VALUES(?, ?, ?, ?, ?, ?, ?);

@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.benasher44.uuid.Uuid
 import com.benasher44.uuid.uuid4
+import com.lift.bro.Settings
+import com.lift.bro.data.Set
 import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.variation.UOM
 import com.lift.bro.ui.LiftingScaffold
@@ -39,16 +41,9 @@ fun EditSetScreen(
 ) {
     var set by remember {
         mutableStateOf(
-            dependencies.database.setDataSource.get(setId)
-                .executeAsOneOrNull() ?: LiftingSet(
+            dependencies.database.setDataSource.get(setId) ?: Set(
                 id = uuid4().toString(),
                 variationId = variationId,
-                weight = null,
-                unit = null,
-                reps = null,
-                tempoDown = null,
-                tempoHold = null,
-                tempoUp = null
             )
         )
     }
@@ -64,16 +59,7 @@ fun EditSetScreen(
         fabText = "Create Set",
         fabClicked = {
             coroutineScope.launch {
-                dependencies.database.setDataSource.save(
-                    id = set.id,
-                    variationId = set.variationId,
-                    weight = set.weight,
-                    unit = set.unit,
-                    reps = set.reps,
-                    tempoDown = set.tempoDown,
-                    tempoHold = set.tempoHold,
-                    tempoUp = set.tempoUp
-                )
+                dependencies.database.setDataSource.save(set)
             }
             setSaved()
         },
@@ -96,17 +82,18 @@ fun EditSetScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
             WeightSelector(
-                weight = Pair(set?.weight, UOM.valueOf(set?.unit ?: UOM.POUNDS.toString())),
+                weight = Pair(set?.weight, Settings.defaultUOM),
                 placeholder = "Weight",
-                weightChanged = { set = set.copy(weight = it.first, unit = it.second.toString()) }
+                weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
             TempoSelector(
-                up = 1,
-                hold = 1,
-                down = 3,
+                reps = set.reps.toInt(),
+                up = set.tempoUp.toInt(),
+                hold = set.tempoHold.toInt(),
+                down = set.tempoDown.toInt(),
                 repChanged = { set = set.copy(reps = it.toLong()) },
                 downChanged = { set = set.copy(tempoDown = it.toLong()) },
                 holdChanged = { set = set.copy(tempoHold = it.toLong()) },
@@ -119,6 +106,7 @@ fun EditSetScreen(
 @Composable
 fun TempoSelector(
     modifier: Modifier = Modifier,
+    reps: Int,
     down: Int,
     hold: Int,
     up: Int,
@@ -134,7 +122,7 @@ fun TempoSelector(
         NumberPicker(
             modifier = Modifier.weight(.25f),
             title = "Reps",
-            selectedNum = 0,
+            selectedNum = reps,
             numberChanged = repChanged
         )
         NumberPicker(
