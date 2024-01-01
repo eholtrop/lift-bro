@@ -48,16 +48,11 @@ fun EditSetScreen(
         )
     }
 
-    var variation by remember {
-        mutableStateOf(
-            dependencies.database.variantDataSource.get(set.variationId)
-                .executeAsOneOrNull()
-        )
-    }
+    val variation = dependencies.database.variantDataSource.get(set.variationId).executeAsOneOrNull()
 
     LiftingScaffold(
         fabText = "Create Set",
-        fabEnabled = set.variationId.isNotBlank(),
+        fabEnabled = variation != null,
         fabClicked = {
             coroutineScope.launch {
                 dependencies.database.setDataSource.save(set)
@@ -77,7 +72,9 @@ fun EditSetScreen(
         ) {
             VariationSelector(
                 variation = variation,
-                variationSelected = { variation = it }
+                variationSelected = {
+                    set = set.copy(variationId = it.id)
+                }
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
