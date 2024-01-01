@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 fun LiftingScaffold(
     fabText: String? = null,
     fabClicked: () -> Unit,
+    fabEnabled: Boolean = true,
     topBar: @Composable () -> Unit,
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -19,6 +20,7 @@ fun LiftingScaffold(
         floatingActionButton = {
             fabText?.let {
                 Button(
+                    enabled = fabEnabled,
                     onClick = fabClicked
                 ) {
                     Text(fabText)

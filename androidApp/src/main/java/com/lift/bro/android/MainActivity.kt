@@ -1,4 +1,4 @@
-package com.lift.bro.android
+package com.lift.bro
 
 import App
 import android.os.Bundle

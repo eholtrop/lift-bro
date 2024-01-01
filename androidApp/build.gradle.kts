@@ -6,10 +6,10 @@ plugins {
 }
 
 android {
-    namespace = "com.lift.bro.android"
+    namespace = "com.lift.bro"
     compileSdk = 34
     defaultConfig {
-        applicationId = "com.lift.bro.android"
+        applicationId = "com.lift.bro"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

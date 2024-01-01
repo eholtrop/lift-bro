@@ -111,7 +111,8 @@ fun VariationCard(
         onClick = { onClick(variation) }
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.padding(MaterialTheme.spacing.one),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(variation.name ?: "")
 

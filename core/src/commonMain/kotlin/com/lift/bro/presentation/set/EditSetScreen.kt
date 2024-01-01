@@ -57,6 +57,7 @@ fun EditSetScreen(
 
     LiftingScaffold(
         fabText = "Create Set",
+        fabEnabled = set.variationId.isNotBlank(),
         fabClicked = {
             coroutineScope.launch {
                 dependencies.database.setDataSource.save(set)
