@@ -2,6 +2,7 @@ plugins {
     kotlin("android")
     id("com.android.application")
     id("org.jetbrains.compose")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -42,4 +43,8 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation("androidx.activity:activity-compose:1.7.2")
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+
+    // unsure about this
+    implementation("com.google.firebase:firebase-analytics")
 }
