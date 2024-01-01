@@ -14,3 +14,6 @@ save:
 INSERT OR REPLACE
 INTO Variation(id, liftId, name)
 VALUES(?, ?, ?);
+
+delete:
+DELETE FROM Variation WHERE id = ?;

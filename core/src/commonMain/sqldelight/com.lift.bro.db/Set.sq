@@ -18,3 +18,6 @@ save:
 INSERT OR REPLACE
 INTO LiftingSet(id, variationId, weight, reps, tempoDown, tempoHold, tempoUp)
 VALUES(?, ?, ?, ?, ?, ?, ?);
+
+delete:
+DELETE FROM LiftingSet WHERE variationId = ?;

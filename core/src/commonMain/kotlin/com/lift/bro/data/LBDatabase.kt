@@ -74,6 +74,10 @@ class SetDataSource(
         )
     }
 
+    suspend fun deleteAll(variationId: String) {
+        setQueries.delete(variationId = variationId)
+    }
+
     internal fun LiftingSet.toSet() = Set(
         id = this.id,
         variationId = this.variationId,
