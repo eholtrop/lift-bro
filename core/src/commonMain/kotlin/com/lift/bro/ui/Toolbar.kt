@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -17,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -53,7 +55,16 @@ fun TopBar(
 
         Row(
             modifier = Modifier.align(Alignment.TopEnd),
-            content = trailingContent
+            content = {
+                trailingContent()
+                TopBarIconButton(
+                    painter = Images.calculator(),
+                    contentDescription = "Calculator",
+                    onClick = {
+                        dependencies.launchCalculator()
+                    }
+                )
+            }
         )
     }
 }
@@ -77,7 +88,6 @@ fun TopBarIconButton(
     contentDescription: String,
     onClick: () -> Unit,
 ) {
-
     IconButton(
         modifier = Modifier.padding(
             start = MaterialTheme.spacing.one,
@@ -87,6 +97,26 @@ fun TopBarIconButton(
     ) {
         Icon(
             imageVector = imageVector,
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.onBackground
+        )
+    }
+}
+@Composable
+fun TopBarIconButton(
+    painter: Painter,
+    contentDescription: String,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        modifier = Modifier.padding(
+            start = MaterialTheme.spacing.one,
+            top = MaterialTheme.spacing.one,
+        ),
+        onClick = onClick,
+    ) {
+        Icon(
+            painter = painter,
             contentDescription = contentDescription,
             tint = MaterialTheme.colorScheme.onBackground
         )

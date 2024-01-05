@@ -7,6 +7,8 @@ expect class DependencyContainer {
     val database: LBDatabase
 
     val coordinator: Coordinator
+
+    fun launchCalculator()
 }
 
 expect val dependencies: DependencyContainer
