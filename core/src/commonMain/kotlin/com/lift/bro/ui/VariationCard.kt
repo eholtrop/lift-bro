@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import comliftbrodb.Lift
 import comliftbrodb.Variation
 import spacing
@@ -25,6 +26,7 @@ fun VariationCard(
             Text(
                 text = variation.name!!,
                 color = MaterialTheme.colorScheme.onSurface,
+                textAlign = TextAlign.Center,
             )
         }
     }

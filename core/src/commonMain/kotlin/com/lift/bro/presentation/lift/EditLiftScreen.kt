@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
@@ -33,6 +35,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
@@ -146,6 +150,7 @@ fun EditLiftScreen(
                         TextField(
                             modifier = Modifier.weight(1f),
                             value = variation.name ?: "",
+                            singleLine = true,
                             onValueChange = {
                                 variations[index] = variations[index].copy(name = it)
                             },

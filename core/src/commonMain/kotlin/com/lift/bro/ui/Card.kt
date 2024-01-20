@@ -28,11 +28,8 @@ fun Card(
                 role = Role.Button
             )
             .background(
-                color = MaterialTheme.colorScheme.surface,
+                color = MaterialTheme.colorScheme.surfaceVariant,
                 shape = MaterialTheme.shapes.medium,
-            )
-            .shadow(
-                elevation = 3.dp,
             )
             .padding(MaterialTheme.spacing.quarter),
         contentAlignment = Alignment.Center,

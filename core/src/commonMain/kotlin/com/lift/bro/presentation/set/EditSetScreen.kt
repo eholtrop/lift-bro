@@ -74,13 +74,14 @@ fun EditSetScreen(
                 variation = variation,
                 variationSelected = {
                     set = set.copy(variationId = it.id)
-                }
+                },
             )
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
             WeightSelector(
-                weight = Pair(set?.weight, Settings.defaultUOM),
+                weight = Pair(set.weight, Settings.defaultUOM),
+                liftId = variation?.liftId ?: "",
                 placeholder = "Weight",
                 weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
             )
