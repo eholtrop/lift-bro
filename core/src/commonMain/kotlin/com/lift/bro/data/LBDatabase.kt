@@ -20,6 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import kotlin.coroutines.CoroutineContext
 
 class LBDatabase(
@@ -47,6 +48,7 @@ data class Set(
     val tempoDown: Long = 3,
     val tempoHold: Long = 1,
     val tempoUp: Long = 1,
+    val date: LocalDate,
 )
 
 class SetDataSource(

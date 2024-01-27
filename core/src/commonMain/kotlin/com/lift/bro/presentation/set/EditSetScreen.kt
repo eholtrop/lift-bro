@@ -1,8 +1,13 @@
 package com.lift.bro.presentation.set
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +21,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.Uuid
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
@@ -30,6 +37,7 @@ import com.lift.bro.ui.WeightSelector
 import comliftbrodb.LiftingSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import spacing
 
 @Composable
@@ -98,7 +106,67 @@ fun EditSetScreen(
                 holdChanged = { set = set.copy(tempoHold = it.toLong()) },
                 upChanged = { set = set.copy(tempoUp = it.toLong()) },
             )
+
+            DateSelector(
+                date = set.date,
+                dateChanged = { set = set.copy(date = it) }
+            )
         }
+    }
+}
+
+@Composable
+fun DateSelector(
+    modifier: Modifier = Modifier,
+    date: LocalDate,
+    dateChanged: (LocalDate) -> Unit
+) {
+    LineItem(
+        title = "Set Date",
+        description = date.toString(),
+        onClick = {}
+    )
+}
+
+
+@Composable
+fun LineItem(
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    description: String,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .defaultMinSize(minHeight = 52.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.small
+            )
+            .clickable(
+                enabled = true,
+                onClick = onClick,
+                role = Role.Button,
+            )
+            .padding(
+                vertical = MaterialTheme.spacing.quarter,
+                horizontal = MaterialTheme.spacing.one
+            )
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        title?.let {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 
