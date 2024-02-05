@@ -1,12 +1,25 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.lift.bro.presentation.set
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -16,20 +29,29 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.Uuid
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
 import com.lift.bro.data.Set
 import com.lift.bro.di.dependencies
+import com.lift.bro.presentation.formatDate
 import com.lift.bro.presentation.variation.UOM
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Picker
 import com.lift.bro.ui.TopBar
 import com.lift.bro.ui.VariationSelector
 import com.lift.bro.ui.WeightSelector
+import com.lift.bro.ui.rememberPickerState
 import comliftbrodb.LiftingSet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import spacing
 
 @Composable
@@ -48,7 +70,8 @@ fun EditSetScreen(
         )
     }
 
-    val variation = dependencies.database.variantDataSource.get(set.variationId).executeAsOneOrNull()
+    val variation =
+        dependencies.database.variantDataSource.get(set.variationId).executeAsOneOrNull()
 
     LiftingScaffold(
         fabText = "Create Set",
@@ -88,6 +111,13 @@ fun EditSetScreen(
 
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
+            DateSelector(
+                date = set.date,
+                dateChanged = { set = set.copy(date = it) }
+            )
+
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
+
             TempoSelector(
                 reps = set.reps.toInt(),
                 up = set.tempoUp.toInt(),
@@ -99,6 +129,99 @@ fun EditSetScreen(
                 upChanged = { set = set.copy(tempoUp = it.toLong()) },
             )
         }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun DateSelector(
+    modifier: Modifier = Modifier,
+    date: Instant,
+    dateChanged: (Instant) -> Unit
+) {
+    var openDialog by remember { mutableStateOf(false) }
+
+    val pickerState = rememberDatePickerState(date.toEpochMilliseconds())
+
+    if (openDialog) {
+        DatePickerDialog(
+            onDismissRequest = { openDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        openDialog = false
+                        dateChanged(
+                            Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
+                        )
+                    },
+                    enabled = pickerState.selectedDateMillis != null,
+                ) {
+                    Text("Ok")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { openDialog = false }
+                ) {
+                    Text("Close")
+                }
+            }
+        ) {
+            DatePicker(
+                state = pickerState
+            )
+        }
+    }
+
+    LineItem(
+        modifier = modifier,
+        title = "Set Date",
+        description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!).formatDate("MMMM d - yyyy"),
+        onClick = {
+            openDialog = true
+        }
+    )
+}
+
+
+@Composable
+fun LineItem(
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    description: String,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .defaultMinSize(minHeight = 52.dp)
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.small
+            )
+            .clickable(
+                enabled = true,
+                onClick = onClick,
+                role = Role.Button,
+            )
+            .padding(
+                vertical = MaterialTheme.spacing.quarter,
+                horizontal = MaterialTheme.spacing.one
+            )
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        title?.let {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface
+        )
     }
 }
 

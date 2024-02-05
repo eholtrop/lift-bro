@@ -48,6 +48,7 @@ kotlin {
                 implementation(compose.components.resources)
 
 
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
                 implementation("com.benasher44:uuid:0.8.1")
                 implementation("app.cash.sqldelight:coroutines-extensions:2.0.0")
 

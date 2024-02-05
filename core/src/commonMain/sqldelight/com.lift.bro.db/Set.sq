@@ -1,3 +1,6 @@
+import kotlinx.datetime.Instant;
+import kotlinx.datetime.LocalDate;
+
 CREATE TABLE LiftingSet (
     id TEXT NOT NULL PRIMARY KEY,
     variationId TEXT NOT NULL,
@@ -5,7 +8,8 @@ CREATE TABLE LiftingSet (
     reps INTEGER,
     tempoDown INTEGER,
     tempoHold INTEGER,
-    tempoUp INTEGER
+    tempoUp INTEGER,
+    date INTEGER AS Instant NOT NULL
 );
 
 getAllByVariation:
@@ -16,8 +20,8 @@ SELECT * FROM LiftingSet WHERE id = ?;
 
 save:
 INSERT OR REPLACE
-INTO LiftingSet(id, variationId, weight, reps, tempoDown, tempoHold, tempoUp)
-VALUES(?, ?, ?, ?, ?, ?, ?);
+INTO LiftingSet(id, variationId, weight, reps, tempoDown, tempoHold, tempoUp, date)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?);
 
 delete:
 DELETE FROM LiftingSet WHERE variationId = ?;
