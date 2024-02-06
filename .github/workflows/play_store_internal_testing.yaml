@@ -1,0 +1,54 @@
+name: Google Play Internal Testing
+
+on:
+  push:
+    branches: [ workflow ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Set up Ruby 2.6
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
+
+      - name: decode keystore
+        id: decode_keystore
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: 'release.jks'
+          fileDir: 'androidApp'
+          encodedString: ${{ secrets.RELEASE_KEYSTORE }}
+
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "key.json"
+          json: ${{ secrets.FASTLANE_JSON }}
+
+      - name: Run fastlane deploy
+        env:
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PW }}
+          KEY_ALIAS: ${{ secrets.KEYSTORE_USR }}
+          KEY_PASSWORD: ${{ secrets.KEY_PW }}
+        run: fastlane deploy build_number:$GITHUB_RUN_NUMBER
+
+      - name: Upload Apk
+        uses: actions/upload-artifact@v2
+        with:
+          name: assets
+          path: app/build/outputs/bundle/release/app-release.aab

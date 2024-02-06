@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.load.kotlin.signatures
+
 plugins {
     kotlin("android")
     id("com.android.application")
@@ -12,8 +14,14 @@ android {
         applicationId = "com.lift.bro"
         minSdk = 24
         targetSdk = 34
-        versionCode = 3
         versionName = "1.0"
+
+
+        versionCode = if (project.hasProperty("buildNumber")) {
+            property("buildNumber").toString().toInt()
+        } else {
+            1
+        }
     }
     buildFeatures {
         compose = true
@@ -26,17 +34,29 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    signingConfigs {
+        register("release") {
+            storeFile = file("release.jks")
+            storePassword = System.getenv("STORE_PASSWORD")
+            keyAlias = System.getenv("KEY_ALIAS")
+            keyPassword = System.getenv("KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            isDebuggable = false
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 }
 
