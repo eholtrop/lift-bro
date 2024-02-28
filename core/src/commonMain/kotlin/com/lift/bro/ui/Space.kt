@@ -15,6 +15,11 @@ fun RowScope.Space(width: Dp) {
 }
 
 @Composable
+fun RowScope.Space(weight: Float = 1f) {
+    Spacer(modifier = Modifier.weight(weight))
+}
+
+@Composable
 fun ColumnScope.Space(height: Dp) {
     Spacer(modifier = Modifier.height(height))
 }
