@@ -8,7 +8,6 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import com.lift.bro.db.LiftBroDB
-import comliftbrodb.Lift
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
@@ -19,15 +18,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayIn
-import kotlin.math.min
+import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.VariationRepository
+import com.lift.bro.utils.mapEach
+import kotlinx.coroutines.flow.map
 
 class LBDatabase(
     driverFactory: DriverFactory,
@@ -42,7 +39,7 @@ class LBDatabase(
 
     val liftDataSource: LiftDataSource = LiftDataSource(database.liftQueries)
 
-    val variantDataSource: VariationQueries = database.variationQueries
+    val variantDataSource: VariationRepository = VariationRepository(database.variationQueries)
 
     val setDataSource: SetDataSource = SetDataSource(database.setQueries)
 }
@@ -56,34 +53,62 @@ private val dateAdapter = object : ColumnAdapter<Instant, Long> {
     override fun encode(value: Instant): Long {
         return value.toEpochMilliseconds()
     }
-
 }
 
-data class Set(
-    val id: String,
-    val variationId: String,
-    val weight: Double = 0.0,
-    val reps: Long = 1,
-    val tempoDown: Long = 3,
-    val tempoHold: Long = 1,
-    val tempoUp: Long = 1,
-    val date: Instant = Clock.System.now(),
-)
+class VariationRepository(
+    private val variationQueries: VariationQueries,
+) : VariationRepository {
+    override suspend fun deleteAll() {
+        variationQueries.deleteAll()
+    }
+
+    override fun save(id: String, liftId: String, name: String?) {
+        GlobalScope.launch {
+            variationQueries.save(id = id, liftId = liftId, name = name)
+        }
+    }
+
+    override fun getAll(liftId: String): List<Variation> {
+        return variationQueries.getAllForLift(liftId).executeAsList().map { it.toDomain() }
+    }
+
+    override fun getAll(): List<Variation> {
+        return variationQueries.getAll().executeAsList().map { it.toDomain() }
+    }
+
+    override fun listenAll(liftId: String): Flow<List<Variation>> {
+        return variationQueries.getAllForLift(liftId).asFlow().mapToList(Dispatchers.IO)
+            .mapEach { it.toDomain() }
+    }
+
+    override fun delete(id: String) {
+        GlobalScope.launch {
+            variationQueries.delete(id)
+        }
+    }
+
+    override fun get(variationId: String): Variation? {
+        return variationQueries.get(variationId).executeAsOneOrNull()?.toDomain()
+    }
+
+}
 
 class SetDataSource(
     private val setQueries: SetQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
-    fun getAll(variationId: String): List<Set> =
+    fun getAll(variationId: String): List<LBSet> =
         setQueries.getAllByVariation(variationId).executeAsList()
             .map {
                 it.toDomain()
             }
 
-    fun get(setId: String): Set? = setQueries.get(setId).executeAsOneOrNull()?.toDomain()
+    fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
 
-    suspend fun save(set: Set) {
+    fun get(setId: String): LBSet? = setQueries.get(setId).executeAsOneOrNull()?.toDomain()
+
+    suspend fun save(set: LBSet) {
         setQueries.save(
             id = set.id,
             variationId = set.variationId,
@@ -97,10 +122,14 @@ class SetDataSource(
     }
 
     suspend fun deleteAll(variationId: String) {
-        setQueries.delete(variationId = variationId)
+        setQueries.deleteAllFromVariations(variationId = variationId)
     }
 
-    private fun LiftingSet.toDomain() = Set(
+    suspend fun deleteAll() {
+        setQueries.deleteAll()
+    }
+
+    private fun LiftingSet.toDomain() = LBSet(
         id = this.id,
         variationId = this.variationId,
         weight = this.weight ?: 0.0,
@@ -113,14 +142,15 @@ class SetDataSource(
 }
 
 class LiftDataSource(
-    val liftQueries: LiftQueries,
+    private val liftQueries: LiftQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
     fun get(id: String?): Flow<Lift?> =
-        liftQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher)
+        liftQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 
-    fun getAll(): Flow<List<Lift>> = liftQueries.getAll().asFlow().mapToList(dispatcher)
+    fun getAll(): Flow<List<Lift>> =
+        liftQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
 
     fun save(lift: Lift): Boolean {
         GlobalScope.launch(dispatcher) {
@@ -132,7 +162,21 @@ class LiftDataSource(
         return true
     }
 
+    suspend fun clear() {
+        liftQueries.deleteAll()
+    }
 }
+
+private fun comliftbrodb.Lift.toDomain() = Lift(
+    id = this.id,
+    name = this.name,
+)
+
+private fun comliftbrodb.Variation.toDomain() = Variation(
+    id = this.id,
+    liftId = this.liftId,
+    name = this.name,
+)
 
 expect class DriverFactory {
 

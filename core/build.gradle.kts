@@ -1,5 +1,6 @@
 plugins {
     kotlin("multiplatform")
+    kotlin("plugin.serialization")
     id("com.android.library")
     id("app.cash.sqldelight") version "2.0.0"
     id("org.jetbrains.compose")
@@ -52,6 +53,9 @@ kotlin {
                 implementation("com.benasher44:uuid:0.8.1")
                 implementation("app.cash.sqldelight:coroutines-extensions:2.0.0")
 
+
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
+
                 implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc05")
             }
         }
@@ -81,5 +85,9 @@ android {
     compileSdk = 34
     defaultConfig {
         minSdk = 24
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }

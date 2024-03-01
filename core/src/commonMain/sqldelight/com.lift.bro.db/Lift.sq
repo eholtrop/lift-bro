@@ -13,3 +13,9 @@ save:
 INSERT OR REPLACE
 INTO Lift(id, name)
 VALUES(?, ?);
+
+delete:
+DELETE FROM Lift WHERE id = ?;
+
+deleteAll:
+DELETE FROM Lift;

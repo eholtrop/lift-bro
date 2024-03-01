@@ -1,10 +1,10 @@
-package com.lift.bro
+package com.lift.bro.android
 
-import App
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.lift.bro.di.DependencyContainer
+import com.lift.bro.presentation.App
 
 class MainActivity : ComponentActivity() {
 

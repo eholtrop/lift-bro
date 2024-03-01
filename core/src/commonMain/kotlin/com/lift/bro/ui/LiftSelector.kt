@@ -20,10 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import com.lift.bro.di.dependencies
-import comliftbrodb.Lift
-import spacing
+import com.lift.bro.domain.models.Lift
+import com.lift.bro.presentation.spacing
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

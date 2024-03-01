@@ -1,15 +1,13 @@
 package com.lift.bro.ui
 
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import comliftbrodb.Lift
-import comliftbrodb.Variation
-import spacing
+import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.spacing
 
 @Composable
 fun VariationCard(

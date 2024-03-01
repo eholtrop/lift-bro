@@ -5,18 +5,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
@@ -35,19 +29,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.spacing
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBar
-import comliftbrodb.Lift
-import comliftbrodb.Variation
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
-import spacing
 
 @Composable
 fun EditLiftScreen(
@@ -57,16 +50,17 @@ fun EditLiftScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     val variations = mutableStateListOf(
-        *database.variantDataSource.getAll(liftId ?: "").executeAsList().toTypedArray()
+        *database.variantDataSource.getAll(liftId ?: "").toTypedArray()
     )
 
-    var lift by remember {
-        mutableStateOf(
-            database.liftDataSource.liftQueries.get(liftId ?: "").executeAsOneOrNull() ?: Lift(
-                id = uuid4().toString(),
-                name = ""
-            )
-        )
+    var lift by remember { mutableStateOf<Lift>(Lift(id = uuid4().toString(), name = "")) }
+
+    LaunchedEffect("get lift") {
+        database.liftDataSource.get(liftId ?: "")
+            .filterNotNull()
+            .collectLatest {
+                lift = it
+            }
     }
 
     LaunchedEffect("Fix variations") {

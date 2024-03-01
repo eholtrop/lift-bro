@@ -4,8 +4,11 @@ CREATE TABLE Variation (
     name TEXT
 );
 
-getAll:
+getAllForLift:
 SELECT * FROM Variation WHERE liftId = ?;
+
+getAll:
+SELECT * FROM Variation;
 
 get:
 SELECT * FROM Variation WHERE id = ?;
@@ -17,3 +20,6 @@ VALUES(?, ?, ?);
 
 delete:
 DELETE FROM Variation WHERE id = ?;
+
+deleteAll:
+DELETE FROM Variation;

@@ -13,10 +13,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
-import androidx.compose.material3.FabPosition
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,12 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Lift
+import com.lift.bro.presentation.spacing
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBar
 import com.lift.bro.ui.TopBarIconButton
-import comliftbrodb.Lift
-import spacing
 
 
 @Composable
