@@ -42,7 +42,6 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.presentation.formatDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.Picker
 import com.lift.bro.ui.TopBar
 import com.lift.bro.ui.VariationSelector
 import com.lift.bro.ui.WeightSelector
