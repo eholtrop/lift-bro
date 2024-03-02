@@ -5,17 +5,26 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.ui.Space
 import kotlinx.coroutines.launch
@@ -92,6 +102,7 @@ private const val CALENDAR_INITIAL_PAGE = CALENDAR_MAX_MONTH_SIZE / 2
 fun Calendar(
     modifier: Modifier = Modifier,
     selectedDate: LocalDate,
+    contentPadding: PaddingValues,
     dateSelected: (LocalDate) -> Unit,
     date: @Composable RowScope.(LocalDate) -> Unit
 ) {
@@ -108,6 +119,7 @@ fun Calendar(
             selection = selectedDate,
             dateSelected = dateSelected,
             date = date,
+            contentPadding = contentPadding
         )
     }
 }
@@ -119,36 +131,70 @@ val today get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
 private fun CalendarContent(
     pagerState: PagerState,
     selection: LocalDate?,
+    contentPadding: PaddingValues,
     dateSelected: (LocalDate) -> Unit,
     date: @Composable RowScope.(LocalDate) -> Unit
 ) {
 
     val coroutineScope = rememberCoroutineScope()
 
-    Row {
+    Row(
+        modifier = Modifier.padding(
+            start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+            end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+        ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Button(
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+            ),
             onClick = {
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(pagerState.currentPage - 1)
                 }
             }
         ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Previous Month",
+                tint = MaterialTheme.colorScheme.primary,
+            )
         }
 
         Space()
+        Text(
+            text = pagerState.currentMonth.month.toString(),
+            style = MaterialTheme.typography.titleMedium
+        )
+        Space()
 
         Button(
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+            ),
             onClick = {
-
                 coroutineScope.launch {
                     pagerState.animateScrollToPage(pagerState.currentPage + 1)
                 }
             }
         ) {
+            Icon(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription = "Next Month",
+                tint = MaterialTheme.colorScheme.primary,
+            )
         }
     }
 
-    Row {
+    Row(
+        modifier = Modifier.padding(
+            start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+            end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+        )
+    ) {
         DayOfWeek.values().forEach {
             Text(
                 modifier = Modifier.weight(1f),
@@ -161,6 +207,7 @@ private fun CalendarContent(
     HorizontalPager(
         state = pagerState,
         modifier = Modifier.fillMaxWidth(),
+        contentPadding = contentPadding,
     ) { page ->
         val monthOffset = remember { page - pagerState.initialPage }
         val currentMonth = today.plus(DatePeriod(months = monthOffset))
@@ -170,13 +217,9 @@ private fun CalendarContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Text(
-                text = currentMonth.month.toString()
-            )
-
-
             for (weekOffset in 0..5) {
-                val currentWeek = startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal)).plus(DatePeriod(days = 7 * weekOffset))
+                val currentWeek = startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal))
+                    .plus(DatePeriod(days = 7 * weekOffset))
 
                 Row(
                     modifier = Modifier
@@ -203,3 +246,6 @@ private fun CalendarContent(
         }
     }
 }
+
+@OptIn(ExperimentalFoundationApi::class)
+private val PagerState.currentMonth get() = today.plus(DatePeriod(months = this.currentPage - this.initialPage))

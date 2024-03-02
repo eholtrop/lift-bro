@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,6 +59,7 @@ fun LiftDetailsScreen(
 
     val variations by database.variantDataSource.listenAll(liftId).collectAsState(emptyList())
 
+
     lift?.let { lift ->
         LiftingScaffold(
             fabText = "Add Set",
@@ -81,23 +83,24 @@ fun LiftDetailsScreen(
                 )
             }
         ) { padding ->
+
+            var selectedDate by remember { mutableStateOf(today) }
+
+            val sets = variations.map {
+                database.setDataSource.getAll(it.id)
+            }
+                .fold(emptyList<LBSet>()) { l1, l2 -> l1 + l2 }
+
             LazyColumn(
                 modifier = Modifier.padding(padding)
             ) {
 
                 item {
-
-                    var selectedDate by remember { mutableStateOf(today) }
-
-                    val sets = variations.map {
-                        database.setDataSource.getAll(it.id)
-                    }
-                        .fold(emptyList<LBSet>()) { l1, l2 -> l1 + l2 }
-
                     Calendar(
                         modifier = Modifier.fillMaxWidth()
                             .wrapContentHeight(),
                         selectedDate = selectedDate,
+                        contentPadding = PaddingValues(MaterialTheme.spacing.one),
                         dateSelected = {
                             selectedDate = it
                         },
@@ -136,8 +139,30 @@ fun LiftDetailsScreen(
                     )
                 }
 
+                items(variations.filter { v ->
+                    sets
+                        .filter { it.date.toLocalDate() == selectedDate }
+                        .any { it.variationId == v.id }
+                }) { variation ->
+                    Text(
+                        text = selectedDate.dayOfWeek.toString(),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    VariationCard(
+                        variation = variation,
+                        onClick = { variationClicked(variation.id) }
+                    )
+                }
 
-                items(variations) { variation ->
+                items(variations.filter { v ->
+                    !sets
+                        .filter { it.date.toLocalDate() == selectedDate }
+                        .any { it.variationId == v.id }
+                }) { variation ->
+                    Text(
+                        text = "Other Variations",
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
                     VariationCard(
                         variation = variation,
                         onClick = { variationClicked(variation.id) }
@@ -179,11 +204,7 @@ fun VariationCard(
 
             maxLift?.let { lift ->
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.quarter))
-                if (lift.weight != null) {
-                    Text(lift.formattedMax)
-                } else {
-                    Text("No Max")
-                }
+                Text(lift.formattedMax)
             } ?: run {
                 Text("No Max")
             }
