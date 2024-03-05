@@ -83,92 +83,15 @@ fun LiftDetailsScreen(
                 )
             }
         ) { padding ->
-
-            var selectedDate by remember { mutableStateOf(today) }
-
-            val sets = variations.map {
-                database.setDataSource.getAll(it.id)
-            }
-                .fold(emptyList<LBSet>()) { l1, l2 -> l1 + l2 }
-
             LazyColumn(
                 modifier = Modifier.padding(padding)
             ) {
-
-                item {
-                    Calendar(
-                        modifier = Modifier.fillMaxWidth()
-                            .wrapContentHeight(),
-                        selectedDate = selectedDate,
-                        contentPadding = PaddingValues(MaterialTheme.spacing.one),
-                        dateSelected = {
-                            selectedDate = it
-                        },
-                        date = { date ->
-                            val selected = date == selectedDate
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f)
-                                    .background(
-                                        color = if (selected) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else if (sets.any { it.date.toLocalDate() == date }) {
-                                            MaterialTheme.colorScheme.surfaceVariant
-                                        } else {
-                                            Color.Transparent
-                                        },
-                                        shape = CircleShape
-                                    )
-                                    .clickable {
-                                        selectedDate = date
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = date.dayOfMonth.toString(),
-                                    color = if (selected) {
-                                        MaterialTheme.colorScheme.onPrimary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurface
-                                    },
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    )
-                }
-
-                items(variations.filter { v ->
-                    sets
-                        .filter { it.date.toLocalDate() == selectedDate }
-                        .any { it.variationId == v.id }
-                }) { variation ->
-                    Text(
-                        text = selectedDate.dayOfWeek.toString(),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+                items(variations) { variation ->
                     VariationCard(
                         variation = variation,
                         onClick = { variationClicked(variation.id) }
                     )
                 }
-
-                items(variations.filter { v ->
-                    !sets
-                        .filter { it.date.toLocalDate() == selectedDate }
-                        .any { it.variationId == v.id }
-                }) { variation ->
-                    Text(
-                        text = "Other Variations",
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                    VariationCard(
-                        variation = variation,
-                        onClick = { variationClicked(variation.id) }
-                    )
-                }
-
             }
         }
     }

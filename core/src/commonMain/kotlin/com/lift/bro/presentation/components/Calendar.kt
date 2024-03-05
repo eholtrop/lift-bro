@@ -36,7 +36,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import com.lift.bro.presentation.spacing
 import com.lift.bro.ui.Space
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -129,6 +132,7 @@ val today get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 private fun CalendarContent(
+    modifier: Modifier = Modifier,
     pagerState: PagerState,
     selection: LocalDate?,
     contentPadding: PaddingValues,
@@ -138,107 +142,118 @@ private fun CalendarContent(
 
     val coroutineScope = rememberCoroutineScope()
 
-    Row(
-        modifier = Modifier.padding(
-            start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-            end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
-        ),
-        verticalAlignment = Alignment.CenterVertically
+    Column(
+        modifier = Modifier,
     ) {
-        Button(
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
+        Row(
+            modifier = Modifier.padding(
+                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
             ),
-            onClick = {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                }
-            }
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Previous Month",
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
-
-        Space()
-        Text(
-            text = pagerState.currentMonth.month.toString(),
-            style = MaterialTheme.typography.titleMedium
-        )
-        Space()
-
-        Button(
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-            ),
-            onClick = {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                }
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Next Month",
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
-    }
-
-    Row(
-        modifier = Modifier.padding(
-            start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-            end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
-        )
-    ) {
-        DayOfWeek.values().forEach {
             Text(
-                modifier = Modifier.weight(1f),
-                text = it.toString().take(1),
-                textAlign = TextAlign.Center,
+                modifier = Modifier.semantics { heading() }.padding(
+                    start = MaterialTheme.spacing.one
+                ),
+                text = pagerState.currentMonth.month.toString(),
+                style = MaterialTheme.typography.titleMedium
             )
+
+            Space()
+
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                ),
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Previous Month",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                ),
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowForward,
+                    contentDescription = "Next Month",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
-    }
 
-    HorizontalPager(
-        state = pagerState,
-        modifier = Modifier.fillMaxWidth(),
-        contentPadding = contentPadding,
-    ) { page ->
-        val monthOffset = remember { page - pagerState.initialPage }
-        val currentMonth = today.plus(DatePeriod(months = monthOffset))
-        val startDate = currentMonth.minus(DatePeriod(days = today.dayOfMonth - 1))
+        Space(MaterialTheme.spacing.half)
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+        Row(
+            modifier = Modifier.padding(
+                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+            )
         ) {
+            DayOfWeek.values().forEach {
+                Text(
+                    modifier = Modifier.weight(1f),
+                    text = it.toString().take(1),
+                    textAlign = TextAlign.Center,
+                )
+            }
+        }
 
-            for (weekOffset in 0..5) {
-                val currentWeek = startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal))
-                    .plus(DatePeriod(days = 7 * weekOffset))
+        Space(MaterialTheme.spacing.half)
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                ) {
-                    for (dayOffset in 0..6) {
-                        val currentDay = currentWeek.plus(DatePeriod(days = dayOffset))
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth(),
+            contentPadding = contentPadding,
+        ) { page ->
+            val monthOffset = remember { page - pagerState.initialPage }
+            val currentMonth = today.plus(DatePeriod(months = monthOffset))
+            val startDate = currentMonth.minus(DatePeriod(days = today.dayOfMonth - 1))
 
-                        if (currentDay.month == currentMonth.month) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-                            val selected = currentDay == selection
+                for (weekOffset in 0..5) {
+                    val currentWeek = startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal))
+                        .plus(DatePeriod(days = 7 * weekOffset))
 
-                            date(currentDay)
-                        } else {
-                            Spacer(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f)
-                            )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        for (dayOffset in 0..6) {
+                            val currentDay = currentWeek.plus(DatePeriod(days = dayOffset))
+
+                            if (currentDay.month == currentMonth.month) {
+
+                                val selected = currentDay == selection
+
+                                date(currentDay)
+                            } else {
+                                Spacer(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .aspectRatio(1f)
+                                )
+                            }
                         }
                     }
                 }
