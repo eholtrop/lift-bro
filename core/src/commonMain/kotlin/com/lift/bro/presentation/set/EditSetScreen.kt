@@ -12,12 +12,14 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
@@ -30,6 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
@@ -234,25 +238,25 @@ fun TempoSelector(
     ) {
 
         NumberPicker(
-            modifier = Modifier.weight(.25f),
+            modifier = Modifier.weight(.25f).height(52.dp),
             title = "Reps",
             selectedNum = reps,
             numberChanged = repChanged
         )
         NumberPicker(
-            modifier = Modifier.weight(.25f),
+            modifier = Modifier.weight(.25f).height(52.dp),
             title = "Down",
             selectedNum = down,
             numberChanged = downChanged
         )
         NumberPicker(
-            modifier = Modifier.weight(.25f),
+            modifier = Modifier.weight(.25f).height(52.dp),
             title = "Hold",
             selectedNum = hold,
             numberChanged = holdChanged
         )
         NumberPicker(
-            modifier = Modifier.weight(.25f),
+            modifier = Modifier.weight(.25f).height(52.dp),
             title = "Up",
             selectedNum = up,
             numberChanged = upChanged
@@ -272,13 +276,17 @@ fun NumberPicker(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Text(text = title)
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.quarter))
-        Picker(
-            modifier = Modifier.weight(.33f),
-            items = (1..99).toList().map { it.toString() },
-            startIndex = selectedNum - 1,
-            selectedItemChanged = { numberChanged(it.toInt()) }
+        TextField(
+            modifier = modifier,
+            value = selectedNum.toString(),
+            onValueChange = { numberChanged(it.toInt()) },
+            label = {
+                Text(title)
+            },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = ImeAction.Next,
+            )
         )
     }
 }

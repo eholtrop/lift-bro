@@ -56,6 +56,7 @@ fun WeightSelector(
                 modifier = modifier,
                 value = currentValue,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
                 label = {
                     Text(placeholder)
                 },
