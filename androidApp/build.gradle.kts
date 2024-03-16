@@ -14,7 +14,7 @@ android {
         applicationId = "com.lift.bro"
         minSdk = 24
         targetSdk = 34
-        versionName = "1.0"
+        versionName = "0.0.1-alpha"
 
 
         versionCode = if (project.hasProperty("buildNumber")) {

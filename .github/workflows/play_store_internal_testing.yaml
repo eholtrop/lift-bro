@@ -2,7 +2,7 @@ name: Google Play Internal Testing
 
 on:
   push:
-    branches: [ workflow ]
+    branches: [ main ]
 
 jobs:
   deploy:
