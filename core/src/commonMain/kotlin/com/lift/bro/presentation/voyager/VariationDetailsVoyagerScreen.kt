@@ -18,7 +18,8 @@ class VariationDetailsVoyagerScreen(
         VariationDetailsScreen(
             variationId = variationId,
             addSetClicked = { navigator.push(EditSetVoyagerScreen(variationId = variationId)) },
-            editClicked = { navigator.push(EditVariationVoyagerScreen(variationId = variationId)) }
+            editClicked = { navigator.push(EditVariationVoyagerScreen(variationId = variationId)) },
+            setClicked = { navigator.push(EditSetVoyagerScreen(setId = it.id)) }
         )
     }
 }
