@@ -62,6 +62,7 @@ kotlin {
 
         val androidMain by getting {
             dependencies {
+                implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.5.2")
                 implementation("app.cash.sqldelight:android-driver:2.0.0")
             }
         }

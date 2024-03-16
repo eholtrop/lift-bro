@@ -12,14 +12,12 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
@@ -39,10 +37,9 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.presentation.formatDate
 import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.toString
 import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.Picker
 import com.lift.bro.ui.TopBar
 import com.lift.bro.ui.VariationSelector
 import com.lift.bro.ui.WeightSelector
@@ -172,7 +169,7 @@ fun DateSelector(
     LineItem(
         modifier = modifier,
         title = "Set Date",
-        description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!).formatDate("MMMM d - yyyy"),
+        description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!).toString("MMMM d - yyyy"),
         onClick = {
             openDialog = true
         }

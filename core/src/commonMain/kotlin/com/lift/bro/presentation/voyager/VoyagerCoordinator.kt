@@ -9,7 +9,7 @@ class VoyagerCoordinator : Coordinator {
     @Composable
     override fun render() {
         Navigator(
-            screens = listOf(HomeVoyagerScreen())
+            screens = listOf(DashboardVoyagerScreen())
         )
     }
 }

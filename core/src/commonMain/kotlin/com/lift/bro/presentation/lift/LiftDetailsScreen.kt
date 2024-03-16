@@ -1,12 +1,19 @@
 package com.lift.bro.presentation.lift
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -15,20 +22,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
+import androidx.compose.ui.graphics.Color
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.components.Calendar
+import com.lift.bro.presentation.components.today
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.variation.formattedMax
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBar
 import com.lift.bro.ui.TopBarIconButton
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+
+fun Instant.toLocalDate() = this.toLocalDateTime(TimeZone.currentSystemDefault()).date
 
 @Composable
 fun LiftDetailsScreen(
@@ -42,6 +58,7 @@ fun LiftDetailsScreen(
     val lift by database.liftDataSource.get(liftId).collectAsState(null)
 
     val variations by database.variantDataSource.listenAll(liftId).collectAsState(emptyList())
+
 
     lift?.let { lift ->
         LiftingScaffold(
@@ -75,7 +92,6 @@ fun LiftDetailsScreen(
                         onClick = { variationClicked(variation.id) }
                     )
                 }
-
             }
         }
     }
@@ -111,11 +127,7 @@ fun VariationCard(
 
             maxLift?.let { lift ->
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.quarter))
-                if (lift.weight != null) {
-                    Text(lift.formattedMax)
-                } else {
-                    Text("No Max")
-                }
+                Text(lift.formattedMax)
             } ?: run {
                 Text("No Max")
             }
