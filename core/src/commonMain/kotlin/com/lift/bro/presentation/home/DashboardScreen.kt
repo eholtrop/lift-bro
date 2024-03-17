@@ -25,6 +25,10 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -187,13 +191,14 @@ fun LiftListScreen(
             )
         },
     ) { padding ->
-        LazyVerticalGrid(
-            modifier = Modifier.padding(padding),
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(MaterialTheme.spacing.one),
-        ) {
-            when (tab) {
-                Tab.Lifts -> {
+        when (tab) {
+            Tab.Lifts -> {
+                LazyVerticalGrid(
+                    modifier = Modifier.padding(padding),
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                ) {
+
                     items(lifts) { lift ->
                         LiftCard(
                             modifier = Modifier.padding(MaterialTheme.spacing.quarter),
@@ -201,23 +206,17 @@ fun LiftListScreen(
                             onClick = liftClicked
                         )
                     }
-
-                }
-
-                Tab.RecentSets -> {
-                    item(
-                        span = { GridItemSpan(maxLineSpan) }
-                    ) {
-                        RecentSetsCalendar(
-                            setClicked = setClicked,
-                            addSetClicked = addSetClicked
-                        )
+                    item {
+                        Spacer(modifier = Modifier.height(72.dp))
                     }
                 }
             }
 
-            item {
-                Spacer(modifier = Modifier.height(72.dp))
+            Tab.RecentSets -> {
+                RecentSetsCalendar(
+                    modifier = Modifier.padding(padding),
+                    setClicked = setClicked
+                )
             }
         }
     }
@@ -225,121 +224,125 @@ fun LiftListScreen(
 
 @Composable
 fun RecentSetsCalendar(
+    modifier: Modifier = Modifier,
     setClicked: (LBSet) -> Unit,
-    addSetClicked: () -> Unit,
 ) {
     var selectedDate by remember { mutableStateOf(today) }
 
     val sets = dependencies.database.setDataSource.getAll()
 
-    Column {
-        Calendar(
-            modifier = Modifier.fillMaxWidth()
-                .wrapContentHeight(),
-            selectedDate = selectedDate,
-            contentPadding = PaddingValues(0.dp),
-            dateSelected = {
-                selectedDate = it
-            },
-            date = { date ->
-                val selected = date == selectedDate
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .aspectRatio(1f)
-                        .background(
-                            color = if (selected) {
-                                MaterialTheme.colorScheme.primary
-                            } else if (sets.any { it.date.toLocalDate() == date }) {
-                                MaterialTheme.colorScheme.surfaceVariant
-                            } else {
-                                Color.Transparent
-                            },
-                            shape = CircleShape
-                        )
-                        .clickable {
-                            selectedDate = date
-                        },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = date.dayOfMonth.toString(),
-                        color = if (selected) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            }
-        )
+    LazyVerticalStaggeredGrid(
+        modifier = modifier,
+        columns = StaggeredGridCells.Fixed(2),
+        verticalItemSpacing = MaterialTheme.spacing.half,
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
+        contentPadding = PaddingValues(MaterialTheme.spacing.one)
+    ) {
 
-        Text(
-            text = selectedDate.toString("EEEE, MMM d yyyy"),
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-
-        Space(MaterialTheme.spacing.quarter)
-
-        Column(
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+        item(
+            span = StaggeredGridItemSpan.FullLine
         ) {
+            Calendar(
+                modifier = Modifier.fillMaxWidth()
+                    .wrapContentHeight(),
+                selectedDate = selectedDate,
+                contentPadding = PaddingValues(0.dp),
+                dateSelected = {
+                    selectedDate = it
+                },
+                date = { date ->
+                    val selected = date == selectedDate
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .aspectRatio(1f)
+                            .background(
+                                color = if (selected) {
+                                    MaterialTheme.colorScheme.primary
+                                } else if (sets.any { it.date.toLocalDate() == date }) {
+                                    MaterialTheme.colorScheme.surfaceVariant
+                                } else {
+                                    Color.Transparent
+                                },
+                                shape = CircleShape
+                            )
+                            .clickable {
+                                selectedDate = date
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = date.dayOfMonth.toString(),
+                            color = if (selected) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            },
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+            )
+        }
 
+        item(
+            span = StaggeredGridItemSpan.FullLine
+        ) {
+            Text(
+                text = selectedDate.toString("EEEE, MMM d yyyy"),
+                style = MaterialTheme.typography.headlineSmall,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+        }
+
+        items(
             sets.filter { it.date.toLocalDate() == selectedDate }
                 .groupBy { it.variationId }
                 .toList()
                 .sortedByDescending { it.second.maxOf { it.weight } }
-                .chunked(2)
-                .forEach { data ->
+        ) { pair ->
+            Card {
+                Column(
+                    modifier = Modifier.padding(MaterialTheme.spacing.half)
+                ) {
+                    val variation =
+                        dependencies.database.variantDataSource.get(pair.first)
+                    val lift by dependencies.database.liftDataSource.get(
+                        variation?.liftId
+                    )
+                        .collectAsState(null)
 
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
-                    ) {
+                    Text(
+                        text = "${variation?.name} ${lift?.name}",
+                        style = MaterialTheme.typography.titleLarge,
+                    )
 
-                        data.forEach { pair ->
-                            Card(
-                                modifier = Modifier.weight(1f)
+                    pair.second.sortedByDescending { it.weight }
+                        .forEach { set ->
+                            Box(
+                                modifier = Modifier.fillMaxWidth()
+                                    .defaultMinSize(minHeight = 44.dp)
+                                    .clickable(
+                                        role = Role.Button,
+                                        onClick = { setClicked(set) }
+                                    ),
+                                contentAlignment = Alignment.CenterStart
                             ) {
-                                Column(
-                                    modifier = Modifier.padding(MaterialTheme.spacing.half)
-                                ) {
-                                    val variation =
-                                        dependencies.database.variantDataSource.get(pair.first)
-                                    val lift by dependencies.database.liftDataSource.get(variation?.liftId)
-                                        .collectAsState(null)
-
-                                    Text(
-                                        text = "${variation?.name} ${lift?.name}",
-                                        style = MaterialTheme.typography.titleLarge,
-                                    )
-
-                                    pair.second.sortedByDescending { it.weight }.forEach { set ->
-                                        Box(
-                                            modifier = Modifier.fillMaxWidth()
-                                                .defaultMinSize(minHeight = 44.dp)
-                                                .clickable(
-                                                    role = Role.Button,
-                                                    onClick = { setClicked(set) }
-                                                ),
-                                            contentAlignment = Alignment.CenterStart
-                                        ) {
-                                            Text(
-                                                text = "${set.formattedWeight} x ${set.reps}",
-                                                style = MaterialTheme.typography.bodyLarge,
-                                            )
-                                        }
-                                    }
-                                }
+                                Text(
+                                    text = "${set.formattedWeight} x ${set.reps}",
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
                             }
                         }
-                    }
-
                 }
+            }
         }
 
-        Space(MaterialTheme.spacing.one)
+        item(
+            span = StaggeredGridItemSpan.FullLine
+        ) {
+            Spacer(modifier = Modifier.height(72.dp))
+        }
     }
 }
 
