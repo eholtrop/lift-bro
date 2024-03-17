@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -35,15 +34,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
@@ -53,9 +52,6 @@ import com.lift.bro.presentation.components.today
 import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
-import com.lift.bro.presentation.variation.formattedMax
-import com.lift.bro.presentation.variation.formattedReps
-import com.lift.bro.presentation.variation.formattedTempo
 import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
@@ -86,6 +82,11 @@ fun DashboardScreen(
     }
 }
 
+private enum class Tab {
+    Lifts,
+    RecentSets,
+}
+
 @Composable
 fun LiftListScreen(
     lifts: List<Lift>,
@@ -110,153 +111,68 @@ fun LiftListScreen(
         },
     ) { padding ->
 
+        var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
+
         LazyVerticalGrid(
             modifier = Modifier.padding(padding),
-            columns = GridCells.Adaptive(96.dp),
+            columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(MaterialTheme.spacing.one),
         ) {
 
             item(
                 span = { GridItemSpan(maxLineSpan) }
             ) {
-                Text(
-                    modifier = Modifier.semantics { heading() },
-                    text = "Lifts",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            items(lifts) { lift ->
-                LiftCard(
-                    modifier = Modifier.padding(MaterialTheme.spacing.quarter),
-                    lift = lift,
-                    onClick = liftClicked
-                )
-            }
-
-            item(
-                span = { GridItemSpan(maxLineSpan) }
-            ) {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-            }
-
-            item(
-                span = { GridItemSpan(maxLineSpan) }
-            ) {
-                Text(
-                    modifier = Modifier.semantics { heading() }
-                        .padding(top = MaterialTheme.spacing.one),
-                    text = "Recent Sets",
-                    style = MaterialTheme.typography.headlineLarge,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-            }
-
-            item(
-                span = { GridItemSpan(maxLineSpan) }
-            ) {
-                var selectedDate by remember { mutableStateOf(today) }
-
-                val sets = dependencies.database.setDataSource.getAll()
-
-                Column {
-                    Calendar(
-                        modifier = Modifier.fillMaxWidth()
-                            .wrapContentHeight(),
-                        selectedDate = selectedDate,
-                        contentPadding = PaddingValues(0.dp),
-                        dateSelected = {
-                            selectedDate = it
-                        },
-                        date = { date ->
-                            val selected = date == selectedDate
-                            Box(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f)
-                                    .background(
-                                        color = if (selected) {
-                                            MaterialTheme.colorScheme.primary
-                                        } else if (sets.any { it.date.toLocalDate() == date }) {
-                                            MaterialTheme.colorScheme.surfaceVariant
-                                        } else {
-                                            Color.Transparent
-                                        },
-                                        shape = CircleShape
-                                    )
-                                    .clickable {
-                                        selectedDate = date
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = date.dayOfMonth.toString(),
-                                    color = if (selected) {
-                                        MaterialTheme.colorScheme.onPrimary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurface
-                                    },
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    )
-
+                Row(
+                    modifier = Modifier.clickable(
+                        role = Role.Switch,
+                        onClick = { tab = when (tab) {
+                            Tab.Lifts -> Tab.RecentSets
+                            Tab.RecentSets -> Tab.Lifts
+                        } }
+                    ),
+                    horizontalArrangement = Arrangement.Center
+                ) {
                     Text(
-                        text = selectedDate.toString("EEEE, MMM d yyyy"),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onBackground
+                        modifier = Modifier.semantics { heading() },
+                        text = "Lifts",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = if (tab == Tab.Lifts) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.secondary
                     )
+                    Text(
+                        modifier = Modifier.semantics { heading() },
+                        text = "/",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
+                    Text(
+                        modifier = Modifier.semantics { heading() },
+                        text = "Recent Sets",
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = if (tab == Tab.RecentSets) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.secondary
+                    )
+                }
+            }
 
-                    Space(MaterialTheme.spacing.quarter)
-
-                    val navigator = LocalNavigator.current
-
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        items(sets.filter { it.date.toLocalDate() == selectedDate }) { set ->
-                            Card {
-                                Row(
-                                    modifier = Modifier.clickable(
-                                        onClick = { setClicked(set) }
-                                    ).padding(MaterialTheme.spacing.half)
-                                ) {
-
-                                    val variation =
-                                        dependencies.database.variantDataSource.get(set.variationId)
-                                    val lift by dependencies.database.liftDataSource.get(variation?.liftId)
-                                        .collectAsState(null)
-
-                                    Column {
-                                        Text(
-                                            text = "${variation?.name} ${lift?.name}",
-                                            style = MaterialTheme.typography.bodyMedium,
-                                        )
-                                        Text(
-                                            text = "${set.reps} x ${set.formattedWeight}",
-                                            style = MaterialTheme.typography.labelMedium,
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        item {
-                            IconButton(
-                                onClick = addSetClicked
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Add Set"
-                                )
-                            }
-                        }
+            when(tab) {
+                Tab.Lifts -> {
+                    items(lifts) { lift ->
+                        LiftCard(
+                            modifier = Modifier.padding(MaterialTheme.spacing.quarter),
+                            lift = lift,
+                            onClick = liftClicked
+                        )
                     }
 
-                    Space(MaterialTheme.spacing.one)
+                }
+                Tab.RecentSets -> {
+                    item(
+                        span = { GridItemSpan(maxLineSpan) }
+                    ) {
+                        RecentSetsCalendar(
+                            setClicked = setClicked,
+                            addSetClicked = addSetClicked
+                        )
+                    }
                 }
             }
 
@@ -264,6 +180,113 @@ fun LiftListScreen(
                 Spacer(modifier = Modifier.height(72.dp))
             }
         }
+    }
+}
+
+@Composable
+fun RecentSetsCalendar(
+    setClicked: (LBSet) -> Unit,
+    addSetClicked: () -> Unit,
+) {
+    var selectedDate by remember { mutableStateOf(today) }
+
+    val sets = dependencies.database.setDataSource.getAll()
+
+    Column {
+        Calendar(
+            modifier = Modifier.fillMaxWidth()
+                .wrapContentHeight(),
+            selectedDate = selectedDate,
+            contentPadding = PaddingValues(0.dp),
+            dateSelected = {
+                selectedDate = it
+            },
+            date = { date ->
+                val selected = date == selectedDate
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .aspectRatio(1f)
+                        .background(
+                            color = if (selected) {
+                                MaterialTheme.colorScheme.primary
+                            } else if (sets.any { it.date.toLocalDate() == date }) {
+                                MaterialTheme.colorScheme.surfaceVariant
+                            } else {
+                                Color.Transparent
+                            },
+                            shape = CircleShape
+                        )
+                        .clickable {
+                            selectedDate = date
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = date.dayOfMonth.toString(),
+                        color = if (selected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            }
+        )
+
+        Text(
+            text = selectedDate.toString("EEEE, MMM d yyyy"),
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Space(MaterialTheme.spacing.quarter)
+
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            items(sets.filter { it.date.toLocalDate() == selectedDate }) { set ->
+                Card {
+                    Row(
+                        modifier = Modifier.clickable(
+                            onClick = { setClicked(set) }
+                        ).padding(MaterialTheme.spacing.half)
+                    ) {
+
+                        val variation =
+                            dependencies.database.variantDataSource.get(set.variationId)
+                        val lift by dependencies.database.liftDataSource.get(variation?.liftId)
+                            .collectAsState(null)
+
+                        Column {
+                            Text(
+                                text = "${variation?.name} ${lift?.name}",
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                            Text(
+                                text = "${set.reps} x ${set.formattedWeight}",
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+                    }
+                }
+            }
+
+            item {
+                IconButton(
+                    onClick = addSetClicked
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Set"
+                    )
+                }
+            }
+        }
+
+        Space(MaterialTheme.spacing.one)
     }
 }
 

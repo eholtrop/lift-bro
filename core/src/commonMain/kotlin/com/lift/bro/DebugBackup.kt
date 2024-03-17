@@ -17,10 +17,35 @@ val debugLifts = listOf(
     Lift(
         id = "2",
         name = "Press"
+    ),
+    Lift(
+        id = "3",
+        name = "Deadlift"
+    ),
+    Lift(
+        id = "4",
+        name = "Dead lift"
+    ),
+    Lift(
+        id = "5",
+        name = "Dead lift"
+    ),
+    Lift(
+        id = "6",
+        name = "Dead lift"
+    ),
+    Lift(
+        id = "7",
+        name = "Dead lift"
+    ),
+    Lift(
+        id = "8",
+        name = "Dead lift"
     )
 )
 
 private val debugVariations = listOf(
+    // squat variations
     Variation(
         id = "back squat",
         liftId = "1",
@@ -31,6 +56,7 @@ private val debugVariations = listOf(
         liftId = "1",
         name = "Front"
     ),
+    // press variations
     Variation(
         id = "military press",
         liftId = "2",
@@ -41,18 +67,20 @@ private val debugVariations = listOf(
         liftId = "2",
         name = "Bench"
     ),
+    // deadlift variations
+    Variation(
+        id = "sumo deadlift",
+        liftId = "3",
+        name = "Sumo"
+    ),
+    Variation(
+        id = "regular deadlift",
+        liftId = "3",
+        name = "Regular"
+    ),
 )
 
 val debugSets = listOf(
-    LBSet(
-        id = uuid4().toString(),
-        variationId = "back squat",
-        weight = 170.0,
-        reps = 1,
-        tempoDown = 3,
-        tempoHold = 1,
-        tempoUp = 1,
-    ),
     LBSet(
         id = uuid4().toString(),
         variationId = "bench press",
@@ -65,7 +93,7 @@ val debugSets = listOf(
     LBSet(
         id = uuid4().toString(),
         variationId = "back squat",
-        weight = 190.0,
+        weight = 120.0,
         reps = 1,
         tempoDown = 3,
         tempoHold = 1,
@@ -74,12 +102,31 @@ val debugSets = listOf(
     LBSet(
         id = uuid4().toString(),
         variationId = "back squat",
-        weight = 190.0,
+        weight = 140.0,
+        reps = 1,
+        tempoDown = 3,
+        tempoHold = 1,
+        tempoUp = 1,
+    ),
+    LBSet(
+        id = uuid4().toString(),
+        variationId = "back squat",
+        weight = 130.0,
         reps = 1,
         tempoDown = 3,
         tempoHold = 1,
         tempoUp = 1,
         date = Clock.System.now().minus(24, DateTimeUnit.HOUR)
+    ),
+    LBSet(
+        id = uuid4().toString(),
+        variationId = "back squat",
+        weight = 170.0,
+        reps = 1,
+        tempoDown = 3,
+        tempoHold = 1,
+        tempoUp = 1,
+        date = Clock.System.now().minus(72, DateTimeUnit.HOUR)
     ),
     LBSet(
         id = uuid4().toString(),

@@ -41,7 +41,10 @@ class LBDatabase(
 
     val variantDataSource: VariationRepository = VariationRepository(database.variationQueries)
 
-    val setDataSource: SetDataSource = SetDataSource(database.setQueries)
+    val setDataSource: SetDataSource = SetDataSource(
+        setQueries = database.setQueries,
+        variationQueries = database.variationQueries
+    )
 }
 
 private val dateAdapter = object : ColumnAdapter<Instant, Long> {
@@ -95,6 +98,7 @@ class VariationRepository(
 
 class SetDataSource(
     private val setQueries: SetQueries,
+    private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
@@ -103,6 +107,12 @@ class SetDataSource(
             .map {
                 it.toDomain()
             }
+
+    fun getAllForLift(liftId: String): List<LBSet> =
+        variationQueries.getAllForLift(liftId).executeAsList().map {
+            setQueries.getAllByVariation(it.id).executeAsList().map { it.toDomain() }
+        }
+            .fold(emptyList()) { list, subList -> list + subList }
 
     fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
 
