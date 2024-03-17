@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -42,6 +43,7 @@ import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.set.EditSetVoyagerScreen
@@ -60,6 +62,13 @@ private enum class Grouping {
     Reps,
     Tempo,
     Weight
+}
+
+private fun Grouping.title(set: LBSet) = when (this) {
+    Grouping.Date -> "${set.formattedWeight} x ${set.reps}"
+    Grouping.Reps -> set.formattedWeight
+    Grouping.Tempo -> "${set.formattedWeight} x ${set.reps}"
+    Grouping.Weight -> set.formattedMax
 }
 
 @Composable
@@ -156,7 +165,7 @@ internal fun VariationDetailsScreen(
                     .map { Pair(it.first.toString("EEEE, MMM d"), it.second) }
 
                 Grouping.Reps -> sets.groupBy { it.reps }.toList().sortedByDescending { it.first }
-                    .map { Pair(it.first.toString(), it.second) }
+                    .map { Pair("${it.first} Rep(s)", it.second) }
 
                 Grouping.Tempo -> sets.groupBy { it.tempo }.toList()
                     .sortedByDescending { it.second.maxOf { it.date.toLocalDate() } }
@@ -178,7 +187,7 @@ internal fun VariationDetailsScreen(
                             text = entry.first,
                             style = MaterialTheme.typography.titleLarge
                         )
-                        entry.second.forEach { set ->
+                        entry.second.sortedByDescending { it.date }.forEach { set ->
                             Column(
                                 modifier = Modifier.fillMaxWidth()
                                     .defaultMinSize(minHeight = 52.dp)
@@ -189,32 +198,18 @@ internal fun VariationDetailsScreen(
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "${set.reps} x ${set.formattedWeight}",
+                                    text = grouping.title(set),
                                     style = MaterialTheme.typography.titleMedium
                                 )
 
-                                Row {
-                                    Icon(
-                                        imageVector = Icons.Default.KeyboardArrowDown,
-                                        contentDescription = "Down"
-                                    )
+                                if (grouping != Grouping.Date) {
                                     Text(
-                                        text = set.tempo.down.toString(),
+                                        text = set.date.toLocalDate().toString("MMM d"),
+                                        style = MaterialTheme.typography.labelSmall
                                     )
-                                    Space(MaterialTheme.spacing.half)
-                                    Text(
-                                        text = "--",
-                                    )
-                                    Text(
-                                        text = set.tempo.hold.toString(),
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.KeyboardArrowUp,
-                                        contentDescription = "Up"
-                                    )
-                                    Text(
-                                        text = set.tempo.up.toString(),
-                                    )
+                                }
+                                if (grouping != Grouping.Tempo) {
+                                    set.tempo.render()
                                 }
                             }
                         }
@@ -223,6 +218,41 @@ internal fun VariationDetailsScreen(
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
             }
         }
+    }
+}
+
+@Composable
+fun Tempo.render() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier.size(12.dp),
+            imageVector = Icons.Default.KeyboardArrowDown,
+            contentDescription = "Down"
+        )
+        Text(
+            text = down.toString(),
+            style = MaterialTheme.typography.labelSmall,
+        )
+        Space(MaterialTheme.spacing.half)
+        Text(
+            text = "-",
+            style = MaterialTheme.typography.labelSmall,
+        )
+        Text(
+            text = hold.toString(),
+            style = MaterialTheme.typography.labelSmall,
+        )
+        Icon(
+            modifier = Modifier.size(12.dp),
+            imageVector = Icons.Default.KeyboardArrowUp,
+            contentDescription = "Up"
+        )
+        Text(
+            text = up.toString(),
+            style = MaterialTheme.typography.labelSmall,
+        )
     }
 }
 
@@ -239,4 +269,4 @@ internal val LBSet.formattedReps: String get() = "${this.formattedTempo} x ${thi
 
 internal val LBSet.formattedWeight: String get() = "${this.weight} ${Settings.defaultUOM.value}"
 
-internal val LBSet.formattedMax: String get() = "${this.reps} x ${this.formattedTempo} @ ${this.formattedWeight}"
+internal val LBSet.formattedMax: String get() = "${this.reps} x ${this.formattedTempo}"
