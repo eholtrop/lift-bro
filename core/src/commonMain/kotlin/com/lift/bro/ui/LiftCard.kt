@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.presentation.lift.toLocalDate
@@ -97,7 +98,7 @@ fun LiftCard(
 
                         drawCircle(
                             color = color,
-                            radius = 5f,
+                            radius = 10.dp.value,
                             center = Offset(x = x, y = y.toFloat())
                         )
                     }
