@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -107,7 +108,8 @@ internal fun VariationDetailsScreen(
     var grouping by rememberSaveable { mutableStateOf(Grouping.Date) }
 
     LiftingScaffold(
-        fabText = "Add Set",
+        fabIcon = Icons.Default.Add,
+        contentDescription = "Add Set",
         fabClicked = addSetClicked,
         topBar = {
             Column(

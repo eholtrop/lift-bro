@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -67,7 +69,8 @@ fun EditSetScreen(
         dependencies.database.variantDataSource.get(set.variationId)
 
     LiftingScaffold(
-        fabText = "Create Set",
+        fabIcon = Icons.Default.Edit,
+        contentDescription = "Save Set",
         fabEnabled = variation != null,
         fabClicked = {
             coroutineScope.launch {

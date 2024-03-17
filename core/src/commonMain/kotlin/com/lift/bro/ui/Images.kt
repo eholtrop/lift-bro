@@ -7,4 +7,13 @@ expect object Images {
 
     @Composable
     fun calculator(): Painter
+
+    @Composable
+    fun addSet(): Painter
+
+    @Composable
+    fun dashboardMenuIcon(): Painter
+
+    @Composable
+    fun calendarMenuIcon(): Painter
 }

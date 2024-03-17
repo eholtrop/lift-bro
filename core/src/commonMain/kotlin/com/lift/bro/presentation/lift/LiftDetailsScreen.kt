@@ -53,7 +53,8 @@ fun LiftDetailsScreen(
 
     lift?.let { lift ->
         LiftingScaffold(
-            fabText = "Add Set",
+            fabIcon = Icons.Default.Add,
+            contentDescription = "Add Set",
             fabClicked = addSetClicked,
             topBar = {
                 TopBar(

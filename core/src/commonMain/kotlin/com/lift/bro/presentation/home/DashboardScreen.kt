@@ -1,5 +1,7 @@
 package com.lift.bro.presentation.home
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,6 +26,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -55,6 +59,7 @@ import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
+import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
@@ -98,9 +103,77 @@ fun LiftListScreen(
     setClicked: (LBSet) -> Unit,
 ) {
 
+    var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
+
     LiftingScaffold(
-        fabText = "Add Set",
+        fabIcon = Icons.Default.Add,
+        contentDescription = "Add Set",
         fabClicked = addSetClicked,
+        preFab = {
+            Button(
+                modifier = Modifier.size(72.dp, 52.dp),
+                onClick = {
+                    tab = Tab.Lifts
+                },
+                shape = RoundedCornerShape(
+                    topStartPercent = 50,
+                    bottomStartPercent = 50,
+                    topEndPercent = 25,
+                    bottomEndPercent = 25,
+                )
+            ) {
+                Column {
+                    Icon(
+                        painter = Images.dashboardMenuIcon(),
+                        contentDescription = "Dashboard"
+                    )
+
+                    AnimatedVisibility(tab == Tab.Lifts) {
+                        Box(
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.quarter.div(2))
+                                .height(2.dp)
+                                .fillMaxWidth()
+                                .background(
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                        )
+                    }
+                }
+            }
+        },
+        postFab = {
+            Button(
+                modifier = Modifier.size(72.dp, 52.dp),
+                onClick = {
+                    tab = Tab.RecentSets
+                },
+                shape = RoundedCornerShape(
+                    topStartPercent = 25,
+                    bottomStartPercent = 25,
+                    topEndPercent = 50,
+                    bottomEndPercent = 50,
+                )
+            ) {
+                Column(
+                ) {
+                    Icon(
+                        painter = Images.calendarMenuIcon(),
+                        contentDescription = "Calendar"
+                    )
+
+                    AnimatedVisibility(tab == Tab.RecentSets) {
+                        Box(
+                            modifier = Modifier.padding(top = MaterialTheme.spacing.quarter.div(2))
+                                .height(2.dp)
+                                .fillMaxWidth()
+                                .background(
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                        )
+                    }
+                }
+            }
+        },
         topBar = {
             TopBar(
                 title = "Lift Bro",
@@ -114,51 +187,11 @@ fun LiftListScreen(
             )
         },
     ) { padding ->
-
-        var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
-
         LazyVerticalGrid(
             modifier = Modifier.padding(padding),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(MaterialTheme.spacing.one),
         ) {
-
-            item(
-                span = { GridItemSpan(maxLineSpan) }
-            ) {
-                Row(
-                    modifier = Modifier.clickable(
-                        role = Role.Switch,
-                        onClick = {
-                            tab = when (tab) {
-                                Tab.Lifts -> Tab.RecentSets
-                                Tab.RecentSets -> Tab.Lifts
-                            }
-                        }
-                    ),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    Text(
-                        modifier = Modifier.semantics { heading() },
-                        text = "Lifts",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = if (tab == Tab.Lifts) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.secondary
-                    )
-                    Text(
-                        modifier = Modifier.semantics { heading() },
-                        text = "/",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                    Text(
-                        modifier = Modifier.semantics { heading() },
-                        text = "Recent Sets",
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = if (tab == Tab.RecentSets) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.secondary
-                    )
-                }
-            }
-
             when (tab) {
                 Tab.Lifts -> {
                     items(lifts) { lift ->
@@ -272,7 +305,8 @@ fun RecentSetsCalendar(
                                 Column(
                                     modifier = Modifier.padding(MaterialTheme.spacing.half)
                                 ) {
-                                    val variation = dependencies.database.variantDataSource.get(pair.first)
+                                    val variation =
+                                        dependencies.database.variantDataSource.get(pair.first)
                                     val lift by dependencies.database.liftDataSource.get(variation?.liftId)
                                         .collectAsState(null)
 
