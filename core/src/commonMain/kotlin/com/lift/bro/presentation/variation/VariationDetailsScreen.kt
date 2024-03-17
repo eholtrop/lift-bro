@@ -19,6 +19,9 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MailOutline
+import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -27,8 +30,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.Group
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -49,15 +55,11 @@ import com.lift.bro.ui.TopBarIconButton
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 
-internal interface SortingOption {
-    object RepDate : SortingOption
-    object DateRep : SortingOption
-    object Date : SortingOption
-    object Reps : SortingOption
-}
-
-internal interface FilterOption {
-
+private enum class Grouping {
+    Date,
+    Reps,
+    Tempo,
+    Weight
 }
 
 @Composable
@@ -93,34 +95,79 @@ internal fun VariationDetailsScreen(
     setClicked: (LBSet) -> Unit,
 ) {
 
+    var grouping by rememberSaveable { mutableStateOf(Grouping.Date) }
+
     LiftingScaffold(
         fabText = "Add Set",
         fabClicked = addSetClicked,
         topBar = {
-            TopBar(
-                title = "${variation.name} ${lift?.name}",
-                showBackButton = true,
-                trailingContent = {
-                    TopBarIconButton(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit",
-                        onClick = editClicked,
-                    )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TopBar(
+                    title = "${variation.name} ${lift?.name}",
+                    showBackButton = true,
+                    trailingContent = {
+                        TopBarIconButton(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit",
+                            onClick = editClicked,
+                        )
+                    }
+                )
+
+                Row {
+                    var expanded by rememberSaveable { mutableStateOf(false) }
+
+                    Button(
+                        onClick = { expanded = true }
+                    ) {
+                        Text(text = grouping.toString())
+                    }
+
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        Grouping.values().forEach {
+                            DropdownMenuItem(
+                                text = { Text(it.toString()) },
+                                onClick = {
+                                    grouping = it
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
                 }
-            )
+            }
         }
     ) { padding ->
-        val navigator = LocalNavigator.current
+
+
         LazyColumn(
             modifier = Modifier.padding(padding),
             contentPadding = PaddingValues(MaterialTheme.spacing.one)
         ) {
-            val items = sets.groupBy { it.date.toLocalDate() }.entries.toList()
-                .sortedByDescending { it.key }
+
+            val items: List<Pair<String, List<LBSet>>> = when (grouping) {
+                Grouping.Date -> sets.groupBy { it.date.toLocalDate() }.toList()
+                    .sortedByDescending { it.first }
+                    .map { Pair(it.first.toString("EEEE, MMM d"), it.second) }
+
+                Grouping.Reps -> sets.groupBy { it.reps }.toList().sortedByDescending { it.first }
+                    .map { Pair(it.first.toString(), it.second) }
+
+                Grouping.Tempo -> sets.groupBy { it.tempo }.toList()
+                    .sortedByDescending { it.second.maxOf { it.date.toLocalDate() } }
+                    .map { Pair("${it.first.down}/${it.first.hold}/${it.first.up}", it.second) }
+
+                Grouping.Weight -> sets.groupBy { it.weight }.toList()
+                    .sortedByDescending { it.first }.map { Pair("${it.first}", it.second) }
+            }
 
 
             items(items) { entry ->
-
                 Card(
                     onClick = {},
                 ) {
@@ -128,10 +175,10 @@ internal fun VariationDetailsScreen(
                         modifier = Modifier.padding(all = MaterialTheme.spacing.one)
                     ) {
                         Text(
-                            text = entry.key.toString(pattern = "EEEE MMM, d"),
+                            text = entry.first,
                             style = MaterialTheme.typography.titleLarge
                         )
-                        entry.value.forEach { set ->
+                        entry.second.forEach { set ->
                             Column(
                                 modifier = Modifier.fillMaxWidth()
                                     .defaultMinSize(minHeight = 52.dp)
@@ -152,21 +199,21 @@ internal fun VariationDetailsScreen(
                                         contentDescription = "Down"
                                     )
                                     Text(
-                                        text = set.tempoDown.toString(),
+                                        text = set.tempo.down.toString(),
                                     )
                                     Space(MaterialTheme.spacing.half)
                                     Text(
                                         text = "--",
                                     )
                                     Text(
-                                        text = set.tempoHold.toString(),
+                                        text = set.tempo.hold.toString(),
                                     )
                                     Icon(
                                         imageVector = Icons.Default.KeyboardArrowUp,
                                         contentDescription = "Up"
                                     )
                                     Text(
-                                        text = set.tempoUp.toString(),
+                                        text = set.tempo.up.toString(),
                                     )
                                 }
                             }
@@ -186,7 +233,7 @@ fun RepCard(
 
 }
 
-internal val LBSet.formattedTempo: String get() = "${this.tempoDown}/${this.tempoHold}/${this.tempoUp}"
+internal val LBSet.formattedTempo: String get() = "${this.tempo.down}/${this.tempo.hold}/${this.tempo.up}"
 
 internal val LBSet.formattedReps: String get() = "${this.formattedTempo} x ${this.reps}"
 

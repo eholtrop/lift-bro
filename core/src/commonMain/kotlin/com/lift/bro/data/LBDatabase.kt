@@ -22,6 +22,7 @@ import kotlinx.datetime.Instant
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.VariationRepository
 import com.lift.bro.utils.mapEach
 import kotlinx.coroutines.flow.map
@@ -124,9 +125,9 @@ class SetDataSource(
             variationId = set.variationId,
             weight = set.weight,
             reps = set.reps,
-            tempoDown = set.tempoDown,
-            tempoHold = set.tempoHold,
-            tempoUp = set.tempoUp,
+            tempoDown = set.tempo.down,
+            tempoHold = set.tempo.hold,
+            tempoUp = set.tempo.up,
             date = set.date,
         )
     }
@@ -144,9 +145,11 @@ class SetDataSource(
         variationId = this.variationId,
         weight = this.weight ?: 0.0,
         reps = this.reps ?: 1,
-        tempoDown = this.tempoDown ?: 3,
-        tempoHold = this.tempoHold ?: 1,
-        tempoUp = this.tempoUp ?: 1,
+        tempo = Tempo(
+            down = this.tempoDown ?: 3,
+            hold = this.tempoHold ?: 1,
+            up = this.tempoUp ?: 1,
+        ),
         date = this.date
     )
 }

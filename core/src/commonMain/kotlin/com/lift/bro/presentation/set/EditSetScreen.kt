@@ -113,13 +113,13 @@ fun EditSetScreen(
 
             TempoSelector(
                 reps = set.reps.toInt(),
-                up = set.tempoUp.toInt(),
-                hold = set.tempoHold.toInt(),
-                down = set.tempoDown.toInt(),
+                up = set.tempo.up.toInt(),
+                hold = set.tempo.hold.toInt(),
+                down = set.tempo.down.toInt(),
                 repChanged = { set = set.copy(reps = it.toLong()) },
-                downChanged = { set = set.copy(tempoDown = it.toLong()) },
-                holdChanged = { set = set.copy(tempoHold = it.toLong()) },
-                upChanged = { set = set.copy(tempoUp = it.toLong()) },
+                downChanged = { set = set.copy(tempo = set.tempo.copy(down = it.toLong())) },
+                holdChanged = { set = set.copy(tempo = set.tempo.copy(hold = it.toLong())) },
+                upChanged = { set = set.copy(tempo = set.tempo.copy(up = it.toLong())) },
             )
         }
     }

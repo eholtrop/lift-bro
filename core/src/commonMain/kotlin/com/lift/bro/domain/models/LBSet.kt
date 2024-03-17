@@ -10,8 +10,13 @@ data class LBSet(
     val variationId: String,
     val weight: Double = 0.0,
     val reps: Long = 1,
-    val tempoDown: Long = 3,
-    val tempoHold: Long = 1,
-    val tempoUp: Long = 1,
+    val tempo: Tempo = Tempo(),
     val date: Instant = Clock.System.now(),
+)
+
+@Serializable
+data class Tempo(
+    val down: Long = 3,
+    val hold: Long = 1,
+    val up: Long = 1,
 )
