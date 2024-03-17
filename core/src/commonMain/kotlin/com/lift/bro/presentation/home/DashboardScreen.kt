@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -97,6 +99,8 @@ fun LiftListScreen(
 ) {
 
     LiftingScaffold(
+        fabText = "Add Set",
+        fabClicked = addSetClicked,
         topBar = {
             TopBar(
                 title = "Lift Bro",
@@ -125,10 +129,12 @@ fun LiftListScreen(
                 Row(
                     modifier = Modifier.clickable(
                         role = Role.Switch,
-                        onClick = { tab = when (tab) {
-                            Tab.Lifts -> Tab.RecentSets
-                            Tab.RecentSets -> Tab.Lifts
-                        } }
+                        onClick = {
+                            tab = when (tab) {
+                                Tab.Lifts -> Tab.RecentSets
+                                Tab.RecentSets -> Tab.Lifts
+                            }
+                        }
                     ),
                     horizontalArrangement = Arrangement.Center
                 ) {
@@ -153,7 +159,7 @@ fun LiftListScreen(
                 }
             }
 
-            when(tab) {
+            when (tab) {
                 Tab.Lifts -> {
                     items(lifts) { lift ->
                         LiftCard(
@@ -164,6 +170,7 @@ fun LiftListScreen(
                     }
 
                 }
+
                 Tab.RecentSets -> {
                     item(
                         span = { GridItemSpan(maxLineSpan) }
@@ -243,47 +250,59 @@ fun RecentSetsCalendar(
 
         Space(MaterialTheme.spacing.quarter)
 
-        LazyRow(
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
         ) {
-            items(sets.filter { it.date.toLocalDate() == selectedDate }) { set ->
-                Card {
+
+            sets.filter { it.date.toLocalDate() == selectedDate }
+                .groupBy { it.variationId }
+                .toList()
+                .sortedByDescending { it.second.maxOf { it.weight } }
+                .chunked(2)
+                .forEach { data ->
+
                     Row(
-                        modifier = Modifier.clickable(
-                            onClick = { setClicked(set) }
-                        ).padding(MaterialTheme.spacing.half)
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
                     ) {
 
-                        val variation =
-                            dependencies.database.variantDataSource.get(set.variationId)
-                        val lift by dependencies.database.liftDataSource.get(variation?.liftId)
-                            .collectAsState(null)
+                        data.forEach { pair ->
+                            Card(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(MaterialTheme.spacing.half)
+                                ) {
+                                    val variation = dependencies.database.variantDataSource.get(pair.first)
+                                    val lift by dependencies.database.liftDataSource.get(variation?.liftId)
+                                        .collectAsState(null)
 
-                        Column {
-                            Text(
-                                text = "${variation?.name} ${lift?.name}",
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                            Text(
-                                text = "${set.reps} x ${set.formattedWeight}",
-                                style = MaterialTheme.typography.labelMedium,
-                            )
+                                    Text(
+                                        text = "${variation?.name} ${lift?.name}",
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+
+                                    pair.second.sortedByDescending { it.weight }.forEach { set ->
+                                        Box(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .defaultMinSize(minHeight = 44.dp)
+                                                .clickable(
+                                                    role = Role.Button,
+                                                    onClick = { setClicked(set) }
+                                                ),
+                                            contentAlignment = Alignment.CenterStart
+                                        ) {
+                                            Text(
+                                                text = "${set.formattedWeight} x ${set.reps}",
+                                                style = MaterialTheme.typography.bodyLarge,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
-                }
-            }
 
-            item {
-                IconButton(
-                    onClick = addSetClicked
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Set"
-                    )
                 }
-            }
         }
 
         Space(MaterialTheme.spacing.one)
