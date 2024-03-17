@@ -53,6 +53,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
@@ -231,6 +232,11 @@ fun RecentSetsCalendar(
 
     val sets = dependencies.database.setDataSource.getAll()
 
+    val selectedVariations = sets.filter { it.date.toLocalDate() == selectedDate }
+        .groupBy { it.variationId }
+        .toList()
+        .sortedByDescending { it.second.maxOf { it.weight } }
+
     LazyVerticalStaggeredGrid(
         modifier = modifier,
         columns = StaggeredGridCells.Fixed(2),
@@ -252,7 +258,7 @@ fun RecentSetsCalendar(
                 },
                 date = { date ->
                     val selected = date == selectedDate
-                    Box(
+                    Column(
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
@@ -269,7 +275,8 @@ fun RecentSetsCalendar(
                             .clickable {
                                 selectedDate = date
                             },
-                        contentAlignment = Alignment.Center
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
                             text = date.dayOfMonth.toString(),
@@ -280,6 +287,21 @@ fun RecentSetsCalendar(
                             },
                             style = MaterialTheme.typography.bodyMedium
                         )
+
+                        Space(MaterialTheme.spacing.quarter)
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                        ) {
+                            for (i in 1..kotlin.math.min(sets.filter { it.date.toLocalDate() == date }.groupBy { it.variationId }.size, 3)) {
+                                Box(
+                                    modifier = Modifier.background(
+                                        color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                        shape = CircleShape,
+                                    ).size(4.dp)
+                                )
+                            }
+                        }
                     }
                 }
             )
@@ -296,10 +318,7 @@ fun RecentSetsCalendar(
         }
 
         items(
-            sets.filter { it.date.toLocalDate() == selectedDate }
-                .groupBy { it.variationId }
-                .toList()
-                .sortedByDescending { it.second.maxOf { it.weight } }
+            selectedVariations
         ) { pair ->
             Card {
                 Column(
