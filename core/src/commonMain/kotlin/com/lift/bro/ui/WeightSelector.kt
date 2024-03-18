@@ -44,7 +44,7 @@ fun WeightSelector(
     var referenceSet by remember { mutableStateOf<LBSet?>(null) }
 
     Column(
-        modifier = Modifier.animateContentSize()
+        modifier = modifier.animateContentSize()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -53,7 +53,6 @@ fun WeightSelector(
             var currentValue by remember { mutableStateOf(DecimalFormat.formatWeight(weight.first)) }
 
             TextField(
-                modifier = modifier,
                 value = currentValue,
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                 singleLine = true,

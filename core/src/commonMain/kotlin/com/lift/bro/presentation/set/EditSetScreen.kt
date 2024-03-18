@@ -24,6 +24,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,14 +32,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.ui.LiftingScaffold
@@ -47,7 +52,44 @@ import com.lift.bro.ui.VariationSelector
 import com.lift.bro.ui.WeightSelector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+
+private data class EditSetState(
+    val id: String,
+    val variationId: String,
+    val weight: Double = 0.0,
+    val reps: Long? = 1,
+    val down: Long? = 3,
+    val hold: Long? = 1,
+    val up: Long? = 1,
+    val date: Instant = Clock.System.now(),
+)
+
+private fun LBSet.toUiState() = EditSetState(
+    id = this.id,
+    variationId = this.variationId,
+    weight = this.weight,
+    reps = this.reps,
+    down = this.tempo.down,
+    hold = this.tempo.hold,
+    up = this.tempo.up,
+    date = this.date
+)
+
+private fun EditSetState.toDomain() = LBSet(
+    id = this.id,
+    variationId = this.variationId,
+    weight = this.weight,
+    reps = this.reps!!,
+    tempo = Tempo
+        (
+        down = this.up!!,
+        hold = this.hold!!,
+        up = this.down!!
+    ),
+    date = this.date
+)
 
 @Composable
 fun EditSetScreen(
@@ -58,7 +100,7 @@ fun EditSetScreen(
 ) {
     var set by remember {
         mutableStateOf(
-            dependencies.database.setDataSource.get(setId) ?: LBSet(
+            dependencies.database.setDataSource.get(setId)?.toUiState() ?: EditSetState(
                 id = uuid4().toString(),
                 variationId = variationId,
             )
@@ -68,13 +110,16 @@ fun EditSetScreen(
     val variation =
         dependencies.database.variantDataSource.get(set.variationId)
 
+    val saveEnabled =
+        variation != null && set.reps != null && set.down != null && set.hold != null && set.up != null
+
     LiftingScaffold(
         fabIcon = Icons.Default.Edit,
         contentDescription = "Save Set",
-        fabEnabled = variation != null,
+        fabEnabled = saveEnabled,
         fabClicked = {
             coroutineScope.launch {
-                dependencies.database.setDataSource.save(set)
+                dependencies.database.setDataSource.save(set.toDomain())
             }
             setSaved()
         },
@@ -99,6 +144,7 @@ fun EditSetScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
             WeightSelector(
+                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
                 weight = Pair(set.weight, Settings.defaultUOM),
                 liftId = variation?.liftId ?: "",
                 placeholder = "Weight",
@@ -115,14 +161,15 @@ fun EditSetScreen(
             Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
             TempoSelector(
-                reps = set.reps.toInt(),
-                up = set.tempo.up.toInt(),
-                hold = set.tempo.hold.toInt(),
-                down = set.tempo.down.toInt(),
-                repChanged = { set = set.copy(reps = it.toLong()) },
-                downChanged = { set = set.copy(tempo = set.tempo.copy(down = it.toLong())) },
-                holdChanged = { set = set.copy(tempo = set.tempo.copy(hold = it.toLong())) },
-                upChanged = { set = set.copy(tempo = set.tempo.copy(up = it.toLong())) },
+                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                reps = set.reps?.toInt(),
+                up = set.up?.toInt(),
+                hold = set.hold?.toInt(),
+                down = set.down?.toInt(),
+                repChanged = { set = set.copy(reps = it?.toLong()) },
+                downChanged = { set = set.copy(down = it?.toLong()) },
+                holdChanged = { set = set.copy(hold = it?.toLong()) },
+                upChanged = { set = set.copy(up = it?.toLong()) },
             )
         }
     }
@@ -172,7 +219,8 @@ fun DateSelector(
     LineItem(
         modifier = modifier,
         title = "Set Date",
-        description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!).toString("MMMM d - yyyy"),
+        description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
+            .toString("MMMM d - yyyy"),
         onClick = {
             openDialog = true
         }
@@ -224,43 +272,50 @@ fun LineItem(
 @Composable
 fun TempoSelector(
     modifier: Modifier = Modifier,
-    reps: Int,
-    down: Int,
-    hold: Int,
-    up: Int,
-    repChanged: (Int) -> Unit,
-    downChanged: (Int) -> Unit,
-    holdChanged: (Int) -> Unit,
-    upChanged: (Int) -> Unit,
+    reps: Int?,
+    down: Int?,
+    hold: Int?,
+    up: Int?,
+    repChanged: (Int?) -> Unit,
+    downChanged: (Int?) -> Unit,
+    holdChanged: (Int?) -> Unit,
+    upChanged: (Int?) -> Unit,
 ) {
-    Row(
+    Column(
         modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
     ) {
 
         NumberPicker(
-            modifier = Modifier.weight(.25f).height(52.dp),
+            modifier = Modifier.height(52.dp).fillMaxWidth(),
             title = "Reps",
             selectedNum = reps,
             numberChanged = repChanged
         )
-        NumberPicker(
-            modifier = Modifier.weight(.25f).height(52.dp),
-            title = "Down",
-            selectedNum = down,
-            numberChanged = downChanged
-        )
-        NumberPicker(
-            modifier = Modifier.weight(.25f).height(52.dp),
-            title = "Hold",
-            selectedNum = hold,
-            numberChanged = holdChanged
-        )
-        NumberPicker(
-            modifier = Modifier.weight(.25f).height(52.dp),
-            title = "Up",
-            selectedNum = up,
-            numberChanged = upChanged
-        )
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+        ) {
+            NumberPicker(
+                modifier = Modifier.weight(.33f).height(52.dp),
+                title = "Down",
+                selectedNum = down,
+                numberChanged = downChanged
+            )
+            NumberPicker(
+                modifier = Modifier.weight(.33f).height(52.dp),
+                title = "Hold",
+                selectedNum = hold,
+                numberChanged = holdChanged
+            )
+            NumberPicker(
+                modifier = Modifier.weight(.33f).height(52.dp),
+                title = "Up",
+                selectedNum = up,
+                numberChanged = upChanged,
+                imeAction = ImeAction.Done
+            )
+        }
     }
 }
 
@@ -268,37 +323,43 @@ fun TempoSelector(
 fun NumberPicker(
     modifier: Modifier,
     title: String,
-    selectedNum: Int = 0,
-    numberChanged: (Int) -> Unit,
+    selectedNum: Int? = null,
+    numberChanged: (Int?) -> Unit,
+    imeAction: ImeAction = ImeAction.Next
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
+        var value by remember { mutableStateOf(TextFieldValue(selectedNum?.toString() ?: "")) }
+
+        var focus by remember { mutableStateOf(false) }
+
+        if (focus) {
+            LaunchedEffect(focus) {
+                if (focus) {
+                    value = value.copy(selection = TextRange(0, value.text.length))
+                }
+            }
+        }
+
         TextField(
-            modifier = modifier,
-            value = selectedNum.toString(),
-            onValueChange = { numberChanged(it.toInt()) },
+            modifier = modifier.onFocusChanged {
+                focus = it.isFocused
+            },
+            value = value,
+            onValueChange = {
+                numberChanged(it.text.toIntOrNull())
+                value = it
+            },
             label = {
                 Text(title)
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next,
+                imeAction = imeAction,
             )
         )
     }
-}
-
-enum class TimeUnit {
-    Minutes, Hours;
-}
-
-@Composable
-fun RestSelector(
-    time: Int,
-    unit: TimeUnit,
-) {
-
 }
