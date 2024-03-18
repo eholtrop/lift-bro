@@ -16,6 +16,6 @@ interface VariationRepository {
 
     fun delete(id: String)
 
-    fun get(variationId: String): Variation?
+    fun get(variationId: String?): Variation?
 
 }

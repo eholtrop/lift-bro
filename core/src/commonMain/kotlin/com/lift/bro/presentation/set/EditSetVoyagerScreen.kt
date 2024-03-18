@@ -6,7 +6,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 
 class EditSetVoyagerScreen(
-    private val setId: String = "",
+    private val setId: String? = null,
     private val variationId: String? = null,
 ): Screen {
 
@@ -16,7 +16,7 @@ class EditSetVoyagerScreen(
 
         EditSetScreen(
             setId = setId,
-            variationId = variationId ?: "",
+            variationId = variationId,
             setSaved = { navigator.pop() },
         )
     }

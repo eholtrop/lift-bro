@@ -91,8 +91,8 @@ class VariationRepository(
         }
     }
 
-    override fun get(variationId: String): Variation? {
-        return variationQueries.get(variationId).executeAsOneOrNull()?.toDomain()
+    override fun get(variationId: String?): Variation? {
+        return variationQueries.get(variationId ?: "").executeAsOneOrNull()?.toDomain()
     }
 
 }
@@ -117,7 +117,7 @@ class SetDataSource(
 
     fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
 
-    fun get(setId: String): LBSet? = setQueries.get(setId).executeAsOneOrNull()?.toDomain()
+    fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 
     suspend fun save(set: LBSet) {
         setQueries.save(
@@ -138,6 +138,10 @@ class SetDataSource(
 
     suspend fun deleteAll() {
         setQueries.deleteAll()
+    }
+
+    suspend fun delete(setId: String) {
+        setQueries.delete(setId)
     }
 
     private fun LiftingSet.toDomain() = LBSet(

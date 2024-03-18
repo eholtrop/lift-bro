@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -39,6 +40,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
@@ -48,6 +51,7 @@ import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBar
+import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.VariationSelector
 import com.lift.bro.ui.WeightSelector
 import kotlinx.coroutines.CoroutineScope
@@ -57,7 +61,7 @@ import kotlinx.datetime.Instant
 
 private data class EditSetState(
     val id: String,
-    val variationId: String,
+    val variationId: String? = null,
     val weight: Double = 0.0,
     val reps: Long? = 1,
     val down: Long? = 3,
@@ -79,7 +83,7 @@ private fun LBSet.toUiState() = EditSetState(
 
 private fun EditSetState.toDomain() = LBSet(
     id = this.id,
-    variationId = this.variationId,
+    variationId = this.variationId!!,
     weight = this.weight,
     reps = this.reps!!,
     tempo = Tempo
@@ -93,8 +97,8 @@ private fun EditSetState.toDomain() = LBSet(
 
 @Composable
 fun EditSetScreen(
-    setId: String,
-    variationId: String,
+    setId: String?,
+    variationId: String?,
     setSaved: () -> Unit,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
@@ -127,6 +131,22 @@ fun EditSetScreen(
             TopBar(
                 title = "",
                 showBackButton = true,
+                trailingContent = {
+                    if (setId != null) {
+                        val coroutineScope = rememberCoroutineScope()
+                        val navigator = LocalNavigator.currentOrThrow
+                        TopBarIconButton(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete",
+                            onClick = {
+                                coroutineScope.launch {
+                                    dependencies.database.setDataSource.delete(setId)
+                                    navigator.pop()
+                                }
+                            }
+                        )
+                    }
+                }
             )
         },
     ) { padding ->
