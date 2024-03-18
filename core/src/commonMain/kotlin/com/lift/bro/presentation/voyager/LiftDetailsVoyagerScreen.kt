@@ -20,7 +20,8 @@ class LiftDetailsVoyagerScreen(
             addVariationClicked = { navigator.push(EditVariationVoyagerScreen(parentLiftId = liftId)) },
             variationClicked = { navigator.push(VariationDetailsVoyagerScreen(variationId = it)) },
             editLiftClicked = { navigator.push(EditLiftVoyagerScreen(liftId)) },
-            addSetClicked = { navigator.push(EditSetVoyagerScreen()) }
+            addSetClicked = { navigator.push(EditSetVoyagerScreen()) },
+            onSetClicked = { navigator.push(EditSetVoyagerScreen(setId = it.id))}
         )
     }
 }

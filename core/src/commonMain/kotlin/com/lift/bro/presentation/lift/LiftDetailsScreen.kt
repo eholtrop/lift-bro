@@ -1,9 +1,14 @@
 package com.lift.bro.presentation.lift
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,6 +17,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,13 +25,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
+import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
@@ -44,6 +55,7 @@ fun LiftDetailsScreen(
     addVariationClicked: () -> Unit,
     variationClicked: (String) -> Unit,
     addSetClicked: () -> Unit,
+    onSetClicked: (LBSet) -> Unit,
     database: LBDatabase = dependencies.database,
 ) {
     val lift by database.liftDataSource.get(liftId).collectAsState(null)
@@ -82,7 +94,9 @@ fun LiftDetailsScreen(
                 items(variations) { variation ->
                     VariationCard(
                         variation = variation,
-                        onClick = { variationClicked(variation.id) }
+                        parentLift = lift,
+                        onClick = { variationClicked(variation.id) },
+                        onSetClicked = onSetClicked
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
                 }
@@ -94,7 +108,9 @@ fun LiftDetailsScreen(
 @Composable
 fun VariationCard(
     variation: Variation,
+    parentLift: Lift,
     onClick: (Variation) -> Unit,
+    onSetClicked: (LBSet) -> Unit,
 ) {
 
     Card(
@@ -112,8 +128,8 @@ fun VariationCard(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = variation.name ?: "",
-                    style = MaterialTheme.typography.headlineMedium,
+                    text = "${variation.name} ${parentLift.name}",
+                    style = MaterialTheme.typography.headlineSmall,
                 )
                 Space()
                 val maxLift = sets
@@ -145,19 +161,58 @@ fun VariationCard(
                 }
             }
 
-            sets.groupBy { it.date.toLocalDate() }.toList().sortedByDescending { it.first }
-                .take(3).forEach { pair ->
+            Space(MaterialTheme.spacing.half)
+
+            sets.groupBy { it.date.toLocalDate() }.toList()
+                .sortedByDescending { it.first }
+                .take(3)
+                .forEach { pair ->
+
+
                     Text(
+                        modifier = Modifier.align(Alignment.Start),
                         text = pair.first.toString(pattern = "EEEE MMM, d"),
-                        style = MaterialTheme.typography.titleMedium
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
-                    pair.second.sortedByDescending { it.weight }.forEach { set ->
-                        Text(
-                            text = "${set.formattedWeight} x ${set.reps}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
+
+                    Box(
+                        modifier = Modifier.height(1.dp).fillMaxWidth()
+                            .background(
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                    )
+
+                    Space(MaterialTheme.spacing.half)
+
+                    pair.second
+                        .sortedByDescending { it.weight }
+                        .forEach { set ->
+                            Column(
+                                modifier = Modifier
+                                    .clickable(
+                                        role = Role.Button,
+                                        onClick = { onSetClicked(set) }
+                                    )
+                                    .defaultMinSize(minHeight = 44.dp)
+                                    .fillMaxWidth(),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = "${set.formattedWeight} x ${set.reps}",
+                                    style = MaterialTheme.typography.titleSmall
+                                )
+                                set.tempo.render()
+                            }
+                        }
                 }
+
+            Button(
+                modifier = Modifier.align(Alignment.End),
+                onClick = { onClick(variation) }
+            ) {
+                Text("See All")
+            }
         }
     }
 }
