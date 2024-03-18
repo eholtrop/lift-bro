@@ -19,6 +19,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.presentation.decimalFormat
 import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
@@ -55,7 +56,7 @@ fun LiftCard(
                 Space()
                 max?.let {
                     Text(
-                        text = max.weight.toString(),
+                        text = max.weight.decimalFormat(),
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }

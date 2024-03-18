@@ -40,6 +40,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.decimalFormat
 import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
@@ -267,6 +268,6 @@ internal val LBSet.formattedTempo: String get() = "${this.tempo.down}/${this.tem
 
 internal val LBSet.formattedReps: String get() = "${this.formattedTempo} x ${this.reps}"
 
-internal val LBSet.formattedWeight: String get() = "${this.weight} ${Settings.defaultUOM.value}"
+internal val LBSet.formattedWeight: String get() = "${this.weight.decimalFormat()} ${Settings.defaultUOM.value}"
 
 internal val LBSet.formattedMax: String get() = "${this.reps} x ${this.formattedTempo}"
