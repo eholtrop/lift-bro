@@ -88,9 +88,9 @@ private fun EditSetState.toDomain() = LBSet(
     reps = this.reps!!,
     tempo = Tempo
         (
-        down = this.up!!,
+        down = this.down!!,
         hold = this.hold!!,
-        up = this.down!!
+        up = this.up!!
     ),
     date = this.date
 )
