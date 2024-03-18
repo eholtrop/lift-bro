@@ -64,6 +64,9 @@ kotlin {
             dependencies {
                 implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.5.2")
                 implementation("app.cash.sqldelight:android-driver:2.0.0")
+
+                implementation("com.google.android.play:app-update:2.1.0")
+                implementation("com.google.android.play:app-update-ktx:2.1.0")
             }
         }
 

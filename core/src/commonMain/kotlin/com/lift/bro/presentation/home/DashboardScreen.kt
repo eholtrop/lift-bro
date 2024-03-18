@@ -111,6 +111,18 @@ fun LiftListScreen(
     var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
 
     LiftingScaffold(
+        topBar = {
+            TopBar(
+                title = "Lift Bro",
+                trailingContent = {
+                    TopBarIconButton(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Lift",
+                        onClick = addLiftClicked,
+                    )
+                }
+            )
+        },
         fabIcon = Icons.Default.Add,
         contentDescription = "Add Set",
         fabClicked = addSetClicked,
@@ -178,18 +190,6 @@ fun LiftListScreen(
                     }
                 }
             }
-        },
-        topBar = {
-            TopBar(
-                title = "Lift Bro",
-                trailingContent = {
-                    TopBarIconButton(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Lift",
-                        onClick = addLiftClicked,
-                    )
-                }
-            )
         },
     ) { padding ->
         when (tab) {

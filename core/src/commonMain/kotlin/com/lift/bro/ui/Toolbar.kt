@@ -1,5 +1,6 @@
 package com.lift.bro.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -8,11 +9,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltipBox
+import androidx.compose.material3.PlainTooltipState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
@@ -23,8 +32,10 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.lift.bro.di.dependencies
+import com.lift.bro.presentation.StoreManager
 import com.lift.bro.presentation.spacing
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
@@ -55,6 +66,33 @@ fun TopBar(
             modifier = Modifier.align(Alignment.TopEnd),
             content = {
                 trailingContent()
+
+                val updateAvailable by StoreManager.isUpdateAvailable().collectAsState(false)
+
+                val tooltipState = remember { PlainTooltipState() }
+
+                AnimatedVisibility(updateAvailable) {
+                    PlainTooltipBox(
+                        tooltip = {
+                            Text("Update Available!")
+                        },
+                        tooltipState = tooltipState,
+                    ) {
+                        TopBarIconButton(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Calculator",
+                            onClick = {
+                                StoreManager.startUpdateFlow()
+                            }
+                        )
+
+                        LaunchedEffect("show tooltip") {
+                            tooltipState.show()
+                        }
+                    }
+
+                }
+
                 TopBarIconButton(
                     painter = Images.calculator(),
                     contentDescription = "Calculator",
@@ -100,6 +138,7 @@ fun TopBarIconButton(
         )
     }
 }
+
 @Composable
 fun TopBarIconButton(
     painter: Painter,
