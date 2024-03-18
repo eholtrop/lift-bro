@@ -64,6 +64,7 @@ import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
+import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
@@ -338,19 +339,20 @@ fun RecentSetsCalendar(
 
                     pair.second.sortedByDescending { it.weight }
                         .forEach { set ->
-                            Box(
+                            Column(
                                 modifier = Modifier.fillMaxWidth()
                                     .defaultMinSize(minHeight = 44.dp)
                                     .clickable(
                                         role = Role.Button,
                                         onClick = { setClicked(set) }
                                     ),
-                                contentAlignment = Alignment.CenterStart
+                                verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
                                     text = "${set.formattedWeight} x ${set.reps}",
-                                    style = MaterialTheme.typography.bodyLarge,
+                                    style = MaterialTheme.typography.titleMedium,
                                 )
+                                set.tempo.render()
                             }
                         }
                 }
