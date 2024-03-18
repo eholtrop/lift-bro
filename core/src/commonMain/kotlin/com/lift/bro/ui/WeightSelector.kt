@@ -27,6 +27,7 @@ import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.variation.UOM
 import com.lift.bro.presentation.variation.formattedTempo
 import com.lift.bro.presentation.variation.formattedWeight
+import com.lift.bro.presentation.variation.render
 
 expect object DecimalFormat {
     fun formatWeight(weight: Double?): String
@@ -88,9 +89,8 @@ fun WeightSelector(
 
         val variations = dependencies.database.variantDataSource.getAll(liftId = liftId)
 
-        val sets = variations.map { dependencies.database.setDataSource.getAll(it.id) }
-            .fold(emptyList<LBSet>()) { list, sets -> list + sets }
-            .sortedBy { it.reps }
+        val sets = dependencies.database.setDataSource.getAllForLift(liftId)
+            .sortedByDescending { it.date }
 
         Space(MaterialTheme.spacing.one)
 
@@ -116,13 +116,10 @@ fun WeightSelector(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                             Text(
-                                text = "${set.reps} x ${set.formattedWeight}",
+                                text = "${set.formattedWeight} x ${set.reps}",
                                 style = MaterialTheme.typography.bodySmall,
                             )
-                            Text(
-                                text = set.formattedTempo,
-                                style = MaterialTheme.typography.bodySmall,
-                            )
+                            set.tempo.render()
                         }
                     }
                 }

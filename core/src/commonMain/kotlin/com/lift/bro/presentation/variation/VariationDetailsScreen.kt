@@ -235,7 +235,7 @@ fun Tempo.render() {
             text = down.toString(),
             style = MaterialTheme.typography.labelSmall,
         )
-        Space(MaterialTheme.spacing.half)
+        Space(MaterialTheme.spacing.quarter)
         Text(
             text = "-",
             style = MaterialTheme.typography.labelSmall,
