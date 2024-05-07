@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import com.lift.bro.presentation.spacing
 
@@ -19,13 +20,13 @@ fun Card(
 ) {
     Box(
         modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
             .clickable(
                 onClick = onClick,
                 role = Role.Button
             )
             .background(
                 color = MaterialTheme.colorScheme.surfaceVariant,
-                shape = MaterialTheme.shapes.medium,
             )
             .padding(MaterialTheme.spacing.quarter),
         contentAlignment = Alignment.Center,
