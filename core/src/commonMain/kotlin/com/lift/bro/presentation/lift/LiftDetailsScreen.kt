@@ -128,10 +128,10 @@ fun VariationCard(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = "${variation.name} ${parentLift.name}",
                     style = MaterialTheme.typography.headlineSmall,
                 )
-                Space()
                 val maxLift = sets
                     .fold(null as LBSet?) { maxLift, currentSet ->
                         when {
@@ -139,6 +139,8 @@ fun VariationCard(
                             else -> maxLift
                         }
                     }
+
+                Space(MaterialTheme.spacing.one)
 
                 maxLift?.let { lift ->
                     Column(
