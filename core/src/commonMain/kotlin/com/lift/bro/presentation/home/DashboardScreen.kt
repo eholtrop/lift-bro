@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+
 package com.lift.bro.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
@@ -35,10 +37,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -112,16 +116,12 @@ fun LiftListScreen(
     var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
 
     LiftingScaffold(
-        topBar = {
-            TopBar(
-                title = "Lift Bro",
-                trailingContent = {
-                    TopBarIconButton(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Lift",
-                        onClick = addLiftClicked,
-                    )
-                }
+        title = "Lift Bro",
+        actions = {
+            TopBarIconButton(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Lift",
+                onClick = addLiftClicked,
             )
         },
         fabIcon = Icons.Default.Add,

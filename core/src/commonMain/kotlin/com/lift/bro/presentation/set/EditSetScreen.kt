@@ -121,33 +121,27 @@ fun EditSetScreen(
         fabIcon = Icons.Default.Edit,
         contentDescription = "Save Set",
         fabEnabled = saveEnabled,
+        title = "",
+        actions = {
+            if (setId != null) {
+                val navigator = LocalNavigator.currentOrThrow
+                TopBarIconButton(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete",
+                    onClick = {
+                        coroutineScope.launch {
+                            dependencies.database.setDataSource.delete(setId)
+                            navigator.pop()
+                        }
+                    }
+                )
+            }
+        },
         fabClicked = {
             coroutineScope.launch {
                 dependencies.database.setDataSource.save(set.toDomain())
             }
             setSaved()
-        },
-        topBar = {
-            TopBar(
-                title = "",
-                showBackButton = true,
-                trailingContent = {
-                    if (setId != null) {
-                        val coroutineScope = rememberCoroutineScope()
-                        val navigator = LocalNavigator.currentOrThrow
-                        TopBarIconButton(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete",
-                            onClick = {
-                                coroutineScope.launch {
-                                    dependencies.database.setDataSource.delete(setId)
-                                    navigator.pop()
-                                }
-                            }
-                        )
-                    }
-                }
-            )
         },
     ) { padding ->
         Column(

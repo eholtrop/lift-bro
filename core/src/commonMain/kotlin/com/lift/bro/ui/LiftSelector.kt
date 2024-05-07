@@ -22,65 +22,62 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.presentation.set.LineItem
 import com.lift.bro.presentation.spacing
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LiftSelector(
+    modifier: Modifier = Modifier,
     lift: Lift?,
     liftSelected: (Lift) -> Unit,
 ) {
     var showSelector by remember { mutableStateOf(false) }
 
     if (showSelector) {
-
-        AlertDialog(
-            modifier = Modifier.background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = MaterialTheme.shapes.medium,
-            ),
-            onDismissRequest = { showSelector = false },
-        ) {
-            val lifts by dependencies.database.liftDataSource.getAll().collectAsState(emptyList())
-
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(96.dp),
-                contentPadding = PaddingValues(MaterialTheme.spacing.one)
-            ) {
-                items(lifts) { lift ->
-                    LiftCard(
-                        modifier = Modifier.padding(MaterialTheme.spacing.quarter),
-                        lift = lift,
-                        onClick = {
-                            showSelector = false
-                            liftSelected(it)
-                        }
-                    )
-                }
+        LiftSelectorDialog(
+            onDismissRequest = {
+                showSelector = false
+            },
+            liftSelected = {
+                liftSelected(it)
+                showSelector = false
             }
-        }
+        )
     }
 
-    when (lift) {
-        null -> {
-            Card(
-                modifier = Modifier.width(96.dp),
-                onClick = { showSelector = true }
-            ) {
-                Text(
-                    text = "Select Lift",
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurface,
+    LineItem(
+        title = "Lift",
+        description = lift?.name ?: "Select Lift",
+        onClick = { showSelector = true }
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun LiftSelectorDialog(
+    onDismissRequest: () -> Unit,
+    liftSelected: (Lift) -> Unit,
+) {
+    AlertDialog(
+        modifier = Modifier.background(
+            color = MaterialTheme.colorScheme.surface,
+            shape = MaterialTheme.shapes.medium,
+        ),
+        onDismissRequest = onDismissRequest,
+    ) {
+        val lifts by dependencies.database.liftDataSource.getAll().collectAsState(emptyList())
+
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(MaterialTheme.spacing.one)
+        ) {
+            items(lifts) { lift ->
+                LiftCard(
+                    modifier = Modifier.padding(MaterialTheme.spacing.quarter),
+                    lift = lift,
+                    onClick = liftSelected
                 )
             }
-        }
-
-        else -> {
-            LiftCard(
-                modifier = Modifier.width(96.dp),
-                lift = lift,
-                onClick = { showSelector = true }
-            )
         }
     }
 }

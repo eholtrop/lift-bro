@@ -1,5 +1,8 @@
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+
 package com.lift.bro.presentation.variation
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +24,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -110,47 +114,13 @@ internal fun VariationDetailsScreen(
         fabIcon = Icons.Default.Add,
         contentDescription = "Add Set",
         fabClicked = addSetClicked,
-        topBar = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                TopBar(
-                    title = "${variation.name} ${lift?.name}",
-                    showBackButton = true,
-                    trailingContent = {
-                        TopBarIconButton(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            onClick = editClicked,
-                        )
-                    }
-                )
-
-                Row {
-                    var expanded by rememberSaveable { mutableStateOf(false) }
-
-                    Button(
-                        onClick = { expanded = true }
-                    ) {
-                        Text(text = grouping.toString())
-                    }
-
-                    DropdownMenu(
-                        expanded = expanded,
-                        onDismissRequest = { expanded = false }
-                    ) {
-                        Grouping.values().forEach {
-                            DropdownMenuItem(
-                                text = { Text(it.toString()) },
-                                onClick = {
-                                    grouping = it
-                                    expanded = false
-                                }
-                            )
-                        }
-                    }
-                }
-            }
+        title = "${variation.name} ${lift?.name}",
+        actions = {
+            TopBarIconButton(
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit",
+                onClick = editClicked,
+            )
         }
     ) { padding ->
 
@@ -159,6 +129,38 @@ internal fun VariationDetailsScreen(
             modifier = Modifier.padding(padding),
             contentPadding = PaddingValues(MaterialTheme.spacing.one)
         ) {
+
+            stickyHeader {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    Row {
+                        var expanded by rememberSaveable { mutableStateOf(false) }
+
+                        Button(
+                            onClick = { expanded = true }
+                        ) {
+                            Text(text = grouping.toString())
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            Grouping.values().forEach {
+                                DropdownMenuItem(
+                                    text = { Text(it.toString()) },
+                                    onClick = {
+                                        grouping = it
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
 
             val items: List<Pair<String, List<LBSet>>> = when (grouping) {
                 Grouping.Date -> sets.groupBy { it.date.toLocalDate() }.toList()

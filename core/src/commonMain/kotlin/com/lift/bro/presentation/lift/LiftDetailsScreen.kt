@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.lift.bro.presentation.lift
 
 import androidx.compose.foundation.background
@@ -18,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,28 +71,24 @@ fun LiftDetailsScreen(
             fabIcon = Icons.Default.Add,
             contentDescription = "Add Set",
             fabClicked = addSetClicked,
-            topBar = {
-                TopBar(
-                    title = lift.name,
-                    showBackButton = true,
-                    trailingContent = {
-                        TopBarIconButton(
-                            Icons.Default.Add,
-                            contentDescription = "Add Variation",
-                            onClick = addVariationClicked,
-                        )
-                        TopBarIconButton(
-                            Icons.Default.Edit,
-                            contentDescription = "Edit",
-                            onClick = editLiftClicked,
-                        )
-                    }
+            title = lift.name,
+            actions = {
+                TopBarIconButton(
+                    Icons.Default.Add,
+                    contentDescription = "Add Variation",
+                    onClick = addVariationClicked,
+                )
+                TopBarIconButton(
+                    Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    onClick = editLiftClicked,
                 )
             }
         ) { padding ->
             LazyColumn(
                 modifier = Modifier.padding(padding),
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
             ) {
                 items(variations) { variation ->
                     VariationCard(
@@ -98,7 +97,6 @@ fun LiftDetailsScreen(
                         onClick = { variationClicked(variation.id) },
                         onSetClicked = onSetClicked
                     )
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
                 }
             }
         }

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
@@ -71,8 +72,6 @@ fun LiftCard(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text("No Sets!")
-                    Space(MaterialTheme.spacing.quarter)
-                    Text("Click in to Add One")
                 }
             } else {
                 val recentSets = sets.groupBy { it.date.toLocalDate() }
