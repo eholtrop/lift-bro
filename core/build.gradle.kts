@@ -56,7 +56,8 @@ kotlin {
 
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
 
-                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc05")
+                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0")
+                implementation("cafe.adriel.voyager:voyager-transitions:1.0.0")
             }
         }
 
