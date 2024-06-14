@@ -97,7 +97,7 @@ fun EditLiftScreen(
                             if (it.name?.isNotBlank() == true) {
                                 database.variantDataSource.save(
                                     id = it.id,
-                                    liftId = it.liftId,
+                                    liftId = it.liftId!!,
                                     name = it.name
                                 )
                             } else {

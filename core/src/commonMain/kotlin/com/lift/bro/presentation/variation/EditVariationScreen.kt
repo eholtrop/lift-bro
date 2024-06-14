@@ -46,8 +46,8 @@ enum class UOM(val value: String) {
 }
 
 @Composable
-fun rememberVariation(id: String?): MutableState<Variation?> {
-    return remember { mutableStateOf(dependencies.database.variantDataSource.get(id ?: "")) }
+fun rememberVariation(id: String?): MutableState<Variation> {
+    return remember { mutableStateOf(dependencies.database.variantDataSource.get(id ?: "") ?: Variation()) }
 }
 
 @Composable
@@ -73,7 +73,7 @@ fun EditVariationScreen(
     variationSaved: () -> Unit,
 ) {
     var variation by rememberVariation(id)
-    val lift by rememberLift(variation?.liftId ?: parentLiftId)
+    val lift by rememberLift(variation.liftId ?: parentLiftId)
     LiftingScaffold(
         title = id?.let { "Edit Variation" } ?: "Create Variation",
         fabIcon = Icons.Default.Edit,
@@ -98,7 +98,7 @@ fun EditVariationScreen(
 
             TextField(
                 value = variation?.name ?: "",
-                onValueChange = { variation = variation?.copy(name = it) },
+                onValueChange = { variation = variation.copy(name = it) },
                 label = { Text("Name") },
                 placeholder = { Text("Name") }
             )
@@ -106,7 +106,7 @@ fun EditVariationScreen(
             LiftSelector(
                 modifier = Modifier.height(160.dp),
                 lift = lift,
-                liftSelected = { variation = variation?.copy(liftId = it.id) }
+                liftSelected = { variation = variation.copy(liftId = it.id) }
             )
         }
     }

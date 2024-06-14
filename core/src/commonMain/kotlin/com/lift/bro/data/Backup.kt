@@ -44,7 +44,7 @@ object BackupRestore {
         backup.variations.forEach {
             dependencies.database.variantDataSource.save(
                 id = it.id,
-                liftId = it.liftId,
+                liftId = it.liftId!!,
                 name = it.name
             )
         }
