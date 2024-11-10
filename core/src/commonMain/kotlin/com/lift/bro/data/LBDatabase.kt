@@ -154,7 +154,8 @@ class SetDataSource(
             hold = this.tempoHold ?: 1,
             up = this.tempoUp ?: 1,
         ),
-        date = this.date
+        date = this.date,
+        notes = "",
     )
 }
 

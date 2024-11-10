@@ -68,6 +68,7 @@ private data class EditSetState(
     val hold: Long? = 1,
     val up: Long? = 1,
     val date: Instant = Clock.System.now(),
+    val notes: String = "",
 )
 
 private fun LBSet.toUiState() = EditSetState(
@@ -78,7 +79,8 @@ private fun LBSet.toUiState() = EditSetState(
     down = this.tempo.down,
     hold = this.tempo.hold,
     up = this.tempo.up,
-    date = this.date
+    date = this.date,
+    notes = this.notes,
 )
 
 private fun EditSetState.toDomain() = LBSet(
@@ -92,7 +94,8 @@ private fun EditSetState.toDomain() = LBSet(
         hold = this.hold!!,
         up = this.up!!
     ),
-    date = this.date
+    date = this.date,
+    notes = this.notes,
 )
 
 @Composable
