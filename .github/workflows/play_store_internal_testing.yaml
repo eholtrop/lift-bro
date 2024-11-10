@@ -48,7 +48,7 @@ jobs:
         run: fastlane deploy build_number:$GITHUB_RUN_NUMBER
 
       - name: Upload Apk
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: assets
           path: app/build/outputs/bundle/release/app-release.aab
