@@ -9,3 +9,7 @@ captures
 local.properties
 xcuserdata
 Gemfile.lock
+
+.kotlin/metadata/kotlinTransformedMetadataLibraries/
+
+.kotlin/metadata/kotlinTransformedCInteropMetadataLibraries/

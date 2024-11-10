@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("app.cash.sqldelight") version "2.0.0"
     id("org.jetbrains.compose")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 sqldelight {
@@ -17,8 +18,6 @@ sqldelight {
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-    targetHierarchy.default()
-
     android {
         compilations.all {
             kotlinOptions {
@@ -71,11 +70,11 @@ kotlin {
             }
         }
 
-        val nativeMain by getting {
-            dependencies {
-                implementation("app.cash.sqldelight:native-driver:2.0.0")
-            }
-        }
+//        val nativeMain by getting {
+//            dependencies {
+//                implementation("app.cash.sqldelight:native-driver:2.0.0")
+//            }
+//        }
 
         val commonTest by getting {
             dependencies {

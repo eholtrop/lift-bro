@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.load.kotlin.signatures
 
 plugins {
     kotlin("android")
+    kotlin("plugin.compose")
     id("com.android.application")
     id("org.jetbrains.compose")
     id("com.google.gms.google-services")
@@ -52,11 +53,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "11"
     }
 }
 
