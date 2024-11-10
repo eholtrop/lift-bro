@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.load.kotlin.signatures
 
 plugins {
-    kotlin("android")
-    kotlin("plugin.compose")
-    id("com.android.application")
-    id("org.jetbrains.compose")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.services)
 }
 
 android {
@@ -63,9 +63,5 @@ android {
 
 dependencies {
     implementation(project(":core"))
-    implementation("androidx.activity:activity-compose:1.7.2")
-    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
-
-    // unsure about this
-    implementation("com.google.firebase:firebase-analytics")
+    implementation(libs.compose.activity)
 }

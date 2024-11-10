@@ -15,8 +15,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.PlainTooltipBox
-import androidx.compose.material3.PlainTooltipState
+//import androidx.compose.material3.PlainTooltipBox
+//import androidx.compose.material3.PlainTooltipState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -74,27 +74,27 @@ fun TopBar(
 
             val updateAvailable by StoreManager.isUpdateAvailable().collectAsState(false)
 
-            val tooltipState = remember { PlainTooltipState() }
+//            val tooltipState = remember { PlainTooltipState() }
 
             AnimatedVisibility(updateAvailable) {
-                PlainTooltipBox(
-                    tooltip = {
-                        Text("Update Available!")
-                    },
-                    tooltipState = tooltipState,
-                ) {
-                    TopBarIconButton(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Calculator",
-                        onClick = {
-                            StoreManager.startUpdateFlow()
-                        }
-                    )
-
-                    LaunchedEffect("show tooltip") {
-                        tooltipState.show()
-                    }
-                }
+//                PlainTooltipBox(
+//                    tooltip = {
+//                        Text("Update Available!")
+//                    },
+//                    tooltipState = tooltipState,
+//                ) {
+//                    TopBarIconButton(
+//                        imageVector = Icons.Default.PlayArrow,
+//                        contentDescription = "Calculator",
+//                        onClick = {
+//                            StoreManager.startUpdateFlow()
+//                        }
+//                    )
+//
+//                    LaunchedEffect("show tooltip") {
+//                        tooltipState.show()
+//                    }
+//                }
 
             }
 

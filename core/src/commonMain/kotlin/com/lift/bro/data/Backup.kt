@@ -26,11 +26,11 @@ object BackupRestore {
     }
 
     fun restore(json: String) {
-        flow {
-            emit(Json.decodeFromString(json))
-        }.flatMapLatest {
-            restore(it as Backup)
-        }
+//        flow {
+//            emit(Json.decodeFromString(json))
+//        }.flatMapLatest {
+//            restore(it as Backup)
+//        }
     }
 
     fun restore(backup: Backup): Flow<Unit> = flow {
