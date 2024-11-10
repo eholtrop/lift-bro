@@ -86,39 +86,45 @@ val debugSets = listOf(
         variationId = "bench press",
         weight = 150.0,
         reps = 1,
+        notes = "Hold at 90 degrees"
     ),
     LBSet(
         id = uuid4().toString(),
         variationId = "back squat",
         weight = 120.0,
         reps = 1,
+        notes = ""
     ),
     LBSet(
         id = uuid4().toString(),
         variationId = "back squat",
         weight = 140.0,
         reps = 1,
+        notes = ""
     ),
     LBSet(
         id = uuid4().toString(),
         variationId = "back squat",
         weight = 130.0,
         reps = 1,
-        date = Clock.System.now().minus(24, DateTimeUnit.HOUR)
+        date = Clock.System.now().minus(24, DateTimeUnit.HOUR),
+        notes = ""
     ),
     LBSet(
         id = uuid4().toString(),
         variationId = "back squat",
         weight = 170.0,
         reps = 1,
-        date = Clock.System.now().minus(72, DateTimeUnit.HOUR)
+        date = Clock.System.now().minus(72, DateTimeUnit.HOUR),
+        notes = ""
     ),
     LBSet(
         id = uuid4().toString(),
         variationId = "back squat",
         weight = 190.0,
         reps = 1,
-        date = Clock.System.now().minus(72, DateTimeUnit.HOUR)
+        date = Clock.System.now().minus(72, DateTimeUnit.HOUR),
+        notes = ""
     ),
 )
 

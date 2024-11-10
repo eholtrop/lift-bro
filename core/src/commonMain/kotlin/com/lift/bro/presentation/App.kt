@@ -30,11 +30,11 @@ fun App(
             coordinator.render()
 
             LaunchedEffect("debug_mode") {
-//                if (BuildConfig.DEBUG) {
-//                    BackupRestore.restore(
-//                        backup = debugBackup
-//                    ).collect()
-//                }
+                if (BuildConfig.DEBUG) {
+                    BackupRestore.restore(
+                        backup = debugBackup
+                    ).collect()
+                }
             }
         }
     }
