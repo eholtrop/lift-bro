@@ -185,6 +185,18 @@ fun EditSetScreen(
                 holdChanged = { set = set.copy(hold = it?.toLong()) },
                 upChanged = { set = set.copy(up = it?.toLong()) },
             )
+
+            TextField(
+                value = set.notes,
+                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
+                label = {
+                    Text(placeholder)
+                },
+                onValueChange = {
+                    set = set.copy(notes = it)
+                },
+            )
         }
     }
 }

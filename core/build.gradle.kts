@@ -1,10 +1,13 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("com.android.library")
-    id("app.cash.sqldelight") version "2.0.0"
-    id("org.jetbrains.compose")
-    id("org.jetbrains.kotlin.plugin.compose")
+    alias(libs.plugins.android.library)
+
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.kotlin.multiplatform)
+
+    alias(libs.plugins.sqldelight)
+
+    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 sqldelight {
@@ -19,11 +22,6 @@ sqldelight {
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     android {
-        compilations.all {
-            kotlinOptions {
-                jvmTarget = "1.8"
-            }
-        }
     }
     
     listOf(
@@ -48,25 +46,22 @@ kotlin {
                 implementation(compose.components.resources)
 
 
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.5.0")
+                implementation(libs.kotlinx.datetime)
                 implementation("com.benasher44:uuid:0.8.1")
-                implementation("app.cash.sqldelight:coroutines-extensions:2.0.0")
+                implementation(libs.sqldelight.coroutines)
+                implementation(libs.kotlinx.serialization)
 
-
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-
-                implementation("cafe.adriel.voyager:voyager-navigator:1.0.0")
-                implementation("cafe.adriel.voyager:voyager-transitions:1.0.0")
+                implementation(libs.voyager.navigator)
+                implementation(libs.voyager.transitions)
             }
         }
 
         val androidMain by getting {
             dependencies {
                 implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.5.2")
-                implementation("app.cash.sqldelight:android-driver:2.0.0")
-
-                implementation("com.google.android.play:app-update:2.1.0")
-                implementation("com.google.android.play:app-update-ktx:2.1.0")
+                implementation(libs.sqldelight.android.driver)
+                implementation(libs.app.update)
+                implementation(libs.app.update.ktx)
             }
         }
 

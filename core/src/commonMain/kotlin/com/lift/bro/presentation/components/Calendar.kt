@@ -223,7 +223,7 @@ private fun CalendarContent(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = contentPadding,
         ) { page ->
-            val monthOffset = remember { page - pagerState.initialPage }
+            val monthOffset = remember { page - 1 }
             val currentMonth = today.plus(DatePeriod(months = monthOffset))
             val startDate = currentMonth.minus(DatePeriod(days = today.dayOfMonth - 1))
 
@@ -263,4 +263,4 @@ private fun CalendarContent(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-private val PagerState.currentMonth get() = today.plus(DatePeriod(months = this.currentPage - this.initialPage))
+private val PagerState.currentMonth get() = today.plus(DatePeriod(months = this.currentPage - 1))
