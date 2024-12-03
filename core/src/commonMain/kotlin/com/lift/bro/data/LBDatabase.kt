@@ -40,7 +40,10 @@ class LBDatabase(
 
     val liftDataSource: LiftDataSource = LiftDataSource(database.liftQueries)
 
-    val variantDataSource: VariationRepository = VariationRepository(database.variationQueries)
+    val variantDataSource: VariationRepository = VariationRepository(
+        liftQueries = database.liftQueries,
+        variationQueries = database.variationQueries
+    )
 
     val setDataSource: SetDataSource = SetDataSource(
         setQueries = database.setQueries,
@@ -60,6 +63,7 @@ private val dateAdapter = object : ColumnAdapter<Instant, Long> {
 }
 
 class VariationRepository(
+    private val liftQueries: LiftQueries,
     private val variationQueries: VariationQueries,
 ) : VariationRepository {
     override suspend fun deleteAll() {
@@ -73,16 +77,20 @@ class VariationRepository(
     }
 
     override fun getAll(liftId: String): List<Variation> {
-        return variationQueries.getAllForLift(liftId).executeAsList().map { it.toDomain() }
+        val parentLift = liftQueries.get(liftId).executeAsOne().toDomain()
+
+        return variationQueries.getAllForLift(liftId).executeAsList().map { it.toDomain(parentLift) }
     }
 
     override fun getAll(): List<Variation> {
-        return variationQueries.getAll().executeAsList().map { it.toDomain() }
+        val parentLift = liftQueries.getAll().executeAsList().map { it.toDomain() }
+        return variationQueries.getAll().executeAsList().map { variation -> variation.toDomain(parentLift.first { it.id == variation.liftId }) }
     }
 
     override fun listenAll(liftId: String): Flow<List<Variation>> {
+        val parentLift = liftQueries.get(liftId).executeAsOne().toDomain()
         return variationQueries.getAllForLift(liftId).asFlow().mapToList(Dispatchers.IO)
-            .mapEach { it.toDomain() }
+            .mapEach { it.toDomain(parentLift) }
     }
 
     override fun delete(id: String) {
@@ -92,7 +100,10 @@ class VariationRepository(
     }
 
     override fun get(variationId: String?): Variation? {
-        return variationQueries.get(variationId ?: "").executeAsOneOrNull()?.toDomain()
+        val variation = variationQueries.get(variationId ?: "").executeAsOneOrNull()
+        val lift = liftQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
+
+        return variation?.toDomain(lift?.toDomain()!!)
     }
 
 }
@@ -190,9 +201,9 @@ private fun comliftbrodb.Lift.toDomain() = Lift(
     name = this.name,
 )
 
-private fun comliftbrodb.Variation.toDomain() = Variation(
+private fun comliftbrodb.Variation.toDomain(parentLift: Lift) = Variation(
     id = this.id,
-    liftId = this.liftId,
+    lift = parentLift,
     name = this.name,
 )
 

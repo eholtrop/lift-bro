@@ -71,7 +71,7 @@ fun EditLiftScreen(
             variations.add(
                 Variation(
                     id = uuid4().toString(),
-                    liftId = lift.id,
+                    lift = lift,
                     name = "",
                 )
             )
@@ -97,7 +97,7 @@ fun EditLiftScreen(
                             if (it.name?.isNotBlank() == true) {
                                 database.variantDataSource.save(
                                     id = it.id,
-                                    liftId = it.liftId!!,
+                                    liftId = it.lift?.id!!,
                                     name = it.name
                                 )
                             } else {
@@ -182,7 +182,7 @@ fun EditLiftScreen(
                                 variations.add(
                                     Variation(
                                         id = uuid4().toString(),
-                                        liftId = lift.id,
+                                        lift = lift,
                                         name = "",
                                     )
                                 )

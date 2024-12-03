@@ -2,23 +2,34 @@
 
 package com.lift.bro.presentation.set
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,6 +46,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,14 +56,20 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
+import com.lift.bro.data.LBDatabase
+import com.lift.bro.di.DependencyContainer
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
+import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBar
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.ui.VariationCard
 import com.lift.bro.ui.VariationSelector
 import com.lift.bro.ui.WeightSelector
 import kotlinx.coroutines.CoroutineScope
@@ -124,7 +142,7 @@ fun EditSetScreen(
         fabIcon = Icons.Default.Edit,
         contentDescription = "Save Set",
         fabEnabled = saveEnabled,
-        title = "",
+        title = "I Crushed...",
         actions = {
             if (setId != null) {
                 val navigator = LocalNavigator.currentOrThrow
@@ -151,55 +169,119 @@ fun EditSetScreen(
             modifier = Modifier.padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            VariationSelector(
-                variation = variation,
-                variationSelected = {
-                    set = set.copy(variationId = it.id)
-                },
-            )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
-            WeightSelector(
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                weight = Pair(set.weight, Settings.defaultUOM),
-                liftId = variation?.liftId ?: "",
-                placeholder = "Weight",
-                weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
-            )
+            Row(
+                modifier = Modifier.animateContentSize()
+            ) {
+                TextField(
+                    modifier = Modifier.animateContentSize().wrapContentSize(),
+                    value = (set.reps ?: 0).toString(),
+                    onValueChange = { set = set.copy(reps = it.toLongOrNull()) }
+                )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
+                if (variation != null) {
+                    Text(
+                        text = variation.fullName + "(s)"
+                    )
+                }
+            }
 
-            DateSelector(
-                date = set.date,
-                dateChanged = { set = set.copy(date = it) }
-            )
+            if (variation != null) {
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
+                WeightSelector(
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                    weight = Pair(set.weight, Settings.defaultUOM),
+                    liftId = variation.lift?.id ?: "",
+                    placeholder = "At",
+                    weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
+                )
 
-            TempoSelector(
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                reps = set.reps?.toInt(),
-                up = set.up?.toInt(),
-                hold = set.hold?.toInt(),
-                down = set.down?.toInt(),
-                repChanged = { set = set.copy(reps = it?.toLong()) },
-                downChanged = { set = set.copy(down = it?.toLong()) },
-                holdChanged = { set = set.copy(hold = it?.toLong()) },
-                upChanged = { set = set.copy(up = it?.toLong()) },
-            )
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
-            TextField(
-                value = set.notes,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
-                singleLine = true,
-                label = {
-                    Text(placeholder)
-                },
-                onValueChange = {
-                    set = set.copy(notes = it)
-                },
-            )
+                TempoSelector(
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                    up = set.up?.toInt(),
+                    hold = set.hold?.toInt(),
+                    down = set.down?.toInt(),
+                    downChanged = { set = set.copy(down = it?.toLong()) },
+                    holdChanged = { set = set.copy(hold = it?.toLong()) },
+                    upChanged = { set = set.copy(up = it?.toLong()) },
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.half))
+
+                DateSelector(
+                    date = set.date,
+                    dateChanged = { set = set.copy(date = it) }
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
+
+                Text("Extra Notes:")
+
+                TextField(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = MaterialTheme.spacing.one),
+                    value = set.notes,
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                    label = {
+                        Text("I killed it today!")
+                    },
+                    onValueChange = {
+                        set = set.copy(notes = it)
+                    },
+                )
+            } else {
+                val liftMap = dependencies.database.variantDataSource.getAll()
+                    .groupBy { it.lift }
+                    .toList()
+                    .sortedBy { it.first!!.id }
+
+
+                var expandedLift: Lift? by remember { mutableStateOf(null) }
+
+                LazyVerticalGrid(
+                    modifier = Modifier.padding(padding),
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                ) {
+                    liftMap.forEach { map ->
+
+                        item(
+                            span = { GridItemSpan(2) }
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .clickable { expandedLift = map.first },
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .weight(1f),
+                                    text = map.first?.name ?: "",
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowDown,
+                                    contentDescription = null
+                                )
+                            }
+                        }
+
+                        if (map.first == expandedLift) {
+                            items(map.second) { variation ->
+                                VariationCard(
+                                    modifier = Modifier.padding(MaterialTheme.spacing.quarter),
+                                    variation = variation,
+                                    onClick = { set = set.copy(variationId = variation.id) }
+                                )
+                            }
+                        }
+                    }
+
+                }
+            }
         }
     }
 }
@@ -247,7 +329,7 @@ fun DateSelector(
 
     LineItem(
         modifier = modifier,
-        title = "Set Date",
+        title = "On",
         description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
             .toString("MMMM d - yyyy"),
         onClick = {
@@ -301,11 +383,9 @@ fun LineItem(
 @Composable
 fun TempoSelector(
     modifier: Modifier = Modifier,
-    reps: Int?,
     down: Int?,
     hold: Int?,
     up: Int?,
-    repChanged: (Int?) -> Unit,
     downChanged: (Int?) -> Unit,
     holdChanged: (Int?) -> Unit,
     upChanged: (Int?) -> Unit,
@@ -314,13 +394,7 @@ fun TempoSelector(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
     ) {
-
-        NumberPicker(
-            modifier = Modifier.height(52.dp).fillMaxWidth(),
-            title = "Reps",
-            selectedNum = reps,
-            numberChanged = repChanged
-        )
+        Text("With a tempo of...")
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
@@ -374,7 +448,7 @@ fun NumberPicker(
         }
 
         TextField(
-            modifier = modifier.onFocusChanged {
+            modifier = Modifier.onFocusChanged {
                 focus = it.isFocused
             },
             value = value,

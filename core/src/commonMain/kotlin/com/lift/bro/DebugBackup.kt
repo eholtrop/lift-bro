@@ -48,34 +48,34 @@ private val debugVariations = listOf(
     // squat variations
     Variation(
         id = "back squat",
-        liftId = "1",
+        lift = debugLifts.first { it.id == "1" },
         name = "Back"
     ),
     Variation(
         id = "front squat",
-        liftId = "1",
+        lift = debugLifts.first { it.id == "1" },
         name = "Front"
     ),
     // press variations
     Variation(
         id = "military press",
-        liftId = "2",
+        lift = debugLifts.first { it.id == "2" },
         name = "Military"
     ),
     Variation(
         id = "bench press",
-        liftId = "2",
+        lift = debugLifts.first { it.id == "2" },
         name = "Bench"
     ),
     // deadlift variations
     Variation(
         id = "sumo deadlift",
-        liftId = "3",
+        lift = debugLifts.first { it.id == "3" },
         name = "Sumo"
     ),
     Variation(
         id = "regular deadlift",
-        liftId = "3",
+        lift = debugLifts.first { it.id == "3" },
         name = "Regular"
     ),
 )

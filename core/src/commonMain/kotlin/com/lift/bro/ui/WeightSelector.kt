@@ -94,36 +94,36 @@ fun WeightSelector(
 
         Space(MaterialTheme.spacing.one)
 
-        if (sets.isNotEmpty()) {
-            Text(
-                text = "Recent Sets"
-            )
-
-            Space(MaterialTheme.spacing.half)
-
-            LazyRow {
-                items(sets) { set ->
-                    Card(
-                        modifier = Modifier.padding(end = MaterialTheme.spacing.half),
-                        onClick = { referenceSet = set }
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(MaterialTheme.spacing.half)
-                        ) {
-                            Text(
-                                text = variations.firstOrNull { it.id == set.variationId }?.name
-                                    ?: "",
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                            Text(
-                                text = "${set.formattedWeight} x ${set.reps}",
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                            set.tempo.render()
-                        }
-                    }
-                }
-            }
-        }
+//        if (sets.isNotEmpty()) {
+//            Text(
+//                text = "Recent Sets"
+//            )
+//
+//            Space(MaterialTheme.spacing.half)
+//
+//            LazyRow {
+//                items(sets) { set ->
+//                    Card(
+//                        modifier = Modifier.padding(end = MaterialTheme.spacing.half),
+//                        onClick = { referenceSet = set }
+//                    ) {
+//                        Column(
+//                            modifier = Modifier.padding(MaterialTheme.spacing.half)
+//                        ) {
+//                            Text(
+//                                text = variations.firstOrNull { it.id == set.variationId }?.name
+//                                    ?: "",
+//                                style = MaterialTheme.typography.bodyMedium,
+//                            )
+//                            Text(
+//                                text = "${set.formattedWeight} x ${set.reps}",
+//                                style = MaterialTheme.typography.bodySmall,
+//                            )
+//                            set.tempo.render()
+//                        }
+//                    }
+//                }
+//            }
+//        }
     }
 }

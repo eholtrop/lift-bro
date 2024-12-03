@@ -83,7 +83,7 @@ fun VariationDetailsScreen(
     setClicked: (LBSet) -> Unit,
 ) {
     val variation = dependencies.database.variantDataSource.get(variationId)
-    val lift by dependencies.database.liftDataSource.get(variation?.liftId).collectAsState(null)
+    val lift = variation?.lift
     val sets = dependencies.database.setDataSource.getAll(variation?.id ?: "")
 
     variation?.let {

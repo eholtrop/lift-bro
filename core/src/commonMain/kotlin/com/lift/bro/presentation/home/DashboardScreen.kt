@@ -328,7 +328,7 @@ fun RecentSetsCalendar(
                     val variation =
                         dependencies.database.variantDataSource.get(pair.first)
                     val lift by dependencies.database.liftDataSource.get(
-                        variation?.liftId
+                        variation?.lift?.id
                     )
                         .collectAsState(null)
 

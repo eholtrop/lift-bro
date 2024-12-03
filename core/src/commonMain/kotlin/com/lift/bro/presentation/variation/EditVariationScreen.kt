@@ -73,7 +73,7 @@ fun EditVariationScreen(
     variationSaved: () -> Unit,
 ) {
     var variation by rememberVariation(id)
-    val lift by rememberLift(variation.liftId ?: parentLiftId)
+    val lift by rememberLift(variation.lift?.id ?: parentLiftId)
     LiftingScaffold(
         title = id?.let { "Edit Variation" } ?: "Create Variation",
         fabIcon = Icons.Default.Edit,
@@ -106,7 +106,7 @@ fun EditVariationScreen(
             LiftSelector(
                 modifier = Modifier.height(160.dp),
                 lift = lift,
-                liftSelected = { variation = variation.copy(liftId = it.id) }
+                liftSelected = { variation = variation.copy(lift = it) }
             )
         }
     }
