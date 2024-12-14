@@ -22,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -39,7 +40,9 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.window.Dialog
 import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.toString
 import com.lift.bro.ui.Space
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -96,11 +99,31 @@ data class ComposeCalendarShapes(
 private const val CALENDAR_MAX_MONTH_SIZE = 48
 private const val CALENDAR_INITIAL_PAGE = CALENDAR_MAX_MONTH_SIZE / 2
 
+@Composable
+fun CalendarDialog(
+    modifier: Modifier = Modifier,
+    selectedDate: LocalDate,
+    contentPadding: PaddingValues,
+    dateSelected: (LocalDate) -> Unit,
+    onDismissRequest: () -> Unit,
+    date: @Composable RowScope.(LocalDate) -> Unit
+) {
+    Dialog(
+        onDismissRequest = onDismissRequest
+    ) {
+        Calendar(
+            modifier = modifier,
+            selectedDate = selectedDate,
+            contentPadding = contentPadding,
+            dateSelected = dateSelected,
+            date = date,
+        )
+    }
+}
 
 /**
  * A Jetpack Compose Calendar Implementation
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Calendar(
     modifier: Modifier = Modifier,
@@ -130,7 +153,6 @@ fun Calendar(
 val today get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 private fun CalendarContent(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
@@ -156,7 +178,7 @@ private fun CalendarContent(
                 modifier = Modifier.semantics { heading() }.padding(
                     start = MaterialTheme.spacing.one
                 ),
-                text = pagerState.currentMonth.month.toString(),
+                text = pagerState.currentMonth.toString("MMMM - yyyy"),
                 style = MaterialTheme.typography.titleMedium
             )
 

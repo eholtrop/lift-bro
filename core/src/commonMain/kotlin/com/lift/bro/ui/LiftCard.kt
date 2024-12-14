@@ -37,8 +37,7 @@ fun LiftCard(
     val max = sets.maxByOrNull { it.weight }
 
     Card(
-        modifier = modifier
-            .aspectRatio(1f),
+        modifier = modifier,
         onClick = { onClick(lift) }
     ) {
         Column(
