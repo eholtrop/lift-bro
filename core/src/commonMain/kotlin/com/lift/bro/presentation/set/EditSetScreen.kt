@@ -2,23 +2,39 @@
 
 package com.lift.bro.presentation.set
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -34,11 +50,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.LinkInteractionListener
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -46,13 +72,16 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.TopBar
+import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
-import com.lift.bro.ui.VariationSelector
+import com.lift.bro.ui.VariationCard
 import com.lift.bro.ui.WeightSelector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -68,6 +97,7 @@ private data class EditSetState(
     val hold: Long? = 1,
     val up: Long? = 1,
     val date: Instant = Clock.System.now(),
+    val notes: String = "",
 )
 
 private fun LBSet.toUiState() = EditSetState(
@@ -78,7 +108,8 @@ private fun LBSet.toUiState() = EditSetState(
     down = this.tempo.down,
     hold = this.tempo.hold,
     up = this.tempo.up,
-    date = this.date
+    date = this.date,
+    notes = this.notes,
 )
 
 private fun EditSetState.toDomain() = LBSet(
@@ -92,7 +123,8 @@ private fun EditSetState.toDomain() = LBSet(
         hold = this.hold!!,
         up = this.up!!
     ),
-    date = this.date
+    date = this.date,
+    notes = this.notes,
 )
 
 @Composable
@@ -121,7 +153,7 @@ fun EditSetScreen(
         fabIcon = Icons.Default.Edit,
         contentDescription = "Save Set",
         fabEnabled = saveEnabled,
-        title = "",
+        title = "I Crushed...",
         actions = {
             if (setId != null) {
                 val navigator = LocalNavigator.currentOrThrow
@@ -148,56 +180,156 @@ fun EditSetScreen(
             modifier = Modifier.padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            VariationSelector(
-                variation = variation,
-                variationSelected = {
-                    set = set.copy(variationId = it.id)
-                },
+            NumberPicker(
+                modifier = Modifier.animateContentSize().wrapContentSize(),
+                selectedNum = set.reps?.toInt(),
+                title = null,
+                numberChanged = { set = set.copy(reps = it?.toLong()) },
+                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
             )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
+            Space(MaterialTheme.spacing.oneAndHalf)
 
-            WeightSelector(
+            Card(
                 modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                weight = Pair(set.weight, Settings.defaultUOM),
-                liftId = variation?.liftId ?: "",
-                placeholder = "Weight",
-                weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
-            )
+                border = BorderStroke(width = Dp.Hairline, color = Color.Black)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .animateContentSize()
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Space(MaterialTheme.spacing.one)
+                    Text(
+                        style = MaterialTheme.typography.headlineSmall,
+                        text = buildAnnotatedString {
+                            withLink(
+                                LinkAnnotation.Clickable(
+                                    tag = "change lift"
+                                ) {
+                                    set = set.copy(variationId = null)
+                                }
+                            ) {
+                                append(variation?.fullName ?: "Select Lift")
+                            }
+                        },
+                    )
+                    Space(MaterialTheme.spacing.one)
+                    if (variation == null) {
+                        VariationSelector(
+                            variationSelected = { set = set.copy(variationId = it.id) }
+                        )
+                    }
+                }
+            }
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
+            if (variation != null) {
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
 
-            DateSelector(
-                date = set.date,
-                dateChanged = { set = set.copy(date = it) }
-            )
+                WeightSelector(
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                    weight = Pair(set.weight, Settings.defaultUOM),
+                    liftId = variation.lift?.id ?: "",
+                    placeholder = "At",
+                    weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
+                )
 
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
 
-            TempoSelector(
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                reps = set.reps?.toInt(),
-                up = set.up?.toInt(),
-                hold = set.hold?.toInt(),
-                down = set.down?.toInt(),
-                repChanged = { set = set.copy(reps = it?.toLong()) },
-                downChanged = { set = set.copy(down = it?.toLong()) },
-                holdChanged = { set = set.copy(hold = it?.toLong()) },
-                upChanged = { set = set.copy(up = it?.toLong()) },
-            )
+                TempoSelector(
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                    up = set.up?.toInt(),
+                    hold = set.hold?.toInt(),
+                    down = set.down?.toInt(),
+                    downChanged = { set = set.copy(down = it?.toLong()) },
+                    holdChanged = { set = set.copy(hold = it?.toLong()) },
+                    upChanged = { set = set.copy(up = it?.toLong()) },
+                )
 
-            TextField(
-                value = set.notes,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
-                singleLine = true,
-                label = {
-                    Text(placeholder)
-                },
-                onValueChange = {
-                    set = set.copy(notes = it)
-                },
-            )
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+
+                DateSelector(
+                    date = set.date,
+                    dateChanged = { set = set.copy(date = it) }
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = MaterialTheme.spacing.one),
+                ) {
+                    Text("Extra Notes:")
+
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = set.notes,
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
+                        singleLine = true,
+                        placeholder = {
+                            Text("I killed it today!")
+                        },
+                        onValueChange = {
+                            set = set.copy(notes = it)
+                        },
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+internal fun VariationSelector(
+    modifier: Modifier = Modifier,
+    variationSelected: (Variation) -> Unit
+) {
+    val liftMap = dependencies.database.variantDataSource.getAll()
+        .groupBy { it.lift }
+        .toList()
+        .sortedBy { it.first!!.id }
+
+
+    var expandedLift: Lift? by remember { mutableStateOf(null) }
+
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(MaterialTheme.spacing.one),
+    ) {
+        liftMap.forEach { map ->
+
+            item(
+                span = { GridItemSpan(2) }
+            ) {
+                Row(
+                    modifier = Modifier
+                        .clickable { expandedLift = map.first },
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .weight(1f),
+                        text = map.first?.name ?: "",
+                    )
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = null
+                    )
+                }
+            }
+
+            if (map.first == expandedLift) {
+                items(map.second) { variation ->
+                    VariationCard(
+                        modifier = Modifier.padding(MaterialTheme.spacing.quarter),
+                        variation = variation,
+                        onClick = { variationSelected(variation) }
+                    )
+                }
+            }
+        }
+
     }
 }
 
@@ -244,7 +376,7 @@ fun DateSelector(
 
     LineItem(
         modifier = modifier,
-        title = "Set Date",
+        title = "On",
         description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
             .toString("MMMM d - yyyy"),
         onClick = {
@@ -298,11 +430,9 @@ fun LineItem(
 @Composable
 fun TempoSelector(
     modifier: Modifier = Modifier,
-    reps: Int?,
     down: Int?,
     hold: Int?,
     up: Int?,
-    repChanged: (Int?) -> Unit,
     downChanged: (Int?) -> Unit,
     holdChanged: (Int?) -> Unit,
     upChanged: (Int?) -> Unit,
@@ -311,13 +441,7 @@ fun TempoSelector(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
     ) {
-
-        NumberPicker(
-            modifier = Modifier.height(52.dp).fillMaxWidth(),
-            title = "Reps",
-            selectedNum = reps,
-            numberChanged = repChanged
-        )
+        Text("With a tempo of...")
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
@@ -348,10 +472,11 @@ fun TempoSelector(
 @Composable
 fun NumberPicker(
     modifier: Modifier,
-    title: String,
+    title: String?,
     selectedNum: Int? = null,
     numberChanged: (Int?) -> Unit,
-    imeAction: ImeAction = ImeAction.Next
+    imeAction: ImeAction = ImeAction.Next,
+    textStyle: TextStyle = LocalTextStyle.current
 ) {
     Column(
         modifier = modifier,
@@ -371,7 +496,7 @@ fun NumberPicker(
         }
 
         TextField(
-            modifier = modifier.onFocusChanged {
+            modifier = Modifier.onFocusChanged {
                 focus = it.isFocused
             },
             value = value,
@@ -379,11 +504,61 @@ fun NumberPicker(
                 numberChanged(it.text.toIntOrNull())
                 value = it
             },
+            label = title?.let {
+                {
+                    Text(title)
+                }
+            },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number,
+                imeAction = imeAction,
+            ),
+            textStyle = textStyle,
+        )
+    }
+}
+
+@Composable
+fun DecimalPicker(
+    modifier: Modifier,
+    title: String,
+    selectedNum: Double? = null,
+    numberChanged: (Double?) -> Unit,
+    imeAction: ImeAction = ImeAction.Next,
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+
+        var value by remember { mutableStateOf(TextFieldValue(selectedNum?.toString() ?: "")) }
+
+        var focus by remember { mutableStateOf(false) }
+
+        if (focus) {
+            LaunchedEffect(focus) {
+                if (focus) {
+                    value = value.copy(selection = TextRange(0, value.text.length))
+                }
+            }
+        }
+
+        TextField(
+            modifier = Modifier.onFocusChanged {
+                focus = it.isFocused
+            },
+            value = value,
+            onValueChange = {
+                numberChanged(it.text.toDoubleOrNull())
+                value = it
+            },
             label = {
                 Text(title)
             },
+            singleLine = true,
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number,
+                keyboardType = KeyboardType.Decimal,
                 imeAction = imeAction,
             )
         )

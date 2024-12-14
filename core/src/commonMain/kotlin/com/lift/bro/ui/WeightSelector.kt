@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -21,13 +22,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.presentation.set.DecimalPicker
+import com.lift.bro.presentation.set.NumberPicker
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.variation.UOM
 import com.lift.bro.presentation.variation.formattedTempo
 import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.presentation.variation.render
+import kotlinx.coroutines.Job
 
 expect object DecimalFormat {
     fun formatWeight(weight: Double?): String
@@ -41,89 +46,38 @@ fun WeightSelector(
     placeholder: String,
     weightChanged: (Pair<Double?, UOM>) -> Unit,
 ) {
-
-    var referenceSet by remember { mutableStateOf<LBSet?>(null) }
-
-    Column(
-        modifier = modifier.animateContentSize()
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        var currentValue by remember { mutableStateOf(DecimalFormat.formatWeight(weight.first)) }
+
+        DecimalPicker(
+            modifier = Modifier.weight(.33f).height(52.dp),
+            title = placeholder,
+            selectedNum = currentValue.toDoubleOrNull(),
+            numberChanged = {
+                currentValue = DecimalFormat.formatWeight(it)
+                weightChanged(weight.copy(first = it))
+            },
+        )
+
+        Spacer(modifier = Modifier.width(MaterialTheme.spacing.one))
+
+        Button(
+            onClick = {
+                if (weight.second == UOM.POUNDS) {
+                    weightChanged(
+                        weight.copy(second = UOM.KG)
+                    )
+                } else {
+                    weightChanged(
+                        weight.copy(second = UOM.POUNDS)
+                    )
+                }
+            }
         ) {
-
-            var currentValue by remember { mutableStateOf(DecimalFormat.formatWeight(weight.first)) }
-
-            TextField(
-                value = currentValue,
-                keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
-                singleLine = true,
-                label = {
-                    Text(placeholder)
-                },
-                onValueChange = {
-                    currentValue = it
-                    if (it.toDoubleOrNull() != null) {
-                        weightChanged(weight.copy(first = it.toDoubleOrNull()))
-                    }
-                },
-            )
-
-            Spacer(modifier = Modifier.width(MaterialTheme.spacing.one))
-
-            Button(
-                onClick = {
-                    if (weight.second == UOM.POUNDS) {
-                        weightChanged(
-                            weight.copy(second = UOM.KG)
-                        )
-                    } else {
-                        weightChanged(
-                            weight.copy(second = UOM.POUNDS)
-                        )
-                    }
-                }
-            ) {
-                Text(text = weight.second.value)
-            }
-        }
-
-        val variations = dependencies.database.variantDataSource.getAll(liftId = liftId)
-
-        val sets = dependencies.database.setDataSource.getAllForLift(liftId)
-            .sortedByDescending { it.date }
-
-        Space(MaterialTheme.spacing.one)
-
-        if (sets.isNotEmpty()) {
-            Text(
-                text = "Recent Sets"
-            )
-
-            Space(MaterialTheme.spacing.half)
-
-            LazyRow {
-                items(sets) { set ->
-                    Card(
-                        modifier = Modifier.padding(end = MaterialTheme.spacing.half),
-                        onClick = { referenceSet = set }
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(MaterialTheme.spacing.half)
-                        ) {
-                            Text(
-                                text = variations.firstOrNull { it.id == set.variationId }?.name
-                                    ?: "",
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                            Text(
-                                text = "${set.formattedWeight} x ${set.reps}",
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                            set.tempo.render()
-                        }
-                    }
-                }
-            }
+            Text(text = weight.second.value)
         }
     }
 }
