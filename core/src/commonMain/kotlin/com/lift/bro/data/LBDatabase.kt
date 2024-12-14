@@ -77,9 +77,9 @@ class VariationRepository(
     }
 
     override fun getAll(liftId: String): List<Variation> {
-        val parentLift = liftQueries.get(liftId).executeAsOne().toDomain()
+        val parentLift = liftQueries.get(liftId).executeAsOneOrNull()?.toDomain()
 
-        return variationQueries.getAllForLift(liftId).executeAsList().map { it.toDomain(parentLift) }
+        return variationQueries.getAllForLift(liftId).executeAsList().map { it.toDomain(parentLift!!) }
     }
 
     override fun getAll(): List<Variation> {

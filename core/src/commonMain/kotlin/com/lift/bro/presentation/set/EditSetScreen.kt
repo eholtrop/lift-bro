@@ -28,6 +28,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -128,6 +129,8 @@ fun EditSetScreen(
     setId: String?,
     variationId: String?,
     setSaved: () -> Unit,
+    createVariationClicked: () -> Unit,
+    createLiftClicked: () -> Unit,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     var set by remember {
@@ -216,6 +219,23 @@ fun EditSetScreen(
                         VariationSelector(
                             variationSelected = { set = set.copy(variationId = it.id) }
                         )
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Button(
+                                onClick = createVariationClicked
+                            ) {
+                                Text("Create Variation")
+                            }
+                            Space(MaterialTheme.spacing.half)
+                            Button(
+                                onClick = createLiftClicked,
+                            ) {
+                                Text("Create Lift")
+                            }
+                            Space(MaterialTheme.spacing.one)
+                        }
                     }
                 }
             }
