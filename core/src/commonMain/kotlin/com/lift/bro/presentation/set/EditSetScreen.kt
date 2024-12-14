@@ -2,12 +2,12 @@
 
 package com.lift.bro.presentation.set
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -52,10 +51,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.LinkInteractionListener
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -290,7 +286,6 @@ internal fun VariationSelector(
         .toList()
         .sortedBy { it.first!!.id }
 
-
     var expandedLift: Lift? by remember { mutableStateOf(null) }
 
     LazyVerticalGrid(
@@ -305,7 +300,13 @@ internal fun VariationSelector(
             ) {
                 Row(
                     modifier = Modifier
-                        .clickable { expandedLift = map.first },
+                        .animateItem(placementSpec = null)
+                        .defaultMinSize(minHeight = 44.dp)
+                        .clickable(
+                            role = Role.Button,
+                            onClick = { expandedLift = map.first },
+                        ),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         modifier = Modifier
@@ -322,7 +323,9 @@ internal fun VariationSelector(
             if (map.first == expandedLift) {
                 items(map.second) { variation ->
                     VariationCard(
-                        modifier = Modifier.padding(MaterialTheme.spacing.quarter),
+                        modifier = Modifier.padding(MaterialTheme.spacing.quarter).animateItem(
+                            placementSpec = null
+                        ),
                         variation = variation,
                         onClick = { variationSelected(variation) }
                     )
