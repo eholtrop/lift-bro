@@ -3,6 +3,7 @@ package com.lift.bro.presentation.components
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -33,13 +35,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.toString
 import com.lift.bro.ui.Space
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -50,6 +57,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
+import kotlin.math.min
 
 
 object ComposeCalendarDefaults {
@@ -106,6 +114,9 @@ fun Calendar(
     modifier: Modifier = Modifier,
     selectedDate: LocalDate,
     contentPadding: PaddingValues,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
+    numberOfDotsForDate: (LocalDate) -> Int,
     dateSelected: (LocalDate) -> Unit,
     date: @Composable RowScope.(LocalDate) -> Unit
 ) {
@@ -121,6 +132,9 @@ fun Calendar(
             pagerState = pagerState,
             selection = selectedDate,
             dateSelected = dateSelected,
+            horizontalArrangement = horizontalArrangement,
+            verticalArrangement = verticalArrangement,
+            numberOfDotsForDate = numberOfDotsForDate,
             date = date,
             contentPadding = contentPadding
         )
@@ -130,20 +144,22 @@ fun Calendar(
 val today get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
 private fun CalendarContent(
     modifier: Modifier = Modifier,
     pagerState: PagerState,
     selection: LocalDate?,
     contentPadding: PaddingValues,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateSelected: (LocalDate) -> Unit,
+    numberOfDotsForDate: (LocalDate) -> Int,
     date: @Composable RowScope.(LocalDate) -> Unit
 ) {
 
     val coroutineScope = rememberCoroutineScope()
 
     Column(
-        modifier = Modifier,
+        modifier = modifier,
     ) {
         Row(
             modifier = Modifier.padding(
@@ -156,7 +172,7 @@ private fun CalendarContent(
                 modifier = Modifier.semantics { heading() }.padding(
                     start = MaterialTheme.spacing.one
                 ),
-                text = pagerState.currentMonth.month.toString(),
+                text = pagerState.currentMonth.toString("MMMM - yyyy"),
                 style = MaterialTheme.typography.titleMedium
             )
 
@@ -210,7 +226,7 @@ private fun CalendarContent(
             DayOfWeek.values().forEach {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = it.toString().take(1),
+                    text = it.toString().take(3).lowercase(),
                     textAlign = TextAlign.Center,
                 )
             }
@@ -228,32 +244,35 @@ private fun CalendarContent(
             val startDate = currentMonth.minus(DatePeriod(days = today.dayOfMonth - 1))
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = verticalArrangement
             ) {
 
                 for (weekOffset in 0..5) {
-                    val currentWeek = startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal))
-                        .plus(DatePeriod(days = 7 * weekOffset))
+                    val currentWeek =
+                        startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal))
+                            .plus(DatePeriod(days = 7 * weekOffset))
 
                     Row(
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        horizontalArrangement = horizontalArrangement
                     ) {
                         for (dayOffset in 0..6) {
                             val currentDay = currentWeek.plus(DatePeriod(days = dayOffset))
-
-                            if (currentDay.month == currentMonth.month) {
-
-                                val selected = currentDay == selection
-
-                                date(currentDay)
-                            } else {
-                                Spacer(
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .aspectRatio(1f)
-                                )
-                            }
+                            CalendarDate(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .aspectRatio(1f),
+                                date = currentDay,
+                                style = when {
+                                    selection == currentDay -> CalendarDateStyle.Selected
+                                    currentDay.month == currentMonth.month -> CalendarDateStyle.Enabled
+                                    else -> CalendarDateStyle.Disabled
+                                },
+                                numDots = numberOfDotsForDate(currentDay),
+                                onClick = dateSelected,
+                            )
                         }
                     }
                 }
@@ -262,5 +281,65 @@ private fun CalendarContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+enum class CalendarDateStyle {
+    Enabled, Disabled, Selected;
+}
+
+@Composable
+private fun CalendarDate(
+    modifier: Modifier = Modifier,
+    date: LocalDate,
+    style: CalendarDateStyle,
+    numDots: Int,
+    onClick: (LocalDate) -> Unit,
+) {
+
+    val backgroundColor = when (style) {
+        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.primary
+        CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.secondaryContainer
+        CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.tertiaryContainer
+    }
+
+    val contentColor = when (style) {
+        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.onPrimary
+        CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.onSecondaryContainer
+        CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.onTertiaryContainer
+    }
+
+    Column(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.small)
+            .background(
+                color = backgroundColor,
+                shape = MaterialTheme.shapes.small,
+            )
+            .clickable {
+                onClick(date)
+            },
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = date.dayOfMonth.toString(),
+            color = contentColor,
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Space(MaterialTheme.spacing.quarter)
+
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+        ) {
+            for (i in 1..min(numDots, 3)) {
+                Box(
+                    modifier = Modifier.background(
+                        color = contentColor,
+                        shape = CircleShape,
+                    ).size(4.dp)
+                )
+            }
+        }
+    }
+}
+
 private val PagerState.currentMonth get() = today.plus(DatePeriod(months = this.currentPage - 1))

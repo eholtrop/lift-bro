@@ -4,7 +4,9 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -37,10 +40,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -52,10 +57,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import com.lift.bro.data.LBDatabase
@@ -238,90 +245,56 @@ fun RecentSetsCalendar(
         .toList()
         .sortedByDescending { it.second.maxOf { it.weight } }
 
-    LazyVerticalStaggeredGrid(
+    LazyColumn(
         modifier = modifier,
-        columns = StaggeredGridCells.Fixed(2),
-        verticalItemSpacing = MaterialTheme.spacing.half,
-        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
-        contentPadding = PaddingValues(MaterialTheme.spacing.one)
+        contentPadding = PaddingValues(MaterialTheme.spacing.one),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
     ) {
 
-        item(
-            span = StaggeredGridItemSpan.FullLine
-        ) {
+        item {
             Calendar(
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight(),
                 selectedDate = selectedDate,
                 contentPadding = PaddingValues(0.dp),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
                 dateSelected = {
                     selectedDate = it
                 },
                 date = { date ->
-                    val selected = date == selectedDate
-                    Column(
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f)
-                            .background(
-                                color = if (selected) {
-                                    MaterialTheme.colorScheme.primary
-                                } else if (sets.any { it.date.toLocalDate() == date }) {
-                                    MaterialTheme.colorScheme.surfaceVariant
-                                } else {
-                                    Color.Transparent
-                                },
-                                shape = CircleShape
-                            )
-                            .clickable {
-                                selectedDate = date
-                            },
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = date.dayOfMonth.toString(),
-                            color = if (selected) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            },
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-
-                        Space(MaterialTheme.spacing.quarter)
-
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-                        ) {
-                            for (i in 1..kotlin.math.min(sets.filter { it.date.toLocalDate() == date }.groupBy { it.variationId }.size, 3)) {
-                                Box(
-                                    modifier = Modifier.background(
-                                        color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                        shape = CircleShape,
-                                    ).size(4.dp)
-                                )
-                            }
-                        }
-                    }
+                },
+                numberOfDotsForDate = { date ->
+                    sets.filter { it.date.toLocalDate() == date }
+                        .groupBy { it.variationId }.size
                 }
             )
         }
 
-        item(
-            span = StaggeredGridItemSpan.FullLine
-        ) {
+        item {
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .height(height = 2.dp)
+                    .background(MaterialTheme.colorScheme.surfaceDim)
+            ) {}
+        }
+
+        item {
             Text(
-                text = selectedDate.toString("EEEE, MMM d yyyy"),
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onBackground
+                text = selectedDate.toString("EEEE, MMM d - yyyy"),
+                style = MaterialTheme.typography.titleLarge
             )
         }
 
         items(
             selectedVariations
         ) { pair ->
-            Card {
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                )
+            ) {
                 Column(
                     modifier = Modifier.padding(MaterialTheme.spacing.half)
                 ) {
@@ -334,7 +307,7 @@ fun RecentSetsCalendar(
 
                     Text(
                         text = "${variation?.name} ${lift?.name}",
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                     )
 
                     pair.second.sortedByDescending { it.weight }
@@ -359,9 +332,7 @@ fun RecentSetsCalendar(
             }
         }
 
-        item(
-            span = StaggeredGridItemSpan.FullLine
-        ) {
+        item {
             Spacer(modifier = Modifier.height(72.dp))
         }
     }
