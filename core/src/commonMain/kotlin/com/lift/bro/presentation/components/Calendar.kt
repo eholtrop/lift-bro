@@ -108,7 +108,6 @@ private const val CALENDAR_INITIAL_PAGE = CALENDAR_MAX_MONTH_SIZE / 2
 /**
  * A Jetpack Compose Calendar Implementation
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Calendar(
     modifier: Modifier = Modifier,
@@ -239,8 +238,7 @@ private fun CalendarContent(
             modifier = Modifier.fillMaxWidth(),
             contentPadding = contentPadding,
         ) { page ->
-            val monthOffset = remember { page - 1 }
-            val currentMonth = today.plus(DatePeriod(months = monthOffset))
+            val currentMonth = pagerState.currentMonth
             val startDate = currentMonth.minus(DatePeriod(days = today.dayOfMonth - 1))
 
             Column(
@@ -342,4 +340,4 @@ private fun CalendarDate(
     }
 }
 
-private val PagerState.currentMonth get() = today.plus(DatePeriod(months = this.currentPage - 1))
+private val PagerState.currentMonth get() = today.plus(DatePeriod(months = CALENDAR_INITIAL_PAGE - currentPage))
