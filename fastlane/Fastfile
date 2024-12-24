@@ -20,6 +20,6 @@ platform :android do
   desc "Deploy a new version to the Google Play"
   lane :deploy do |options|
     gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
-   supply(track: "internal", release_status:"draft")
+   supply(track: "beta")
   end
 end
