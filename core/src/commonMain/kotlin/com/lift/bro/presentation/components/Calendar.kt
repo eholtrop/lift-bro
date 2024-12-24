@@ -115,7 +115,7 @@ fun Calendar(
     contentPadding: PaddingValues,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
-    numberOfDotsForDate: (LocalDate) -> Int,
+    dotsForDate: (LocalDate) -> List<Color>,
     dateSelected: (LocalDate) -> Unit,
     date: @Composable RowScope.(LocalDate) -> Unit
 ) {
@@ -133,7 +133,7 @@ fun Calendar(
             dateSelected = dateSelected,
             horizontalArrangement = horizontalArrangement,
             verticalArrangement = verticalArrangement,
-            numberOfDotsForDate = numberOfDotsForDate,
+            dotsForDate = dotsForDate,
             date = date,
             contentPadding = contentPadding
         )
@@ -151,7 +151,7 @@ private fun CalendarContent(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateSelected: (LocalDate) -> Unit,
-    numberOfDotsForDate: (LocalDate) -> Int,
+    dotsForDate: (LocalDate) -> List<Color>,
     date: @Composable RowScope.(LocalDate) -> Unit
 ) {
 
@@ -268,7 +268,7 @@ private fun CalendarContent(
                                     currentDay.month == currentMonth.month -> CalendarDateStyle.Enabled
                                     else -> CalendarDateStyle.Disabled
                                 },
-                                numDots = numberOfDotsForDate(currentDay),
+                                dots = dotsForDate(currentDay),
                                 onClick = dateSelected,
                             )
                         }
@@ -288,8 +288,8 @@ private fun CalendarDate(
     modifier: Modifier = Modifier,
     date: LocalDate,
     style: CalendarDateStyle,
-    numDots: Int,
     onClick: (LocalDate) -> Unit,
+    dots: List<Color> = emptyList(),
 ) {
 
     val backgroundColor = when (style) {
@@ -328,10 +328,10 @@ private fun CalendarDate(
         Row(
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
         ) {
-            for (i in 1..min(numDots, 3)) {
+            dots.forEach {
                 Box(
                     modifier = Modifier.background(
-                        color = contentColor,
+                        color = if (style == CalendarDateStyle.Selected) contentColor else it,
                         shape = CircleShape,
                     ).size(4.dp)
                 )

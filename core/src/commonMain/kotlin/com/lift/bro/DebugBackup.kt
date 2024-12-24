@@ -1,5 +1,6 @@
 package com.lift.bro
 
+import androidx.compose.ui.graphics.Color
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.Backup
 import com.lift.bro.domain.models.LBSet
@@ -12,36 +13,19 @@ import kotlinx.datetime.minus
 val debugLifts = listOf(
     Lift(
         id = "1",
-        name = "Squat"
+        name = "Squat",
+        color = null,
     ),
     Lift(
         id = "2",
-        name = "Press"
+        name = "Press",
+        color = Color.Red.value,
     ),
     Lift(
         id = "3",
-        name = "Deadlift"
+        name = "Deadlift",
+        color = Color.Blue.value,
     ),
-    Lift(
-        id = "4",
-        name = "Dead lift"
-    ),
-    Lift(
-        id = "5",
-        name = "Dead lift"
-    ),
-    Lift(
-        id = "6",
-        name = "Dead lift"
-    ),
-    Lift(
-        id = "7",
-        name = "Dead lift"
-    ),
-    Lift(
-        id = "8",
-        name = "Dead lift"
-    )
 )
 
 private val debugVariations = listOf(
@@ -97,7 +81,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        variationId = "regular deadlift",
         weight = 140.0,
         reps = 1,
         notes = ""
@@ -123,7 +107,23 @@ val debugSets = listOf(
         variationId = "back squat",
         weight = 190.0,
         reps = 1,
-        date = Clock.System.now().minus(72, DateTimeUnit.HOUR),
+        date = Clock.System.now().minus(102, DateTimeUnit.HOUR),
+        notes = ""
+    ),
+    LBSet(
+        id = uuid4().toString(),
+        variationId = "regular deadlift",
+        weight = 170.0,
+        reps = 1,
+        date = Clock.System.now().minus(102, DateTimeUnit.HOUR),
+        notes = ""
+    ),
+    LBSet(
+        id = uuid4().toString(),
+        variationId = "bench press",
+        weight = 190.0,
+        reps = 1,
+        date = Clock.System.now().minus(200, DateTimeUnit.HOUR),
         notes = ""
     ),
 )

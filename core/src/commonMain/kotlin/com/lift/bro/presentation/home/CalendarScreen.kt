@@ -3,19 +3,24 @@ package com.lift.bro.presentation.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -26,18 +31,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.presentation.components.Calendar
 import com.lift.bro.presentation.components.today
+import com.lift.bro.presentation.lift.toColor
 import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.presentation.variation.render
+import com.lift.bro.ui.Space
 
 @Composable
 fun CalendarScreen(
@@ -47,6 +56,7 @@ fun CalendarScreen(
     var selectedDate by remember { mutableStateOf(today) }
 
     val sets = dependencies.database.setDataSource.getAll()
+    val variations = dependencies.database.variantDataSource.getAll()
 
     val selectedVariations = sets.filter { it.date.toLocalDate() == selectedDate }
         .groupBy { it.variationId }
@@ -60,6 +70,7 @@ fun CalendarScreen(
     ) {
 
         item {
+            val defaultColor = MaterialTheme.colorScheme.primary
             Calendar(
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight(),
@@ -72,9 +83,12 @@ fun CalendarScreen(
                 },
                 date = { date ->
                 },
-                numberOfDotsForDate = { date ->
-                    sets.filter { it.date.toLocalDate() == date }
-                        .groupBy { it.variationId }.size
+                dotsForDate = { date ->
+                    variations.filter { variation ->
+                        sets.any { it.date.toLocalDate() == date && variation.id == it.variationId }
+                    }.map {
+                        it.lift?.color?.toColor() ?: defaultColor
+                    }
                 }
             )
         }
@@ -104,39 +118,56 @@ fun CalendarScreen(
                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             ) {
-                Column(
-                    modifier = Modifier.padding(MaterialTheme.spacing.half)
+                Row(
+                    modifier = Modifier.padding(
+                        horizontal = MaterialTheme.spacing.one,
+                        vertical = MaterialTheme.spacing.half
+                    ),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     val variation =
                         dependencies.database.variantDataSource.get(pair.first)
                     val lift by dependencies.database.liftDataSource.get(
                         variation?.lift?.id
-                    )
-                        .collectAsState(null)
+                    ).collectAsState(null)
 
-                    Text(
-                        text = "${variation?.name} ${lift?.name}",
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                    Column(
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text(
+                            text = "${variation?.name} ${lift?.name}",
+                            style = MaterialTheme.typography.titleMedium,
+                        )
 
-                    pair.second.sortedByDescending { it.weight }
-                        .forEach { set ->
-                            Column(
-                                modifier = Modifier.fillMaxWidth()
-                                    .defaultMinSize(minHeight = 44.dp)
-                                    .clickable(
-                                        role = Role.Button,
-                                        onClick = { setClicked(set) }
-                                    ),
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "${set.formattedWeight} x ${set.reps}",
-                                    style = MaterialTheme.typography.titleMedium,
-                                )
-                                set.tempo.render()
+                        pair.second.sortedByDescending { it.weight }
+                            .forEach { set ->
+                                Column(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .defaultMinSize(minHeight = 44.dp)
+                                        .clickable(
+                                            role = Role.Button,
+                                            onClick = { setClicked(set) }
+                                        ),
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Text(
+                                        text = "${set.formattedWeight} x ${set.reps}",
+                                        style = MaterialTheme.typography.titleMedium,
+                                    )
+                                    set.tempo.render()
+                                }
                             }
-                        }
+                    }
+
+                    Space(MaterialTheme.spacing.half)
+
+                    Box(
+                        modifier = Modifier.background(
+                            color = lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary,
+                            shape = CircleShape,
+                        ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
+                        content = {}
+                    )
                 }
             }
         }

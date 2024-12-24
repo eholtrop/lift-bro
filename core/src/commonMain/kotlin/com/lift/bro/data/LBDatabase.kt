@@ -185,7 +185,8 @@ class LiftDataSource(
         GlobalScope.launch(dispatcher) {
             liftQueries.save(
                 lift.id,
-                lift.name
+                lift.name,
+                lift.color?.toLong(),
             )
         }
         return true
@@ -199,6 +200,7 @@ class LiftDataSource(
 private fun comliftbrodb.Lift.toDomain() = Lift(
     id = this.id,
     name = this.name,
+    color = this.color?.toULong(),
 )
 
 private fun comliftbrodb.Variation.toDomain(parentLift: Lift) = Variation(
