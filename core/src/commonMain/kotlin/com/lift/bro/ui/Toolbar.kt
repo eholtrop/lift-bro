@@ -150,3 +150,18 @@ fun TopBarIconButton(
         )
     }
 }
+
+@Composable
+fun TopBarButton(
+    onClick: () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    IconButton(
+        modifier = Modifier.padding(
+            start = MaterialTheme.spacing.one,
+            top = MaterialTheme.spacing.one,
+        ),
+        onClick = onClick,
+        content = content,
+    )
+}

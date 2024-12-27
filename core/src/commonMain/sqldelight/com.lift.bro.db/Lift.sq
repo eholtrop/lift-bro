@@ -1,6 +1,7 @@
 CREATE TABLE Lift (
     id TEXT NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL
+    name TEXT NOT NULL,
+    color INTEGER DEFAULT NULL
 );
 
 get:
@@ -11,8 +12,8 @@ SELECT * FROM Lift;
 
 save:
 INSERT OR REPLACE
-INTO Lift(id, name)
-VALUES(?, ?);
+INTO Lift(id, name, color)
+VALUES(?, ?, ?);
 
 delete:
 DELETE FROM Lift WHERE id = ?;

@@ -53,6 +53,7 @@ kotlin {
 
                 implementation(libs.voyager.navigator)
                 implementation(libs.voyager.transitions)
+                implementation("com.github.skydoves:colorpicker-compose:1.1.2")
             }
         }
 

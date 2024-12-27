@@ -56,7 +56,7 @@ fun EditLiftScreen(
         *database.variantDataSource.getAll(liftId ?: "").toTypedArray()
     )
 
-    var lift by remember { mutableStateOf<Lift>(Lift(id = uuid4().toString(), name = "")) }
+    var lift by remember { mutableStateOf<Lift>(Lift(id = uuid4().toString(), name = "", color = null)) }
 
     LaunchedEffect("get lift") {
         database.liftDataSource.get(liftId ?: "")
