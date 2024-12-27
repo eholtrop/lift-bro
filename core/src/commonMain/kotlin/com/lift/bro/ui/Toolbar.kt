@@ -1,6 +1,9 @@
 package com.lift.bro.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BasicTooltipBox
+import androidx.compose.foundation.BasicTooltipState
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,8 +41,8 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.presentation.spacing
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 fun TopBar(
     modifier: Modifier = Modifier,
     title: String,
@@ -74,28 +77,14 @@ fun TopBar(
 
             val updateAvailable by StoreManager.isUpdateAvailable().collectAsState(false)
 
-//            val tooltipState = remember { PlainTooltipState() }
-
             AnimatedVisibility(updateAvailable) {
-//                PlainTooltipBox(
-//                    tooltip = {
-//                        Text("Update Available!")
-//                    },
-//                    tooltipState = tooltipState,
-//                ) {
-//                    TopBarIconButton(
-//                        imageVector = Icons.Default.PlayArrow,
-//                        contentDescription = "Calculator",
-//                        onClick = {
-//                            StoreManager.startUpdateFlow()
-//                        }
-//                    )
-//
-//                    LaunchedEffect("show tooltip") {
-//                        tooltipState.show()
-//                    }
-//                }
-
+                TopBarIconButton(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = "Calculator",
+                    onClick = {
+                        StoreManager.startUpdateFlow()
+                    }
+                )
             }
 
             TopBarIconButton(
