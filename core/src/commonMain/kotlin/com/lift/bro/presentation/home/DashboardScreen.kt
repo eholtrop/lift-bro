@@ -38,6 +38,7 @@ import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.spacing
 import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
@@ -54,11 +55,15 @@ fun DashboardScreen(
     setClicked: (LBSet) -> Unit,
 ) {
     val state by database.liftDataSource.getAll().collectAsState(null)
+    val sets by dependencies.database.setDataSource.listenAll().collectAsState(emptyList())
+    val variations by dependencies.database.variantDataSource.listenAll().collectAsState(emptyList())
 
     when {
         state?.isEmpty() == true -> EmptyHomeScreen(addLiftClicked)
-        state?.isNotEmpty() == true -> LiftListScreen(
+        state?.isNotEmpty() == true -> DashboardContent(
             lifts = state!!,
+            sets = sets,
+            variations = variations,
             addLiftClicked = addLiftClicked,
             liftClicked = liftClicked,
             addSetClicked = addSetClicked,
@@ -73,8 +78,10 @@ private enum class Tab {
 }
 
 @Composable
-fun LiftListScreen(
+fun DashboardContent(
     lifts: List<Lift>,
+    sets: List<LBSet>,
+    variations: List<Variation>,
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
@@ -185,7 +192,9 @@ fun LiftListScreen(
             Tab.RecentSets -> {
                 CalendarScreen(
                     modifier = Modifier.padding(padding),
-                    setClicked = setClicked
+                    setClicked = setClicked,
+                    sets = sets,
+                    variations = variations
                 )
             }
         }

@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.components.Calendar
 import com.lift.bro.presentation.components.today
 import com.lift.bro.presentation.lift.toColor
@@ -52,11 +53,10 @@ import com.lift.bro.ui.Space
 fun CalendarScreen(
     modifier: Modifier = Modifier,
     setClicked: (LBSet) -> Unit,
+    sets: List<LBSet>,
+    variations: List<Variation>,
 ) {
     var selectedDate by remember { mutableStateOf(today) }
-
-    val sets = dependencies.database.setDataSource.getAll()
-    val variations = dependencies.database.variantDataSource.getAll()
 
     val selectedVariations = sets.filter { it.date.toLocalDate() == selectedDate }
         .groupBy { it.variationId }
@@ -125,17 +125,13 @@ fun CalendarScreen(
                     ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val variation =
-                        dependencies.database.variantDataSource.get(pair.first)
-                    val lift by dependencies.database.liftDataSource.get(
-                        variation?.lift?.id
-                    ).collectAsState(null)
+                    val variation = variations.firstOrNull { it.id == pair.first }
 
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
                         Text(
-                            text = "${variation?.name} ${lift?.name}",
+                            text = "${variation?.name} ${variation?.lift?.name}",
                             style = MaterialTheme.typography.titleMedium,
                         )
 
@@ -163,7 +159,7 @@ fun CalendarScreen(
 
                     Box(
                         modifier = Modifier.background(
-                            color = lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary,
+                            color = variation?.lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary,
                             shape = CircleShape,
                         ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
                         content = {}

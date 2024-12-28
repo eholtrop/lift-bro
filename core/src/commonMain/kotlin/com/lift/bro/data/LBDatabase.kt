@@ -95,11 +95,10 @@ class VariationRepository(
     }
 
     override fun listenAll(): Flow<List<Variation>> {
-        return liftQueries.getAll().asFlow().mapToList(Dispatchers.IO)
-            .mapEach { it.toDomain() }
-            .flatMapLatest { lifts ->
-                variationQueries.getAll().asFlow().mapToList(Dispatchers.IO).mapEach { variation -> variation.toDomain(lifts.first { it.id == variation.liftId }) }
-            }
+        return variationQueries.getAll().asFlow().mapToList(Dispatchers.IO).map { variations ->
+            val lifts = liftQueries.getAll().executeAsList().map { it.toDomain() }
+            variations.map { variation -> variation.toDomain(lifts.first{ it.id == variation.liftId }) }
+        }
     }
 
     override fun delete(id: String) {
@@ -136,6 +135,8 @@ class SetDataSource(
             .fold(emptyList()) { list, subList -> list + subList }
 
     fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
+
+    fun listenAll(): Flow<List<LBSet>> = setQueries.getAll().asFlow().mapToList(Dispatchers.IO).mapEach { it.toDomain() }
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 
