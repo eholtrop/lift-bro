@@ -3,9 +3,6 @@
 package com.lift.bro.presentation.set
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,7 +27,9 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,6 +42,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -73,6 +74,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
+import com.lift.bro.presentation.dialog.CreateVariationDialog
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.ui.LiftingScaffold
@@ -81,6 +83,7 @@ import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.VariationCard
 import com.lift.bro.ui.WeightSelector
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -123,6 +126,11 @@ private fun EditSetState.toDomain() = LBSet(
     date = this.date,
     notes = this.notes,
 )
+
+@Composable
+fun EditSetScreenPreview() {
+
+}
 
 @Composable
 fun EditSetScreen(
@@ -191,7 +199,7 @@ fun EditSetScreen(
 
             Card(
                 modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                border = BorderStroke(width = Dp.Hairline, color = Color.Black)
+                border = BorderStroke(width = Dp.Hairline, color = Color.Black),
             ) {
                 Column(
                     modifier = Modifier
@@ -217,25 +225,14 @@ fun EditSetScreen(
                     Space(MaterialTheme.spacing.one)
                     if (variation == null) {
                         VariationSelector(
-                            variationSelected = { set = set.copy(variationId = it.id) }
+                            variationSelected = { set = set.copy(variationId = it) }
                         )
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                        Button(
+                            onClick = createLiftClicked,
                         ) {
-                            Button(
-                                onClick = createVariationClicked
-                            ) {
-                                Text("Create Variation")
-                            }
-                            Space(MaterialTheme.spacing.half)
-                            Button(
-                                onClick = createLiftClicked,
-                            ) {
-                                Text("Create Lift")
-                            }
-                            Space(MaterialTheme.spacing.one)
+                            Text("Create Lift")
                         }
+                        Space(MaterialTheme.spacing.one)
                     }
                 }
             }
@@ -299,21 +296,32 @@ fun EditSetScreen(
 @Composable
 internal fun VariationSelector(
     modifier: Modifier = Modifier,
-    variationSelected: (Variation) -> Unit
+    variationSelected: (String) -> Unit
 ) {
-    val liftMap = dependencies.database.variantDataSource.getAll()
-        .groupBy { it.lift }
+    val lifts by dependencies.database.variantDataSource.listenAll().map {
+        it.groupBy { it.lift }
         .toList()
         .sortedBy { it.first!!.id }
+    }.collectAsState(emptyList())
 
     var expandedLift: Lift? by remember { mutableStateOf(null) }
+
+    var showCreateVariationDialog: Boolean by remember { mutableStateOf(false) }
+
+    if (showCreateVariationDialog) {
+        CreateVariationDialog(
+            parentLiftId = expandedLift!!.id,
+            onDismissRequest = { showCreateVariationDialog = false },
+            onVariationCreated = { variationSelected(it) }
+        )
+    }
 
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(2),
         contentPadding = PaddingValues(MaterialTheme.spacing.one),
     ) {
-        liftMap.forEach { map ->
+        lifts.forEach { map ->
 
             item(
                 span = { GridItemSpan(2) }
@@ -347,8 +355,22 @@ internal fun VariationSelector(
                             placementSpec = null
                         ),
                         variation = variation,
-                        onClick = { variationSelected(variation) }
+                        onClick = { variationSelected(variation.id) }
                     )
+                }
+
+                item(
+                    span = { GridItemSpan(2) }
+                ) {
+                    Button(
+                        modifier = Modifier.wrapContentWidth(),
+                        colors = ButtonDefaults.outlinedButtonColors(),
+                        onClick = {
+                            showCreateVariationDialog = true
+                        }
+                    ) {
+                        Text("Create ${map.first?.name ?: ""} Variation")
+                    }
                 }
             }
         }

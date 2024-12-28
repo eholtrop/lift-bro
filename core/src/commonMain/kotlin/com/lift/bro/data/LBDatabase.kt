@@ -25,6 +25,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.VariationRepository
 import com.lift.bro.utils.mapEach
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
 class LBDatabase(
@@ -91,6 +92,14 @@ class VariationRepository(
         val parentLift = liftQueries.get(liftId).executeAsOne().toDomain()
         return variationQueries.getAllForLift(liftId).asFlow().mapToList(Dispatchers.IO)
             .mapEach { it.toDomain(parentLift) }
+    }
+
+    override fun listenAll(): Flow<List<Variation>> {
+        return liftQueries.getAll().asFlow().mapToList(Dispatchers.IO)
+            .mapEach { it.toDomain() }
+            .flatMapLatest { lifts ->
+                variationQueries.getAll().asFlow().mapToList(Dispatchers.IO).mapEach { variation -> variation.toDomain(lifts.first { it.id == variation.liftId }) }
+            }
     }
 
     override fun delete(id: String) {

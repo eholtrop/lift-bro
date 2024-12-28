@@ -13,6 +13,7 @@ app-update = "2.1.0"
 
 
 voyager = "1.0.0"
+ui-tooling-preview-android = "1.7.6"
 
 [libraries]
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose" }
@@ -26,6 +27,7 @@ kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "app-update" }
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
+ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "ui-tooling-preview-android" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

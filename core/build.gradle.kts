@@ -63,6 +63,7 @@ kotlin {
                 implementation(libs.sqldelight.android.driver)
                 implementation(libs.app.update)
                 implementation(libs.app.update.ktx)
+                implementation(libs.ui.tooling.preview.android)
             }
         }
 

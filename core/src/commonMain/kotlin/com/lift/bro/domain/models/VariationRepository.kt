@@ -14,6 +14,8 @@ interface VariationRepository {
 
     fun getAll(): List<Variation>
 
+    fun listenAll(): Flow<List<Variation>>
+
     fun delete(id: String)
 
     fun get(variationId: String?): Variation?
