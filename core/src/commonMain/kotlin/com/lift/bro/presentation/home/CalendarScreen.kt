@@ -81,8 +81,6 @@ fun CalendarScreen(
                 dateSelected = {
                     selectedDate = it
                 },
-                date = { date ->
-                },
                 dotsForDate = { date ->
                     variations.filter { variation ->
                         sets.any { it.date.toLocalDate() == date && variation.id == it.variationId }

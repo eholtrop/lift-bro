@@ -31,6 +31,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -117,7 +119,6 @@ fun Calendar(
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dotsForDate: (LocalDate) -> List<Color>,
     dateSelected: (LocalDate) -> Unit,
-    date: @Composable RowScope.(LocalDate) -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -134,7 +135,6 @@ fun Calendar(
             horizontalArrangement = horizontalArrangement,
             verticalArrangement = verticalArrangement,
             dotsForDate = dotsForDate,
-            date = date,
             contentPadding = contentPadding
         )
     }
@@ -151,8 +151,7 @@ private fun CalendarContent(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateSelected: (LocalDate) -> Unit,
-    dotsForDate: (LocalDate) -> List<Color>,
-    date: @Composable RowScope.(LocalDate) -> Unit
+    dotsForDate: (LocalDate) -> List<Color>
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -258,6 +257,11 @@ private fun CalendarContent(
                     ) {
                         for (dayOffset in 0..6) {
                             val currentDay = currentWeek.plus(DatePeriod(days = dayOffset))
+
+                            val dots by remember(currentDay) {
+                                mutableStateOf(dotsForDate(currentDay))
+                            }
+
                             CalendarDate(
                                 modifier = Modifier
                                     .weight(1f)
@@ -268,7 +272,7 @@ private fun CalendarContent(
                                     currentDay.month == currentMonth.month -> CalendarDateStyle.Enabled
                                     else -> CalendarDateStyle.Disabled
                                 },
-                                dots = dotsForDate(currentDay),
+                                dots = dots,
                                 onClick = dateSelected,
                             )
                         }
