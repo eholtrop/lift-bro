@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
+import com.lift.bro.presentation.NavController
 import com.lift.bro.presentation.spacing
 
 @Composable
@@ -38,6 +38,7 @@ fun LiftingScaffold(
     postFab: @Composable (() -> Unit)? = null,
     fabEnabled: Boolean = true,
     title: String,
+    showBackButton: Boolean = true,
     actions: @Composable RowScope.() -> Unit = {},
     topAppBarScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(),
     content: @Composable (PaddingValues) -> Unit
@@ -49,7 +50,7 @@ fun LiftingScaffold(
                      title = title,
                      scrollBehavior = topAppBarScrollBehavior,
                      trailingContent = actions,
-                     showBackButton = LocalNavigator.current?.canPop ?: false
+                     showBackButton = showBackButton
                  )
         },
         floatingActionButton = {

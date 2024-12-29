@@ -5,7 +5,6 @@ import android.content.Intent
 import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.presentation.Coordinator
-import com.lift.bro.presentation.voyager.VoyagerCoordinator
 
 actual class DependencyContainer {
 
@@ -15,8 +14,6 @@ actual class DependencyContainer {
 
     actual val database: LBDatabase
         get() = LBDatabase(DriverFactory(context!!))
-
-    actual val coordinator: Coordinator by lazy { VoyagerCoordinator() }
 
     actual fun launchCalculator() {
         val intent = Intent(Intent.ACTION_MAIN)

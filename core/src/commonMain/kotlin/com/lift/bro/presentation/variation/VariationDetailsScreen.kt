@@ -99,7 +99,7 @@ fun VariationDetailsScreen(
 }
 
 @Composable
-internal fun VariationDetailsScreen(
+private fun VariationDetailsScreen(
     variation: Variation,
     lift: Lift?,
     sets: List<LBSet>,
