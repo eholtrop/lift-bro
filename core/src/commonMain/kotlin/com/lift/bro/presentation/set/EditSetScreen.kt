@@ -64,8 +64,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
@@ -74,6 +72,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
+import com.lift.bro.presentation.NavController
 import com.lift.bro.presentation.dialog.CreateVariationDialog
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
@@ -164,14 +163,14 @@ fun EditSetScreen(
         title = "${if (setId != null) "You" else "I"} Crushed...",
         actions = {
             if (setId != null) {
-                val navigator = LocalNavigator.currentOrThrow
+                val navController = NavController.current
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
                     onClick = {
                         coroutineScope.launch {
                             dependencies.database.setDataSource.delete(setId)
-                            navigator.pop()
+                            navController.popBackStack()
                         }
                     }
                 )

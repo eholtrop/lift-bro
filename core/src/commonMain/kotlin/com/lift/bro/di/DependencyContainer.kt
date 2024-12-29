@@ -6,8 +6,6 @@ import com.lift.bro.presentation.Coordinator
 expect class DependencyContainer {
     val database: LBDatabase
 
-    val coordinator: Coordinator
-
     fun launchCalculator()
 }
 

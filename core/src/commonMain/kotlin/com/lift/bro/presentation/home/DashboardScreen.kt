@@ -92,6 +92,7 @@ fun DashboardContent(
 
     LiftingScaffold(
         title = "Lift Bro",
+        showBackButton = false,
         actions = {
             TopBarIconButton(
                 imageVector = Icons.Default.Add,

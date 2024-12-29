@@ -35,9 +35,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.lift.bro.di.dependencies
+import com.lift.bro.presentation.NavController
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.presentation.spacing
 
@@ -64,11 +63,11 @@ fun TopBar(
         },
         navigationIcon = {
             if (showBackButton) {
-                val navigator = LocalNavigator.currentOrThrow
+                val navController = NavController.current
                 TopBarIconButton(
                     imageVector = Icons.Default.ArrowBack,
                     contentDescription = "Back",
-                    onClick = { navigator.pop() },
+                    onClick = { navController.popBackStack() },
                 )
             }
         },

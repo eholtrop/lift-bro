@@ -6,7 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -52,6 +54,10 @@ sealed interface Destination {
         Destination
 }
 
+val NavController = compositionLocalOf<NavHostController>() {
+    error("NavHostController was not set")
+}
+
 @Composable
 fun App(
     navController: NavHostController = rememberNavController()
@@ -69,122 +75,127 @@ fun App(
 //                }
 //            }
 
-            NavHost(
-                navController = navController,
-                startDestination = Destination.Dashboard,
-                enterTransition = {
-                    slideInHorizontally {
-                        it / 2
-                    }
-                },
-                exitTransition = {
-                    slideOutHorizontally {
-                        it / 2
-                    }
-                }
+
+            CompositionLocalProvider(
+                NavController provides navController
             ) {
-                composable<Destination.Dashboard> { entry ->
-                    DashboardScreen(
-                        addLiftClicked = {
-                            navController.navigate(Destination.EditLift(null))
-                        },
-                        liftClicked = {
-                            navController.navigate(Destination.LiftDetails(it.id))
-                        },
-                        addSetClicked = {
-                            navController.navigate(Destination.EditSet(null, null, null))
-                        },
-                        setClicked = {
-                            navController.navigate(Destination.EditSet(it.id, null, null))
+                NavHost(
+                    navController = navController,
+                    startDestination = Destination.Dashboard,
+                    enterTransition = {
+                        slideInHorizontally {
+                            it / 2
                         }
-                    )
-                }
+                    },
+                    exitTransition = {
+                        slideOutHorizontally {
+                            it / 2
+                        }
+                    }
+                ) {
+                    composable<Destination.Dashboard> { entry ->
+                        DashboardScreen(
+                            addLiftClicked = {
+                                navController.navigate(Destination.EditLift(null))
+                            },
+                            liftClicked = {
+                                navController.navigate(Destination.LiftDetails(it.id))
+                            },
+                            addSetClicked = {
+                                navController.navigate(Destination.EditSet(null, null, null))
+                            },
+                            setClicked = {
+                                navController.navigate(Destination.EditSet(it.id, null, null))
+                            }
+                        )
+                    }
 
-                composable<Destination.LiftDetails> {
-                    val route: Destination.LiftDetails = it.toRoute()
-                    LiftDetailsScreen(
-                        liftId = route.liftId,
-                        editLiftClicked = {
-                            navController.navigate(Destination.EditLift(route.liftId))
-                        },
-                        addVariationClicked = {
-                            navController.navigate(
-                                Destination.EditVariation(
-                                    variationId = null,
-                                    parentLiftId = it.id
+                    composable<Destination.LiftDetails> {
+                        val route: Destination.LiftDetails = it.toRoute()
+                        LiftDetailsScreen(
+                            liftId = route.liftId,
+                            editLiftClicked = {
+                                navController.navigate(Destination.EditLift(route.liftId))
+                            },
+                            addVariationClicked = {
+                                navController.navigate(
+                                    Destination.EditVariation(
+                                        variationId = null,
+                                        parentLiftId = it.id
+                                    )
                                 )
-                            )
-                        },
-                        variationClicked = {
-                            navController.navigate(
-                                Destination.EditVariation(
-                                    variationId = it,
-                                    parentLiftId = null
+                            },
+                            variationClicked = {
+                                navController.navigate(
+                                    Destination.EditVariation(
+                                        variationId = it,
+                                        parentLiftId = null
+                                    )
                                 )
-                            )
-                        },
-                        addSetClicked = {
-                            navController.navigate(Destination.EditSet(null, it.id, null))
-                        },
-                        onSetClicked = {
-                            navController.navigate(Destination.EditSet(it.id, null, null))
-                        },
-                    )
-                }
+                            },
+                            addSetClicked = {
+                                navController.navigate(Destination.EditSet(null, it.id, null))
+                            },
+                            onSetClicked = {
+                                navController.navigate(Destination.EditSet(it.id, null, null))
+                            },
+                        )
+                    }
 
-                composable<Destination.EditLift> {
-                    val route: Destination.EditLift = it.toRoute()
-                    EditLiftScreen(
-                        liftId = route.liftId,
-                        liftSaved = {
-                            navController.popBackStack()
-                        },
-                    )
-                }
+                    composable<Destination.EditLift> {
+                        val route: Destination.EditLift = it.toRoute()
+                        EditLiftScreen(
+                            liftId = route.liftId,
+                            liftSaved = {
+                                navController.popBackStack()
+                            },
+                        )
+                    }
 
-                composable<Destination.VariationDetails> {
-                    val route: Destination.VariationDetails = it.toRoute()
-                    VariationDetailsScreen(
-                        variationId = route.variationId,
-                        addSetClicked = {
-                            navController.navigate(Destination.EditSet(null, null, null))
-                        },
-                        editClicked = {
-                            navController.navigate(Destination.EditVariation(variationId = route.variationId, parentLiftId = null))
-                        },
-                        setClicked = {
-                            navController.navigate(Destination.EditSet(it.id, null, null))
-                        }
-                    )
-                }
+                    composable<Destination.VariationDetails> {
+                        val route: Destination.VariationDetails = it.toRoute()
+                        VariationDetailsScreen(
+                            variationId = route.variationId,
+                            addSetClicked = {
+                                navController.navigate(Destination.EditSet(null, null, null))
+                            },
+                            editClicked = {
+                                navController.navigate(Destination.EditVariation(variationId = route.variationId, parentLiftId = null))
+                            },
+                            setClicked = {
+                                navController.navigate(Destination.EditSet(it.id, null, null))
+                            }
+                        )
+                    }
 
-                composable<Destination.EditVariation> {
-                    val route: Destination.EditVariation = it.toRoute()
-                    EditVariationScreen(
-                        id = route.variationId,
-                        parentLiftId = route.parentLiftId,
-                        variationSaved = {
-                            navController.popBackStack()
-                        }
-                    )
-                }
+                    composable<Destination.EditVariation> {
+                        val route: Destination.EditVariation = it.toRoute()
+                        EditVariationScreen(
+                            id = route.variationId,
+                            parentLiftId = route.parentLiftId,
+                            variationSaved = {
+                                navController.popBackStack()
+                            }
+                        )
+                    }
 
-                composable<Destination.EditSet> {
-                    val route: Destination.EditSet = it.toRoute()
-                    EditSetScreen(
-                        setId = route.setId,
-                        variationId = route.variationId,
-                        liftId = route.liftId,
-                        setSaved = {
-                            navController.popBackStack()
-                        },
-                        createVariationClicked = {
+                    composable<Destination.EditSet> {
+                        val route: Destination.EditSet = it.toRoute()
+                        EditSetScreen(
+                            setId = route.setId,
+                            variationId = route.variationId,
+                            liftId = route.liftId,
+                            setSaved = {
+                                navController.popBackStack()
+                            },
+                            createVariationClicked = {
 
-                        },
-                        createLiftClicked = {
-                            navController.navigate(Destination.EditLift(null))
-                        },
-                    )
+                            },
+                            createLiftClicked = {
+                                navController.navigate(Destination.EditLift(null))
+                            },
+                        )
+                    }
                 }
             }
         }
