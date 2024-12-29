@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.KeyboardOptions
@@ -67,6 +68,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -135,7 +137,11 @@ fun LiftDetailsScreen(
                         color = color,
                         shape = CircleShape,
                     )
-                        .border(1.dp, color = MaterialTheme.colorScheme.onSurface, shape = CircleShape)
+                        .border(
+                            1.dp,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            shape = CircleShape
+                        )
                         .size(32.dp),
                     content = {}
                 )
@@ -285,9 +291,13 @@ fun VariationCard(
     onSetClicked: (LBSet) -> Unit,
 ) {
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = { onClick(variation) },
+    Box(
+        modifier = Modifier.fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
+            .background(
+                color = MaterialTheme.colorScheme.surfaceVariant,
+            )
+            .padding(MaterialTheme.spacing.quarter),
     ) {
         Column(
             modifier = Modifier.fillMaxWidth()
@@ -300,7 +310,9 @@ fun VariationCard(
             val sets = dependencies.database.setDataSource.getAll(variation.id)
 
             Row(
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.half),
+                modifier = Modifier.clickable {
+                    onClick(variation)
+                }.padding(horizontal = MaterialTheme.spacing.half),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
@@ -330,14 +342,50 @@ fun VariationCard(
                 Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
             }
 
-            Space(MaterialTheme.spacing.half)
+            Space(MaterialTheme.spacing.one)
 
-            sets.groupBy { it.date.toLocalDate() }.toList()
+            val setPoints = sets.groupBy { it.date.toLocalDate() }.toList()
                 .sortedByDescending { it.first }
-                .take(3)
-                .forEach { pair ->
 
 
+            if (setPoints.isNotEmpty()) {
+                var selectedData: DotGraphData? by remember {
+                    mutableStateOf(setPoints.maxBy { it.first }.let {
+                        DotGraphData(
+                            it.first.toEpochDays().toLong(),
+                            it.second.maxOf { it.weight.toFloat() }
+                        )
+                    })
+                }
+
+                DotGraph(
+                    modifier = Modifier.fillMaxWidth().height(128.dp),
+                    data = setPoints.map {
+                        DotGraphData(
+                            it.first.toEpochDays().toLong(),
+                            it.second.maxOf { it.weight.toFloat() }
+                        )
+                    },
+                    state = rememberLazyListState(),
+                    selectedData = selectedData,
+                    xAxis = { epochDays ->
+                        Text(
+                            LocalDate.fromEpochDays(epochDays.toInt()).toString("MMM d"),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = if (selectedData?.x == epochDays) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        )
+                    },
+                    yAxis = { fl: Float, fl1: Float -> },
+                    dataPointClicked = {
+                        selectedData = it
+                    }
+                )
+
+                selectedData?.let { data ->
+
+                    Space(MaterialTheme.spacing.one)
+
+                    val pair = setPoints.first { it.first.toEpochDays().toLong() == data.x }
                     Column(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.half)
                     ) {
@@ -382,6 +430,10 @@ fun VariationCard(
                             }
                         }
                 }
+            } else {
+
+            }
+
         }
     }
 }

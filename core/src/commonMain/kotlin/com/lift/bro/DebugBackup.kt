@@ -112,6 +112,46 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
+        variationId = "back squat",
+        weight = 167.0,
+        reps = 1,
+        date = Clock.System.now().minus(132, DateTimeUnit.HOUR),
+        notes = ""
+    ),
+    LBSet(
+        id = uuid4().toString(),
+        variationId = "back squat",
+        weight = 153.0,
+        reps = 1,
+        date = Clock.System.now().minus(162, DateTimeUnit.HOUR),
+        notes = ""
+    ),
+    LBSet(
+        id = uuid4().toString(),
+        variationId = "back squat",
+        weight = 142.0,
+        reps = 1,
+        date = Clock.System.now().minus(192, DateTimeUnit.HOUR),
+        notes = ""
+    ),
+    LBSet(
+        id = uuid4().toString(),
+        variationId = "back squat",
+        weight = 123.0,
+        reps = 1,
+        date = Clock.System.now().minus(222, DateTimeUnit.HOUR),
+        notes = ""
+    ),
+    LBSet(
+        id = uuid4().toString(),
+        variationId = "back squat",
+        weight = 172.0,
+        reps = 1,
+        date = Clock.System.now().minus(252, DateTimeUnit.HOUR),
+        notes = ""
+    ),
+    LBSet(
+        id = uuid4().toString(),
         variationId = "regular deadlift",
         weight = 170.0,
         reps = 1,

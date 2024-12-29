@@ -160,7 +160,7 @@ fun EditSetScreen(
         fabIcon = Icons.Default.Edit,
         contentDescription = "Save Set",
         fabEnabled = saveEnabled,
-        title = "I Crushed...",
+        title = "${if (setId != null) "You" else "I"} Crushed...",
         actions = {
             if (setId != null) {
                 val navigator = LocalNavigator.currentOrThrow
