@@ -21,6 +21,7 @@ class EditSetVoyagerScreen(
         EditSetScreen(
             setId = setId,
             variationId = variationId,
+            liftId = null,
             setSaved = { navigator.pop() },
             createVariationClicked = { navigator.push(EditVariationVoyagerScreen()) },
             createLiftClicked = {navigator.push(EditLiftVoyagerScreen()) }

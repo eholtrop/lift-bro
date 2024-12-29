@@ -45,6 +45,8 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
 
+                implementation(libs.navigation.compose)
+
 
                 implementation(libs.kotlinx.datetime)
                 implementation("com.benasher44:uuid:0.8.1")

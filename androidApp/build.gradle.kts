@@ -64,4 +64,5 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(libs.compose.activity)
+    implementation(libs.navigation.compose)
 }

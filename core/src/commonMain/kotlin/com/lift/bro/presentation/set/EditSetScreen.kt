@@ -136,6 +136,7 @@ fun EditSetScreenPreview() {
 fun EditSetScreen(
     setId: String?,
     variationId: String?,
+    liftId: String?,
     setSaved: () -> Unit,
     createVariationClicked: () -> Unit,
     createLiftClicked: () -> Unit,
