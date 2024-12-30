@@ -62,7 +62,7 @@ val NavController = compositionLocalOf<NavHostController>() {
 fun App(
     navController: NavHostController = rememberNavController()
 ) {
-    AppTheme() {
+    AppTheme {
         Box(
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
@@ -127,9 +127,8 @@ fun App(
                             },
                             variationClicked = {
                                 navController.navigate(
-                                    Destination.EditVariation(
-                                        variationId = it,
-                                        parentLiftId = null
+                                    Destination.VariationDetails(
+                                        variationId = it
                                     )
                                 )
                             },
