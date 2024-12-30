@@ -24,10 +24,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.spacing
+
+data class DotGraphColors(
+    val dotColor: Color,
+    val dotColorSelected: Color,
+)
 
 @Composable
 fun DotGraph(
@@ -40,6 +46,7 @@ fun DotGraph(
     xAxis: @Composable ((Long) -> Unit)? = null,
     yAxis: @Composable ((Float, Float) -> Unit)? = null,
     dataPointClicked: ((DotGraphData) -> Unit)? = null,
+    colors: DotGraphColors
 ) {
     Row(
         modifier = modifier
@@ -64,7 +71,7 @@ fun DotGraph(
                 ) {
 
                     val dotColor =
-                        if (selectedData == point) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                        if (selectedData == point) colors.dotColorSelected else colors.dotColor
 
                     Canvas(
                         modifier = Modifier

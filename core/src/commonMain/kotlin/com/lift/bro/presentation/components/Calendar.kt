@@ -299,15 +299,15 @@ private fun CalendarDate(
 ) {
 
     val backgroundColor = when (style) {
-        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.primary
-        CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.secondaryContainer
-        CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.tertiaryContainer
+        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.secondary
+        CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.surface
+        CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.surfaceDim
     }
 
     val contentColor = when (style) {
-        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.onPrimary
-        CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.onSecondaryContainer
-        CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.onTertiaryContainer
+        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.secondaryContainer
+        CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.onSurface
+        CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.onSurface
     }
 
     Column(

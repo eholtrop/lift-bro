@@ -78,9 +78,15 @@ fun AppTheme(
   content: @Composable() () -> Unit
 ) {
   val colors = if (!useDarkTheme) {
-    LightColors
+    LightColors.copy(
+        surface = LightColors.surfaceDim,
+        surfaceDim = LightColors.surfaceDim.copy(alpha = .4f)
+    )
   } else {
-    DarkColors
+    DarkColors.copy(
+        surface = DarkColors.surfaceVariant,
+        surfaceDim = DarkColors.surfaceVariant.copy(alpha = .4f)
+    )
   }
 
   MaterialTheme(

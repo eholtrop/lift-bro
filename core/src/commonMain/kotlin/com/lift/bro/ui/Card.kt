@@ -26,7 +26,7 @@ fun Card(
                 role = Role.Button
             )
             .background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
+                color = MaterialTheme.colorScheme.surface,
             )
             .padding(MaterialTheme.spacing.quarter),
         contentAlignment = Alignment.Center,

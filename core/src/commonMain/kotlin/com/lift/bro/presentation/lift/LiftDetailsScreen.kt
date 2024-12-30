@@ -295,7 +295,7 @@ fun VariationCard(
         modifier = Modifier.fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .background(
-                color = MaterialTheme.colorScheme.surfaceVariant,
+                color = MaterialTheme.colorScheme.surface,
             )
             .padding(MaterialTheme.spacing.quarter),
     ) {
@@ -372,13 +372,17 @@ fun VariationCard(
                         Text(
                             LocalDate.fromEpochDays(epochDays.toInt()).toString("MMM d"),
                             style = MaterialTheme.typography.titleSmall,
-                            color = if (selectedData?.x == epochDays) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            color = if (selectedData?.x == epochDays) parentLift.color?.toColor() ?: MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
                     },
                     yAxis = { fl: Float, fl1: Float -> },
                     dataPointClicked = {
                         selectedData = it
-                    }
+                    },
+                    colors = DotGraphColors(
+                        dotColor = MaterialTheme.colorScheme.onSurface,
+                        dotColorSelected = parentLift.color?.toColor() ?: MaterialTheme.colorScheme.primary
+                    )
                 )
 
                 selectedData?.let { data ->
@@ -393,13 +397,13 @@ fun VariationCard(
                             modifier = Modifier.align(Alignment.Start),
                             text = pair.first.toString(pattern = "EEEE MMM, d"),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.onSurface
                         )
 
                         Box(
                             modifier = Modifier.height(1.dp).fillMaxWidth()
                                 .background(
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    color = MaterialTheme.colorScheme.onSurface,
                                 )
                         )
                     }

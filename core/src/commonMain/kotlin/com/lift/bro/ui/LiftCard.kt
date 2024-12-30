@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.presentation.decimalFormat
+import com.lift.bro.presentation.lift.toColor
 import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
@@ -81,7 +82,7 @@ fun LiftCard(
 
                 val recentMin = recentSets.minOfOrNull { it.second.weight } ?: 0.0
 
-                val color = MaterialTheme.colorScheme.onSurfaceVariant
+                val color = lift.color?.toColor() ?: MaterialTheme.colorScheme.onSurfaceVariant
                 Canvas(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
