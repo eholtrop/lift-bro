@@ -236,8 +236,10 @@ private fun CalendarContent(
             state = pagerState,
             modifier = Modifier.fillMaxWidth(),
             contentPadding = contentPadding,
+            pageSpacing = MaterialTheme.spacing.half,
+            beyondViewportPageCount = 1
         ) { page ->
-            val currentMonth = pagerState.currentMonth
+            val currentMonth = today.plus(DatePeriod(months = CALENDAR_INITIAL_PAGE - page))
             val startDate = currentMonth.minus(DatePeriod(days = today.dayOfMonth - 1))
 
             Column(

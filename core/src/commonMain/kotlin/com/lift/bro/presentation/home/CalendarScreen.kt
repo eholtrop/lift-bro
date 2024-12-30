@@ -82,11 +82,12 @@ fun CalendarScreen(
                     selectedDate = it
                 },
                 dotsForDate = { date ->
-                    variations.filter { variation ->
-                        sets.any { it.date.toLocalDate() == date && variation.id == it.variationId }
-                    }.map {
-                        it.lift?.color?.toColor() ?: defaultColor
-                    }
+                    sets.asSequence()
+                        .filter { it.date.toLocalDate() == date }
+                        .map { it.variationId }
+                        .distinct()
+                        .map { id -> variations.firstOrNull { it.id == id } ?.lift?.color?.toColor() ?: defaultColor }
+                        .toList()
                 }
             )
         }
