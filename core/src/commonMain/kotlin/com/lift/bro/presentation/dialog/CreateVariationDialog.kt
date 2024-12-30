@@ -52,9 +52,9 @@ fun CreateVariationDialog(
                     color = MaterialTheme.colorScheme.surface,
                     shape = MaterialTheme.shapes.large,
                 ).padding(MaterialTheme.spacing.one),
-                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                val parentLift by dependencies.database.liftDataSource.get(parentLiftId).collectAsState(null)
+                val parentLift by dependencies.database.liftDataSource.get(parentLiftId)
+                    .collectAsState(null)
 
                 var variationName by remember { mutableStateOf("") }
 
@@ -62,55 +62,57 @@ fun CreateVariationDialog(
 
                 var isLoading by remember { mutableStateOf(false) }
 
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+                Text(
+                    text = "Create Variation",
+                    style = MaterialTheme.typography.titleLarge,
+                )
 
-                    parentLift?.let { lift ->
-                        TextField(
-                            value = variationName,
-                            onValueChange = { variationName = it },
-                            suffix = {
-                                Text(lift.name)
-                            }
-                        )
-                    }
+                Space(MaterialTheme.spacing.two)
 
-                    Space(MaterialTheme.spacing.one)
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                    ) {
-                        Button(
-                            onClick = onDismissRequest,
-                            colors = ButtonDefaults.textButtonColors(),
-                        ) {
-                            Text("Cancel")
+                parentLift?.let { lift ->
+                    TextField(
+                        value = variationName,
+                        onValueChange = { variationName = it },
+                        suffix = {
+                            Text(lift.name)
                         }
-                        Space(MaterialTheme.spacing.half)
-                        Button(
-                            enabled = variationName.isNotBlank(),
-                            onClick = {
-                                isLoading = true
-                                coroutineScope.launch(context = Dispatchers.IO) {
-                                    val newId = uuid4().toString()
-                                    dependencies.database.variantDataSource.save(
-                                        id = newId,
-                                        liftId = parentLift!!.id,
-                                        name = variationName
-                                    )
-                                    onVariationCreated(newId)
-                                }
-                                onDismissRequest()
-                            },
-                            colors = ButtonDefaults.textButtonColors(),
-                        ) {
-                            Text("Create")
-                        }
-                    }
-
+                    )
                 }
+
+                Space(MaterialTheme.spacing.one)
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    Button(
+                        onClick = onDismissRequest,
+                        colors = ButtonDefaults.textButtonColors(),
+                    ) {
+                        Text("Cancel")
+                    }
+                    Space(MaterialTheme.spacing.half)
+                    Button(
+                        enabled = variationName.isNotBlank(),
+                        onClick = {
+                            isLoading = true
+                            coroutineScope.launch(context = Dispatchers.IO) {
+                                val newId = uuid4().toString()
+                                dependencies.database.variantDataSource.save(
+                                    id = newId,
+                                    liftId = parentLift!!.id,
+                                    name = variationName
+                                )
+                                onVariationCreated(newId)
+                            }
+                            onDismissRequest()
+                        },
+                        colors = ButtonDefaults.textButtonColors(),
+                    ) {
+                        Text("Create")
+                    }
+                }
+
             }
         }
     )

@@ -6,6 +6,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,11 +18,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -50,8 +55,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextRange
@@ -183,110 +191,118 @@ fun EditSetScreen(
             setSaved()
         },
     ) { padding ->
-        Column(
+
+        LazyColumn(
             modifier = Modifier.padding(padding),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            NumberPicker(
-                modifier = Modifier.animateContentSize().wrapContentSize(),
-                selectedNum = set.reps?.toInt(),
-                title = null,
-                numberChanged = { set = set.copy(reps = it?.toLong()) },
-                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-            )
+            item {
+                NumberPicker(
+                    modifier = Modifier.animateContentSize().wrapContentSize(),
+                    selectedNum = set.reps?.toInt(),
+                    title = null,
+                    numberChanged = { set = set.copy(reps = it?.toLong()) },
+                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                )
+            }
 
-            Space(MaterialTheme.spacing.oneAndHalf)
+            item {
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.oneAndHalf))
+            }
 
-            Card(
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                border = BorderStroke(width = Dp.Hairline, color = Color.Black),
-            ) {
-                Column(
-                    modifier = Modifier
-                        .animateContentSize()
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+            item {
+                Card(
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                    border = BorderStroke(width = Dp.Hairline, color = Color.Black),
                 ) {
-                    Space(MaterialTheme.spacing.one)
-                    Text(
-                        style = MaterialTheme.typography.headlineSmall,
-                        text = buildAnnotatedString {
-                            withLink(
-                                LinkAnnotation.Clickable(
-                                    tag = "change lift"
-                                ) {
-                                    set = set.copy(variationId = null)
-                                }
-                            ) {
-                                append(variation?.fullName ?: "Select Lift")
-                            }
-                        },
-                    )
-                    Space(MaterialTheme.spacing.one)
-                    if (variation == null) {
-                        VariationSelector(
-                            variationSelected = { set = set.copy(variationId = it) }
-                        )
-                        Button(
-                            onClick = createLiftClicked,
-                        ) {
-                            Text("Create Lift")
-                        }
+                    Column(
+                        modifier = Modifier
+                            .animateContentSize()
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
                         Space(MaterialTheme.spacing.one)
+                        Text(
+                            style = MaterialTheme.typography.headlineSmall,
+                            text = buildAnnotatedString {
+                                withLink(
+                                    LinkAnnotation.Clickable(
+                                        tag = "change lift"
+                                    ) {
+                                        set = set.copy(variationId = null)
+                                    }
+                                ) {
+                                    append(variation?.fullName ?: "Select Lift")
+                                }
+                            },
+                        )
+                        Space(MaterialTheme.spacing.one)
+                        if (variation == null) {
+                            VariationSelector(
+                                variationSelected = { set = set.copy(variationId = it) }
+                            )
+                            Button(
+                                onClick = createLiftClicked,
+                            ) {
+                                Text("Create Lift")
+                            }
+                            Space(MaterialTheme.spacing.one)
+                        }
                     }
                 }
             }
 
             if (variation != null) {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
-
-                WeightSelector(
-                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                    weight = Pair(set.weight, Settings.defaultUOM),
-                    liftId = variation.lift?.id ?: "",
-                    placeholder = "At",
-                    weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
-                )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-
-                TempoSelector(
-                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                    up = set.up?.toInt(),
-                    hold = set.hold?.toInt(),
-                    down = set.down?.toInt(),
-                    downChanged = { set = set.copy(down = it?.toLong()) },
-                    holdChanged = { set = set.copy(hold = it?.toLong()) },
-                    upChanged = { set = set.copy(up = it?.toLong()) },
-                )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-
-                DateSelector(
-                    date = set.date,
-                    dateChanged = { set = set.copy(date = it) }
-                )
-
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(horizontal = MaterialTheme.spacing.one),
-                ) {
-                    Text("Extra Notes:")
-
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = set.notes,
-                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
-                        singleLine = true,
-                        placeholder = {
-                            Text("I killed it today!")
-                        },
-                        onValueChange = {
-                            set = set.copy(notes = it)
-                        },
+                item {
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
+                    WeightSelector(
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                        weight = Pair(set.weight, Settings.defaultUOM),
+                        liftId = variation.lift?.id ?: "",
+                        placeholder = "At",
+                        weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
                     )
+
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+
+                    TempoSelector(
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                        up = set.up?.toInt(),
+                        hold = set.hold?.toInt(),
+                        down = set.down?.toInt(),
+                        downChanged = { set = set.copy(down = it?.toLong()) },
+                        holdChanged = { set = set.copy(hold = it?.toLong()) },
+                        upChanged = { set = set.copy(up = it?.toLong()) },
+                    )
+
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+
+                    DateSelector(
+                        date = set.date,
+                        dateChanged = { set = set.copy(date = it) }
+                    )
+
+                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = MaterialTheme.spacing.one),
+                    ) {
+                        Text("Extra Notes:")
+
+                        TextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            value = set.notes,
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
+                            singleLine = true,
+                            placeholder = {
+                                Text("I killed it today!")
+                            },
+                            onValueChange = {
+                                set = set.copy(notes = it)
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -296,12 +312,12 @@ fun EditSetScreen(
 @Composable
 internal fun VariationSelector(
     modifier: Modifier = Modifier,
-    variationSelected: (String) -> Unit
+    variationSelected: (String) -> Unit,
 ) {
     val lifts by dependencies.database.variantDataSource.listenAll().map {
         it.groupBy { it.lift }
-        .toList()
-        .sortedBy { it.first!!.id }
+            .toList()
+            .sortedBy { it.first!!.id }
     }.collectAsState(emptyList())
 
     var expandedLift: Lift? by remember { mutableStateOf(null) }
@@ -316,61 +332,56 @@ internal fun VariationSelector(
         )
     }
 
-    LazyVerticalGrid(
-        modifier = modifier,
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(MaterialTheme.spacing.one),
+    Column(
+        modifier = modifier.padding(horizontal = MaterialTheme.spacing.half),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         lifts.forEach { map ->
-
-            item(
-                span = { GridItemSpan(2) }
+            Row(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 44.dp)
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(
+                        role = Role.Button,
+                        onClick = { expandedLift = map.first },
+                    )
+                    .padding(horizontal = MaterialTheme.spacing.half),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
+                Text(
                     modifier = Modifier
-                        .animateItem(placementSpec = null)
-                        .defaultMinSize(minHeight = 44.dp)
-                        .clickable(
-                            role = Role.Button,
-                            onClick = { expandedLift = map.first },
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .weight(1f),
-                        text = map.first?.name ?: "",
-                    )
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = null
-                    )
-                }
+                        .weight(1f),
+                    text = map.first?.name ?: "",
+                )
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = null
+                )
             }
 
             if (map.first == expandedLift) {
-                items(map.second) { variation ->
-                    VariationCard(
-                        modifier = Modifier.padding(MaterialTheme.spacing.quarter).animateItem(
-                            placementSpec = null
-                        ),
-                        variation = variation,
-                        onClick = { variationSelected(variation.id) }
-                    )
+                map.second.chunked(2).forEach { variations ->
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                    ) {
+                        variations.forEach { variation ->
+                            VariationCard(
+                                modifier = Modifier.padding(MaterialTheme.spacing.quarter).weight(1f),
+                                variation = variation,
+                                onClick = { variationSelected(variation.id) }
+                            )
+                        }
+                    }
                 }
 
-                item(
-                    span = { GridItemSpan(2) }
-                ) {
-                    Button(
-                        modifier = Modifier.wrapContentWidth(),
-                        colors = ButtonDefaults.outlinedButtonColors(),
-                        onClick = {
-                            showCreateVariationDialog = true
-                        }
-                    ) {
-                        Text("Create ${map.first?.name ?: ""} Variation")
+                Button(
+                    modifier = Modifier.wrapContentWidth(),
+                    colors = ButtonDefaults.outlinedButtonColors(),
+                    onClick = {
+                        showCreateVariationDialog = true
                     }
+                ) {
+                    Text("Create ${map.first?.name ?: ""} Variation")
                 }
             }
         }
