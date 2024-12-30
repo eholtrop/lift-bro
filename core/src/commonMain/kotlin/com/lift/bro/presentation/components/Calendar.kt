@@ -183,7 +183,7 @@ private fun CalendarContent(
                 ),
                 onClick = {
                     coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 }
             ) {
@@ -201,7 +201,7 @@ private fun CalendarContent(
                 ),
                 onClick = {
                     coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
                     }
                 }
             ) {
