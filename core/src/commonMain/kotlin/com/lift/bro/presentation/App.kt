@@ -41,17 +41,22 @@ sealed interface Destination {
 
     @Serializable
     data class LiftDetails(val liftId: String) : Destination
+
     @Serializable
     data class EditLift(val liftId: String?) : Destination
 
     @Serializable
     data class VariationDetails(val variationId: String) : Destination
+
     @Serializable
     data class EditVariation(val variationId: String?, val parentLiftId: String?) : Destination
 
     @Serializable
-    data class EditSet(val setId: String?, val liftId: String?, val variationId: String?) :
-        Destination
+    data class EditSet(
+        val setId: String? = null,
+        val liftId: String? = null,
+        val variationId: String? = null
+    ) : Destination
 }
 
 val NavController = compositionLocalOf<NavHostController>() {
@@ -121,7 +126,7 @@ fun App(
                                 navController.navigate(
                                     Destination.EditVariation(
                                         variationId = null,
-                                        parentLiftId = it.id
+                                        parentLiftId = route.liftId
                                     )
                                 )
                             },
@@ -133,10 +138,10 @@ fun App(
                                 )
                             },
                             addSetClicked = {
-                                navController.navigate(Destination.EditSet(null, it.id, null))
+                                navController.navigate(Destination.EditSet(liftId = route.liftId))
                             },
                             onSetClicked = {
-                                navController.navigate(Destination.EditSet(it.id, null, null))
+                                navController.navigate(Destination.EditSet(setId = it.id))
                             },
                         )
                     }
@@ -156,13 +161,28 @@ fun App(
                         VariationDetailsScreen(
                             variationId = route.variationId,
                             addSetClicked = {
-                                navController.navigate(Destination.EditSet(null, null, null))
+                                navController.navigate(
+                                    Destination.EditSet(
+                                        null,
+                                        null,
+                                        route.variationId
+                                    )
+                                )
                             },
                             editClicked = {
-                                navController.navigate(Destination.EditVariation(variationId = route.variationId, parentLiftId = null))
+                                navController.navigate(
+                                    Destination.EditVariation(
+                                        variationId = route.variationId,
+                                        parentLiftId = null
+                                    )
+                                )
                             },
                             setClicked = {
-                                navController.navigate(Destination.EditSet(it.id, null, null))
+                                navController.navigate(
+                                    Destination.EditSet(
+                                        setId = it.id, null, null
+                                    )
+                                )
                             }
                         )
                     }
@@ -186,9 +206,6 @@ fun App(
                             liftId = route.liftId,
                             setSaved = {
                                 navController.popBackStack()
-                            },
-                            createVariationClicked = {
-
                             },
                             createLiftClicked = {
                                 navController.navigate(Destination.EditLift(null))

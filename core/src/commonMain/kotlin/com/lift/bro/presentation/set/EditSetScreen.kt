@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -84,6 +85,7 @@ import com.lift.bro.presentation.NavController
 import com.lift.bro.presentation.dialog.CreateVariationDialog
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
+import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
@@ -145,7 +147,6 @@ fun EditSetScreen(
     variationId: String?,
     liftId: String?,
     setSaved: () -> Unit,
-    createVariationClicked: () -> Unit,
     createLiftClicked: () -> Unit,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
@@ -193,7 +194,7 @@ fun EditSetScreen(
     ) { padding ->
 
         LazyColumn(
-            modifier = Modifier.padding(padding),
+            modifier = Modifier.padding(padding).fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
@@ -218,28 +219,26 @@ fun EditSetScreen(
                     Column(
                         modifier = Modifier
                             .animateContentSize()
+                            .clickable(
+                                enabled = set.variationId != null,
+                                onClick = {
+                                    set = set.copy(variationId = null)
+                                },
+                                role = Role.DropdownList
+                            )
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Space(MaterialTheme.spacing.one)
                         Text(
+                            text = variation?.fullName ?: "Select Lift",
                             style = MaterialTheme.typography.headlineSmall,
-                            text = buildAnnotatedString {
-                                withLink(
-                                    LinkAnnotation.Clickable(
-                                        tag = "change lift"
-                                    ) {
-                                        set = set.copy(variationId = null)
-                                    }
-                                ) {
-                                    append(variation?.fullName ?: "Select Lift")
-                                }
-                            },
                         )
                         Space(MaterialTheme.spacing.one)
                         if (variation == null) {
                             VariationSelector(
-                                variationSelected = { set = set.copy(variationId = it) }
+                                variationSelected = { set = set.copy(variationId = it) },
+                                initialLiftId = liftId,
                             )
                             Button(
                                 onClick = createLiftClicked,
@@ -247,6 +246,17 @@ fun EditSetScreen(
                                 Text("Create Lift")
                             }
                             Space(MaterialTheme.spacing.one)
+                        } else {
+                            val sets = dependencies.database.setDataSource.getAllForLift(
+                                variation.lift?.id ?: ""
+                            )
+
+                            val liftMax = sets.maxByOrNull { it.weight }
+                            val variationMax = sets.filter { it.variationId == variation.id }
+                                .maxByOrNull { it.weight }
+                            Text("${variation.lift?.name ?: ""} Max: ${liftMax?.formattedWeight ?: "None"}")
+                            Text("${variation.fullName} Max: ${variationMax?.formattedWeight ?: "None"}")
+                            Space(MaterialTheme.spacing.half)
                         }
                     }
                 }
@@ -258,7 +268,7 @@ fun EditSetScreen(
                     WeightSelector(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
                         weight = Pair(set.weight, Settings.defaultUOM),
-                        liftId = variation.lift?.id ?: "",
+                        variation = variation,
                         placeholder = "At",
                         weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
                     )
@@ -312,6 +322,7 @@ fun EditSetScreen(
 @Composable
 internal fun VariationSelector(
     modifier: Modifier = Modifier,
+    initialLiftId: String?,
     variationSelected: (String) -> Unit,
 ) {
     val lifts by dependencies.database.variantDataSource.listenAll().map {
@@ -321,6 +332,12 @@ internal fun VariationSelector(
     }.collectAsState(emptyList())
 
     var expandedLift: Lift? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(lifts) {
+        if (initialLiftId != null) {
+            expandedLift = lifts.firstOrNull { it.first?.id == initialLiftId }?.first
+        }
+    }
 
     var showCreateVariationDialog: Boolean by remember { mutableStateOf(false) }
 
@@ -366,7 +383,8 @@ internal fun VariationSelector(
                     ) {
                         variations.forEach { variation ->
                             VariationCard(
-                                modifier = Modifier.padding(MaterialTheme.spacing.quarter).weight(1f),
+                                modifier = Modifier.padding(MaterialTheme.spacing.quarter)
+                                    .weight(1f),
                                 variation = variation,
                                 onClick = { variationSelected(variation.id) }
                             )
@@ -582,41 +600,37 @@ fun DecimalPicker(
     selectedNum: Double? = null,
     numberChanged: (Double?) -> Unit,
     imeAction: ImeAction = ImeAction.Next,
+    suffix: @Composable (() -> Unit)? = null,
 ) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
+    var value by remember { mutableStateOf(TextFieldValue(selectedNum?.toString() ?: "")) }
 
-        var value by remember { mutableStateOf(TextFieldValue(selectedNum?.toString() ?: "")) }
+    var focus by remember { mutableStateOf(false) }
 
-        var focus by remember { mutableStateOf(false) }
-
-        if (focus) {
-            LaunchedEffect(focus) {
-                if (focus) {
-                    value = value.copy(selection = TextRange(0, value.text.length))
-                }
+    if (focus) {
+        LaunchedEffect(focus) {
+            if (focus) {
+                value = value.copy(selection = TextRange(0, value.text.length))
             }
         }
-
-        TextField(
-            modifier = Modifier.onFocusChanged {
-                focus = it.isFocused
-            },
-            value = value,
-            onValueChange = {
-                numberChanged(it.text.toDoubleOrNull())
-                value = it
-            },
-            label = {
-                Text(title)
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Decimal,
-                imeAction = imeAction,
-            )
-        )
     }
+
+    TextField(
+        modifier = modifier.onFocusChanged {
+            focus = it.isFocused
+        },
+        value = value,
+        onValueChange = {
+            numberChanged(it.text.toDoubleOrNull())
+            value = it
+        },
+        label = {
+            Text(title)
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardType = KeyboardType.Decimal,
+            imeAction = imeAction,
+        ),
+        suffix = suffix,
+    )
 }
