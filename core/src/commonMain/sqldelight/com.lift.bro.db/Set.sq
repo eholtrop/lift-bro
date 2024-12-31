@@ -9,7 +9,8 @@ CREATE TABLE LiftingSet (
     tempoDown INTEGER,
     tempoHold INTEGER,
     tempoUp INTEGER,
-    date INTEGER AS Instant NOT NULL
+    date INTEGER AS Instant NOT NULL,
+    notes TEXT NOT NULL
 );
 
 getAllByVariation:
@@ -23,8 +24,8 @@ SELECT * FROM LiftingSet WHERE id = ?;
 
 save:
 INSERT OR REPLACE
-INTO LiftingSet(id, variationId, weight, reps, tempoDown, tempoHold, tempoUp, date)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?);
+INTO LiftingSet(id, variationId, weight, reps, tempoDown, tempoHold, tempoUp, date, notes)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteAllFromVariations:
 DELETE FROM LiftingSet WHERE variationId = ?;

@@ -21,8 +21,12 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -150,6 +154,23 @@ fun CalendarScreen(
                                         style = MaterialTheme.typography.titleMedium,
                                     )
                                     set.tempo.render()
+                                    if (set.notes.isNotBlank()) {
+                                        Row(
+                                            modifier = Modifier.padding(top = MaterialTheme.spacing.quarter),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Icon(
+                                                modifier = Modifier.size(MaterialTheme.typography.labelSmall.fontSize.value.dp),
+                                                imageVector = Icons.Default.Edit,
+                                                contentDescription = null,
+                                            )
+                                            Space(MaterialTheme.spacing.quarter)
+                                            Text(
+                                                text = set.notes,
+                                                style = MaterialTheme.typography.labelSmall,
+                                            )
+                                        }
+                                    }
                                 }
                             }
                     }

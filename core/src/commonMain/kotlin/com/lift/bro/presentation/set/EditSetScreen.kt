@@ -137,11 +137,6 @@ private fun EditSetState.toDomain() = LBSet(
 )
 
 @Composable
-fun EditSetScreenPreview() {
-
-}
-
-@Composable
 fun EditSetScreen(
     setId: String?,
     variationId: String?,
@@ -163,7 +158,7 @@ fun EditSetScreen(
         dependencies.database.variantDataSource.get(set.variationId)
 
     val saveEnabled =
-        variation != null && set.reps != null && set.down != null && set.hold != null && set.up != null
+        set.variationId != null && set.reps != null && set.down != null && set.hold != null && set.up != null && set.weight != null
 
     LiftingScaffold(
         fabIcon = Icons.Default.Edit,

@@ -150,6 +150,7 @@ class SetDataSource(
             tempoHold = set.tempo.hold,
             tempoUp = set.tempo.up,
             date = set.date,
+            notes = set.notes,
         )
     }
 
@@ -176,7 +177,7 @@ class SetDataSource(
             up = this.tempoUp ?: 1,
         ),
         date = this.date,
-        notes = "",
+        notes = this.notes,
     )
 }
 
