@@ -1,8 +1,9 @@
-package com.lift.bro.domain.models
+package com.lift.bro.domain.repositories
 
+import com.lift.bro.domain.models.Variation
 import kotlinx.coroutines.flow.Flow
 
-interface VariationRepository {
+interface IVariationRepository {
 
     suspend fun deleteAll()
 
