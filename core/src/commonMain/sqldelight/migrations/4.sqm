@@ -1,0 +1,5 @@
+CREATE TABLE DayMetadata (
+    id TEXT NOT NULL PRIMARY KEY,
+    notes TEXT NOT NULL,
+    date TEXT NOT NULL UNIQUE
+);

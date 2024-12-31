@@ -1,0 +1,22 @@
+import kotlinx.datetime.Instant;
+import kotlinx.datetime.LocalDate;
+
+CREATE TABLE DayMetadata (
+    id TEXT NOT NULL PRIMARY KEY,
+    notes TEXT NOT NULL,
+    date TEXT NOT NULL UNIQUE
+);
+
+getAll:
+SELECT * FROM DayMetadata;
+
+get:
+SELECT * FROM DayMetadata WHERE id = ?;
+
+getByDate:
+SELECT * FROM DayMetadata WHERE date = ?;
+
+save:
+INSERT OR REPLACE
+INTO DayMetadata(id, notes, date)
+VALUES(?, ?, ?);

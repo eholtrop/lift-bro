@@ -3,16 +3,20 @@ package com.lift.bro.data
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import com.lift.bro.db.LiftBroDB
+import com.lift.bro.domain.models.Day
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.repositories.IDayRepository
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.presentation.toString
 import com.lift.bro.utils.mapEach
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingSet
@@ -24,8 +28,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 class LBDatabase(
     driverFactory: DriverFactory,
@@ -49,6 +55,48 @@ class LBDatabase(
         setQueries = database.setQueries,
         variationQueries = database.variationQueries
     )
+
+    val dayRepository: IDayRepository = object : IDayRepository {
+
+        override fun listen(date: LocalDate): Flow<Day> {
+            return database.dayMetadataQueries.getByDate(date.toString("yyyy-MM-dd")).asFlow()
+                .mapToOneOrNull(Dispatchers.IO).map {
+                    it?.let {
+                        Day(
+                            id = it.id,
+                            date = LocalDate.parse(it.date),
+                            notes = it.notes,
+                        )
+                    } ?: run {
+                        Day(
+                            date = date,
+                            notes = "",
+                        )
+                    }
+                }
+        }
+
+        override fun listenAll(): Flow<List<Day>> {
+            return database.dayMetadataQueries.getAll().asFlow().mapToList(Dispatchers.IO).mapEach {
+                Day(
+                    id = it.id,
+                    date = LocalDate.parse(it.date),
+                    notes = it.notes,
+                )
+            }
+        }
+
+        override fun save(day: Day) {
+            GlobalScope.launch {
+                database.dayMetadataQueries.save(
+                    id = day.id,
+                    date = day.date.toString("yyyy-MM-dd"),
+                    notes = day.notes,
+                )
+            }
+        }
+
+    }
 }
 
 private val dateAdapter = object : ColumnAdapter<Instant, Long> {
@@ -83,7 +131,8 @@ class SetDataSource(
 
     fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
 
-    fun listenAll(): Flow<List<LBSet>> = setQueries.getAll().asFlow().mapToList(Dispatchers.IO).mapEach { it.toDomain() }
+    fun listenAll(): Flow<List<LBSet>> =
+        setQueries.getAll().asFlow().mapToList(Dispatchers.IO).mapEach { it.toDomain() }
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 

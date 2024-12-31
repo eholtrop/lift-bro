@@ -29,8 +29,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +42,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Day
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.components.Calendar
@@ -61,6 +65,8 @@ fun CalendarScreen(
     variations: List<Variation>,
 ) {
     var selectedDate by remember { mutableStateOf(today) }
+
+    val day by dependencies.database.dayRepository.listen(selectedDate).collectAsState(null)
 
     val selectedVariations = sets.filter { it.date.toLocalDate() == selectedDate }
         .groupBy { it.variationId }
@@ -109,6 +115,22 @@ fun CalendarScreen(
                 text = selectedDate.toString("EEEE, MMM d - yyyy"),
                 style = MaterialTheme.typography.titleLarge
             )
+        }
+
+        if (day != null) {
+            item {
+                TextField(
+                    value = day!!.notes ?: "",
+                    onValueChange = {
+                        dependencies.database.dayRepository.save(
+                            day?.copy(notes = it) ?: Day(
+                                date = selectedDate,
+                                notes = it
+                            )
+                        )
+                    }
+                )
+            }
         }
 
         items(
