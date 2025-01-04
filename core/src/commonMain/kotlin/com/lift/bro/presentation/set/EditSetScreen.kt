@@ -298,7 +298,6 @@ fun EditSetScreen(
                         TextField(
                             modifier = Modifier.fillMaxWidth(),
                             value = set.notes,
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                             singleLine = true,
                             placeholder = {
                                 Text("I killed it today!")
