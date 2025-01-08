@@ -72,13 +72,13 @@ fun App(
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
 
-//            LaunchedEffect("debug_mode") {
-//                if (BuildConfig.DEBUG) {
-//                    BackupRestore.restore(
-//                        backup = debugBackup
-//                    ).collect()
-//                }
-//            }
+            LaunchedEffect("debug_mode") {
+                if (BuildConfig.DEBUG) {
+                    BackupRestore.restore(
+                        backup = debugBackup
+                    ).collect()
+                }
+            }
 
 
             CompositionLocalProvider(

@@ -183,7 +183,7 @@ private fun CalendarContent(
                 ),
                 onClick = {
                     coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
                     }
                 }
             ) {
@@ -201,7 +201,7 @@ private fun CalendarContent(
                 ),
                 onClick = {
                     coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
                     }
                 }
             ) {
@@ -239,7 +239,7 @@ private fun CalendarContent(
             pageSpacing = MaterialTheme.spacing.half,
             beyondViewportPageCount = 1
         ) { page ->
-            val currentMonth = today.plus(DatePeriod(months = CALENDAR_INITIAL_PAGE - page))
+            val currentMonth = today.plus(DatePeriod(months = page - CALENDAR_INITIAL_PAGE))
             val startDate = currentMonth.minus(DatePeriod(days = today.dayOfMonth - 1))
 
             Column(
@@ -346,4 +346,4 @@ private fun CalendarDate(
     }
 }
 
-private val PagerState.currentMonth get() = today.plus(DatePeriod(months = CALENDAR_INITIAL_PAGE - currentPage))
+private val PagerState.currentMonth get() = today.plus(DatePeriod(months = currentPage - CALENDAR_INITIAL_PAGE))
