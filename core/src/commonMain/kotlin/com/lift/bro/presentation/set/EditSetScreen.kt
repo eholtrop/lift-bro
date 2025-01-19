@@ -83,6 +83,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.NavController
 import com.lift.bro.presentation.dialog.CreateVariationDialog
+import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
@@ -96,6 +97,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 
 private data class EditSetState(
     val id: String,
@@ -199,6 +204,9 @@ fun EditSetScreen(
                     title = null,
                     numberChanged = { set = set.copy(reps = it?.toLong()) },
                     textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                    suffix = {
+                        Text("reps")
+                    }
                 )
             }
 
@@ -544,7 +552,8 @@ fun NumberPicker(
     selectedNum: Int? = null,
     numberChanged: (Int?) -> Unit,
     imeAction: ImeAction = ImeAction.Next,
-    textStyle: TextStyle = LocalTextStyle.current
+    textStyle: TextStyle = LocalTextStyle.current,
+    suffix: @Composable (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier,
@@ -567,6 +576,7 @@ fun NumberPicker(
             modifier = Modifier.onFocusChanged {
                 focus = it.isFocused
             },
+            suffix = suffix,
             value = value,
             onValueChange = {
                 numberChanged(it.text.toIntOrNull())
