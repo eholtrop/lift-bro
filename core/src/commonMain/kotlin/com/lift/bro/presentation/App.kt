@@ -49,7 +49,7 @@ sealed interface Destination {
     data class VariationDetails(val variationId: String) : Destination
 
     @Serializable
-    data class EditVariation(val variationId: String?, val parentLiftId: String?) : Destination
+    data class EditVariation(val variationId: String) : Destination
 
     @Serializable
     data class EditSet(
@@ -122,14 +122,6 @@ fun App(
                             editLiftClicked = {
                                 navController.navigate(Destination.EditLift(route.liftId))
                             },
-                            addVariationClicked = {
-                                navController.navigate(
-                                    Destination.EditVariation(
-                                        variationId = null,
-                                        parentLiftId = route.liftId
-                                    )
-                                )
-                            },
                             variationClicked = {
                                 navController.navigate(
                                     Destination.VariationDetails(
@@ -173,7 +165,6 @@ fun App(
                                 navController.navigate(
                                     Destination.EditVariation(
                                         variationId = route.variationId,
-                                        parentLiftId = null
                                     )
                                 )
                             },
@@ -191,7 +182,6 @@ fun App(
                         val route: Destination.EditVariation = it.toRoute()
                         EditVariationScreen(
                             id = route.variationId,
-                            parentLiftId = route.parentLiftId,
                             variationSaved = {
                                 navController.popBackStack()
                             }

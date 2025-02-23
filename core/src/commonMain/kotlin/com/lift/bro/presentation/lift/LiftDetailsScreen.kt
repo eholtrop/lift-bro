@@ -79,7 +79,6 @@ fun Instant.toLocalDate() = this.toLocalDateTime(TimeZone.currentSystemDefault()
 fun LiftDetailsScreen(
     liftId: String,
     editLiftClicked: () -> Unit,
-    addVariationClicked: () -> Unit,
     variationClicked: (String) -> Unit,
     addSetClicked: () -> Unit,
     onSetClicked: (LBSet) -> Unit,

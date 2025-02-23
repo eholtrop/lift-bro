@@ -54,7 +54,7 @@ fun rememberVariation(id: String?): MutableState<Variation> {
 fun rememberLift(id: String?): MutableState<Lift?>  {
     val lift = mutableStateOf<Lift?>(null)
 
-    LaunchedEffect("id") {
+    LaunchedEffect(id) {
         dependencies.database.liftDataSource.get(id)
             .collectLatest {
                 lift.value = it
@@ -66,24 +66,22 @@ fun rememberLift(id: String?): MutableState<Lift?>  {
 
 @Composable
 fun EditVariationScreen(
-    id: String? = null,
-    parentLiftId: String? = null,
+    id: String,
     database: LBDatabase = dependencies.database,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     variationSaved: () -> Unit,
 ) {
     var variation by rememberVariation(id)
-    val lift by rememberLift(variation.lift?.id ?: parentLiftId)
     LiftingScaffold(
-        title = id?.let { "Edit Variation" } ?: "Create Variation",
+        title = id.let { "Edit Variation" },
         fabIcon = Icons.Default.Edit,
         contentDescription = "Save Variant",
         fabClicked = {
             coroutineScope.launch {
                 database.variantDataSource.save(
-                    id = variation?.id ?: uuid4().toString(),
-                    name = variation?.name,
-                    liftId = lift?.id!!,
+                    id = variation.id,
+                    name = variation.name,
+                    liftId = variation.lift!!.id,
                 )
                 variationSaved()
             }
@@ -97,7 +95,7 @@ fun EditVariationScreen(
         ) {
 
             TextField(
-                value = variation?.name ?: "",
+                value = variation.name ?: "",
                 onValueChange = { variation = variation.copy(name = it) },
                 label = { Text("Name") },
                 placeholder = { Text("Name") }
@@ -105,7 +103,7 @@ fun EditVariationScreen(
 
             LiftSelector(
                 modifier = Modifier.height(160.dp),
-                lift = lift,
+                lift = variation.lift,
                 liftSelected = { variation = variation.copy(lift = it) }
             )
         }
