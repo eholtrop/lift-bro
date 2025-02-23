@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,9 +27,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,8 +57,10 @@ fun DashboardScreen(
     setClicked: (LBSet) -> Unit,
 ) {
     val state by database.liftDataSource.getAll().collectAsStateWithLifecycle(null)
-    val sets by dependencies.database.setDataSource.listenAll().collectAsStateWithLifecycle(emptyList())
-    val variations by dependencies.database.variantDataSource.listenAll().collectAsStateWithLifecycle(emptyList())
+    val sets by dependencies.database.setDataSource.listenAll()
+        .collectAsStateWithLifecycle(emptyList())
+    val variations by dependencies.database.variantDataSource.listenAll()
+        .collectAsStateWithLifecycle(emptyList())
 
     when {
         state?.isEmpty() == true -> EmptyHomeScreen(addLiftClicked)
@@ -172,16 +175,46 @@ fun DashboardContent(
     ) { padding ->
         when (tab) {
             Tab.Lifts -> {
+
+                var sorting by remember { mutableStateOf(SortingOption.Latest) }
+
+                val liftMap = variations.groupBy { it.lift }
+                    .map { entry ->
+                        entry.key to sets.filter { set -> entry.value.any { it.id == set.variationId } }
+                    }
+
                 LazyVerticalGrid(
                     modifier = Modifier.padding(padding),
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 ) {
 
-                    items(lifts) { lift ->
+                    item(
+                        span = { GridItemSpan(2) }
+                    ) {
+                        Button(
+                            onClick = {
+                                sorting = when (sorting) {
+                                    SortingOption.Latest -> SortingOption.Heaviest
+                                    SortingOption.Heaviest -> SortingOption.Alphabetical
+                                    SortingOption.Alphabetical -> SortingOption.Latest
+                                }
+                            }
+                        ) {
+                            Text(text = sorting.toString())
+                        }
+                    }
+
+                    items(liftMap.let {
+                        when (sorting) {
+                            SortingOption.Latest -> it.sortedByDescending { it.second.maxOfOrNull { it.date.toEpochMilliseconds() } }
+                            SortingOption.Heaviest -> it.sortedByDescending { it.second.maxOfOrNull { it.weight } }
+                            SortingOption.Alphabetical -> it.sortedBy { it.first?.name }
+                        }
+                    }, key = { it.first?.id!! }) { lift ->
                         LiftCard(
-                            modifier = Modifier.padding(MaterialTheme.spacing.quarter),
-                            lift = lift,
+                            modifier = Modifier.padding(MaterialTheme.spacing.quarter).animateItem(),
+                            lift = lift.first!!,
                             onClick = liftClicked
                         )
                     }
@@ -203,6 +236,9 @@ fun DashboardContent(
     }
 }
 
+private enum class SortingOption {
+    Latest, Heaviest, Alphabetical
+}
 
 @Composable
 fun EmptyHomeScreen(
