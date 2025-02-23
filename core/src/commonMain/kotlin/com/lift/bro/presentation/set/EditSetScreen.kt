@@ -418,7 +418,11 @@ fun DateSelector(
 ) {
     var openDialog by remember { mutableStateOf(false) }
 
-    val pickerState = rememberDatePickerState(date.toEpochMilliseconds())
+    val pickerState = rememberDatePickerState(
+        date.toLocalDateTime(TimeZone.currentSystemDefault()).toInstant(
+            TimeZone.UTC
+        ).toEpochMilliseconds()
+    )
 
     if (openDialog) {
         DatePickerDialog(
@@ -429,6 +433,8 @@ fun DateSelector(
                         openDialog = false
                         dateChanged(
                             Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
+                                .toLocalDateTime(TimeZone.UTC)
+                                .toInstant(TimeZone.currentSystemDefault())
                         )
                     },
                     enabled = pickerState.selectedDateMillis != null,
@@ -454,6 +460,8 @@ fun DateSelector(
         modifier = modifier,
         title = "On",
         description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
+            .toLocalDateTime(TimeZone.UTC)
+            .toInstant(TimeZone.currentSystemDefault())
             .toString("MMMM d - yyyy"),
         onClick = {
             openDialog = true
