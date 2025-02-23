@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
@@ -54,9 +55,9 @@ fun DashboardScreen(
     addSetClicked: () -> Unit,
     setClicked: (LBSet) -> Unit,
 ) {
-    val state by database.liftDataSource.getAll().collectAsState(null)
-    val sets by dependencies.database.setDataSource.listenAll().collectAsState(emptyList())
-    val variations by dependencies.database.variantDataSource.listenAll().collectAsState(emptyList())
+    val state by database.liftDataSource.getAll().collectAsStateWithLifecycle(null)
+    val sets by dependencies.database.setDataSource.listenAll().collectAsStateWithLifecycle(emptyList())
+    val variations by dependencies.database.variantDataSource.listenAll().collectAsStateWithLifecycle(emptyList())
 
     when {
         state?.isEmpty() == true -> EmptyHomeScreen(addLiftClicked)
