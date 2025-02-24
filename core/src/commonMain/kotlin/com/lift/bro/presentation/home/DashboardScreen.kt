@@ -54,6 +54,7 @@ fun DashboardScreen(
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
     setClicked: (LBSet) -> Unit,
+    copySetClicked: (LBSet) -> Unit,
 ) {
     val state by database.liftDataSource.getAll().collectAsStateWithLifecycle(null)
     val sets by dependencies.database.setDataSource.listenAll().collectAsStateWithLifecycle(emptyList())
@@ -69,6 +70,7 @@ fun DashboardScreen(
             liftClicked = liftClicked,
             addSetClicked = addSetClicked,
             setClicked = setClicked,
+            copySetClicked = copySetClicked
         )
     }
 }
@@ -87,6 +89,7 @@ fun DashboardContent(
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
     setClicked: (LBSet) -> Unit,
+    copySetClicked: (LBSet) -> Unit,
 ) {
 
     var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
@@ -196,7 +199,8 @@ fun DashboardContent(
                     modifier = Modifier.padding(padding),
                     setClicked = setClicked,
                     sets = sets,
-                    variations = variations
+                    variations = variations,
+                    copySetClicked = copySetClicked,
                 )
             }
         }

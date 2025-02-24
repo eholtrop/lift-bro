@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.benasher44.uuid.uuid4
 import com.example.compose.AppTheme
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.data.Backup
@@ -56,6 +57,11 @@ sealed interface Destination {
         val setId: String? = null,
         val liftId: String? = null,
         val variationId: String? = null
+    ) : Destination
+
+    @Serializable
+    data class EditSetCopy(
+        val set: LBSet,
     ) : Destination
 }
 
@@ -111,6 +117,9 @@ fun App(
                             },
                             setClicked = {
                                 navController.navigate(Destination.EditSet(it.id, null, null))
+                            },
+                            copySetClicked = {
+                                navController.navigate(Destination.EditSetCopy(set = it.copy(id = uuid4().toString())))
                             }
                         )
                     }

@@ -2,9 +2,11 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,18 +24,26 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,11 +62,14 @@ import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun CalendarScreen(
     modifier: Modifier = Modifier,
     setClicked: (LBSet) -> Unit,
+    copySetClicked: (LBSet) -> Unit,
     sets: List<LBSet>,
     variations: List<Variation>,
 ) {
@@ -129,6 +142,7 @@ fun CalendarScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val variation = variations.firstOrNull { it.id == pair.first }
+                    val coroutineScope = rememberCoroutineScope()
 
                     Column(
                         modifier = Modifier.weight(1f)
@@ -140,12 +154,93 @@ fun CalendarScreen(
 
                         pair.second.sortedByDescending { it.weight }
                             .forEach { set ->
+                                var showSheet by remember { mutableStateOf(false) }
+                                if (showSheet) {
+                                    ModalBottomSheet(
+                                        onDismissRequest = {
+                                            showSheet = false
+                                        },
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .clickable(
+                                                    onClick = {
+                                                        setClicked(set)
+                                                    },
+                                                    role =  Role.Button
+                                                )
+                                                .padding(
+                                                    horizontal = MaterialTheme.spacing.one,
+                                                    vertical = MaterialTheme.spacing.half
+                                                ),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Info,
+                                                contentDescription = null
+                                            )
+                                            Space(MaterialTheme.spacing.half)
+                                            Text(
+                                                text = "Open"
+                                            )
+                                        }
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .clickable(
+                                                    onClick = {
+                                                        copySetClicked(set)
+                                                    },
+                                                    role =  Role.Button
+                                                )
+                                                .padding(
+                                                    horizontal = MaterialTheme.spacing.one,
+                                                    vertical = MaterialTheme.spacing.half
+                                                ),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Add,
+                                                contentDescription = null
+                                            )
+                                            Space(MaterialTheme.spacing.half)
+                                            Text(
+                                                text = "Duplicate"
+                                            )
+                                        }
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .clickable(
+                                                    onClick = {
+                                                        coroutineScope.launch {
+                                                            dependencies.database.setDataSource.delete(set.id)
+                                                        }
+                                                    },
+                                                    role =  Role.Button
+                                                )
+                                                .padding(
+                                                    horizontal = MaterialTheme.spacing.one,
+                                                    vertical = MaterialTheme.spacing.half
+                                                ),
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Filled.Delete,
+                                                contentDescription = null
+                                            )
+                                            Space(MaterialTheme.spacing.half)
+                                            Text(
+                                                text = "Delete"
+                                            )
+                                        }
+                                    }
+                                }
+
                                 Column(
                                     modifier = Modifier.fillMaxWidth()
                                         .defaultMinSize(minHeight = 44.dp)
-                                        .clickable(
+                                        .combinedClickable(
                                             role = Role.Button,
-                                            onClick = { setClicked(set) }
+                                            onClick = { setClicked(set) },
+                                            onLongClick = {
+                                                showSheet = true
+                                            }
                                         ),
                                     verticalArrangement = Arrangement.Center
                                 ) {
