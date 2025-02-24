@@ -32,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
@@ -56,7 +57,15 @@ fun EditLiftScreen(
         *database.variantDataSource.getAll(liftId ?: "").toTypedArray()
     )
 
-    var lift by remember { mutableStateOf<Lift>(Lift(id = uuid4().toString(), name = "", color = null)) }
+    var lift by remember {
+        mutableStateOf<Lift>(
+            Lift(
+                id = uuid4().toString(),
+                name = "",
+                color = null
+            )
+        )
+    }
 
     LaunchedEffect("get lift") {
         database.liftDataSource.get(liftId ?: "")
@@ -122,11 +131,13 @@ fun EditLiftScreen(
             TextField(
                 value = lift.name,
                 onValueChange = { lift = lift.copy(name = it) },
-                placeholder = { Text("Press, Squat, Deadlift") }
+                placeholder = { Text("Squat, Bench Press, Deadlift") },
+                textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center)
             )
             Space(MaterialTheme.spacing.two)
 
             Text(
+                modifier = Modifier.align(Alignment.Start).padding(start = MaterialTheme.spacing.one),
                 text = "Variations",
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -152,12 +163,14 @@ fun EditLiftScreen(
                                 variations[index] = variations[index].copy(name = it)
                             },
                             placeholder = {
-                                if (sets.isNotEmpty()) {
-                                    Text(text = "Variation and sets will be deleted if saved")
-                                } else {
-                                    Text(text = "ex: Back vs Front Squat")
-                                }
+                                Text(text = "ex: Back vs Front Squat")
                             },
+                            supportingText = if (variation.name.isNullOrBlank() && sets.isNotEmpty()) {
+                                {
+                                    Text(text = "All sets will be deleted if saved")
+                                }
+                            } else null,
+                            isError = variation.name.isNullOrBlank() && sets.isNotEmpty(),
                             suffix = {
                                 Text(text = lift.name)
                             }
