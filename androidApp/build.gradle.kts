@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.load.kotlin.signatures
+import java.text.SimpleDateFormat
+import java.util.Date
 
 plugins {
     alias(libs.plugins.compose)
@@ -15,7 +17,7 @@ android {
         applicationId = "com.lift.bro"
         minSdk = 24
         targetSdk = 34
-        versionName = "0.0.1-alpha"
+        versionName = "${SimpleDateFormat("YYY-MM-dd").format(Date())}-alpha"
 
 
         versionCode = if (project.hasProperty("buildNumber")) {
