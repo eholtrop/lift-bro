@@ -41,7 +41,6 @@ class PickerState {
     var selectedItem by mutableStateOf("")
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Picker(
     items: List<String>,
