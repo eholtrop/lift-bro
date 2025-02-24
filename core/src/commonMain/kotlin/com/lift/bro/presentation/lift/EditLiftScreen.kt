@@ -157,6 +157,9 @@ fun EditLiftScreen(
                                 } else {
                                     Text(text = "ex: Back vs Front Squat")
                                 }
+                            },
+                            suffix = {
+                                Text(text = lift.name)
                             }
                         )
 
