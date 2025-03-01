@@ -25,6 +25,12 @@ jobs:
           ruby-version: 2.7.2
           bundler-cache: true
 
+      - name: Run linter
+        run: fastlane lint
+        
+      - name: Run tests
+        run: fastlane test
+
       - name: decode keystore
         id: decode_keystore
         uses: timheuer/base64-to-file@v1.2

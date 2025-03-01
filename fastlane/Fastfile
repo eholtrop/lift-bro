@@ -17,9 +17,24 @@ default_platform(:android)
 
 platform :android do
 
-  desc "Deploy a new version to the Google Play"
-  lane :deploy do |options|
-    gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
-   supply(track: "beta")
+    desc "Build the release artifact"
+    lane :build_release do
+        gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
+    end
+
+    desc "Run the project tests"
+    lane :test do |options|
+        gradle(task: "test")
   end
+
+    desc "Run the project Linter"
+    lane :lint do
+       gradle(task: "detekt")
+    end
+
+    desc "Deploy a new version to the Google Play"
+    lane :deploy do |options|
+      gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
+      supply(track: "beta")
+    end
 end

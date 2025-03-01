@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
+
+    id("io.gitlab.arturbosch.detekt") version("1.23.8")
 }
 
 android {
