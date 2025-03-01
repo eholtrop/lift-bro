@@ -8,6 +8,8 @@ plugins {
 
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
+
+    id("io.gitlab.arturbosch.detekt") version("1.23.8")
 }
 
 sqldelight {
