@@ -10,7 +10,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 
-val debugLifts = listOf(
+private val debugLifts = listOf(
     Lift(
         id = "1",
         name = "Squat",

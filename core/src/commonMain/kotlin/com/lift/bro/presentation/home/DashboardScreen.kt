@@ -26,16 +26,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lift.bro.data.BackupRestore
 import com.lift.bro.data.LBDatabase
+import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
@@ -45,6 +47,9 @@ import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBarIconButton
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -224,6 +229,28 @@ fun EmptyHomeScreen(
             onClick = addLiftClicked
         ) {
             Text("Add Lift")
+        }
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+
+        val coroutineScope = rememberCoroutineScope()
+        Button(
+            onClick = {
+                coroutineScope.launch {
+                    BackupRestore.restore(defaultSbdLifts).first()
+                }
+            }
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Add Default Lifts/Variations",
+                )
+                Text(
+                    text = "Squat, Bench, Deadlift (SBD)",
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
         }
     }
 }
