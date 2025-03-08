@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.load.kotlin.signatures
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -14,11 +13,11 @@ plugins {
 
 android {
     namespace = "com.lift.bro"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         applicationId = "com.lift.bro"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionName = "${SimpleDateFormat("YYY-MM-dd").format(Date())}-alpha"
 
 
