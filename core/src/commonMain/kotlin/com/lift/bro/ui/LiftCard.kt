@@ -1,6 +1,7 @@
 package com.lift.bro.ui
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,23 +9,36 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.decimalFormat
+import com.lift.bro.presentation.dialog.CreateMaxSetDialog
 import com.lift.bro.presentation.lift.toColor
 import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun LiftCard(
@@ -33,7 +47,10 @@ fun LiftCard(
     onClick: (Lift) -> Unit
 ) {
 
-    val sets = dependencies.database.setDataSource.getAllForLift(lift.id)
+    val sets by
+        dependencies.database.setDataSource.listenAllForLift(lift.id).collectAsStateWithLifecycle(
+            emptyList()
+        )
 
     val max = sets.maxByOrNull { it.weight }
 
@@ -67,12 +84,38 @@ fun LiftCard(
             Space(MaterialTheme.spacing.half)
 
             if (max == null) {
+                var showMaxDialog by remember { mutableStateOf(false) }
+
+                if (showMaxDialog) {
+                    CreateMaxSetDialog(
+                        parentLiftId = lift.id,
+                        onDismissRequest = {
+                            showMaxDialog = false
+                        },
+                        onSetCreated = {
+                            showMaxDialog = false
+                        },
+                    )
+                }
+
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize()
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable(
+                            onClick = {
+                                showMaxDialog = true
+                            },
+                            role = Role.Button,
+                        ),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text("No Sets!")
+                    Text(
+                        "No Sets!"
+                    )
+                    Text(
+                        "Tap to set your Max"
+                    )
                 }
             } else {
                 val recentSets = sets.groupBy { it.date.toLocalDate() }
