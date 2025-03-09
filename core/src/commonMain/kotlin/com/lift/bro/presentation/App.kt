@@ -27,6 +27,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.home.DashboardScreen
+import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
 import com.lift.bro.presentation.set.EditSetScreen
@@ -100,6 +101,7 @@ fun App(
                 ) {
                     composable<Destination.Dashboard> { entry ->
                         DashboardScreen(
+                            viewModel = DashboardViewModel(),
                             addLiftClicked = {
                                 navController.navigate(Destination.EditLift(null))
                             },

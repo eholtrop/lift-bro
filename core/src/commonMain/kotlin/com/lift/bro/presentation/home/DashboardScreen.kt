@@ -3,6 +3,7 @@
 package com.lift.bro.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,8 +27,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -37,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lift.bro.data.BackupRestore
 import com.lift.bro.data.LBDatabase
+import com.lift.bro.data.LiftDataSource
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
@@ -47,34 +52,82 @@ import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.utils.debug
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@Composable
+fun rememberLifts(): StateFlow<List<Lift>> {
+    val stateFlow = MutableStateFlow<List<Lift>>(emptyList())
+
+    LaunchedEffect(Unit) {
+        dependencies.database.liftDataSource.getAll()
+            .catch {
+                it.printStackTrace()
+            }.collectLatest {
+                stateFlow.tryEmit(it)
+            }
+    }
+    return stateFlow
+}
+
+data class DashboardState(
+    val showEmpty: Boolean,
+    val lifts: List<Lift>,
+)
+
+class DashboardViewModel(
+    initialState: DashboardState? = null,
+    liftRepository: LiftDataSource = dependencies.database.liftDataSource,
+    scope: CoroutineScope = GlobalScope
+) {
+    val state = liftRepository.getAll()
+        .map { DashboardState(showEmpty = it.isEmpty(), it) }
+        .debug()
+        .stateIn(scope, SharingStarted.WhileSubscribed(), initialState)
+}
 
 @Composable
 fun DashboardScreen(
-    database: LBDatabase = dependencies.database,
+    viewModel: DashboardViewModel,
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
     setClicked: (LBSet) -> Unit,
 ) {
-    val state by database.liftDataSource.getAll().collectAsStateWithLifecycle(null)
-    val sets by dependencies.database.setDataSource.listenAll().collectAsStateWithLifecycle(emptyList())
-    val variations by dependencies.database.variantDataSource.listenAll().collectAsStateWithLifecycle(emptyList())
 
-    when {
-        state?.isEmpty() == true -> EmptyHomeScreen(addLiftClicked)
-        state?.isNotEmpty() == true -> DashboardContent(
-            lifts = state!!,
-            sets = sets,
-            variations = variations,
-            addLiftClicked = addLiftClicked,
-            liftClicked = liftClicked,
-            addSetClicked = addSetClicked,
-            setClicked = setClicked,
-        )
+    val state by remember { viewModel }.state.collectAsStateWithLifecycle()
+
+    state?.let {
+        Crossfade(it.showEmpty) { showEmpty ->
+            when(showEmpty) {
+                true -> EmptyHomeScreen(addLiftClicked)
+                false -> {
+                    val sets by dependencies.database.setDataSource.listenAll()
+                        .collectAsStateWithLifecycle(emptyList())
+                    val variations by dependencies.database.variantDataSource.listenAll()
+                        .collectAsStateWithLifecycle(emptyList())
+                    DashboardContent(
+                        lifts = it.lifts,
+                        sets = sets,
+                        variations = variations,
+                        addLiftClicked = addLiftClicked,
+                        liftClicked = liftClicked,
+                        addSetClicked = addSetClicked,
+                        setClicked = setClicked,
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -232,25 +285,26 @@ fun EmptyHomeScreen(
         }
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
 
-        val coroutineScope = rememberCoroutineScope()
-        Button(
-            onClick = {
-                coroutineScope.launch {
-                    BackupRestore.restore(defaultSbdLifts).first()
-                }
-            }
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "Add Default Lifts/Variations",
-                )
-                Text(
-                    text = "Squat, Bench, Deadlift (SBD)",
-                    style = MaterialTheme.typography.labelMedium
-                )
-            }
-        }
+        // This button seems to be broken when subscribing to the DB. So ill find another way to do this in the future
+//        val coroutineScope = rememberCoroutineScope()
+//        Button(
+//            onClick = {
+//                GlobalScope.launch {
+//                    BackupRestore.restore(defaultSbdLifts).debug().collectLatest {  }
+//                }
+//            }
+//        ) {
+//            Column(
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text(
+//                    text = "Add Default Lifts/Variations",
+//                )
+//                Text(
+//                    text = "Squat, Bench, Deadlift (SBD)",
+//                    style = MaterialTheme.typography.labelMedium
+//                )
+//            }
+//        }
     }
 }
