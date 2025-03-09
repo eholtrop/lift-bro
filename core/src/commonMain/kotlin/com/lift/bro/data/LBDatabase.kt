@@ -23,8 +23,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 
 class LBDatabase(
@@ -38,9 +41,7 @@ class LBDatabase(
         )
     }
 
-    val liftDataSource: LiftDataSource by lazy {
-        LiftDataSource(database.liftQueries)
-    }
+    val liftDataSource: LiftDataSource = LiftDataSource(database.liftQueries)
 
     val variantDataSource: IVariationRepository = VariationRepository(
         liftQueries = database.liftQueries,
@@ -83,24 +84,33 @@ class SetDataSource(
         }
             .fold(emptyList()) { list, subList -> list + subList }
 
+    fun listenAllForLift(liftId: String): Flow<List<LBSet>> = combine(
+        variationQueries.getAllForLift(liftId).asFlow().mapToList(dispatcher),
+        setQueries.getAll().asFlow().mapToList(dispatcher),
+    ) { variations, sets ->
+        sets.filter { set -> variations.any { it.id == set.variationId } }
+    }.mapEach { it.toDomain() }
+
     fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
 
-    fun listenAll(): Flow<List<LBSet>> = setQueries.getAll().asFlow().mapToList(Dispatchers.IO).mapEach { it.toDomain() }
+    fun listenAll(): Flow<List<LBSet>> = setQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 
     suspend fun save(set: LBSet) {
-        setQueries.save(
-            id = set.id,
-            variationId = set.variationId,
-            weight = set.weight,
-            reps = set.reps,
-            tempoDown = set.tempo.down,
-            tempoHold = set.tempo.hold,
-            tempoUp = set.tempo.up,
-            date = set.date,
-            notes = set.notes,
-        )
+        withContext(dispatcher) {
+            setQueries.save(
+                id = set.id,
+                variationId = set.variationId,
+                weight = set.weight,
+                reps = set.reps,
+                tempoDown = set.tempo.down,
+                tempoHold = set.tempo.hold,
+                tempoUp = set.tempo.up,
+                date = set.date,
+                notes = set.notes,
+            )
+        }
     }
 
     suspend fun deleteAll(variationId: String) {
