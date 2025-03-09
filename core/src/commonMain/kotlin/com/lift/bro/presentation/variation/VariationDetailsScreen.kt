@@ -48,6 +48,7 @@ import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.ui.Card
+import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
@@ -109,9 +110,11 @@ private fun VariationDetailsScreen(
     var grouping by rememberSaveable { mutableStateOf(Grouping.Date) }
 
     LiftingScaffold(
-        fabIcon = Icons.Default.Add,
-        contentDescription = "Add Set",
-        fabClicked = addSetClicked,
+        fabProperties = FabProperties(
+            fabIcon = Icons.Default.Add,
+            contentDescription = "Add Set",
+            fabClicked = addSetClicked,
+        ),
         title = "${variation.name} ${lift?.name}",
         trailingContent = {
             TopBarIconButton(

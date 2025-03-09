@@ -55,6 +55,7 @@ import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.presentation.variation.render
+import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
@@ -231,9 +232,11 @@ fun LiftDetailsScreen(
 
     lift?.let { lift ->
         LiftingScaffold(
-            fabIcon = Icons.Default.Add,
-            contentDescription = "Add Set",
-            fabClicked = addSetClicked,
+            fabProperties = FabProperties(
+                fabIcon = Icons.Default.Add,
+                contentDescription = "Add Set",
+                fabClicked = addSetClicked,
+            ),
             title = lift.name,
             trailingContent = {
                 TopBarButton(

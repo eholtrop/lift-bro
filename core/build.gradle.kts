@@ -54,6 +54,8 @@ kotlin {
                 implementation("com.benasher44:uuid:0.8.1")
                 implementation(libs.sqldelight.coroutines)
                 implementation(libs.kotlinx.serialization)
+                implementation(libs.kotlin.reflect)
+//                implementation(kotlin("reflect"))
 
                 implementation("com.github.skydoves:colorpicker-compose:1.1.2")
             }

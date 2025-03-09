@@ -36,14 +36,7 @@ fun TopBar(
     modifier: Modifier = Modifier,
     title: String,
     trailingContent: @Composable () -> Unit = {},
-    leadingContent: @Composable () -> Unit = {
-        val navController = LocalNavController.current
-        TopBarIconButton(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = "Back",
-            onClick = { navController.popBackStack() },
-        )
-    },
+    leadingContent: @Composable () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     LargeTopAppBar(

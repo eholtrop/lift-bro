@@ -36,6 +36,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.components.DropDownButton
 import com.lift.bro.presentation.spacing
+import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -79,18 +80,20 @@ fun EditVariationScreen(
     var variation by rememberVariation(id)
     LiftingScaffold(
         title = id.let { "Edit Variation" },
-        fabIcon = Icons.Default.Edit,
-        contentDescription = "Save Variant",
-        fabClicked = {
-            coroutineScope.launch {
-                database.variantDataSource.save(
-                    id = variation.id,
-                    name = variation.name,
-                    liftId = variation.lift!!.id,
-                )
-                variationSaved()
+        fabProperties = FabProperties(
+            fabIcon = Icons.Default.Edit,
+            contentDescription = "Save Variant",
+            fabClicked = {
+                coroutineScope.launch {
+                    database.variantDataSource.save(
+                        id = variation.id,
+                        name = variation.name,
+                        liftId = variation.lift!!.id,
+                    )
+                    variationSaved()
+                }
             }
-        }
+        ),
     ) { padding ->
         Column(
             modifier = Modifier.padding(padding)

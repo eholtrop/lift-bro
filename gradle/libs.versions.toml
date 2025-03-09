@@ -24,6 +24,7 @@ sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", ver
 
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "app-update" }
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
 ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "ui-tooling-preview-android" }
