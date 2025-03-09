@@ -132,14 +132,8 @@ fun DashboardScreen(
                     }
                 )
                 false -> {
-                    val sets by dependencies.database.setDataSource.listenAll()
-                        .collectAsStateWithLifecycle(emptyList())
-                    val variations by dependencies.database.variantDataSource.listenAll()
-                        .collectAsStateWithLifecycle(emptyList())
                     DashboardContent(
                         lifts = it.lifts,
-                        sets = sets,
-                        variations = variations,
                         addLiftClicked = addLiftClicked,
                         liftClicked = liftClicked,
                         addSetClicked = addSetClicked,
@@ -159,8 +153,6 @@ private enum class Tab {
 @Composable
 fun DashboardContent(
     lifts: List<Lift>,
-    sets: List<LBSet>,
-    variations: List<Variation>,
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
@@ -248,6 +240,12 @@ fun DashboardContent(
             }
         },
     ) { padding ->
+
+        val sets by dependencies.database.setDataSource.listenAll()
+            .collectAsStateWithLifecycle(emptyList())
+        val variations by dependencies.database.variantDataSource.listenAll()
+            .collectAsStateWithLifecycle(emptyList())
+
         when (tab) {
             Tab.Lifts -> {
                 LazyVerticalGrid(
