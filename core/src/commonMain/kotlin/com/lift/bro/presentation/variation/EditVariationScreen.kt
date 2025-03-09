@@ -44,7 +44,6 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.spacing
-import com.lift.bro.ui.LiftSelector
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBar
 import kotlinx.coroutines.CoroutineScope
