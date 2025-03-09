@@ -28,20 +28,19 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.benasher44.uuid.uuid4
 import com.lift.bro.data.BackupRestore
-import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.LiftDataSource
+import com.lift.bro.debugBackup
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
@@ -54,13 +53,17 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.utils.debug
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -85,6 +88,10 @@ data class DashboardState(
     val lifts: List<Lift>,
 )
 
+sealed class DashboardEvent {
+    object RestoreDefaultLifts: DashboardEvent()
+}
+
 class DashboardViewModel(
     initialState: DashboardState? = null,
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
@@ -93,7 +100,15 @@ class DashboardViewModel(
     val state = liftRepository.getAll()
         .map { DashboardState(showEmpty = it.isEmpty(), it) }
         .debug()
-        .stateIn(scope, SharingStarted.WhileSubscribed(), initialState)
+        .stateIn(scope, SharingStarted.Eagerly, initialState)
+
+    fun handleEvent(event: DashboardEvent) {
+        when (event) {
+            DashboardEvent.RestoreDefaultLifts -> GlobalScope.launch {
+                BackupRestore.restore(defaultSbdLifts).flowOn(Dispatchers.IO).collect()
+            }
+        }
+    }
 }
 
 @Composable
@@ -110,7 +125,12 @@ fun DashboardScreen(
     state?.let {
         Crossfade(it.showEmpty) { showEmpty ->
             when(showEmpty) {
-                true -> EmptyHomeScreen(addLiftClicked)
+                true -> EmptyHomeScreen(
+                    addLiftClicked = addLiftClicked,
+                    loadDefaultLifts = {
+                        viewModel.handleEvent(DashboardEvent.RestoreDefaultLifts)
+                    }
+                )
                 false -> {
                     val sets by dependencies.database.setDataSource.listenAll()
                         .collectAsStateWithLifecycle(emptyList())
@@ -265,6 +285,7 @@ fun DashboardContent(
 @Composable
 fun EmptyHomeScreen(
     addLiftClicked: () -> Unit,
+    loadDefaultLifts: () -> Unit
 ) {
 
     Column(
@@ -285,26 +306,20 @@ fun EmptyHomeScreen(
         }
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
 
-        // This button seems to be broken when subscribing to the DB. So ill find another way to do this in the future
-//        val coroutineScope = rememberCoroutineScope()
-//        Button(
-//            onClick = {
-//                GlobalScope.launch {
-//                    BackupRestore.restore(defaultSbdLifts).debug().collectLatest {  }
-//                }
-//            }
-//        ) {
-//            Column(
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text(
-//                    text = "Add Default Lifts/Variations",
-//                )
-//                Text(
-//                    text = "Squat, Bench, Deadlift (SBD)",
-//                    style = MaterialTheme.typography.labelMedium
-//                )
-//            }
-//        }
+        Button(
+            onClick = loadDefaultLifts
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Add Default Lifts/Variations",
+                )
+                Text(
+                    text = "Squat, Bench, Deadlift (SBD)",
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+        }
     }
 }

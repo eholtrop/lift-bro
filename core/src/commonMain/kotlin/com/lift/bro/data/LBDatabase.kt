@@ -38,7 +38,9 @@ class LBDatabase(
         )
     }
 
-    val liftDataSource: LiftDataSource = LiftDataSource(database.liftQueries)
+    val liftDataSource: LiftDataSource by lazy {
+        LiftDataSource(database.liftQueries)
+    }
 
     val variantDataSource: IVariationRepository = VariationRepository(
         liftQueries = database.liftQueries,

@@ -12,8 +12,9 @@ actual class DependencyContainer {
         var context: Context? = null
     }
 
-    actual val database: LBDatabase
-        get() = LBDatabase(DriverFactory(context!!))
+    actual val database: LBDatabase by lazy {
+        LBDatabase(DriverFactory(context!!))
+    }
 
     actual fun launchCalculator() {
         val intent = Intent(Intent.ACTION_MAIN)
