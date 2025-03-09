@@ -66,7 +66,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.fullName
-import com.lift.bro.presentation.NavController
+import com.lift.bro.presentation.LocalNavController
 import com.lift.bro.presentation.dialog.CreateVariationDialog
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
@@ -154,9 +154,9 @@ fun EditSetScreen(
         contentDescription = "Save Set",
         fabEnabled = saveEnabled,
         title = "${if (setId != null) "You" else "I"} Crushed...",
-        actions = {
+        trailingContent = {
             if (setId != null) {
-                val navController = NavController.current
+                val navController = LocalNavController.current
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",

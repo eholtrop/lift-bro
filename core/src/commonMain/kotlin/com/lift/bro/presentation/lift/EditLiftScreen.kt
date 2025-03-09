@@ -91,7 +91,7 @@ fun EditLiftScreen(
         topBar = {
             TopBar(
                 title = liftId?.let { "Edit Lift" } ?: "Create Lift",
-                showBackButton = true
+//                showBackButton = true
             )
         },
         floatingActionButton = {

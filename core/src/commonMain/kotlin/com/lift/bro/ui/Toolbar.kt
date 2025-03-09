@@ -2,7 +2,6 @@ package com.lift.bro.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -27,7 +26,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.di.dependencies
-import com.lift.bro.presentation.NavController
+import com.lift.bro.presentation.LocalNavController
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.presentation.spacing
 
@@ -36,8 +35,15 @@ import com.lift.bro.presentation.spacing
 fun TopBar(
     modifier: Modifier = Modifier,
     title: String,
-    showBackButton: Boolean = false,
-    trailingContent: @Composable RowScope.() -> Unit = {},
+    trailingContent: @Composable () -> Unit = {},
+    leadingContent: @Composable () -> Unit = {
+        val navController = LocalNavController.current
+        TopBarIconButton(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Back",
+            onClick = { navController.popBackStack() },
+        )
+    },
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) {
     LargeTopAppBar(
@@ -49,21 +55,16 @@ fun TopBar(
         title = {
             Text(
                 modifier = modifier.semantics { heading() }.fillMaxWidth(),
-                textAlign = if ((scrollBehavior?.state?.collapsedFraction ?: 0f) < .66f) TextAlign.Center else TextAlign.Start,
+                textAlign = if ((scrollBehavior?.state?.collapsedFraction
+                        ?: 0f) < .66f
+                ) TextAlign.Center else TextAlign.Start,
                 text = title,
                 color = MaterialTheme.colorScheme.onBackground,
                 style = MaterialTheme.typography.headlineLarge,
             )
         },
         navigationIcon = {
-            if (showBackButton) {
-                val navController = NavController.current
-                TopBarIconButton(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back",
-                    onClick = { navController.popBackStack() },
-                )
-            }
+            leadingContent()
         },
         actions = {
             trailingContent()

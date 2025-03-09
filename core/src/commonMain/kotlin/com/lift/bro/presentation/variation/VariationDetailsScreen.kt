@@ -29,7 +29,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -51,7 +50,6 @@ import com.lift.bro.presentation.toString
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.TopBar
 import com.lift.bro.ui.TopBarIconButton
 import kotlin.collections.List
 import kotlin.collections.forEach
@@ -115,7 +113,7 @@ private fun VariationDetailsScreen(
         contentDescription = "Add Set",
         fabClicked = addSetClicked,
         title = "${variation.name} ${lift?.name}",
-        actions = {
+        trailingContent = {
             TopBarIconButton(
                 imageVector = Icons.Default.Edit,
                 contentDescription = "Edit",

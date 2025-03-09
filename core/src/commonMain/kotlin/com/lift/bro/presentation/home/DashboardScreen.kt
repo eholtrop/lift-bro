@@ -37,15 +37,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.benasher44.uuid.uuid4
 import com.lift.bro.data.BackupRestore
 import com.lift.bro.data.LiftDataSource
-import com.lift.bro.debugBackup
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.Destination
+import com.lift.bro.presentation.LocalNavController
 import com.lift.bro.presentation.spacing
 import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
@@ -56,7 +55,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -67,6 +65,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import lift_bro.core.generated.resources.Res
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun rememberLifts(): StateFlow<List<Lift>> {
@@ -163,8 +163,16 @@ fun DashboardContent(
 
     LiftingScaffold(
         title = "Lift Bro",
-        showBackButton = false,
-        actions = {
+        leadingContent = {
+//            val navController = LocalNavController.current
+//            TopBarIconButton(
+//                painter = Images.logo(),
+//                contentDescription = "Settings"
+//            ) {
+//                navController.navigate(Destination.Settings)
+//            }
+        },
+        trailingContent = {
             TopBarIconButton(
                 imageVector = Icons.Default.Add,
                 contentDescription = "Add Lift",

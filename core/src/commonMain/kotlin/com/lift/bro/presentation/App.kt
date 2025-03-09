@@ -49,9 +49,12 @@ sealed interface Destination {
         val liftId: String? = null,
         val variationId: String? = null
     ) : Destination
+
+    @Serializable
+    object Settings: Destination
 }
 
-val NavController = compositionLocalOf<NavHostController>() {
+val LocalNavController = compositionLocalOf<NavHostController>() {
     error("NavHostController was not set")
 }
 
@@ -73,7 +76,7 @@ fun App(
             }
 
             CompositionLocalProvider(
-                NavController provides navController
+                LocalNavController provides navController
             ) {
                 NavHost(
                     navController = navController,
@@ -138,6 +141,10 @@ fun App(
                                 navController.popBackStack()
                             },
                         )
+                    }
+
+                    composable<Destination.Settings> {
+
                     }
 
                     composable<Destination.VariationDetails> {
