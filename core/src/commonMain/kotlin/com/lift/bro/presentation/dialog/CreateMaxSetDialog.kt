@@ -104,7 +104,8 @@ fun CreateMaxSetDialog(
                         value = DecimalFormat.formatWeight(weight),
                         onValueChange = { weight = it.toDoubleOrNull() },
                         supportingText = {
-                            Text("weight in lbs")
+                            val uom by dependencies.settingsRepository.getUnitOfMeasure().collectAsState(null)
+                            Text("weight in ${uom?.uom?.value ?: ""}")
                         },
                         trailingIcon = {
                             DropDownButton(

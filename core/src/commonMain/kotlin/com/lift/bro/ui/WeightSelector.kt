@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -66,7 +67,10 @@ fun WeightSelector(
                 weightChanged(weight.copy(first = it))
             },
             suffix = {
-                Text("lbs")
+                val uom by dependencies.settingsRepository.getUnitOfMeasure().collectAsState(null)
+                uom?.let {
+                    Text(it.uom.value)
+                }
             },
         )
 

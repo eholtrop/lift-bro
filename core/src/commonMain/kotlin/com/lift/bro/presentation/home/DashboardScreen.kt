@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -46,6 +47,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.presentation.Destination
 import com.lift.bro.presentation.LocalNavController
 import com.lift.bro.presentation.spacing
+import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
@@ -164,13 +166,13 @@ fun DashboardContent(
     LiftingScaffold(
         title = "Lift Bro",
         leadingContent = {
-//            val navController = LocalNavController.current
-//            TopBarIconButton(
-//                painter = Images.logo(),
-//                contentDescription = "Settings"
-//            ) {
-//                navController.navigate(Destination.Settings)
-//            }
+            val navController = LocalNavController.current
+            TopBarIconButton(
+                imageVector = Icons.Default.Settings,
+                contentDescription = "Settings"
+            ) {
+                navController.navigate(Destination.Settings)
+            }
         },
         trailingContent = {
             TopBarIconButton(
@@ -179,74 +181,76 @@ fun DashboardContent(
                 onClick = addLiftClicked,
             )
         },
-        fabIcon = Icons.Default.Add,
-        contentDescription = "Add Set",
-        fabClicked = addSetClicked,
-        preFab = {
-            Button(
-                modifier = Modifier.size(72.dp, 52.dp),
-                onClick = {
-                    tab = Tab.Lifts
-                },
-                shape = RoundedCornerShape(
-                    topStartPercent = 50,
-                    bottomStartPercent = 50,
-                    topEndPercent = 25,
-                    bottomEndPercent = 25,
-                )
-            ) {
-                Column {
-                    Icon(
-                        painter = Images.dashboardMenuIcon(),
-                        contentDescription = "Dashboard"
+        fabProperties = FabProperties(
+            fabIcon = Icons.Default.Add,
+            contentDescription = "Add Set",
+            fabClicked = addSetClicked,
+            preFab = {
+                Button(
+                    modifier = Modifier.size(72.dp, 52.dp),
+                    onClick = {
+                        tab = Tab.Lifts
+                    },
+                    shape = RoundedCornerShape(
+                        topStartPercent = 50,
+                        bottomStartPercent = 50,
+                        topEndPercent = 25,
+                        bottomEndPercent = 25,
                     )
-
-                    AnimatedVisibility(tab == Tab.Lifts) {
-                        Box(
-                            modifier = Modifier.padding(top = MaterialTheme.spacing.quarter.div(2))
-                                .height(2.dp)
-                                .fillMaxWidth()
-                                .background(
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                        )
-                    }
-                }
-            }
-        },
-        postFab = {
-            Button(
-                modifier = Modifier.size(72.dp, 52.dp),
-                onClick = {
-                    tab = Tab.RecentSets
-                },
-                shape = RoundedCornerShape(
-                    topStartPercent = 25,
-                    bottomStartPercent = 25,
-                    topEndPercent = 50,
-                    bottomEndPercent = 50,
-                )
-            ) {
-                Column(
                 ) {
-                    Icon(
-                        painter = Images.calendarMenuIcon(),
-                        contentDescription = "Calendar"
-                    )
-
-                    AnimatedVisibility(tab == Tab.RecentSets) {
-                        Box(
-                            modifier = Modifier.padding(top = MaterialTheme.spacing.quarter.div(2))
-                                .height(2.dp)
-                                .fillMaxWidth()
-                                .background(
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
+                    Column {
+                        Icon(
+                            painter = Images.dashboardMenuIcon(),
+                            contentDescription = "Dashboard"
                         )
+
+                        AnimatedVisibility(tab == Tab.Lifts) {
+                            Box(
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.quarter.div(2))
+                                    .height(2.dp)
+                                    .fillMaxWidth()
+                                    .background(
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                            )
+                        }
+                    }
+                }
+            },
+            postFab = {
+                Button(
+                    modifier = Modifier.size(72.dp, 52.dp),
+                    onClick = {
+                        tab = Tab.RecentSets
+                    },
+                    shape = RoundedCornerShape(
+                        topStartPercent = 25,
+                        bottomStartPercent = 25,
+                        topEndPercent = 50,
+                        bottomEndPercent = 50,
+                    )
+                ) {
+                    Column(
+                    ) {
+                        Icon(
+                            painter = Images.calendarMenuIcon(),
+                            contentDescription = "Calendar"
+                        )
+
+                        AnimatedVisibility(tab == Tab.RecentSets) {
+                            Box(
+                                modifier = Modifier.padding(top = MaterialTheme.spacing.quarter.div(2))
+                                    .height(2.dp)
+                                    .fillMaxWidth()
+                                    .background(
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                            )
+                        }
                     }
                 }
             }
-        },
+        ),
     ) { padding ->
 
         val sets by dependencies.database.setDataSource.listenAll()

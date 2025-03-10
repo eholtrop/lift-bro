@@ -71,6 +71,7 @@ import com.lift.bro.presentation.dialog.CreateVariationDialog
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
+import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
@@ -150,9 +151,17 @@ fun EditSetScreen(
         set.variationId != null && set.reps != null && set.down != null && set.hold != null && set.up != null && set.weight != null
 
     LiftingScaffold(
-        fabIcon = Icons.Default.Edit,
-        contentDescription = "Save Set",
-        fabEnabled = saveEnabled,
+        fabProperties = FabProperties(
+            fabIcon = Icons.Default.Edit,
+            contentDescription = "Save Set",
+            fabEnabled = saveEnabled,
+            fabClicked = {
+                coroutineScope.launch {
+                    dependencies.database.setDataSource.save(set.toDomain())
+                }
+                setSaved()
+            },
+        ),
         title = "${if (setId != null) "You" else "I"} Crushed...",
         trailingContent = {
             if (setId != null) {
@@ -168,12 +177,6 @@ fun EditSetScreen(
                     }
                 )
             }
-        },
-        fabClicked = {
-            coroutineScope.launch {
-                dependencies.database.setDataSource.save(set.toDomain())
-            }
-            setSaved()
         },
     ) { padding ->
 

@@ -23,6 +23,7 @@ import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
 import com.lift.bro.presentation.set.EditSetScreen
+import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.EditVariationScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
 import kotlinx.serialization.Serializable
@@ -144,7 +145,7 @@ fun App(
                     }
 
                     composable<Destination.Settings> {
-
+                        SettingsScreen()
                     }
 
                     composable<Destination.VariationDetails> {

@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,18 +23,31 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.lift.bro.presentation.LocalNavController
 import com.lift.bro.presentation.spacing
+
+data class FabProperties(
+    val fabIcon: ImageVector,
+    val contentDescription: String,
+    val fabClicked: (() -> Unit)? = null,
+    val preFab: @Composable (() -> Unit)? = null,
+    val postFab: @Composable (() -> Unit)? = null,
+    val fabEnabled: Boolean = true,
+)
 
 @Composable
 fun LiftingScaffold(
-    fabIcon: ImageVector,
-    contentDescription: String,
-    fabClicked: (() -> Unit)? = null,
-    preFab: @Composable (() -> Unit)? = null,
-    postFab: @Composable (() -> Unit)? = null,
-    fabEnabled: Boolean = true,
     title: String,
-    leadingContent: @Composable () -> Unit = {},
+    fabProperties: FabProperties? = null,
+    leadingContent: @Composable () -> Unit = {
+        val navController = LocalNavController.current
+        TopBarIconButton(
+            imageVector = Icons.Default.ArrowBack,
+            contentDescription = "Back",
+            onClick = { navController.popBackStack() },
+        )
+
+    },
     trailingContent: @Composable () -> Unit = {},
     topAppBarScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(),
     content: @Composable (PaddingValues) -> Unit
@@ -48,33 +63,35 @@ fun LiftingScaffold(
             )
         },
         floatingActionButton = {
-            Row {
-                preFab?.invoke()
-                Space(MaterialTheme.spacing.half)
-                Button(
-                    modifier = Modifier.defaultMinSize(52.dp, 52.dp),
-                    enabled = fabEnabled,
-                    onClick = { fabClicked?.invoke() },
-                    shape = when {
-                        preFab != null || postFab != null -> {
-                            RoundedCornerShape(
-                                topStartPercent = if (preFab != null) 25 else 50,
-                                bottomStartPercent = if (preFab != null) 25 else 50,
-                                topEndPercent = if (postFab != null) 25 else 50,
-                                bottomEndPercent = if (postFab != null) 25 else 50,
-                            )
-                        }
+            if (fabProperties != null) {
+                Row {
+                    fabProperties.preFab?.invoke()
+                    Space(MaterialTheme.spacing.half)
+                    Button(
+                        modifier = Modifier.defaultMinSize(52.dp, 52.dp),
+                        enabled = fabProperties.fabEnabled,
+                        onClick = { fabProperties.fabClicked?.invoke() },
+                        shape = when {
+                            fabProperties.preFab != null || fabProperties.postFab != null -> {
+                                RoundedCornerShape(
+                                    topStartPercent = if (fabProperties.preFab != null) 25 else 50,
+                                    bottomStartPercent = if (fabProperties.preFab != null) 25 else 50,
+                                    topEndPercent = if (fabProperties.postFab != null) 25 else 50,
+                                    bottomEndPercent = if (fabProperties.postFab != null) 25 else 50,
+                                )
+                            }
 
-                        else -> ButtonDefaults.shape
+                            else -> ButtonDefaults.shape
+                        }
+                    ) {
+                        Icon(
+                            imageVector = fabProperties.fabIcon,
+                            contentDescription = fabProperties.contentDescription,
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = fabIcon,
-                        contentDescription = contentDescription,
-                    )
+                    Space(MaterialTheme.spacing.half)
+                    fabProperties.postFab?.invoke()
                 }
-                Space(MaterialTheme.spacing.half)
-                postFab?.invoke()
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
