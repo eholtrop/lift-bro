@@ -6,10 +6,8 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 
 //expect class FileManager {
 //    fun saveToFile(path: String, fileName: String, content: String)
@@ -19,7 +17,7 @@ object BackupRestore {
 
     suspend fun backup(): Backup {
         return Backup(
-            lifts = dependencies.database.liftDataSource.getAll().first(),
+            lifts = dependencies.database.liftDataSource.listenAll().first(),
             variations = dependencies.database.variantDataSource.getAll(),
             sets = dependencies.database.setDataSource.getAll()
         )
@@ -34,7 +32,7 @@ object BackupRestore {
     }
 
     fun restore(backup: Backup): Flow<Unit> = flow {
-        dependencies.database.liftDataSource.clear()
+        dependencies.database.liftDataSource.deleteAll()
         dependencies.database.variantDataSource.deleteAll()
         dependencies.database.setDataSource.deleteAll()
 

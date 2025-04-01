@@ -9,6 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -18,14 +22,25 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.compose.AppTheme
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.di.dependencies
+import com.lift.bro.domain.repositories.BackupSettings
+import com.lift.bro.presentation.dialog.BackupDialog
 import com.lift.bro.presentation.home.DashboardScreen
 import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
+import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.EditVariationScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
+import kotlinx.coroutines.flow.first
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.daysUntil
+import kotlinx.datetime.minus
+import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
 
 sealed interface Destination {
@@ -52,7 +67,7 @@ sealed interface Destination {
     ) : Destination
 
     @Serializable
-    object Settings: Destination
+    object Settings : Destination
 }
 
 val LocalNavController = compositionLocalOf<NavHostController>() {
@@ -68,12 +83,33 @@ fun App(
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
 
+            var showBackupModal by remember { mutableStateOf(false) }
+
             LaunchedEffect("debug_mode") {
                 if (BuildConfig.DEBUG) {
 //                    BackupRestore.restore(
 //                        backup = debugBackup
 //                    ).collect()
+
+//                    dependencies.settingsRepository.saveBackupSettings(
+//                        BackupSettings(
+//                            lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+//                                .minus(8, DateTimeUnit.DAY)
+//                        )
+//                    )
                 }
+            }
+
+            LaunchedEffect("check_for_update_prompt") {
+                val backupSettings = dependencies.settingsRepository.getBackupSettings().first()
+                showBackupModal =
+                    backupSettings.lastBackupDate.daysUntil(Clock.System.now().toLocalDate()) >= 7
+            }
+
+            if (showBackupModal) {
+                BackupDialog(
+                    onDismissRequest = { showBackupModal = false }
+                )
             }
 
             CompositionLocalProvider(

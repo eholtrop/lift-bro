@@ -2,6 +2,7 @@ package com.lift.bro.presentation.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -17,12 +19,14 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.presentation.components.RadioField
@@ -32,6 +36,7 @@ import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.utils.debug
+import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +46,8 @@ fun SettingsScreen() {
         content = { padding ->
             LazyColumn(
                 modifier = Modifier.padding(padding),
-                contentPadding = PaddingValues(MaterialTheme.spacing.one)
+                contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
             ) {
                 item {
                     val uom by dependencies.settingsRepository.getUnitOfMeasure()
@@ -100,8 +106,65 @@ fun SettingsScreen() {
                         }
                     }
                 }
+
+                item {
+                    BackupRow()
+                }
             }
         }
     )
+}
+
+@Composable
+private fun BackupRow() {
+    Column(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+            )
+            .padding(MaterialTheme.spacing.one)
+    ) {
+        Text(
+            modifier = Modifier.semantics {
+                heading()
+            },
+            text = "Backup / Restore",
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Space(MaterialTheme.spacing.quarter)
+
+        HorizontalDivider()
+
+        Space(MaterialTheme.spacing.half)
+
+        val scope = rememberCoroutineScope()
+
+        Row(
+            modifier = Modifier.selectableGroup(),
+        ) {
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    scope.launch {
+                        BackupService.backup()
+                    }
+                }
+            ) {
+                Text("Backup")
+            }
+
+            Space(MaterialTheme.spacing.one)
+
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    BackupService.restore()
+                }
+            ) {
+                Text("Restore")
+            }
+        }
+    }
 }
 

@@ -24,7 +24,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -148,8 +147,11 @@ class LiftDataSource(
     fun get(id: String?): Flow<Lift?> =
         liftQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 
-    fun getAll(): Flow<List<Lift>> =
+    fun listenAll(): Flow<List<Lift>> =
         liftQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
+
+    fun getAll(): List<Lift> =
+        liftQueries.getAll().executeAsList().map { it.toDomain() }
 
     fun save(lift: Lift): Boolean {
         GlobalScope.launch(dispatcher) {
@@ -162,7 +164,7 @@ class LiftDataSource(
         return true
     }
 
-    suspend fun clear() {
+    suspend fun deleteAll() {
         liftQueries.deleteAll()
     }
 }

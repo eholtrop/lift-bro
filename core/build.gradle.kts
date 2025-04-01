@@ -96,6 +96,9 @@ android {
         buildConfig = true
     }
 }
+dependencies {
+    implementation(libs.appcompat)
+}
 kotlin {
     sourceSets {
         getByName("commonMain") {
