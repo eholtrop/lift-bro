@@ -8,14 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -108,7 +103,7 @@ fun EditVariationScreen(
                     onValueChange = { variation = variation.copy(name = it) },
                     placeholder = { Text("ex: Front or Back Squat") },
                     trailingIcon = {
-                        val lifts by dependencies.database.liftDataSource.getAll()
+                        val lifts by dependencies.database.liftDataSource.listenAll()
                             .collectAsStateWithLifecycle(emptyList())
 
                         DropDownButton(

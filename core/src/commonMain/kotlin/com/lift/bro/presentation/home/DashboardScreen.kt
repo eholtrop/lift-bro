@@ -67,15 +67,13 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import lift_bro.core.generated.resources.Res
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun rememberLifts(): StateFlow<List<Lift>> {
     val stateFlow = MutableStateFlow<List<Lift>>(emptyList())
 
     LaunchedEffect(Unit) {
-        dependencies.database.liftDataSource.getAll()
+        dependencies.database.liftDataSource.listenAll()
             .catch {
                 it.printStackTrace()
             }.collectLatest {
@@ -99,7 +97,7 @@ class DashboardViewModel(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     scope: CoroutineScope = GlobalScope
 ) {
-    val state = liftRepository.getAll()
+    val state = liftRepository.listenAll()
         .map { DashboardState(showEmpty = it.isEmpty(), it) }
         .debug()
         .stateIn(scope, SharingStarted.Eagerly, initialState)
