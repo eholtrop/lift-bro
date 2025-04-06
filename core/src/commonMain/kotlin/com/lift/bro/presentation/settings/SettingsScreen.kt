@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -25,7 +26,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Settings
@@ -51,7 +51,7 @@ fun SettingsScreen() {
             ) {
                 item {
                     val uom by dependencies.settingsRepository.getUnitOfMeasure()
-                        .collectAsStateWithLifecycle(
+                        .collectAsState(
                             null
                         )
 

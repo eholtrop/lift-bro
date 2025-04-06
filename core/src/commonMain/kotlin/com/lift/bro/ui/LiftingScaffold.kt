@@ -24,6 +24,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.navigation.LocalNavCoordinator
 import com.lift.bro.presentation.spacing
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.toolbar_back_button_content_description
+import org.jetbrains.compose.resources.stringResource
 
 data class FabProperties(
     val fabIcon: ImageVector,
@@ -42,7 +45,7 @@ fun LiftingScaffold(
         val navCoordinator = LocalNavCoordinator.current
         TopBarIconButton(
             imageVector = Icons.Default.ArrowBack,
-            contentDescription = "Back",
+            contentDescription = stringResource(Res.string.toolbar_back_button_content_description),
             onClick = { navCoordinator.onBackPressed() },
         )
 

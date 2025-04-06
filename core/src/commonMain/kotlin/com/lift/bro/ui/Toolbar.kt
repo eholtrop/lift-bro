@@ -28,6 +28,10 @@ import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.presentation.spacing
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.toolbar_calculator_button_content_description
+import lift_bro.core.generated.resources.toolbar_update_button_content_description
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -66,7 +70,7 @@ fun TopBar(
             AnimatedVisibility(updateAvailable) {
                 TopBarIconButton(
                     imageVector = Icons.Default.PlayArrow,
-                    contentDescription = "Calculator",
+                    contentDescription = stringResource(Res.string.toolbar_update_button_content_description),
                     onClick = {
                         StoreManager.startUpdateFlow()
                     }
@@ -75,7 +79,7 @@ fun TopBar(
 
             TopBarIconButton(
                 painter = Images.calculator(),
-                contentDescription = "Calculator",
+                contentDescription = stringResource(Res.string.toolbar_calculator_button_content_description),
                 onClick = {
                     dependencies.launchCalculator()
                 }

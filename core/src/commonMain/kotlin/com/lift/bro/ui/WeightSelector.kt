@@ -28,6 +28,10 @@ import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.set.DecimalPicker
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.variation.UOM
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.weight_selector_chin_subtitle
+import lift_bro.core.generated.resources.weight_selector_chin_title
+import org.jetbrains.compose.resources.stringResource
 
 expect object DecimalFormat {
     fun formatWeight(weight: Double?): String
@@ -90,14 +94,22 @@ fun WeightSelector(
                         if (liftMax != null) {
                             val percentage = ((weight / liftMax.weight) * 100).toInt()
                             Text(
-                                text = "${percentage}% of ${variation.lift?.name} Max",
+                                text = stringResource(
+                                    Res.string.weight_selector_chin_title,
+                                    percentage,
+                                    variation.lift?.name ?: "",
+                                ),
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }
                         if (variationMax != null) {
                             val percentage = ((weight / variationMax.weight) * 100).toInt()
                             Text(
-                                text = "${percentage}% of ${variation.fullName} Max",
+                                text = stringResource(
+                                    Res.string.weight_selector_chin_subtitle,
+                                    percentage,
+                                    variation.fullName,
+                                ),
                                 style = MaterialTheme.typography.labelSmall
                             )
                         }

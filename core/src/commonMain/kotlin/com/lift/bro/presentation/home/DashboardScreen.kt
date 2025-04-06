@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lift.bro.data.BackupRestore
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.defaultSbdLifts
@@ -67,6 +67,18 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.dashboard_empty_primary_cta_title
+import lift_bro.core.generated.resources.dashboard_empty_secondary_cta_subtitle
+import lift_bro.core.generated.resources.dashboard_empty_secondary_cta_title
+import lift_bro.core.generated.resources.dashboard_empty_title
+import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
+import lift_bro.core.generated.resources.dashboard_footer_trailing_button_content_description
+import lift_bro.core.generated.resources.dashboard_settings_fab_content_description
+import lift_bro.core.generated.resources.dashboard_title
+import lift_bro.core.generated.resources.dashboard_toolbar_leading_button_content_description
+import lift_bro.core.generated.resources.dashboard_toolbar_trailing_button_content_description
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun rememberLifts(): StateFlow<List<Lift>> {
@@ -89,7 +101,7 @@ data class DashboardState(
 )
 
 sealed class DashboardEvent {
-    object RestoreDefaultLifts: DashboardEvent()
+    object RestoreDefaultLifts : DashboardEvent()
 }
 
 class DashboardViewModel(
@@ -120,17 +132,18 @@ fun DashboardScreen(
     setClicked: (LBSet) -> Unit,
 ) {
 
-    val state by remember { viewModel }.state.collectAsStateWithLifecycle()
+    val state by remember { viewModel }.state.collectAsState(null)
 
     state?.let {
         Crossfade(it.showEmpty) { showEmpty ->
-            when(showEmpty) {
+            when (showEmpty) {
                 true -> EmptyHomeScreen(
                     addLiftClicked = addLiftClicked,
                     loadDefaultLifts = {
                         viewModel.handleEvent(DashboardEvent.RestoreDefaultLifts)
                     }
                 )
+
                 false -> {
                     DashboardContent(
                         lifts = it.lifts,
@@ -162,12 +175,12 @@ fun DashboardContent(
     var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
 
     LiftingScaffold(
-        title = "Lift Bro",
+        title = stringResource(Res.string.dashboard_title),
         leadingContent = {
             val navCoordinator = LocalNavCoordinator.current
             TopBarIconButton(
                 imageVector = Icons.Default.Settings,
-                contentDescription = "Settings"
+                contentDescription = stringResource(Res.string.dashboard_toolbar_leading_button_content_description)
             ) {
                 navCoordinator.present(Destination.Settings)
             }
@@ -175,13 +188,13 @@ fun DashboardContent(
         trailingContent = {
             TopBarIconButton(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Add Lift",
+                contentDescription = stringResource(Res.string.dashboard_toolbar_trailing_button_content_description),
                 onClick = addLiftClicked,
             )
         },
         fabProperties = FabProperties(
             fabIcon = Icons.Default.Add,
-            contentDescription = "Add Set",
+            contentDescription = stringResource(Res.string.dashboard_settings_fab_content_description),
             fabClicked = addSetClicked,
             preFab = {
                 Button(
@@ -199,12 +212,16 @@ fun DashboardContent(
                     Column {
                         Icon(
                             painter = Images.dashboardMenuIcon(),
-                            contentDescription = "Dashboard"
+                            contentDescription = stringResource(Res.string.dashboard_footer_leading_button_content_description),
                         )
 
                         AnimatedVisibility(tab == Tab.Lifts) {
                             Box(
-                                modifier = Modifier.padding(top = MaterialTheme.spacing.quarter.div(2))
+                                modifier = Modifier.padding(
+                                    top = MaterialTheme.spacing.quarter.div(
+                                        2
+                                    )
+                                )
                                     .height(2.dp)
                                     .fillMaxWidth()
                                     .background(
@@ -232,12 +249,16 @@ fun DashboardContent(
                     ) {
                         Icon(
                             painter = Images.calendarMenuIcon(),
-                            contentDescription = "Calendar"
+                            contentDescription = stringResource(Res.string.dashboard_footer_trailing_button_content_description),
                         )
 
                         AnimatedVisibility(tab == Tab.RecentSets) {
                             Box(
-                                modifier = Modifier.padding(top = MaterialTheme.spacing.quarter.div(2))
+                                modifier = Modifier.padding(
+                                    top = MaterialTheme.spacing.quarter.div(
+                                        2
+                                    )
+                                )
                                     .height(2.dp)
                                     .fillMaxWidth()
                                     .background(
@@ -252,9 +273,9 @@ fun DashboardContent(
     ) { padding ->
 
         val sets by dependencies.database.setDataSource.listenAll()
-            .collectAsStateWithLifecycle(emptyList())
+            .collectAsState(emptyList())
         val variations by dependencies.database.variantDataSource.listenAll()
-            .collectAsStateWithLifecycle(emptyList())
+            .collectAsState(emptyList())
 
         when (tab) {
             Tab.Lifts -> {
@@ -302,7 +323,7 @@ fun EmptyHomeScreen(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            "Do you even Lift Bro?",
+            text = stringResource(Res.string.dashboard_empty_title),
             color = MaterialTheme.colorScheme.onBackground,
             style = MaterialTheme.typography.headlineLarge
         )
@@ -310,7 +331,8 @@ fun EmptyHomeScreen(
         Button(
             onClick = addLiftClicked
         ) {
-            Text("Add Lift")
+            Text(
+                text = stringResource(Res.string.dashboard_empty_primary_cta_title),)
         }
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
 
@@ -321,10 +343,10 @@ fun EmptyHomeScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Add Default Lifts/Variations",
+                    text = stringResource(Res.string.dashboard_empty_secondary_cta_title),
                 )
                 Text(
-                    text = "Squat, Bench, Deadlift (SBD)",
+                    text = stringResource(Res.string.dashboard_empty_secondary_cta_subtitle),
                     style = MaterialTheme.typography.labelMedium
                 )
             }

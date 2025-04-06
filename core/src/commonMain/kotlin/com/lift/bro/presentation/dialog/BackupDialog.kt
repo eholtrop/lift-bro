@@ -15,6 +15,12 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.backup_dialog_message
+import lift_bro.core.generated.resources.backup_dialog_primary_cta
+import lift_bro.core.generated.resources.backup_dialog_secondary_cta
+import lift_bro.core.generated.resources.backup_dialog_title
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -36,8 +42,8 @@ fun BackupDialog(
     AlertDialog(
         modifier = Modifier,
         onDismissRequest = onDismissRequest,
-        title = { Text("Its been a while...") },
-        text = { Text("Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?") },
+        title = { Text(stringResource(Res.string.backup_dialog_title)) },
+        text = { Text(stringResource(Res.string.backup_dialog_message)) },
         confirmButton = {
             Button(
                 onClick = {
@@ -47,7 +53,7 @@ fun BackupDialog(
                     }
                 }
             ) {
-                Text("Backup Now")
+                Text(stringResource(Res.string.backup_dialog_primary_cta))
             }
         },
         dismissButton = {
@@ -61,7 +67,7 @@ fun BackupDialog(
                     onDismissRequest()
                 }
             ) {
-                Text("Ignore")
+                Text(stringResource(Res.string.backup_dialog_secondary_cta))
             }
         }
     )

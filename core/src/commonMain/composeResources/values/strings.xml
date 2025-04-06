@@ -1,0 +1,33 @@
+<resources>
+    <string name="dashboard_title">Lift Bro</string>
+    <string name="dashboard_toolbar_trailing_button_content_description">Settings</string>
+    <string name="dashboard_toolbar_leading_button_content_description">Add Lift</string>
+    <string name="dashboard_settings_fab_content_description">Add Lift</string>
+
+
+    <string name="dashboard_footer_trailing_button_content_description">Dashboard</string>
+    <string name="dashboard_footer_leading_button_content_description">Calendar</string>
+
+
+    <string name="dashboard_empty_title">Do you even Lift Bro?</string>
+    <string name="dashboard_empty_primary_cta_title">Add Lift</string>
+    <string name="dashboard_empty_secondary_cta_title">Add Default Lifts/Variations</string>
+    <string name="dashboard_empty_secondary_cta_subtitle">Squat, Bench, Deadlift (SBD)</string>
+
+    <string name="toolbar_back_button_content_description">Back</string>
+
+    <string name="backup_dialog_title">Its been a while...</string>
+    <string name="backup_dialog_message">Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?</string>
+    <string name="backup_dialog_primary_cta">Backup Now</string>
+    <string name="backup_dialog_secondary_cta">Ignore</string>
+
+
+    <string name="lift_card_empty_title">No Sets!</string>
+    <string name="lift_card_empty_subtitle">Tap to set your Max</string>
+
+    <string name="toolbar_update_button_content_description">Update Lift Bro</string>
+    <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
+
+    <string name="weight_selector_chin_title">%1$d of %2$s Max</string>
+    <string name="weight_selector_chin_subtitle">%1$d of %2$s Max</string>
+</resources>

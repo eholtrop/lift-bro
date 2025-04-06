@@ -17,6 +17,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,7 +25,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
@@ -104,7 +104,7 @@ fun EditVariationScreen(
                     placeholder = { Text("ex: Front or Back Squat") },
                     trailingIcon = {
                         val lifts by dependencies.database.liftDataSource.listenAll()
-                            .collectAsStateWithLifecycle(emptyList())
+                            .collectAsState(emptyList())
 
                         DropDownButton(
                             buttonText = variation.lift?.name ?: "",

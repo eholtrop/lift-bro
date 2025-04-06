@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,24 +21,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
-import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.decimalFormat
 import com.lift.bro.presentation.dialog.CreateMaxSetDialog
 import com.lift.bro.presentation.lift.toColor
 import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.lift_card_empty_subtitle
+import lift_bro.core.generated.resources.lift_card_empty_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LiftCard(
@@ -48,7 +44,7 @@ fun LiftCard(
 ) {
 
     val sets by
-        dependencies.database.setDataSource.listenAllForLift(lift.id).collectAsStateWithLifecycle(
+        dependencies.database.setDataSource.listenAllForLift(lift.id).collectAsState(
             emptyList()
         )
 
@@ -111,10 +107,10 @@ fun LiftCard(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        "No Sets!"
+                        stringResource(Res.string.lift_card_empty_title)
                     )
                     Text(
-                        "Tap to set your Max"
+                        stringResource(Res.string.lift_card_empty_subtitle)
                     )
                 }
             } else {
