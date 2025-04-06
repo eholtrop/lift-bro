@@ -4,7 +4,6 @@ package com.lift.bro.ui
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,7 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import com.lift.bro.presentation.LocalNavController
+import com.lift.bro.presentation.navigation.LocalNavCoordinator
 import com.lift.bro.presentation.spacing
 
 data class FabProperties(
@@ -40,11 +39,11 @@ fun LiftingScaffold(
     title: String,
     fabProperties: FabProperties? = null,
     leadingContent: @Composable () -> Unit = {
-        val navController = LocalNavController.current
+        val navCoordinator = LocalNavCoordinator.current
         TopBarIconButton(
             imageVector = Icons.Default.ArrowBack,
             contentDescription = "Back",
-            onClick = { navController.popBackStack() },
+            onClick = { navCoordinator.onBackPressed() },
         )
 
     },

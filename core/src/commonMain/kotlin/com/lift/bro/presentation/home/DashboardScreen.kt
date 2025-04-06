@@ -44,8 +44,8 @@ import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
-import com.lift.bro.presentation.Destination
-import com.lift.bro.presentation.LocalNavController
+import com.lift.bro.presentation.navigation.Destination
+import com.lift.bro.presentation.navigation.LocalNavCoordinator
 import com.lift.bro.presentation.spacing
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.Images
@@ -164,12 +164,12 @@ fun DashboardContent(
     LiftingScaffold(
         title = "Lift Bro",
         leadingContent = {
-            val navController = LocalNavController.current
+            val navCoordinator = LocalNavCoordinator.current
             TopBarIconButton(
                 imageVector = Icons.Default.Settings,
                 contentDescription = "Settings"
             ) {
-                navController.navigate(Destination.Settings)
+                navCoordinator.present(Destination.Settings)
             }
         },
         trailingContent = {

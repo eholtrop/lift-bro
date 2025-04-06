@@ -2,7 +2,6 @@
 app-update-ktx = "2.1.0"
 
 kotlin = "2.0.0"
-navigation-compose = "2.8.0-alpha10"
 sqldelight = "2.0.2"
 agp = "8.2.2"
 compose = "1.7.2"
@@ -19,7 +18,6 @@ appcompat = "1.7.0"
 [libraries]
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose" }
 
-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation-compose" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 

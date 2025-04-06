@@ -67,6 +67,5 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(libs.compose.activity)
-    implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization)
 }

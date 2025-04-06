@@ -17,8 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.lift.bro.di.dependencies
 
 @Composable
 fun DropDownButton(

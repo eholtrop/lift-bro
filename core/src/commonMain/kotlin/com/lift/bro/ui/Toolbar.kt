@@ -26,7 +26,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.di.dependencies
-import com.lift.bro.presentation.LocalNavController
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.presentation.spacing
 

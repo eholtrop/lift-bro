@@ -66,8 +66,8 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.fullName
-import com.lift.bro.presentation.LocalNavController
 import com.lift.bro.presentation.dialog.CreateVariationDialog
+import com.lift.bro.presentation.navigation.LocalNavCoordinator
 import com.lift.bro.presentation.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
@@ -165,14 +165,14 @@ fun EditSetScreen(
         title = "${if (setId != null) "You" else "I"} Crushed...",
         trailingContent = {
             if (setId != null) {
-                val navController = LocalNavController.current
+                val navCoordinator = LocalNavCoordinator.current
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
                     onClick = {
                         coroutineScope.launch {
                             dependencies.database.setDataSource.delete(setId)
-                            navController.popBackStack()
+                            navCoordinator.onBackPressed()
                         }
                     }
                 )
