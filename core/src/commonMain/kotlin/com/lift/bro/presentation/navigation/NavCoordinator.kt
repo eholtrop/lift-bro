@@ -2,12 +2,6 @@ package com.lift.bro.presentation.navigation
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface NavigationEvent
-
-interface Router<T : NavigationEvent> {
-    fun handleEvent(event: T)
-}
-
 interface NavCoordinator {
 
     val pages: List<Destination>

@@ -20,9 +20,6 @@ import androidx.compose.ui.util.lerp
 import kotlin.math.absoluteValue
 
 
-val LocalNavCoordinator = compositionLocalOf<NavCoordinator>() {
-    error("NavHostController was not set")
-}
 
 @Composable
 fun SwipeableNavHost(
