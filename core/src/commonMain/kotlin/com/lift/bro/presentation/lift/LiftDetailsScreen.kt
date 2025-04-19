@@ -60,12 +60,11 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.utils.toLocalDate
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-
-fun Instant.toLocalDate() = this.toLocalDateTime(TimeZone.currentSystemDefault()).date
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

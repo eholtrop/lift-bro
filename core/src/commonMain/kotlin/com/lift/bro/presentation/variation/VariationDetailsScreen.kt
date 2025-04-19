@@ -44,7 +44,6 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.decimalFormat
-import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.ui.Card
@@ -52,6 +51,7 @@ import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.utils.toLocalDate
 import kotlin.collections.List
 import kotlin.collections.forEach
 import kotlin.collections.groupBy

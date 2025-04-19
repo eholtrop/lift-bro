@@ -46,12 +46,12 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.components.Calendar
 import com.lift.bro.presentation.components.today
 import com.lift.bro.presentation.lift.toColor
-import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
+import com.lift.bro.utils.toLocalDate
 
 @Composable
 fun CalendarScreen(

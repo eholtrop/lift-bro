@@ -19,7 +19,6 @@ import com.lift.bro.presentation.home.DashboardScreen
 import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
-import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.navigation.Destination
 import com.lift.bro.presentation.navigation.NavCoordinator
 import com.lift.bro.presentation.navigation.SwipeableNavHost
@@ -28,6 +27,7 @@ import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.EditVariationScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
+import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.flow.first
 import kotlinx.datetime.Clock
 import kotlinx.datetime.daysUntil

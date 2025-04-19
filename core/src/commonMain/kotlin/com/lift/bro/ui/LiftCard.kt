@@ -28,9 +28,9 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.presentation.decimalFormat
 import com.lift.bro.presentation.dialog.CreateMaxSetDialog
 import com.lift.bro.presentation.lift.toColor
-import com.lift.bro.presentation.lift.toLocalDate
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
+import com.lift.bro.utils.toLocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
