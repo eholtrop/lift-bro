@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -26,17 +25,13 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.minimumInteractiveComponentSize
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -48,14 +43,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -69,7 +59,7 @@ import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.dialog.CreateVariationDialog
 import com.lift.bro.presentation.navigation.LocalNavCoordinator
 import com.lift.bro.presentation.theme.spacing
-import com.lift.bro.presentation.toString
+import com.lift.bro.ui.DateSelector
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.NumberPicker
@@ -84,9 +74,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 
 private data class EditSetState(
     val id: String,
@@ -394,66 +381,6 @@ internal fun VariationSelector(
         }
 
     }
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun DateSelector(
-    modifier: Modifier = Modifier,
-    date: Instant,
-    dateChanged: (Instant) -> Unit
-) {
-    var openDialog by remember { mutableStateOf(false) }
-
-    val pickerState = rememberDatePickerState(
-        date.toLocalDateTime(TimeZone.currentSystemDefault()).toInstant(
-            TimeZone.UTC
-        ).toEpochMilliseconds()
-    )
-
-    if (openDialog) {
-        DatePickerDialog(
-            onDismissRequest = { openDialog = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        openDialog = false
-                        dateChanged(
-                            Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
-                                .toLocalDateTime(TimeZone.UTC)
-                                .toInstant(TimeZone.currentSystemDefault())
-                        )
-                    },
-                    enabled = pickerState.selectedDateMillis != null,
-                ) {
-                    Text("Ok")
-                }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = { openDialog = false }
-                ) {
-                    Text("Close")
-                }
-            }
-        ) {
-            DatePicker(
-                state = pickerState
-            )
-        }
-    }
-
-    LineItem(
-        modifier = modifier,
-        title = "On",
-        description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
-            .toLocalDateTime(TimeZone.UTC)
-            .toInstant(TimeZone.currentSystemDefault())
-            .toString("MMMM d - yyyy"),
-        onClick = {
-            openDialog = true
-        }
-    )
 }
 
 
