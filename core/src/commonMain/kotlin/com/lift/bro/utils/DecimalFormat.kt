@@ -1,3 +1,3 @@
-package com.lift.bro.presentation
+package com.lift.bro.utils
 
 expect fun Double.decimalFormat(): String

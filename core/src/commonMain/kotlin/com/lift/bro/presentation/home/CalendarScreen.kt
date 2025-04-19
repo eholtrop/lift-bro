@@ -39,7 +39,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.today
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.presentation.toString
+import com.lift.bro.utils.toString
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.utils.formattedWeight

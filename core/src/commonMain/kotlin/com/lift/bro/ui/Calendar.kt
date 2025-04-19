@@ -42,7 +42,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.presentation.toString
+import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod

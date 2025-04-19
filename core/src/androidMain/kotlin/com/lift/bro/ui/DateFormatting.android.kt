@@ -1,4 +1,4 @@
-package com.lift.bro.presentation
+package com.lift.bro.utils
 
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate

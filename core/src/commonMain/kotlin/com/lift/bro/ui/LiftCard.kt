@@ -25,10 +25,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
-import com.lift.bro.presentation.decimalFormat
+import com.lift.bro.utils.decimalFormat
 import com.lift.bro.ui.dialog.CreateMaxSetDialog
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.presentation.toString
+import com.lift.bro.utils.toString
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import lift_bro.core.generated.resources.Res

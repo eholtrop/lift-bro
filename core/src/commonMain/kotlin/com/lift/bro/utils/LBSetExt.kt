@@ -2,7 +2,6 @@ package com.lift.bro.utils
 
 import com.lift.bro.Settings
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.presentation.decimalFormat
 
 internal val LBSet.formattedTempo: String get() = "${this.tempo.down}/${this.tempo.hold}/${this.tempo.up}"
 
