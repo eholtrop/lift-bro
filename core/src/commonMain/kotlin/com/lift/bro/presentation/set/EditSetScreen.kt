@@ -54,7 +54,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.ui.dialog.CreateVariationDialog
-import com.lift.bro.presentation.navigation.LocalNavCoordinator
+import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.DateSelector
 import com.lift.bro.ui.FabProperties

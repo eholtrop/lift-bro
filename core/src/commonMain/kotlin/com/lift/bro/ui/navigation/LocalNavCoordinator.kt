@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.navigation
+package com.lift.bro.ui.navigation
 
 import androidx.compose.runtime.compositionLocalOf
 
