@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
-import com.lift.bro.presentation.theme.spacing
+import com.lift.bro.ui.theme.spacing
 
 @Composable
 fun Card(

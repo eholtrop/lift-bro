@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import com.lift.bro.presentation.theme.spacing
+import com.lift.bro.ui.theme.spacing
 
 @Composable
 fun TempoSelector(

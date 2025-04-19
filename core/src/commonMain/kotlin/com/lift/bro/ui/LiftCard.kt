@@ -27,7 +27,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.presentation.decimalFormat
 import com.lift.bro.presentation.dialog.CreateMaxSetDialog
-import com.lift.bro.presentation.theme.spacing
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate

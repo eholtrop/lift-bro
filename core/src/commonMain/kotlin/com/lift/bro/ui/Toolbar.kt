@@ -26,7 +26,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.StoreManager
-import com.lift.bro.presentation.theme.spacing
+import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.toolbar_calculator_button_content_description
 import lift_bro.core.generated.resources.toolbar_update_button_content_description

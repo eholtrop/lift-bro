@@ -33,7 +33,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.ui.DropDownButton
-import com.lift.bro.presentation.theme.spacing
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.DecimalFormat
 import com.lift.bro.ui.Space
 import kotlinx.coroutines.Dispatchers

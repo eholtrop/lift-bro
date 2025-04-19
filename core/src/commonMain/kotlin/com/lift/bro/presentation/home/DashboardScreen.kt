@@ -46,7 +46,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.presentation.navigation.Destination
 import com.lift.bro.presentation.navigation.LocalNavCoordinator
-import com.lift.bro.presentation.theme.spacing
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard

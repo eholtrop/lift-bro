@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.theme
+package com.lift.bro.ui.theme
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.unit.dp
