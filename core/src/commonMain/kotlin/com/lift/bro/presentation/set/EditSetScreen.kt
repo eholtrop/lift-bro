@@ -53,7 +53,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.fullName
-import com.lift.bro.presentation.dialog.CreateVariationDialog
+import com.lift.bro.ui.dialog.CreateVariationDialog
 import com.lift.bro.presentation.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.DateSelector

@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.dialog
+package com.lift.bro.ui.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import com.example.compose.AppTheme
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
-import com.lift.bro.presentation.dialog.BackupDialog
+import com.lift.bro.ui.dialog.BackupDialog
 import com.lift.bro.presentation.home.DashboardScreen
 import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
