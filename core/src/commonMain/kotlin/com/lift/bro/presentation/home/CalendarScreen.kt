@@ -36,8 +36,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.presentation.components.Calendar
-import com.lift.bro.presentation.components.today
+import com.lift.bro.ui.Calendar
+import com.lift.bro.ui.today
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.render

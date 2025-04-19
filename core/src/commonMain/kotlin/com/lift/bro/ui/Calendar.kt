@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.components
+package com.lift.bro.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,7 +43,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
-import com.lift.bro.ui.Space
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod

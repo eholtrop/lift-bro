@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.components
+package com.lift.bro.ui
 
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
