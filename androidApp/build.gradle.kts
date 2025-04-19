@@ -18,14 +18,13 @@ android {
         applicationId = "com.lift.bro"
         minSdk = 24
         targetSdk = 35
-        versionName = "${SimpleDateFormat("YYY-MM-dd").format(Date())}-alpha"
-
-
         versionCode = if (project.hasProperty("buildNumber")) {
             property("buildNumber").toString().toInt()
         } else {
             1
         }
+        versionName = "${SimpleDateFormat("YYY-MM-dd").format(Date())}-${versionCode}-alpha"
+
     }
     buildFeatures {
         compose = true
