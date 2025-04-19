@@ -44,10 +44,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
@@ -63,6 +61,7 @@ import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.NumberPicker
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.VariationCard
 import com.lift.bro.ui.WeightSelector
@@ -379,47 +378,5 @@ internal fun VariationSelector(
             }
         }
 
-    }
-}
-
-@Composable
-fun TempoSelector(
-    modifier: Modifier = Modifier,
-    down: Int?,
-    hold: Int?,
-    up: Int?,
-    downChanged: (Int?) -> Unit,
-    holdChanged: (Int?) -> Unit,
-    upChanged: (Int?) -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
-    ) {
-        Text("With a tempo of...")
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
-        ) {
-            NumberPicker(
-                modifier = Modifier.weight(.33f).height(52.dp),
-                title = "Down",
-                selectedNum = down,
-                numberChanged = downChanged
-            )
-            NumberPicker(
-                modifier = Modifier.weight(.33f).height(52.dp),
-                title = "Hold",
-                selectedNum = hold,
-                numberChanged = holdChanged
-            )
-            NumberPicker(
-                modifier = Modifier.weight(.33f).height(52.dp),
-                title = "Up",
-                selectedNum = up,
-                numberChanged = upChanged,
-                imeAction = ImeAction.Done
-            )
-        }
     }
 }
