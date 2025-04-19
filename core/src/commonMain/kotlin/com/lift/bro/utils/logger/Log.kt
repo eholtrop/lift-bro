@@ -1,4 +1,4 @@
-package com.lift.bro.logger
+package com.lift.bro.utils.logger
 
 object Log
 
