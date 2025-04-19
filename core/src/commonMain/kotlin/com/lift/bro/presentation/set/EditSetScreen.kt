@@ -4,7 +4,6 @@ package com.lift.bro.presentation.set
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -380,48 +379,6 @@ internal fun VariationSelector(
             }
         }
 
-    }
-}
-
-
-@Composable
-fun LineItem(
-    modifier: Modifier = Modifier,
-    title: String? = null,
-    description: String,
-    onClick: () -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .defaultMinSize(minHeight = 52.dp)
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = MaterialTheme.shapes.small
-            )
-            .clickable(
-                enabled = true,
-                onClick = onClick,
-                role = Role.Button,
-            )
-            .padding(
-                vertical = MaterialTheme.spacing.quarter,
-                horizontal = MaterialTheme.spacing.one
-            )
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.Center
-    ) {
-        title?.let {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
-        Text(
-            text = description,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface
-        )
     }
 }
 
