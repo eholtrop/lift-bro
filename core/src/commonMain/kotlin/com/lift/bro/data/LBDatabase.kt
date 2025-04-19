@@ -3,6 +3,7 @@ package com.lift.bro.data
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOne
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
@@ -90,9 +91,14 @@ class SetDataSource(
         sets.filter { set -> variations.any { it.id == set.variationId } }
     }.mapEach { it.toDomain() }
 
+    fun listenAllForVariation(variationId: String): Flow<List<LBSet>> =
+        setQueries.getAllByVariation(variationId).asFlow().mapToList(dispatcher)
+            .mapEach { it.toDomain() }
+
     fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
 
-    fun listenAll(): Flow<List<LBSet>> = setQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
+    fun listenAll(): Flow<List<LBSet>> =
+        setQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 

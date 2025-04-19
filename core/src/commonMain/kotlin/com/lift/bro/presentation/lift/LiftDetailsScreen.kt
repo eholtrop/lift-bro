@@ -301,7 +301,7 @@ fun VariationCard(
                 ),
         ) {
 
-            val sets = dependencies.database.setDataSource.getAll(variation.id)
+            val sets by dependencies.database.setDataSource.listenAllForVariation(variation.id).collectAsState(emptyList())
 
             Row(
                 modifier = Modifier.clickable {
