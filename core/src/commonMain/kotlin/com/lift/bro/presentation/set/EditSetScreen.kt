@@ -70,7 +70,6 @@ import com.lift.bro.presentation.dialog.CreateVariationDialog
 import com.lift.bro.presentation.navigation.LocalNavCoordinator
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
-import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
@@ -78,6 +77,7 @@ import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.VariationCard
 import com.lift.bro.ui.WeightSelector
 import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.utils.formattedWeight
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch

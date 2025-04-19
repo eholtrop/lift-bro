@@ -48,9 +48,9 @@ import com.lift.bro.presentation.components.today
 import com.lift.bro.presentation.lift.toColor
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
-import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
+import com.lift.bro.utils.formattedWeight
 import com.lift.bro.utils.toLocalDate
 
 @Composable

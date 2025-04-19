@@ -51,6 +51,8 @@ import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.utils.formattedMax
+import com.lift.bro.utils.formattedWeight
 import com.lift.bro.utils.toLocalDate
 import kotlin.collections.List
 import kotlin.collections.forEach
@@ -266,11 +268,3 @@ fun RepCard(
 ) {
 
 }
-
-internal val LBSet.formattedTempo: String get() = "${this.tempo.down}/${this.tempo.hold}/${this.tempo.up}"
-
-internal val LBSet.formattedReps: String get() = "${this.formattedTempo} x ${this.reps}"
-
-internal val LBSet.formattedWeight: String get() = "${this.weight.decimalFormat()} ${Settings.defaultUOM.value}"
-
-internal val LBSet.formattedMax: String get() = "${this.reps} x ${this.formattedTempo}"

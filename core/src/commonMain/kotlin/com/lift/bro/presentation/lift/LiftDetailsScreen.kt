@@ -53,13 +53,13 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
-import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.utils.formattedWeight
 import com.lift.bro.utils.toLocalDate
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
