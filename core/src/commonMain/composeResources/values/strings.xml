@@ -28,6 +28,6 @@
     <string name="toolbar_update_button_content_description">Update Lift Bro</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
 
-    <string name="weight_selector_chin_title">%1$d of %2$s Max</string>
-    <string name="weight_selector_chin_subtitle">%1$d of %2$s Max</string>
+    <string name="weight_selector_chin_title">%1$d% of %2$s Max</string>
+    <string name="weight_selector_chin_subtitle">%1$d% of %2$s Max</string>
 </resources>
