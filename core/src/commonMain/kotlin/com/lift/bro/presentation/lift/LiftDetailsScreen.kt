@@ -60,6 +60,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.utils.formattedWeight
+import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -274,7 +275,6 @@ fun LiftDetailsScreen(
     }
 }
 
-fun ULong.toColor(): Color = Color(this)
 
 @Composable
 fun VariationCard(
