@@ -2,9 +2,13 @@ package com.example.compose
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import com.lift.bro.ui.navigation.LocalSnackbarHostState
 
 
 private val LightColors = lightColorScheme(
@@ -74,23 +78,27 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun AppTheme(
-  useDarkTheme: Boolean = isSystemInDarkTheme(),
-  content: @Composable() () -> Unit
+    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable() () -> Unit
 ) {
-  val colors = if (!useDarkTheme) {
-    LightColors.copy(
-        surface = LightColors.surfaceDim,
-        surfaceDim = LightColors.surfaceDim.copy(alpha = .4f)
-    )
-  } else {
-    DarkColors.copy(
-        surface = DarkColors.surfaceVariant,
-        surfaceDim = DarkColors.surfaceVariant.copy(alpha = .4f)
-    )
-  }
+    val colors = if (!useDarkTheme) {
+        LightColors.copy(
+            surface = LightColors.surfaceDim,
+            surfaceDim = LightColors.surfaceDim.copy(alpha = .4f)
+        )
+    } else {
+        DarkColors.copy(
+            surface = DarkColors.surfaceVariant,
+            surfaceDim = DarkColors.surfaceVariant.copy(alpha = .4f)
+        )
+    }
 
-  MaterialTheme(
-    colorScheme = colors,
-    content = content
-  )
+    CompositionLocalProvider(
+        LocalSnackbarHostState provides remember { SnackbarHostState() }
+    ) {
+        MaterialTheme(
+            colorScheme = colors,
+            content = content
+        )
+    }
 }

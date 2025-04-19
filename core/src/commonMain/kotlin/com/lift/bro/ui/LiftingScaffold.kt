@@ -15,6 +15,8 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -23,6 +25,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.navigation.LocalSnackbarHostState
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.toolbar_back_button_content_description
@@ -40,6 +43,7 @@ data class FabProperties(
 @Composable
 fun LiftingScaffold(
     title: String,
+    snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     fabProperties: FabProperties? = null,
     leadingContent: @Composable () -> Unit = {
         val navCoordinator = LocalNavCoordinator.current
@@ -97,6 +101,9 @@ fun LiftingScaffold(
             }
         },
         floatingActionButtonPosition = FabPosition.Center,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
     ) {
         content(it)
     }

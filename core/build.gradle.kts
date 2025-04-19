@@ -54,6 +54,7 @@ kotlin {
                 implementation(libs.kotlin.reflect)
 //                implementation(kotlin("reflect"))
 
+                implementation("nl.dionsegijn:konfetti-compose:2.0.5")
                 implementation("com.github.skydoves:colorpicker-compose:1.1.2")
             }
         }
