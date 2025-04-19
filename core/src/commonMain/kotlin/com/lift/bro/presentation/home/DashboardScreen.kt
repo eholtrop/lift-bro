@@ -44,15 +44,14 @@ import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
-import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.LocalNavCoordinator
-import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBarIconButton
-import com.lift.bro.utils.debug
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -111,7 +110,6 @@ class DashboardViewModel(
 ) {
     val state = liftRepository.listenAll()
         .map { DashboardState(showEmpty = it.isEmpty(), it) }
-        .debug()
         .stateIn(scope, SharingStarted.Eagerly, initialState)
 
     fun handleEvent(event: DashboardEvent) {
