@@ -273,7 +273,7 @@ fun LiftDetailsScreen(
 
 
 @Composable
-fun VariationCard(
+private fun VariationCard(
     variation: Variation,
     parentLift: Lift,
     onClick: (Variation) -> Unit,
