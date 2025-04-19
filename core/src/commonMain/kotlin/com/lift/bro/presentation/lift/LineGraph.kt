@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.theme.spacing
 
 data class DotGraphColors(
     val dotColor: Color,

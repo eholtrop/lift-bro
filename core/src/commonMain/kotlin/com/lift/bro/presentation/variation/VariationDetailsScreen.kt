@@ -45,7 +45,7 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.decimalFormat
 import com.lift.bro.presentation.lift.toLocalDate
-import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties

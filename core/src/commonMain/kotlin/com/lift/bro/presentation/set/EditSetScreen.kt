@@ -68,7 +68,7 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.dialog.CreateVariationDialog
 import com.lift.bro.presentation.navigation.LocalNavCoordinator
-import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.presentation.variation.formattedWeight
 import com.lift.bro.ui.FabProperties

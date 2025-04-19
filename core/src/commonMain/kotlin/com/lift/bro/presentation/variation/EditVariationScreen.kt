@@ -30,7 +30,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.components.DropDownButton
-import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import kotlinx.coroutines.CoroutineScope

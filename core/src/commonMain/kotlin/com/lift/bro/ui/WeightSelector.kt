@@ -26,7 +26,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.set.DecimalPicker
-import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.variation.UOM
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.weight_selector_chin_subtitle

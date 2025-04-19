@@ -26,7 +26,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.ui.Space
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

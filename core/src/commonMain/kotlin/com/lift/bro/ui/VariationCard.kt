@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.presentation.spacing
+import com.lift.bro.presentation.theme.spacing
 
 @Composable
 fun VariationCard(
