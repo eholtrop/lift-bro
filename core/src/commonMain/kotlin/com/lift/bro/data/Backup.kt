@@ -1,8 +1,8 @@
 package com.lift.bro.data
 
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first

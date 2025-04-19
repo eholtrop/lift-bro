@@ -40,7 +40,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -62,10 +61,7 @@ import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.utils.formattedWeight
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

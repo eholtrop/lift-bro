@@ -2,7 +2,6 @@ package com.lift.bro
 
 import com.lift.bro.data.Backup
 import com.lift.bro.di.dependencies
-import kotlinx.coroutines.flow.first
 
 expect object BackupService {
 

@@ -37,13 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.presentation.decimalFormat
 import com.lift.bro.presentation.theme.spacing
 import com.lift.bro.presentation.toString
 import com.lift.bro.ui.Card
@@ -260,11 +258,4 @@ fun Tempo.render() {
             style = MaterialTheme.typography.labelSmall,
         )
     }
-}
-
-@Composable
-fun RepCard(
-
-) {
-
 }

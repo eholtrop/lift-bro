@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import androidx.activity.ComponentActivity
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ShareCompat
 import androidx.core.content.FileProvider
 import com.lift.bro.data.Backup
 import com.lift.bro.di.DependencyContainer
-import com.lift.bro.di.dependencies
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File

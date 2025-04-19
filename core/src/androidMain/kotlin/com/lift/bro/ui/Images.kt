@@ -1,7 +1,6 @@
 package com.lift.bro.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import com.lift.bro.R
 
