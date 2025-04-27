@@ -135,7 +135,7 @@ fun App(
                             variationId = route.variationId,
                             liftId = route.liftId,
                             setSaved = {
-                                navCoordinator.onBackPressed()
+                                navCoordinator.onBackPressed(keepStack = false)
                             },
                             createLiftClicked = {
                                 navCoordinator.present(Destination.EditLift(null))

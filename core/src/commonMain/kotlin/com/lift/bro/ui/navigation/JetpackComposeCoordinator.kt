@@ -35,12 +35,12 @@ class JetpackComposeCoordinator(
         return if (currentIndex == 0) {
             false
         } else {
+            currentState.value = pages.get(pages.indexOf(currentPage) - 1)
             if (!keepStack) {
                 GlobalScope.launch {
                     mutableStateList.value.removeAt(mutableStateList.value.lastIndex)
                 }
             }
-            currentState.value = pages.get(pages.indexOf(currentPage) - 1)
             true
         }
     }
