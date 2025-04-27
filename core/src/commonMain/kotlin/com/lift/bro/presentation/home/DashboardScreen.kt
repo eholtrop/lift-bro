@@ -109,6 +109,7 @@ class DashboardViewModel(
     scope: CoroutineScope = GlobalScope
 ) {
     val state = liftRepository.listenAll()
+        .map { it.sortedBy { it.name } }
         .map { DashboardState(showEmpty = it.isEmpty(), it) }
         .stateIn(scope, SharingStarted.Eagerly, initialState)
 
