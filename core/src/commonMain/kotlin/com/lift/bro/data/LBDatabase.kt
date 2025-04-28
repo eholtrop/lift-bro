@@ -172,6 +172,10 @@ class LiftDataSource(
     suspend fun deleteAll() {
         liftQueries.deleteAll()
     }
+
+    suspend fun delete(liftId: String) {
+        liftQueries.delete(liftId)
+    }
 }
 
 internal fun comliftbrodb.Lift.toDomain() = Lift(

@@ -2,6 +2,7 @@ package com.lift.bro.data
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.mapEach
@@ -11,6 +12,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -31,9 +34,13 @@ class VariationRepository(
     }
 
     override fun getAll(liftId: String): List<Variation> {
-        val parentLift = liftQueries.get(liftId).executeAsOneOrNull()?.toDomain()
+        val lift =  liftQueries.get(liftId).executeAsOneOrNull()?.toDomain()
 
-        return variationQueries.getAllForLift(liftId).executeAsList().map { it.toDomain(parentLift!!) }
+        return if (lift != null) {
+            variationQueries.getAllForLift(liftId).executeAsList().map { it.toDomain(lift) }
+        } else {
+            emptyList()
+        }
     }
 
     override fun getAll(): List<Variation> {
@@ -42,9 +49,16 @@ class VariationRepository(
     }
 
     override fun listenAll(liftId: String): Flow<List<Variation>> {
-        val parentLift = liftQueries.get(liftId).executeAsOne().toDomain()
-        return variationQueries.getAllForLift(liftId).asFlow().mapToList(Dispatchers.IO)
-            .mapEach { it.toDomain(parentLift) }
+        return liftQueries.get(liftId).asFlow().mapToOneOrNull(Dispatchers.IO)
+            .map { it?.toDomain() }
+            .flatMapLatest { lift ->
+                if (lift != null) {
+                    variationQueries.getAllForLift(lift.id).asFlow().mapToList(Dispatchers.IO)
+                        .mapEach { it.toDomain(lift) }
+                } else {
+                    flowOf(emptyList())
+                }
+            }
     }
 
     override fun listenAll(): Flow<List<Variation>> {

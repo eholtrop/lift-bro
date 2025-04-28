@@ -127,6 +127,12 @@ fun App(
                         liftSaved = {
                             navCoordinator.onBackPressed()
                         },
+                        liftDeleted = {
+                            navCoordinator.popToRoot(false)
+                        },
+                        editVariationClicked = {
+                            navCoordinator.present(Destination.EditVariation(variationId = it.id))
+                        }
                     )
 
                     is Destination.EditSet ->

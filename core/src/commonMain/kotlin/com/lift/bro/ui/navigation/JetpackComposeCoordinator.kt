@@ -46,7 +46,12 @@ class JetpackComposeCoordinator(
     }
 
     override fun popToRoot(keepStack: Boolean): Boolean {
-        mutableStateList.value.removeRange(1, mutableStateList.value.size - 1)
+        currentState.value = pages.first()
+        if (!keepStack) {
+            mutableStateList.value.clear()
+            mutableStateList.value.add(currentState.value)
+//            mutableStateList.value.removeRange(1, mutableStateList.value.size)
+        }
         return true
     }
 

@@ -13,13 +13,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -38,27 +40,50 @@ import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.ui.FabProperties
+import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.TopBar
+import com.lift.bro.ui.TopBarIconButton
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
+
+data class EditLiftState(
+    val variations: List<Variation>
+)
+
+data class EditLiftVariationState(
+    val id: String,
+    val lift: Lift?,
+    val name: String?,
+    val isNew: Boolean,
+)
 
 @Composable
 fun EditLiftScreen(
     liftId: String? = null,
     liftSaved: () -> Unit,
+    liftDeleted: () -> Unit,
+    editVariationClicked: (Variation) -> Unit,
     database: LBDatabase = dependencies.database,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     val variations = mutableStateListOf(
-        *database.variantDataSource.getAll(liftId ?: "").toTypedArray()
+        *database.variantDataSource.getAll(liftId ?: "").map {
+            EditLiftVariationState(
+                id = it.id,
+                lift = it.lift,
+                name = it.name,
+                isNew = false,
+            )
+        }.toTypedArray()
     )
 
     var lift by remember {
-        mutableStateOf<Lift>(
+        mutableStateOf(
             Lift(
                 id = uuid4().toString(),
                 name = "",
@@ -78,50 +103,97 @@ fun EditLiftScreen(
     LaunchedEffect("Fix variations") {
         if (variations.isEmpty()) {
             variations.add(
-                Variation(
+                EditLiftVariationState(
                     id = uuid4().toString(),
                     lift = lift,
                     name = "",
+                    isNew = true
                 )
             )
         }
     }
 
-    Scaffold(
-        topBar = {
-            TopBar(
-                title = liftId?.let { "Edit Lift" } ?: "Create Lift",
-//                showBackButton = true
-            )
-        },
-        floatingActionButton = {
-            Button(
-                enabled = lift.name.isNotBlank() && variations.any { it.name?.isNotBlank() == true },
-                onClick = {
-                    database.liftDataSource.save(
-                        lift
-                    )
-                    coroutineScope.launch {
-                        variations.forEach {
-                            if (it.name?.isNotBlank() == true) {
-                                database.variantDataSource.save(
-                                    id = it.id,
-                                    liftId = it.lift?.id!!,
-                                    name = it.name
-                                )
-                            } else {
-                                database.variantDataSource.delete(it.id)
+    var showDeleteWarning by remember { mutableStateOf(false) }
+    if (showDeleteWarning) {
+        AlertDialog(
+            onDismissRequest = {
+                showDeleteWarning = false
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        GlobalScope.launch {
+                            variations.forEach {
                                 database.setDataSource.deleteAll(it.id)
+                                database.variantDataSource.delete(it.id)
                             }
+                            database.liftDataSource.delete(lift.id)
+                            liftDeleted()
                         }
                     }
-                    liftSaved()
+                ) {
+                    Text("Okay!")
                 }
-            ) {
-                Text("Save")
-            }
+            },
+            dismissButton = {
+                Button(
+                    onClick = {
+                        showDeleteWarning = false
+                    }
+                ) {
+                    Text("Nevermind")
+                }
+            },
+            title = {
+                Text("Warning")
+            },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = "Warning"
+                )
+            },
+            text = {
+                Text("This will delete all variations and sets for this lift, This cannot be undone")
+            },
+        )
+    }
+
+    LiftingScaffold(
+        title = liftId?.let { "Edit Lift" } ?: "Create Lift",
+        trailingContent = {
+            TopBarIconButton(
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete",
+                onClick = {
+                    showDeleteWarning = true
+                },
+            )
         },
-        floatingActionButtonPosition = FabPosition.Center,
+        fabProperties = FabProperties(
+            fabIcon = Icons.Default.Edit,
+            contentDescription = "Save Lift",
+            fabClicked = {
+                database.liftDataSource.save(
+                    lift
+                )
+                coroutineScope.launch {
+                    variations.forEach {
+                        if (it.name?.isNotBlank() == true) {
+                            database.variantDataSource.save(
+                                id = it.id,
+                                liftId = it.lift?.id!!,
+                                name = it.name
+                            )
+                        } else {
+                            database.variantDataSource.delete(it.id)
+                            database.setDataSource.deleteAll(it.id)
+                        }
+                    }
+                }
+                liftSaved()
+            },
+        ),
     ) { padding ->
         Column(
             modifier = Modifier.padding(padding).fillMaxWidth(),
@@ -137,7 +209,8 @@ fun EditLiftScreen(
             Space(MaterialTheme.spacing.two)
 
             Text(
-                modifier = Modifier.align(Alignment.Start).padding(start = MaterialTheme.spacing.one),
+                modifier = Modifier.align(Alignment.Start)
+                    .padding(start = MaterialTheme.spacing.one),
                 text = "Variations",
                 style = MaterialTheme.typography.headlineSmall
             )
@@ -162,6 +235,7 @@ fun EditLiftScreen(
                             onValueChange = {
                                 variations[index] = variations[index].copy(name = it)
                             },
+                            enabled = variation.isNew,
                             placeholder = {
                                 Text(text = "ex: Back vs Front Squat")
                             },
@@ -178,13 +252,32 @@ fun EditLiftScreen(
 
                         Space(MaterialTheme.spacing.one)
 
-                        IconButton(
-                            onClick = { variations[index] = variations[index].copy(name = "") },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear"
-                            )
+                        if (variation.isNew) {
+                            IconButton(
+                                onClick = { variations.remove(variation) },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "Clear"
+                                )
+                            }
+                        } else {
+                            IconButton(
+                                onClick = {
+                                    editVariationClicked(
+                                        Variation(
+                                            id = variation.id,
+                                            lift = variation.lift,
+                                            name = variation.name,
+                                        )
+                                    )
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Edit,
+                                    contentDescription = "Edit"
+                                )
+                            }
                         }
                     }
                 }
@@ -196,10 +289,11 @@ fun EditLiftScreen(
                         IconButton(
                             onClick = {
                                 variations.add(
-                                    Variation(
+                                    EditLiftVariationState(
                                         id = uuid4().toString(),
                                         lift = lift,
                                         name = "",
+                                        isNew = true
                                     )
                                 )
                             },
