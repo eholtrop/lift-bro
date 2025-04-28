@@ -9,7 +9,7 @@ import com.lift.bro.data.LBDatabase
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.ISettingsRepository
-import com.lift.bro.presentation.variation.UOM
+import com.lift.bro.domain.models.UOM
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

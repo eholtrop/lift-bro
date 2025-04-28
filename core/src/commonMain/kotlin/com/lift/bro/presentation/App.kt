@@ -38,11 +38,11 @@ import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
-import com.lift.bro.presentation.variation.EditVariationScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.BackupDialog
+import com.lift.bro.ui.dialog.EditVariationDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
@@ -148,13 +148,17 @@ fun App(
                             },
                         )
 
-                    is Destination.EditVariation ->
-                        EditVariationScreen(
-                            id = route.variationId,
-                            variationSaved = {
-                                navCoordinator.onBackPressed()
-                            }
+                    is Destination.EditVariation -> {
+                        EditVariationDialog(
+                            variationId = route.variationId,
+                            onDismissRequest = {
+                                navCoordinator.onBackPressed(false)
+                            },
+                            onVariationSaved = {
+                                navCoordinator.onBackPressed(false)
+                            },
                         )
+                    }
 
                     is Destination.LiftDetails ->
                         LiftDetailsScreen(

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +25,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Variation
+import com.lift.bro.ui.DropDownButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.Space
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +34,27 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
+fun EditVariationDialog(
+    modifier: Modifier = Modifier,
+    variationId: String,
+    onDismissRequest: () -> Unit,
+    onVariationSaved: (String) -> Unit,
+    properties: DialogProperties = DialogProperties()
+) {
+    val variation = dependencies.database.variantDataSource.get(variationId)
+
+    VariationDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        title = "Edit Variation",
+        properties = properties,
+        variation = variation!!,
+        onVariationSaved = onVariationSaved,
+    )
+}
+
+
+@Composable
 fun CreateVariationDialog(
     modifier: Modifier = Modifier,
     parentLiftId: String,
@@ -39,7 +62,31 @@ fun CreateVariationDialog(
     onVariationCreated: (String) -> Unit,
     properties: DialogProperties = DialogProperties()
 ) {
+    val parentLift by dependencies.database.liftDataSource.get(parentLiftId)
+        .collectAsState(null)
 
+    VariationDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        title = "Create Variation",
+        properties = properties,
+        variation = Variation(
+            lift = parentLift,
+        ),
+        onVariationSaved = onVariationCreated,
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun VariationDialog(
+    modifier: Modifier = Modifier,
+    variation: Variation,
+    title: String,
+    onDismissRequest: () -> Unit,
+    onVariationSaved: (String) -> Unit,
+    properties: DialogProperties,
+) {
     BasicAlertDialog(
         modifier = modifier,
         onDismissRequest = onDismissRequest,
@@ -51,28 +98,41 @@ fun CreateVariationDialog(
                     shape = MaterialTheme.shapes.large,
                 ).padding(MaterialTheme.spacing.one),
             ) {
-                val parentLift by dependencies.database.liftDataSource.get(parentLiftId)
-                    .collectAsState(null)
 
-                var variationName by remember { mutableStateOf("") }
+                var currentVariation by remember { mutableStateOf(variation) }
 
                 val coroutineScope = rememberCoroutineScope()
 
                 var isLoading by remember { mutableStateOf(false) }
 
                 Text(
-                    text = "Create Variation",
+                    text = title,
                     style = MaterialTheme.typography.titleLarge,
                 )
 
                 Space(MaterialTheme.spacing.two)
 
-                parentLift?.let { lift ->
+                variation.lift?.let { lift ->
                     TextField(
-                        value = variationName,
-                        onValueChange = { variationName = it },
-                        suffix = {
-                            Text(lift.name)
+                        value = currentVariation.name ?: "",
+                        onValueChange = { currentVariation = currentVariation.copy(name = it) },
+                        trailingIcon = {
+
+                            val lifts by dependencies.database.liftDataSource.listenAll()
+                                .collectAsState(emptyList())
+
+                            DropDownButton(
+                                buttonText = currentVariation.lift?.name ?: ""
+                            ) {
+                                lifts.forEach {
+                                    DropdownMenuItem(
+                                        text = { Text(text = it.name) },
+                                        onClick = {
+                                            currentVariation = currentVariation.copy(lift = it)
+                                        }
+                                    )
+                                }
+                            }
                         }
                     )
                 }
@@ -91,23 +151,21 @@ fun CreateVariationDialog(
                     }
                     Space(MaterialTheme.spacing.half)
                     Button(
-                        enabled = variationName.isNotBlank(),
+                        enabled = currentVariation.name?.isNotBlank() ?: false,
                         onClick = {
                             isLoading = true
                             coroutineScope.launch(context = Dispatchers.IO) {
-                                val newId = uuid4().toString()
                                 dependencies.database.variantDataSource.save(
-                                    id = newId,
-                                    liftId = parentLift!!.id,
-                                    name = variationName
+                                    id = currentVariation.id,
+                                    liftId = currentVariation.lift!!.id,
+                                    name = currentVariation.name
                                 )
-                                onVariationCreated(newId)
+                                onVariationSaved(currentVariation.id)
                             }
-                            onDismissRequest()
                         },
                         colors = ButtonDefaults.textButtonColors(),
                     ) {
-                        Text("Create")
+                        Text("Save")
                     }
                 }
 

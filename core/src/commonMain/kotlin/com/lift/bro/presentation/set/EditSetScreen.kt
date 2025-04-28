@@ -319,7 +319,10 @@ internal fun VariationSelector(
         CreateVariationDialog(
             parentLiftId = expandedLift!!.id,
             onDismissRequest = { showCreateVariationDialog = false },
-            onVariationCreated = { variationSelected(it) }
+            onVariationCreated = {
+                variationSelected(it)
+                showCreateVariationDialog = false
+            }
         )
     }
 
