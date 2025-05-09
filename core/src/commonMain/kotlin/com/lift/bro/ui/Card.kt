@@ -15,11 +15,12 @@ import com.lift.bro.ui.theme.spacing
 @Composable
 fun Card(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-    Box(
-        modifier = modifier
+
+    val localModifier = if (onClick != null) {
+        modifier
             .clip(MaterialTheme.shapes.medium)
             .clickable(
                 onClick = onClick,
@@ -28,7 +29,17 @@ fun Card(
             .background(
                 color = MaterialTheme.colorScheme.surface,
             )
-            .padding(MaterialTheme.spacing.quarter),
+            .padding(MaterialTheme.spacing.quarter)
+    } else {
+        modifier.clip(MaterialTheme.shapes.medium)
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+            )
+            .padding(MaterialTheme.spacing.quarter)
+    }
+
+    Box(
+        modifier = localModifier,
         contentAlignment = Alignment.Center,
     ) {
         content()
