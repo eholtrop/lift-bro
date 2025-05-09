@@ -37,6 +37,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import com.lift.bro.data.BackupRestore
 import com.lift.bro.data.LiftDataSource
@@ -109,7 +111,7 @@ class DashboardViewModel(
     scope: CoroutineScope = GlobalScope
 ) {
     val state = liftRepository.listenAll()
-        .map { it.sortedBy { it.name } }
+        .map { it.sortedBy { it.name.toLowerCase(Locale.current) } }
         .map { DashboardState(showEmpty = it.isEmpty(), it) }
         .stateIn(scope, SharingStarted.Eagerly, initialState)
 
@@ -283,7 +285,6 @@ fun DashboardContent(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 ) {
-
                     items(lifts) { lift ->
                         LiftCard(
                             modifier = Modifier.padding(MaterialTheme.spacing.quarter),
