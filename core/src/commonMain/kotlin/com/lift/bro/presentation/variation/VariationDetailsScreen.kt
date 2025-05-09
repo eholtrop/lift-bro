@@ -3,12 +3,15 @@
 package com.lift.bro.presentation.variation
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
@@ -51,6 +55,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.utils.formattedMax
 import com.lift.bro.utils.formattedWeight
+import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import kotlin.collections.List
 import kotlin.collections.forEach
@@ -128,14 +133,15 @@ private fun VariationDetailsScreen(
 
         LazyColumn(
             modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(MaterialTheme.spacing.one)
+            contentPadding = PaddingValues(MaterialTheme.spacing.one),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
         ) {
 
             stickyHeader {
                 Column(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
                     Row {
                         var expanded by rememberSaveable { mutableStateOf(false) }
 
@@ -181,9 +187,7 @@ private fun VariationDetailsScreen(
 
 
             items(items) { entry ->
-                Card(
-                    onClick = {},
-                ) {
+                Card {
                     Column(
                         modifier = Modifier.padding(all = MaterialTheme.spacing.one)
                     ) {
@@ -191,35 +195,62 @@ private fun VariationDetailsScreen(
                             text = entry.first,
                             style = MaterialTheme.typography.titleLarge
                         )
-                        entry.second.sortedByDescending { it.date }.forEach { set ->
-                            Column(
-                                modifier = Modifier.fillMaxWidth()
-                                    .defaultMinSize(minHeight = 52.dp)
-                                    .clickable(
-                                        role = Role.Button,
-                                        onClick = { setClicked(set) }
-                                    ),
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = grouping.title(set),
-                                    style = MaterialTheme.typography.titleMedium
-                                )
 
-                                if (grouping != Grouping.Date) {
-                                    Text(
-                                        text = set.date.toLocalDate().toString("MMM d"),
-                                        style = MaterialTheme.typography.labelSmall
-                                    )
+                        Row(
+                            modifier = Modifier.padding(
+                                vertical = MaterialTheme.spacing.half
+                            ),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            entry.second.sortedByDescending { it.weight }
+                                .forEach { set ->
+                                    Column(
+                                        modifier = Modifier.weight(1f)
+                                            .defaultMinSize(minHeight = 44.dp)
+                                            .clickable(
+                                                role = Role.Button,
+                                                onClick = { setClicked(set) }
+                                            ),
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(
+                                            text = "${set.formattedWeight} x ${set.reps}",
+                                            style = MaterialTheme.typography.titleMedium,
+                                        )
+                                        set.tempo.render()
+                                        if (set.notes.isNotBlank()) {
+                                            Row(
+                                                modifier = Modifier.padding(top = MaterialTheme.spacing.quarter),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+                                                Icon(
+                                                    modifier = Modifier.size(MaterialTheme.typography.labelSmall.fontSize.value.dp),
+                                                    imageVector = Icons.Default.Edit,
+                                                    contentDescription = null,
+                                                )
+                                                Space(MaterialTheme.spacing.quarter)
+                                                Text(
+                                                    text = set.notes,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
-                                if (grouping != Grouping.Tempo) {
-                                    set.tempo.render()
-                                }
-                            }
+
+                            Space(MaterialTheme.spacing.half)
+
+                            Box(
+                                modifier = Modifier.background(
+                                    color = variation.lift?.color?.toColor()
+                                        ?: MaterialTheme.colorScheme.primary,
+                                    shape = CircleShape,
+                                ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
+                                content = {}
+                            )
                         }
                     }
                 }
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
             }
         }
     }
