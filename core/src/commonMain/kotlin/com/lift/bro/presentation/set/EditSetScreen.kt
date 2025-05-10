@@ -2,10 +2,12 @@
 
 package com.lift.bro.presentation.set
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,9 +16,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -26,7 +28,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -42,29 +43,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
-import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.fullName
-import com.lift.bro.ui.dialog.CreateVariationDialog
-import com.lift.bro.ui.navigation.LocalNavCoordinator
-import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.DateSelector
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.NumberPicker
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.VariationCard
-import com.lift.bro.ui.WeightSelector
+import com.lift.bro.ui.dialog.CreateVariationDialog
+import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.formattedWeight
 import kotlinx.coroutines.CoroutineScope
@@ -72,11 +69,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.weight_selector_chin_subtitle
+import lift_bro.core.generated.resources.weight_selector_chin_title
+import org.jetbrains.compose.resources.stringResource
 
-private data class EditSetState(
+data class EditSetState(
     val id: String,
     val variationId: String? = null,
-    val weight: Double = 0.0,
+    val weight: Double? = 0.0,
     val reps: Long? = 1,
     val down: Long? = 3,
     val hold: Long? = 1,
@@ -100,7 +101,7 @@ private fun LBSet.toUiState() = EditSetState(
 private fun EditSetState.toDomain() = LBSet(
     id = this.id,
     variationId = this.variationId!!,
-    weight = this.weight,
+    weight = this.weight!!,
     reps = this.reps!!,
     tempo = Tempo
         (
@@ -170,28 +171,85 @@ fun EditSetScreen(
             modifier = Modifier.padding(padding).fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            item {
-                NumberPicker(
-                    modifier = Modifier.animateContentSize().wrapContentSize(),
-                    selectedNum = set.reps?.toInt(),
-                    title = null,
-                    numberChanged = { set = set.copy(reps = it?.toLong()) },
-                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                    suffix = {
-                        Text("reps")
-                    }
-                )
-            }
 
             item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.oneAndHalf))
-            }
-
-            item {
-                Card(
-                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                    border = BorderStroke(width = Dp.Hairline, color = Color.Black),
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    RepWeightSelector(
+                        set = set,
+                        repChanged = {
+                            set = set.copy(reps = it)
+                        },
+                        weightChanged = {
+                            set = set.copy(weight = it)
+                        }
+                    )
+
+                    val sets = dependencies.database.setDataSource.getAllForLift(
+                        variation?.lift?.id ?: ""
+                    )
+
+                    val liftMax = sets.maxByOrNull { it.weight }
+                    val variationMax = sets.filter { it.variationId == variation?.id }
+                        .maxByOrNull { it.weight }
+
+                    AnimatedVisibility(set.variationId != null) {
+                        Box(
+                            modifier = Modifier.padding(
+                                vertical = MaterialTheme.spacing.half,
+                                horizontal = MaterialTheme.spacing.one
+                            ).animateContentSize()
+                        ) {
+                            val weight = set.weight ?: 0.0
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                if (liftMax != null) {
+                                    val percentage =
+                                        ((weight / liftMax.weight) * 100).toInt()
+                                    Text(
+                                        text = stringResource(
+                                            Res.string.weight_selector_chin_title,
+                                            percentage,
+                                            variation?.lift?.name ?: "",
+                                        ),
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                }
+                                if (variationMax != null) {
+                                    val percentage =
+                                        ((weight / variationMax.weight) * 100).toInt()
+                                    Text(
+                                        text = stringResource(
+                                            Res.string.weight_selector_chin_subtitle,
+                                            percentage,
+                                            variation?.fullName ?: "",
+                                        ),
+                                        style = MaterialTheme.typography.labelSmall
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding(MaterialTheme.spacing.one)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = MaterialTheme.shapes.large
+                        )
+                        .padding(horizontal = MaterialTheme.spacing.one),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+
+                    Space(MaterialTheme.spacing.one)
+
                     Column(
                         modifier = Modifier
                             .animateContentSize()
@@ -206,11 +264,14 @@ fun EditSetScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Space(MaterialTheme.spacing.one)
+
                         Text(
                             text = variation?.fullName ?: "Select Lift",
                             style = MaterialTheme.typography.headlineSmall,
                         )
+
                         Space(MaterialTheme.spacing.one)
+
                         if (variation == null) {
                             VariationSelector(
                                 variationSelected = { set = set.copy(variationId = it) },
@@ -240,15 +301,6 @@ fun EditSetScreen(
 
             if (variation != null) {
                 item {
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
-                    WeightSelector(
-                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                        weight = Pair(set.weight, Settings.defaultUOM),
-                        variation = variation,
-                        placeholder = "At",
-                        weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
-                    )
-
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
 
                     TempoSelector(
@@ -293,6 +345,7 @@ fun EditSetScreen(
         }
     }
 }
+
 @Composable
 internal fun VariationSelector(
     modifier: Modifier = Modifier,
@@ -380,6 +433,5 @@ internal fun VariationSelector(
                 }
             }
         }
-
     }
 }

@@ -26,7 +26,7 @@ fun DropDownButton(
 
     var showDropdown by remember { mutableStateOf(false) }
     Button(
-        modifier = Modifier,
+        modifier = modifier,
         onClick = {
             showDropdown = true
         },

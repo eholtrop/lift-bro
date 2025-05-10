@@ -18,11 +18,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 
 @Composable
 fun DecimalPicker(
-    modifier: Modifier,
-    title: String,
+    modifier: Modifier = Modifier,
+    title: String? = null,
     selectedNum: Double? = null,
     numberChanged: (Double?) -> Unit,
     imeAction: ImeAction = ImeAction.Next,
+    prefix: @Composable (() -> Unit)? = null,
     suffix: @Composable (() -> Unit)? = null,
 ) {
     var value by remember { mutableStateOf(TextFieldValue(selectedNum?.toString() ?: "")) }
@@ -47,13 +48,16 @@ fun DecimalPicker(
             value = it
         },
         label = {
-            Text(title)
+            title?.let {
+                Text(title)
+            }
         },
         singleLine = true,
         keyboardOptions = KeyboardOptions.Default.copy(
             keyboardType = KeyboardType.Decimal,
             imeAction = imeAction,
         ),
+        prefix = prefix,
         suffix = suffix,
     )
 }
