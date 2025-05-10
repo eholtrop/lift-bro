@@ -92,9 +92,7 @@ actual class DependencyContainer {
                         BackupSettings(
                             LocalDate.fromEpochDays(
                                 sharedPreferences.getInt(
-                                    "last_backup_epoch_days", Clock.System.todayIn(
-                                        TimeZone.currentSystemDefault()
-                                    ).toEpochDays()
+                                    "last_backup_epoch_days", 0
                                 )
                             )
                         )

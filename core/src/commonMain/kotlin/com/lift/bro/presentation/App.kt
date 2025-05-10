@@ -9,14 +9,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,10 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.window.DialogProperties
 import com.example.compose.AppTheme
 import com.lift.bro.config.BuildConfig
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.presentation.home.DashboardScreen
@@ -41,24 +35,15 @@ import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.dialog.BackupDialog
+import com.lift.bro.ui.dialog.BackupAlertDialog
 import com.lift.bro.ui.dialog.EditVariationDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.debug
-import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.scan
-import kotlinx.datetime.Clock
-import kotlinx.datetime.daysUntil
 
 
 @Composable
@@ -70,7 +55,6 @@ fun App(
             modifier = Modifier.background(MaterialTheme.colorScheme.background)
         ) {
 
-            var showBackupModal by remember { mutableStateOf(false) }
 
             LaunchedEffect("debug_mode") {
                 if (BuildConfig.DEBUG) {
@@ -87,18 +71,7 @@ fun App(
                 }
             }
 
-            LaunchedEffect("check_for_update_prompt") {
-                val backupSettings = dependencies.settingsRepository.getBackupSettings().first()
-                showBackupModal =
-                    backupSettings.lastBackupDate.daysUntil(Clock.System.now().toLocalDate()) >= 7
-            }
-
-            if (showBackupModal) {
-                BackupDialog(
-                    onDismissRequest = { showBackupModal = false }
-                )
-            }
-
+            BackupAlertDialog()
 
             SwipeableNavHost(
                 navCoordinator = navCoordinator,
