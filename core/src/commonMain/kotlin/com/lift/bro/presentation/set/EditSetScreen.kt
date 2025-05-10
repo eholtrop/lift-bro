@@ -4,9 +4,13 @@ package com.lift.bro.presentation.set
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -14,9 +18,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -30,6 +38,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,8 +53,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.Settings
 import com.lift.bro.di.dependencies
@@ -57,6 +69,8 @@ import com.lift.bro.ui.dialog.CreateVariationDialog
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.DateSelector
+import com.lift.bro.ui.DecimalFormat
+import com.lift.bro.ui.DecimalPicker
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.NumberPicker
@@ -171,27 +185,94 @@ fun EditSetScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                NumberPicker(
-                    modifier = Modifier.animateContentSize().wrapContentSize(),
-                    selectedNum = set.reps?.toInt(),
-                    title = null,
-                    numberChanged = { set = set.copy(reps = it?.toLong()) },
-                    textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                    suffix = {
-                        Text("reps")
-                    }
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.oneAndHalf))
-            }
-
-            item {
-                Card(
-                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                    border = BorderStroke(width = Dp.Hairline, color = Color.Black),
+                Column(
+                    modifier = Modifier
+                        .padding(MaterialTheme.spacing.one)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = MaterialTheme.shapes.large
+                        )
+                        .padding(horizontal = MaterialTheme.spacing.one),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    Space(MaterialTheme.spacing.one)
+                    Row(
+                        modifier = Modifier.background(
+                            color = MaterialTheme.colorScheme.surfaceContainer,
+                            shape = MaterialTheme.shapes.extraLarge
+                        ).padding(
+                            horizontal = MaterialTheme.spacing.one,
+                            vertical = MaterialTheme.spacing.quarter
+                        ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+
+                        BasicTextField(
+                            modifier = Modifier.width(IntrinsicSize.Min)
+                                .border(
+                                    width = 1.dp,
+                                    shape = MaterialTheme.shapes.small,
+                                    color = Color.Black
+                                ).padding(
+                                    horizontal = MaterialTheme.spacing.half,
+                                    vertical = MaterialTheme.spacing.half,
+                                ).defaultMinSize(
+                                    minWidth = Dp.AccessibilityMinimumSize,
+                                ),
+                            value = set.reps.toString(),
+                            onValueChange = {
+                                set = set.copy(reps = it.toLongOrNull())
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Next,
+                            ),
+                            textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center),
+                        )
+
+                        Space(MaterialTheme.spacing.half)
+
+                        Text(
+                            text = "x",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Space(MaterialTheme.spacing.half)
+
+
+                        BasicTextField(
+                            modifier = Modifier.width(IntrinsicSize.Min)
+                                .border(
+                                    width = 1.dp,
+                                    shape = MaterialTheme.shapes.small,
+                                    color = Color.Black
+                                ).padding(
+                                    horizontal = MaterialTheme.spacing.half,
+                                    vertical = MaterialTheme.spacing.half,
+                                ).defaultMinSize(
+                                    minWidth = Dp.AccessibilityMinimumSize,
+                                ),
+                            value = DecimalFormat.formatWeight(set.weight),
+                            onValueChange = {
+                                set = set.copy(weight = it.toDoubleOrNull() ?: 0.0)
+                            },
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                keyboardType = KeyboardType.Decimal,
+                                imeAction = ImeAction.Next,
+                            ),
+                            textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center),
+                        )
+
+                        Space(MaterialTheme.spacing.half)
+
+                        Text(
+                            text = "lbs",
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                    }
+
                     Column(
                         modifier = Modifier
                             .animateContentSize()
@@ -206,10 +287,13 @@ fun EditSetScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Space(MaterialTheme.spacing.one)
-                        Text(
-                            text = variation?.fullName ?: "Select Lift",
-                            style = MaterialTheme.typography.headlineSmall,
-                        )
+                        variation?.fullName
+                            ?.let {
+                                Text(
+                                    text = variation.fullName,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                )
+                            }
                         Space(MaterialTheme.spacing.one)
                         if (variation == null) {
                             VariationSelector(
@@ -240,15 +324,6 @@ fun EditSetScreen(
 
             if (variation != null) {
                 item {
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
-                    WeightSelector(
-                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                        weight = Pair(set.weight, Settings.defaultUOM),
-                        variation = variation,
-                        placeholder = "At",
-                        weightChanged = { set = set.copy(weight = it.first ?: 0.0) }
-                    )
-
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
 
                     TempoSelector(
@@ -293,6 +368,7 @@ fun EditSetScreen(
         }
     }
 }
+
 @Composable
 internal fun VariationSelector(
     modifier: Modifier = Modifier,
@@ -380,6 +456,5 @@ internal fun VariationSelector(
                 }
             }
         }
-
     }
 }
