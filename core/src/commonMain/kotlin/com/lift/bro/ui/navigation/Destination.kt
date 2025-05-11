@@ -1,5 +1,6 @@
 package com.lift.bro.ui.navigation
 
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 sealed interface Destination {
@@ -23,6 +24,12 @@ sealed interface Destination {
         val setId: String? = null,
         val liftId: String? = null,
         val variationId: String? = null
+    ) : Destination
+
+    @Serializable
+    data class EditExcercise(
+        val localDate: LocalDate,
+        val variationId: String,
     ) : Destination
 
     @Serializable

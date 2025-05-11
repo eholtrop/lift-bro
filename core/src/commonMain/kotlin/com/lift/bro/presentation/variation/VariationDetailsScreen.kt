@@ -46,6 +46,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toString
 import com.lift.bro.ui.Card
@@ -213,28 +214,7 @@ private fun VariationDetailsScreen(
                                             ),
                                         verticalArrangement = Arrangement.Center
                                     ) {
-                                        Text(
-                                            text = "${set.formattedWeight} x ${set.reps}",
-                                            style = MaterialTheme.typography.titleMedium,
-                                        )
-                                        set.tempo.render()
-                                        if (set.notes.isNotBlank()) {
-                                            Row(
-                                                modifier = Modifier.padding(top = MaterialTheme.spacing.quarter),
-                                                verticalAlignment = Alignment.CenterVertically,
-                                            ) {
-                                                Icon(
-                                                    modifier = Modifier.size(MaterialTheme.typography.labelSmall.fontSize.value.dp),
-                                                    imageVector = Icons.Default.Edit,
-                                                    contentDescription = null,
-                                                )
-                                                Space(MaterialTheme.spacing.quarter)
-                                                Text(
-                                                    text = set.notes,
-                                                    style = MaterialTheme.typography.labelSmall,
-                                                )
-                                            }
-                                        }
+                                        SetInfoRow(set = set)
                                     }
                                 }
 

@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.today
 import com.lift.bro.ui.theme.spacing
@@ -45,11 +46,12 @@ import com.lift.bro.ui.Space
 import com.lift.bro.utils.formattedWeight
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
+import kotlinx.datetime.LocalDate
 
 @Composable
 fun CalendarScreen(
     modifier: Modifier = Modifier,
-    setClicked: (LBSet) -> Unit,
+    variationClicked: (Variation, LocalDate) -> Unit,
     sets: List<LBSet>,
     variations: List<Variation>,
 ) {
@@ -125,6 +127,10 @@ fun CalendarScreen(
 
                     Column(
                         modifier = Modifier.weight(1f)
+                            .clickable(
+                                role = Role.Button,
+                                onClick = { variationClicked(variation!!, selectedDate) }
+                            )
                     ) {
                         Text(
                             text = "${variation?.name} ${variation?.lift?.name}",
@@ -135,35 +141,10 @@ fun CalendarScreen(
                             .forEach { set ->
                                 Column(
                                     modifier = Modifier.fillMaxWidth()
-                                        .defaultMinSize(minHeight = 44.dp)
-                                        .clickable(
-                                            role = Role.Button,
-                                            onClick = { setClicked(set) }
-                                        ),
+                                        .defaultMinSize(minHeight = 44.dp),
                                     verticalArrangement = Arrangement.Center
                                 ) {
-                                    Text(
-                                        text = "${set.formattedWeight} x ${set.reps}",
-                                        style = MaterialTheme.typography.titleMedium,
-                                    )
-                                    set.tempo.render()
-                                    if (set.notes.isNotBlank()) {
-                                        Row(
-                                            modifier = Modifier.padding(top = MaterialTheme.spacing.quarter),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            Icon(
-                                                modifier = Modifier.size(MaterialTheme.typography.labelSmall.fontSize.value.dp),
-                                                imageVector = Icons.Default.Edit,
-                                                contentDescription = null,
-                                            )
-                                            Space(MaterialTheme.spacing.quarter)
-                                            Text(
-                                                text = set.notes,
-                                                style = MaterialTheme.typography.labelSmall,
-                                            )
-                                        }
-                                    }
+                                    SetInfoRow(set = set)
                                 }
                             }
                     }

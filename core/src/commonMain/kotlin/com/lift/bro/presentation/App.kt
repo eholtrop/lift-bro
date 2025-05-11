@@ -26,6 +26,7 @@ import com.example.compose.AppTheme
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
+import com.lift.bro.presentation.excercise.ExcerciseDetailsScreen
 import com.lift.bro.presentation.home.DashboardScreen
 import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
@@ -90,10 +91,15 @@ fun App(
                             addSetClicked = {
                                 navCoordinator.present(Destination.EditSet(null, null, null))
                             },
-                            setClicked = {
-                                navCoordinator.present(Destination.EditSet(it.id, null, null))
+                            setClicked = { variation, date ->
+                                navCoordinator.present(Destination.EditExcercise(variationId = variation.id, localDate =  date))
                             }
                         )
+
+                    is Destination.EditExcercise -> ExcerciseDetailsScreen(
+                        date = route.localDate,
+                        variationId = route.variationId
+                    )
 
                     is Destination.EditLift -> EditLiftScreen(
                         liftId = route.liftId,

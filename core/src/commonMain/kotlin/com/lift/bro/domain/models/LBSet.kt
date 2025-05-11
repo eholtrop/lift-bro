@@ -1,7 +1,10 @@
 package com.lift.bro.domain.models
 
+import com.lift.bro.utils.toLocalDate
+import com.lift.bro.utils.toString
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,7 +16,9 @@ data class LBSet(
     val tempo: Tempo = Tempo(),
     val date: Instant = Clock.System.now(),
     val notes: String,
-)
+) {
+    val excerciseId = variationId + date.toLocalDate().toString("dd-MM-yyyy")
+}
 
 @Serializable
 data class Tempo(

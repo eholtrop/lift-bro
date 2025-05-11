@@ -46,6 +46,7 @@ import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
@@ -68,6 +69,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_empty_primary_cta_title
 import lift_bro.core.generated.resources.dashboard_empty_secondary_cta_subtitle
@@ -130,7 +132,7 @@ fun DashboardScreen(
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
-    setClicked: (LBSet) -> Unit,
+    setClicked: (Variation, LocalDate) -> Unit,
 ) {
 
     val state by remember { viewModel }.state.collectAsState(null)
@@ -170,7 +172,7 @@ fun DashboardContent(
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
-    setClicked: (LBSet) -> Unit,
+    setClicked: (Variation, LocalDate) -> Unit,
 ) {
 
     var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
@@ -301,7 +303,7 @@ fun DashboardContent(
             Tab.RecentSets -> {
                 CalendarScreen(
                     modifier = Modifier.padding(padding),
-                    setClicked = setClicked,
+                    variationClicked = setClicked,
                     sets = sets,
                     variations = variations
                 )
