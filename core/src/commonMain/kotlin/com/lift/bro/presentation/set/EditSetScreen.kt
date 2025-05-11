@@ -244,27 +244,22 @@ fun EditSetScreen(
                             color = MaterialTheme.colorScheme.surface,
                             shape = MaterialTheme.shapes.large
                         )
-                        .padding(horizontal = MaterialTheme.spacing.one),
+                        .clickable(
+                            enabled = set.variationId != null,
+                            onClick = {
+                                set = set.copy(variationId = null)
+                            },
+                            role = Role.DropdownList
+                        )
+                        .padding(MaterialTheme.spacing.one),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-
-                    Space(MaterialTheme.spacing.one)
-
                     Column(
                         modifier = Modifier
                             .animateContentSize()
-                            .clickable(
-                                enabled = set.variationId != null,
-                                onClick = {
-                                    set = set.copy(variationId = null)
-                                },
-                                role = Role.DropdownList
-                            )
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Space(MaterialTheme.spacing.one)
-
                         Text(
                             text = variation?.fullName ?: "Select Lift",
                             style = MaterialTheme.typography.headlineSmall,
@@ -282,7 +277,6 @@ fun EditSetScreen(
                             ) {
                                 Text("Create Lift")
                             }
-                            Space(MaterialTheme.spacing.one)
                         } else {
                             val sets = dependencies.database.setDataSource.getAllForLift(
                                 variation.lift?.id ?: ""
@@ -293,7 +287,6 @@ fun EditSetScreen(
                                 .maxByOrNull { it.weight }
                             Text("${variation.lift?.name ?: ""} Max: ${liftMax?.formattedWeight ?: "None"}")
                             Text("${variation.fullName} Max: ${variationMax?.formattedWeight ?: "None"}")
-                            Space(MaterialTheme.spacing.half)
                         }
                     }
                 }

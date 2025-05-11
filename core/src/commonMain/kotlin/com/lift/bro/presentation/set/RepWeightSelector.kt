@@ -1,9 +1,7 @@
 package com.lift.bro.presentation.set
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -14,17 +12,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusEvent
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -33,6 +30,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lift.bro.di.dependencies
 import com.lift.bro.ui.DecimalFormat
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -46,7 +44,9 @@ fun RepWeightSelector(
     weightChanged: (Double?) -> Unit,
 ) {
     Row(
-        modifier = modifier.semantics(mergeDescendants = true) {},
+        modifier = modifier.semantics(mergeDescendants = true) {
+            // TODO: figure out the accessibility here
+        },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -67,7 +67,7 @@ fun RepWeightSelector(
 
         Text(
             text = "x",
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
         )
         Space(MaterialTheme.spacing.half)
 
@@ -81,8 +81,10 @@ fun RepWeightSelector(
 
         Space(MaterialTheme.spacing.half)
 
+
+        val uom by dependencies.settingsRepository.getUnitOfMeasure().collectAsState(null)
         Text(
-            text = "lbs",
+            text = uom?.uom?.value ?: "",
             style = MaterialTheme.typography.titleLarge
         )
     }
@@ -97,9 +99,12 @@ private fun RepWeightTextField(
 ) {
     var textFieldValue by remember { mutableStateOf(TextFieldValue(value)) }
 
+    var focusState by remember { mutableStateOf<FocusState?>(null) }
+
     BasicTextField(
         modifier = modifier.width(IntrinsicSize.Min)
             .onFocusEvent {
+                focusState = it
                 textFieldValue = if (it.isFocused) {
                     textFieldValue.copy(
                         selection = TextRange(0, textFieldValue.text.length)
@@ -113,7 +118,7 @@ private fun RepWeightTextField(
             .border(
                 width = 1.dp,
                 shape = MaterialTheme.shapes.small,
-                color = Color.Black
+                color = if (focusState?.isFocused == true) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
             ).padding(
                 horizontal = MaterialTheme.spacing.half,
                 vertical = MaterialTheme.spacing.half,
@@ -130,6 +135,10 @@ private fun RepWeightTextField(
             keyboardType = keyboardType,
             imeAction = ImeAction.Next,
         ),
-        textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center),
+        textStyle = MaterialTheme.typography.titleLarge.copy(
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground
+        ),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground)
     )
 }
