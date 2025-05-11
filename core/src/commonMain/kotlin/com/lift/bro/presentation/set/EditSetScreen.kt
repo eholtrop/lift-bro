@@ -294,8 +294,6 @@ fun EditSetScreen(
 
             if (variation != null) {
                 item {
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-
                     TempoSelector(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
                         up = set.up?.toInt(),
