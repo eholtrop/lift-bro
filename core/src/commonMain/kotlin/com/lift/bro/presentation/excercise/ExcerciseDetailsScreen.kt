@@ -123,6 +123,7 @@ private fun ExcerciseDetailsScreen(
                                     dependencies.database.setDataSource.save(
                                         set = baseSet.copy(
                                             id = uuid4().toString(),
+                                            // increment date by one to ensure this new list is the "Last Set"
                                             date = baseSet.date.plus(1, DateTimeUnit.MILLISECOND)
                                         )
                                     )

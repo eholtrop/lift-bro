@@ -43,34 +43,25 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
 
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material3)
-                implementation(compose.components.resources)
-                implementation(compose.components.uiToolingPreview)
+            implementation(libs.kotlinx.datetime)
+            implementation(libs.uuid)
+            implementation(libs.sqldelight.coroutines)
+            implementation(libs.kotlinx.serialization)
+            implementation(libs.kotlin.reflect)
 
-                implementation(libs.kotlinx.datetime)
-                implementation(libs.uuid)
-                implementation(libs.sqldelight.coroutines)
-                implementation(libs.kotlinx.serialization)
-                implementation(libs.kotlin.reflect)
-
-                implementation(libs.colorpicker.compose)
-                implementation(libs.kotlinx.coroutines.core)
-            }
+            implementation(libs.colorpicker.compose)
+            implementation(libs.kotlinx.coroutines.core)
         }
 
-        val androidMain by getting {
-            dependencies {
-                implementation(libs.ui.tooling.preview)
-                implementation(libs.sqldelight.android.driver)
-                implementation(libs.app.update)
-                implementation(libs.app.update.ktx)
-            }
+        androidMain.dependencies {
+            implementation(libs.sqldelight.android.driver)
+            implementation(libs.app.update)
+            implementation(libs.app.update.ktx)
         }
 
-        iosMain.dependencies {
+        nativeMain.dependencies {
             implementation(libs.sqldelight.native.driver)
         }
 
