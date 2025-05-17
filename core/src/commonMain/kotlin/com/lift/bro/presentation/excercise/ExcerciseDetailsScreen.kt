@@ -43,7 +43,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 
 @Composable
 fun ExcerciseDetailsScreen(
@@ -115,12 +117,13 @@ private fun ExcerciseDetailsScreen(
                     Button(
                         onClick = {
                             GlobalScope.launch {
-                                val baseSet = excercise.sets.maxByOrNull { it.date }
+                                val baseSet = excercise.sets.maxByOrNull { it.date.toEpochMilliseconds() }
 
                                 if (baseSet != null) {
                                     dependencies.database.setDataSource.save(
                                         set = baseSet.copy(
                                             id = uuid4().toString(),
+                                            date = baseSet.date.plus(1, DateTimeUnit.MILLISECOND)
                                         )
                                     )
                                 }
