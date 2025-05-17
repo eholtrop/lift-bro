@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
 
-    id("io.gitlab.arturbosch.detekt") version("1.23.8")
+    id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
 
 sqldelight {
@@ -23,9 +23,9 @@ sqldelight {
 
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
-    android {
-    }
-    
+
+    androidTarget()
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -37,8 +37,12 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
+        commonMain.dependencies {
+            // Compose Multiplatform
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material3)
+            implementation(compose.components.resources)
 
                 implementation(compose.runtime)
                 implementation(compose.foundation)
@@ -66,23 +70,19 @@ kotlin {
             }
         }
 
-//        val nativeMain by getting {
-//            dependencies {
-//                implementation("app.cash.sqldelight:native-driver:2.0.0")
-//            }
-//        }
+        iosMain.dependencies {
+            implementation(libs.sqldelight.native.driver)
+        }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }
 
 android {
     namespace = "com.lift.bro"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig {
         minSdk = 24
     }
