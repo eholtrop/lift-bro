@@ -1,7 +1,9 @@
 [versions]
 app-update-ktx = "2.1.0"
 
+colorpicker-compose = "1.1.2"
 kotlin = "2.0.0"
+kotlinx-coroutines-core = "1.8.0"
 sqldelight = "2.0.2"
 agp = "8.2.2"
 compose = "1.7.2"
@@ -12,12 +14,16 @@ kotlinx-serialization = "1.6.3"
 kotlinx-datetime = "0.6.1"
 app-update = "2.1.0"
 
+ui-tooling-preview = "1.5.2"
 ui-tooling-preview-android = "1.7.6"
 appcompat = "1.7.0"
+uuid = "0.8.1"
 
 [libraries]
+colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose" }
 
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines-core" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 
@@ -26,8 +32,10 @@ kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
 app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.ref = "app-update" }
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
+ui-tooling-preview = { module = "org.jetbrains.compose.ui:ui-tooling-preview", version.ref = "ui-tooling-preview" }
 ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "ui-tooling-preview-android" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

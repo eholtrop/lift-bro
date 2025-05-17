@@ -40,32 +40,29 @@ kotlin {
         val commonMain by getting {
             dependencies {
 
-                // Compose Multiplatform
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material3)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+                implementation(compose.components.uiToolingPreview)
 
                 implementation(libs.kotlinx.datetime)
-                implementation("com.benasher44:uuid:0.8.1")
+                implementation(libs.uuid)
                 implementation(libs.sqldelight.coroutines)
                 implementation(libs.kotlinx.serialization)
                 implementation(libs.kotlin.reflect)
-//                implementation(kotlin("reflect"))
 
-                implementation("nl.dionsegijn:konfetti-compose:2.0.5")
-                implementation("com.github.skydoves:colorpicker-compose:1.1.2")
+                implementation(libs.colorpicker.compose)
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
 
         val androidMain by getting {
             dependencies {
-                implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.5.2")
+                implementation(libs.ui.tooling.preview)
                 implementation(libs.sqldelight.android.driver)
                 implementation(libs.app.update)
                 implementation(libs.app.update.ktx)
-                implementation(libs.ui.tooling.preview.android)
             }
         }
 
@@ -94,15 +91,7 @@ android {
         buildConfig = true
     }
 }
+
 dependencies {
     implementation(libs.appcompat)
-}
-kotlin {
-    sourceSets {
-        getByName("commonMain") {
-            dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-            }
-        }
-    }
 }
