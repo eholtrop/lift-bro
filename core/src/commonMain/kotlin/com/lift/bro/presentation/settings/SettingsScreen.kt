@@ -29,6 +29,8 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.launch
 
 @Composable
@@ -43,10 +45,6 @@ fun SettingsScreen() {
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
             ) {
                 item {
-                    val uom by dependencies.settingsRepository.getUnitOfMeasure()
-                        .collectAsState(
-                            null
-                        )
 
 
                     Column(
@@ -73,6 +71,11 @@ fun SettingsScreen() {
                         Row(
                             modifier = Modifier.selectableGroup(),
                         ) {
+                            val uom by dependencies.settingsRepository.getUnitOfMeasure()
+                                .collectAsState(
+                                    null
+                                )
+
                             RadioField(
                                 text = UOM.POUNDS.value,
                                 selected = uom?.uom == UOM.POUNDS,
