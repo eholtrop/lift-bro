@@ -2,7 +2,6 @@ package com.lift.bro
 
 import androidx.compose.ui.graphics.Color
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.Backup
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation

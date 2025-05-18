@@ -59,16 +59,6 @@ fun App(
 
             LaunchedEffect("debug_mode") {
                 if (BuildConfig.isDebug) {
-//                    BackupRestore.restore(
-//                        backup = debugBackup
-//                    ).collect()
-
-//                    dependencies.settingsRepository.saveBackupSettings(
-//                        BackupSettings(
-//                            lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-//                                .minus(8, DateTimeUnit.DAY)
-//                        )
-//                    )
                 }
             }
 

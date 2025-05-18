@@ -31,6 +31,8 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
+import io.github.vinceglb.filekit.FileKit
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -155,7 +157,9 @@ private fun BackupRow() {
             Button(
                 modifier = Modifier.weight(1f),
                 onClick = {
-                    BackupService.restore()
+                    scope.launch {
+                        BackupService.restore()
+                    }
                 }
             ) {
                 Text("Restore")

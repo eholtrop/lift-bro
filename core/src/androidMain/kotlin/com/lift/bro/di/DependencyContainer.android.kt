@@ -1,31 +1,25 @@
 package com.lift.bro.di
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.content.SharedPreferences
+import androidx.activity.ComponentActivity
 import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.SharedPreferencesSettingsRepository
-import com.lift.bro.domain.models.Settings
-import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.ISettingsRepository
-import com.lift.bro.domain.models.UOM
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.onStart
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.dialogs.init
+import io.github.vinceglb.filekit.manualFileKitCoreInitialization
 
 actual class DependencyContainer {
 
     companion object {
-        var context: Context? = null
+        private var context: Context? = null
+
+        fun initialize(context: Context) {
+            this.context = context
+            FileKit.init(context as ComponentActivity)
+        }
     }
 
     actual val database: LBDatabase by lazy {

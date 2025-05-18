@@ -40,11 +40,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
-import com.lift.bro.data.BackupRestore
+import com.lift.bro.BackupService
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.FabProperties
@@ -122,7 +121,7 @@ class DashboardViewModel(
     fun handleEvent(event: DashboardEvent) {
         when (event) {
             DashboardEvent.RestoreDefaultLifts -> GlobalScope.launch {
-                BackupRestore.restore(defaultSbdLifts).flowOn(Dispatchers.IO).collect()
+                BackupService.restore(defaultSbdLifts)
             }
         }
     }

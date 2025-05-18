@@ -58,6 +58,11 @@ kotlin {
 
             implementation(libs.colorpicker.compose)
             implementation(libs.kotlinx.coroutines.core)
+
+            // File picker/sharing
+            implementation(libs.filekit.core)
+            implementation(libs.filekit.dialogs)
+            implementation(libs.filekit.dialogs.compose)
         }
 
         androidMain.dependencies {
