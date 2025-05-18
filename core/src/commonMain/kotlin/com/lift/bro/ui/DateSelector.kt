@@ -13,11 +13,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toString
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.date_selector_dialog_confirm_button_text
+import lift_bro.core.generated.resources.date_selector_dialog_dismiss_button_text
+import lift_bro.core.generated.resources.date_selector_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,14 +56,14 @@ fun DateSelector(
                     },
                     enabled = pickerState.selectedDateMillis != null,
                 ) {
-                    Text("Ok")
+                    Text(stringResource(Res.string.date_selector_dialog_confirm_button_text))
                 }
             },
             dismissButton = {
                 TextButton(
                     onClick = { openDialog = false }
                 ) {
-                    Text("Close")
+                    Text(stringResource(Res.string.date_selector_dialog_dismiss_button_text))
                 }
             }
         ) {
@@ -68,10 +75,8 @@ fun DateSelector(
 
     LineItem(
         modifier = modifier,
-        title = "On",
+        title = stringResource(Res.string.date_selector_title),
         description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
-            .toLocalDateTime(TimeZone.UTC)
-            .toInstant(TimeZone.currentSystemDefault())
             .toString("MMMM d - yyyy"),
         onClick = {
             openDialog = true

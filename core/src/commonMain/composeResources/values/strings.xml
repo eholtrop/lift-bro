@@ -30,4 +30,8 @@
 
     <string name="weight_selector_chin_title">%1$d% of %2$s Max</string>
     <string name="weight_selector_chin_subtitle">%1$d% of %2$s Max</string>
+
+    <string name="date_selector_dialog_confirm_button_text">Ok</string>
+    <string name="date_selector_dialog_dismiss_button_text">Close</string>
+    <string name="date_selector_title">On</string>
 </resources>
