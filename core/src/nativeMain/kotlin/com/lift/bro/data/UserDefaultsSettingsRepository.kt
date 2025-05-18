@@ -16,9 +16,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import platform.Foundation.NSUserDefaults
 
-class UserDefaultsSettingsRepository: ISettingsRepository {
+class UserDefaultsSettingsRepository : ISettingsRepository {
 
     private val userDefaults = NSUserDefaults.standardUserDefaults
 
@@ -30,14 +31,22 @@ class UserDefaultsSettingsRepository: ISettingsRepository {
         }
     }
 
-    override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
+    private fun <R> subscribeToKey(key: String, block: (String) -> R): Flow<R> {
         return refreshKey
-            .filter { it == "unit_of_measure" }
-            .map { Settings.UnitOfWeight(UOM.valueOf(userDefaults.stringForKey("unit_of_measure") ?: "POUNDS")) }
-//            .onStart {
-//                emit(Settings.UnitOfWeight(UOM.valueOf(userDefaults.stringForKey("unit_of_measure") ?: "POUNDS")))
-//            }
-            .debug()
+            .filter { it == key }
+            .map(block)
+            .onStart {
+                emit(block(key))
+            }
+    }
+
+    override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
+        return subscribeToKey(
+                key = "unit_of_measure",
+                block = { key ->
+                    Settings.UnitOfWeight(UOM.valueOf(userDefaults.stringForKey(key) ?: "POUNDS"))
+                }
+            )
     }
 
     override fun saveUnitOfMeasure(uom: Settings.UnitOfWeight) {
@@ -46,9 +55,14 @@ class UserDefaultsSettingsRepository: ISettingsRepository {
     }
 
     override fun getBackupSettings(): Flow<BackupSettings> {
-        return flowOf(BackupSettings(
-            lastBackupDate = Clock.System.today
-        ))
+        return subscribeToKey(
+            key = "backup_settings",
+            block = { key ->
+                BackupSettings(
+                    lastBackupDate = LocalDate.fromEpochDays(userDefaults.integerForKey(key).toInt())
+                )
+            }
+        )
     }
 
     override fun saveBackupSettings(settings: BackupSettings) {
