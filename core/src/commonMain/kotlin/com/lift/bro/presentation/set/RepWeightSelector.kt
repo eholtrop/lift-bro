@@ -31,10 +31,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
-import com.lift.bro.ui.DecimalFormat
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.utils.decimalFormat
 
 @Composable
 fun RepWeightSelector(
@@ -72,7 +72,7 @@ fun RepWeightSelector(
         Space(MaterialTheme.spacing.half)
 
         RepWeightTextField(
-            value = DecimalFormat.formatWeight(set.weight),
+            value = set.weight.decimalFormat(),
             onValueChanged = {
                 weightChanged(it.toDoubleOrNull())
             },

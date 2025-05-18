@@ -1,7 +1,13 @@
 package com.lift.bro.utils
 
-import com.lift.bro.ui.DecimalFormat
+import platform.Foundation.NSNumber
+import platform.Foundation.NSNumberFormatter
+import platform.Foundation.NSNumberFormatterDecimalStyle
 
-actual fun Double.decimalFormat(): String {
-    return this.toString()
+actual fun Double?.decimalFormat(): String {
+    return NSNumberFormatter().apply {
+        minimumFractionDigits = 0u
+        maximumFractionDigits = 2u
+        numberStyle = NSNumberFormatterDecimalStyle
+    }.stringFromNumber(NSNumber(this ?: 0.0)) ?: ""
 }

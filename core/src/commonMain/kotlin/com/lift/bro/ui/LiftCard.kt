@@ -49,6 +49,8 @@ fun LiftCard(
             emptyList()
         )
 
+    val uom by dependencies.settingsRepository.getUnitOfMeasure().collectAsState(null)
+
     val max = sets.maxByOrNull { it.weight }
 
     Card(
@@ -72,7 +74,7 @@ fun LiftCard(
                 Space()
                 max?.let {
                     Text(
-                        text = max.weight.decimalFormat(),
+                        text = "${max.weight.decimalFormat()} ${uom?.uom?.value ?: ""}",
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
@@ -161,7 +163,7 @@ fun LiftCard(
                     )
                     Space()
                     Text(
-                        text = recentMin.toString(),
+                        text = "${recentMin.decimalFormat()} ${uom?.uom?.value ?: ""}",
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }

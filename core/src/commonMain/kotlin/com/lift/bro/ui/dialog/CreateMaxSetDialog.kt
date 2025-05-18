@@ -34,8 +34,8 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.ui.DropDownButton
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.DecimalFormat
 import com.lift.bro.ui.Space
+import com.lift.bro.utils.decimalFormat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
@@ -97,7 +97,7 @@ fun CreateMaxSetDialog(
 
                     TextField(
                         modifier = Modifier.weight(1f),
-                        value = DecimalFormat.formatWeight(weight),
+                        value = weight.decimalFormat(),
                         onValueChange = { weight = it.toDoubleOrNull() },
                         supportingText = {
                             val uom by dependencies.settingsRepository.getUnitOfMeasure().collectAsState(null)

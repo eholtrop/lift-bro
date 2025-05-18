@@ -52,10 +52,6 @@ import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
 
-expect object DecimalFormat {
-    fun formatWeight(weight: Double?): String
-}
-
 val FloatVectorConverter: TwoWayConverter<Float, AnimationVector1D> = TwoWayConverter(
     convertToVector = { AnimationVector1D(it) },
     convertFromVector = { it.value }
