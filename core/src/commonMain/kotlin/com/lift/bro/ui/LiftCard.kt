@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
@@ -110,7 +111,8 @@ fun LiftCard(
                         stringResource(Res.string.lift_card_empty_title)
                     )
                     Text(
-                        stringResource(Res.string.lift_card_empty_subtitle)
+                        stringResource(Res.string.lift_card_empty_subtitle),
+                        textAlign = TextAlign.Center,
                     )
                 }
             } else {
@@ -133,7 +135,7 @@ fun LiftCard(
                     recentSets.forEachIndexed { index, lbSet ->
                         val x = width - (spacing * index + spacing / 2)
                         val normalizedPercentage = lbSet.second.weight.minus(recentMin.times(.95f))
-                            .div(max?.weight?.minus(recentMin.times(.95f)) ?: 1.0)
+                            .div(max.weight.minus(recentMin.times(.95f)) ?: 1.0)
                         val y = height - (normalizedPercentage) * height
 
                         drawCircle(

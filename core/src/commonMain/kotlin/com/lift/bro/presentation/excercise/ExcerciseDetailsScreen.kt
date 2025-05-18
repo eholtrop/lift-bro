@@ -1,7 +1,6 @@
 package com.lift.bro.presentation.excercise
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,12 +34,9 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.AccessibilityMinimumSize
-import com.lift.bro.utils.formattedReps
 import com.lift.bro.utils.formattedWeight
 import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit

@@ -13,16 +13,12 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,14 +34,12 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
-import com.lift.bro.ui.today
-import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.toString
-import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
-import com.lift.bro.utils.formattedWeight
+import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.today
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
+import com.lift.bro.utils.toString
 import kotlinx.datetime.LocalDate
 
 @Composable

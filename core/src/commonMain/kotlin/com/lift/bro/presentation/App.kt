@@ -58,7 +58,7 @@ fun App(
 
 
             LaunchedEffect("debug_mode") {
-                if (BuildConfig.DEBUG) {
+                if (BuildConfig.isDebug) {
 //                    BackupRestore.restore(
 //                        backup = debugBackup
 //                    ).collect()

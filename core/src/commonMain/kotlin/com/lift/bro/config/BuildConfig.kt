@@ -1,5 +1,5 @@
 package com.lift.bro.config
 
-expect object BuildConfig {
-    val DEBUG: Boolean
+object BuildConfig {
+    const val isDebug: Boolean = true
 }

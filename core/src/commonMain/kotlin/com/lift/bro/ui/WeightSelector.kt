@@ -94,7 +94,6 @@ data class Confetti(
     }
 }
 
-@OptIn(ExperimentalAnimationSpecApi::class)
 @Composable
 fun ConfettiExplosion(
     modifier: Modifier = Modifier,

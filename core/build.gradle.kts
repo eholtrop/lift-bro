@@ -24,7 +24,9 @@ sqldelight {
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
 
-    androidTarget()
+    androidTarget {
+        publishLibraryVariants("release", "debug")
+    }
 
     listOf(
         iosX64(),
@@ -33,15 +35,18 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "core"
+//            isStatic = true
         }
     }
 
     sourceSets {
         commonMain.dependencies {
             // Compose Multiplatform
+            implementation(compose.ui)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
@@ -61,12 +66,16 @@ kotlin {
             implementation(libs.app.update.ktx)
         }
 
-        nativeMain.dependencies {
+        iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
+        }
+
+        compilerOptions {
+            freeCompilerArgs.add("-Xexpect-actual-classes")
         }
     }
 }
