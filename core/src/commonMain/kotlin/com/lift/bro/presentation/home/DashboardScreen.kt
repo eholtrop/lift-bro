@@ -48,7 +48,6 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.FabProperties
-import com.lift.bro.ui.Images
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBarIconButton
@@ -81,6 +80,9 @@ import lift_bro.core.generated.resources.dashboard_settings_fab_content_descript
 import lift_bro.core.generated.resources.dashboard_title
 import lift_bro.core.generated.resources.dashboard_toolbar_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_toolbar_trailing_button_content_description
+import lift_bro.core.generated.resources.ic_calendar
+import lift_bro.core.generated.resources.view_dashboard
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -214,7 +216,7 @@ fun DashboardContent(
                 ) {
                     Column {
                         Icon(
-                            painter = Images.dashboardMenuIcon(),
+                            painter = painterResource(Res.drawable.view_dashboard),
                             contentDescription = stringResource(Res.string.dashboard_footer_leading_button_content_description),
                         )
 
@@ -251,7 +253,7 @@ fun DashboardContent(
                     Column(
                     ) {
                         Icon(
-                            painter = Images.calendarMenuIcon(),
+                            painter = painterResource(Res.drawable.ic_calendar),
                             contentDescription = stringResource(Res.string.dashboard_footer_trailing_button_content_description),
                         )
 
