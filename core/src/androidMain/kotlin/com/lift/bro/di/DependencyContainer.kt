@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
+import com.lift.bro.data.SharedPreferencesSettingsRepository
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.ISettingsRepository
@@ -37,76 +38,9 @@ actual class DependencyContainer {
         context?.startActivity(intent)
     }
 
-    actual val settingsRepository: ISettingsRepository
-        get() = object : ISettingsRepository {
-
-            private val sharedPreferences by lazy {
-                context!!.getSharedPreferences("lift.bro.prefs", MODE_PRIVATE)
-            }
-
-            override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
-                val state: MutableStateFlow<Settings.UnitOfWeight> = MutableStateFlow(
-                    Settings.UnitOfWeight(
-                        UOM.valueOf(
-                            sharedPreferences!!.getString(
-                                "unit_of_measure",
-                                UOM.POUNDS.toString()
-                            )!!
-                        )
-                    )
-                )
-
-                val listener =
-                    SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-                        if (key == "unit_of_measure") {
-                            state.tryEmit(
-                                Settings.UnitOfWeight(
-                                    UOM.valueOf(
-                                        sharedPreferences!!.getString(
-                                            "unit_of_measure",
-                                            UOM.POUNDS.toString()
-                                        )!!
-                                    )
-                                )
-                            )
-                        }
-                    }
-
-                return state.asStateFlow()
-                    .onStart {
-                        sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-                    }
-                    .onCompletion {
-                        sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
-                    }
-            }
-
-            override fun saveUnitOfMeasure(uom: Settings.UnitOfWeight) {
-                sharedPreferences.edit().putString("unit_of_measure", uom.uom.toString()).apply()
-            }
-
-            override fun getBackupSettings(): Flow<BackupSettings> {
-                // TODO: update this to listen to changes instead of just fetching once... for now this is fine!
-                return flow {
-                    emit(
-                        BackupSettings(
-                            LocalDate.fromEpochDays(
-                                sharedPreferences.getInt(
-                                    "last_backup_epoch_days", 0
-                                )
-                            )
-                        )
-                    )
-                }
-            }
-
-            override fun saveBackupSettings(settings: BackupSettings) {
-                sharedPreferences.edit().apply {
-                    this.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays())
-                }.apply()
-            }
-
-        }
+    actual val settingsRepository: ISettingsRepository by lazy {
+        SharedPreferencesSettingsRepository(context!!)
+    }
 
 }
 
