@@ -57,7 +57,6 @@ fun TopBar(
                 ) TextAlign.Center else TextAlign.Start,
                 text = title,
                 color = MaterialTheme.colorScheme.onBackground,
-                style = MaterialTheme.typography.headlineLarge,
             )
         },
         navigationIcon = {
@@ -98,7 +97,6 @@ fun TopBarIconButton(
     IconButton(
         modifier = Modifier.padding(
             start = MaterialTheme.spacing.one,
-            top = MaterialTheme.spacing.one,
         ),
         onClick = onClick,
     ) {
@@ -119,7 +117,6 @@ fun TopBarIconButton(
     IconButton(
         modifier = Modifier.padding(
             start = MaterialTheme.spacing.one,
-            top = MaterialTheme.spacing.one,
         ),
         onClick = onClick,
     ) {
