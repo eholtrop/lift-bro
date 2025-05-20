@@ -275,12 +275,6 @@ fun DashboardContent(
             }
         ),
     ) { padding ->
-
-        val sets by dependencies.database.setDataSource.listenAll()
-            .collectAsState(emptyList())
-        val variations by dependencies.database.variantDataSource.listenAll()
-            .collectAsState(emptyList())
-
         when (tab) {
             Tab.Lifts -> {
                 LazyVerticalGrid(
@@ -302,11 +296,9 @@ fun DashboardContent(
             }
 
             Tab.RecentSets -> {
-                CalendarScreen(
+                WorkoutCalendarScreen(
                     modifier = Modifier.padding(padding),
                     variationClicked = setClicked,
-                    sets = sets,
-                    variations = variations
                 )
             }
         }

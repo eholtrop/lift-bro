@@ -1,5 +1,6 @@
 package com.lift.bro.presentation.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -22,34 +24,46 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
-import com.lift.bro.ui.Space
-import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.CalendarDateStyle
 import com.lift.bro.ui.today
+import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.toString
+import com.lift.bro.ui.Space
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import kotlinx.datetime.LocalDate
 
 @Composable
-fun CalendarScreen(
+fun WorkoutCalendarScreen(
     modifier: Modifier = Modifier,
     variationClicked: (Variation, LocalDate) -> Unit,
-    sets: List<LBSet>,
-    variations: List<Variation>,
 ) {
     var selectedDate by remember { mutableStateOf(today) }
+
+    val sets by dependencies.database.setDataSource.listenAll()
+        .collectAsState(emptyList())
+    val variations by dependencies.database.variantDataSource.listenAll()
+        .collectAsState(emptyList())
 
     val selectedVariations = sets.filter { it.date.toLocalDate() == selectedDate }
         .groupBy { it.variationId }
@@ -74,13 +88,35 @@ fun CalendarScreen(
                 dateSelected = {
                     selectedDate = it
                 },
-                dotsForDate = { date ->
-                    sets.asSequence()
-                        .filter { it.date.toLocalDate() == date }
-                        .map { it.variationId }
-                        .distinct()
-                        .map { id -> variations.firstOrNull { it.id == id } ?.lift?.color?.toColor() ?: defaultColor }
-                        .toList()
+                dateDecorations = { date ->
+                    var dots by remember { mutableStateOf(emptyList<Color>()) }
+
+                    LaunchedEffect(sets) {
+                        dots = sets.asSequence()
+                            .filter { it.date.toLocalDate() == date }
+                            .map { it.variationId }
+                            .distinct()
+                            .map { id ->
+                                variations.firstOrNull { it.id == id }?.lift?.color?.toColor()
+                                    ?: defaultColor
+                            }
+                            .toList()
+                    }
+
+                    AnimatedVisibility(dots.isNotEmpty()) {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                        ) {
+                            dots.forEach {
+                                Box(
+                                    modifier = Modifier.background(
+                                        color = if (selectedDate == date) MaterialTheme.colorScheme.secondaryContainer else it,
+                                        shape = CircleShape,
+                                    ).size(4.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             )
         }

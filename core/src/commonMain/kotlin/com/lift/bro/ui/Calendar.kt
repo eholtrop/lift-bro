@@ -109,7 +109,7 @@ fun Calendar(
     contentPadding: PaddingValues,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
-    dotsForDate: (LocalDate) -> List<Color>,
+    dateDecorations: @Composable (LocalDate) -> Unit,
     dateSelected: (LocalDate) -> Unit,
 ) {
     Column(
@@ -126,7 +126,7 @@ fun Calendar(
             dateSelected = dateSelected,
             horizontalArrangement = horizontalArrangement,
             verticalArrangement = verticalArrangement,
-            dotsForDate = dotsForDate,
+            dateDecorations = dateDecorations,
             contentPadding = contentPadding
         )
     }
@@ -143,7 +143,7 @@ private fun CalendarContent(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateSelected: (LocalDate) -> Unit,
-    dotsForDate: (LocalDate) -> List<Color>
+    dateDecorations: @Composable (LocalDate) -> Unit,
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -252,10 +252,6 @@ private fun CalendarContent(
                         for (dayOffset in 0..6) {
                             val currentDay = currentWeek.plus(DatePeriod(days = dayOffset))
 
-                            val dots by remember(currentDay) {
-                                mutableStateOf(dotsForDate(currentDay))
-                            }
-
                             CalendarDate(
                                 modifier = Modifier
                                     .weight(1f)
@@ -266,7 +262,7 @@ private fun CalendarContent(
                                     currentDay.month == currentMonth.month -> CalendarDateStyle.Enabled
                                     else -> CalendarDateStyle.Disabled
                                 },
-                                dots = dots,
+                                decorations = dateDecorations,
                                 onClick = dateSelected,
                             )
                         }
@@ -282,12 +278,12 @@ enum class CalendarDateStyle {
 }
 
 @Composable
-private fun CalendarDate(
+fun CalendarDate(
     modifier: Modifier = Modifier,
     date: LocalDate,
     style: CalendarDateStyle,
     onClick: (LocalDate) -> Unit,
-    dots: List<Color> = emptyList(),
+    decorations: @Composable (LocalDate) -> Unit
 ) {
 
     val backgroundColor = when (style) {
@@ -323,18 +319,7 @@ private fun CalendarDate(
 
         Space(MaterialTheme.spacing.quarter)
 
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-        ) {
-            dots.forEach {
-                Box(
-                    modifier = Modifier.background(
-                        color = if (style == CalendarDateStyle.Selected) contentColor else it,
-                        shape = CircleShape,
-                    ).size(4.dp)
-                )
-            }
-        }
+        decorations(date)
     }
 }
 
