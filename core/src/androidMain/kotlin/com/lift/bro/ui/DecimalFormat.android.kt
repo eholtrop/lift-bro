@@ -1,6 +1,8 @@
 package com.lift.bro.utils
 
 actual fun Double?.decimalFormat(): String {
+    if (this == null) return ""
+
     val df = java.text.DecimalFormat()
     df.isGroupingUsed = false
     df.maximumFractionDigits = 2
