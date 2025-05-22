@@ -51,7 +51,9 @@ import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
+
 
 @Composable
 fun WorkoutCalendarScreen(
@@ -60,15 +62,11 @@ fun WorkoutCalendarScreen(
 ) {
     var selectedDate by remember { mutableStateOf(today) }
 
-    val sets by dependencies.database.setDataSource.listenAll()
-        .collectAsState(emptyList())
-    val variations by dependencies.database.variantDataSource.listenAll()
-        .collectAsState(emptyList())
+    val setDateMap by dependencies.database.setDataSource.listenAll()
+        .map { it.groupBy { it.date.toLocalDate() } }
+        .collectAsState(emptyMap())
 
-    val selectedVariations = sets.filter { it.date.toLocalDate() == selectedDate }
-        .groupBy { it.variationId }
-        .toList()
-        .sortedByDescending { it.second.maxOf { it.weight } }
+    val selectedDateSets: List<LBSet> = setDateMap[selectedDate] ?: emptyList()
 
     LazyColumn(
         modifier = modifier,
@@ -78,6 +76,11 @@ fun WorkoutCalendarScreen(
 
         item {
             val defaultColor = MaterialTheme.colorScheme.primary
+
+            val variations by dependencies.database.variantDataSource.listenAll().collectAsState(
+                emptyList()
+            )
+
             Calendar(
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight(),
@@ -91,16 +94,14 @@ fun WorkoutCalendarScreen(
                 dateDecorations = { date ->
                     var dots by remember { mutableStateOf(emptyList<Color>()) }
 
-                    LaunchedEffect(sets) {
-                        dots = sets.asSequence()
-                            .filter { it.date.toLocalDate() == date }
-                            .map { it.variationId }
-                            .distinct()
-                            .map { id ->
-                                variations.firstOrNull { it.id == id }?.lift?.color?.toColor()
-                                    ?: defaultColor
-                            }
-                            .toList()
+                    LaunchedEffect(setDateMap, variations) {
+                        val sets = setDateMap[date] ?: emptyList()
+
+                        if (sets.isNotEmpty()) {
+                            dots = variations.filter { variation ->
+                                sets.any { it.variationId == variation.id }
+                            }.map { it.lift?.color?.toColor() ?: defaultColor }
+                        }
                     }
 
                     AnimatedVisibility(dots.isNotEmpty()) {
@@ -137,7 +138,7 @@ fun WorkoutCalendarScreen(
         }
 
         items(
-            selectedVariations
+            selectedDateSets.groupBy { it.variationId }.toList()
         ) { pair ->
             Card(
                 modifier = Modifier.animateItem(),
@@ -153,8 +154,7 @@ fun WorkoutCalendarScreen(
                     ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val variation = variations.firstOrNull { it.id == pair.first }
-
+                    val variation = dependencies.database.variantDataSource.get(pair.first)
                     Column(
                         modifier = Modifier.weight(1f)
                             .clickable(
@@ -183,7 +183,8 @@ fun WorkoutCalendarScreen(
 
                     Box(
                         modifier = Modifier.background(
-                            color = variation?.lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary,
+                            color = variation?.lift?.color?.toColor()
+                                ?: MaterialTheme.colorScheme.primary,
                             shape = CircleShape,
                         ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
                         content = {}
