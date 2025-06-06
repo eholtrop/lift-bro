@@ -22,6 +22,7 @@ import kotlin.math.absoluteValue
 
 @Composable
 fun SwipeableNavHost(
+    modifier: Modifier = Modifier,
     navCoordinator: NavCoordinator,
     content: @Composable (Destination) -> Unit
 ) {
@@ -46,7 +47,7 @@ fun SwipeableNavHost(
     var pagerSize: Size? by remember { mutableStateOf(null) }
 
     HorizontalPager(
-        modifier = Modifier.graphicsLayer {
+        modifier = modifier.graphicsLayer {
             pagerSize = this.size
         },
         state = savedPagerState,

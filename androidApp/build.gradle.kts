@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
 
-    id("io.gitlab.arturbosch.detekt") version("1.23.8")
+    id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
 
 android {
@@ -20,7 +20,6 @@ android {
         targetSdk = 35
         versionName = "${SimpleDateFormat("YYY-MM-dd").format(Date())}-alpha"
 
-
         versionCode = if (project.hasProperty("buildNumber")) {
             property("buildNumber").toString().toInt()
         } else {
@@ -29,6 +28,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.7"
@@ -49,12 +49,18 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        defaultConfig {
+            resValue("string", "admob_app_id", System.getenv("LIFT_BRO_ADMOB_APP_ID"))
+            buildConfigField("String", "AD_UNIT_ID", "\"${System.getenv("LIFT_BRO_AD_UNIT_ID")}\"")
+        }
+
+        release {
             isMinifyEnabled = false
             isDebuggable = false
             signingConfig = signingConfigs.getByName("release")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -68,4 +74,5 @@ dependencies {
     implementation(project(":core"))
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
+    implementation(libs.play.services.ads)
 }

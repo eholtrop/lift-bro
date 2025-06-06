@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.LaunchedEffect
+import com.google.android.gms.ads.MobileAds
+import com.lift.bro.BuildConfig
 import com.lift.bro.di.DependencyContainer
 import com.lift.bro.presentation.App
 import com.lift.bro.presentation.StoreManager
@@ -24,6 +27,12 @@ class MainActivity : ComponentActivity() {
             App(
                 navCoordinator = coordinator
             )
+
+            LaunchedEffect("admob_initialization") {
+                if (BuildConfig.DEBUG) {
+                    MobileAds.initialize(this@MainActivity)
+                }
+            }
 
             BackHandler {
                 if (!coordinator.onBackPressed()) {
