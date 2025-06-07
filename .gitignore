@@ -13,3 +13,5 @@ Gemfile.lock
 .kotlin/metadata/kotlinTransformedMetadataLibraries/
 
 .kotlin/metadata/kotlinTransformedCInteropMetadataLibraries/
+
+.kotlin/sessions/
