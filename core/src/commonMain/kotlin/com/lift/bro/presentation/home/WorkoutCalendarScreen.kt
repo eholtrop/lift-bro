@@ -111,7 +111,7 @@ fun WorkoutCalendarScreen(
                             dots.forEach {
                                 Box(
                                     modifier = Modifier.background(
-                                        color = if (selectedDate == date) MaterialTheme.colorScheme.secondaryContainer else it,
+                                        color = if (selectedDate == date) MaterialTheme.colorScheme.onSecondary else it,
                                         shape = CircleShape,
                                     ).size(4.dp)
                                 )

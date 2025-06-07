@@ -293,7 +293,7 @@ fun CalendarDate(
     }
 
     val contentColor = when (style) {
-        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.secondaryContainer
+        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.onSecondary
         CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.onSurface
         CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.onSurface
     }
