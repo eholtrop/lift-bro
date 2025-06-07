@@ -35,7 +35,6 @@ kotlin {
     ).forEach {
         it.binaries.framework {
             baseName = "core"
-//            isStatic = true
         }
     }
 
@@ -87,7 +86,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.lift.bro"
+    namespace = "com.lift.bro.core"
     compileSdk = 35
     defaultConfig {
         minSdk = 24
@@ -96,6 +95,7 @@ android {
     buildFeatures {
         buildConfig = true
     }
+
 }
 
 dependencies {
