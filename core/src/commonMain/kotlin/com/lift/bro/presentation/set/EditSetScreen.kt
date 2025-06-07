@@ -237,22 +237,6 @@ fun EditSetScreen(
             }
 
             item {
-                var checked by remember { mutableStateOf(false) }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Attempt")
-                    Checkbox(
-                        checked = checked,
-                        onCheckedChange = {
-                            checked = it
-                        }
-                    )
-                }
-            }
-
-
-            item {
                 Column(
                     modifier = Modifier
                         .padding(MaterialTheme.spacing.one)
