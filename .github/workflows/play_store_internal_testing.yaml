@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
 
+env:
+  LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
+  LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -51,8 +55,6 @@ jobs:
           STORE_PASSWORD: ${{ secrets.KEYSTORE_PW }}
           KEY_ALIAS: ${{ secrets.KEYSTORE_USR }}
           KEY_PASSWORD: ${{ secrets.KEY_PW }}
-          LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
-          LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
         run: fastlane deploy build_number:$GITHUB_RUN_NUMBER
 
       - name: Upload Apk
