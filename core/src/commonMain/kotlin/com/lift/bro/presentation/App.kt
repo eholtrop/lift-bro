@@ -58,9 +58,7 @@ fun App(
     navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Dashboard)
 ) {
     AppTheme {
-        Box(
-            modifier = Modifier.background(MaterialTheme.colorScheme.background)
-        ) {
+        Box {
             LaunchedEffect("debug_mode") {
                 if (BuildConfig.isDebug) {
                 }

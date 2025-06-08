@@ -1,6 +1,8 @@
 package com.example.compose
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Typography
@@ -9,9 +11,6 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import com.lift.bro.ui.navigation.LocalSnackbarHostState
 import lift_bro.core.generated.resources.DMSans_Black
 import lift_bro.core.generated.resources.DMSans_Bold
@@ -114,7 +113,15 @@ fun AppTheme(
     ) {
         MaterialTheme(
             colorScheme = colors,
-            content = content,
+            content = {
+                Box(
+                    modifier = Modifier.background(
+                        color = MaterialTheme.colorScheme.background
+                    )
+                ) {
+                    content()
+                }
+            },
             typography = typography()
         )
     }
