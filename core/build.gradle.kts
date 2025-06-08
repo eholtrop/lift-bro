@@ -48,7 +48,6 @@ kotlin {
             implementation(compose.materialIconsExtended)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-//            implementation(compose.preview)
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.uuid)
@@ -70,7 +69,6 @@ kotlin {
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
             implementation(libs.play.services.ads)
-            implementation(compose.preview)
             implementation(compose.uiTooling)
         }
 

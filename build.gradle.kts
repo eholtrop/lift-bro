@@ -1,6 +1,3 @@
-buildscript {
-    val asdf by extra("")
-}
 plugins {
     //trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.compose) apply false
