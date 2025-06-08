@@ -5,12 +5,10 @@ package com.lift.bro.presentation.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -26,7 +24,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
@@ -52,27 +48,20 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.dashboard_empty_primary_cta_title
-import lift_bro.core.generated.resources.dashboard_empty_secondary_cta_subtitle
-import lift_bro.core.generated.resources.dashboard_empty_secondary_cta_title
-import lift_bro.core.generated.resources.dashboard_empty_title
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_footer_trailing_button_content_description
 import lift_bro.core.generated.resources.dashboard_settings_fab_content_description
@@ -174,6 +163,7 @@ fun DashboardContent(
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
     setClicked: (Variation, LocalDate) -> Unit,
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ) {
 
     var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
@@ -181,7 +171,6 @@ fun DashboardContent(
     LiftingScaffold(
         title = stringResource(Res.string.dashboard_title),
         leadingContent = {
-            val navCoordinator = LocalNavCoordinator.current
             TopBarIconButton(
                 imageVector = Icons.Default.Settings,
                 contentDescription = stringResource(Res.string.dashboard_toolbar_leading_button_content_description)
