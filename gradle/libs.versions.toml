@@ -1,15 +1,17 @@
 [versions]
-app-update-ktx = "2.1.0"
-
+kotlin = "2.1.20"
 colorpicker-compose = "1.1.2"
 filekit = "0.10.0-beta04"
-kotlin = "2.1.20"
 kotlinx-coroutines-core = "1.8.0"
 play-services-ads = "24.3.0"
 sqldelight = "2.0.2"
 agp = "8.3.2"
-compose = "1.7.2"
+
+# compose
+compose = "1.8.0"
 compose-multiplatform = "1.8.0"
+compose-compiiler = "2.1.0"
+
 google-services = "4.4.0"
 detekt = "1.23.8"
 kotlinx-serialization = "1.6.3"
@@ -42,7 +44,7 @@ uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "compose-compiiler" }
 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
