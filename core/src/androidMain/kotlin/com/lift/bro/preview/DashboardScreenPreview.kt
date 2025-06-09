@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.example.compose.AppTheme
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.presentation.home.DashboardContent
+import com.lift.bro.presentation.home.DashboardState
 import com.lift.bro.presentation.home.Tab
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.navigation.Destination
@@ -12,10 +13,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun DashboardHomeScreenPreview() {
+fun DashboardLiftScreenPreview() {
     AppTheme {
         DashboardContent(
-            liftCards = LiftCardPreviewStates.All,
+            dashboardState = dashboardPreviewState,
             defaultTab = Tab.Lifts,
             addLiftClicked = {},
             liftClicked = {},
@@ -31,7 +32,7 @@ fun DashboardHomeScreenPreview() {
 fun DashboardCalendarScreenPreview() {
     AppTheme {
         DashboardContent(
-            liftCards = LiftCardPreviewStates.All,
+            dashboardState = dashboardPreviewState,
             defaultTab = Tab.RecentSets,
             addLiftClicked = {},
             liftClicked = {},
@@ -41,3 +42,9 @@ fun DashboardCalendarScreenPreview() {
         )
     }
 }
+
+val dashboardPreviewState = DashboardState(
+    showEmpty = false,
+    liftCards = LiftCardPreviewStates.All,
+    excercises = emptyList(),
+)

@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Excercise(
     val sets: List<LBSet>,
-    val variationId: String,
+    val variation: Variation,
     val date: LocalDate,
 ) {
     val id = sets.firstOrNull()?.excerciseId

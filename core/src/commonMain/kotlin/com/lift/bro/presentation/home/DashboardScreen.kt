@@ -42,6 +42,7 @@ import com.lift.bro.data.SetDataSource
 import com.lift.bro.data.VariationRepository
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
@@ -63,7 +64,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -97,6 +97,7 @@ fun rememberLifts(): StateFlow<List<Lift>> {
 data class DashboardState(
     val showEmpty: Boolean,
     val liftCards: List<LiftCardState>,
+    val excercises: List<Excercise>
 )
 
 sealed class DashboardEvent {
@@ -118,7 +119,6 @@ class DashboardViewModel(
             DashboardState(
                 showEmpty = lifts.isEmpty(),
                 liftCards = lifts.map { lift ->
-
                     val liftVariations = variations.filter { it.lift?.id == lift.id }
                     val liftSets = sets.filter { set -> liftVariations.any { set.variationId == it.id } }
                     LiftCardState(
@@ -126,6 +126,13 @@ class DashboardViewModel(
                         values = liftSets.groupBy { it.date.toLocalDate() }.map { it.key to it.value.maxOf { it.weight } },
                     )
                 }.sortedBy { it.lift.name.toLowerCase(Locale.current) },
+                excercises = sets.groupBy { it.date }.map { map ->
+                    Excercise(
+                        date = map.key.toLocalDate(),
+                        variation = variations.first { it.id == map.value.first().variationId },
+                        sets = map.value,
+                    )
+                }
             )
         }
         .stateIn(scope, SharingStarted.Eagerly, initialState)
@@ -162,7 +169,7 @@ fun DashboardScreen(
 
                 false -> {
                     DashboardContent(
-                        liftCards = it.liftCards,
+                        dashboardState = it,
                         addLiftClicked = addLiftClicked,
                         liftClicked = liftClicked,
                         addSetClicked = addSetClicked,
@@ -181,7 +188,7 @@ enum class Tab {
 
 @Composable
 fun DashboardContent(
-    liftCards: List<LiftCardState>,
+    dashboardState: DashboardState,
     defaultTab: Tab = Tab.Lifts,
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
@@ -295,7 +302,7 @@ fun DashboardContent(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 ) {
-                    items(liftCards) { state ->
+                    items(dashboardState.liftCards) { state ->
                         LiftCard(
                             modifier = Modifier.padding(MaterialTheme.spacing.quarter),
                             state = state,
@@ -312,6 +319,7 @@ fun DashboardContent(
                 WorkoutCalendarScreen(
                     modifier = Modifier.padding(padding),
                     variationClicked = setClicked,
+                    excercises = dashboardState.excercises,
                 )
             }
         }

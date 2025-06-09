@@ -53,11 +53,13 @@ fun ExcerciseDetailsScreen(
         .map { it.sortedBy { it.date } }
         .collectAsState(emptyList())
 
+    val variation = dependencies.database.variantDataSource.get(variationId)!!
+
     ExcerciseDetailsScreen(
         excercise = Excercise(
             sets = sets,
             date = date,
-            variationId = variationId,
+            variation = variation,
         )
     )
 }
@@ -136,7 +138,7 @@ private fun ExcerciseDetailsScreen(
                     Button(
                         onClick = {
                             coordinator.present(Destination.EditSet(
-                                variationId = excercise.variationId,
+                                variationId = excercise.variation.id,
                             ))
                         }
                     ) {

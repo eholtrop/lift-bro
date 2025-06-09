@@ -152,7 +152,7 @@ fun LiftCard(
 
                 Row {
                     Text(
-                        text = state.values.maxOf { it.first }.toString("MMM d"),
+                        text = state.values.maxOfOrNull { it.first }?.toString("MMM d") ?: "",
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Space()

@@ -25,11 +25,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,20 +36,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
-import com.lift.bro.ui.CalendarDateStyle
 import com.lift.bro.ui.today
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toString
 import com.lift.bro.ui.Space
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
-import com.lift.bro.utils.toString
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 
@@ -59,14 +55,13 @@ import kotlinx.datetime.LocalDate
 fun WorkoutCalendarScreen(
     modifier: Modifier = Modifier,
     variationClicked: (Variation, LocalDate) -> Unit,
+    excercises: List<Excercise>,
 ) {
     var selectedDate by remember { mutableStateOf(today) }
 
-    val setDateMap by dependencies.database.setDataSource.listenAll()
-        .map { it.groupBy { it.date.toLocalDate() } }
-        .collectAsState(emptyMap())
+    val setDateMap = excercises.groupBy { it.date }
 
-    val selectedDateSets: List<LBSet> = setDateMap[selectedDate] ?: emptyList()
+    val selectedDateSets: List<Excercise> = setDateMap[selectedDate] ?: emptyList()
 
     LazyColumn(
         modifier = modifier,
@@ -76,10 +71,6 @@ fun WorkoutCalendarScreen(
 
         item {
             val defaultColor = MaterialTheme.colorScheme.primary
-
-            val variations by dependencies.database.variantDataSource.listenAll().collectAsState(
-                emptyList()
-            )
 
             Calendar(
                 modifier = Modifier.fillMaxWidth()
@@ -92,30 +83,16 @@ fun WorkoutCalendarScreen(
                     selectedDate = it
                 },
                 dateDecorations = { date ->
-                    var dots by remember { mutableStateOf(emptyList<Color>()) }
-
-                    LaunchedEffect(setDateMap, variations) {
-                        val sets = setDateMap[date] ?: emptyList()
-
-                        if (sets.isNotEmpty()) {
-                            dots = variations.filter { variation ->
-                                sets.any { it.variationId == variation.id }
-                            }.map { it.lift?.color?.toColor() ?: defaultColor }
-                        }
-                    }
-
-                    AnimatedVisibility(dots.isNotEmpty()) {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-                        ) {
-                            dots.forEach {
-                                Box(
-                                    modifier = Modifier.background(
-                                        color = if (selectedDate == date) MaterialTheme.colorScheme.onSecondary else it,
-                                        shape = CircleShape,
-                                    ).size(4.dp)
-                                )
-                            }
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                    ) {
+                        setDateMap[date]?.map { it.variation.lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary }?.forEach { color ->
+                            Box(
+                                modifier = Modifier.background(
+                                    color = if (selectedDate == date) MaterialTheme.colorScheme.onSecondary else color,
+                                    shape = CircleShape,
+                                ).size(4.dp)
+                            )
                         }
                     }
                 }
@@ -138,8 +115,8 @@ fun WorkoutCalendarScreen(
         }
 
         items(
-            selectedDateSets.groupBy { it.variationId }.toList()
-        ) { pair ->
+            selectedDateSets
+        ) { excercise ->
             Card(
                 modifier = Modifier.animateItem(),
                 colors = CardDefaults.cardColors(
@@ -147,6 +124,8 @@ fun WorkoutCalendarScreen(
                     contentColor = MaterialTheme.colorScheme.onSurface
                 )
             ) {
+                val variation = excercise.variation
+
                 Row(
                     modifier = Modifier.padding(
                         horizontal = MaterialTheme.spacing.one,
@@ -154,20 +133,19 @@ fun WorkoutCalendarScreen(
                     ),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val variation = dependencies.database.variantDataSource.get(pair.first)
                     Column(
                         modifier = Modifier.weight(1f)
                             .clickable(
                                 role = Role.Button,
-                                onClick = { variationClicked(variation!!, selectedDate) }
+                                onClick = { variationClicked(variation, selectedDate) }
                             )
                     ) {
                         Text(
-                            text = "${variation?.name} ${variation?.lift?.name}",
+                            text = "${variation.name} ${variation.lift?.name}",
                             style = MaterialTheme.typography.titleMedium,
                         )
 
-                        pair.second.sortedByDescending { it.weight }
+                        excercise.sets.sortedByDescending { it.weight }
                             .forEach { set ->
                                 Column(
                                     modifier = Modifier.fillMaxWidth()
@@ -183,7 +161,7 @@ fun WorkoutCalendarScreen(
 
                     Box(
                         modifier = Modifier.background(
-                            color = variation?.lift?.color?.toColor()
+                            color = variation.lift?.color?.toColor()
                                 ?: MaterialTheme.colorScheme.primary,
                             shape = CircleShape,
                         ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
