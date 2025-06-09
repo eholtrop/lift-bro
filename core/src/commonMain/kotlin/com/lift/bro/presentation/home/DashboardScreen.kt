@@ -25,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,19 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
-import com.lift.bro.BackupService
-import com.lift.bro.data.LiftDataSource
-import com.lift.bro.data.SetDataSource
-import com.lift.bro.data.VariationRepository
-import com.lift.bro.defaultSbdLifts
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardState
@@ -55,17 +45,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.toLocalDate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
@@ -79,21 +58,6 @@ import lift_bro.core.generated.resources.view_dashboard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
-@Composable
-fun rememberLifts(): StateFlow<List<Lift>> {
-    val stateFlow = MutableStateFlow<List<Lift>>(emptyList())
-
-    LaunchedEffect(Unit) {
-        dependencies.database.liftDataSource.listenAll()
-            .catch {
-                it.printStackTrace()
-            }.collectLatest {
-                stateFlow.tryEmit(it)
-            }
-    }
-    return stateFlow
-}
-
 data class DashboardState(
     val showEmpty: Boolean,
     val liftCards: List<LiftCardState>,
@@ -102,48 +66,6 @@ data class DashboardState(
 
 sealed class DashboardEvent {
     object RestoreDefaultLifts : DashboardEvent()
-}
-
-class DashboardViewModel(
-    initialState: DashboardState? = null,
-    liftRepository: LiftDataSource = dependencies.database.liftDataSource,
-    variationRepository: IVariationRepository = dependencies.database.variantDataSource,
-    setRepository: SetDataSource = dependencies.database.setDataSource,
-    scope: CoroutineScope = GlobalScope
-) {
-    val state = combine(
-        liftRepository.listenAll(),
-        variationRepository.listenAll(),
-        setRepository.listenAll(),
-    ) { lifts, variations, sets ->
-            DashboardState(
-                showEmpty = lifts.isEmpty(),
-                liftCards = lifts.map { lift ->
-                    val liftVariations = variations.filter { it.lift?.id == lift.id }
-                    val liftSets = sets.filter { set -> liftVariations.any { set.variationId == it.id } }
-                    LiftCardState(
-                        lift = lift,
-                        values = liftSets.groupBy { it.date.toLocalDate() }.map { it.key to it.value.maxOf { it.weight } },
-                    )
-                }.sortedBy { it.lift.name.toLowerCase(Locale.current) },
-                excercises = sets.groupBy { it.date }.map { map ->
-                    Excercise(
-                        date = map.key.toLocalDate(),
-                        variation = variations.first { it.id == map.value.first().variationId },
-                        sets = map.value,
-                    )
-                }
-            )
-        }
-        .stateIn(scope, SharingStarted.Eagerly, initialState)
-
-    fun handleEvent(event: DashboardEvent) {
-        when (event) {
-            DashboardEvent.RestoreDefaultLifts -> GlobalScope.launch {
-                BackupService.restore(defaultSbdLifts)
-            }
-        }
-    }
 }
 
 @Composable

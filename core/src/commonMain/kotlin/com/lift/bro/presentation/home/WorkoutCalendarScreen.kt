@@ -1,6 +1,5 @@
 package com.lift.bro.presentation.home
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,30 +23,23 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
-import com.lift.bro.ui.today
-import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.toString
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.today
 import com.lift.bro.utils.toColor
-import com.lift.bro.utils.toLocalDate
-import kotlinx.coroutines.flow.map
+import com.lift.bro.utils.toString
 import kotlinx.datetime.LocalDate
 
 
