@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.ui.dialog.CreateMaxSetDialog
@@ -32,26 +33,26 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
+import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
 import org.jetbrains.compose.resources.stringResource
 
+data class LiftCardState(
+    val lift: Lift,
+    val values: List<Pair<LocalDate, Double>>,
+)
+
 @Composable
 fun LiftCard(
     modifier: Modifier = Modifier,
-    lift: Lift,
+    state: LiftCardState,
     onClick: (Lift) -> Unit
 ) {
-
-    val sets by
-        dependencies.database.setDataSource.listenAllForLift(lift.id).collectAsState(
-            emptyList()
-        )
-
-    val uom by dependencies.settingsRepository.getUnitOfMeasure().collectAsState(null)
-
-    val max = sets.maxByOrNull { it.weight }
+    val lift = state.lift
+    val max = state.lift.maxWeight
+    val min = state.values.minOfOrNull { it.second } ?: 0.0
 
     Card(
         modifier = modifier
@@ -74,7 +75,7 @@ fun LiftCard(
                 Space()
                 max?.let {
                     Text(
-                        text = "${max.weight.decimalFormat()} ${uom?.uom?.value ?: ""}",
+                        text = weightFormat(max),
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
@@ -118,13 +119,6 @@ fun LiftCard(
                     )
                 }
             } else {
-                val recentSets = sets.groupBy { it.date.toLocalDate() }
-                    .map { Pair(it.key, it.value.maxBy { it.weight }) }
-                    .sortedByDescending { it.first }
-                    .take(5)
-
-                val recentMin = recentSets.minOfOrNull { it.second.weight } ?: 0.0
-
                 val color = lift.color?.toColor() ?: MaterialTheme.colorScheme.onSurfaceVariant
                 Canvas(
                     modifier = Modifier.fillMaxWidth().weight(1f),
@@ -134,10 +128,10 @@ fun LiftCard(
                     val spacing = width.div(5)
 
 
-                    recentSets.forEachIndexed { index, lbSet ->
+                    state.values.forEachIndexed { index, set ->
                         val x = width - (spacing * index + spacing / 2)
-                        val normalizedPercentage = lbSet.second.weight.minus(recentMin.times(.95f))
-                            .div(max.weight.minus(recentMin.times(.95f)) ?: 1.0)
+                        val normalizedPercentage = set.second.minus(min.times(.95f))
+                            .div(max.minus(min.times(.95f)) ?: 1.0)
                         val y = height - (normalizedPercentage) * height
 
                         drawCircle(
@@ -158,16 +152,21 @@ fun LiftCard(
 
                 Row {
                     Text(
-                        text = recentSets.maxOf { it.first }.toString("MMM d"),
+                        text = state.values.maxOf { it.first }.toString("MMM d"),
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Space()
                     Text(
-                        text = "${recentMin.decimalFormat()} ${uom?.uom?.value ?: ""}",
+                        text = weightFormat(weight = min),
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
             }
         }
     }
+}
+
+@Composable
+fun weightFormat(weight: Double): String {
+    return "${weight.decimalFormat()}"
 }

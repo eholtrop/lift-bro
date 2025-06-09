@@ -40,7 +40,11 @@ class LBDatabase(
         )
     }
 
-    val liftDataSource: LiftDataSource = LiftDataSource(database.liftQueries)
+    val liftDataSource: LiftDataSource = LiftDataSource(
+        database.liftQueries,
+        database.setQueries,
+        database.variationQueries
+    )
 
     val variantDataSource: IVariationRepository = VariationRepository(
         liftQueries = database.liftQueries,
@@ -146,15 +150,30 @@ class SetDataSource(
 
 class LiftDataSource(
     private val liftQueries: LiftQueries,
+    private val setQueries: SetQueries,
+    private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
     fun get(id: String?): Flow<Lift?> =
         liftQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 
-    fun listenAll(): Flow<List<Lift>> =
-        liftQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
+    fun listenAll(): Flow<List<Lift>> = combine(
+        liftQueries.getAll().asFlow().mapToList(dispatcher),
+        variationQueries.getAll().asFlow().mapToList(dispatcher),
+        setQueries.getAll().asFlow().mapToList(dispatcher),
+    ) { lifts, variations, sets ->
+        lifts.map { lift ->
+            lift.toDomain().copy(
+                maxWeight = sets.filter { set ->
+                    variations.filter { it.liftId == lift.id }
+                        .any { it.id == set.variationId }
+                }.maxOfOrNull { it.weight ?: 0.0 }
+            )
+        }
+    }
 
+    // TODO: make sure to populate maxWeight here
     fun getAll(): List<Lift> =
         liftQueries.getAll().executeAsList().map { it.toDomain() }
 

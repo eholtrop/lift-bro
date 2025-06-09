@@ -44,12 +44,14 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
+import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -272,9 +274,18 @@ fun DashboardContent(
                     contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 ) {
                     items(lifts) { lift ->
+                        val weights = dependencies.database.setDataSource.getAllForLift(lift.id)
+                            .groupBy { it.date.toLocalDate() }
+                            .map { Pair(it.key, it.value.maxOf { it.weight }) }
+                            .sortedByDescending { it.first }
+                            .take(5)
+
                         LiftCard(
                             modifier = Modifier.padding(MaterialTheme.spacing.quarter),
-                            lift = lift,
+                            state = LiftCardState(
+                                lift = lift,
+                                values = weights,
+                            ),
                             onClick = liftClicked
                         )
                     }

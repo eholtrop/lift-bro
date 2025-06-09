@@ -17,22 +17,18 @@ fun DashboardScreenPreview() {
                 Lift(
                     id = "1",
                     name = "Bench Press",
-                    color = null,
                 ),
                 Lift(
                     id = "2",
                     name = "Bench Press",
-                    color = null,
                 ),
                 Lift(
                     id = "3",
                     name = "Bench Press",
-                    color = null,
                 ),
                 Lift(
                     id = "4",
                     name = "Bench Press",
-                    color = null,
                 )
             ),
             addLiftClicked = {},

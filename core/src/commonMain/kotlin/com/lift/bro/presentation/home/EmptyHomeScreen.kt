@@ -62,12 +62,3 @@ fun EmptyHomeScreen(
         }
     }
 }
-
-@Preview
-@Composable
-fun EmptyHomeScreenPreview() {
-    EmptyHomeScreen(
-        addLiftClicked = {},
-        loadDefaultLifts = {}
-    )
-}

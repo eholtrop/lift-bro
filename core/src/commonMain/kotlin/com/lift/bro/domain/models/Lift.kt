@@ -6,5 +6,6 @@ import kotlinx.serialization.Serializable
 data class Lift(
     val id: String,
     val name: String,
-    val color: ULong?,
+    val color: ULong? = null,
+    val maxWeight: Double? = null,
 )
