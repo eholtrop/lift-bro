@@ -14,14 +14,7 @@ import kotlin.math.max
 fun EmptyLiftCardPreview() {
     AppTheme {
         LiftCard(
-            state = LiftCardState(
-                lift = Lift(
-                    id = "1",
-                    name = "Bench Press",
-                    color = null,
-                ),
-                values = emptyList()
-            ),
+            state = LiftCardPreviewStates.Empty,
             onClick = {}
         )
     }
@@ -32,18 +25,7 @@ fun EmptyLiftCardPreview() {
 fun PopulatedLiftCardPreview() {
     AppTheme {
         LiftCard(
-            state = LiftCardState(
-                lift = Lift(
-                    id = "1",
-                    name = "Bench Press",
-                    color = null,
-                    maxWeight = 130.0,
-                ),
-                values = listOf(
-                    LocalDate.parse("2023-01-01") to 100.0,
-                    LocalDate.parse("2023-01-02") to 120.0,
-                )
-            ),
+            state = LiftCardPreviewStates.Partial,
             onClick = {}
         )
     }
@@ -54,22 +36,51 @@ fun PopulatedLiftCardPreview() {
 fun FullLiftCardPreview() {
     AppTheme {
         LiftCard(
-            state = LiftCardState(
-                lift = Lift(
-                    id = "1",
-                    name = "Bench Press",
-                    color = null,
-                    maxWeight = 135.0,
-                ),
-                values = listOf(
-                    LocalDate.parse("2023-01-01") to 135.0,
-                    LocalDate.parse("2023-01-02") to 125.0,
-                    LocalDate.parse("2023-01-01") to 120.0,
-                    LocalDate.parse("2023-01-02") to 130.0,
-                    LocalDate.parse("2023-01-01") to 125.0,
-                )
-            ),
+            state = LiftCardPreviewStates.Full,
             onClick = {}
         )
     }
+}
+
+internal object LiftCardPreviewStates {
+
+    val Empty = LiftCardState(
+        lift = Lift(
+            id = "1",
+            name = "Press",
+            color = null,
+        ),
+        values = emptyList()
+    )
+
+    val Partial = LiftCardState(
+        lift = Lift(
+            id = "2",
+            name = "Squat",
+            color = null,
+            maxWeight = 130.0,
+        ),
+        values = listOf(
+            LocalDate.parse("2023-01-01") to 100.0,
+            LocalDate.parse("2023-01-02") to 120.0,
+        )
+    )
+
+    val Full = LiftCardState(
+        lift = Lift(
+            id = "3",
+            name = "Deadlift",
+            color = null,
+            maxWeight = 135.0,
+        ),
+        values = listOf(
+            LocalDate.parse("2023-01-01") to 135.0,
+            LocalDate.parse("2023-01-02") to 125.0,
+            LocalDate.parse("2023-01-01") to 120.0,
+            LocalDate.parse("2023-01-02") to 130.0,
+            LocalDate.parse("2023-01-01") to 125.0,
+        )
+    )
+
+    val All = listOf(Empty, Partial, Full)
 }

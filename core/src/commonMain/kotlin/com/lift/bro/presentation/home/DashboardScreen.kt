@@ -38,10 +38,13 @@ import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import com.lift.bro.BackupService
 import com.lift.bro.data.LiftDataSource
+import com.lift.bro.data.SetDataSource
+import com.lift.bro.data.VariationRepository
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardState
@@ -59,6 +62,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -92,7 +96,7 @@ fun rememberLifts(): StateFlow<List<Lift>> {
 
 data class DashboardState(
     val showEmpty: Boolean,
-    val lifts: List<Lift>,
+    val liftCards: List<LiftCardState>,
 )
 
 sealed class DashboardEvent {
@@ -102,11 +106,28 @@ sealed class DashboardEvent {
 class DashboardViewModel(
     initialState: DashboardState? = null,
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
+    variationRepository: IVariationRepository = dependencies.database.variantDataSource,
+    setRepository: SetDataSource = dependencies.database.setDataSource,
     scope: CoroutineScope = GlobalScope
 ) {
-    val state = liftRepository.listenAll()
-        .map { it.sortedBy { it.name.toLowerCase(Locale.current) } }
-        .map { DashboardState(showEmpty = it.isEmpty(), it) }
+    val state = combine(
+        liftRepository.listenAll(),
+        variationRepository.listenAll(),
+        setRepository.listenAll(),
+    ) { lifts, variations, sets ->
+            DashboardState(
+                showEmpty = lifts.isEmpty(),
+                liftCards = lifts.map { lift ->
+
+                    val liftVariations = variations.filter { it.lift?.id == lift.id }
+                    val liftSets = sets.filter { set -> liftVariations.any { set.variationId == it.id } }
+                    LiftCardState(
+                        lift = lift,
+                        values = liftSets.groupBy { it.date.toLocalDate() }.map { it.key to it.value.maxOf { it.weight } },
+                    )
+                }.sortedBy { it.lift.name.toLowerCase(Locale.current) },
+            )
+        }
         .stateIn(scope, SharingStarted.Eagerly, initialState)
 
     fun handleEvent(event: DashboardEvent) {
@@ -141,7 +162,7 @@ fun DashboardScreen(
 
                 false -> {
                     DashboardContent(
-                        lifts = it.lifts,
+                        liftCards = it.liftCards,
                         addLiftClicked = addLiftClicked,
                         liftClicked = liftClicked,
                         addSetClicked = addSetClicked,
@@ -153,14 +174,15 @@ fun DashboardScreen(
     }
 }
 
-private enum class Tab {
+enum class Tab {
     Lifts,
     RecentSets,
 }
 
 @Composable
 fun DashboardContent(
-    lifts: List<Lift>,
+    liftCards: List<LiftCardState>,
+    defaultTab: Tab = Tab.Lifts,
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
@@ -168,7 +190,7 @@ fun DashboardContent(
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ) {
 
-    var tab by rememberSaveable { mutableStateOf(Tab.Lifts) }
+    var tab by rememberSaveable { mutableStateOf(defaultTab) }
 
     LiftingScaffold(
         title = stringResource(Res.string.dashboard_title),
@@ -273,19 +295,10 @@ fun DashboardContent(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 ) {
-                    items(lifts) { lift ->
-                        val weights = dependencies.database.setDataSource.getAllForLift(lift.id)
-                            .groupBy { it.date.toLocalDate() }
-                            .map { Pair(it.key, it.value.maxOf { it.weight }) }
-                            .sortedByDescending { it.first }
-                            .take(5)
-
+                    items(liftCards) { state ->
                         LiftCard(
                             modifier = Modifier.padding(MaterialTheme.spacing.quarter),
-                            state = LiftCardState(
-                                lift = lift,
-                                values = weights,
-                            ),
+                            state = state,
                             onClick = liftClicked
                         )
                     }
