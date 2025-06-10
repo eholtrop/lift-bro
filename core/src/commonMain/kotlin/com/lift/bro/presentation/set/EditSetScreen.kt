@@ -262,7 +262,7 @@ fun EditSetScreen(
                     ) {
                         Text(
                             text = variation?.fullName ?: "Select Lift",
-                            style = MaterialTheme.typography.headlineSmall,
+                            style = MaterialTheme.typography.titleLarge,
                         )
 
                         Space(MaterialTheme.spacing.one)
@@ -317,7 +317,10 @@ fun EditSetScreen(
                         modifier = Modifier.fillMaxWidth()
                             .padding(horizontal = MaterialTheme.spacing.one),
                     ) {
-                        Text("Extra Notes:")
+                        Text(
+                            "Extra Notes:",
+                            style = MaterialTheme.typography.titleMedium
+                        )
 
                         TextField(
                             modifier = Modifier.fillMaxWidth(),

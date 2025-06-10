@@ -34,6 +34,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LBDatabase
@@ -210,9 +212,12 @@ fun EditLiftScreen(
 
             Text(
                 modifier = Modifier.align(Alignment.Start)
-                    .padding(start = MaterialTheme.spacing.one),
+                    .padding(start = MaterialTheme.spacing.one)
+                    .semantics {
+                        heading()
+                    },
                 text = "Variations",
-                style = MaterialTheme.typography.headlineSmall
+                style = MaterialTheme.typography.titleLarge
             )
 
             LazyColumn(

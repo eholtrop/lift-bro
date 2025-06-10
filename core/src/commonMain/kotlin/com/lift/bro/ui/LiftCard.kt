@@ -69,7 +69,7 @@ fun LiftCard(
             ) {
                 Text(
                     text = lift.name,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.titleSmall,
                 )
                 Space()
                 max?.let {

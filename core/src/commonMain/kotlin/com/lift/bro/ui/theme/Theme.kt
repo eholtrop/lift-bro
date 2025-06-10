@@ -3,12 +3,28 @@ package com.example.compose
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import com.lift.bro.ui.navigation.LocalSnackbarHostState
+import lift_bro.core.generated.resources.DMSans_Black
+import lift_bro.core.generated.resources.DMSans_Bold
+import lift_bro.core.generated.resources.DMSans_ExtraBold
+import lift_bro.core.generated.resources.DMSans_ExtraLight
+import lift_bro.core.generated.resources.DMSans_Light
+import lift_bro.core.generated.resources.DMSans_Medium
+import lift_bro.core.generated.resources.DMSans_Regular
+import lift_bro.core.generated.resources.DMSans_SemiBold
+import lift_bro.core.generated.resources.DMSans_Thin
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.provicali
+import org.jetbrains.compose.resources.Font
 
 
 private val LightColors = lightColorScheme(
@@ -98,7 +114,46 @@ fun AppTheme(
     ) {
         MaterialTheme(
             colorScheme = colors,
-            content = content
+            content = content,
+            typography = typography()
         )
     }
 }
+
+@Composable
+private fun typography() = Typography(
+    displayLarge = MaterialTheme.typography.displayLarge.copy(fontFamily = provicali()),
+    displayMedium = MaterialTheme.typography.displayMedium.copy(fontFamily = provicali()),
+    displaySmall = MaterialTheme.typography.displaySmall.copy(fontFamily = provicali()),
+    headlineLarge = MaterialTheme.typography.headlineLarge.copy(fontFamily = provicali()),
+    headlineMedium = MaterialTheme.typography.headlineMedium.copy(fontFamily = provicali()),
+    headlineSmall = MaterialTheme.typography.headlineSmall.copy(fontFamily = provicali()),
+    titleLarge = MaterialTheme.typography.titleLarge.copy(fontFamily = dmSansFontFamily(), fontWeight = FontWeight.Bold),
+    titleMedium = MaterialTheme.typography.titleMedium.copy(fontFamily = dmSansFontFamily(), fontWeight = FontWeight.Bold),
+    titleSmall = MaterialTheme.typography.titleSmall.copy(fontFamily = dmSansFontFamily(), fontWeight = FontWeight.Bold),
+    bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontFamily = dmSansFontFamily()),
+    bodyMedium = MaterialTheme.typography.bodyMedium.copy(fontFamily = dmSansFontFamily()),
+    bodySmall = MaterialTheme.typography.bodySmall.copy(fontFamily = dmSansFontFamily()),
+    labelLarge = MaterialTheme.typography.labelLarge.copy(fontFamily = dmSansFontFamily()),
+    labelMedium = MaterialTheme.typography.labelMedium.copy(fontFamily = dmSansFontFamily()),
+    labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = dmSansFontFamily()),
+
+)
+
+@Composable
+private fun provicali() = FontFamily(
+    Font(Res.font.provicali, weight = FontWeight.Normal, style = FontStyle.Normal)
+)
+
+@Composable
+private fun dmSansFontFamily() = FontFamily(
+    Font(Res.font.DMSans_ExtraBold, FontWeight.ExtraBold, FontStyle.Normal),
+    Font(Res.font.DMSans_SemiBold, FontWeight.SemiBold, FontStyle.Normal),
+    Font(Res.font.DMSans_Bold, FontWeight.Bold, FontStyle.Normal),
+    Font(Res.font.DMSans_Medium, FontWeight.Medium, FontStyle.Normal),
+    Font(Res.font.DMSans_Regular, FontWeight.Normal, FontStyle.Normal),
+    Font(Res.font.DMSans_Thin, FontWeight.Thin, FontStyle.Normal),
+    Font(Res.font.DMSans_Black, FontWeight.Black, FontStyle.Normal),
+    Font(Res.font.DMSans_Light, FontWeight.Light, FontStyle.Normal),
+    Font(Res.font.DMSans_ExtraLight, FontWeight.ExtraLight, FontStyle.Normal),
+)

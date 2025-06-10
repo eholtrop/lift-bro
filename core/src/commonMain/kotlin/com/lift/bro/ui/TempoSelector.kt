@@ -65,7 +65,8 @@ fun TempoSelector(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = "With a tempo of..."
+                text = "With a tempo of...",
+                style = MaterialTheme.typography.titleMedium
             )
             IconButton(
                 onClick = {
