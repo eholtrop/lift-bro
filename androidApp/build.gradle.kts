@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
+    alias(libs.plugins.secrets)
 
     id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
@@ -50,9 +51,10 @@ android {
 
     buildTypes {
         defaultConfig {
-            resValue("string", "admob_app_id", System.getenv("LIFT_BRO_ADMOB_APP_ID"))
-            buildConfigField("String", "AD_UNIT_ID", "\"${System.getenv("LIFT_BRO_AD_UNIT_ID")}\"")
+            resValue("string", "admob_app_id", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as String)
+            buildConfigField("String", "AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as String)
         }
+
 
         release {
             isMinifyEnabled = false
@@ -68,6 +70,10 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+}
+
+secrets {
+    propertiesFileName="secrets.properties"
 }
 
 dependencies {
