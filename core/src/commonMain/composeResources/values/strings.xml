@@ -10,9 +10,8 @@
 
 
     <string name="dashboard_empty_title">Do you even Lift Bro?</string>
-    <string name="dashboard_empty_primary_cta_title">Add Lift</string>
-    <string name="dashboard_empty_secondary_cta_title">Add Default Lifts/Variations</string>
-    <string name="dashboard_empty_secondary_cta_subtitle">Squat, Bench, Deadlift (SBD)</string>
+    <string name="dashboard_empty_primary_cta_title">Create Lift</string>
+    <string name="dashboard_empty_secondary_cta_title">Restore a Backup</string>
 
     <string name="toolbar_back_button_content_description">Back</string>
 

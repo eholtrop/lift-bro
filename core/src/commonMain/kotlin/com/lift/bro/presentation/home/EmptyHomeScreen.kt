@@ -1,5 +1,6 @@
 package com.lift.bro.presentation.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,16 +10,35 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.lift.bro.BackupService
+import com.lift.bro.di.dependencies
+import com.lift.bro.presentation.LocalLiftBro
+import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.theme.spacing
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_empty_primary_cta_title
-import lift_bro.core.generated.resources.dashboard_empty_secondary_cta_subtitle
 import lift_bro.core.generated.resources.dashboard_empty_secondary_cta_title
 import lift_bro.core.generated.resources.dashboard_empty_title
+import lift_bro.core.generated.resources.ic_lift_bro_leo
+import lift_bro.core.generated.resources.ic_lift_bro_lisa
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+
+fun LiftBro.iconRes(): DrawableResource {
+    return when (this) {
+        LiftBro.Leo -> Res.drawable.ic_lift_bro_leo
+        LiftBro.Lisa -> Res.drawable.ic_lift_bro_lisa
+    }
+}
 
 @Composable
 fun EmptyHomeScreen(
@@ -26,11 +46,19 @@ fun EmptyHomeScreen(
     loadDefaultLifts: () -> Unit
 ) {
 
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        LocalLiftBro.current?.let {
+            Image(
+                modifier = Modifier.height(124.dp),
+                painter = painterResource(it.iconRes()),
+                contentDescription = "",
+            )
+        }
         Text(
             text = stringResource(Res.string.dashboard_empty_title),
             color = MaterialTheme.colorScheme.onBackground,
@@ -43,20 +71,21 @@ fun EmptyHomeScreen(
             Text(
                 text = stringResource(Res.string.dashboard_empty_primary_cta_title),)
         }
-        Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.half))
 
+        val coroutineScope = rememberCoroutineScope()
         Button(
-            onClick = loadDefaultLifts
+            onClick = {
+                coroutineScope.launch {
+                    BackupService.restore()
+                }
+            }
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = stringResource(Res.string.dashboard_empty_secondary_cta_title),
-                )
-                Text(
-                    text = stringResource(Res.string.dashboard_empty_secondary_cta_subtitle),
-                    style = MaterialTheme.typography.labelMedium
                 )
             }
         }

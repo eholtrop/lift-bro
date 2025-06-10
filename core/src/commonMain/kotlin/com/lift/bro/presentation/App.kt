@@ -15,7 +15,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.presentation.ads.AdBanner
@@ -37,6 +41,7 @@ import com.lift.bro.presentation.home.DashboardScreen
 import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
+import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
@@ -53,91 +58,103 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
 
+val LocalLiftBro = compositionLocalOf<LiftBro?> {
+    error("LiftBro was not set")
+}
+
 @Composable
 fun App(
     navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding)
 ) {
-    AppTheme {
-        Box {
-            LaunchedEffect("debug_mode") {
-                if (BuildConfig.isDebug) {
-                }
-            }
 
-            BackupAlertDialog()
+    val bro by dependencies.settingsRepository.getBro().collectAsState(null)
 
-            Column {
-                SwipeableNavHost(
-                    modifier = Modifier.weight(1f),
-                    navCoordinator = navCoordinator,
-                ) { route ->
-                    AppRouter(route)
-                }
-                if (!BuildConfig.isDebug) {
-                    AdBanner(modifier = Modifier.fillMaxWidth().navigationBarsPadding())
-                }
-            }
+    CompositionLocalProvider(
+        LocalLiftBro provides bro
+    ) {
 
-            // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix
-            var showCelebration by remember { mutableStateOf(false) }
-
-            LaunchedEffect(Unit) {
-                GetCelebrationTypeUseCase()
-                    .collectLatest {
-                        if (it != CelebrationType.None) {
-                            showCelebration = true
-                        }
+        AppTheme {
+            Box {
+                LaunchedEffect("debug_mode") {
+                    if (BuildConfig.isDebug) {
                     }
-            }
+                }
 
-            if (showCelebration) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    ConfettiExplosion()
+                BackupAlertDialog()
 
-                    var showMessage by remember { mutableStateOf(false) }
-                    AnimatedVisibility(
-                        modifier = Modifier.align(Alignment.Center),
-                        visible = showMessage,
-                        enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
-                        exit = fadeOut(),
+                Column {
+                    SwipeableNavHost(
+                        modifier = Modifier.weight(1f),
+                        navCoordinator = navCoordinator,
+                    ) { route ->
+                        AppRouter(route)
+                    }
+                    if (!BuildConfig.isDebug) {
+                        AdBanner(modifier = Modifier.fillMaxWidth().navigationBarsPadding())
+                    }
+                }
+
+                // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix
+                var showCelebration by remember { mutableStateOf(false) }
+
+                LaunchedEffect(Unit) {
+                    GetCelebrationTypeUseCase()
+                        .collectLatest {
+                            if (it != CelebrationType.None) {
+                                showCelebration = true
+                            }
+                        }
+                }
+
+                if (showCelebration) {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Column(
-                            modifier = Modifier
-                                .semantics(
-                                    mergeDescendants = true,
-                                ) {
-                                    liveRegion = LiveRegionMode.Assertive
-                                }
-                                .background(
-                                    MaterialTheme.colorScheme.primary,
-                                    shape = MaterialTheme.shapes.medium
-                                )
-                                .padding(MaterialTheme.spacing.one),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Text(
-                                text = "Congrats!!",
-                                style = MaterialTheme.typography.headlineLarge,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                            Space(MaterialTheme.spacing.half)
-                            Text(
-                                text = "That's a new Personal Record!",
-                                style = MaterialTheme.typography.headlineSmall,
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
-                        }
-                    }
+                        ConfettiExplosion()
 
-                    LaunchedEffect(Unit) {
-                        delay(1000)
-                        showMessage = true
-                        delay(4000)
-                        showMessage = false
-                        delay(2000)
-                        showCelebration = false
+                        var showMessage by remember { mutableStateOf(false) }
+                        AnimatedVisibility(
+                            modifier = Modifier.align(Alignment.Center),
+                            visible = showMessage,
+                            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+                            exit = fadeOut(),
+                        ) {
+                            Column(
+                                modifier = Modifier
+                                    .semantics(
+                                        mergeDescendants = true,
+                                    ) {
+                                        liveRegion = LiveRegionMode.Assertive
+                                    }
+                                    .background(
+                                        MaterialTheme.colorScheme.primary,
+                                        shape = MaterialTheme.shapes.medium
+                                    )
+                                    .padding(MaterialTheme.spacing.one),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = "Congrats!!",
+                                    style = MaterialTheme.typography.headlineLarge,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                )
+                                Space(MaterialTheme.spacing.half)
+                                Text(
+                                    text = "That's a new Personal Record!",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        }
+
+                        LaunchedEffect(Unit) {
+                            delay(1000)
+                            showMessage = true
+                            delay(4000)
+                            showMessage = false
+                            delay(2000)
+                            showCelebration = false
+                        }
                     }
                 }
             }
