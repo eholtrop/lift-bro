@@ -27,7 +27,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -61,10 +63,9 @@ enum class LiftBro {
     Leo, Lisa
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun OnboardingScreen() {
-    val navCoordinator = LocalNavCoordinator.current
-
     var onboardingState by remember { mutableStateOf(0) }
 
     AnimatedContent(
@@ -87,6 +88,10 @@ fun OnboardingScreen() {
 
             2 -> OnboardingSetupScreen { dependencies.settingsRepository.setDeviceFtux(true) }
         }
+    }
+
+    BackHandler(enabled = onboardingState != 0) {
+        onboardingState -= 1
     }
 
 }

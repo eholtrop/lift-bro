@@ -48,6 +48,7 @@ kotlin {
             implementation(compose.materialIconsExtended)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation("org.jetbrains.compose.ui:ui-backhandler:1.8.0")
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.uuid)

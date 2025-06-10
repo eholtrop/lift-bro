@@ -40,6 +40,9 @@ fun LiftBro.iconRes(): DrawableResource {
     }
 }
 
+// TODO: need to setup back handling in onboarding
+// continue adding branding throughout the app
+
 @Composable
 fun EmptyHomeScreen(
     addLiftClicked: () -> Unit,
