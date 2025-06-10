@@ -51,8 +51,8 @@ android {
 
     buildTypes {
         defaultConfig {
-            resValue("string", "admob_app_id", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as String)
-            buildConfigField("String", "AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as String)
+            resValue("string", "admob_app_id", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as? String ?: System.getenv("LIFT_BRO_ADMOB_APP_ID"))
+            buildConfigField("String", "AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as? String ?: "\"${System.getenv("LIFT_BRO_AD_UNIT_ID")}\"")
         }
 
 
