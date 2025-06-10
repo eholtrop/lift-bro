@@ -55,7 +55,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun App(
-    navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Dashboard)
+    navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding)
 ) {
     AppTheme {
         Box {

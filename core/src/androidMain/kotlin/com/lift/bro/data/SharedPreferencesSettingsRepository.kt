@@ -15,6 +15,18 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.LocalDate
 import androidx.core.content.edit
+import com.lift.bro.presentation.onboarding.LiftBro
+import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 class SharedPreferencesSettingsRepository(
     val context: Context,
@@ -24,45 +36,67 @@ class SharedPreferencesSettingsRepository(
         context.getSharedPreferences("lift.bro.prefs", MODE_PRIVATE)
     }
 
-    override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
-        val state: MutableStateFlow<Settings.UnitOfWeight> = MutableStateFlow(
-            Settings.UnitOfWeight(
-                UOM.valueOf(
-                    sharedPreferences!!.getString(
-                        "unit_of_measure",
-                        UOM.POUNDS.toString()
-                    )!!
-                )
-            )
-        )
+    private val keyChangedChannel: MutableSharedFlow<String> =
+        MutableSharedFlow(extraBufferCapacity = 1)
 
-        val listener =
-            SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-                if (key == "unit_of_measure") {
-                    state.tryEmit(
-                        Settings.UnitOfWeight(
-                            UOM.valueOf(
-                                sharedPreferences!!.getString(
-                                    "unit_of_measure",
-                                    UOM.POUNDS.toString()
-                                )!!
-                            )
+    val preferenceListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key != null) {
+                keyChangedChannel.tryEmit(key)
+            }
+        }
+
+    private val keyChangedFlow = keyChangedChannel
+        .onStart {
+            sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceListener)
+        }.onCompletion {
+            sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
+        }
+
+    override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
+        return keyChangedFlow
+            .filter { it == "unit_of_measure" }
+            .map {
+                val uom = sharedPreferences!!.getString(
+                    "unit_of_measure",
+                    UOM.POUNDS.toString()
+                )!!
+                Settings.UnitOfWeight(
+                    UOM.valueOf(
+                        uom
+                    )
+                )
+            }
+            .onStart {
+                emit(
+                    Settings.UnitOfWeight(
+                        UOM.valueOf(
+                            sharedPreferences!!.getString(
+                                "unit_of_measure",
+                                UOM.POUNDS.toString()
+                            )!!
                         )
                     )
-                }
-            }
-
-        return state.asStateFlow()
-            .onStart {
-                sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
-            }
-            .onCompletion {
-                sharedPreferences.unregisterOnSharedPreferenceChangeListener(listener)
+                )
             }
     }
 
     override fun saveUnitOfMeasure(uom: Settings.UnitOfWeight) {
         sharedPreferences.edit { putString("unit_of_measure", uom.uom.toString()) }
+    }
+
+    override fun getDeviceFtux(): Flow<Boolean> {
+        return keyChangedFlow
+            .filter { it == "ftux" }
+            .map {
+                sharedPreferences!!.getBoolean("ftux", false)
+            }.onStart {
+                emit(sharedPreferences!!.getBoolean("ftux", false))
+            }
+    }
+
+    override fun setDeviceFtux(ftux: Boolean) {
+        sharedPreferences.edit { putBoolean("ftux", true) }
     }
 
     override fun getBackupSettings(): Flow<BackupSettings> {
@@ -84,6 +118,26 @@ class SharedPreferencesSettingsRepository(
         sharedPreferences.edit().apply {
             this.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays())
         }.apply()
+    }
+
+    override fun getBro(): Flow<LiftBro?> {
+        return keyChangedFlow
+            .filter { "bro" == it }
+            .map {
+                sharedPreferences.getString("bro", null)?.let {
+                    LiftBro.valueOf(it)
+                }
+            }.onStart {
+                emit(
+                    sharedPreferences.getString("bro", null)?.let {
+                        LiftBro.valueOf(it)
+                    }
+                )
+            }
+    }
+
+    override fun setBro(bro: LiftBro) {
+        sharedPreferences.edit { putString("bro", bro.toString()) }
     }
 
 }

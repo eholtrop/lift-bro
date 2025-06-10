@@ -1,0 +1,265 @@
+package com.lift.bro.presentation.onboarding
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.lift.bro.BackupService
+import com.lift.bro.di.dependencies
+import com.lift.bro.ui.Card
+import com.lift.bro.ui.Space
+import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.AccessibilityMinimumSize
+import kotlinx.coroutines.launch
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.ic_lift_bro_leo
+import lift_bro.core.generated.resources.ic_lift_bro_lisa
+import org.jetbrains.compose.resources.painterResource
+
+@Composable
+internal fun Modifier.onboardingBackground(): Modifier = this
+    .background(
+        brush = Brush.linearGradient(
+            colors = listOf(
+                MaterialTheme.colorScheme.tertiary,
+                MaterialTheme.colorScheme.secondary,
+            ),
+        )
+    )
+
+enum class LiftBro {
+    Leo, Lisa
+}
+
+@Composable
+fun OnboardingScreen() {
+    val navCoordinator = LocalNavCoordinator.current
+
+    var onboardingState by remember { mutableStateOf(0) }
+
+    AnimatedContent(
+        onboardingState,
+        transitionSpec = {
+            (fadeIn(animationSpec = tween(220, delayMillis = 90))
+                .togetherWith(fadeOut(animationSpec = tween(90))))
+        }
+    ) { state ->
+        when (state) {
+            0 -> OnboardingBroScreen {
+                dependencies.settingsRepository.setBro(it)
+                onboardingState += 1
+            }
+//            1 -> OnboardingUOMScreen { onboardingState = 2 }
+            1 -> OnboardingSkipScreen(
+                setupClicked = { onboardingState += 1 },
+                continueClicked = { dependencies.settingsRepository.setDeviceFtux(true) }
+            )
+
+            2 -> OnboardingSetupScreen { dependencies.settingsRepository.setDeviceFtux(true) }
+        }
+    }
+
+}
+
+@Composable
+fun OnboardingBroScreen(
+    broSelected: (LiftBro) -> Unit,
+) {
+    var bro by remember { mutableStateOf<LiftBro?>(null) }
+
+    Column(
+        modifier = Modifier
+            .onboardingBackground()
+            .navigationBarsPadding()
+            .statusBarsPadding()
+            .padding(
+                horizontal = MaterialTheme.spacing.one,
+                vertical = MaterialTheme.spacing.two,
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "CHOOSE\nYOUR\nLIFT BRO",
+            style = MaterialTheme.typography.displayLarge
+        )
+
+        Space()
+
+        Card(
+            modifier = Modifier.fillMaxWidth(.5f)
+                .aspectRatio(1f)
+                .border(
+                    width = if (bro == LiftBro.Leo) 4.dp else 0.dp,
+                    color = Color.Black,
+                    shape = MaterialTheme.shapes.medium
+                ),
+            backgroundColor = Color.White,
+            onClick = { bro = LiftBro.Leo },
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.weight(1f),
+                    painter = painterResource(Res.drawable.ic_lift_bro_leo),
+                    contentDescription = null
+                )
+                Text(
+                    "Leo",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(.5f)
+                .aspectRatio(1f)
+                .border(
+                    width = if (bro == LiftBro.Lisa) 4.dp else 0.dp,
+                    color = Color.Black,
+                    shape = MaterialTheme.shapes.medium
+                ),
+            backgroundColor = Color.White,
+            onClick = { bro = LiftBro.Lisa },
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    modifier = Modifier.weight(1f),
+                    painter = painterResource(Res.drawable.ic_lift_bro_lisa),
+                    contentDescription = null
+                )
+                Text(
+                    "Lisa",
+                    style = MaterialTheme.typography.titleMedium
+                )
+            }
+        }
+
+        Space()
+
+        Button(
+            modifier = Modifier.height(Dp.AccessibilityMinimumSize),
+            onClick = { broSelected(bro!!) },
+            colors = ButtonDefaults.elevatedButtonColors(
+                contentColor = Color.Black
+            ),
+            enabled = bro != null
+        ) {
+            Text(
+                "Continue",
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+    }
+}
+
+@Composable
+fun OnboardingSkipScreen(
+    setupClicked: () -> Unit,
+    continueClicked: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .onboardingBackground()
+            .navigationBarsPadding()
+            .statusBarsPadding()
+            .padding(
+                horizontal = MaterialTheme.spacing.one,
+                vertical = MaterialTheme.spacing.two,
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "LETS\nGOOOOO!",
+            style = MaterialTheme.typography.displayLarge
+        )
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = "How would you like to get things started?",
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        Space(MaterialTheme.spacing.one.times(3))
+
+        Button(
+            modifier = Modifier.height(Dp.AccessibilityMinimumSize),
+            onClick = { setupClicked() },
+            colors = ButtonDefaults.elevatedButtonColors(),
+        ) {
+            Text(
+                text = "\uD83D\uDE4F Help me setup some Lifts",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Black,
+            )
+        }
+
+        val coroutineScope = rememberCoroutineScope()
+        Button(
+            modifier = Modifier.height(Dp.AccessibilityMinimumSize),
+            onClick = {
+                coroutineScope.launch {
+                    BackupService.restore()
+                }
+            },
+            colors = ButtonDefaults.elevatedButtonColors(),
+        ) {
+            Text(
+                text = "\uD83E\uDDBA Restore from a Backup",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Black,
+            )
+        }
+        Button(
+            onClick = { continueClicked() },
+            colors = ButtonDefaults.elevatedButtonColors(),
+        ) {
+            Text(
+                text = "\uD83E\uDEE1 Just put me in Coach!",
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Black,
+            )
+        }
+
+        Space()
+    }
+}

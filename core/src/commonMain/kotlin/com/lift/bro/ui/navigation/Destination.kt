@@ -4,6 +4,13 @@ import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 sealed interface Destination {
+
+    @Serializable
+    data object Unknown: Destination
+
+    @Serializable
+    data object Onboarding: Destination
+
     @Serializable
     object Dashboard : Destination
 

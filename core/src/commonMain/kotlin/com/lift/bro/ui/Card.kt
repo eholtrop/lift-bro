@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import com.lift.bro.ui.theme.spacing
 
@@ -16,6 +17,7 @@ import com.lift.bro.ui.theme.spacing
 fun Card(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     content: @Composable () -> Unit,
 ) {
 
@@ -27,13 +29,13 @@ fun Card(
                 role = Role.Button
             )
             .background(
-                color = MaterialTheme.colorScheme.surface,
+                color = backgroundColor,
             )
             .padding(MaterialTheme.spacing.quarter)
     } else {
         modifier.clip(MaterialTheme.shapes.medium)
             .background(
-                color = MaterialTheme.colorScheme.surface,
+                color = backgroundColor,
             )
             .padding(MaterialTheme.spacing.quarter)
     }

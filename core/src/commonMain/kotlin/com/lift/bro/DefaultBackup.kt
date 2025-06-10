@@ -32,10 +32,26 @@ private val debugVariations = listOf(
         lift = defaultSBDLifts.first { it.name == "Squat" },
         name = "Front"
     ),
+    Variation(
+        lift = defaultSBDLifts.first { it.name == "Squat" },
+        name = "Zercher"
+    ),
     // press variations
     Variation(
         lift = defaultSBDLifts.first { it.name == "Press" },
         name = "Bench"
+    ),
+    Variation(
+        lift = defaultSBDLifts.first { it.name == "Press" },
+        name = "Floor"
+    ),
+    Variation(
+        lift = defaultSBDLifts.first { it.name == "Press" },
+        name = "Incline Bench"
+    ),
+    Variation(
+        lift = defaultSBDLifts.first { it.name == "Press" },
+        name = "Military"
     ),
     // deadlift variations
     Variation(
@@ -45,6 +61,10 @@ private val debugVariations = listOf(
     Variation(
         lift = defaultSBDLifts.first { it.name == "Deadlift" },
         name = "Regular"
+    ),
+    Variation(
+        lift = defaultSBDLifts.first { it.name == "Deadlift" },
+        name = "Negative"
     ),
 )
 

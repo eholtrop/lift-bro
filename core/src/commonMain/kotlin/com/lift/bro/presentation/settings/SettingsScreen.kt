@@ -61,7 +61,7 @@ fun SettingsScreen() {
                             modifier = Modifier.semantics {
                                 heading()
                             },
-                            text = "Default Unit of Measure",
+                            text = "Unit of Measure",
                             style = MaterialTheme.typography.headlineSmall
                         )
                         Space(MaterialTheme.spacing.quarter)

@@ -6,6 +6,7 @@ import com.lift.bro.presentation.home.DashboardScreen
 import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
+import com.lift.bro.presentation.onboarding.OnboardingScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
@@ -17,6 +18,10 @@ import com.lift.bro.ui.navigation.LocalNavCoordinator
 fun AppRouter(route: Destination) {
     val navCoordinator = LocalNavCoordinator.current
     when (route) {
+        is Destination.Unknown -> {}
+
+        is Destination.Onboarding -> OnboardingScreen()
+
         Destination.Dashboard ->
             DashboardScreen(
                 viewModel = DashboardViewModel(),

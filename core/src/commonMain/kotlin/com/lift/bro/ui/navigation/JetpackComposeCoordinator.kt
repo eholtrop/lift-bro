@@ -58,6 +58,7 @@ class JetpackComposeCoordinator(
     override fun setRoot(state: Destination) {
         mutableStateList.value.clear()
         mutableStateList.value.add(state)
+        currentState.value = state
     }
 
     override fun present(state: Destination, animate: Boolean) {
