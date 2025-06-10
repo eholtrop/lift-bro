@@ -18,12 +18,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -43,6 +46,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
@@ -73,7 +77,7 @@ import org.jetbrains.compose.resources.stringResource
 
 data class EditSetState(
     val id: String,
-    val selectorState: VariationSelectorState? = null,
+    val variationId: String? = null,
     val weight: Double? = 0.0,
     val reps: Long? = 1,
     val down: Long? = 3,
@@ -81,19 +85,11 @@ data class EditSetState(
     val up: Long? = 1,
     val date: Instant = Clock.System.now(),
     val notes: String = "",
-    val isNew: Boolean,
 )
-
-sealed interface VariationSelectorState {
-
-    data class VariationSelected(val variationId: String) : VariationSelectorState
-
-    data class LiftSelected(val liftId: String) : VariationSelectorState
-}
 
 private fun LBSet.toUiState() = EditSetState(
     id = this.id,
-    selectorState = VariationSelectorState.VariationSelected(this.variationId),
+    variationId = this.variationId,
     weight = this.weight,
     reps = this.reps,
     down = this.tempo.down,
@@ -101,12 +97,11 @@ private fun LBSet.toUiState() = EditSetState(
     up = this.tempo.up,
     date = this.date,
     notes = this.notes,
-    isNew = false
 )
 
 private fun EditSetState.toDomain() = LBSet(
     id = this.id,
-    variationId = (this.selectorState as? VariationSelectorState.VariationSelected)!!.variationId,
+    variationId = this.variationId!!,
     weight = this.weight!!,
     reps = this.reps!!,
     tempo = Tempo
@@ -128,41 +123,20 @@ fun EditSetScreen(
     createLiftClicked: () -> Unit,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    val state = dependencies.database.setDataSource.get(setId)?.toUiState() ?: EditSetState(
-        id = uuid4().toString(),
-        selectorState = when {
-            variationId != null -> VariationSelectorState.VariationSelected(variationId)
-            liftId != null -> VariationSelectorState.LiftSelected(liftId)
-            else -> null
-        },
-        isNew = true
-    )
+    var set by remember {
+        mutableStateOf(
+            dependencies.database.setDataSource.get(setId)?.toUiState() ?: EditSetState(
+                id = uuid4().toString(),
+                variationId = variationId,
+            )
+        )
+    }
 
+    val variation =
+        dependencies.database.variantDataSource.get(set.variationId)
 
-    EditSetScreenContent(
-        state = state,
-        setSaved = setSaved,
-        createLiftClicked = createLiftClicked
-    )
-}
-
-
-@Composable
-fun EditSetScreenContent(
-    state: EditSetState,
-    setSaved: () -> Unit,
-    createLiftClicked: () -> Unit,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
-) {
-    var set by remember { mutableStateOf(state) }
-
-    val saveEnabled = set.selectorState is VariationSelectorState.VariationSelected &&
-                set.weight != null &&
-                set.reps != null &&
-                set.down != null &&
-                set.hold != null &&
-                set.up != null &&
-                set.weight != null
+    val saveEnabled =
+        set.variationId != null && set.reps != null && set.down != null && set.hold != null && set.up != null && set.weight != null
 
     LiftingScaffold(
         fabProperties = FabProperties(
@@ -176,16 +150,16 @@ fun EditSetScreenContent(
                 setSaved()
             },
         ),
-        title = "I Crushed...",
+        title = "${if (setId != null) "You" else "I"} Crushed...",
         trailingContent = {
-            if (!set.isNew) {
+            if (setId != null) {
                 val navCoordinator = LocalNavCoordinator.current
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Delete",
                     onClick = {
                         coroutineScope.launch {
-                            dependencies.database.setDataSource.delete(set.id)
+                            dependencies.database.setDataSource.delete(setId)
                             navCoordinator.onBackPressed()
                         }
                     }
