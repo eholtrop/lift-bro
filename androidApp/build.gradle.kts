@@ -7,7 +7,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
-    alias(libs.plugins.secrets)
 
     id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
@@ -70,10 +69,6 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-}
-
-secrets {
-    propertiesFileName="secrets.properties"
 }
 
 dependencies {
