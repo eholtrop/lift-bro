@@ -24,7 +24,7 @@ fun EmptyHomeScreenPreview_Light() {
 @Composable
 fun EmptyHomeScreenPreview_Dark() {
     PreviewAppTheme(
-        isDarkMode = false
+        isDarkMode = true
     ) {
         EmptyHomeScreen(
             addLiftClicked = {},
