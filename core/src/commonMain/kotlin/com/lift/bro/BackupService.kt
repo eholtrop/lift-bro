@@ -8,10 +8,12 @@ import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.today
 import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.createDirectories
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.dialogs.shareFile
 import io.github.vinceglb.filekit.div
+import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.readString
 import io.github.vinceglb.filekit.writeString
@@ -30,7 +32,11 @@ data class Backup(
 object BackupService {
 
     suspend fun backup(backup: Backup = createBackup()) {
-        val backupFile = FileKit.filesDir / "backups/${Clock.System.now().toString("yyyy-MM-dd_HH:mm:ss")}.json"
+        val backupDir = FileKit.filesDir / "backups"
+        if (!backupDir.exists()) {
+            backupDir.createDirectories()
+        }
+        val backupFile = backupDir / "${Clock.System.now().toString("yyyy-MM-dd_HH:mm:ss")}.json"
         backupFile.writeString(Json.encodeToString(backup))
         FileKit.shareFile(backupFile)
         dependencies.settingsRepository.saveBackupSettings(BackupSettings(lastBackupDate = Clock.System.today))
@@ -46,6 +52,7 @@ object BackupService {
         } ?: kotlin.run {
             return false
         }
+        return false
     }
 
     suspend fun restore(backup: Backup): Boolean {
