@@ -67,8 +67,10 @@ enum class LiftBro {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun OnboardingScreen() {
-    var onboardingState by remember { mutableStateOf(0) }
+fun OnboardingScreen(
+    defaultState: Int = 0
+) {
+    var onboardingState by remember { mutableStateOf(defaultState) }
 
     AppTheme(
         useDarkTheme = false,

@@ -11,8 +11,10 @@ import kotlin.math.max
 
 @Preview
 @Composable
-fun EmptyLiftCardPreview() {
-    AppTheme {
+fun EmptyLiftCardPreview_Light() {
+    PreviewAppTheme(
+        isDarkMode = false
+    ) {
         LiftCard(
             state = LiftCardPreviewStates.Empty,
             onClick = {}
@@ -22,8 +24,10 @@ fun EmptyLiftCardPreview() {
 
 @Preview
 @Composable
-fun PopulatedLiftCardPreview() {
-    AppTheme {
+fun PopulatedLiftCardPreview_Light() {
+    PreviewAppTheme(
+        isDarkMode = false
+    ) {
         LiftCard(
             state = LiftCardPreviewStates.Partial,
             onClick = {}
@@ -33,8 +37,49 @@ fun PopulatedLiftCardPreview() {
 
 @Preview
 @Composable
-fun FullLiftCardPreview() {
-    AppTheme {
+fun FullLiftCardPreview_Light() {
+    PreviewAppTheme(
+        isDarkMode = false
+    ) {
+        LiftCard(
+            state = LiftCardPreviewStates.Full,
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EmptyLiftCardPreview_Dark() {
+    PreviewAppTheme(
+        isDarkMode = true
+    ) {
+        LiftCard(
+            state = LiftCardPreviewStates.Empty,
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PopulatedLiftCardPreview_Dark() {
+    PreviewAppTheme(
+        isDarkMode = true
+    ) {
+        LiftCard(
+            state = LiftCardPreviewStates.Partial,
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun FullLiftCardPreview_Dark() {
+    PreviewAppTheme(
+        isDarkMode = true
+    ) {
         LiftCard(
             state = LiftCardPreviewStates.Full,
             onClick = {}
