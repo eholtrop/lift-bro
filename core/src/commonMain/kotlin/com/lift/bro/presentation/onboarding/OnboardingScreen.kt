@@ -47,7 +47,9 @@ import com.lift.bro.utils.AccessibilityMinimumSize
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.ic_lift_bro_leo
+import lift_bro.core.generated.resources.ic_lift_bro_leo_light
 import lift_bro.core.generated.resources.ic_lift_bro_lisa
+import lift_bro.core.generated.resources.ic_lift_bro_lisa_light
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -147,7 +149,7 @@ fun OnboardingBroScreen(
             ) {
                 Image(
                     modifier = Modifier.weight(1f),
-                    painter = painterResource(Res.drawable.ic_lift_bro_leo),
+                    painter = painterResource(Res.drawable.ic_lift_bro_leo_light),
                     contentDescription = null
                 )
                 Text(
@@ -173,7 +175,7 @@ fun OnboardingBroScreen(
             ) {
                 Image(
                     modifier = Modifier.weight(1f),
-                    painter = painterResource(Res.drawable.ic_lift_bro_lisa),
+                    painter = painterResource(Res.drawable.ic_lift_bro_lisa_light),
                     contentDescription = null
                 )
                 Text(
@@ -250,7 +252,9 @@ fun OnboardingSkipScreen(
             modifier = Modifier.height(Dp.AccessibilityMinimumSize),
             onClick = {
                 coroutineScope.launch {
-                    BackupService.restore()
+                    if (BackupService.restore()) {
+                        continueClicked()
+                    }
                 }
             },
             colors = ButtonDefaults.elevatedButtonColors(),

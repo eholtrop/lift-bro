@@ -36,16 +36,19 @@ object BackupService {
         dependencies.settingsRepository.saveBackupSettings(BackupSettings(lastBackupDate = Clock.System.today))
     }
 
-    suspend fun restore() {
+    suspend fun restore(): Boolean {
         FileKit.openFilePicker(
             type = FileKitType.File("application/json"),
             directory = FileKit.filesDir / "backups"
         )?.apply {
             restore(Json.decodeFromString<Backup>(readString()))
+            return true
+        } ?: kotlin.run {
+            return false
         }
     }
 
-    suspend fun restore(backup: Backup) {
+    suspend fun restore(backup: Backup): Boolean {
         dependencies.database.liftDataSource.deleteAll()
         dependencies.database.variantDataSource.deleteAll()
         dependencies.database.setDataSource.deleteAll()
@@ -65,6 +68,7 @@ object BackupService {
         backup.sets.forEach {
             dependencies.database.setDataSource.save(it)
         }
+        return true
     }
 
 }
