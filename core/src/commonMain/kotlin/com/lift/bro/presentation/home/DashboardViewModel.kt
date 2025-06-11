@@ -30,25 +30,34 @@ class DashboardViewModel(
         variationRepository.listenAll(),
         setRepository.listenAll(),
     ) { lifts, variations, sets ->
-            DashboardState(
-                showEmpty = lifts.isEmpty(),
-                liftCards = lifts.map { lift ->
-                    val liftVariations = variations.filter { it.lift?.id == lift.id }
-                    val liftSets = sets.filter { set -> liftVariations.any { set.variationId == it.id } }
-                    LiftCardState(
-                        lift = lift,
-                        values = liftSets.groupBy { it.date.toLocalDate() }.map { it.key to it.value.maxOf { it.weight } },
-                    )
-                }.sortedBy { it.lift.name.toLowerCase(Locale.current) },
-                excercises = sets.groupBy { it.date }.map { map ->
+        DashboardState(
+            showEmpty = lifts.isEmpty(),
+            liftCards = lifts.map { lift ->
+                val liftVariations = variations.filter { it.lift?.id == lift.id }
+                val liftSets =
+                    sets.filter { set -> liftVariations.any { set.variationId == it.id } }
+                LiftCardState(
+                    lift = lift,
+                    values = liftSets.groupBy { it.date.toLocalDate() }
+                        .map { it.key to it.value.maxOf { it.weight } },
+                )
+            }.sortedBy { it.lift.name.toLowerCase(Locale.current) },
+            excercises = sets.groupBy { it.date }.map { dateSetsEntry ->
+                val variation = variations
+                    .firstOrNull { variation ->
+                        dateSetsEntry.value.any { set -> set.variationId == variation.id }
+                    }
+
+                variation?.let {
                     Excercise(
-                        date = map.key.toLocalDate(),
-                        variation = variations.first { it.id == map.value.first().variationId },
-                        sets = map.value,
+                        date = dateSetsEntry.key.toLocalDate(),
+                        variation = it,
+                        sets = dateSetsEntry.value,
                     )
                 }
-            )
-        }
+            }.filterNotNull()
+        )
+    }
         .stateIn(scope, SharingStarted.Eagerly, initialState)
 
     fun handleEvent(event: DashboardEvent) {

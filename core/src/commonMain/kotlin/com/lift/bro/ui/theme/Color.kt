@@ -1,15 +1,19 @@
 package com.example.compose
 import androidx.compose.ui.graphics.Color
 
-val md_theme_light_primary = Color(0xFFFF7401)
+val pumpkin = Color(0xFFFF7401)
+val aerospaceOrange = Color(0xFFFF4D01)
+val orangePeel = Color(0xFFFF9A01)
+
+val md_theme_light_primary = pumpkin
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)
 val md_theme_light_primaryContainer = Color(0xFFFFD9E2)
 val md_theme_light_onPrimaryContainer = Color(0xFF3E001D)
-val md_theme_light_secondary = Color(0xFFFFC101)
+val md_theme_light_secondary = aerospaceOrange
 val md_theme_light_onSecondary = Color(0xFFFFFFFF)
 val md_theme_light_secondaryContainer = Color(0xFFFFD9E2)
 val md_theme_light_onSecondaryContainer = Color(0xFF2B151C)
-val md_theme_light_tertiary = Color(0xFFFF4D01)
+val md_theme_light_tertiary = orangePeel
 val md_theme_light_onTertiary = Color(0xFFFFFFFF)
 val md_theme_light_tertiaryContainer = Color(0xFFFFDCC2)
 val md_theme_light_onTertiaryContainer = Color(0xFF2E1500)
@@ -32,15 +36,15 @@ val md_theme_light_surfaceTint = Color(0xFF984061)
 val md_theme_light_outlineVariant = Color(0xFFD5C2C6)
 val md_theme_light_scrim = Color(0xFF000000)
 
-val md_theme_dark_primary = Color(0xFFFF7401)
+val md_theme_dark_primary = pumpkin
 val md_theme_dark_onPrimary = Color(0xFFFFFFFF)
 val md_theme_dark_primaryContainer = Color(0xFF7B2949)
 val md_theme_dark_onPrimaryContainer = Color(0xFFFFD9E2)
-val md_theme_dark_secondary = Color(0xFFFF0101)
+val md_theme_dark_secondary = orangePeel
 val md_theme_dark_onSecondary = Color(0xFFFFFFFF)
 val md_theme_dark_secondaryContainer = Color(0xFF5A3F47)
 val md_theme_dark_onSecondaryContainer = Color(0xFFFFD9E2)
-val md_theme_dark_tertiary = Color(0xFFFF4D01)
+val md_theme_dark_tertiary = aerospaceOrange
 val md_theme_dark_onTertiary = Color(0xFFFFFFFF)
 val md_theme_dark_tertiaryContainer = Color(0xFF623F20)
 val md_theme_dark_onTertiaryContainer = Color(0xFFFFDCC2)

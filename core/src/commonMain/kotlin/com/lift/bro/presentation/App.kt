@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
@@ -36,19 +34,10 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.presentation.ads.AdBanner
-import com.lift.bro.presentation.excercise.ExcerciseDetailsScreen
-import com.lift.bro.presentation.home.DashboardScreen
-import com.lift.bro.presentation.home.DashboardViewModel
-import com.lift.bro.presentation.lift.EditLiftScreen
-import com.lift.bro.presentation.lift.LiftDetailsScreen
 import com.lift.bro.presentation.onboarding.LiftBro
-import com.lift.bro.presentation.set.EditSetScreen
-import com.lift.bro.presentation.settings.SettingsScreen
-import com.lift.bro.presentation.variation.VariationDetailsScreen
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.BackupAlertDialog
-import com.lift.bro.ui.dialog.EditVariationDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
@@ -56,9 +45,10 @@ import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlin.random.Random
 
 
-val LocalLiftBro = compositionLocalOf<LiftBro?> {
+val LocalLiftBro = compositionLocalOf<LiftBro> {
     error("LiftBro was not set")
 }
 
@@ -70,7 +60,7 @@ fun App(
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
 
     CompositionLocalProvider(
-        LocalLiftBro provides bro
+        LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa)
     ) {
 
         AppTheme {

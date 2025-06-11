@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardState
@@ -125,7 +126,7 @@ fun DashboardContent(
         title = stringResource(Res.string.dashboard_title),
         leadingContent = {
             TopBarIconButton(
-                imageVector = Icons.Default.Settings,
+                painter = painterResource(LocalLiftBro.current!!.iconRes()),
                 contentDescription = stringResource(Res.string.dashboard_toolbar_leading_button_content_description)
             ) {
                 navCoordinator.present(Destination.Settings)
