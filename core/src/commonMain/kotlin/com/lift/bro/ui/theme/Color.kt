@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 val pumpkin = Color(0xFFFF7401)
 val aerospaceOrange = Color(0xFFFF4D01)
 val orangePeel = Color(0xFFFF9A01)
+val amber = Color(0xFFFFC101)
 
 val md_theme_light_primary = pumpkin
 val md_theme_light_onPrimary = Color(0xFFFFFFFF)

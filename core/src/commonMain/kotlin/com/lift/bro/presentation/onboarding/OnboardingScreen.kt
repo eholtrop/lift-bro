@@ -35,6 +35,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.example.compose.AppTheme
+import com.example.compose.amber
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
 import com.lift.bro.ui.Card
@@ -53,8 +55,8 @@ internal fun Modifier.onboardingBackground(): Modifier = this
     .background(
         brush = Brush.linearGradient(
             colors = listOf(
-                MaterialTheme.colorScheme.tertiary,
                 MaterialTheme.colorScheme.secondary,
+                amber,
             ),
         )
     )
@@ -68,30 +70,35 @@ enum class LiftBro {
 fun OnboardingScreen() {
     var onboardingState by remember { mutableStateOf(0) }
 
-    AnimatedContent(
-        onboardingState,
-        transitionSpec = {
-            (fadeIn(animationSpec = tween(220, delayMillis = 90))
-                .togetherWith(fadeOut(animationSpec = tween(90))))
-        }
-    ) { state ->
-        when (state) {
-            0 -> OnboardingBroScreen {
-                dependencies.settingsRepository.setBro(it)
-                onboardingState += 1
+    AppTheme(
+        useDarkTheme = false,
+    ) {
+
+        AnimatedContent(
+            onboardingState,
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(220, delayMillis = 90))
+                    .togetherWith(fadeOut(animationSpec = tween(90))))
             }
+        ) { state ->
+            when (state) {
+                0 -> OnboardingBroScreen {
+                    dependencies.settingsRepository.setBro(it)
+                    onboardingState += 1
+                }
 //            1 -> OnboardingUOMScreen { onboardingState = 2 }
-            1 -> OnboardingSkipScreen(
-                setupClicked = { onboardingState += 1 },
-                continueClicked = { dependencies.settingsRepository.setDeviceFtux(true) }
-            )
+                1 -> OnboardingSkipScreen(
+                    setupClicked = { onboardingState += 1 },
+                    continueClicked = { dependencies.settingsRepository.setDeviceFtux(true) }
+                )
 
-            2 -> OnboardingSetupScreen { dependencies.settingsRepository.setDeviceFtux(true) }
+                2 -> OnboardingSetupScreen { dependencies.settingsRepository.setDeviceFtux(true) }
+            }
         }
-    }
 
-    BackHandler(enabled = onboardingState != 0) {
-        onboardingState -= 1
+        BackHandler(enabled = onboardingState != 0) {
+            onboardingState -= 1
+        }
     }
 
 }
