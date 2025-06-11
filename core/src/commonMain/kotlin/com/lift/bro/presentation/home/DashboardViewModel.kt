@@ -42,7 +42,7 @@ class DashboardViewModel(
                         .map { it.key to it.value.maxOf { it.weight } },
                 )
             }.sortedBy { it.lift.name.toLowerCase(Locale.current) },
-            excercises = sets.groupBy { it.date }.map { dateSetsEntry ->
+            excercises = sets.groupBy { it.date.toLocalDate() }.map { dateSetsEntry ->
                 val variation = variations
                     .firstOrNull { variation ->
                         dateSetsEntry.value.any { set -> set.variationId == variation.id }
@@ -50,7 +50,7 @@ class DashboardViewModel(
 
                 variation?.let {
                     Excercise(
-                        date = dateSetsEntry.key.toLocalDate(),
+                        date = dateSetsEntry.key,
                         variation = it,
                         sets = dateSetsEntry.value,
                     )
