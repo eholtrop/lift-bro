@@ -4,13 +4,18 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,9 +29,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
@@ -34,6 +42,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.presentation.ads.AdBanner
+import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.Space
@@ -45,6 +54,7 @@ import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import org.jetbrains.compose.resources.painterResource
 import kotlin.random.Random
 
 
@@ -109,31 +119,56 @@ fun App(
                             enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
                             exit = fadeOut(),
                         ) {
-                            Column(
-                                modifier = Modifier
-                                    .semantics(
-                                        mergeDescendants = true,
-                                    ) {
-                                        liveRegion = LiveRegionMode.Assertive
-                                    }
-                                    .background(
-                                        MaterialTheme.colorScheme.primary,
-                                        shape = MaterialTheme.shapes.medium
+                            val speechBubbleColor = MaterialTheme.colorScheme.primary
+                            Column {
+                                Column(
+                                    modifier = Modifier
+                                        .semantics(
+                                            mergeDescendants = true,
+                                        ) {
+                                            liveRegion = LiveRegionMode.Assertive
+                                        }
+                                        .background(
+                                            speechBubbleColor,
+                                            shape = MaterialTheme.shapes.medium
+                                        )
+                                        .padding(MaterialTheme.spacing.one),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Text(
+                                        text = "Congrats!!",
+                                        style = MaterialTheme.typography.headlineLarge,
+                                        color = MaterialTheme.colorScheme.onPrimary,
                                     )
-                                    .padding(MaterialTheme.spacing.one),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Text(
-                                    text = "Congrats!!",
-                                    style = MaterialTheme.typography.headlineLarge,
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                )
-                                Space(MaterialTheme.spacing.half)
-                                Text(
-                                    text = "That's a new Personal Record!",
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
+                                    Space(MaterialTheme.spacing.half)
+                                    Text(
+                                        text = "That's a new Personal Record!",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                                Row {
+                                    Image(
+                                        modifier = Modifier
+                                            .size(72.dp),
+                                        painter = painterResource(LocalLiftBro.current.iconRes()),
+                                        contentDescription = ""
+                                    )
+                                    Canvas(
+                                        modifier = Modifier.size(72.dp.div(2))
+                                    ) {
+                                        drawPath(
+                                            Path().apply {
+                                                moveTo(20f, 0f)
+                                                lineTo(0f, 60f)
+                                                lineTo(60f, 0f)
+                                                lineTo(0f, 0f)
+                                                close()
+                                            },
+                                            speechBubbleColor
+                                        )
+                                    }
+                                }
                             }
                         }
 
