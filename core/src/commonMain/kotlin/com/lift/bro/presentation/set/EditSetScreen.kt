@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -378,13 +379,17 @@ internal fun VariationSelector(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         lifts.forEach { map ->
+            val lift = map.first
+            val variations = map.second
             Row(
                 modifier = Modifier
                     .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
                     .clip(MaterialTheme.shapes.small)
                     .clickable(
                         role = Role.Button,
-                        onClick = { expandedLift = map.first },
+                        onClick = {
+                            expandedLift = if (expandedLift == lift) null else lift
+                        },
                     )
                     .padding(horizontal = MaterialTheme.spacing.half),
                 verticalAlignment = Alignment.CenterVertically,
@@ -395,35 +400,39 @@ internal fun VariationSelector(
                     text = map.first?.name ?: "",
                 )
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
+                    imageVector = if (expandedLift == lift) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                     contentDescription = null
                 )
             }
 
-            if (map.first == expandedLift) {
-                map.second.chunked(2).forEach { variations ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-                    ) {
-                        variations.forEach { variation ->
-                            VariationCard(
-                                modifier = Modifier.padding(MaterialTheme.spacing.quarter)
-                                    .weight(1f),
-                                variation = variation,
-                                onClick = { variationSelected(variation.id) }
-                            )
+            AnimatedVisibility(lift == expandedLift) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    map.second.chunked(2).forEach { variations ->
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                        ) {
+                            variations.forEach { variation ->
+                                VariationCard(
+                                    modifier = Modifier.padding(MaterialTheme.spacing.quarter)
+                                        .weight(1f),
+                                    variation = variation,
+                                    onClick = { variationSelected(variation.id) }
+                                )
+                            }
                         }
                     }
-                }
 
-                Button(
-                    modifier = Modifier.wrapContentWidth().minimumInteractiveComponentSize(),
-                    colors = ButtonDefaults.outlinedButtonColors(),
-                    onClick = {
-                        showCreateVariationDialog = true
+                    Button(
+                        modifier = Modifier.wrapContentWidth().minimumInteractiveComponentSize(),
+                        colors = ButtonDefaults.outlinedButtonColors(),
+                        onClick = {
+                            showCreateVariationDialog = true
+                        }
+                    ) {
+                        Text("Create ${map.first?.name ?: ""} Variation")
                     }
-                ) {
-                    Text("Create ${map.first?.name ?: ""} Variation")
                 }
             }
         }
