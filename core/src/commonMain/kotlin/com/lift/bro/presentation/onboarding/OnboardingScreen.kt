@@ -152,10 +152,6 @@ fun OnboardingBroScreen(
                     painter = painterResource(Res.drawable.ic_lift_bro_leo_light),
                     contentDescription = null
                 )
-                Text(
-                    "Leo",
-                    style = MaterialTheme.typography.titleMedium
-                )
             }
         }
 
@@ -177,10 +173,6 @@ fun OnboardingBroScreen(
                     modifier = Modifier.weight(1f),
                     painter = painterResource(Res.drawable.ic_lift_bro_lisa_light),
                     contentDescription = null
-                )
-                Text(
-                    "Lisa",
-                    style = MaterialTheme.typography.titleMedium
                 )
             }
         }
