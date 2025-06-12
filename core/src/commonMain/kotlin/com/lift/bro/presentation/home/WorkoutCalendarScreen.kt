@@ -62,8 +62,6 @@ fun WorkoutCalendarScreen(
     ) {
 
         item {
-            val defaultColor = MaterialTheme.colorScheme.primary
-
             Calendar(
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight(),

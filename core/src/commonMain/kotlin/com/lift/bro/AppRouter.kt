@@ -47,7 +47,7 @@ fun AppRouter(route: Destination) {
         is Destination.EditLift -> EditLiftScreen(
             liftId = route.liftId,
             liftSaved = {
-                navCoordinator.onBackPressed()
+                navCoordinator.onBackPressed(keepStack = false)
             },
             liftDeleted = {
                 navCoordinator.popToRoot(false)
