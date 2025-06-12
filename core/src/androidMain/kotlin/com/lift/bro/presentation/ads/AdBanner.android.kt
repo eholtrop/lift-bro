@@ -13,6 +13,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.admanager.AdManagerAdRequest
 import com.google.android.gms.ads.admanager.AdManagerAdView
+import com.lift.bro.core.BuildConfig
 
 @Composable
 actual fun AdBanner(modifier: Modifier) {
@@ -33,7 +34,7 @@ actual fun AdBanner(modifier: Modifier) {
             factory = { context ->
                 AdManagerAdView(context).apply {
                     setAdSize(AdSize.BANNER)
-                    adUnitId = "ca-app-pub-2361666372543198/1681617839"
+                    adUnitId = BuildConfig.AD_UNIT_ID
                     loadAd(AdManagerAdRequest.Builder().build())
                 }
             }

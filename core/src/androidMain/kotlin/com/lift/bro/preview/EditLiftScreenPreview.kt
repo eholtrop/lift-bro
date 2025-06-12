@@ -4,8 +4,6 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.lift.EditLiftScreen
-import com.lift.bro.presentation.lift.EditLiftState
-import com.lift.bro.presentation.lift.EditLiftVariationState
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable

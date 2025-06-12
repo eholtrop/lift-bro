@@ -17,3 +17,5 @@ Gemfile.lock
 .kotlin/sessions/
 
 secrets.properties
+
+node_modules/

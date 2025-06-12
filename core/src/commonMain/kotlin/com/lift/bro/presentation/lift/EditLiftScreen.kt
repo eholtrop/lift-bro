@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -230,7 +231,10 @@ internal fun EditLiftScreen(
                     }
 
                     LaunchedEffect(visibilityState.currentState) {
-                        if (!visibilityState.currentState && !visibilityState.targetState && variations.contains(variation)) {
+                        if (!visibilityState.currentState && !visibilityState.targetState && variations.contains(
+                                variation
+                            )
+                        ) {
                             variations.remove(variation)
                         }
                     }
@@ -258,7 +262,9 @@ internal fun EditLiftScreen(
                             focusRequester = focusRequester,
                             variation = variation,
                             liftName = thisLift.name,
-                            onNameChange = { variations[index] = variations[index].copy(name = it) },
+                            onNameChange = {
+                                variations[index] = variations[index].copy(name = it)
+                            },
                             onDelete = {
                                 if (initialVariations.contains(variation)) {
                                     showVariationWarning = true

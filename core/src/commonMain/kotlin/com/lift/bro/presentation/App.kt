@@ -64,6 +64,7 @@ val LocalLiftBro = compositionLocalOf<LiftBro> {
 
 @Composable
 fun App(
+    modifier: Modifier,
     navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding)
 ) {
 
@@ -74,7 +75,9 @@ fun App(
     ) {
 
         AppTheme {
-            Box {
+            Box(
+                modifier = modifier,
+            ) {
                 LaunchedEffect("debug_mode") {
                     if (BuildConfig.isDebug) {
                     }

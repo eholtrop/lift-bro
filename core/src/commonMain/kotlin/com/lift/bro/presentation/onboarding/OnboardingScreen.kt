@@ -32,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -227,7 +229,8 @@ fun OnboardingSkipScreen(
         Space(MaterialTheme.spacing.one.times(3))
 
         Button(
-            modifier = Modifier.height(Dp.AccessibilityMinimumSize),
+            modifier = Modifier.testTag("SETUP_ONBOARDING")
+                .height(Dp.AccessibilityMinimumSize),
             onClick = { setupClicked() },
             colors = ButtonDefaults.elevatedButtonColors(),
         ) {
@@ -241,7 +244,8 @@ fun OnboardingSkipScreen(
 
         val coroutineScope = rememberCoroutineScope()
         Button(
-            modifier = Modifier.height(Dp.AccessibilityMinimumSize),
+            modifier = Modifier.testTag("RESTORE_BACKUP")
+                .height(Dp.AccessibilityMinimumSize),
             onClick = {
                 coroutineScope.launch {
                     if (BackupService.restore()) {
@@ -259,6 +263,9 @@ fun OnboardingSkipScreen(
             )
         }
         Button(
+            modifier = Modifier.semantics(mergeDescendants = true) {}
+                .testTag("SKIP_ONBOARDING")
+                .height(Dp.AccessibilityMinimumSize),
             onClick = { continueClicked() },
             colors = ButtonDefaults.elevatedButtonColors(),
         ) {
@@ -273,3 +280,6 @@ fun OnboardingSkipScreen(
         Space()
     }
 }
+
+@Composable
+expect fun Modifier.resourceId(id: String): Modifier

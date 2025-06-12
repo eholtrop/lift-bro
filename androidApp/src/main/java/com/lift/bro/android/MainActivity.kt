@@ -7,6 +7,9 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import com.google.android.gms.ads.MobileAds
 import com.lift.bro.BuildConfig
 import com.lift.bro.di.DependencyContainer
@@ -36,7 +39,13 @@ class MainActivity : ComponentActivity() {
             }
 
             val coordinator = rememberNavCoordinator(Destination.Unknown)
-            App(navCoordinator = coordinator)
+            App(
+                modifier = Modifier.semantics {
+                    // for ui tests. this ensures that our testTags will be readable by Appium
+                    testTagsAsResourceId = true
+                },
+                navCoordinator = coordinator
+            )
             BackHandler {
                 if (!coordinator.onBackPressed()) {
                     onBackPressed()
