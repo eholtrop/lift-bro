@@ -43,19 +43,18 @@ class DashboardViewModel(
                 )
             }.sortedBy { it.lift.name.toLowerCase(Locale.current) },
             excercises = sets.groupBy { it.date.toLocalDate() }.map { dateSetsEntry ->
-                val variation = variations
-                    .firstOrNull { variation ->
-                        dateSetsEntry.value.any { set -> set.variationId == variation.id }
+                val date = dateSetsEntry.key
+                dateSetsEntry.value.groupBy { it.variationId }.map { map ->
+                    val variation = variations.firstOrNull { it.id == map.key }
+                    variation?.let {
+                        Excercise(
+                            date = date,
+                            variation = variation,
+                            sets = map.value
+                        )
                     }
-
-                variation?.let {
-                    Excercise(
-                        date = dateSetsEntry.key,
-                        variation = it,
-                        sets = dateSetsEntry.value,
-                    )
                 }
-            }.filterNotNull()
+            }.flatten().filterNotNull()
         )
     }
         .stateIn(scope, SharingStarted.Eagerly, initialState)
