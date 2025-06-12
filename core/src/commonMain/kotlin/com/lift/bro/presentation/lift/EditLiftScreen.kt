@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -93,32 +94,6 @@ fun EditLiftScreen(
         initialVariations = variations,
         liftSaved = liftSaved,
         liftDeleted = liftDeleted,
-    )
-}
-
-@Composable
-private fun WarningDialog(
-    title: String = "Warning",
-    text: String,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            Button(
-                colors = ButtonDefaults.outlinedButtonColors(),
-                onClick = onConfirm
-            ) { Text("Okay!") }
-        },
-        dismissButton = {
-            Button(
-                onClick = onDismiss
-            ) { Text("Nevermind") }
-        },
-        title = { Text(title) },
-        icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Warning") },
-        text = { Text(text) },
     )
 }
 
@@ -315,6 +290,32 @@ internal fun EditLiftScreen(
             }
         }
     }
+}
+
+@Composable
+private fun WarningDialog(
+    title: String = "Warning",
+    text: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(
+                colors = ButtonDefaults.outlinedButtonColors(),
+                onClick = onConfirm
+            ) { Text("Okay!") }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss
+            ) { Text("Nevermind") }
+        },
+        title = { Text(title) },
+        icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Warning") },
+        text = { Text(text) },
+    )
 }
 
 @Composable
