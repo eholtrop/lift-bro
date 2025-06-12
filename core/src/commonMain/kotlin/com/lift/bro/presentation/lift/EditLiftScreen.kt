@@ -133,7 +133,7 @@ internal fun EditLiftScreen(
             text = "This will delete all variations and sets for this lift, This cannot be undone",
             onDismiss = { showLiftDeleteWarning = false },
             onConfirm = {
-                GlobalScope.launch {
+                coroutineScope.launch {
                     variations.forEach {
                         dependencies.database.setDataSource.deleteAll(it.id)
                         dependencies.database.variantDataSource.delete(it.id)
