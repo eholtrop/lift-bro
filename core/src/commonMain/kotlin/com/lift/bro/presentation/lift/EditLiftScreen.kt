@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
@@ -30,7 +29,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -39,7 +37,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -47,7 +44,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
@@ -60,7 +56,6 @@ import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 data class EditLiftState(
@@ -96,6 +91,23 @@ fun EditLiftScreen(
 }
 
 @Composable
+private fun WarningDialog(
+    title: String = "Warning",
+    text: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = { Button(onClick = onConfirm) { Text("Okay!") } },
+        dismissButton = { Button(onClick = onDismiss) { Text("Nevermind") } },
+        title = { Text(title) },
+        icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Warning") },
+        text = { Text(text) },
+    )
+}
+
+@Composable
 internal fun EditLiftScreen(
     lift: Lift?,
     initialVariations: List<Variation>,
@@ -106,52 +118,24 @@ internal fun EditLiftScreen(
     var thisLift by remember(lift) { mutableStateOf(lift ?: Lift()) }
     val variations =
         remember(initialVariations) { (initialVariations + Variation()).toMutableStateList() }
-    var showDeleteWarning by remember { mutableStateOf(false) }
+    var showLiftDeleteWarning by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    if (showDeleteWarning) {
-        AlertDialog(
-            onDismissRequest = {
-                showDeleteWarning = false
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        GlobalScope.launch {
-                            variations.forEach {
-                                dependencies.database.setDataSource.deleteAll(it.id)
-                                dependencies.database.variantDataSource.delete(it.id)
-                            }
-                            dependencies.database.liftDataSource.delete(lift?.id ?: "")
-                            liftDeleted()
-                        }
+    if (showLiftDeleteWarning) {
+        WarningDialog(
+            text = "This will delete all variations and sets for this lift, This cannot be undone",
+            onDismiss = { showLiftDeleteWarning = false },
+            onConfirm = {
+                GlobalScope.launch {
+                    variations.forEach {
+                        dependencies.database.setDataSource.deleteAll(it.id)
+                        dependencies.database.variantDataSource.delete(it.id)
                     }
-                ) {
-                    Text("Okay!")
+                    dependencies.database.liftDataSource.delete(lift?.id ?: "")
+                    liftDeleted()
                 }
-            },
-            dismissButton = {
-                Button(
-                    onClick = {
-                        showDeleteWarning = false
-                    }
-                ) {
-                    Text("Nevermind")
-                }
-            },
-            title = {
-                Text("Warning")
-            },
-            icon = {
-                Icon(
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = "Warning"
-                )
-            },
-            text = {
-                Text("This will delete all variations and sets for this lift, This cannot be undone")
-            },
+            }
         )
     }
 
@@ -162,7 +146,7 @@ internal fun EditLiftScreen(
                 imageVector = Icons.Default.Delete,
                 contentDescription = "Delete",
                 onClick = {
-                    showDeleteWarning = true
+                    showLiftDeleteWarning = true
                 },
             )
         },
@@ -252,94 +236,31 @@ internal fun EditLiftScreen(
                     var showVariationWarning by remember { mutableStateOf(false) }
 
                     if (showVariationWarning) {
-                        AlertDialog(
-                            onDismissRequest = {
-                                showVariationWarning = false
-                            },
-                            confirmButton = {
-                                Button(
-                                    onClick = {
-                                        GlobalScope.launch {
-                                            dependencies.database.setDataSource.deleteAll(variation.id)
-                                            dependencies.database.variantDataSource.delete(variation.id)
-                                            variations.remove(variation)
-                                        }
-                                    }
-                                ) {
-                                    Text("Okay!")
-                                }
-                            },
-                            dismissButton = {
-                                Button(
-                                    onClick = {
-                                        showDeleteWarning = false
-                                    }
-                                ) {
-                                    Text("Nevermind")
-                                }
-                            },
-                            title = {
-                                Text("Warning")
-                            },
-                            icon = {
-                                Icon(
-                                    imageVector = Icons.Default.Warning,
-                                    contentDescription = "Warning"
-                                )
-                            },
-                            text = {
-                                Text("This will delete all sets for this variation, This cannot be undone")
-                            },
-                        )
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .background(
-                                color = MaterialTheme.colorScheme.surface,
-                                shape = MaterialTheme.shapes.medium,
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        var modifier = Modifier.weight(1f)
-
-                        if (index == variations.lastIndex) {
-                            modifier = modifier.focusRequester(focusRequester)
-                        }
-
-                        TextField(
-                            modifier = modifier,
-                            value = variation.name ?: "",
-                            singleLine = true,
-                            onValueChange = {
-                                variations[index] = variations[index].copy(name = it)
-                            },
-                            placeholder = {
-                                Text(text = "ex: Back vs Front Squat")
-                            },
-                            suffix = {
-                                Text(text = thisLift.name)
-                            },
-                            colors = TextFieldDefaults.transparentColors()
-                        )
-
-                        Space(MaterialTheme.spacing.one)
-
-                        IconButton(
-                            onClick = {
-                                if (initialVariations.contains(variation)) {
-                                    showVariationWarning = true
-                                } else {
+                        WarningDialog(
+                            text = "This will delete all sets for this variation, This cannot be undone",
+                            onDismiss = { showVariationWarning = false },
+                            onConfirm = {
+                                GlobalScope.launch {
+                                    dependencies.database.setDataSource.deleteAll(variation.id)
+                                    dependencies.database.variantDataSource.delete(variation.id)
                                     variations.remove(variation)
                                 }
                             }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete"
-                            )
-                        }
+                        )
                     }
+
+                    VariationItem(
+                        variation = variation,
+                        liftName = thisLift.name,
+                        onNameChange = { variations[index] = variations[index].copy(name = it) },
+                        onDelete = {
+                            if (initialVariations.contains(variation)) {
+                                showVariationWarning = true
+                            } else {
+                                variations.remove(variation)
+                            }
+                        }
+                    )
                 }
             }
 
@@ -360,6 +281,38 @@ internal fun EditLiftScreen(
             ) {
                 Text("Add Variation")
             }
+        }
+    }
+}
+
+@Composable
+private fun VariationItem(
+    variation: Variation,
+    liftName: String,
+    onNameChange: (String) -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+                shape = MaterialTheme.shapes.medium,
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        TextField(
+            modifier = modifier.weight(1f),
+            value = variation.name ?: "",
+            singleLine = true,
+            onValueChange = onNameChange,
+            placeholder = { Text("e.g., Back, Front, Incline") },
+            suffix = { if(liftName.isNotBlank()) Text(liftName) },
+            colors = TextFieldDefaults.transparentColors()
+        )
+        IconButton(onClick = onDelete) {
+            Icon(Icons.Default.Delete, contentDescription = "Delete Variation")
         }
     }
 }
