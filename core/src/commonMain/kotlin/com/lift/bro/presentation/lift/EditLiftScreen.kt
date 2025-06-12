@@ -2,6 +2,12 @@
 
 package com.lift.bro.presentation.lift
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -227,40 +233,57 @@ internal fun EditLiftScreen(
             )
 
             LazyColumn(
+                modifier = Modifier.animateContentSize(),
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
             ) {
-                itemsIndexed(variations) { index, variation ->
+                itemsIndexed(variations, { index, variation -> variation.id }) { index, variation ->
 
-                    var showVariationWarning by remember { mutableStateOf(false) }
+                    var showVariationWarning by remember { mutableStateOf(false) }// 1. Create a transition state for each item's visibility
+                    val visibilityState = remember {
+                        MutableTransitionState<Boolean>(true)
+                    }
+
+                    LaunchedEffect(visibilityState.currentState) {
+                        if (!visibilityState.currentState && !visibilityState.targetState && variations.contains(variation)) {
+                            variations.remove(variation)
+                        }
+                    }
 
                     if (showVariationWarning) {
                         WarningDialog(
                             text = "This will delete all sets for this variation, This cannot be undone",
                             onDismiss = { showVariationWarning = false },
                             onConfirm = {
-                                GlobalScope.launch {
-                                    dependencies.database.setDataSource.deleteAll(variation.id)
-                                    dependencies.database.variantDataSource.delete(variation.id)
-                                    variations.remove(variation)
-                                }
+                                visibilityState.targetState = false
+                                showVariationWarning = false
                             }
                         )
                     }
 
-                    VariationItem(
-                        variation = variation,
-                        liftName = thisLift.name,
-                        onNameChange = { variations[index] = variations[index].copy(name = it) },
-                        onDelete = {
-                            if (initialVariations.contains(variation)) {
-                                showVariationWarning = true
-                            } else {
-                                variations.remove(variation)
+
+
+                    AnimatedVisibility(
+                        visibleState = visibilityState,
+                        enter = fadeIn() + slideInVertically(),
+                        exit = fadeOut()
+                    ) {
+                        VariationItem(
+                            modifier = Modifier.animateItem(),
+                            focusRequester = focusRequester,
+                            variation = variation,
+                            liftName = thisLift.name,
+                            onNameChange = { variations[index] = variations[index].copy(name = it) },
+                            onDelete = {
+                                if (initialVariations.contains(variation)) {
+                                    showVariationWarning = true
+                                } else {
+                                    visibilityState.targetState = false
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
             }
 
@@ -289,13 +312,13 @@ internal fun EditLiftScreen(
 private fun VariationItem(
     variation: Variation,
     liftName: String,
+    focusRequester: FocusRequester = FocusRequester(),
     onNameChange: (String) -> Unit,
     onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .background(
                 color = MaterialTheme.colorScheme.surface,
                 shape = MaterialTheme.shapes.medium,
@@ -303,12 +326,12 @@ private fun VariationItem(
         verticalAlignment = Alignment.CenterVertically
     ) {
         TextField(
-            modifier = modifier.weight(1f),
+            modifier = Modifier.weight(1f).focusRequester(focusRequester),
             value = variation.name ?: "",
             singleLine = true,
             onValueChange = onNameChange,
             placeholder = { Text("e.g., Back, Front, Incline") },
-            suffix = { if(liftName.isNotBlank()) Text(liftName) },
+            suffix = { if (liftName.isNotBlank()) Text(liftName) },
             colors = TextFieldDefaults.transparentColors()
         )
         IconButton(onClick = onDelete) {
