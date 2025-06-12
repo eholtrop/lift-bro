@@ -57,14 +57,13 @@ fun TempoSelector(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+//        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
     ) {
 
         Row(
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                modifier = Modifier.weight(1f),
                 text = "With a tempo of...",
                 style = MaterialTheme.typography.titleMedium
             )
@@ -141,7 +140,7 @@ private fun InfoDialogText() {
         )
         Text(
             modifier = Modifier.padding(start = MaterialTheme.spacing.half),
-            text = "• picking up a deadlift\n• putting coming up from a squat\n• pushing the bar up in a bench press",
+            text = "• picking up a deadlift\n• coming up from a squat\n• pushing the bar up in a bench press",
             style = MaterialTheme.typography.bodyMedium,
         )
 
