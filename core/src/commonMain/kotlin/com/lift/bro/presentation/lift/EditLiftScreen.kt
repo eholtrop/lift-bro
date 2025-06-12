@@ -105,8 +105,17 @@ private fun WarningDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        confirmButton = { Button(onClick = onConfirm) { Text("Okay!") } },
-        dismissButton = { Button(onClick = onDismiss) { Text("Nevermind") } },
+        confirmButton = {
+            Button(
+                colors = ButtonDefaults.outlinedButtonColors(),
+                onClick = onConfirm
+            ) { Text("Okay!") }
+        },
+        dismissButton = {
+            Button(
+                onClick = onDismiss
+            ) { Text("Nevermind") }
+        },
         title = { Text(title) },
         icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Warning") },
         text = { Text(text) },
