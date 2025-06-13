@@ -33,4 +33,18 @@
     <string name="date_selector_dialog_confirm_button_text">Ok</string>
     <string name="date_selector_dialog_dismiss_button_text">Close</string>
     <string name="date_selector_title">On</string>
+
+    <string name="create_set_screen_title">I Crushed</string>
+    <string name="edit_set_screen_title">You Crushed</string>
+    <string name="edit_set_screen_delete_acc_label">Delete</string>
+
+    <string name="edit_set_screen_variation_selector_empty_state_title">Select Lift</string>
+
+    <string name="edit_set_screen_variation_selector_lift_max">%s Max: %s</string>
+    <string name="edit_set_screen_variation_selector_variation_max">%s Max: %s</string>
+    <string name="edit_set_screen_variation_selector_no_lift_max">None</string>
+    <string name="edit_set_screen_variation_selector_no_variation_max">None</string>
+    <string name="edit_set_screen_extra_notes_label">Extra Notes:</string>
+    <string name="edit_set_screen_extra_notes_placeholder">I killed it today!</string>
+
 </resources>

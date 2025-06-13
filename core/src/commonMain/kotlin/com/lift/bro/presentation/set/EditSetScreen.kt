@@ -68,6 +68,12 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.create_set_screen_title
+import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
+import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
+import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
+import lift_bro.core.generated.resources.edit_set_screen_title
+import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
 import lift_bro.core.generated.resources.weight_selector_chin_subtitle
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
@@ -147,13 +153,13 @@ fun EditSetScreen(
                 setSaved()
             },
         ),
-        title = "${if (setId != null) "You" else "I"} Crushed...",
+        title = stringResource(if (setId != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title),
         trailingContent = {
             if (setId != null) {
                 val navCoordinator = LocalNavCoordinator.current
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = stringResource(Res.string.edit_set_screen_delete_acc_label),
                     onClick = {
                         coroutineScope.launch {
                             dependencies.database.setDataSource.delete(setId)
@@ -258,7 +264,7 @@ fun EditSetScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = variation?.fullName ?: "Select Lift",
+                            text = variation?.fullName ?: stringResource(Res.string.edit_set_screen_variation_selector_empty_state_title),
                             style = MaterialTheme.typography.titleLarge,
                         )
 
@@ -315,7 +321,7 @@ fun EditSetScreen(
                             .padding(horizontal = MaterialTheme.spacing.one),
                     ) {
                         Text(
-                            "Extra Notes:",
+                            stringResource(Res.string.edit_set_screen_extra_notes_label),
                             style = MaterialTheme.typography.titleMedium
                         )
 
@@ -324,7 +330,7 @@ fun EditSetScreen(
                             value = set.notes,
                             singleLine = true,
                             placeholder = {
-                                Text("I killed it today!")
+                                Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
                             },
                             onValueChange = {
                                 set = set.copy(notes = it)
