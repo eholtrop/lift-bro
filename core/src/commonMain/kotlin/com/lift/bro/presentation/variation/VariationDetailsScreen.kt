@@ -73,13 +73,6 @@ private enum class Grouping {
     Weight
 }
 
-private fun Grouping.title(set: LBSet) = when (this) {
-    Grouping.Date -> "${set.formattedWeight} x ${set.reps}"
-    Grouping.Reps -> set.formattedWeight
-    Grouping.Tempo -> "${set.formattedWeight} x ${set.reps}"
-    Grouping.Weight -> set.formattedMax
-}
-
 @Composable
 fun VariationDetailsScreen(
     variationId: String,

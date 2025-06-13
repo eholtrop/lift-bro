@@ -321,7 +321,7 @@ private fun VariationCard(
                         }
 
                     Text(
-                        text = maxLift?.let { "${it.formattedWeight} Max" } ?: run { "No Max" },
+                        text = maxLift?.let { "${it.formattedWeight()} Max" } ?: run { "No Max" },
                         style = MaterialTheme.typography.titleSmall
                     )
 
@@ -417,7 +417,7 @@ private fun VariationCard(
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 Text(
-                                    text = "${set.formattedWeight} x ${set.reps}",
+                                    text = "${set.formattedWeight()} x ${set.reps}",
                                     style = MaterialTheme.typography.titleSmall
                                 )
                                 set.tempo.render()

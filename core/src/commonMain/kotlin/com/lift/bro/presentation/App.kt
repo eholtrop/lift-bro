@@ -40,6 +40,7 @@ import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
+import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.home.iconRes
@@ -54,12 +55,17 @@ import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
 import org.jetbrains.compose.resources.painterResource
 import kotlin.random.Random
 
 
 val LocalLiftBro = compositionLocalOf<LiftBro> {
     error("LiftBro was not set")
+}
+
+val LocalUnitOfMeasure = compositionLocalOf<UOM> {
+    error("UOM was not set")
 }
 
 @Composable
@@ -69,9 +75,11 @@ fun App(
 ) {
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
+    val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }.collectAsState(UOM.POUNDS)
 
     CompositionLocalProvider(
-        LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa)
+        LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
+        LocalUnitOfMeasure provides uom
     ) {
 
         AppTheme {

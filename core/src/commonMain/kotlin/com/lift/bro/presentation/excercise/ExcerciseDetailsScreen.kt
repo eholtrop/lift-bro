@@ -159,7 +159,7 @@ fun SetInfoRow(
         modifier = modifier,
     ) {
         Text(
-            text = "${set.formattedWeight} x ${set.reps}",
+            text = "${set.formattedWeight()} x ${set.reps}",
             style = MaterialTheme.typography.titleMedium,
         )
         set.tempo.render()

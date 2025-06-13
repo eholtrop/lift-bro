@@ -282,8 +282,8 @@ fun EditSetScreen(
                             val liftMax = sets.maxByOrNull { it.weight }
                             val variationMax = sets.filter { it.variationId == variation.id }
                                 .maxByOrNull { it.weight }
-                            Text("${variation.lift?.name ?: ""} Max: ${liftMax?.formattedWeight ?: "None"}")
-                            Text("${variation.fullName} Max: ${variationMax?.formattedWeight ?: "None"}")
+                            Text("${variation.lift?.name ?: ""} Max: ${liftMax?.formattedWeight() ?: "None"}")
+                            Text("${variation.fullName} Max: ${variationMax?.formattedWeight() ?: "None"}")
                         }
                     }
                 }
