@@ -149,7 +149,7 @@ internal fun EditLiftScreen(
                     thisLift
                 )
                 coroutineScope.launch {
-                    variations.forEach {
+                    variations.filter { it.name != null }.forEach {
                         dependencies.database.variantDataSource.save(
                             id = it.id,
                             liftId = thisLift.id,
@@ -227,14 +227,13 @@ internal fun EditLiftScreen(
 
                     var showVariationWarning by remember { mutableStateOf(false) }// 1. Create a transition state for each item's visibility
                     val visibilityState = remember {
-                        MutableTransitionState<Boolean>(true)
+                        MutableTransitionState(true)
                     }
 
                     LaunchedEffect(visibilityState.currentState) {
-                        if (!visibilityState.currentState && !visibilityState.targetState && variations.contains(
-                                variation
-                            )
-                        ) {
+                        if (!visibilityState.currentState && !visibilityState.targetState && variations.contains(variation)) {
+                            dependencies.database.variantDataSource.delete(variation.id)
+                            dependencies.database.setDataSource.deleteAll(variation.id)
                             variations.remove(variation)
                         }
                     }
