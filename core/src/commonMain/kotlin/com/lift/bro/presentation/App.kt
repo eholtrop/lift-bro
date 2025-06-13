@@ -92,9 +92,6 @@ fun App(
                     ) { route ->
                         AppRouter(route)
                     }
-                    if (!BuildConfig.isDebug) {
-                        AdBanner(modifier = Modifier.fillMaxWidth().navigationBarsPadding())
-                    }
                 }
 
                 // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix

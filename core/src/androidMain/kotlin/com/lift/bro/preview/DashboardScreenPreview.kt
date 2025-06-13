@@ -5,6 +5,7 @@ import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.home.DashboardContent
+import com.lift.bro.presentation.home.DashboardListItem
 import com.lift.bro.presentation.home.DashboardState
 import com.lift.bro.presentation.home.Tab
 import com.lift.bro.ui.navigation.Destination
@@ -128,6 +129,6 @@ fun DashboardCalendarScreenPreview_Dark() {
 
 val dashboardPreviewState = DashboardState(
     showEmpty = false,
-    liftCards = LiftCardPreviewStates.All,
+    items = LiftCardPreviewStates.All.map { DashboardListItem.LiftCard(it) },
     excercises = emptyList(),
 )

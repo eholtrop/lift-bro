@@ -32,16 +32,27 @@ class DashboardViewModel(
     ) { lifts, variations, sets ->
         DashboardState(
             showEmpty = lifts.isEmpty(),
-            liftCards = lifts.map { lift ->
+            items = lifts.map { lift ->
                 val liftVariations = variations.filter { it.lift?.id == lift.id }
                 val liftSets =
                     sets.filter { set -> liftVariations.any { set.variationId == it.id } }
-                LiftCardState(
-                    lift = lift,
-                    values = liftSets.groupBy { it.date.toLocalDate() }
-                        .map { it.key to it.value.maxOf { it.weight } },
+                DashboardListItem.LiftCard(
+                    LiftCardState(
+                        lift = lift,
+                        values = liftSets.groupBy { it.date.toLocalDate() }
+                            .map { it.key to it.value.maxOf { it.weight } },
+                    )
                 )
-            }.sortedBy { it.lift.name.toLowerCase(Locale.current) },
+            }.sortedBy { it.state.lift.name.toLowerCase(Locale.current) }
+                .toMutableList<DashboardListItem>().apply {
+                    if (this.size == 0) {
+
+                    } else if (this.size < 2) {
+                        this.add(DashboardListItem.Ad)
+                    } else {
+                        this.add(2, DashboardListItem.Ad)
+                    }
+                }.toList(),
             excercises = sets.groupBy { it.date.toLocalDate() }.map { dateSetsEntry ->
                 val date = dateSetsEntry.key
                 dateSetsEntry.value.groupBy { it.variationId }.map { map ->

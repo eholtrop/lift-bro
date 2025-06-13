@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.Space
@@ -93,6 +94,10 @@ fun WorkoutCalendarScreen(
                     }
                 }
             )
+        }
+
+        item {
+            AdBanner(modifier = Modifier.defaultMinSize(minHeight = 52.dp).fillMaxWidth())
         }
 
         item {

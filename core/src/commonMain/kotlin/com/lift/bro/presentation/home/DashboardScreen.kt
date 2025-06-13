@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -37,6 +39,7 @@ import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftBro
+import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardState
@@ -61,9 +64,14 @@ import org.jetbrains.compose.resources.stringResource
 
 data class DashboardState(
     val showEmpty: Boolean,
-    val liftCards: List<LiftCardState>,
+    val items: List<DashboardListItem>,
     val excercises: List<Excercise>
 )
+
+sealed class DashboardListItem {
+    data class LiftCard(val state: LiftCardState) : DashboardListItem()
+    object Ad : DashboardListItem()
+}
 
 sealed class DashboardEvent {
     object RestoreDefaultLifts : DashboardEvent()
@@ -225,12 +233,21 @@ fun DashboardContent(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 ) {
-                    items(dashboardState.liftCards) { state ->
-                        LiftCard(
-                            modifier = Modifier.padding(MaterialTheme.spacing.quarter),
-                            state = state,
-                            onClick = liftClicked
-                        )
+                    items(
+                        dashboardState.items,
+                        span = { item ->
+                            if (item is DashboardListItem.Ad) GridItemSpan(2) else GridItemSpan(1)
+                        }) { s ->
+                        when (val state = s) {
+                            DashboardListItem.Ad -> AdBanner(modifier = Modifier.defaultMinSize(minHeight = 52.dp))
+                            is DashboardListItem.LiftCard -> {
+                                LiftCard(
+                                    modifier = Modifier.padding(MaterialTheme.spacing.quarter),
+                                    state = state.state,
+                                    onClick = liftClicked
+                                )
+                            }
+                        }
                     }
                     item {
                         Spacer(modifier = Modifier.height(72.dp))
