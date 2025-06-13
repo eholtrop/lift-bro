@@ -98,18 +98,16 @@ fun App(
                 }
 
                 // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix
-                var showCelebration by remember { mutableStateOf(false) }
+                var celebration by remember { mutableStateOf<CelebrationType>(CelebrationType.None) }
 
                 LaunchedEffect(Unit) {
                     GetCelebrationTypeUseCase()
                         .collectLatest {
-                            if (it != CelebrationType.None) {
-                                showCelebration = true
-                            }
+                            celebration = it
                         }
                 }
 
-                if (showCelebration) {
+                if (celebration != CelebrationType.None) {
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
@@ -145,7 +143,13 @@ fun App(
                                     )
                                     Space(MaterialTheme.spacing.half)
                                     Text(
-                                        text = "That's a new Personal Record!",
+                                        text = when (val cel = celebration) {
+                                            CelebrationType.FirstLift -> "That's a new Personal Record!"
+                                            CelebrationType.FirstVariation -> "That's a new Personal Record!"
+                                            is CelebrationType.NewLiftMax -> "That's a new ${cel.liftName} Personal Record!"
+                                            is CelebrationType.NewVariationMax -> "That's a new ${cel.variationName} Personal Record!"
+                                            CelebrationType.None -> ""
+                                        },
                                         style = MaterialTheme.typography.bodyLarge,
                                         color = MaterialTheme.colorScheme.onPrimary
                                     )
@@ -181,7 +185,7 @@ fun App(
                             delay(4000)
                             showMessage = false
                             delay(2000)
-                            showCelebration = false
+                            celebration = CelebrationType.None
                         }
                     }
                 }
