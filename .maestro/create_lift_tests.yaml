@@ -1,0 +1,42 @@
+appId: com.lift.bro
+---
+- runFlow:
+    file: flows/skip_onboarding.yaml
+
+- tapOn: "Create Lift"
+- assertVisible: "ex: Squat, Bench Press, Deadlift"
+
+- tapOn: "ex: Squat, Bench Press, Deadlift"
+- inputText: "Bench Press"
+
+- tapOn: "Delete Variation"
+- assertNotVisible:
+    text: "Delete Variation"
+
+# Add all 3 types of variations, one populated, one "tampered with" and one empty
+- tapOn: "Add Variation"
+- assertVisible:
+    id: "com.google.android.inputmethod.latin:id/key_pos_del"
+- inputText: "Incline"
+
+- tapOn: "Add Variation"
+- inputText: " "
+- tapOn:
+    id: "com.google.android.inputmethod.latin:id/key_pos_del"
+
+- tapOn: "Add Variation"
+- tapOn:
+    id: "android:id/input_method_nav_back"
+
+- tapOn: "Save Lift"
+- tapOn: "Bench Press"
+
+- assertVisible: "Incline Bench Press"
+- assertVisible: " Bench Press"
+
+- tapOn: "Edit"
+- tapOn: "Delete"
+- tapOn: "Okay!"
+
+# assert empty state is shown again
+- assertVisible: "Do you even Lift Bro?"

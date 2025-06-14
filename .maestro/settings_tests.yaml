@@ -1,0 +1,12 @@
+appId: com.lift.bro
+
+---
+- runFlow:
+    file: flows/skip_onboarding_with_backup.yaml
+
+# Test Settings UOM Change
+- assertVisible: "30 lbs"
+- tapOn: "Settings"
+- tapOn: "kg"
+- tapOn: "Back"
+- assertVisible: "30 kg"

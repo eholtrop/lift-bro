@@ -1,0 +1,8 @@
+appId: com.lift.bro
+
+---
+
+- runFlow:
+    file: onboarding_select_bro.yaml
+- tapOn: "🦺 Restore from a Backup"
+- tapOn: "2025-06-12_15_51_15.json"

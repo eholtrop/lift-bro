@@ -2,18 +2,16 @@
 appId: com.lift.bro
 ---
 # Test Case 1: The user chooses to skip onboarding and sees the empty state
-#- runFlow:
-#      file: flows/skip_onboarding.yaml
-#- assertVisible: "Do you even Lift Bro?"
-#
-### Test Case 2: The user can restore a backup from onboarding
-#- runFlow:
-#      file: flows/onboarding_select_bro.yaml
-#- tapOn: "🦺 Restore from a Backup"
-#- tapOn: "2025-06-12_15_51_15.json"
-#- assertVisible: "LIFT BRO"
-#- assertVisible: "Curl"
-#- assertVisible: "30 lbs"
+- runFlow:
+      file: flows/skip_onboarding.yaml
+- assertVisible: "Do you even Lift Bro?"
+
+## Test Case 2: The user can restore a backup from onboarding
+- runFlow:
+      file: flows/skip_onboarding_with_backup.yaml
+- assertVisible: "LIFT BRO"
+- assertVisible: "Curl"
+- assertVisible: "30 lbs"
 
 ## Test Case 3: The use goes through the full setup flow
 - runFlow:

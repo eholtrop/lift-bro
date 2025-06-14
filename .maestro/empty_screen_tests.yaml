@@ -1,0 +1,16 @@
+# onboarding_tests.yaml
+appId: com.lift.bro
+
+---
+- runFlow:
+    file: flows/skip_onboarding.yaml
+
+- assertVisible: "Do you even Lift Bro?"
+
+- tapOn: "Create Lift"
+- assertVisible: "ex: Squat, Bench Press, Deadlift"
+- tapOn: "Back"
+
+- tapOn: "Restore a Backup"
+- tapOn: "2025-06-12_15_51_15.json"
+- assertVisible: "LIFT BRO"
