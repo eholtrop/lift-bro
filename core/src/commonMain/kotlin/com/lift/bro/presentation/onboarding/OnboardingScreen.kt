@@ -137,6 +137,7 @@ fun OnboardingBroScreen(
 
         Card(
             modifier = Modifier.fillMaxWidth(.5f)
+                .testTag("LEO_CARD")
                 .aspectRatio(1f)
                 .border(
                     width = if (bro == LiftBro.Leo) 4.dp else 0.dp,

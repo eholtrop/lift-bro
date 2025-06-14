@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,14 +24,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
-import com.lift.bro.utils.decimalFormat
-import com.lift.bro.ui.dialog.CreateMaxSetDialog
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.toString
+import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toColor
-import com.lift.bro.utils.toLocalDate
+import com.lift.bro.utils.toString
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
@@ -84,26 +82,13 @@ fun LiftCard(
             Space(MaterialTheme.spacing.half)
 
             if (max == null) {
-                var showMaxDialog by remember { mutableStateOf(false) }
-
-                if (showMaxDialog) {
-                    CreateMaxSetDialog(
-                        parentLiftId = lift.id,
-                        onDismissRequest = {
-                            showMaxDialog = false
-                        },
-                        onSetCreated = {
-                            showMaxDialog = false
-                        },
-                    )
-                }
-
+                val coordinator = LocalNavCoordinator.current
                 Column(
                     modifier = Modifier.fillMaxSize()
                         .clip(MaterialTheme.shapes.medium)
                         .clickable(
                             onClick = {
-                                showMaxDialog = true
+                                coordinator.present(Destination.EditSet(liftId = lift.id))
                             },
                             role = Role.Button,
                         ),

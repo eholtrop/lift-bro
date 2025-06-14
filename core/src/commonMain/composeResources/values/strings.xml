@@ -22,7 +22,7 @@
 
 
     <string name="lift_card_empty_title">No Sets!</string>
-    <string name="lift_card_empty_subtitle">Tap to set your Max</string>
+    <string name="lift_card_empty_subtitle">Tap to add one</string>
 
     <string name="toolbar_update_button_content_description">Update Lift Bro</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
