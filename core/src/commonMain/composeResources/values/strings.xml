@@ -47,4 +47,16 @@
     <string name="edit_set_screen_extra_notes_label">Extra Notes:</string>
     <string name="edit_set_screen_extra_notes_placeholder">I killed it today!</string>
 
+
+    <!-- ONBOARDING -->
+    <string name="onboarding_page_one_title">CHOOSE\nYOUR\nLIFT BRO</string>
+    <string name="onboarding_page_one_cta">Continue</string>
+    <string name="onboarding_leo_content_description">Lift Bro With Short Hair</string>
+    <string name="onboarding_lisa_content_description">Lift Bro With A Ponytail</string>
+
+
+    <string name="onboarding_page_two_title">LETS\nGOOOOO!</string>
+    <string name="onboarding_page_two_subtitle">How would you like to get things started?</string>
+    <string name="onboarding_page_three_title"></string>
+
 </resources>

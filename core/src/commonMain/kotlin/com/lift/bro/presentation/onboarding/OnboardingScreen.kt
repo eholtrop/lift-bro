@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -43,16 +43,20 @@ import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.ic_lift_bro_leo
 import lift_bro.core.generated.resources.ic_lift_bro_leo_light
-import lift_bro.core.generated.resources.ic_lift_bro_lisa
 import lift_bro.core.generated.resources.ic_lift_bro_lisa_light
+import lift_bro.core.generated.resources.onboarding_leo_content_description
+import lift_bro.core.generated.resources.onboarding_lisa_content_description
+import lift_bro.core.generated.resources.onboarding_page_one_cta
+import lift_bro.core.generated.resources.onboarding_page_one_title
+import lift_bro.core.generated.resources.onboarding_page_two_subtitle
+import lift_bro.core.generated.resources.onboarding_page_two_title
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun Modifier.onboardingBackground(): Modifier = this
@@ -129,16 +133,20 @@ fun OnboardingBroScreen(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "CHOOSE\nYOUR\nLIFT BRO",
+            text = stringResource(Res.string.onboarding_page_one_title),
             style = MaterialTheme.typography.displayLarge
         )
 
         Space()
 
+        val leoContentDescription = stringResource(Res.string.onboarding_leo_content_description)
         Card(
             modifier = Modifier.fillMaxWidth(.5f)
                 .testTag("LEO_CARD")
                 .aspectRatio(1f)
+                .semantics(mergeDescendants = true) {
+                    contentDescription = leoContentDescription
+                }
                 .border(
                     width = if (bro == LiftBro.Leo) 4.dp else 0.dp,
                     color = Color.Black,
@@ -158,9 +166,13 @@ fun OnboardingBroScreen(
             }
         }
 
+        val lisaContentDescription = stringResource(Res.string.onboarding_lisa_content_description)
         Card(
             modifier = Modifier.fillMaxWidth(.5f)
                 .aspectRatio(1f)
+                .semantics(mergeDescendants = true) {
+                    contentDescription = lisaContentDescription
+                }
                 .border(
                     width = if (bro == LiftBro.Lisa) 4.dp else 0.dp,
                     color = Color.Black,
@@ -191,7 +203,7 @@ fun OnboardingBroScreen(
             enabled = bro != null
         ) {
             Text(
-                "Continue",
+                stringResource(Res.string.onboarding_page_one_cta),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -217,20 +229,20 @@ fun OnboardingSkipScreen(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "LETS\nGOOOOO!",
+            text = stringResource(Res.string.onboarding_page_two_title),
             style = MaterialTheme.typography.displayLarge
         )
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "How would you like to get things started?",
+            text = stringResource(Res.string.onboarding_page_two_subtitle),
             style = MaterialTheme.typography.titleLarge
         )
 
         Space(MaterialTheme.spacing.one.times(3))
 
         Button(
-            modifier = Modifier.testTag("SETUP_ONBOARDING")
+            modifier = Modifier
                 .height(Dp.AccessibilityMinimumSize),
             onClick = { setupClicked() },
             colors = ButtonDefaults.elevatedButtonColors(),
@@ -245,7 +257,7 @@ fun OnboardingSkipScreen(
 
         val coroutineScope = rememberCoroutineScope()
         Button(
-            modifier = Modifier.testTag("RESTORE_BACKUP")
+            modifier = Modifier
                 .height(Dp.AccessibilityMinimumSize),
             onClick = {
                 coroutineScope.launch {
@@ -264,8 +276,7 @@ fun OnboardingSkipScreen(
             )
         }
         Button(
-            modifier = Modifier.semantics(mergeDescendants = true) {}
-                .testTag("SKIP_ONBOARDING")
+            modifier = Modifier
                 .height(Dp.AccessibilityMinimumSize),
             onClick = { continueClicked() },
             colors = ButtonDefaults.elevatedButtonColors(),
@@ -283,4 +294,4 @@ fun OnboardingSkipScreen(
 }
 
 @Composable
-expect fun Modifier.resourceId(id: String): Modifier
+expect fun Modifier.testContentDescription(id: String): Modifier
