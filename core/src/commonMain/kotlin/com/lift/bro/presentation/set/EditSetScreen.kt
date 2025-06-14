@@ -88,6 +88,7 @@ data class EditSetState(
     val up: Long? = 1,
     val date: Instant = Clock.System.now(),
     val notes: String = "",
+    val rpe: Int? = null,
 )
 
 private fun LBSet.toUiState() = EditSetState(
@@ -100,6 +101,7 @@ private fun LBSet.toUiState() = EditSetState(
     up = this.tempo.up,
     date = this.date,
     notes = this.notes,
+    rpe = this.rpe,
 )
 
 private fun EditSetState.toDomain() = LBSet(
@@ -182,12 +184,9 @@ fun EditSetScreen(
                 ) {
                     RepWeightSelector(
                         set = set,
-                        repChanged = {
-                            set = set.copy(reps = it)
-                        },
-                        weightChanged = {
-                            set = set.copy(weight = it)
-                        }
+                        repChanged = { set = set.copy(reps = it) },
+                        weightChanged = { set = set.copy(weight = it) },
+                        rpeChanged = { set.copy(rpe = it) }
                     )
 
                     val sets = dependencies.database.setDataSource.getAllForLift(

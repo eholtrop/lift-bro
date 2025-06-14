@@ -133,6 +133,7 @@ class SetDataSource(
                 tempoUp = set.tempo.up,
                 date = set.date,
                 notes = set.notes,
+                rpe = set.rpe?.toLong(),
             )
         }
     }
@@ -161,6 +162,7 @@ class SetDataSource(
         ),
         date = this.date,
         notes = this.notes,
+        rpe = this.rpe?.toInt(),
     )
 }
 

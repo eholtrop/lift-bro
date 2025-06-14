@@ -16,6 +16,7 @@ data class LBSet(
     val tempo: Tempo = Tempo(),
     val date: Instant = Clock.System.now(),
     val notes: String,
+    val rpe: Int? = null,
 ) {
     val excerciseId = variationId + date.toLocalDate().toString("dd-MM-yyyy")
 }
