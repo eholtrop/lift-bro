@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.ads.AdBanner
@@ -65,7 +66,8 @@ import org.jetbrains.compose.resources.stringResource
 data class DashboardState(
     val showEmpty: Boolean,
     val items: List<DashboardListItem>,
-    val excercises: List<Excercise>
+    val excercises: List<Excercise>,
+    val logs: List<LiftingLog>,
 )
 
 sealed class DashboardListItem {
@@ -260,6 +262,7 @@ fun DashboardContent(
                     modifier = Modifier.padding(padding),
                     variationClicked = setClicked,
                     excercises = dashboardState.excercises,
+                    logs = dashboardState.logs,
                 )
             }
         }

@@ -171,4 +171,5 @@ val debugBackup = Backup(
     lifts = debugLifts,
     variations = debugVariations,
     sets = debugSets,
+    liftingLogs = emptyList(),
 )

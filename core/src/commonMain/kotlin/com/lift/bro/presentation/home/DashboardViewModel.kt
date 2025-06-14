@@ -2,17 +2,22 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import com.lift.bro.BackupService
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
+import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -29,7 +34,8 @@ class DashboardViewModel(
         liftRepository.listenAll(),
         variationRepository.listenAll(),
         setRepository.listenAll(),
-    ) { lifts, variations, sets ->
+        dependencies.database.logDataSource.getAll().asFlow().mapToList(Dispatchers.IO),
+    ) { lifts, variations, sets, logs ->
         DashboardState(
             showEmpty = lifts.isEmpty(),
             items = lifts.map { lift ->
@@ -65,7 +71,15 @@ class DashboardViewModel(
                         )
                     }
                 }
-            }.flatten().filterNotNull()
+            }.flatten().filterNotNull(),
+            logs = logs.map {
+                LiftingLog(
+                    id = it.id,
+                    date = it.date,
+                    notes = it.notes ?: "",
+                    vibe = it.vibe_check?.toInt(),
+                )
+            },
         )
     }
         .stateIn(scope, SharingStarted.Eagerly, initialState)

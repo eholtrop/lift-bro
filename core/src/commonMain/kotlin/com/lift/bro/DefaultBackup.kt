@@ -73,4 +73,5 @@ val defaultSbdLifts = Backup(
     lifts = defaultSBDLifts,
     variations = debugVariations,
     sets = emptyList(),
+    liftingLogs = emptyList(),
 )

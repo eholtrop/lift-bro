@@ -109,7 +109,7 @@ fun Calendar(
     contentPadding: PaddingValues,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
-    dateDecorations: @Composable (LocalDate) -> Unit,
+    dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
     dateSelected: (LocalDate) -> Unit,
 ) {
     Column(
@@ -143,7 +143,7 @@ private fun CalendarContent(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateSelected: (LocalDate) -> Unit,
-    dateDecorations: @Composable (LocalDate) -> Unit,
+    dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -283,7 +283,7 @@ fun CalendarDate(
     date: LocalDate,
     style: CalendarDateStyle,
     onClick: (LocalDate) -> Unit,
-    decorations: @Composable (LocalDate) -> Unit
+    decorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit
 ) {
 
     val backgroundColor = when (style) {
@@ -311,15 +311,13 @@ fun CalendarDate(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = date.dayOfMonth.toString(),
-            color = contentColor,
-            style = MaterialTheme.typography.bodyMedium
-        )
-
-        Space(MaterialTheme.spacing.quarter)
-
-        decorations(date)
+        decorations(date) {
+            Text(
+                text = date.dayOfMonth.toString(),
+                color = contentColor,
+                style = MaterialTheme.typography.bodyMedium
+            )
+        }
     }
 }
 

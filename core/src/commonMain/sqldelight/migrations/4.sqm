@@ -1,0 +1,8 @@
+import kotlinx.datetime.LocalDate;
+
+CREATE TABLE LiftingLog (
+    id TEXT NOT NULL PRIMARY KEY,
+    date INTEGER AS LocalDate NOT NULL,
+    notes TEXT,
+    vibe_check INTEGER
+);

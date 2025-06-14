@@ -15,6 +15,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.mapEach
 import comliftbrodb.LiftQueries
+import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
@@ -28,6 +29,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 class LBDatabase(
     driverFactory: DriverFactory,
@@ -36,7 +38,8 @@ class LBDatabase(
     private val database by lazy {
         LiftBroDB(
             driverFactory.provideDbDriver(LiftBroDB.Schema),
-            LiftingSetAdapter = LiftingSet.Adapter(dateAdapter = dateAdapter),
+            LiftingSetAdapter = LiftingSet.Adapter(dateAdapter = instantAdapter),
+            LiftingLogAdapter = LiftingLog.Adapter(dateAdapter = dateAdapter),
         )
     }
 
@@ -55,9 +58,11 @@ class LBDatabase(
         setQueries = database.setQueries,
         variationQueries = database.variationQueries
     )
+
+    val logDataSource = database.liftingLogQueries
 }
 
-private val dateAdapter = object : ColumnAdapter<Instant, Long> {
+private val instantAdapter = object : ColumnAdapter<Instant, Long> {
 
     override fun decode(databaseValue: Long): Instant {
         return Instant.fromEpochMilliseconds(databaseValue)
@@ -65,6 +70,17 @@ private val dateAdapter = object : ColumnAdapter<Instant, Long> {
 
     override fun encode(value: Instant): Long {
         return value.toEpochMilliseconds()
+    }
+}
+
+private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
+
+    override fun decode(databaseValue: Long): LocalDate {
+        return LocalDate.fromEpochDays(databaseValue.toInt())
+    }
+
+    override fun encode(value: LocalDate): Long {
+        return value.toEpochDays().toLong()
     }
 }
 

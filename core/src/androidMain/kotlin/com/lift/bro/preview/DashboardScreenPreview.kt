@@ -131,4 +131,5 @@ val dashboardPreviewState = DashboardState(
     showEmpty = false,
     items = LiftCardPreviewStates.All.map { DashboardListItem.LiftCard(it) },
     excercises = emptyList(),
+    logs = emptyList(),
 )

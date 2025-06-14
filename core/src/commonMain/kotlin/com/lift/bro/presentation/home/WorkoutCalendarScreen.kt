@@ -1,5 +1,6 @@
 package com.lift.bro.presentation.home
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,23 +21,32 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.benasher44.uuid.uuid4
+import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
+import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.excercise.SetInfoRow
@@ -45,7 +56,12 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.workout_calendar_edit_daily_notes_cta
+import org.jetbrains.compose.resources.stringResource
 
 
 @Composable
@@ -53,12 +69,15 @@ fun WorkoutCalendarScreen(
     modifier: Modifier = Modifier,
     variationClicked: (Variation, LocalDate) -> Unit,
     excercises: List<Excercise>,
+    logs: List<LiftingLog>,
 ) {
     var selectedDate by remember { mutableStateOf(today) }
 
     val setDateMap = excercises.groupBy { it.date }
 
     val selectedDateSets: List<Excercise> = setDateMap[selectedDate] ?: emptyList()
+
+    val dailyLogs = logs.associateBy { it.date }
 
     LazyColumn(
         modifier = modifier,
@@ -77,19 +96,44 @@ fun WorkoutCalendarScreen(
                 dateSelected = {
                     selectedDate = it
                 },
-                dateDecorations = { date ->
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                dateDecorations = { date, day ->
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        setDateMap[date]?.map {
-                            it.variation.lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary
-                        }?.take(4)?.forEachIndexed { index, color ->
-                            Box(
-                                modifier = Modifier.background(
-                                    color = color,
-                                    shape = CircleShape,
-                                ).size(4.dp)
+                        if (dailyLogs[date] != null) {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(
+                                        top = MaterialTheme.spacing.quarter,
+                                        start = MaterialTheme.spacing.quarter,
+                                    )
+                                    .size(8.dp).align(Alignment.TopStart),
+                                imageVector = Icons.Default.Edit,
+                                tint = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                contentDescription = null
                             )
+                        }
+
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            day()
+                            Space(MaterialTheme.spacing.quarter)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                            ) {
+                                setDateMap[date]?.map {
+                                    it.variation.lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary
+                                }?.take(4)?.forEachIndexed { index, color ->
+                                    Box(
+                                        modifier = Modifier.background(
+                                            color = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else color,
+                                            shape = CircleShape,
+                                        ).size(4.dp)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -109,10 +153,89 @@ fun WorkoutCalendarScreen(
         }
 
         item {
-            Text(
-                text = selectedDate.toString("EEEE, MMM d - yyyy"),
-                style = MaterialTheme.typography.titleLarge
-            )
+            Column {
+                var showNotesDialog by remember { mutableStateOf(false) }
+                var todaysNotes by remember(selectedDate) { mutableStateOf(dailyLogs[selectedDate]?.notes ?: "") }
+
+                if (showNotesDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showNotesDialog = false },
+                        confirmButton = {
+                            Button(
+                                onClick = {
+                                    GlobalScope.launch {
+                                        dependencies.database.logDataSource.save(
+                                            id = dailyLogs[selectedDate]?.id ?: uuid4().toString(),
+                                            date = dailyLogs[selectedDate]?.date ?: selectedDate,
+                                            notes = todaysNotes,
+                                            vibe_check = dailyLogs[selectedDate]?.vibe?.toLong()
+                                        )
+                                        showNotesDialog = false
+                                    }
+                                }
+                            ) {
+                                Text("Save")
+                            }
+                        },
+                        dismissButton = {
+                            Button(
+                                onClick = {
+                                    showNotesDialog = false
+                                }
+                            ) {
+                                Text("Cancel")
+                            }
+                        },
+                        title = {
+                            Text("Notes for:\n${selectedDate.toString("EEEE, MMM d - yyyy")}")
+                        },
+                        text = {
+                            val focusRequester = FocusRequester()
+                            TextField(
+                                modifier = Modifier.defaultMinSize(minHeight = 128.dp)
+                                    .focusRequester(focusRequester),
+                                value = todaysNotes,
+                                onValueChange = { todaysNotes = it },
+                                placeholder = {
+                                    Text("Goals for today?\nFeeling especially spicy?\nSoreness or pain?")
+                                }
+                            )
+
+                            LaunchedEffect(Unit) {
+                                focusRequester.requestFocus()
+                            }
+                        }
+                    )
+                }
+
+                Row(
+                    modifier = Modifier.animateContentSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = selectedDate.toString("EEEE, MMM d - yyyy"),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                    IconButton(
+                        onClick = {
+                            showNotesDialog = true
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(12.dp),
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta)
+                        )
+                    }
+                }
+
+                dailyLogs[selectedDate]?.let {
+                    Text(
+                        text = it.notes,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
         }
 
         items(

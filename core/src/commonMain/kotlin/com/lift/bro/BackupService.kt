@@ -3,6 +3,7 @@ package com.lift.bro
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.utils.toString
@@ -27,6 +28,7 @@ data class Backup(
     val lifts: List<Lift>,
     val variations: List<Variation>,
     val sets: List<LBSet>,
+    val liftingLogs: List<LiftingLog>? = null,
 )
 
 object BackupService {
@@ -59,6 +61,7 @@ object BackupService {
         dependencies.database.liftDataSource.deleteAll()
         dependencies.database.variantDataSource.deleteAll()
         dependencies.database.setDataSource.deleteAll()
+        dependencies.database.logDataSource.deleteAll()
 
         backup.lifts.forEach {
             dependencies.database.liftDataSource.save(it)
@@ -75,6 +78,16 @@ object BackupService {
         backup.sets.forEach {
             dependencies.database.setDataSource.save(it)
         }
+
+        backup.liftingLogs?.forEach {
+            dependencies.database.logDataSource.save(
+                id = it.id,
+                notes = it.notes,
+                date = it.date,
+                vibe_check = it.vibe?.toLong(),
+            )
+        }
+
         return true
     }
 
@@ -84,6 +97,14 @@ fun createBackup(): Backup {
     return Backup(
         lifts = dependencies.database.liftDataSource.getAll(),
         variations = dependencies.database.variantDataSource.getAll(),
-        sets = dependencies.database.setDataSource.getAll()
+        sets = dependencies.database.setDataSource.getAll(),
+        liftingLogs = dependencies.database.logDataSource.getAll().executeAsList().map {
+            LiftingLog(
+                id = it.id,
+                date = it.date,
+                notes = it.notes ?: "",
+                vibe = it.vibe_check?.toInt(),
+            )
+        },
     )
 }

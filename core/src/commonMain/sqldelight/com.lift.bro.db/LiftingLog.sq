@@ -1,0 +1,31 @@
+import kotlinx.datetime.LocalDate;
+
+CREATE TABLE LiftingLog (
+    id TEXT NOT NULL PRIMARY KEY,
+    date INTEGER AS LocalDate NOT NULL,
+    notes TEXT,
+    vibe_check INTEGER
+);
+
+getAllByVariation:
+SELECT * FROM LiftingLog WHERE date = ?;
+
+getAll:
+SELECT * FROM LiftingLog;
+
+get:
+SELECT * FROM LiftingLog WHERE id = ?;
+
+save:
+INSERT OR REPLACE
+INTO LiftingLog(id, date, notes, vibe_check)
+VALUES(?, ?, ?, ?);
+
+deleteByDate:
+DELETE FROM LiftingLog WHERE date = ?;
+
+deleteById:
+DELETE FROM LiftingLog WHERE id = ?;
+
+deleteAll:
+DELETE FROM LiftingLog;
