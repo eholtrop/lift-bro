@@ -1,26 +1,35 @@
 # onboarding_tests.yaml
 appId: com.lift.bro
-
 ---
-# Test Case 1: The user chooses to skip onboarding
-- clearState
-- launchApp
-- tapOn: "Lift Bro With A Ponytail"
-- tapOn: "Continue"
-- tapOn: "🫡 Just put me in Coach!"
-- assertVisible: "Do you even Lift Bro?"
+# Test Case 1: The user chooses to skip onboarding and sees the empty state
+#- runFlow:
+#      file: flows/skip_onboarding.yaml
+#- assertVisible: "Do you even Lift Bro?"
+#
+### Test Case 2: The user can restore a backup from onboarding
+#- runFlow:
+#      file: flows/onboarding_select_bro.yaml
+#- tapOn: "🦺 Restore from a Backup"
+#- tapOn: "2025-06-12_15_51_15.json"
+#- assertVisible: "LIFT BRO"
+#- assertVisible: "Curl"
+#- assertVisible: "30 lbs"
 
----
-# Test Case 2: The user chooses to restore from a backup
-- clearState
-- launchApp
-- tapOn: "Lift Bro With A Ponytail"
+## Test Case 3: The use goes through the full setup flow
+- runFlow:
+      file: flows/onboarding_select_bro.yaml
+- tapOn: "🙏 Help me setup some Lifts"
+- tapOn: "KG"
+- tapOn: "Squat"
+- tapOn: "Back Squat"
+- tapOn: "Press"
+- tapOn: "Incline Bench Press"
+- tapOn: "Bench Press"
+- scrollUntilVisible:
+    element:
+      text: "Continue"
 - tapOn: "Continue"
-- tapOn: "🦺 Restore from a Backup"
-- tapOn: "2025-06-12_15_51_15.json"
-
-# You can have multiple assertions to verify the final state
-- assertVisible: "LIFT BRO"
-- assertVisible: "Press"
-- assertVisible: "Deadlift"
 - assertVisible: "Squat"
+- assertVisible: "Press"
+- tapOn: "Squat"
+- assertVisible: "Back Squat"

@@ -53,7 +53,7 @@ import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_footer_trailing_button_content_description
-import lift_bro.core.generated.resources.dashboard_settings_fab_content_description
+import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_title
 import lift_bro.core.generated.resources.dashboard_toolbar_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_toolbar_trailing_button_content_description
@@ -134,7 +134,7 @@ fun DashboardContent(
         title = stringResource(Res.string.dashboard_title),
         leadingContent = {
             TopBarIconButton(
-                painter = painterResource(LocalLiftBro.current!!.iconRes()),
+                painter = painterResource(LocalLiftBro.current.iconRes()),
                 contentDescription = stringResource(Res.string.dashboard_toolbar_leading_button_content_description)
             ) {
                 navCoordinator.present(Destination.Settings)
@@ -149,7 +149,7 @@ fun DashboardContent(
         },
         fabProperties = FabProperties(
             fabIcon = Icons.Default.Add,
-            contentDescription = stringResource(Res.string.dashboard_settings_fab_content_description),
+            contentDescription = stringResource(Res.string.dashboard_fab_content_description),
             fabClicked = addSetClicked,
             preFab = {
                 Button(

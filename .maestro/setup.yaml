@@ -1,7 +1,0 @@
-# setup.yaml
-appId: com.lift.bro  # Defines the app we are testing
----
-- tapOn:
-    text: "Leo" # Maestro finds elements by their visible text
-- tapOn:
-    text: "Continue"

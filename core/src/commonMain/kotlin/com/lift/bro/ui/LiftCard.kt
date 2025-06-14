@@ -25,6 +25,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
@@ -153,5 +154,5 @@ fun LiftCard(
 
 @Composable
 fun weightFormat(weight: Double): String {
-    return "${weight.decimalFormat()}"
+    return "${weight.decimalFormat()} ${LocalUnitOfMeasure.current.value}"
 }

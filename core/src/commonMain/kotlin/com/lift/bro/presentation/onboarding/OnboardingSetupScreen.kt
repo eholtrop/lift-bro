@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -33,9 +34,12 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Settings
@@ -45,6 +49,7 @@ import com.lift.bro.domain.models.fullName
 import com.lift.bro.ui.RadioButtonCard
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.AccessibilityMinimumSize
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -187,12 +192,11 @@ private fun OnboardingLiftSelector(
             .background(
                 color = Color.White,
                 shape = MaterialTheme.shapes.large,
-            )
-            .padding(MaterialTheme.spacing.one),
+            ),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
     ) {
         with(defaultSbdLifts) {
-            lifts.forEach { lift ->
+            lifts.forEachIndexed { index, lift ->
                 var expanded by remember { mutableStateOf(false) }
 
                 val liftVariations = variations.filter { it.lift?.id == lift.id }
@@ -203,7 +207,12 @@ private fun OnboardingLiftSelector(
                     Row(
                         modifier = Modifier.clickable {
                             expanded = !expanded
-                        },
+                        }.padding(
+                            top = if (index == 0) MaterialTheme.spacing.one else 0.dp,
+                            start = MaterialTheme.spacing.one,
+                            end = MaterialTheme.spacing.one,
+                            bottom = if (index == lifts.lastIndex) MaterialTheme.spacing.one else 0.dp
+                        ).defaultMinSize(minHeight = Dp.AccessibilityMinimumSize),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(
@@ -249,6 +258,17 @@ private fun OnboardingLiftSelector(
                                 }
                             }
                             Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .clickable(
+                                        role = Role.Checkbox,
+                                        onClick = {
+                                            if (checked) {
+                                                selectedVariations.remove(variation)
+                                            } else {
+                                                selectedVariations.add(variation)
+                                            }
+                                        }
+                                    ),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Checkbox(
