@@ -135,14 +135,14 @@ fun DashboardContent(
     LiftingScaffold(
         title = stringResource(Res.string.dashboard_title),
         leadingContent = {
+        },
+        trailingContent = {
             TopBarIconButton(
                 painter = painterResource(LocalLiftBro.current.iconRes()),
                 contentDescription = stringResource(Res.string.dashboard_toolbar_leading_button_content_description)
             ) {
                 navCoordinator.present(Destination.Settings)
             }
-        },
-        trailingContent = {
             TopBarIconButton(
                 imageVector = Icons.Default.Add,
                 contentDescription = stringResource(Res.string.dashboard_toolbar_trailing_button_content_description),
