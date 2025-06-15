@@ -140,4 +140,20 @@ class SharedPreferencesSettingsRepository(
         sharedPreferences.edit { putString("bro", bro.toString()) }
     }
 
+    override fun shouldShowMerCalcs(): Flow<Boolean> {
+        return keyChangedFlow
+            .filter { it == "show_mer_calcs" }
+            .map {
+                sharedPreferences.getBoolean("show_mer_calcs", false)
+            }.onStart {
+                emit(
+                    sharedPreferences.getBoolean("show_mer_calcs", false)
+                )
+            }
+    }
+
+    override fun setShowMerCalcs(showMerCalcs: Boolean) {
+        sharedPreferences.edit { putBoolean("show_mer_calcs", showMerCalcs) }
+    }
+
 }

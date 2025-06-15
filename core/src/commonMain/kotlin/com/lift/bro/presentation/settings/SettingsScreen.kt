@@ -7,13 +7,17 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,28 +52,9 @@ fun SettingsScreen() {
             ) {
                 item {
 
-
-                    Column(
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.medium)
-                            .background(
-                                color = MaterialTheme.colorScheme.surface,
-                            )
-                            .padding(MaterialTheme.spacing.one)
+                    SettingsRowItem(
+                        title = { Text("Backup / Restore") }
                     ) {
-                        Text(
-                            modifier = Modifier.semantics {
-                                heading()
-                            },
-                            text = "Unit of Measure",
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                        Space(MaterialTheme.spacing.quarter)
-
-                        HorizontalDivider()
-
-                        Space(MaterialTheme.spacing.half)
-
                         Row(
                             modifier = Modifier.selectableGroup(),
                         ) {
@@ -108,6 +93,27 @@ fun SettingsScreen() {
                 item {
                     BackupRow()
                 }
+
+                item {
+                    SettingsRowItem(
+                        title = {
+                            Text("Maximally Effective Reps (MERs)")
+                        },
+                        content = {
+                            val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs().collectAsState(false)
+                            Row {
+                                Checkbox(
+                                    checked = showMerCalcs,
+                                    onCheckedChange = {
+                                        dependencies.settingsRepository.setShowMerCalcs(it)
+                                    }
+                                )
+
+                                Text("Show MER calculations where applicable")
+                            }
+                        }
+                    )
+                }
             }
         }
     )
@@ -115,27 +121,9 @@ fun SettingsScreen() {
 
 @Composable
 private fun BackupRow() {
-    Column(
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.medium)
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-            )
-            .padding(MaterialTheme.spacing.one)
+    SettingsRowItem(
+        title = { Text("Backup / Restore") }
     ) {
-        Text(
-            modifier = Modifier.semantics {
-                heading()
-            },
-            text = "Backup / Restore",
-            style = MaterialTheme.typography.headlineSmall
-        )
-        Space(MaterialTheme.spacing.quarter)
-
-        HorizontalDivider()
-
-        Space(MaterialTheme.spacing.half)
-
         val scope = rememberCoroutineScope()
 
         Row(
@@ -165,6 +153,32 @@ private fun BackupRow() {
                 Text("Restore")
             }
         }
+    }
+}
+
+@Composable
+fun SettingsRowItem(
+    title: @Composable () -> Unit,
+    content: @Composable () -> Unit
+) {
+
+    Column(
+        modifier = Modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(
+                color = MaterialTheme.colorScheme.surface,
+            )
+            .padding(MaterialTheme.spacing.one)
+    ) {
+        CompositionLocalProvider(
+            LocalTextStyle provides MaterialTheme.typography.headlineSmall
+        ) {
+            title()
+        }
+        Space(MaterialTheme.spacing.quarter)
+        HorizontalDivider()
+        Space(MaterialTheme.spacing.quarter)
+        content()
     }
 }
 

@@ -1,5 +1,6 @@
 package com.lift.bro.data
 
+import androidx.compose.ui.platform.LocalGraphicsContext
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -13,6 +14,8 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.mapEach
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
@@ -84,22 +87,41 @@ private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
     }
 }
 
-
 class SetDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
-    fun getAll(variationId: String): List<LBSet> =
-        setQueries.getAllByVariation(variationId).executeAsList()
-            .map {
-                it.toDomain()
-            }
+    private fun calculateMer(set: LiftingSet, maxWeight: Int?): Int {
+        val repFatigueCost = 4
+
+        val merFatigueThreshold = 80
+
+        val setFatigue =
+            (set.weight?.div(maxWeight ?: 1))?.times(100)?.plus((set.reps ?: 0) * repFatigueCost)
+                ?.toInt()
+
+        Log.d("DEBUGEH", (setFatigue?.minus(merFatigueThreshold ?: 0)?.mod(4) ?: 0).toString())
+
+        return setFatigue?.minus(merFatigueThreshold ?: 0)?.mod(4) ?: 0
+    }
+
+    fun getAll(variationId: String): List<LBSet> {
+        val sets = setQueries.getAllByVariation(variationId).executeAsList()
+        return sets.map { set ->
+            val localMax =
+                sets.maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }?.toInt()
+            val copy = set.toDomain().copy(
+                mer = calculateMer(set, localMax ?: 0)
+            )
+            copy
+        }
+    }
 
     fun getAllForLift(liftId: String): List<LBSet> =
         variationQueries.getAllForLift(liftId).executeAsList().map {
-            setQueries.getAllByVariation(it.id).executeAsList().map { it.toDomain() }
+            getAll(variationId = it.id)
         }
             .fold(emptyList()) { list, subList -> list + subList }
 
@@ -108,16 +130,42 @@ class SetDataSource(
         setQueries.getAll().asFlow().mapToList(dispatcher),
     ) { variations, sets ->
         sets.filter { set -> variations.any { it.id == set.variationId } }
-    }.mapEach { it.toDomain() }
+    }.map { sets ->
+        sets.map { set ->
+            val localMax =
+                sets.maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }?.toInt()
+            set.toDomain().copy(
+                mer = calculateMer(set, localMax ?: 0)
+            )
+        }
+    }
 
     fun listenAllForVariation(variationId: String): Flow<List<LBSet>> =
         setQueries.getAllByVariation(variationId).asFlow().mapToList(dispatcher)
-            .mapEach { it.toDomain() }
+            .map { sets ->
+                sets.map { set ->
+                    val localMax =
+                        sets.maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }
+                            ?.toInt()
+                    set.toDomain().copy(
+                        mer = calculateMer(set, localMax ?: 0)
+                    )
+                }
+            }
 
     fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
 
     fun listenAll(): Flow<List<LBSet>> =
-        setQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
+        setQueries.getAll().asFlow().mapToList(dispatcher).map { sets ->
+            sets.map { set ->
+                val localMax =
+                    sets.maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }
+                        ?.toInt()
+                set.toDomain().copy(
+                    mer = calculateMer(set, localMax ?: 0)
+                )
+            }
+        }
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 

@@ -34,7 +34,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.formattedWeight
+import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.map
@@ -158,10 +158,14 @@ fun SetInfoRow(
     Column(
         modifier = modifier,
     ) {
-        Text(
-            text = "${set.formattedWeight()} x ${set.reps}",
-            style = MaterialTheme.typography.titleMedium,
-        )
+        Row(
+            verticalAlignment = Alignment.Bottom
+        ) {
+            Text(
+                text = set.prettyPrintSet(),
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
         set.tempo.render()
         if (set.notes.isNotBlank()) {
             Row(

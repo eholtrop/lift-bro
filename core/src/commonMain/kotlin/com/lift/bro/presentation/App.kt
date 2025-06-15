@@ -68,6 +68,10 @@ val LocalUnitOfMeasure = compositionLocalOf<UOM> {
     error("UOM was not set")
 }
 
+val LocalShowMERCalcs = compositionLocalOf<Boolean> {
+    error("Show MER Calcs was not set")
+}
+
 @Composable
 fun App(
     modifier: Modifier,
@@ -76,10 +80,13 @@ fun App(
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }.collectAsState(UOM.POUNDS)
+    val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs().collectAsState(false)
 
     CompositionLocalProvider(
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
-        LocalUnitOfMeasure provides uom
+        LocalUnitOfMeasure provides uom,
+        LocalShowMERCalcs provides showMerCalcs
+
     ) {
 
         AppTheme {

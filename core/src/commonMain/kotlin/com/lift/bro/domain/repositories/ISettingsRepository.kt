@@ -22,6 +22,10 @@ interface ISettingsRepository {
     fun getBro(): Flow<LiftBro?>
 
     fun setBro(bro: LiftBro)
+
+    fun shouldShowMerCalcs(): Flow<Boolean>
+
+    fun setShowMerCalcs(showMerCalcs: Boolean)
 }
 
 data class BackupSettings(

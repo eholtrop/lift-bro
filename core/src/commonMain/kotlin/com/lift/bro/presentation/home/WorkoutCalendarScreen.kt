@@ -42,12 +42,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
@@ -124,7 +128,8 @@ fun WorkoutCalendarScreen(
                                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
                             ) {
                                 setDateMap[date]?.map {
-                                    it.variation.lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary
+                                    it.variation.lift?.color?.toColor()
+                                        ?: MaterialTheme.colorScheme.primary
                                 }?.take(4)?.forEachIndexed { index, color ->
                                     Box(
                                         modifier = Modifier.background(
@@ -155,7 +160,11 @@ fun WorkoutCalendarScreen(
         item {
             Column {
                 var showNotesDialog by remember { mutableStateOf(false) }
-                var todaysNotes by remember(selectedDate) { mutableStateOf(dailyLogs[selectedDate]?.notes ?: "") }
+                var todaysNotes by remember(selectedDate) {
+                    mutableStateOf(
+                        dailyLogs[selectedDate]?.notes ?: ""
+                    )
+                }
 
                 if (showNotesDialog) {
                     AlertDialog(
@@ -265,7 +274,23 @@ fun WorkoutCalendarScreen(
                             )
                     ) {
                         Text(
-                            text = "${variation.name} ${variation.lift?.name}",
+                            text = buildAnnotatedString {
+                                withStyle(
+                                    style = SpanStyle()
+                                ) {
+                                    append("${variation.name} ${variation.lift?.name}")
+                                }
+
+                                val mer = excercise.sets.sumOf { it.mer }
+                                if (mer > 0 && LocalShowMERCalcs.current) {
+                                    withStyle(
+                                        style = MaterialTheme.typography.labelSmall.toSpanStyle()
+                                    ) {
+                                        append(" ")
+                                        append("(+${mer}mer)")
+                                    }
+                                }
+                            },
                             style = MaterialTheme.typography.titleMedium,
                         )
 
