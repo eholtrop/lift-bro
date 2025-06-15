@@ -108,10 +108,16 @@ internal fun EditLiftScreen(
 ) {
     var thisLift by remember(lift) { mutableStateOf(lift ?: Lift()) }
     val variations =
-        remember(initialVariations) { (initialVariations + Variation()).toMutableStateList() }
+        remember(initialVariations) { (initialVariations).toMutableStateList() }
     var showLiftDeleteWarning by remember { mutableStateOf(false) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(initialVariations) {
+        if (initialVariations.isEmpty()) {
+            variations.add(Variation())
+        }
+    }
 
     if (showLiftDeleteWarning) {
         WarningDialog(
