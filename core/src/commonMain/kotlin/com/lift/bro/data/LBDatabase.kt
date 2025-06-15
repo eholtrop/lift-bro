@@ -33,6 +33,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlin.math.min
 
 class LBDatabase(
     driverFactory: DriverFactory,
@@ -104,7 +105,7 @@ class SetDataSource(
 
         Log.d("DEBUGEH", (setFatigue?.minus(merFatigueThreshold ?: 0)?.mod(4) ?: 0).toString())
 
-        return setFatigue?.minus(merFatigueThreshold ?: 0)?.mod(4) ?: 0
+        return min(set.reps?.toInt() ?: 0, setFatigue?.minus(merFatigueThreshold ?: 0)?.div(4) ?: 0)
     }
 
     fun getAll(variationId: String): List<LBSet> {
