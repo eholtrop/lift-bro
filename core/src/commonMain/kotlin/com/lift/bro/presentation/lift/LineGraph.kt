@@ -2,6 +2,7 @@
 
 package com.lift.bro.presentation.lift
 
+import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -15,9 +16,15 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -66,17 +73,25 @@ fun DotGraph(
                     val dotColor =
                         if (selectedData == point) colors.dotColorSelected else colors.dotColor
 
+                    var canvasSize by remember { mutableStateOf(Size.Zero) }
+                    var targetOffset by remember(canvasSize) { mutableStateOf(Offset(canvasSize.width / 2, canvasSize.height)) }
+
+                    val animatedGraph by animateOffsetAsState(
+                        targetValue = targetOffset
+                    )
+
                     Canvas(
                         modifier = Modifier
                             .width(52.dp)
                             .weight(1f)
                     ) {
-                        val center = Offset(size.width / 2f, size.height - (point.y.div(maxY) * size.height))
+                        canvasSize = size
+                        targetOffset = targetOffset.copy(y = size.height - (point.y.div(maxY) * size.height))
 
                         drawCircle(
                             color = dotColor,
                             radius = MaterialTheme.spacing.half.toPx(),
-                            center = center,
+                            center = animatedGraph
                         )
                     }
 

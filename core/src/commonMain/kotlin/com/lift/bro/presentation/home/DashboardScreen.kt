@@ -4,7 +4,6 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -26,13 +24,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -48,9 +43,8 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftBro
-import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.ads.AdBanner
-import com.lift.bro.ui.DropDownButton
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardState
@@ -63,9 +57,9 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_footer_trailing_button_content_description
-import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_title
 import lift_bro.core.generated.resources.dashboard_toolbar_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_toolbar_trailing_button_content_description
@@ -241,7 +235,7 @@ fun DashboardContent(
     ) { padding ->
         when (tab) {
             Tab.Lifts -> {
-                var showWeight by remember { mutableStateOf(true) }
+                val showWeight = LocalLiftCardYValue.current
                 LazyVerticalGrid(
                     modifier = Modifier.padding(padding),
                     columns = GridCells.Fixed(2),
@@ -255,9 +249,12 @@ fun DashboardContent(
                             horizontalArrangement = Arrangement.End,
                         ) {
                             Button(
-                                onClick = { showWeight = !showWeight }
+                                onClick = {
+                                    showWeight.value =
+                                        if (showWeight.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
+                                }
                             ) {
-                                Text(text = if (showWeight) "lbs" else "reps")
+                                Text(text = if (showWeight.value == LiftCardYValue.Weight) "lbs" else "reps")
                             }
                         }
                     }
@@ -279,7 +276,7 @@ fun DashboardContent(
                                     modifier = Modifier.padding(MaterialTheme.spacing.quarter),
                                     state = state.state,
                                     onClick = liftClicked,
-                                    value = if (showWeight) LiftCardYValue.Weight else LiftCardYValue.Reps
+                                    value = showWeight.value
                                 )
                             }
                         }

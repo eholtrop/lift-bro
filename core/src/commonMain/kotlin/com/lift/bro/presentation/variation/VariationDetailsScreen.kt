@@ -77,7 +77,6 @@ private enum class Grouping {
 fun VariationDetailsScreen(
     variationId: String,
     addSetClicked: () -> Unit,
-    editClicked: () -> Unit,
     setClicked: (LBSet) -> Unit,
 ) {
     val variation = dependencies.database.variantDataSource.get(variationId)
@@ -90,7 +89,6 @@ fun VariationDetailsScreen(
             lift = lift,
             sets = sets,
             addSetClicked = addSetClicked,
-            editClicked = editClicked,
             setClicked = setClicked,
         )
     }
@@ -102,7 +100,6 @@ private fun VariationDetailsScreen(
     lift: Lift?,
     sets: List<LBSet>,
     addSetClicked: () -> Unit,
-    editClicked: () -> Unit,
     setClicked: (LBSet) -> Unit,
 ) {
 
@@ -115,13 +112,6 @@ private fun VariationDetailsScreen(
             fabClicked = addSetClicked,
         ),
         title = "${variation.name} ${lift?.name}",
-        trailingContent = {
-            TopBarIconButton(
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Edit",
-                onClick = editClicked,
-            )
-        }
     ) { padding ->
 
 

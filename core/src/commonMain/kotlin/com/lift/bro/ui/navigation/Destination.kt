@@ -24,9 +24,6 @@ sealed interface Destination {
     data class VariationDetails(val variationId: String) : Destination
 
     @Serializable
-    data class EditVariation(val variationId: String) : Destination
-
-    @Serializable
     data class EditSet(
         val setId: String? = null,
         val liftId: String? = null,

@@ -84,7 +84,6 @@ fun EditLiftScreen(
     liftId: String? = null,
     liftSaved: () -> Unit,
     liftDeleted: () -> Unit,
-    editVariationClicked: (Variation) -> Unit,
 ) {
     val lift by dependencies.database.liftDataSource.get(liftId).collectAsState(null)
     val variations by dependencies.database.variantDataSource.listenAll(liftId ?: "")

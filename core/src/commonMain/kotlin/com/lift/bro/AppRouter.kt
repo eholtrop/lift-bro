@@ -52,9 +52,6 @@ fun AppRouter(route: Destination) {
             liftDeleted = {
                 navCoordinator.popToRoot(false)
             },
-            editVariationClicked = {
-                navCoordinator.present(Destination.EditVariation(variationId = it.id))
-            }
         )
 
         is Destination.EditSet ->
@@ -69,18 +66,6 @@ fun AppRouter(route: Destination) {
                     navCoordinator.present(Destination.EditLift(null))
                 },
             )
-
-        is Destination.EditVariation -> {
-            EditVariationDialog(
-                variationId = route.variationId,
-                onDismissRequest = {
-                    navCoordinator.onBackPressed(false)
-                },
-                onVariationSaved = {
-                    navCoordinator.onBackPressed(false)
-                },
-            )
-        }
 
         is Destination.LiftDetails ->
             LiftDetailsScreen(
@@ -113,13 +98,6 @@ fun AppRouter(route: Destination) {
                             null,
                             null,
                             route.variationId
-                        )
-                    )
-                },
-                editClicked = {
-                    navCoordinator.present(
-                        Destination.EditVariation(
-                            variationId = route.variationId,
                         )
                     )
                 },

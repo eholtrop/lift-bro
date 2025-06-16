@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -51,10 +52,12 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toString
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.FabProperties
+import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
@@ -259,6 +262,23 @@ fun LiftDetailsScreen(
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
             ) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        val yValue = LocalLiftCardYValue.current
+                        Button(
+                            onClick = {
+                                yValue.value =
+                                    if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
+                            }
+                        ) {
+                            Text(text = if (yValue.value == LiftCardYValue.Weight) "lbs" else "reps")
+                        }
+                    }
+                }
+
                 items(variations) { variation ->
                     VariationCard(
                         variation = variation,
@@ -320,10 +340,20 @@ private fun VariationCard(
                             }
                         }
 
-                    Text(
-                        text = maxLift?.let { "${it.formattedWeight()} Max" } ?: run { "No Max" },
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    when (LocalLiftCardYValue.current.value) {
+                        LiftCardYValue.Weight -> {
+                            Text(
+                                text = maxLift?.let { "${it.formattedWeight()} Max" } ?: run { "No Sets" },
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
+                        LiftCardYValue.Reps -> {
+                            Text(
+                                text = maxLift?.let { "${it.reps} Reps" } ?: run { "No Sets" },
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
+                    }
 
                 }
 
@@ -353,7 +383,12 @@ private fun VariationCard(
                     data = setPoints.map {
                         DotGraphData(
                             it.first.toEpochDays().toLong(),
-                            it.second.maxOf { it.weight.toFloat() }
+                            it.second.maxOf {
+                                when (LocalLiftCardYValue.current.value) {
+                                    LiftCardYValue.Weight -> it.weight.toFloat()
+                                    LiftCardYValue.Reps -> it.reps.toFloat()
+                                }
+                            }
                         )
                     },
                     state = rememberLazyListState(),
