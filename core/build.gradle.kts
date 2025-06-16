@@ -39,6 +39,15 @@ kotlin {
     }
 
     sourceSets {
+
+        // Required for Revenuecat
+        named { it.lowercase().startsWith("ios") }.configureEach {
+            languageSettings {
+                optIn("kotlinx.cinterop.ExperimentalForeignApi")
+            }
+        }
+
+
         commonMain.dependencies {
             // Compose Multiplatform
             implementation(compose.ui)
@@ -63,6 +72,10 @@ kotlin {
             implementation(libs.filekit.core)
             implementation(libs.filekit.dialogs)
             implementation(libs.filekit.dialogs.compose)
+
+            implementation(libs.revenuecat.core)
+            implementation(libs.revenuecat.datetime)
+            implementation(libs.revenuecat.ui)
         }
 
         androidMain.dependencies {

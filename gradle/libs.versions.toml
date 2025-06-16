@@ -6,6 +6,7 @@ kotlinx-coroutines-core = "1.8.0"
 play-services-ads = "24.3.0"
 sqldelight = "2.0.2"
 agp = "8.6.0"
+revenuecat = "1.8.3+13.36.0"
 
 # compose
 compose = "1.8.0"
@@ -24,6 +25,10 @@ uuid = "0.8.1"
 [libraries]
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose" }
+
+revenuecat-core = { module = "com.revenuecat.purchases:purchases-kmp-core", version.ref = "revenuecat" }
+revenuecat-datetime = { module = "com.revenuecat.purchases:purchases-kmp-datetime", version.ref = "revenuecat" }
+revenuecat-ui = { module = "com.revenuecat.purchases:purchases-kmp-ui", version.ref = "revenuecat" }
 
 filekit-core = { module = "io.github.vinceglb:filekit-core", version.ref = "filekit" }
 filekit-dialogs = { module = "io.github.vinceglb:filekit-dialogs", version.ref = "filekit" }

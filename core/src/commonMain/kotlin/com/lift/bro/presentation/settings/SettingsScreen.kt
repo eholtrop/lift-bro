@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +37,8 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
+import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
+import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import io.github.vinceglb.filekit.FileKit
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -95,28 +98,28 @@ fun SettingsScreen() {
                     BackupRow()
                 }
 
-                item {
-                    SettingsRowItem(
-                        title = {
-                            Text("Maximally Effective Reps (MERs)")
-                        },
-                        content = {
-                            val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs().collectAsState(false)
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Checkbox(
-                                    checked = showMerCalcs,
-                                    onCheckedChange = {
-                                        dependencies.settingsRepository.setShowMerCalcs(it)
-                                    }
-                                )
-
-                                Text("Show MER calculations where applicable")
-                            }
-                        }
-                    )
-                }
+//                item {
+//                    SettingsRowItem(
+//                        title = {
+//                            Text("Maximally Effective Reps (MERs)")
+//                        },
+//                        content = {
+//                            val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs().collectAsState(false)
+//                            Row(
+//                                verticalAlignment = Alignment.CenterVertically,
+//                            ) {
+//                                Checkbox(
+//                                    checked = showMerCalcs,
+//                                    onCheckedChange = {
+////                                        dependencies.settingsRepository.setShowMerCalcs(it)
+//                                    }
+//                                )
+//
+//                                Text("Show MER calculations where applicable")
+//                            }
+//                        }
+//                    )
+//                }
             }
         }
     )
