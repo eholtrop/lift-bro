@@ -1,5 +1,10 @@
 package com.lift.bro.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector2D
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +17,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -20,10 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
@@ -32,26 +39,46 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
 import org.jetbrains.compose.resources.stringResource
+import kotlin.math.max
 
 data class LiftCardState(
     val lift: Lift,
-    val values: List<Pair<LocalDate, Double>>,
+    val values: List<Pair<LocalDate, LiftCardData>>,
 )
+
+data class LiftCardData(
+    val weight: Double,
+    val reps: Int,
+    val rpe: Int?,
+    private val offset: Offset = Offset.Zero,
+)
+
+enum class LiftCardYValue {
+    Reps, Weight
+}
 
 @Composable
 fun LiftCard(
     modifier: Modifier = Modifier,
     state: LiftCardState,
-    onClick: (Lift) -> Unit
+    onClick: (Lift) -> Unit,
+    value: LiftCardYValue = LiftCardYValue.Weight
 ) {
     val lift = state.lift
-    val max = state.lift.maxWeight
-    val min = state.values.minOfOrNull { it.second } ?: 0.0
+    val max =
+        if (value == LiftCardYValue.Reps) state.values.maxOf { it.second.reps.toDouble() } else state.lift.maxWeight
+    val min = state.values.minOfOrNull {
+        when (value) {
+            LiftCardYValue.Reps -> 0.0
+            LiftCardYValue.Weight -> it.second.weight
+        }
+    } ?: 0.0
 
     Card(
         modifier = modifier
@@ -74,7 +101,10 @@ fun LiftCard(
                 Space()
                 max?.let {
                     Text(
-                        text = weightFormat(max),
+                        text = when (value) {
+                            LiftCardYValue.Weight -> weightFormat(max)
+                            LiftCardYValue.Reps -> "${max.toInt()} reps"
+                        },
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
@@ -106,32 +136,65 @@ fun LiftCard(
                 }
             } else {
                 val color = lift.color?.toColor() ?: MaterialTheme.colorScheme.onSurfaceVariant
+
+                var canvasSize by remember { mutableStateOf(Size.Zero) }
+                val animatedGraphNodes =
+                    remember { mutableStateMapOf<LocalDate, Animatable<Offset, AnimationVector2D>>() }
+
+                LaunchedEffect(value, canvasSize) {
+                    if (canvasSize == Size.Zero) return@LaunchedEffect
+
+                    val height = canvasSize.height
+                    val width = canvasSize.width
+                    val spacing = width.div(5)
+
+                    val nodeData = when (value) {
+                        LiftCardYValue.Reps -> state.values.map {
+                            it.first to it.second.reps.toDouble()
+                        }
+
+                        LiftCardYValue.Weight -> state.values.map {
+                            it.first to it.second.weight
+                        }
+                    }
+
+
+                    nodeData.forEachIndexed { index, pair ->
+                        val targetX = width - (spacing * index + spacing / 2)
+                        val normalizedPercentage =
+                            (pair.second - min * 0.95) / (max(1.0, max - min * 0.95))
+                        val targetY = height - (normalizedPercentage * height).toFloat()
+                        val newTargetOffset = Offset(targetX, targetY)
+
+                        val animatable = animatedGraphNodes.getOrPut(pair.first) {
+                            Animatable(Offset(targetX, height), Offset.VectorConverter)
+                        }
+
+                        launch {
+                            animatable.animateTo(
+                                targetValue = newTargetOffset,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            )
+                        }
+                    }
+                }
+
+
+
                 Canvas(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
-                    val height = this.size.height
-                    val width = this.size.width
-                    val spacing = width.div(5)
-
-
-                    state.values.forEachIndexed { index, set ->
-                        val x = width - (spacing * index + spacing / 2)
-                        val normalizedPercentage = set.second.minus(min.times(.95f))
-                            .div(max.minus(min.times(.95f)) ?: 1.0)
-                        val y = height - (normalizedPercentage) * height
-
+                    canvasSize = this.size
+                    animatedGraphNodes.forEach { node ->
                         drawCircle(
                             color = color,
                             radius = 10.dp.value,
-                            center = Offset(x = x, y = y.toFloat())
+                            center = node.value.value
                         )
                     }
-                    drawLine(
-                        color = color,
-                        strokeWidth = 3f,
-                        start = Offset(0f, height),
-                        end = Offset(width, height)
-                    )
                 }
 
                 Space(MaterialTheme.spacing.half)
@@ -143,7 +206,10 @@ fun LiftCard(
                     )
                     Space()
                     Text(
-                        text = weightFormat(weight = min),
+                        text = when (value) {
+                            LiftCardYValue.Weight -> weightFormat(min)
+                            LiftCardYValue.Reps -> "${min.toInt()} reps"
+                        },
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }

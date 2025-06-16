@@ -12,6 +12,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.CoroutineScope
@@ -46,7 +47,13 @@ class DashboardViewModel(
                     LiftCardState(
                         lift = lift,
                         values = liftSets.groupBy { it.date.toLocalDate() }
-                            .map { it.key to it.value.maxOf { it.weight } },
+                            .map {
+                                it.key to LiftCardData(
+                                    it.value.maxOf { it.weight },
+                                    it.value.maxOf { it.reps }.toInt(),
+                                    it.value.maxOfOrNull { it.rpe ?: 0 },
+                                )
+                            },
                     )
                 )
             }.sortedBy { it.state.lift.name.toLowerCase(Locale.current) }

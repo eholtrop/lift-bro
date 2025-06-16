@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.example.compose.AppTheme
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.ui.LiftCard
+import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -106,8 +107,8 @@ internal object LiftCardPreviewStates {
             maxWeight = 130.0,
         ),
         values = listOf(
-            LocalDate.parse("2023-01-01") to 100.0,
-            LocalDate.parse("2023-01-02") to 120.0,
+            LocalDate.parse("2023-01-01") to LiftCardData(100.0, 2, 2),
+            LocalDate.parse("2023-01-02") to LiftCardData(120.0, 2, 2),
         )
     )
 
@@ -119,11 +120,11 @@ internal object LiftCardPreviewStates {
             maxWeight = 135.0,
         ),
         values = listOf(
-            LocalDate.parse("2023-01-01") to 135.0,
-            LocalDate.parse("2023-01-02") to 125.0,
-            LocalDate.parse("2023-01-01") to 120.0,
-            LocalDate.parse("2023-01-02") to 130.0,
-            LocalDate.parse("2023-01-01") to 125.0,
+            LocalDate.parse("2023-01-01") to LiftCardData(135.0, 2, 2),
+            LocalDate.parse("2023-01-02") to LiftCardData(125.0, 2, 2),
+            LocalDate.parse("2023-01-01") to LiftCardData(120.0, 2, 2),
+            LocalDate.parse("2023-01-02") to LiftCardData(130.0,2, 2),
+            LocalDate.parse("2023-01-01") to LiftCardData(125.0,2, 2),
         )
     )
 
