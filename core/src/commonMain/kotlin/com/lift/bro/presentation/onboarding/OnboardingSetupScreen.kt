@@ -196,10 +196,10 @@ private fun OnboardingLiftSelector(
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
     ) {
         with(defaultSbdLifts) {
-            lifts.forEachIndexed { index, lift ->
+            lifts?.forEachIndexed { index, lift ->
                 var expanded by remember { mutableStateOf(false) }
 
-                val liftVariations = variations.filter { it.lift?.id == lift.id }
+                val liftVariations = variations?.filter { it.lift?.id == lift.id }
 
                 Column(
                     modifier = Modifier.animateContentSize()
@@ -211,7 +211,7 @@ private fun OnboardingLiftSelector(
                             top = if (index == 0) MaterialTheme.spacing.one else 0.dp,
                             start = MaterialTheme.spacing.one,
                             end = MaterialTheme.spacing.one,
-                            bottom = if (index == lifts.lastIndex) MaterialTheme.spacing.one else 0.dp
+                            bottom = if (index == lifts?.lastIndex) MaterialTheme.spacing.one else 0.dp
                         ).defaultMinSize(minHeight = Dp.AccessibilityMinimumSize),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -223,7 +223,7 @@ private fun OnboardingLiftSelector(
                                 style = MaterialTheme.typography.titleMedium
                             )
                             Row {
-                                liftVariations.forEachIndexed { index, variation ->
+                                liftVariations?.forEachIndexed { index, variation ->
                                     val selected by remember {
                                         derivedStateOf {
                                             selectedVariations.contains(
@@ -249,7 +249,7 @@ private fun OnboardingLiftSelector(
 
                     val coroutineScope = rememberCoroutineScope()
                     if (expanded) {
-                        liftVariations.forEach { variation ->
+                        liftVariations?.forEach { variation ->
                             val checked by remember {
                                 derivedStateOf {
                                     selectedVariations.contains(

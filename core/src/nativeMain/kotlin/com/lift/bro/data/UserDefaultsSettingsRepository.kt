@@ -6,19 +6,13 @@ import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.utils.debug
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
-import com.lift.bro.utils.today
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import platform.Foundation.NSUserDefaults
 

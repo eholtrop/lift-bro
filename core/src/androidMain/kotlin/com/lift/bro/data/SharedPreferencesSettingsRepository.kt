@@ -3,30 +3,20 @@ package com.lift.bro.data
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.ISettingsRepository
+import com.lift.bro.presentation.onboarding.LiftBro
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.LocalDate
-import androidx.core.content.edit
-import com.lift.bro.presentation.onboarding.LiftBro
-import com.lift.bro.utils.debug
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.consumeAsFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
 
 class SharedPreferencesSettingsRepository(
     val context: Context,

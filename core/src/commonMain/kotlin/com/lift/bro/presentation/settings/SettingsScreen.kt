@@ -9,18 +9,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.intl.Locale
+import androidx.compose.ui.text.toLowerCase
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Settings
@@ -37,6 +45,9 @@ fun SettingsScreen() {
     LiftingScaffold(
         title = "Settings",
         content = { padding ->
+
+            var showExperimental by remember { mutableStateOf(false) }
+
             LazyColumn(
                 modifier = Modifier.padding(padding),
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
@@ -86,28 +97,56 @@ fun SettingsScreen() {
                     BackupRow()
                 }
 
-//                item {
-//                    SettingsRowItem(
-//                        title = {
-//                            Text("Maximally Effective Reps (MERs)")
-//                        },
-//                        content = {
-//                            val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs().collectAsState(false)
-//                            Row(
-//                                verticalAlignment = Alignment.CenterVertically,
-//                            ) {
-//                                Checkbox(
-//                                    checked = showMerCalcs,
-//                                    onCheckedChange = {
-////                                        dependencies.settingsRepository.setShowMerCalcs(it)
-//                                    }
-//                                )
-//
-//                                Text("Show MER calculations where applicable")
-//                            }
-//                        }
-//                    )
-//                }
+                item {
+                    var value by remember { mutableStateOf("") }
+                    if (showExperimental) {
+                        Column {
+                            Text(
+                                text = "Experimental",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                        }
+                    } else {
+                        TextField(
+                            modifier = Modifier.fillParentMaxWidth(),
+                            value = value,
+                            onValueChange = {
+                                value = it
+                                if (value.toLowerCase(Locale.current) == "pizza") {
+                                    showExperimental = true
+                                }
+                            },
+                            placeholder = { Text("Say the magic word") }
+                        )
+                    }
+                }
+
+                if (showExperimental) {
+                    item {
+                        SettingsRowItem(
+                            title = {
+                                Text("Maximally Effective Reps (MERs)")
+                            },
+                            content = {
+                                val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs()
+                                    .collectAsState(false)
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Checkbox(
+                                        checked = showMerCalcs,
+                                        onCheckedChange = {
+                                            dependencies.settingsRepository.setShowMerCalcs(it)
+                                        }
+                                    )
+
+                                    Text("Show MER calculations where applicable")
+                                }
+                            }
+                        )
+                    }
+                }
+
             }
         }
     )

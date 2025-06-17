@@ -5,23 +5,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import com.google.android.gms.ads.MobileAds
 import com.lift.bro.BuildConfig
 import com.lift.bro.di.DependencyContainer
-import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.App
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.rememberNavCoordinator
-import com.lift.bro.utils.debug
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
-import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {
 

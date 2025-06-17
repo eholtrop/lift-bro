@@ -1,6 +1,5 @@
 package com.lift.bro.data
 
-import androidx.compose.ui.platform.LocalGraphicsContext
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -14,9 +13,6 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
-import com.lift.bro.utils.mapEach
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
@@ -102,8 +98,6 @@ class SetDataSource(
         val setFatigue =
             (set.weight?.div(maxWeight ?: 1))?.times(100)?.plus((set.reps ?: 0) * repFatigueCost)
                 ?.toInt()
-
-        Log.d("DEBUGEH", (setFatigue?.minus(merFatigueThreshold ?: 0)?.mod(4) ?: 0).toString())
 
         return min(set.reps?.toInt() ?: 0, setFatigue?.minus(merFatigueThreshold ?: 0)?.div(4) ?: 0)
     }

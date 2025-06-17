@@ -25,9 +25,9 @@ import kotlinx.serialization.json.Json
 
 @Serializable
 data class Backup(
-    val lifts: List<Lift>,
-    val variations: List<Variation>,
-    val sets: List<LBSet>,
+    val lifts: List<Lift>? = null,
+    val variations: List<Variation>? = null,
+    val sets: List<LBSet>? = null,
     val liftingLogs: List<LiftingLog>? = null,
 )
 
@@ -67,11 +67,11 @@ object BackupService {
         dependencies.database.setDataSource.deleteAll()
         dependencies.database.logDataSource.deleteAll()
 
-        backup.lifts.forEach {
+        backup.lifts?.forEach {
             dependencies.database.liftDataSource.save(it)
         }
 
-        backup.variations.forEach {
+        backup.variations?.forEach {
             dependencies.database.variantDataSource.save(
                 id = it.id,
                 liftId = it.lift!!.id,
@@ -79,7 +79,7 @@ object BackupService {
             )
         }
 
-        backup.sets.forEach {
+        backup.sets?.forEach {
             dependencies.database.setDataSource.save(it)
         }
 

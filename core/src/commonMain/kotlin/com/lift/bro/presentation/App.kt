@@ -11,18 +11,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
@@ -31,7 +27,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -42,10 +37,8 @@ import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
-import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
-import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.ConfettiExplosion
@@ -57,8 +50,6 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
