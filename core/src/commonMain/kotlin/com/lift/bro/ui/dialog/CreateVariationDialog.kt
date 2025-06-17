@@ -65,16 +65,19 @@ fun CreateVariationDialog(
     val parentLift by dependencies.database.liftDataSource.get(parentLiftId)
         .collectAsState(null)
 
-    VariationDialog(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-        title = "Create Variation",
-        properties = properties,
-        variation = Variation(
-            lift = parentLift,
-        ),
-        onVariationSaved = onVariationCreated,
-    )
+    if (parentLift != null) {
+
+        VariationDialog(
+            modifier = modifier,
+            onDismissRequest = onDismissRequest,
+            title = "Create Variation",
+            properties = properties,
+            variation = Variation(
+                lift = parentLift,
+            ),
+            onVariationSaved = onVariationCreated,
+        )
+    }
 }
 
 @Composable
