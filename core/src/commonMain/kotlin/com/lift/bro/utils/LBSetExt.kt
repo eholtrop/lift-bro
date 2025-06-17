@@ -22,7 +22,7 @@ internal fun LBSet.prettyPrintSet(
 ): AnnotatedString = buildAnnotatedString {
     withStyle(
         style = SpanStyle(),
-    ) { append("$reps x ${weight.decimalFormat()} ${uom.value}" + if (rpe != null) "at $rpe" else "") }
+    ) { append("$reps x ${weight.decimalFormat()} ${uom.value}" + if (rpe != null) " at ${rpe}rpe" else "") }
 
     if (mer > 0 && LocalShowMERCalcs.current) {
         withStyle(

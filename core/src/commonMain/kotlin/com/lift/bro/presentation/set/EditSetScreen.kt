@@ -117,6 +117,7 @@ private fun EditSetState.toDomain() = LBSet(
     ),
     date = this.date,
     notes = this.notes,
+    rpe = this.rpe,
 )
 
 @Composable
@@ -186,7 +187,7 @@ fun EditSetScreen(
                         set = set,
                         repChanged = { set = set.copy(reps = it) },
                         weightChanged = { set = set.copy(weight = it) },
-                        rpeChanged = { set.copy(rpe = it) }
+                        rpeChanged = { set = set.copy(rpe = it) }
                     )
 
                     val sets = dependencies.database.setDataSource.getAllForLift(
