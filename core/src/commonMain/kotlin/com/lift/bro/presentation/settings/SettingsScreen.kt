@@ -7,10 +7,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
@@ -20,27 +18,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Settings
-import com.lift.bro.ui.RadioField
-import com.lift.bro.ui.theme.spacing
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.RadioField
 import com.lift.bro.ui.Space
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
-import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
-import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
-import io.github.vinceglb.filekit.FileKit
-import kotlinx.coroutines.coroutineScope
+import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.launch
 
 @Composable

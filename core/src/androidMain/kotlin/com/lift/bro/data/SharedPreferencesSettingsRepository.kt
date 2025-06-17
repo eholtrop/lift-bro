@@ -96,11 +96,10 @@ class SharedPreferencesSettingsRepository(
     }
 
     override fun setDeviceFtux(ftux: Boolean) {
-        sharedPreferences.edit { putBoolean("ftux", true) }
+        sharedPreferences.edit { putBoolean("ftux", ftux) }
     }
 
     override fun getBackupSettings(): Flow<BackupSettings> {
-        // TODO: update this to listen to changes instead of just fetching once... for now this is fine!
         return flow {
             emit(
                 BackupSettings(

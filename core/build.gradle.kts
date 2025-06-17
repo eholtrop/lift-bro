@@ -73,9 +73,9 @@ kotlin {
             implementation(libs.filekit.dialogs)
             implementation(libs.filekit.dialogs.compose)
 
-            implementation(libs.revenuecat.core)
-            implementation(libs.revenuecat.datetime)
-            implementation(libs.revenuecat.ui)
+//            implementation(libs.revenuecat.core)
+//            implementation(libs.revenuecat.datetime)
+//            implementation(libs.revenuecat.ui)
         }
 
         androidMain.dependencies {

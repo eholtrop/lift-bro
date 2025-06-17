@@ -57,6 +57,8 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -82,7 +84,7 @@ val LocalLiftCardYValue = compositionLocalOf<MutableState<LiftCardYValue>> {
 
 @Composable
 fun App(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding)
 ) {
 
@@ -94,9 +96,17 @@ fun App(
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
         LocalUnitOfMeasure provides uom,
         LocalShowMERCalcs provides showMerCalcs,
-        LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight)
+        LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Reps)
 
     ) {
+        LaunchedEffect("landing_selection") {
+            dependencies.settingsRepository.getDeviceFtux().collectLatest {
+                when (it) {
+                    true -> navCoordinator.setRoot(Destination.Dashboard)
+                    false -> navCoordinator.setRoot(Destination.Onboarding)
+                }
+            }
+        }
 
         AppTheme {
             Box(

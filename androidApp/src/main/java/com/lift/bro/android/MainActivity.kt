@@ -18,6 +18,9 @@ import com.lift.bro.presentation.App
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.rememberNavCoordinator
+import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.flow.collectLatest
 
 class MainActivity : ComponentActivity() {
@@ -49,15 +52,6 @@ class MainActivity : ComponentActivity() {
             BackHandler {
                 if (!coordinator.onBackPressed()) {
                     onBackPressed()
-                }
-            }
-
-            LaunchedEffect("landing_selection") {
-                dependencies.settingsRepository.getDeviceFtux().collectLatest {
-                    when (it) {
-                        true -> coordinator.setRoot(Destination.Dashboard)
-                        false -> coordinator.setRoot(Destination.Onboarding)
-                    }
                 }
             }
         }

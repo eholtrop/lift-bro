@@ -4,7 +4,10 @@ import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.ISettingsRepository
+import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.today
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -38,6 +41,7 @@ class UserDefaultsSettingsRepository : ISettingsRepository {
             .onStart {
                 emit(block(key))
             }
+            .debug("DEBUGEH")
     }
 
     override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
@@ -47,6 +51,20 @@ class UserDefaultsSettingsRepository : ISettingsRepository {
                     Settings.UnitOfWeight(UOM.valueOf(userDefaults.stringForKey(key) ?: "POUNDS"))
                 }
             )
+    }
+
+    override fun getDeviceFtux(): Flow<Boolean> {
+        return subscribeToKey(
+            key = "ftux",
+            block = { key ->
+                userDefaults.boolForKey("ftux")
+            }
+        )
+    }
+
+    override fun setDeviceFtux(ftux: Boolean) {
+        userDefaults.setObject(ftux, "ftux")
+        keyChanged("ftux")
     }
 
     override fun saveUnitOfMeasure(uom: Settings.UnitOfWeight) {
@@ -66,5 +84,33 @@ class UserDefaultsSettingsRepository : ISettingsRepository {
     }
 
     override fun saveBackupSettings(settings: BackupSettings) {
+    }
+
+    override fun getBro(): Flow<LiftBro?> {
+        return subscribeToKey(
+            key = "bro",
+            block = {
+                userDefaults.stringForKey("bro")?.let { LiftBro.valueOf(it) }
+            }
+        )
+    }
+
+    override fun setBro(bro: LiftBro) {
+        userDefaults.setObject(bro.name, "bro")
+        keyChanged("bro")
+    }
+
+    override fun shouldShowMerCalcs(): Flow<Boolean> {
+        return subscribeToKey(
+            key = "show_mer_calcs",
+            block = { key ->
+                userDefaults.boolForKey(key)
+            }
+        )
+    }
+
+    override fun setShowMerCalcs(showMerCalcs: Boolean) {
+        userDefaults.setBool(showMerCalcs, "show_mer_calcs")
+        keyChanged("show_mer_calcs")
     }
 }

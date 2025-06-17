@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -46,6 +47,7 @@ import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.max
+import kotlin.text.Typography.nbsp
 
 data class LiftCardState(
     val lift: Lift,
@@ -72,7 +74,7 @@ fun LiftCard(
 ) {
     val lift = state.lift
     val max =
-        if (value == LiftCardYValue.Reps) state.values.maxOf { it.second.reps.toDouble() } else state.lift.maxWeight
+        if (value == LiftCardYValue.Reps) state.values.maxOfOrNull { it.second.reps.toDouble() } ?: 0.0 else state.lift.maxWeight
     val min = state.values.minOfOrNull {
         when (value) {
             LiftCardYValue.Reps -> 0.0
@@ -101,9 +103,10 @@ fun LiftCard(
                 Space()
                 max?.let {
                     Text(
+                        modifier = Modifier.wrapContentWidth(),
                         text = when (value) {
                             LiftCardYValue.Weight -> weightFormat(max)
-                            LiftCardYValue.Reps -> "${max.toInt()} reps"
+                            LiftCardYValue.Reps -> "${max.toInt()}${nbsp}reps"
                         },
                         style = MaterialTheme.typography.labelMedium,
                     )

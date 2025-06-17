@@ -45,9 +45,13 @@ object BackupService {
     }
 
     suspend fun restore(): Boolean {
+        val backupDir = FileKit.filesDir / "backups"
+        if (!backupDir.exists()) {
+            backupDir.createDirectories()
+        }
         FileKit.openFilePicker(
             type = FileKitType.File("application/json"),
-            directory = FileKit.filesDir / "backups"
+            directory = backupDir
         )?.apply {
             restore(Json.decodeFromString<Backup>(readString()))
             return true
