@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -53,6 +54,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftCardYValue
+import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toString
 import com.lift.bro.presentation.variation.render
@@ -287,6 +289,10 @@ fun LiftDetailsScreen(
                         onSetClicked = onSetClicked
                     )
                 }
+
+                item {
+                    Spacer(modifier = Modifier.height(72.dp))
+                }
             }
         }
     }
@@ -306,15 +312,10 @@ private fun VariationCard(
             .clip(MaterialTheme.shapes.medium)
             .background(
                 color = MaterialTheme.colorScheme.surface,
-            )
-            .padding(MaterialTheme.spacing.quarter),
+            ),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
-                .padding(
-                    vertical = MaterialTheme.spacing.one,
-                    horizontal = MaterialTheme.spacing.half
-                ),
+            modifier = Modifier.fillMaxWidth(),
         ) {
 
             val sets by dependencies.database.setDataSource.listenAllForVariation(variation.id).collectAsState(emptyList())
@@ -322,7 +323,11 @@ private fun VariationCard(
             Row(
                 modifier = Modifier.clickable {
                     onClick(variation)
-                }.padding(horizontal = MaterialTheme.spacing.half),
+                }.padding(
+                    start = MaterialTheme.spacing.one,
+                    end = MaterialTheme.spacing.one,
+                    top = MaterialTheme.spacing.one
+                ),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(
@@ -355,14 +360,14 @@ private fun VariationCard(
                         }
                     }
 
+                    Space(MaterialTheme.spacing.one)
+
                 }
 
                 Space(MaterialTheme.spacing.one)
 
                 Icon(imageVector = Icons.Default.KeyboardArrowRight, contentDescription = null)
             }
-
-            Space(MaterialTheme.spacing.one)
 
             val setPoints = sets.groupBy { it.date.toLocalDate() }.toList()
                 .sortedByDescending { it.first }
@@ -440,23 +445,20 @@ private fun VariationCard(
                     pair.second
                         .sortedByDescending { it.weight }
                         .forEach { set ->
-                            Column(
-                                modifier = Modifier.defaultMinSize(minHeight = 44.dp)
-                                    .fillMaxWidth()
+
+                            SetInfoRow(
+                                modifier = Modifier
+                                    .fillMaxSize()
                                     .clip(MaterialTheme.shapes.small)
                                     .clickable(
                                         role = Role.Button,
                                         onClick = { onSetClicked(set) }
-                                    )
-                                    .padding(horizontal = MaterialTheme.spacing.half),
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Text(
-                                    text = "${set.formattedWeight()} x ${set.reps}",
-                                    style = MaterialTheme.typography.titleSmall
-                                )
-                                set.tempo.render()
-                            }
+                                    ).padding(
+                                        horizontal = MaterialTheme.spacing.one,
+                                        vertical = MaterialTheme.spacing.half,
+                                    ),
+                                set = set,
+                            )
                         }
                 }
             } else {

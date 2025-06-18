@@ -105,6 +105,10 @@ fun SettingsScreen() {
                                 text = "Experimental",
                                 style = MaterialTheme.typography.titleLarge
                             )
+                            Text(
+                                text = "Features here are experimental, and could break app functionality, use with caution!",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         }
                     } else {
                         TextField(
