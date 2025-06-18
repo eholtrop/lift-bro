@@ -87,7 +87,7 @@ fun App(
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
         LocalUnitOfMeasure provides uom,
         LocalShowMERCalcs provides showMerCalcs,
-        LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Reps)
+        LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight)
 
     ) {
         LaunchedEffect("landing_selection") {
