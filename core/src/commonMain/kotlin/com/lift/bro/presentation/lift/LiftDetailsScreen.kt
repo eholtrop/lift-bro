@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -31,7 +29,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -57,7 +54,6 @@ import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toString
-import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.LiftingScaffold
@@ -318,7 +314,8 @@ private fun VariationCard(
             modifier = Modifier.fillMaxWidth(),
         ) {
 
-            val sets by dependencies.database.setDataSource.listenAllForVariation(variation.id).collectAsState(emptyList())
+            val sets by dependencies.database.setDataSource.listenAllForVariation(variation.id)
+                .collectAsState(emptyList())
 
             Row(
                 modifier = Modifier.clickable {
@@ -348,10 +345,12 @@ private fun VariationCard(
                     when (LocalLiftCardYValue.current.value) {
                         LiftCardYValue.Weight -> {
                             Text(
-                                text = maxLift?.let { "${it.formattedWeight()} Max" } ?: run { "No Sets" },
+                                text = maxLift?.let { "${it.formattedWeight()} Max" }
+                                    ?: run { "No Sets" },
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
+
                         LiftCardYValue.Reps -> {
                             Text(
                                 text = maxLift?.let { "${it.reps} Reps" } ?: run { "No Sets" },
@@ -374,26 +373,32 @@ private fun VariationCard(
 
 
             if (setPoints.isNotEmpty()) {
-                var selectedData: DotGraphData? by remember {
-                    mutableStateOf(setPoints.maxBy { it.first }.let {
-                        DotGraphData(
-                            it.first.toEpochDays().toLong(),
-                            it.second.maxOf { it.weight.toFloat() }
-                        )
-                    })
+                var selectedData: LocalDate? by remember {
+                    mutableStateOf(setPoints.maxOf { it.first })
                 }
 
                 DotGraph(
                     modifier = Modifier.fillMaxWidth().height(128.dp),
-                    data = setPoints.map {
-                        DotGraphData(
-                            it.first.toEpochDays().toLong(),
-                            it.second.maxOf {
-                                when (LocalLiftCardYValue.current.value) {
-                                    LiftCardYValue.Weight -> it.weight.toFloat()
-                                    LiftCardYValue.Reps -> it.reps.toFloat()
-                                }
+                    graphData = setPoints.map {
+                        val topLift = it.second.maxBy {
+                            when (LocalLiftCardYValue.current.value) {
+                                LiftCardYValue.Weight -> it.weight.toFloat()
+                                LiftCardYValue.Reps -> it.reps.toFloat()
                             }
+                        }
+
+                        it.first to Pair(
+                            GraphData.DotGraphData(
+                                it.first,
+                                when (LocalLiftCardYValue.current.value) {
+                                    LiftCardYValue.Weight -> topLift.weight.toFloat()
+                                    LiftCardYValue.Reps -> topLift.reps.toFloat()
+                                }
+                            ),
+                            GraphData.LineGraphData(
+                                it.first,
+                                topLift.rpe?.toFloat()?.div(10f) ?: 0f
+                            )
                         )
                     },
                     state = rememberLazyListState(),
@@ -402,7 +407,8 @@ private fun VariationCard(
                         Text(
                             LocalDate.fromEpochDays(epochDays.toInt()).toString("MMM d"),
                             style = MaterialTheme.typography.titleSmall,
-                            color = if (selectedData?.x == epochDays) parentLift.color?.toColor() ?: MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            color = if (selectedData?.toEpochDays()?.toLong() == epochDays) parentLift.color?.toColor()
+                                ?: MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
                     },
                     yAxis = { fl: Float, fl1: Float -> },
@@ -411,7 +417,8 @@ private fun VariationCard(
                     },
                     colors = DotGraphColors(
                         dotColor = MaterialTheme.colorScheme.onSurface,
-                        dotColorSelected = parentLift.color?.toColor() ?: MaterialTheme.colorScheme.primary
+                        dotColorSelected = parentLift.color?.toColor()
+                            ?: MaterialTheme.colorScheme.primary
                     )
                 )
 
@@ -419,7 +426,7 @@ private fun VariationCard(
 
                     Space(MaterialTheme.spacing.one)
 
-                    val pair = setPoints.first { it.first.toEpochDays().toLong() == data.x }
+                    val pair = setPoints.first { it.first == data }
                     Column(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.half)
                     ) {

@@ -61,10 +61,7 @@ fun SettingsScreen() {
                         Row(
                             modifier = Modifier.selectableGroup(),
                         ) {
-                            val uom by dependencies.settingsRepository.getUnitOfMeasure()
-                                .collectAsState(
-                                    null
-                                )
+                            val uom by dependencies.settingsRepository.getUnitOfMeasure().collectAsState(null)
 
                             RadioField(
                                 text = UOM.POUNDS.value,

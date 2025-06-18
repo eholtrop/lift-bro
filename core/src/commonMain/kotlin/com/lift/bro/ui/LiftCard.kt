@@ -1,16 +1,20 @@
 package com.lift.bro.ui
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +43,8 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
@@ -74,7 +81,8 @@ fun LiftCard(
 ) {
     val lift = state.lift
     val max =
-        if (value == LiftCardYValue.Reps) state.values.maxOfOrNull { it.second.reps.toDouble() } ?: 0.0 else state.lift.maxWeight
+        if (value == LiftCardYValue.Reps) state.values.maxOfOrNull { it.second.reps.toDouble() }
+            ?: 0.0 else state.lift.maxWeight
     val min = state.values.minOfOrNull {
         when (value) {
             LiftCardYValue.Reps -> 0.0
@@ -142,40 +150,51 @@ fun LiftCard(
 
                 var canvasSize by remember { mutableStateOf(Size.Zero) }
                 val animatedGraphNodes =
-                    remember { mutableStateMapOf<LocalDate, Animatable<Offset, AnimationVector2D>>() }
+                    remember { mutableStateMapOf<LocalDate, Pair<Animatable<Offset, AnimationVector2D>, Animatable<Float, AnimationVector1D>?>>() }
 
                 LaunchedEffect(value, canvasSize) {
-                    if (canvasSize == Size.Zero) return@LaunchedEffect
-
                     val height = canvasSize.height
                     val width = canvasSize.width
                     val spacing = width.div(5)
 
                     val nodeData = when (value) {
                         LiftCardYValue.Reps -> state.values.map {
-                            it.first to it.second.reps.toDouble()
+                            it.first to Pair(it.second.reps.toDouble(), it.second.rpe)
                         }
 
                         LiftCardYValue.Weight -> state.values.map {
-                            it.first to it.second.weight
+                            it.first to Pair(it.second.weight, it.second.rpe)
                         }
                     }
 
-
                     nodeData.forEachIndexed { index, pair ->
-                        val targetX = width - (spacing * index + spacing / 2)
+                        val targetX = width / 2f
                         val normalizedPercentage =
-                            (pair.second - min * 0.95) / (max(1.0, max - min * 0.95))
+                            (pair.second.first - min * 0.95) / (max(1.0, max - min * 0.95))
                         val targetY = height - (normalizedPercentage * height).toFloat()
                         val newTargetOffset = Offset(targetX, targetY)
 
-                        val animatable = animatedGraphNodes.getOrPut(pair.first) {
-                            Animatable(Offset(targetX, height), Offset.VectorConverter)
+                        val animatablePair = animatedGraphNodes.getOrPut(pair.first) {
+                            Animatable(
+                                Offset(targetX, targetY),
+                                Offset.VectorConverter
+                            ) to Animatable(0f, FloatVectorConverter)
                         }
 
                         launch {
-                            animatable.animateTo(
+                            animatablePair.first.animateTo(
                                 targetValue = newTargetOffset,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            )
+                        }
+
+                        launch {
+                            animatablePair.second?.animateTo(
+                                targetValue = canvasSize.height * (pair.second.second?.div(10f)
+                                    ?: 0f),
                                 animationSpec = spring(
                                     dampingRatio = Spring.DampingRatioNoBouncy,
                                     stiffness = Spring.StiffnessLow
@@ -185,20 +204,35 @@ fun LiftCard(
                     }
                 }
 
-
-
-                Canvas(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                Row(
+                    modifier = Modifier.fillMaxWidth().weight(1f)
                 ) {
-                    canvasSize = this.size
-                    animatedGraphNodes.forEach { node ->
-                        drawCircle(
-                            color = color,
-                            radius = 10.dp.value,
-                            center = node.value.value
-                        )
+                    if (animatedGraphNodes.size < 5) {
+                        Box(modifier = Modifier.weight(5f - animatedGraphNodes.size))
+                    }
+
+                    animatedGraphNodes.toList().sortedBy{ it.first }.forEachIndexed { index, node ->
+                        Canvas(
+                            modifier = Modifier.fillMaxHeight().weight(1f),
+                        ) {
+                            canvasSize = size
+                            drawCircle(
+                                color = color,
+                                radius = 10.dp.value,
+                                center = node.second.first.value
+                            )
+                            drawRect(
+                                color = color.copy(alpha = .6f),
+                                size = Size(size.width, node.second.second?.value ?: 0f),
+                                topLeft = Offset(
+                                    x = 0f,
+                                    y = size.height - (node.second.second?.value ?: size.height)
+                                )
+                            )
+                        }
                     }
                 }
+
 
                 Space(MaterialTheme.spacing.half)
 

@@ -35,7 +35,6 @@ class UserDefaultsSettingsRepository : ISettingsRepository {
             .onStart {
                 emit(block(key))
             }
-            .debug("DEBUGEH")
     }
 
     override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {

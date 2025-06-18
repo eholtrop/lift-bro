@@ -53,7 +53,7 @@ class DashboardViewModel(
                                     it.value.maxOf { it.reps }.toInt(),
                                     it.value.maxOfOrNull { it.rpe ?: 0 },
                                 )
-                            },
+                            }.sortedByDescending { it.first }.take(5).reversed(),
                     )
                 )
             }.sortedBy { it.state.lift.name.toLowerCase(Locale.current) }
