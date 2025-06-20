@@ -1,0 +1,84 @@
+name: iOS CI/CD
+
+on:
+  push:
+    branches: [ ios ]
+
+env:
+  LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
+  LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
+
+jobs:
+  build_and_deploy_ios:
+    runs-on: macos-latest
+
+    steps:
+
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: "temurin"
+          java-version: 17
+
+      - name: Set up Ruby 3.3
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+
+#      - name: Install cocoapods
+#        run: |
+#          gem install cocoapods
+#          cd iosApp
+#          pod install --repo-update
+#        env:
+#          LANG: en_US.UTF-8
+
+#      - name: Run linter
+#        run: fastlane lint
+#
+#      - name: Run tests
+#        run: fastlane test
+
+
+      - name: Build and Upload to TestFlight (Beta Lane)
+        # Or you could have separate jobs/workflows for beta and app store.
+        # This example combines them, using conditionals.
+        if: github.ref == 'refs/heads/main' # Only deploy beta on pushes to main (or your dev branch)
+        env:
+          # Essential for Fastlane Match and App Store Connect API Key
+          FASTLANE_MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          MATCH_GIT_PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+        run: |
+          bundle install
+          bundle exec fastlane beta
+        working-directory: ./fastlane # Or ./iosApp/fastlane if your Fastfile is there
+
+      - name: Build and Submit to App Store (Release Lane)
+        env:
+          # Same essential Fastlane secrets as above
+          FASTLANE_MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          MATCH_GIT_PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+          # Any other environment variables
+        run: |
+          bundle install
+          bundle exec fastlane appstore # Call your appstore lane in Fastfile
+        working-directory: ./fastlane # Or ./iosApp/fastlane if your Fastfile is there
+
+      - name: Upload Build Artifact (IPA)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/artifacts/iosApp.ipa # Adjust path to where gym outputs the IPA
+          if-no-files-found: ignore

@@ -15,6 +15,34 @@
 
 default_platform(:android)
 
+before_all do
+    if platform == :ios
+        setup_ci
+
+        unless ENV["APPSTORE_KEY_ID"].nil? || ENV["APPSTORE_KEY_ID"].empty?
+          app_store_connect_api_key(
+            key_id: ENV["APPSTORE_KEY_ID"],
+            issuer_id: ENV["APPSTORE_ISSUER_ID"],
+            key_content: ENV["APPSTORE_PRIVATE_KEY"]
+          )
+        end
+
+        # For iOS Match: Decode the SSH private key to access your Match Git repo
+        unless ENV["MATCH_GIT_PRIVATE_KEY"].nil? || ENV["MATCH_GIT_PRIVATE_KEY"].empty?
+          sh "mkdir -p ~/.ssh/"
+          # Using HEREDOC for multi-line key content
+          File.open(File.expand_path("~/.ssh/id_rsa"), "w") do |file|
+            file.puts ENV["MATCH_GIT_PRIVATE_KEY"]
+          end
+          sh "chmod 600 ~/.ssh/id_rsa"
+          # Add your Git host to known_hosts to prevent SSH prompts in CI
+          # Replace github.com with your actual Git host (e.g., gitlab.com, bitbucket.org)
+          sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+        end
+    end
+end
+
+# Android
 platform :android do
 
     desc "Build the release artifact"
@@ -25,7 +53,7 @@ platform :android do
     desc "Run the project tests"
     lane :test do |options|
         gradle(task: "test")
-  end
+    end
 
     desc "Run the project Linter"
     lane :lint do
@@ -37,4 +65,146 @@ platform :android do
       gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
       supply(track: "beta")
     end
+end
+
+# iOS
+platform :ios do
+  # This is often placed in a 'before_all' or specific lane setup
+  # to ensure development profiles are available.
+  desc "Sync iOS Development Code Signing Identities using match"
+  lane :match_development do
+    match(
+      type: "development",
+      readonly: true, # true for CI, false for local setup if you're updating certs
+      git_url: ENV["MATCH_GIT_URL"], # Set this in GitHub Actions secrets
+      git_branch: "main", # Or your desired branch for Match
+      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"]
+    )
+  end
+
+  # This is often placed in a 'before_all' or specific lane setup
+  # to ensure App Store profiles are available.
+  desc "Sync iOS App Store Code Signing Identities using match"
+  lane :match_appstore do
+    match(
+      type: "appstore",
+      readonly: true, # true for CI, false for local setup
+      git_url: ENV["MATCH_GIT_URL"], # Set this in GitHub Actions secrets
+      git_branch: "main", # Or your desired branch for Match
+      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"]
+    )
+  end
+
+  desc "Build the release artifact for iOS"
+  lane :build_release do |options|
+    # Ensure App Store profiles are available for release builds
+    match_appstore
+
+    # Increment build number (optional, but good practice for CI)
+    # Fastlane's `increment_build_number` uses agvtool. Ensure your Xcode project
+    # is set up to use `$(CURRENT_PROJECT_VERSION)` for Build number.
+    # If your KMP versioning is handled purely by Gradle, you might need a custom script
+    # to update the Xcode project version/build number from Gradle properties.
+    # For now, let's assume simple increment.
+    increment_build_number(
+      # xcodeproj: "iosApp/iosApp.xcodeproj" # Specify if not in root
+    )
+
+    # Build the iOS app (.ipa)
+    gym(
+      scheme: "iosApp", # IMPORTANT: Replace with your actual iOS app scheme name (e.g., MyApp, MyKMPProject)
+      workspace: "iosApp/iosApp.xcworkspace", # IMPORTANT: Point to your .xcworkspace file
+      configuration: "Release", # Build in Release configuration
+      export_method: "app-store", # For TestFlight or App Store distribution
+      output_directory: "build/artifacts/ios", # Output IPA to a specific directory
+      output_name: "ios_app_release.ipa",
+      clean: true,
+      silent: false,
+      # Ensure your Xcode project's build phases are set up to trigger Gradle
+      # for the shared module. If not, you might need a `before_build` hook here:
+      # before_build: -> (lane_context) { sh "cd ../ && ./gradlew :shared:build" }
+    )
+  end
+
+  desc "Run tests for iOS"
+  lane :test do
+    # You can run both native iOS tests and KMP shared module tests here
+    # 1. KMP Shared Module Tests (Kotlin/Native)
+    sh "cd ../ && ./gradlew :shared:iosSimulatorArm64Test"
+    # sh "cd ../ && ./gradlew :shared:iosX64Test" # For x86_64 simulator
+
+    # 2. Native iOS Tests (Xcode)
+    # (Requires a test scheme in your Xcode project)
+    run_tests(
+      scheme: "iosAppTests", # Replace with your iOS test scheme name
+      workspace: "iosApp/iosApp.xcworkspace",
+      destination: "platform=iOS Simulator,name=iPhone 15", # Or your preferred simulator
+      clean: true
+    )
+  end
+
+  desc "Run Linter for iOS (e.g., SwiftLint)"
+  lane :lint do
+    # If you use SwiftLint, ensure it's installed and configured.
+    # Example:
+    # swiftlint(
+    #   mode: :lint, # Or :autocorrect
+    #   strict: true
+    # )
+    # If no specific iOS linter, you might just skip this or add a placeholder.
+    UI.message("No specific iOS linting configured in Fastfile.")
+  end
+
+  desc "Deploy a new beta version to TestFlight for iOS"
+  lane :beta do |options|
+    build_release(build_number: options[:build_number]) # Reuse the build_release lane
+
+    # Upload to TestFlight
+    testflight(
+      ipa: "build/artifacts/ios/ios_app_release.ipa",
+      changelog: "Updated app to a new beta version from CI. Build: #{options[:build_number]}",
+      # notify_testers: true, # Set to true to automatically notify testers
+      # groups: ["Internal Testers"] # Optional: specific groups to notify
+    )
+  end
+
+  desc "Submit a new version to the App Store for iOS"
+  lane :appstore do |options|
+    # This lane would be similar to `beta` but with `deliver` for App Store submission
+    # and possibly different versioning logic.
+    UI.message("Building and submitting to App Store for iOS...")
+    build_release(build_number: options[:build_number])
+
+    deliver(
+      ipa: "build/artifacts/ios/ios_app_release.ipa",
+      # Add your App Store Connect metadata here (e.g., `app_review_information`, `pricing_tier`, etc.)
+      # It's recommended to pull metadata from `fastlane/metadata` using `deliver init`
+      # or specify directly here.
+      # For first submission, you'll need all metadata. For updates, only new/changed items.
+      force: true, # Use with caution, overwrites existing metadata
+      skip_metadata: false, # Set to true if you don't update metadata via Fastlane
+      skip_screenshots: true, # Set to true if you don't upload screenshots via Fastlane
+      submit_for_review: true, # Automatically submit for review after upload
+      automatic_release: true, # Release immediately after review (or set a date)
+      # release_build_status: "READY_FOR_SALE" # Or other values if managing through App Store Connect
+    )
+  end
+
+end # End of iOS platform block
+
+# --------------------------------------------------
+# Error Handling and Post-Actions
+# --------------------------------------------------
+# Actions that should always run after a lane finishes
+after_all do |lane|
+  # Clean up temporary files, keychains etc.
+  # `setup_ci` from `before_all` often handles most of this automatically.
+  UI.message("Fastlane lane '#{lane.name}' finished successfully.")
+end
+
+# Error handling block
+error do |lane, exception|
+  UI.user_error!("Fastlane lane '#{lane.name}' failed with error: #{exception.message}")
+  # You could add notifications here (e.g., Slack, email)
+  # slack(message: "Fastlane build failed for #{lane.name}: #{exception.message}", success: false)
 end

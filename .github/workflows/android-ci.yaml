@@ -1,4 +1,4 @@
-name: Google Play Internal Testing
+#name: Android CI/CD
 
 on:
   push:
