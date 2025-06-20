@@ -50,7 +50,6 @@ class JetpackComposeCoordinator(
         if (!keepStack) {
             mutableStateList.value.clear()
             mutableStateList.value.add(currentState.value)
-//            mutableStateList.value.removeRange(1, mutableStateList.value.size)
         }
         return true
     }

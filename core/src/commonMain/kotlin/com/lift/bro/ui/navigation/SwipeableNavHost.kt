@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.util.lerp
 import kotlin.math.absoluteValue
 
@@ -39,9 +40,10 @@ fun SwipeableNavHost(
             page = pages.indexOf(currentPage)
         )
     }
-
+    val keyboard = LocalSoftwareKeyboardController.current
     LaunchedEffect(savedPagerState.currentPage) {
         navCoordinator.updateCurrentIndex(savedPagerState.currentPage)
+        keyboard?.hide()
     }
 
     var pagerSize: Size? by remember { mutableStateOf(null) }
