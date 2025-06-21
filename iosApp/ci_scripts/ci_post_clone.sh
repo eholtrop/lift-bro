@@ -11,6 +11,25 @@ cd "$SRCROOT/../.." # This is a common setup for KMM projects
 
 echo "Current directory for Gradle: $(pwd)"
 
+# --- START JAVA_HOME CONFIGURATION ---
+# Try to locate Java using /usr/libexec/java_home
+# This utility often helps find the correct path if multiple JDKs are present.
+# Specify the version you need (e.g., -v 17 for Java 17)
+JAVA_HOME_PATH=$(/usr/libexec/java_home -v 17 || /usr/libexec/java_home -v "11" || /usr/libexec/java_home -v "1.8")
+
+if [ -z "$JAVA_HOME_PATH" ]; then
+    echo "Error: Java 17, 11, or 1.8 not found using /usr/libexec/java_home."
+    echo "Please ensure a compatible JDK is available on the Xcode Cloud runner image."
+    exit 1 # Fail the build if Java isn't found
+fi
+
+export JAVA_HOME="$JAVA_HOME_PATH"
+export PATH="$JAVA_HOME/bin:$PATH" # Add Java bin to PATH for 'java' command
+
+echo "JAVA_HOME set to: $JAVA_HOME"
+java -version # Confirm Java version being used
+# --- END JAVA_HOME CONFIGURATION ---
+
 # Export the Xcode Cloud environment variables so Gradle can pick them up.
 # Gradle's System.getenv() will read these.
 # Check if the variables are set by Xcode Cloud before exporting to avoid empty strings
