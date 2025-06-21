@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "--- Xcode Cloud BuildKonfig Environment Variable Bridge ---"
 
@@ -31,7 +31,7 @@ fi
 # Explicitly run the Gradle task to generate BuildKonfig.
 # This ensures the .kt file is generated *before* Xcode tries to compile the KMP framework.
 echo "Running ./gradlew generateBuildKonfig"
-../.././gradlew generateBuildKonfig
+#../.././gradlew generateBuildKonfig
 
 if [ $? -ne 0 ]; then
     echo "Error: Gradle generateBuildKonfig task failed!"
