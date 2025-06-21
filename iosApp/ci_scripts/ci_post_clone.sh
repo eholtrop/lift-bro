@@ -7,7 +7,7 @@ echo "--- Xcode Cloud BuildKonfig Environment Variable Bridge ---"
 # If your iosApp is at the root and shared is a subfolder: cd "$SRCROOT"
 # If your iosApp and shared are siblings under a monorepo root: cd "$SRCROOT/.."
 # If your iosApp is a subfolder and your shared module and gradlew are at the root:
-cd "$SRCROOT/../.." # This is a common setup for KMM projects
+cd "$SRCROOT/../../.." # This is a common setup for KMM projects
 
 echo "Current directory for Gradle: $(pwd)"
 
