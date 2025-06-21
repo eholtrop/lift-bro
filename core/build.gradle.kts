@@ -1,3 +1,5 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+
 plugins {
     alias(libs.plugins.android.library)
 
@@ -8,6 +10,8 @@ plugins {
 
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
+
+    alias(libs.plugins.buildkonfig)
 
     id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
@@ -100,13 +104,20 @@ kotlin {
     }
 }
 
+buildkonfig {
+
+    defaultConfigs {
+        packageName = "com.lift.bro.core.buildconfig"
+        buildConfigField(FieldSpec.Type.STRING, "ADMOB_APP_ID", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as? String ?: System.getenv("LIFT_BRO_ADMOB_APP_ID"))
+        buildConfigField(FieldSpec.Type.STRING, "ADMOB_AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as? String ?: "\"${System.getenv("LIFT_BRO_AD_UNIT_ID")}\"")
+    }
+}
+
 android {
     namespace = "com.lift.bro.core"
     compileSdk = 35
     defaultConfig {
         minSdk = 24
-        resValue("string", "admob_app_id", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as? String ?: System.getenv("LIFT_BRO_ADMOB_APP_ID"))
-        buildConfigField("String", "AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as? String ?: "\"${System.getenv("LIFT_BRO_AD_UNIT_ID")}\"")
     }
 
     buildFeatures {
