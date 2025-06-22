@@ -65,6 +65,44 @@ platform :android do
       gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
       supply(track: "beta")
     end
+
+    desk "Promote internal build to prod on Google Play"
+    lane :promote_internal_to_prod do
+        # Fetch the latest release from the 'internal testing' track
+        # This gets the details of the active release, including its version codes.
+        # The 'supply' action has an option to fetch track information.
+        # We fetch it to ensure we know what's in internal testing, then promote it.
+        testing_track_info = get_google_play_track_releases(
+          track: 'internal_testing',
+          package_name: "com.lift.bro"
+        )
+
+        # Assuming you want to promote the first (latest) release found in internal testing
+        # You might need more sophisticated logic here if you have multiple releases
+        # or want to pick a specific one based on version code or other criteria.
+        if testing_track_info && testing_track_info.first && testing_track_info.first[:version_codes]
+          version_codes_to_promote = testing_track_info.first[:version_codes]
+          UI.message "Promoting version codes #{version_codes_to_promote} from 'internal testing' to 'production'"
+
+          # Promote the release to production
+          supply(
+            track: 'production',                  # Target track is production
+            version_codes: version_codes_to_promote, # Use the version codes from internal testing
+            status: 'completed',                  # Set the release status to completed
+            package_name: package_name,
+            # Optional: You can specify release notes or in-app update priority here if needed
+            # release_notes: {
+            #   'en-US' => 'Weekly production release from internal testing.'
+            # },
+            # in_app_update_priority: 0 # 0-5, 5 is highest
+          )
+          UI.success "Successfully promoted build with version codes #{version_codes_to_promote} to production!"
+        else
+          UI.important "No active releases found in 'internal testing' track to promote."
+          # Exit with an error code if no releases are found to prevent committing an empty release
+          exit(1)
+        end
+      end
 end
 
 # iOS
