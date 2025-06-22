@@ -73,6 +73,10 @@ val LocalLiftCardYValue = compositionLocalOf<MutableState<LiftCardYValue>> {
     error("Lift Card Y Value was not set")
 }
 
+val LocalAdBannerProvider = compositionLocalOf<() -> Any> {
+    error("No Ad Banner Provided")
+}
+
 @Composable
 fun App(
     modifier: Modifier = Modifier,
@@ -88,7 +92,6 @@ fun App(
         LocalUnitOfMeasure provides uom,
         LocalShowMERCalcs provides showMerCalcs,
         LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight)
-
     ) {
         LaunchedEffect("landing_selection") {
             dependencies.settingsRepository.getDeviceFtux().collectLatest {
