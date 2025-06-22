@@ -89,7 +89,7 @@ platform :android do
             track: 'internal',                  # Target track is production
             track_promote_to: "production",
             version_code: version_codes_to_promote, # Use the version codes from internal testing
-            status: 'completed',                  # Set the release status to completed
+            track_promote_release_status: 'completed',                  # Set the release status to completed
             package_name: "com.lift.bro",
             # Optional: You can specify release notes or in-app update priority here if needed
             # release_notes: {
