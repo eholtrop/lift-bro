@@ -18,7 +18,7 @@ android {
         applicationId = "com.lift.bro"
         minSdk = 24
         targetSdk = 35
-        versionName = SimpleDateFormat("dd.mm.yyyy").format(Date())
+        versionName = SimpleDateFormat("dd.MM.yyyy").format(Date())
 
         versionCode = if (project.hasProperty("buildNumber")) {
             property("buildNumber").toString().toInt() + 156
