@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy:
+  promote_to_prod:
     runs-on: ubuntu-latest
 
     steps:

@@ -72,7 +72,7 @@ platform :android do
         # This gets the details of the active release, including its version codes.
         # The 'supply' action has an option to fetch track information.
         # We fetch it to ensure we know what's in internal testing, then promote it.
-        testing_track_info = google_play_track_release_names(
+        testing_track_info = google_play_track_version_codes(
           track: 'internal',
           package_name: "com.lift.bro"
         )
@@ -80,16 +80,17 @@ platform :android do
         # Assuming you want to promote the first (latest) release found in internal testing
         # You might need more sophisticated logic here if you have multiple releases
         # or want to pick a specific one based on version code or other criteria.
-        if testing_track_info && testing_track_info.first && testing_track_info.first[:version_codes]
-          version_codes_to_promote = testing_track_info.first[:version_codes]
+        if testing_track_info && testing_track_info.first
+          version_codes_to_promote = testing_track_info.first
           UI.message "Promoting version codes #{version_codes_to_promote} from 'internal testing' to 'production'"
 
           # Promote the release to production
           supply(
-            track: 'production',                  # Target track is production
+            track: 'internal',                  # Target track is production
+            track_promote_to: "production",
             version_codes: version_codes_to_promote, # Use the version codes from internal testing
             status: 'completed',                  # Set the release status to completed
-            package_name: package_name,
+            package_name: "com.lift.bro",
             # Optional: You can specify release notes or in-app update priority here if needed
             # release_notes: {
             #   'en-US' => 'Weekly production release from internal testing.'
