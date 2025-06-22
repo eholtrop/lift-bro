@@ -1,0 +1,34 @@
+[
+  {
+    "versionId": "22.06.2025",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Add Release Notes!"
+    }
+  },
+  {
+    "versionId": "22.06.2025",
+    "type": "fix",
+    "platform": "iOS",
+    "note": {
+      "en": "Fix keyboard dismissal issues on iOS"
+    }
+  },
+  {
+    "versionId": "22.06.2025",
+    "type": "fix",
+    "platform": "iOS",
+    "note": {
+      "en": "Fix crash when restoring older backups"
+    }
+  },
+  {
+    "versionId": "22.06.2025",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Add links to github and discord to the settings page"
+    }
+  }
+]

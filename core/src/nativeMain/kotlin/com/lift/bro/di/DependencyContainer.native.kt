@@ -14,6 +14,9 @@ actual class DependencyContainer {
     actual fun launchCalculator() {
 
     }
+
+    actual fun launchUrl(url: String) {
+    }
 }
 
 actual val dependencies: DependencyContainer by lazy {

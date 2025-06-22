@@ -106,4 +106,18 @@ class UserDefaultsSettingsRepository : ISettingsRepository {
         userDefaults.setBool(showMerCalcs, "show_mer_calcs")
         keyChanged("show_mer_calcs")
     }
+
+    override fun getLatestReadReleaseNotes(): Flow<String?> {
+        return subscribeToKey(
+            "latest_read_release_notes",
+            block = { key ->
+                userDefaults.stringForKey(key)
+            }
+        )
+    }
+
+    override fun setLatestReadReleaseNotes(versionId: String) {
+        userDefaults.setObject(versionId, "latest_read_release_notes")
+        keyChanged("latest_read_release_notes")
+    }
 }

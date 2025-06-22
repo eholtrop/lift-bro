@@ -26,6 +26,10 @@ interface ISettingsRepository {
     fun shouldShowMerCalcs(): Flow<Boolean>
 
     fun setShowMerCalcs(showMerCalcs: Boolean)
+
+    fun getLatestReadReleaseNotes(): Flow<String?>
+
+    fun setLatestReadReleaseNotes(versionId: String)
 }
 
 data class BackupSettings(

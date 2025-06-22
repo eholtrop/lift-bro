@@ -67,8 +67,9 @@ object BackupService {
         dependencies.database.setDataSource.deleteAll()
         dependencies.database.logDataSource.deleteAll()
 
-        backup.lifts?.forEach {
-            dependencies.database.liftDataSource.save(it)
+
+        backup.sets?.forEach {
+            dependencies.database.setDataSource.save(it)
         }
 
         backup.variations?.forEach {
@@ -79,8 +80,8 @@ object BackupService {
             )
         }
 
-        backup.sets?.forEach {
-            dependencies.database.setDataSource.save(it)
+        backup.lifts?.forEach {
+            dependencies.database.liftDataSource.save(it)
         }
 
         backup.liftingLogs?.forEach {

@@ -9,6 +9,8 @@ expect class DependencyContainer {
     val settingsRepository: ISettingsRepository
 
     fun launchCalculator()
+
+    fun launchUrl(url: String)
 }
 
 expect val dependencies: DependencyContainer

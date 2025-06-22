@@ -145,4 +145,19 @@ class SharedPreferencesSettingsRepository(
         sharedPreferences.edit { putBoolean("show_mer_calcs", showMerCalcs) }
     }
 
+    override fun getLatestReadReleaseNotes(): Flow<String?> {
+        return keyChangedFlow
+            .filter { "latest_read_release_notes" == it }
+            .map {
+                sharedPreferences.getString("latest_read_release_notes", null)
+            }.onStart {
+                emit(
+                    sharedPreferences.getString("latest_read_release_notes", null)
+                )
+            }
+    }
+
+    override fun setLatestReadReleaseNotes(versionId: String) {
+        sharedPreferences.edit { putString("latest_read_release_notes", versionId) }
+    }
 }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -61,7 +62,8 @@ fun SettingsScreen() {
                         Row(
                             modifier = Modifier.selectableGroup(),
                         ) {
-                            val uom by dependencies.settingsRepository.getUnitOfMeasure().collectAsState(null)
+                            val uom by dependencies.settingsRepository.getUnitOfMeasure()
+                                .collectAsState(null)
 
                             RadioField(
                                 text = UOM.POUNDS.value,
@@ -117,7 +119,7 @@ fun SettingsScreen() {
                                     showExperimental = true
                                 }
                             },
-                            placeholder = { Text("Say the magic word") }
+                            placeholder = { Text("What's the magic word?") }
                         )
                     }
                 }
@@ -148,6 +150,37 @@ fun SettingsScreen() {
                     }
                 }
 
+                item {
+                    SettingsRowItem(
+                        title = { Text("Other:") },
+                        content = {
+                            Button(
+                                colors = ButtonDefaults.textButtonColors(),
+                                onClick = {
+                                    dependencies.launchUrl("https://discord.gg/mgxQK8ma")
+                                }
+                            ) {
+                                Text("Join the Discord! >")
+                            }
+
+                            Button(
+                                colors = ButtonDefaults.textButtonColors(),
+                                onClick = {
+                                    dependencies.launchUrl("https://www.github.com/eholtrop/lift-bro")
+                                }
+                            ) {
+                                Text("Source Code >")
+                            }
+
+//                            Button(
+//                                colors = ButtonDefaults.textButtonColors(),
+//                                onClick = {}
+//                            ) {
+//                                Text("Release Notes")
+//                            }
+                        }
+                    )
+                }
             }
         }
     )

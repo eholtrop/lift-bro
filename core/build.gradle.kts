@@ -1,4 +1,6 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import java.text.SimpleDateFormat
+import java.util.Date
 
 plugins {
     alias(libs.plugins.android.library)
@@ -110,6 +112,8 @@ buildkonfig {
         packageName = "com.lift.bro.core.buildconfig"
         buildConfigField(FieldSpec.Type.STRING, "ADMOB_APP_ID", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as? String ?: System.getenv("LIFT_BRO_ADMOB_APP_ID"))
         buildConfigField(FieldSpec.Type.STRING, "ADMOB_AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as? String ?: "\"${System.getenv("LIFT_BRO_AD_UNIT_ID")}\"")
+
+        buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", SimpleDateFormat("dd.MM.yyyy").format(Date()))
     }
 }
 

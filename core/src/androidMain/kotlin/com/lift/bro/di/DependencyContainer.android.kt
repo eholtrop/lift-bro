@@ -2,6 +2,7 @@ package com.lift.bro.di
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
@@ -34,6 +35,11 @@ actual class DependencyContainer {
 
     actual val settingsRepository: ISettingsRepository by lazy {
         SharedPreferencesSettingsRepository(context!!)
+    }
+
+    actual fun launchUrl(url: String) {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        context?.startActivity(intent)
     }
 
 }

@@ -5,6 +5,7 @@ package com.lift.bro.presentation.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -24,6 +26,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -36,8 +39,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
@@ -45,11 +51,13 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.ads.AdBanner
+import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.ReleaseNotesRow
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
@@ -240,13 +248,15 @@ fun DashboardContent(
                     modifier = Modifier.padding(padding),
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
                 ) {
                     item(
                         span = { GridItemSpan(2) }
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
-                            horizontalArrangement = Arrangement.End,
+                            horizontalArrangement = Arrangement.Center,
                         ) {
                             Button(
                                 onClick = {
@@ -257,6 +267,14 @@ fun DashboardContent(
                                 Text(text = if (showWeight.value == LiftCardYValue.Weight) "lbs" else "reps")
                             }
                         }
+                    }
+
+                    item(
+                        span = { GridItemSpan(2) }
+                    ) {
+                        ReleaseNotesRow(
+                            modifier = Modifier.height(72.dp)
+                        )
                     }
 
                     items(
@@ -273,7 +291,6 @@ fun DashboardContent(
 
                             is DashboardListItem.LiftCard -> {
                                 LiftCard(
-                                    modifier = Modifier.padding(MaterialTheme.spacing.quarter),
                                     state = state.state,
                                     onClick = liftClicked,
                                     value = showWeight.value
@@ -281,6 +298,13 @@ fun DashboardContent(
                             }
                         }
                     }
+
+                    item(
+                        span = { GridItemSpan(2) }
+                    ) {
+                        Text("Version: ${BuildKonfig.VERSION_NAME}")
+                    }
+
                     item {
                         Spacer(modifier = Modifier.height(72.dp))
                     }
