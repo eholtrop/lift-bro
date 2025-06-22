@@ -20,6 +20,8 @@
 	<string>22.06.2025</string>
 	<key>CFBundleVersion</key>
 	<string>24</string>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-2361666372543198~5028694260</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>LSRequiresIPhoneOS</key>
