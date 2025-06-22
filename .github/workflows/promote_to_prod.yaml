@@ -1,4 +1,4 @@
-name: Android CI/CD
+name: Promote Testing to Prod (Android)
 
 on:
   schedule:
