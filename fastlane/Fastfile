@@ -107,13 +107,14 @@ platform :ios do
     # to update the Xcode project version/build number from Gradle properties.
     # For now, let's assume simple increment.
     increment_build_number(
-      # xcodeproj: "iosApp/iosApp.xcodeproj" # Specify if not in root
+      xcodeproj: "iosApp/iosApp.xcodeproj" # Specify if not in root
     )
 
     # Build the iOS app (.ipa)
     gym(
       scheme: "iosApp", # IMPORTANT: Replace with your actual iOS app scheme name (e.g., MyApp, MyKMPProject)
-      workspace: "iosApp/iosApp.xcworkspace", # IMPORTANT: Point to your .xcworkspace file
+#       workspace: "iosApp/iosApp.xcworkspace", # IMPORTANT: Point to your .xcworkspace file
+      project: "iosApp/iosApp.xcodeproj",
       configuration: "Release", # Build in Release configuration
       export_method: "app-store", # For TestFlight or App Store distribution
       output_directory: "build/artifacts/ios", # Output IPA to a specific directory
@@ -122,7 +123,7 @@ platform :ios do
       silent: false,
       # Ensure your Xcode project's build phases are set up to trigger Gradle
       # for the shared module. If not, you might need a `before_build` hook here:
-      # before_build: -> (lane_context) { sh "cd ../ && ./gradlew :shared:build" }
+#       before_build: -> (lane_context) { sh "cd ../ && ./gradlew :core:build" }
     )
   end
 
@@ -181,11 +182,11 @@ platform :ios do
       # It's recommended to pull metadata from `fastlane/metadata` using `deliver init`
       # or specify directly here.
       # For first submission, you'll need all metadata. For updates, only new/changed items.
-      force: true, # Use with caution, overwrites existing metadata
-      skip_metadata: false, # Set to true if you don't update metadata via Fastlane
+#       force: true, # Use with caution, overwrites existing metadata
+      skip_metadata: true, # Set to true if you don't update metadata via Fastlane
       skip_screenshots: true, # Set to true if you don't upload screenshots via Fastlane
-      submit_for_review: true, # Automatically submit for review after upload
-      automatic_release: true, # Release immediately after review (or set a date)
+#       submit_for_review: true, # Automatically submit for review after upload
+#       automatic_release: true, # Release immediately after review (or set a date)
       # release_build_status: "READY_FOR_SALE" # Or other values if managing through App Store Connect
     )
   end

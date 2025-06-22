@@ -2,7 +2,7 @@ name: iOS CI/CD
 
 on:
   push:
-    branches: [ ios ]
+    branches: [ main ]
 
 env:
   LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
