@@ -15,8 +15,8 @@
 
 default_platform(:android)
 
-before_all do
-    if platform == :ios
+before_all do |lane|
+    platform :ios do
         setup_ci
 
         unless ENV["APPSTORE_KEY_ID"].nil? || ENV["APPSTORE_KEY_ID"].empty?
@@ -169,7 +169,7 @@ platform :ios do
   end
 
   desc "Submit a new version to the App Store for iOS"
-  lane :appstore do |options|
+  lane :deploy do |options|
     # This lane would be similar to `beta` but with `deliver` for App Store submission
     # and possibly different versioning logic.
     UI.message("Building and submitting to App Store for iOS...")

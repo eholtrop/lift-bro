@@ -43,6 +43,11 @@ jobs:
 #      - name: Run tests
 #        run: fastlane test
 
+      - name: Restore Fastlane Match Keys
+        run: |
+          echo "${{ secrets.MATCH_GIT_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
 
       - name: Build and Upload to TestFlight (Beta Lane)
         # Or you could have separate jobs/workflows for beta and app store.
@@ -58,7 +63,7 @@ jobs:
           APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
         run: |
           bundle install
-          bundle exec fastlane beta
+          bundle exec fastlane ios beta
         working-directory: ./fastlane # Or ./iosApp/fastlane if your Fastfile is there
 
       - name: Build and Submit to App Store (Release Lane)
@@ -73,7 +78,7 @@ jobs:
           # Any other environment variables
         run: |
           bundle install
-          bundle exec fastlane appstore # Call your appstore lane in Fastfile
+          bundle exec fastlane ios deploy
         working-directory: ./fastlane # Or ./iosApp/fastlane if your Fastfile is there
 
       - name: Upload Build Artifact (IPA)
