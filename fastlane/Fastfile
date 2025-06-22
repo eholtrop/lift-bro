@@ -66,14 +66,14 @@ platform :android do
       supply(track: "beta")
     end
 
-    desk "Promote internal build to prod on Google Play"
+    desc "Promote internal build to prod on Google Play"
     lane :promote_internal_to_prod do
         # Fetch the latest release from the 'internal testing' track
         # This gets the details of the active release, including its version codes.
         # The 'supply' action has an option to fetch track information.
         # We fetch it to ensure we know what's in internal testing, then promote it.
-        testing_track_info = get_google_play_track_releases(
-          track: 'internal_testing',
+        testing_track_info = google_play_track_release_names(
+          track: 'internal',
           package_name: "com.lift.bro"
         )
 

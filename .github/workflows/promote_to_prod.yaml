@@ -33,4 +33,4 @@ jobs:
           json: ${{ secrets.FASTLANE_JSON }}
 
       - name: Run fastlane android promote_internal_to_prod
-        run: fastlane promote_internal_to_prod
+        run: fastlane android promote_internal_to_prod
