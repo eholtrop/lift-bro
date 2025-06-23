@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
-import com.example.compose.LocalThemeMode
 import com.example.compose.ThemeMode
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
@@ -130,7 +129,7 @@ fun SettingsScreen() {
                     SettingsRowItem(
                         title = { Text("Theme") }
                     ) {
-                        val themeMode = LocalThemeMode.current
+                        val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
                         Row {
                             RadioField(
                                 text = "Dark",

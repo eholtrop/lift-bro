@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.lift.bro.di.dependencies
 import com.lift.bro.ui.navigation.LocalSnackbarHostState
+import com.lift.bro.utils.debug
 import lift_bro.core.generated.resources.DMSans_Black
 import lift_bro.core.generated.resources.DMSans_Bold
 import lift_bro.core.generated.resources.DMSans_ExtraBold
@@ -107,9 +108,6 @@ enum class ThemeMode {
     Light, Dark, System
 }
 
-val LocalThemeMode = compositionLocalOf<ThemeMode> {
-    error("No was not set")
-}
 
 @Composable
 fun AppTheme(
@@ -118,13 +116,11 @@ fun AppTheme(
 ) {
     val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
 
-
     CompositionLocalProvider(
-        LocalSnackbarHostState provides remember { SnackbarHostState() },
-        LocalThemeMode provides themeMode
+        LocalSnackbarHostState provides remember { SnackbarHostState() }
     ) {
         MaterialTheme(
-            colorScheme = when (LocalThemeMode.current) {
+            colorScheme = when (themeMode) {
                 ThemeMode.Light ->
                     LightColors.copy(
                         surface = LightColors.surfaceDim,
