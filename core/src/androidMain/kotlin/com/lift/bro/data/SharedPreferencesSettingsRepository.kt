@@ -4,11 +4,13 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.example.compose.ThemeMode
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.presentation.onboarding.LiftBro
+import com.lift.bro.utils.debug
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
@@ -159,5 +161,26 @@ class SharedPreferencesSettingsRepository(
 
     override fun setLatestReadReleaseNotes(versionId: String) {
         sharedPreferences.edit { putString("latest_read_release_notes", versionId) }
+    }
+
+    override fun getThemeMode(): Flow<ThemeMode> {
+        return keyChangedFlow
+            .filter { "theme_mode" == it }
+            .map {
+                sharedPreferences.getString("theme_mode", null)?.let {
+                    ThemeMode.valueOf(it)
+                } ?: ThemeMode.System
+            }.onStart {
+                emit(
+                    sharedPreferences.getString("theme_mode", null)?.let {
+                        ThemeMode.valueOf(it)
+                    } ?: ThemeMode.System
+                )
+            }
+            .debug("DEBUGEH")
+    }
+
+    override fun setThemeMode(themeMode: ThemeMode) {
+        sharedPreferences.edit { putString("theme_mode", themeMode.toString()) }
     }
 }

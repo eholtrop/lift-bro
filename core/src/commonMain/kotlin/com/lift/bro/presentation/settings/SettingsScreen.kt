@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
+import com.example.compose.LocalThemeMode
+import com.example.compose.ThemeMode
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Settings
@@ -121,6 +123,37 @@ fun SettingsScreen() {
                             },
                             placeholder = { Text("What's the magic word?") }
                         )
+                    }
+                }
+
+                item {
+                    SettingsRowItem(
+                        title = { Text("Theme") }
+                    ) {
+                        val themeMode = LocalThemeMode.current
+                        Row {
+                            RadioField(
+                                text = "Dark",
+                                selected = themeMode == ThemeMode.Dark,
+                                fieldSelected = {
+                                    dependencies.settingsRepository.setThemeMode(ThemeMode.Dark)
+                                }
+                            )
+                            RadioField(
+                                text = "Light",
+                                selected = themeMode == ThemeMode.Light,
+                                fieldSelected = {
+                                    dependencies.settingsRepository.setThemeMode(ThemeMode.Light)
+                                }
+                            )
+                            RadioField(
+                                text = "System",
+                                selected = themeMode == ThemeMode.System,
+                                fieldSelected = {
+                                    dependencies.settingsRepository.setThemeMode(ThemeMode.System)
+                                }
+                            )
+                        }
                     }
                 }
 

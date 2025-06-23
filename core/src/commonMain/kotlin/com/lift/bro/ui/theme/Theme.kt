@@ -10,11 +10,19 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.Recomposer
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import com.lift.bro.di.dependencies
 import com.lift.bro.ui.navigation.LocalSnackbarHostState
 import lift_bro.core.generated.resources.DMSans_Black
 import lift_bro.core.generated.resources.DMSans_Bold
@@ -95,28 +103,53 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
+enum class ThemeMode {
+    Light, Dark, System
+}
+
+val LocalThemeMode = compositionLocalOf<ThemeMode> {
+    error("No was not set")
+}
+
 @Composable
 fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
-    val colors = if (!useDarkTheme) {
-        LightColors.copy(
-            surface = LightColors.surfaceDim,
-            surfaceDim = LightColors.surfaceDim.copy(alpha = .4f)
-        )
-    } else {
-        DarkColors.copy(
-            surface = DarkColors.surfaceVariant,
-            surfaceDim = DarkColors.surfaceVariant.copy(alpha = .4f)
-        )
-    }
+    val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
+
 
     CompositionLocalProvider(
-        LocalSnackbarHostState provides remember { SnackbarHostState() }
+        LocalSnackbarHostState provides remember { SnackbarHostState() },
+        LocalThemeMode provides themeMode
     ) {
         MaterialTheme(
-            colorScheme = colors,
+            colorScheme = when (LocalThemeMode.current) {
+                ThemeMode.Light ->
+                    LightColors.copy(
+                        surface = LightColors.surfaceDim,
+                        surfaceDim = LightColors.surfaceDim.copy(alpha = .4f)
+                    )
+                ThemeMode.Dark -> {
+                    DarkColors.copy(
+                        surface = DarkColors.surfaceVariant,
+                        surfaceDim = DarkColors.surfaceVariant.copy(alpha = .4f)
+                    )
+                }
+                ThemeMode.System -> {
+                    if (useDarkTheme) {
+                        DarkColors.copy(
+                            surface = DarkColors.surfaceVariant,
+                            surfaceDim = DarkColors.surfaceVariant.copy(alpha = .4f)
+                        )
+                    } else {
+                        LightColors.copy(
+                            surface = LightColors.surfaceDim,
+                            surfaceDim = LightColors.surfaceDim.copy(alpha = .4f)
+                        )
+                    }
+                }
+            },
             content = {
                 Box(
                     modifier = Modifier.background(

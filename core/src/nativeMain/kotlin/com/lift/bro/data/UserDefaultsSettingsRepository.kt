@@ -1,5 +1,6 @@
 package com.lift.bro.data
 
+import com.example.compose.ThemeMode
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
@@ -119,5 +120,19 @@ class UserDefaultsSettingsRepository : ISettingsRepository {
     override fun setLatestReadReleaseNotes(versionId: String) {
         userDefaults.setObject(versionId, "latest_read_release_notes")
         keyChanged("latest_read_release_notes")
+    }
+
+    override fun getThemeMode(): Flow<ThemeMode> {
+        return subscribeToKey(
+            "theme_mode",
+            block = { key ->
+                userDefaults.stringForKey(key)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
+            }
+        )
+    }
+
+    override fun setThemeMode(themeMode: ThemeMode) {
+        userDefaults.setObject(themeMode.toString(), "theme_mode")
+        keyChanged("theme_mode")
     }
 }

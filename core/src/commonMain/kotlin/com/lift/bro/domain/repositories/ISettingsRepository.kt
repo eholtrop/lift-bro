@@ -1,5 +1,6 @@
 package com.lift.bro.domain.repositories
 
+import com.example.compose.ThemeMode
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.presentation.onboarding.LiftBro
 import kotlinx.coroutines.flow.Flow
@@ -30,6 +31,10 @@ interface ISettingsRepository {
     fun getLatestReadReleaseNotes(): Flow<String?>
 
     fun setLatestReadReleaseNotes(versionId: String)
+
+    fun getThemeMode(): Flow<ThemeMode>
+
+    fun setThemeMode(themeMode: ThemeMode)
 }
 
 data class BackupSettings(
