@@ -73,7 +73,7 @@ platform :android do
         # The 'supply' action has an option to fetch track information.
         # We fetch it to ensure we know what's in internal testing, then promote it.
         testing_track_info = google_play_track_version_codes(
-          track: 'internal',
+          track: 'beta',
           package_name: "com.lift.bro"
         )
 
@@ -86,7 +86,7 @@ platform :android do
 
           # Promote the release to production
           supply(
-            track: 'internal',                  # Target track is production
+            track: 'beta',                  # Target track is production
             track_promote_to: "production",
             version_code: version_codes_to_promote, # Use the version codes from internal testing
             track_promote_release_status: 'completed',                  # Set the release status to completed
