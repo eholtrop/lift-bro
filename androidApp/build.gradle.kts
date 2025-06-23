@@ -76,4 +76,5 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.play.services.ads)
+    implementation(libs.billing.ktx)
 }
