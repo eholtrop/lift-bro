@@ -45,29 +45,32 @@ class SharedPreferencesSettingsRepository(
             sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
 
-    private fun <R> subscribeToKey(key: String, block: (String) -> R): Flow<R> {
-        return keyChangedChannel
-            .filter { it == key }
-            .map(block)
-            .onStart {
-                emit(block(key))
-            }
-    }
-
     override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
-        return subscribeToKey(
-            key = "unit_of_measure",
-            block = {
+        return keyChangedFlow
+            .filter { it == "unit_of_measure" }
+            .map {
+                val uom = sharedPreferences!!.getString(
+                    "unit_of_measure",
+                    UOM.POUNDS.toString()
+                )!!
                 Settings.UnitOfWeight(
                     UOM.valueOf(
-                        sharedPreferences!!.getString(
-                            it,
-                            UOM.POUNDS.toString()
-                        )!!
+                        uom
                     )
                 )
             }
-        )
+            .onStart {
+                emit(
+                    Settings.UnitOfWeight(
+                        UOM.valueOf(
+                            sharedPreferences!!.getString(
+                                "unit_of_measure",
+                                UOM.POUNDS.toString()
+                            )!!
+                        )
+                    )
+                )
+            }
     }
 
     override fun saveUnitOfMeasure(uom: Settings.UnitOfWeight) {
@@ -75,12 +78,13 @@ class SharedPreferencesSettingsRepository(
     }
 
     override fun getDeviceFtux(): Flow<Boolean> {
-        return subscribeToKey(
-            key = "ftux",
-            block = {
+        return keyChangedFlow
+            .filter { it == "ftux" }
+            .map {
                 sharedPreferences!!.getBoolean("ftux", false)
+            }.onStart {
+                emit(sharedPreferences!!.getBoolean("ftux", false))
             }
-        )
     }
 
     override fun setDeviceFtux(ftux: Boolean) {
@@ -88,9 +92,8 @@ class SharedPreferencesSettingsRepository(
     }
 
     override fun getBackupSettings(): Flow<BackupSettings> {
-        return subscribeToKey(
-            key = "last_backup_epoch_days",
-            block = {
+        return flow {
+            emit(
                 BackupSettings(
                     LocalDate.fromEpochDays(
                         sharedPreferences.getInt(
@@ -98,23 +101,30 @@ class SharedPreferencesSettingsRepository(
                         )
                     )
                 )
-            }
-        )
-    }
-
-    override fun saveBackupSettings(settings: BackupSettings) {
-        sharedPreferences.edit {
-            this.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays())
+            )
         }
     }
 
+    override fun saveBackupSettings(settings: BackupSettings) {
+        sharedPreferences.edit().apply {
+            this.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays())
+        }.apply()
+    }
+
     override fun getBro(): Flow<LiftBro?> {
-        return subscribeToKey(
-            key = "bro",
-            block = {
-                sharedPreferences.getString(it, null)?.let { LiftBro.valueOf(it) }
+        return keyChangedFlow
+            .filter { "bro" == it }
+            .map {
+                sharedPreferences.getString("bro", null)?.let {
+                    LiftBro.valueOf(it)
+                }
+            }.onStart {
+                emit(
+                    sharedPreferences.getString("bro", null)?.let {
+                        LiftBro.valueOf(it)
+                    }
+                )
             }
-        )
     }
 
     override fun setBro(bro: LiftBro) {
@@ -122,12 +132,15 @@ class SharedPreferencesSettingsRepository(
     }
 
     override fun shouldShowMerCalcs(): Flow<Boolean> {
-        return subscribeToKey(
-            key = "show_mer_calcs",
-            block = {
-                sharedPreferences.getBoolean(it, false)
+        return keyChangedFlow
+            .filter { it == "show_mer_calcs" }
+            .map {
+                sharedPreferences.getBoolean("show_mer_calcs", false)
+            }.onStart {
+                emit(
+                    sharedPreferences.getBoolean("show_mer_calcs", false)
+                )
             }
-        )
     }
 
     override fun setShowMerCalcs(showMerCalcs: Boolean) {
@@ -135,12 +148,15 @@ class SharedPreferencesSettingsRepository(
     }
 
     override fun getLatestReadReleaseNotes(): Flow<String?> {
-        return subscribeToKey(
-            key = "latest_read_release_notes",
-            block = {
-                sharedPreferences.getString(it, null)
+        return keyChangedFlow
+            .filter { "latest_read_release_notes" == it }
+            .map {
+                sharedPreferences.getString("latest_read_release_notes", null)
+            }.onStart {
+                emit(
+                    sharedPreferences.getString("latest_read_release_notes", null)
+                )
             }
-        )
     }
 
     override fun setLatestReadReleaseNotes(versionId: String) {
@@ -148,14 +164,20 @@ class SharedPreferencesSettingsRepository(
     }
 
     override fun getThemeMode(): Flow<ThemeMode> {
-        return subscribeToKey(
-            key = "theme_mode",
-            block = {
+        return keyChangedFlow
+            .filter { "theme_mode" == it }
+            .map {
                 sharedPreferences.getString("theme_mode", null)?.let {
                     ThemeMode.valueOf(it)
                 } ?: ThemeMode.System
+            }.onStart {
+                emit(
+                    sharedPreferences.getString("theme_mode", null)?.let {
+                        ThemeMode.valueOf(it)
+                    } ?: ThemeMode.System
+                )
             }
-        )
+            .debug("DEBUGEH")
     }
 
     override fun setThemeMode(themeMode: ThemeMode) {
