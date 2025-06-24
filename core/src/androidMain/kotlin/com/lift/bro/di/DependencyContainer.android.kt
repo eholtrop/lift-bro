@@ -42,6 +42,16 @@ actual class DependencyContainer {
         context?.startActivity(intent)
     }
 
+    actual fun launchManageSubscriptions() {
+        context?.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://play.google.com/store/account/subscriptions?sku=pro&package=com.lift.bro")
+            )
+        )
+
+    }
+
 }
 
 actual val dependencies: DependencyContainer by lazy { DependencyContainer() }

@@ -15,6 +15,8 @@ import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.utils.toLocalDate
+import com.revenuecat.purchases.kmp.Purchases
+import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -63,7 +65,9 @@ class DashboardViewModel(
                     } else if (this.size < 2) {
                         this.add(DashboardListItem.Ad)
                     } else {
-                        this.add(2, DashboardListItem.Ad)
+                        if (!Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.containsKey("pro")){
+                            this.add(2, DashboardListItem.Ad)
+                        }
                     }
                 }.toList(),
             excercises = sets.groupBy { it.date.toLocalDate() }.map { dateSetsEntry ->

@@ -42,6 +42,8 @@ kotlin {
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
             baseName = "core"
+            isStatic = true
+            binaryOption("bundleId", "com.lift.bro.core")
             binaryOption("bundleVersion", project.versionCode().toString())
             binaryOption("bundleShortVersionString", project.versionName())
         }
@@ -82,9 +84,9 @@ kotlin {
             implementation(libs.filekit.dialogs)
             implementation(libs.filekit.dialogs.compose)
 
-//            implementation(libs.revenuecat.core)
-//            implementation(libs.revenuecat.datetime)
-//            implementation(libs.revenuecat.ui)
+            implementation(libs.revenuecat.core)
+            implementation(libs.revenuecat.datetime)
+            implementation(libs.revenuecat.ui)
         }
 
         androidMain.dependencies {
@@ -116,8 +118,7 @@ buildkonfig {
         buildConfigField(FieldSpec.Type.STRING, "ADMOB_APP_ID", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as? String ?: System.getenv("LIFT_BRO_ADMOB_APP_ID"))
         buildConfigField(FieldSpec.Type.STRING, "ADMOB_AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as? String ?: System.getenv("LIFT_BRO_AD_UNIT_ID"))
         buildConfigField(FieldSpec.Type.STRING, "SENTRY_DSN", project.findProperty("LIFT_BRO_SENTRY_DSN") as? String ?: System.getenv("LIFT_BRO_SENTRY_DSN"))
-
-        // if changed make sure to update android and iOS versions accordingly... this should be abstracted
+        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY", project.findProperty("revenueCatApiKey") as? String ?: System.getenv("REVENUE_CAT_API_KEY"))
         buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", project.versionName())
     }
 }

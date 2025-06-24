@@ -11,6 +11,8 @@ expect class DependencyContainer {
     fun launchCalculator()
 
     fun launchUrl(url: String)
+
+    fun launchManageSubscriptions()
 }
 
 expect val dependencies: DependencyContainer

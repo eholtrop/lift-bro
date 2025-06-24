@@ -1,12 +1,15 @@
 package com.lift.bro.presentation.settings
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
@@ -16,10 +19,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,18 +37,28 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
+import androidx.compose.ui.unit.dp
 import com.example.compose.ThemeMode
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
+import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.presentation.LocalLiftBro
+import com.lift.bro.presentation.LocalSubscriptionStatusProvider
+import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.NumberPicker
 import com.lift.bro.ui.RadioField
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.revenuecat.purchases.kmp.Purchases
+import com.revenuecat.purchases.kmp.models.Offering
+import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
+import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
+import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.privacy_policy
@@ -74,6 +90,7 @@ import lift_bro.core.generated.resources.settings_uom_title
 import lift_bro.core.generated.resources.terms_and_conditions
 import lift_bro.core.generated.resources.url_privacy_policy
 import lift_bro.core.generated.resources.url_terms_and_conditions
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -84,14 +101,15 @@ fun SettingsScreen() {
         content = { padding ->
 
             var showExperimental by remember { mutableStateOf(false) }
+            var subscriptionType by LocalSubscriptionStatusProvider.current
 
             LazyColumn(
                 modifier = Modifier.padding(padding),
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
             ) {
-                item {
 
+                item {
                     SettingsRowItem(
                         title = { Text(stringResource(Res.string.settings_uom_title)) }
                     ) {
@@ -200,6 +218,85 @@ fun SettingsScreen() {
                     }
                 }
                 if (showExperimental) {
+                    item {
+
+                        var showPaywall by remember { mutableStateOf(false) }
+
+                        val options = remember {
+                            PaywallOptions(dismissRequest = { showPaywall = false }) {
+                                shouldDisplayDismissButton = true
+                            }
+                        }
+
+
+                        if (showPaywall) {
+                            ModalBottomSheet(
+                                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+                                onDismissRequest = {
+                                    showPaywall = false
+                                }
+                            ) {
+                                Paywall(options)
+                            }
+                        }
+
+                        when (subscriptionType) {
+                            SubscriptionType.None -> {
+                                SettingsRowItem(
+                                    modifier = Modifier.clickable { showPaywall = true },
+                                    title = { Text("Become Pro!") },
+                                ) {
+                                    Row {
+                                        Text("Sign up for an Ad free experience and extra premium tracking metrics!")
+                                    }
+                                }
+                            }
+
+                            SubscriptionType.Pro -> {
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        modifier = Modifier.size(128.dp),
+                                        painter = painterResource(LocalLiftBro.current.iconRes()),
+                                        contentDescription = ""
+                                    )
+                                    Text(
+                                        "Thank you for the support!",
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+                                    Text(
+                                        "You are a Lift PRO!!",
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                    Button(
+                                        onClick = {
+                                            dependencies.launchManageSubscriptions()
+                                        },
+                                        colors = ButtonDefaults.textButtonColors()
+                                    ) {
+                                        Text("Manage Subscription")
+                                    }
+                                }
+                            }
+                        }
+
+                        LaunchedEffect(Unit) {
+                            Purchases.sharedInstance.getCustomerInfo(
+                                onError = { error ->
+                                    Sentry.captureException(Throwable(message = error.message))
+                                },
+                                onSuccess = { success ->
+                                    if (success.entitlements.active.containsKey("pro")) {
+                                        subscriptionType = SubscriptionType.Pro
+                                    }
+                                }
+                            )
+                        }
+
+                    }
+
                     item {
                         SettingsRowItem(
                             title = {
@@ -359,12 +456,13 @@ private fun BackupRow() {
 
 @Composable
 fun SettingsRowItem(
+    modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(MaterialTheme.shapes.medium)
             .background(
                 color = MaterialTheme.colorScheme.surface,

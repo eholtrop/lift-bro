@@ -28,6 +28,9 @@ actual class DependencyContainer {
             )
         }
     }
+
+    actual fun launchManageSubscriptions() {
+    }
 }
 
 actual val dependencies: DependencyContainer by lazy {

@@ -11,8 +11,10 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
-		B1535A832E1474DB0082F365 /* Sentry-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B1535A822E1474DB0082F365 /* Sentry-Dynamic */; };
 		B17C1AE72E08C81200020BDE /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B17C1AE62E08C81200020BDE /* GoogleMobileAds */; };
+		B1A23C662E2D66E100525DEF /* PurchasesHybridCommon in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C652E2D66E100525DEF /* PurchasesHybridCommon */; };
+		B1A23C682E2D66E100525DEF /* PurchasesHybridCommonUI in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C672E2D66E100525DEF /* PurchasesHybridCommonUI */; };
+		B1A23C6B2E2D6A1F00525DEF /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C6A2E2D6A1F00525DEF /* Sentry */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,7 +46,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				B17C1AE72E08C81200020BDE /* GoogleMobileAds in Frameworks */,
-				B1535A832E1474DB0082F365 /* Sentry-Dynamic in Frameworks */,
+				B1A23C662E2D66E100525DEF /* PurchasesHybridCommon in Frameworks */,
+				B1A23C682E2D66E100525DEF /* PurchasesHybridCommonUI in Frameworks */,
+				B1A23C6B2E2D6A1F00525DEF /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +68,7 @@
 			children = (
 				B11618242E0761C000672FF1 /* ci_scripts */,
 				7555FF7D242A565900829871 /* iosApp */,
+				B1A23C692E2D6A1F00525DEF /* Frameworks */,
 				7555FF7C242A565900829871 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -94,6 +99,13 @@
 				B11618252E0761C900672FF1 /* ci_post_clone.sh */,
 			);
 			path = ci_scripts;
+			sourceTree = "<group>";
+		};
+		B1A23C692E2D6A1F00525DEF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -145,6 +157,7 @@
 			packageReferences = (
 				B17C1AE52E08C81200020BDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 				B1535A812E1474DB0082F365 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				B1A23C642E2D66E100525DEF /* XCRemoteSwiftPackageReference "purchases-hybrid-common" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -431,18 +444,36 @@
 				minimumVersion = 12.6.0;
 			};
 		};
+		B1A23C642E2D66E100525DEF /* XCRemoteSwiftPackageReference "purchases-hybrid-common" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-hybrid-common";
+			requirement = {
+				kind = exactVersion;
+				version = 15.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		B1535A822E1474DB0082F365 /* Sentry-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B1535A812E1474DB0082F365 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = "Sentry-Dynamic";
-		};
 		B17C1AE62E08C81200020BDE /* GoogleMobileAds */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B17C1AE52E08C81200020BDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
+		};
+		B1A23C652E2D66E100525DEF /* PurchasesHybridCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1A23C642E2D66E100525DEF /* XCRemoteSwiftPackageReference "purchases-hybrid-common" */;
+			productName = PurchasesHybridCommon;
+		};
+		B1A23C672E2D66E100525DEF /* PurchasesHybridCommonUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1A23C642E2D66E100525DEF /* XCRemoteSwiftPackageReference "purchases-hybrid-common" */;
+			productName = PurchasesHybridCommonUI;
+		};
+		B1A23C6A2E2D6A1F00525DEF /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1535A812E1474DB0082F365 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -43,7 +43,9 @@ import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.MERSettings
+import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.domain.models.User
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
@@ -60,6 +62,11 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
+import com.revenuecat.purchases.kmp.LogLevel
+import com.revenuecat.purchases.kmp.Purchases
+import com.revenuecat.purchases.kmp.configure
 import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -90,6 +97,10 @@ val LocalLiftCardYValue = compositionLocalOf<MutableState<LiftCardYValue>> {
 
 val LocalAdBannerProvider = compositionLocalOf<() -> Any> {
     error("No Ad Banner Provided")
+}
+
+val LocalSubscriptionStatusProvider = compositionLocalOf<MutableState<SubscriptionType>> {
+    error("No Subscription Provided")
 }
 
 @Composable
@@ -131,12 +142,14 @@ fun App(
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
         .collectAsState(UOM.POUNDS)
     val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
+    var subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
 
     CompositionLocalProvider(
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
         LocalUnitOfMeasure provides uom,
         LocalShowMERCalcs provides showMerCalcs,
-        LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight)
+        LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
+        LocalSubscriptionStatusProvider provides subscriptionType
     ) {
         LaunchedEffect("landing_selection") {
             dependencies.settingsRepository.getDeviceFtux().collectLatest {
@@ -157,14 +170,28 @@ fun App(
             }
         }
 
+        LaunchedEffect("setup_revenuecat") {
+            if (BuildConfig.isDebug) {
+                Purchases.logLevel = LogLevel.DEBUG
+            }
+
+            Purchases.configure(BuildKonfig.REVENUE_CAT_API_KEY)
+            Purchases.sharedInstance.getCustomerInfo(
+                onError = { error ->
+                    Sentry.captureException(Throwable(message = error.message))
+                },
+                onSuccess = { success ->
+                    if (success.entitlements.active.containsKey("pro")) {
+                        subscriptionType.value = SubscriptionType.Pro
+                    }
+                }
+            )
+        }
+
         AppTheme {
             Box(
                 modifier = modifier,
             ) {
-                LaunchedEffect("debug_mode") {
-                    if (BuildConfig.isDebug) {
-                    }
-                }
 
                 if (navCoordinator.currentPage != Destination.Onboarding) {
                     CheckAppConsent()

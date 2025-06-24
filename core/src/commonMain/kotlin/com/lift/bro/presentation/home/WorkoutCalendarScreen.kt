@@ -51,8 +51,10 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LiftingLog
+import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalShowMERCalcs
+import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
@@ -62,6 +64,8 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
+import com.revenuecat.purchases.kmp.Purchases
+import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -84,6 +88,8 @@ fun WorkoutCalendarScreen(
     val selectedDateSets: List<Excercise> = setDateMap[selectedDate] ?: emptyList()
 
     val dailyLogs = logs.associateBy { it.date }
+
+    val subscriptionType by LocalSubscriptionStatusProvider.current
 
     LazyColumn(
         modifier = modifier,
@@ -147,8 +153,11 @@ fun WorkoutCalendarScreen(
             )
         }
 
-        item {
-            AdBanner(modifier = Modifier.defaultMinSize(minHeight = 52.dp).fillMaxWidth())
+
+        if (subscriptionType == SubscriptionType.Pro) {
+            item {
+                AdBanner(modifier = Modifier.defaultMinSize(minHeight = 52.dp).fillMaxWidth())
+            }
         }
 
         item {
