@@ -24,6 +24,8 @@
 	<string>ca-app-pub-2361666372543198~5028694260</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
