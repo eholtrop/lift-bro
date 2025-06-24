@@ -1,6 +1,7 @@
 package com.lift.bro.presentation.settings
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,6 +40,9 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.RadioField
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.revenuecat.purchases.kmp.models.Offering
+import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
+import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import kotlinx.coroutines.launch
 
 @Composable
@@ -56,7 +60,30 @@ fun SettingsScreen() {
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
             ) {
                 item {
+                    var showPaywall by remember { mutableStateOf(false) }
 
+                    val options = remember {
+                        PaywallOptions(dismissRequest = { showPaywall = false }) {
+                            shouldDisplayDismissButton = true
+//                            this.offering = Offering
+                        }
+                    }
+
+
+                    if (showPaywall) {
+                        Paywall(options)
+                    }
+                    SettingsRowItem(
+                        modifier = Modifier.clickable { showPaywall = true },
+                        title = { Text("Become Pro!") },
+                    ) {
+                        Row {
+                            Text("Sign up for an Ad free experience and extra premium tracking metrics!")
+                        }
+                    }
+                }
+
+                item {
                     SettingsRowItem(
                         title = { Text("Backup / Restore") }
                     ) {
@@ -98,38 +125,11 @@ fun SettingsScreen() {
                 }
 
                 item {
-                    var value by remember { mutableStateOf("") }
-                    if (showExperimental) {
-                        Column {
-                            Text(
-                                text = "Experimental",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                text = "Features here are experimental, and could break app functionality, use with caution!",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    } else {
-                        TextField(
-                            modifier = Modifier.fillParentMaxWidth(),
-                            value = value,
-                            onValueChange = {
-                                value = it
-                                if (value.toLowerCase(Locale.current) == "pizza") {
-                                    showExperimental = true
-                                }
-                            },
-                            placeholder = { Text("What's the magic word?") }
-                        )
-                    }
-                }
-
-                item {
                     SettingsRowItem(
                         title = { Text("Theme") }
                     ) {
-                        val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
+                        val themeMode by dependencies.settingsRepository.getThemeMode()
+                            .collectAsState(ThemeMode.System)
                         Row {
                             RadioField(
                                 text = "Dark",
@@ -151,6 +151,69 @@ fun SettingsScreen() {
                                 fieldSelected = {
                                     dependencies.settingsRepository.setThemeMode(ThemeMode.System)
                                 }
+                            )
+                        }
+                    }
+                }
+
+                item {
+                    SettingsRowItem(
+                        title = { Text("Other:") },
+                        content = {
+                            Button(
+                                colors = ButtonDefaults.textButtonColors(),
+                                onClick = {
+                                    dependencies.launchUrl("https://discord.gg/mgxQK8ma")
+                                }
+                            ) {
+                                Text("Join the Discord! >")
+                            }
+
+                            Button(
+                                colors = ButtonDefaults.textButtonColors(),
+                                onClick = {
+                                    dependencies.launchUrl("https://www.github.com/eholtrop/lift-bro")
+                                }
+                            ) {
+                                Text("Source Code >")
+                            }
+                        }
+                    )
+                }
+
+                item {
+                    if (showExperimental) {
+                        Column {
+                            Text(
+                                text = "Experimental",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                text = "Features here are experimental, and could break app functionality, use with caution! (so... BACKUP FIRST!!)",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            Text(
+                                text = "These features may also become paid once they graduate from \"Experimental\"",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    } else {
+                        var value by remember { mutableStateOf("") }
+                        Column {
+                            Text(
+                                text = "Experimental",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            TextField(
+                                modifier = Modifier.fillParentMaxWidth(),
+                                value = value,
+                                onValueChange = {
+                                    value = it
+                                    if (value.toLowerCase(Locale.current) == "pizza") {
+                                        showExperimental = true
+                                    }
+                                },
+                                placeholder = { Text("What's the magic word?") }
                             )
                         }
                     }
@@ -180,38 +243,6 @@ fun SettingsScreen() {
                             }
                         )
                     }
-                }
-
-                item {
-                    SettingsRowItem(
-                        title = { Text("Other:") },
-                        content = {
-                            Button(
-                                colors = ButtonDefaults.textButtonColors(),
-                                onClick = {
-                                    dependencies.launchUrl("https://discord.gg/mgxQK8ma")
-                                }
-                            ) {
-                                Text("Join the Discord! >")
-                            }
-
-                            Button(
-                                colors = ButtonDefaults.textButtonColors(),
-                                onClick = {
-                                    dependencies.launchUrl("https://www.github.com/eholtrop/lift-bro")
-                                }
-                            ) {
-                                Text("Source Code >")
-                            }
-
-//                            Button(
-//                                colors = ButtonDefaults.textButtonColors(),
-//                                onClick = {}
-//                            ) {
-//                                Text("Release Notes")
-//                            }
-                        }
-                    )
                 }
             }
         }
@@ -257,12 +288,13 @@ private fun BackupRow() {
 
 @Composable
 fun SettingsRowItem(
+    modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(MaterialTheme.shapes.medium)
             .background(
                 color = MaterialTheme.colorScheme.surface,

@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.UOM
@@ -50,6 +51,9 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.revenuecat.purchases.kmp.LogLevel
+import com.revenuecat.purchases.kmp.Purchases
+import com.revenuecat.purchases.kmp.configure
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -106,8 +110,13 @@ fun App(
             Box(
                 modifier = modifier,
             ) {
-                LaunchedEffect("debug_mode") {
+                LaunchedEffect("setup_revenuecat") {
                     if (BuildConfig.isDebug) {
+                        Purchases.logLevel = LogLevel.DEBUG
+                    }
+
+                    Purchases.configure("goog_KBaWDfynkjvMuHkBToOxqMmTWZk") {
+                        appUserId = "appbda3276b5a"
                     }
                 }
 
