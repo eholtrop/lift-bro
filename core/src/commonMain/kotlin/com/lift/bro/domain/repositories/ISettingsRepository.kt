@@ -1,6 +1,7 @@
 package com.lift.bro.domain.repositories
 
 import com.example.compose.ThemeMode
+import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.presentation.onboarding.LiftBro
 import kotlinx.coroutines.flow.Flow
@@ -24,9 +25,9 @@ interface ISettingsRepository {
 
     fun setBro(bro: LiftBro)
 
-    fun shouldShowMerCalcs(): Flow<Boolean>
+    fun getMerSettings(): Flow<MERSettings>
 
-    fun setShowMerCalcs(showMerCalcs: Boolean)
+    fun setMerSettings(merSettings: MERSettings)
 
     fun getLatestReadReleaseNotes(): Flow<String?>
 

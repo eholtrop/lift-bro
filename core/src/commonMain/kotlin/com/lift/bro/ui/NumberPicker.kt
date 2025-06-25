@@ -30,6 +30,7 @@ fun NumberPicker(
     imeAction: ImeAction = ImeAction.Next,
     textStyle: TextStyle = LocalTextStyle.current,
     suffix: @Composable (() -> Unit)? = null,
+    prefix: @Composable (() -> Unit)? = null,
 ) {
 
     var value by remember { mutableStateOf(TextFieldValue(selectedNum?.toString() ?: "")) }
@@ -49,12 +50,13 @@ fun NumberPicker(
             focus = it.isFocused
         },
         suffix = suffix,
+        prefix = prefix,
         value = value,
         onValueChange = {
             numberChanged(it.text.toIntOrNull())
             value = it
         },
-        label = title?.let {
+        label = title.let {
             {
                 Text(title)
             }

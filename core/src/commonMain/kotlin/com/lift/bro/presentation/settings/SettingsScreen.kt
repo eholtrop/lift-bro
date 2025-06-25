@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
@@ -13,6 +14,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,17 +30,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import com.example.compose.ThemeMode
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.ui.DecimalPicker
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.NumberPicker
 import com.lift.bro.ui.RadioField
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.dialog.InfoDialog
+import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.decimalFormat
 import kotlinx.coroutines.launch
 
 @Composable
@@ -98,38 +107,11 @@ fun SettingsScreen() {
                 }
 
                 item {
-                    var value by remember { mutableStateOf("") }
-                    if (showExperimental) {
-                        Column {
-                            Text(
-                                text = "Experimental",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                text = "Features here are experimental, and could break app functionality, use with caution!",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    } else {
-                        TextField(
-                            modifier = Modifier.fillParentMaxWidth(),
-                            value = value,
-                            onValueChange = {
-                                value = it
-                                if (value.toLowerCase(Locale.current) == "pizza") {
-                                    showExperimental = true
-                                }
-                            },
-                            placeholder = { Text("What's the magic word?") }
-                        )
-                    }
-                }
-
-                item {
                     SettingsRowItem(
                         title = { Text("Theme") }
                     ) {
-                        val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
+                        val themeMode by dependencies.settingsRepository.getThemeMode()
+                            .collectAsState(ThemeMode.System)
                         Row {
                             RadioField(
                                 text = "Dark",
@@ -153,32 +135,6 @@ fun SettingsScreen() {
                                 }
                             )
                         }
-                    }
-                }
-
-                if (showExperimental) {
-                    item {
-                        SettingsRowItem(
-                            title = {
-                                Text("Maximally Effective Reps (MERs)")
-                            },
-                            content = {
-                                val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs()
-                                    .collectAsState(false)
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Checkbox(
-                                        checked = showMerCalcs,
-                                        onCheckedChange = {
-                                            dependencies.settingsRepository.setShowMerCalcs(it)
-                                        }
-                                    )
-
-                                    Text("Show MER calculations where applicable")
-                                }
-                            }
-                        )
                     }
                 }
 
@@ -212,6 +168,114 @@ fun SettingsScreen() {
 //                            }
                         }
                     )
+                }
+
+                item {
+                    var value by remember { mutableStateOf("") }
+                    if (showExperimental) {
+                        Column {
+                            Text(
+                                text = "Experimental",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                text = "Features here are experimental, and could break app functionality, use with caution!",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    } else {
+                        Column {
+                            Text(
+                                text = "Experimental",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            TextField(
+                                modifier = Modifier.fillParentMaxWidth(),
+                                value = value,
+                                onValueChange = {
+                                    value = it
+                                    if (value.toLowerCase(Locale.current) == "pizza") {
+                                        showExperimental = true
+                                    }
+                                },
+                                placeholder = { Text("What's the magic word?") }
+                            )
+                        }
+                    }
+                }
+                if (showExperimental) {
+                    item {
+                        SettingsRowItem(
+                            title = {
+                                Text("Maximally Effective Reps (MERs)")
+                            },
+                            content = {
+                                val showMerCalcs by dependencies.settingsRepository.getMerSettings()
+                                    .collectAsState(MERSettings())
+
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Checkbox(
+                                            checked = showMerCalcs.enabled,
+                                            onCheckedChange = {
+                                                dependencies.settingsRepository.setMerSettings(
+                                                    showMerCalcs.copy(enabled = it)
+                                                )
+                                            }
+                                        )
+
+                                        Text("Show MER calculations")
+                                    }
+
+                                    Row {
+                                        NumberPicker(
+                                            modifier = Modifier.weight(1f),
+                                            title = "Fatigue Threshold",
+                                            selectedNum = (showMerCalcs.threshold * 100).toInt(),
+                                            numberChanged = {
+                                                dependencies.settingsRepository.setMerSettings(
+                                                    showMerCalcs.copy(threshold = it?.toFloat() ?: 0f)
+                                                )
+                                            },
+                                        )
+
+                                        InfoDialogButton(
+                                            dialogTitle = { Text("Fatigue Threshold") },
+                                            dialogMessage = {
+                                                Text("The % fatigue that you must hit of your max for a rep to be considered a MER (default 80%), This can be calculated by taking a look at your Max")
+                                                Space(MaterialTheme.spacing.half)
+                                                Text("ex: if you have a 100lbs max Bench Press and you do one rep at 80lbs. This is above the threshold of 80% and therefore an MER!")
+                                            }
+                                        )
+                                    }
+
+                                    Row {
+                                        NumberPicker(
+                                            modifier = Modifier.weight(1f),
+                                            title = "Weekly MER Goal",
+                                            selectedNum = showMerCalcs.weeklyTotalGoal,
+                                            numberChanged = {
+                                                dependencies.settingsRepository.setMerSettings(
+                                                    showMerCalcs.copy(weeklyTotalGoal = it)
+                                                )
+                                            },
+                                        )
+
+                                        InfoDialogButton(
+                                            dialogTitle = { Text("Weekly MER Goal") },
+                                            dialogMessage = {
+                                                Text("MER's can be used to track your progress in a week! Set yourself a weekly goal and celebrate your successes!")
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }

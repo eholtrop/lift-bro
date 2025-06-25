@@ -5,6 +5,8 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.compose.ThemeMode
+import com.lift.bro.domain.models.Excercise
+import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
@@ -19,6 +21,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
 
 class SharedPreferencesSettingsRepository(
     val context: Context,
@@ -75,6 +81,7 @@ class SharedPreferencesSettingsRepository(
 
     override fun saveUnitOfMeasure(uom: Settings.UnitOfWeight) {
         sharedPreferences.edit { putString("unit_of_measure", uom.uom.toString()) }
+        keyChangedChannel.tryEmit("unit_of_measure")
     }
 
     override fun getDeviceFtux(): Flow<Boolean> {
@@ -89,6 +96,7 @@ class SharedPreferencesSettingsRepository(
 
     override fun setDeviceFtux(ftux: Boolean) {
         sharedPreferences.edit { putBoolean("ftux", ftux) }
+        keyChangedChannel.tryEmit("ftux")
     }
 
     override fun getBackupSettings(): Flow<BackupSettings> {
@@ -106,9 +114,10 @@ class SharedPreferencesSettingsRepository(
     }
 
     override fun saveBackupSettings(settings: BackupSettings) {
-        sharedPreferences.edit().apply {
+        sharedPreferences.edit {
             this.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays())
-        }.apply()
+        }
+        keyChangedChannel.tryEmit("last_backup_epoch_days")
     }
 
     override fun getBro(): Flow<LiftBro?> {
@@ -129,22 +138,36 @@ class SharedPreferencesSettingsRepository(
 
     override fun setBro(bro: LiftBro) {
         sharedPreferences.edit { putString("bro", bro.toString()) }
+        keyChangedChannel.tryEmit("bro")
     }
 
-    override fun shouldShowMerCalcs(): Flow<Boolean> {
+    override fun getMerSettings(): Flow<MERSettings> {
         return keyChangedFlow
-            .filter { it == "show_mer_calcs" }
+            .filter { it == "mer_settings" }
             .map {
-                sharedPreferences.getBoolean("show_mer_calcs", false)
+                sharedPreferences.getString("mer_settings", null)?.let {
+                    try {
+                        Json.decodeFromString<MERSettings>(it)
+                    } catch (e: Exception) {
+                        null
+                    }
+                } ?: MERSettings()
             }.onStart {
                 emit(
-                    sharedPreferences.getBoolean("show_mer_calcs", false)
+                    sharedPreferences.getString("mer_settings", null)?.let {
+                        try {
+                            Json.decodeFromString<MERSettings>(it)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    } ?: MERSettings()
                 )
             }
     }
 
-    override fun setShowMerCalcs(showMerCalcs: Boolean) {
-        sharedPreferences.edit { putBoolean("show_mer_calcs", showMerCalcs) }
+    override fun setMerSettings(settings: MERSettings) {
+        sharedPreferences.edit { putString("mer_settings", Json.encodeToString(settings)) }
+        keyChangedChannel.tryEmit("mer_settings")
     }
 
     override fun getLatestReadReleaseNotes(): Flow<String?> {
@@ -161,6 +184,7 @@ class SharedPreferencesSettingsRepository(
 
     override fun setLatestReadReleaseNotes(versionId: String) {
         sharedPreferences.edit { putString("latest_read_release_notes", versionId) }
+        keyChangedChannel.tryEmit("latest_read_release_notes")
     }
 
     override fun getThemeMode(): Flow<ThemeMode> {
@@ -177,10 +201,10 @@ class SharedPreferencesSettingsRepository(
                     } ?: ThemeMode.System
                 )
             }
-            .debug("DEBUGEH")
     }
 
     override fun setThemeMode(themeMode: ThemeMode) {
         sharedPreferences.edit { putString("theme_mode", themeMode.toString()) }
+        keyChangedChannel.tryEmit("theme_mode")
     }
 }

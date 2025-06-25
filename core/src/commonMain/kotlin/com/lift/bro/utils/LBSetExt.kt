@@ -24,7 +24,7 @@ internal fun LBSet.prettyPrintSet(
         style = SpanStyle(),
     ) { append("$reps x ${weight.decimalFormat()} ${uom.value}" + if (rpe != null) " at ${rpe}rpe" else "") }
 
-    if (mer > 0 && LocalShowMERCalcs.current) {
+    if (mer > 0 && LocalShowMERCalcs.current?.enabled == true) {
         withStyle(
             style = MaterialTheme.typography.labelMedium.toSpanStyle(),
         ) {
