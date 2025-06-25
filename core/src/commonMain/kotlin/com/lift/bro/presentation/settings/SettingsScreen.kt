@@ -33,6 +33,7 @@ import androidx.compose.ui.text.toLowerCase
 import com.example.compose.ThemeMode
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.ui.LiftingScaffold
@@ -98,34 +99,6 @@ fun SettingsScreen() {
                 }
 
                 item {
-                    var value by remember { mutableStateOf("") }
-                    if (showExperimental) {
-                        Column {
-                            Text(
-                                text = "Experimental",
-                                style = MaterialTheme.typography.titleLarge
-                            )
-                            Text(
-                                text = "Features here are experimental, and could break app functionality, use with caution!",
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    } else {
-                        TextField(
-                            modifier = Modifier.fillParentMaxWidth(),
-                            value = value,
-                            onValueChange = {
-                                value = it
-                                if (value.toLowerCase(Locale.current) == "pizza") {
-                                    showExperimental = true
-                                }
-                            },
-                            placeholder = { Text("What's the magic word?") }
-                        )
-                    }
-                }
-
-                item {
                     SettingsRowItem(
                         title = { Text("Theme") }
                     ) {
@@ -153,32 +126,6 @@ fun SettingsScreen() {
                                 }
                             )
                         }
-                    }
-                }
-
-                if (showExperimental) {
-                    item {
-                        SettingsRowItem(
-                            title = {
-                                Text("Maximally Effective Reps (MERs)")
-                            },
-                            content = {
-                                val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs()
-                                    .collectAsState(false)
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Checkbox(
-                                        checked = showMerCalcs,
-                                        onCheckedChange = {
-                                            dependencies.settingsRepository.setShowMerCalcs(it)
-                                        }
-                                    )
-
-                                    Text("Show MER calculations where applicable")
-                                }
-                            }
-                        )
                     }
                 }
 
@@ -212,6 +159,67 @@ fun SettingsScreen() {
 //                            }
                         }
                     )
+                }
+
+                item {
+                    var value by remember { mutableStateOf("") }
+                    if (showExperimental) {
+                        Column {
+                            Text(
+                                text = "Experimental",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            Text(
+                                text = "Features here are experimental, and could break app functionality, use with caution!",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    } else {
+                        Column {
+                            Text(
+                                text = "Experimental",
+                                style = MaterialTheme.typography.titleLarge
+                            )
+                            TextField(
+                                modifier = Modifier.fillParentMaxWidth(),
+                                value = value,
+                                onValueChange = {
+                                    value = it
+                                    if (value.toLowerCase(Locale.current) == "pizza") {
+                                        showExperimental = true
+                                    }
+                                },
+                                placeholder = { Text("What's the magic word?") }
+                            )
+                        }
+                    }
+                }
+                if (showExperimental) {
+                    item {
+                        SettingsRowItem(
+                            title = {
+                                Text("Maximally Effective Reps (MERs)")
+                            },
+                            content = {
+                                val showMerCalcs by dependencies.settingsRepository.getMerSettings()
+                                    .collectAsState(MERSettings())
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Checkbox(
+                                        checked = showMerCalcs.enabled,
+                                        onCheckedChange = {
+                                            dependencies.settingsRepository.setMerSettings(
+                                                showMerCalcs.copy(enabled = it)
+                                            )
+                                        }
+                                    )
+
+                                    Text("Show MER calculations where applicable")
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }

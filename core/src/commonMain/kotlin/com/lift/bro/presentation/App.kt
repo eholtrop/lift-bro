@@ -37,6 +37,7 @@ import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
+import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.presentation.home.iconRes
@@ -65,7 +66,7 @@ val LocalUnitOfMeasure = compositionLocalOf<UOM> {
     error("UOM was not set")
 }
 
-val LocalShowMERCalcs = compositionLocalOf<Boolean> {
+val LocalShowMERCalcs = compositionLocalOf<MERSettings?> {
     error("Show MER Calcs was not set")
 }
 
@@ -85,7 +86,7 @@ fun App(
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }.collectAsState(UOM.POUNDS)
-    val showMerCalcs by dependencies.settingsRepository.shouldShowMerCalcs().collectAsState(false)
+    val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
 
     CompositionLocalProvider(
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),

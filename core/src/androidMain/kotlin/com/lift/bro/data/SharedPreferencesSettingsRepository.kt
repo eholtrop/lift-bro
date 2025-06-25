@@ -5,6 +5,8 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.compose.ThemeMode
+import com.lift.bro.domain.models.Excercise
+import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
@@ -19,6 +21,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
 
 class SharedPreferencesSettingsRepository(
     val context: Context,
@@ -131,20 +137,32 @@ class SharedPreferencesSettingsRepository(
         sharedPreferences.edit { putString("bro", bro.toString()) }
     }
 
-    override fun shouldShowMerCalcs(): Flow<Boolean> {
+    override fun getMerSettings(): Flow<MERSettings> {
         return keyChangedFlow
-            .filter { it == "show_mer_calcs" }
+            .filter { it == "mer_settings" }
             .map {
-                sharedPreferences.getBoolean("show_mer_calcs", false)
+                sharedPreferences.getString("mer_settings", null)?.let {
+                    try {
+                        Json.decodeFromString<MERSettings>(it)
+                    } catch (e: Exception) {
+                        null
+                    }
+                } ?: MERSettings()
             }.onStart {
                 emit(
-                    sharedPreferences.getBoolean("show_mer_calcs", false)
+                    sharedPreferences.getString("mer_settings", null)?.let {
+                        try {
+                            Json.decodeFromString<MERSettings>(it)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    } ?: MERSettings()
                 )
             }
     }
 
-    override fun setShowMerCalcs(showMerCalcs: Boolean) {
-        sharedPreferences.edit { putBoolean("show_mer_calcs", showMerCalcs) }
+    override fun setMerSettings(settings: MERSettings) {
+        sharedPreferences.edit { putString("mer_settings", Json.encodeToString(settings)) }
     }
 
     override fun getLatestReadReleaseNotes(): Flow<String?> {
@@ -177,7 +195,6 @@ class SharedPreferencesSettingsRepository(
                     } ?: ThemeMode.System
                 )
             }
-            .debug("DEBUGEH")
     }
 
     override fun setThemeMode(themeMode: ThemeMode) {

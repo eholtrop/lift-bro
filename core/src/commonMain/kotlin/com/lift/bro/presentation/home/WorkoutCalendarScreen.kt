@@ -282,7 +282,7 @@ fun WorkoutCalendarScreen(
                                 }
 
                                 val mer = excercise.sets.sumOf { it.mer }
-                                if (mer > 0 && LocalShowMERCalcs.current) {
+                                if (mer > 0 && LocalShowMERCalcs.current?.enabled == true) {
                                     withStyle(
                                         style = MaterialTheme.typography.labelSmall.toSpanStyle()
                                     ) {
