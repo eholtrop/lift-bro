@@ -114,7 +114,9 @@ internal fun EditLiftScreen(
 
     LaunchedEffect(initialVariations) {
         if (initialVariations.isEmpty()) {
-            variations.add(Variation())
+            variations.add(Variation(
+                name = ""
+            ))
         }
     }
 
@@ -254,8 +256,6 @@ internal fun EditLiftScreen(
                         )
                     }
 
-
-
                     AnimatedVisibility(
                         visibleState = visibilityState,
                         enter = fadeIn() + slideInVertically(),
@@ -292,7 +292,7 @@ internal fun EditLiftScreen(
 
             Button(
                 onClick = {
-                    variations.add(Variation())
+                    variations.add(Variation(name = ""))
                     focusLastItem = true
                 },
             ) {
