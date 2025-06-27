@@ -36,6 +36,7 @@ import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toLocalDate
+import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -86,7 +87,7 @@ private fun ExcerciseDetailsScreen(
                 }
 
                 item {
-                    Text("June 5th - 2025")
+                    Text(excercise.date.toString("MMMM d - yyyy"))
                 }
 
                 excercise.sets.forEach {
