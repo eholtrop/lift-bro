@@ -11,10 +11,8 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
+		B1535A832E1474DB0082F365 /* Sentry-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B1535A822E1474DB0082F365 /* Sentry-Dynamic */; };
 		B17C1AE72E08C81200020BDE /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B17C1AE62E08C81200020BDE /* GoogleMobileAds */; };
-		B1F230482E1468B40070696C /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = B1F230472E1468B40070696C /* Sentry */; };
-		B1F2304A2E1468B40070696C /* Sentry-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = B1F230492E1468B40070696C /* Sentry-Dynamic */; };
-		B1F2304C2E1468B40070696C /* SentrySwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = B1F2304B2E1468B40070696C /* SentrySwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -45,10 +43,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1F2304A2E1468B40070696C /* Sentry-Dynamic in Frameworks */,
-				B1F2304C2E1468B40070696C /* SentrySwiftUI in Frameworks */,
 				B17C1AE72E08C81200020BDE /* GoogleMobileAds in Frameworks */,
-				B1F230482E1468B40070696C /* Sentry in Frameworks */,
+				B1535A832E1474DB0082F365 /* Sentry-Dynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -107,7 +103,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7555FFA5242A565B00829871 /* Build configuration list for PBXNativeTarget "iosApp" */;
 			buildPhases = (
-				7555FFB5242A651A00829871 /* ShellScript */,
+				7555FFB5242A651A00829871 /* Run Script */,
 				7555FF77242A565900829871 /* Sources */,
 				7555FF78242A565900829871 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
@@ -148,7 +144,7 @@
 			mainGroup = 7555FF72242A565900829871;
 			packageReferences = (
 				B17C1AE52E08C81200020BDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
-				B1F230462E1468B40070696C /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				B1535A812E1474DB0082F365 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -172,7 +168,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		7555FFB5242A651A00829871 /* ShellScript */ = {
+		7555FFB5242A651A00829871 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -181,6 +177,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -418,6 +415,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		B1535A812E1474DB0082F365 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.53.1;
+			};
+		};
 		B17C1AE52E08C81200020BDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/googleads/swift-package-manager-google-mobile-ads.git";
@@ -426,36 +431,18 @@
 				minimumVersion = 12.6.0;
 			};
 		};
-		B1F230462E1468B40070696C /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/getsentry/sentry-cocoa.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 8.53.1;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		B1535A822E1474DB0082F365 /* Sentry-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1535A812E1474DB0082F365 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = "Sentry-Dynamic";
+		};
 		B17C1AE62E08C81200020BDE /* GoogleMobileAds */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = B17C1AE52E08C81200020BDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */;
 			productName = GoogleMobileAds;
-		};
-		B1F230472E1468B40070696C /* Sentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B1F230462E1468B40070696C /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = Sentry;
-		};
-		B1F230492E1468B40070696C /* Sentry-Dynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B1F230462E1468B40070696C /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = "Sentry-Dynamic";
-		};
-		B1F2304B2E1468B40070696C /* SentrySwiftUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = B1F230462E1468B40070696C /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = SentrySwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
