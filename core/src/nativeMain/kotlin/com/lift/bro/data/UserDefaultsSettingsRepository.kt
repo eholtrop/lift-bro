@@ -1,6 +1,7 @@
 package com.lift.bro.data
 
 import com.example.compose.ThemeMode
+import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import platform.Foundation.NSUserDefaults
 
 class UserDefaultsSettingsRepository : ISettingsRepository {
@@ -94,18 +97,24 @@ class UserDefaultsSettingsRepository : ISettingsRepository {
         keyChanged("bro")
     }
 
-    override fun shouldShowMerCalcs(): Flow<Boolean> {
+    override fun getMerSettings(): Flow<MERSettings> {
         return subscribeToKey(
-            key = "show_mer_calcs",
+            key = "mer_settings",
             block = { key ->
-                userDefaults.boolForKey(key)
+                with (userDefaults.stringForKey("mer_settings")) {
+                    if (this != null) {
+                        Json.decodeFromString<MERSettings>(this)
+                    } else {
+                        MERSettings()
+                    }
+                }
             }
         )
     }
 
-    override fun setShowMerCalcs(showMerCalcs: Boolean) {
-        userDefaults.setBool(showMerCalcs, "show_mer_calcs")
-        keyChanged("show_mer_calcs")
+    override fun setMerSettings(merSettings: MERSettings) {
+        userDefaults.setObject(Json.encodeToString(merSettings), "mer_settings")
+        keyChanged("mer_settings")
     }
 
     override fun getLatestReadReleaseNotes(): Flow<String?> {
