@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.MERSettings
@@ -51,6 +53,7 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -85,7 +88,8 @@ fun App(
 ) {
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
-    val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }.collectAsState(UOM.POUNDS)
+    val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
+        .collectAsState(UOM.POUNDS)
     val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
 
     CompositionLocalProvider(
@@ -100,6 +104,12 @@ fun App(
                     true -> navCoordinator.setRoot(Destination.Dashboard)
                     false -> navCoordinator.setRoot(Destination.Onboarding)
                 }
+            }
+        }
+
+        LaunchedEffect("initialize_sentry") {
+            Sentry.init { options ->
+                options.dsn = BuildKonfig.SENTRY_DSN
             }
         }
 

@@ -14,6 +14,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
 
     alias(libs.plugins.buildkonfig)
+    alias(libs.plugins.sentry)
 
     id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
@@ -112,8 +113,10 @@ buildkonfig {
         packageName = "com.lift.bro.core.buildconfig"
         buildConfigField(FieldSpec.Type.STRING, "ADMOB_APP_ID", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as? String ?: System.getenv("LIFT_BRO_ADMOB_APP_ID"))
         buildConfigField(FieldSpec.Type.STRING, "ADMOB_AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as? String ?: System.getenv("LIFT_BRO_AD_UNIT_ID"))
+        buildConfigField(FieldSpec.Type.STRING, "SENTRY_DSN", System.getenv("LIFT_BRO_SENTRY_DSN"))
 
-        buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", SimpleDateFormat("dd.MM.yyyy").format(Date()))
+
+        buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", SimpleDateFormat("yyyy.MM.dd").format(Date()))
     }
 }
 

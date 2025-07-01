@@ -70,5 +70,4 @@ detekt = { id = "io.gitlab.artubosch.dektekt", version.ref = "detekt" }
 
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.17.1" }
 
-
-
+sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.strictly = "0.13.0" }
