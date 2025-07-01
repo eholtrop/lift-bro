@@ -1,5 +1,29 @@
 [
   {
+    "versionId": "01.07.2025",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Add French and Spanish translations"
+    }
+  },
+  {
+    "versionId": "01.07.2025",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Fix title and Date formatting on the Excercise screen"
+    }
+  },
+  {
+    "versionId": "01.07.2025",
+    "type": "feature",
+    "platform": "android",
+    "note": {
+      "en": "Fix issue on the settings page where you needed to close/open the app to get an update to register"
+    }
+  },
+  {
     "versionId": "22.06.2025",
     "type": "feature",
     "platform": "all",
