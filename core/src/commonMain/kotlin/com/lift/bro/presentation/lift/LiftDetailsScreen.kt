@@ -51,6 +51,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftCardYValue
+import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toString
@@ -68,9 +69,12 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.color_picker_dialog_blue
 import lift_bro.core.generated.resources.color_picker_dialog_green
 import lift_bro.core.generated.resources.color_picker_dialog_red
+import lift_bro.core.generated.resources.color_picker_dialog_title
 import lift_bro.core.generated.resources.color_picker_negative_cta
 import lift_bro.core.generated.resources.color_picker_positive_cta
 import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_positive_cta
+import lift_bro.core.generated.resources.lift_details_fab_content_description
+import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -110,7 +114,7 @@ fun LiftDetailsScreen(
             ) {
 
                 Text(
-                    text = "Select a Color",
+                    text = stringResource(Res.string.color_picker_dialog_title),
                     style = MaterialTheme.typography.titleLarge
                 )
 
@@ -240,7 +244,7 @@ fun LiftDetailsScreen(
         LiftingScaffold(
             fabProperties = FabProperties(
                 fabIcon = Icons.Default.Add,
-                contentDescription = "Add Set",
+                contentDescription = stringResource(Res.string.lift_details_fab_content_description),
                 fabClicked = addSetClicked,
             ),
             title = lift.name,
@@ -271,7 +275,7 @@ fun LiftDetailsScreen(
                 item {
                     Row(
                         modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.End,
+                        horizontalArrangement = Arrangement.Center,
                     ) {
                         val yValue = LocalLiftCardYValue.current
                         Button(
@@ -280,7 +284,7 @@ fun LiftDetailsScreen(
                                     if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
                             }
                         ) {
-                            Text(text = if (yValue.value == LiftCardYValue.Weight) "lbs" else "reps")
+                            Text(text = if (yValue.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(Res.string.reps))
                         }
                     }
                 }

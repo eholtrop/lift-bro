@@ -1,6 +1,6 @@
 [
   {
-    "versionId": "01.07.2025",
+    "versionId": "2025.07.01",
     "type": "feature",
     "platform": "all",
     "note": {
@@ -8,15 +8,15 @@
     }
   },
   {
-    "versionId": "01.07.2025",
+    "versionId": "2025.07.01",
     "type": "feature",
     "platform": "all",
     "note": {
-      "en": "Fix title and Date formatting on the Excercise screen"
+      "en": "Fix title and Date formatting on the Excercize screen"
     }
   },
   {
-    "versionId": "01.07.2025",
+    "versionId": "2025.07.01",
     "type": "feature",
     "platform": "android",
     "note": {
@@ -24,7 +24,7 @@
     }
   },
   {
-    "versionId": "22.06.2025",
+    "versionId": "2025.06.22",
     "type": "feature",
     "platform": "all",
     "note": {
@@ -32,7 +32,7 @@
     }
   },
   {
-    "versionId": "22.06.2025",
+    "versionId": "2025.06.22",
     "type": "fix",
     "platform": "iOS",
     "note": {
@@ -40,7 +40,7 @@
     }
   },
   {
-    "versionId": "22.06.2025",
+    "versionId": "2025.06.22",
     "type": "fix",
     "platform": "iOS",
     "note": {
@@ -48,7 +48,7 @@
     }
   },
   {
-    "versionId": "22.06.2025",
+    "versionId": "2025.06.22",
     "type": "feature",
     "platform": "all",
     "note": {

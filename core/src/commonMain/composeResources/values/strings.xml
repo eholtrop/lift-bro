@@ -9,11 +9,14 @@
     <string name="dashboard_footer_version">Version: %s</string>
 
 
+    <string name="color_picker_dialog_title">Select a Color</string>
     <string name="color_picker_dialog_red">red</string>
     <string name="color_picker_dialog_green">green</string>
     <string name="color_picker_dialog_blue">blue</string>
     <string name="color_picker_positive_cta">Save</string>
     <string name="color_picker_negative_cta">Cancel</string>
+
+    <string name="lift_details_fab_content_description">Add Set</string>
 
     <string name="dashboard_footer_trailing_button_content_description">Calendar</string>
     <string name="dashboard_footer_leading_button_content_description">Dashboard</string>
