@@ -1,0 +1,132 @@
+<resources>
+    <string name="dashboard_title">LIFT BRO</string>
+    <string name="dashboard_toolbar_trailing_button_content_description">Ajouter une série</string>
+    <string name="dashboard_toolbar_leading_button_content_description">Paramètres</string>
+    <string name="dashboard_fab_content_description">Ajouter une série</string>
+    <string name="lbs">lbs</string>
+    <string name="kg">kg</string>
+    <string name="reps">répétitions</string>
+    <string name="dashboard_footer_version">Version : %s</string>
+
+
+    <string name="color_picker_dialog_red">rouge</string>
+    <string name="color_picker_dialog_green">vert</string>
+    <string name="color_picker_dialog_blue">bleu</string>
+    <string name="color_picker_positive_cta">Enregistrer</string>
+    <string name="color_picker_negative_cta">Annuler</string>
+
+    <string name="dashboard_footer_trailing_button_content_description">Calendrier</string>
+    <string name="dashboard_footer_leading_button_content_description">Tableau de bord</string>
+
+    <string name="edit_lift_screen_add_variation_cta_content_description">Ajouter une variation</string>
+    <string name="edit_lift_screen_warning_dialog_title">Avertissement</string>
+    <string name="edit_lift_screen_lift_warning_dialog_text">Ceci supprimera toutes les variations et séries pour cet exercice, cette action est irréversible</string>
+    <string name="edit_lift_screen_title">Modifier l'exercice</string>
+    <string name="create_lift_screen_title">Créer un exercice</string>
+    <string name="edit_lift_screen_delete_cta_content_description">Supprimer</string>
+    <string name="edit_lift_screen_save_cta_content_description">Enregistrer l'exercice</string>
+
+    <string name="edit_lift_screen_lift_name_placeholder">ex: Squat, Développé couché, Soulevé de terre</string>
+    <string name="edit_lift_screen_variation_name_placeholder">ex: Arrière, Avant, Incliné</string>
+    <string name="edit_lift_screen_variation_delete_cta_content_description">Supprimer la variation</string>
+
+    <string name="edit_lift_info_dialog_title">Qu'est-ce qu'un exercice ?</string>
+    <string name="edit_lift_info_dialog_text">Un groupe de <b>variations/mouvements</b>\n\nex: Un Squat peut avoir plusieurs variations comme le Squat avant et arrière\n\nUne fois que vous avez nommé votre exercice, vous pouvez commencer à créer des variations de cet exercice !\nConsidérez-le comme le "suffixe" d'un mouvement\n\nSoulevé de terre *Roumain*\n*Squat* avant\nDéveloppé *couché* incliné\n</string>
+    <string name="edit_lift_variation_heading">Variations</string>
+    <string name="edit_lift_variation_warning_dialog_text">Ceci supprimera toutes les séries pour cette variation, cette action est irréversible</string>
+
+    <string name="edit_lift_screen_warning_dialog_positive_cta">D'accord !</string>
+    <string name="edit_lift_screen_warning_dialog_negative_cta">Peu importe</string>
+
+    <string name="dashboard_empty_title">Tu soulèves même, mec ?</string>
+    <string name="dashboard_empty_primary_cta_title">Créer un exercice</string>
+    <string name="dashboard_empty_secondary_cta_title">Restaurer une sauvegarde</string>
+
+    <string name="toolbar_back_button_content_description">Retour</string>
+
+    <string name="backup_dialog_title">Ça fait un moment...</string>
+    <string name="backup_dialog_message">Lift Bro est une application locale uniquement. Si vous perdez votre téléphone, toutes vos données seront perdues ! Souhaitez-vous sauvegarder maintenant ?</string>
+    <string name="backup_dialog_primary_cta">Sauvegarder maintenant</string>
+    <string name="backup_dialog_secondary_cta">Ignorer</string>
+
+
+    <string name="lift_card_empty_title">Aucune série !</string>
+    <string name="lift_card_empty_subtitle">Appuyez pour en ajouter une</string>
+
+    <string name="toolbar_update_button_content_description">Mettre à jour Lift Bro</string>
+    <string name="toolbar_calculator_button_content_description">Mettre à jour Lift Bro</string>
+
+    <string name="weight_selector_chin_title">%1$d%% de %2$s Max</string>
+    <string name="weight_selector_chin_subtitle">%1$d%% de %2$s Max</string>
+
+    <string name="date_selector_dialog_confirm_button_text">Ok</string>
+    <string name="date_selector_dialog_dismiss_button_text">Fermer</string>
+    <string name="date_selector_title">Le</string>
+
+    <string name="create_set_screen_title">J'ai tout déchiré</string>
+    <string name="edit_set_screen_title">Tu as tout déchiré</string>
+    <string name="edit_set_screen_delete_acc_label">Supprimer</string>
+    <string name="edit_set_screen_save_cta_content_description">Enregistrer la série</string>
+    <string name="edit_set_screen_create_lift_cta">Créer un exercice</string>
+
+    <string name="edit_set_screen_variation_selector_empty_state_title">Sélectionner un exercice</string>
+
+    <string name="edit_set_screen_variation_selector_lift_max">%s Max : %s</string>
+    <string name="edit_set_screen_variation_selector_variation_max">%s Max : %s</string>
+    <string name="edit_set_screen_variation_selector_no_lift_max">Aucun</string>
+    <string name="edit_set_screen_variation_selector_no_variation_max">Aucun</string>
+    <string name="edit_set_screen_extra_notes_label">Notes supplémentaires :</string>
+    <string name="edit_set_screen_extra_notes_placeholder">J'ai tout donné aujourd'hui !</string>
+
+    <string name="excercise_screen_title">Exercice</string>
+    <string name="excercise_screen_duplicate_cta">Dupliquer la dernière série</string>
+    <string name="excercise_screen_new_set_cta">Ajouter une nouvelle série</string>
+    <string name="excercise_string_title_date_format">d MMMM -EEE</string>
+
+
+    <string name="onboarding_page_one_title">CHOISIS\nTON\nLIFT BRO</string>
+    <string name="onboarding_page_one_cta">Continuer</string>
+    <string name="onboarding_leo_content_description">Lift Bro avec les cheveux courts</string>
+    <string name="onboarding_lisa_content_description">Lift Bro avec une queue de cheval</string>
+
+
+    <string name="onboarding_page_two_title">C'EST\nPARTIIII !</string>
+    <string name="onboarding_page_two_subtitle">Comment souhaitez-vous commencer ?</string>
+    <string name="onboarding_page_three_title"></string>
+
+
+    <string name="workout_calendar_edit_daily_notes_cta">Modifier les notes quotidiennes</string>
+
+    <string name="settings_title">Paramètres</string>
+
+    <string name="settings_uom_title">Unité de mesure par défaut</string>
+    <string name="settings_theme_title">Thème</string>
+    <string name="settings_theme_option_one">Système</string>
+    <string name="settings_theme_option_two">Clair</string>
+    <string name="settings_theme_option_three">Foncé</string>
+
+    <string name="settings_backup_restore_title">Sauvegarder / Restaurer</string>
+    <string name="settings_backup_cta">Sauvegarder</string>
+    <string name="settings_restore_cta">Restaurer</string>
+
+    <string name="settings_other_title">Autres :</string>
+    <string name="settings_other_discord_cta">Rejoindre le Discord !</string>
+    <string name="settings_other_github_cta">Code source</string>
+
+    <string name="settings_experimental_title">Expérimental</string>
+    <string name="settings_experimental_message">Les fonctionnalités ici sont expérimentales et pourraient perturber le fonctionnement de l'application, utilisez avec prudence !</string>
+    <string name="settings_experimental_input_placeholder">Quel est le mot magique ?</string>
+    <string name="settings_experimental_input_password">pizza</string>
+
+    <string name="settings_mer_title">Répétitions Maximalement Efficaces (RME)</string>
+    <string name="settings_mer_enable_text">Afficher les calculs des RME</string>
+    <string name="settings_mer_fatigue_input_title">Seuil de fatigue</string>
+    <string name="settings_mer_fatigue_info_dialog_title">Seuil de fatigue</string>
+    <string name="settings_mer_fatigue_info_dialog_paragraph_one">Le % de fatigue que vous devez atteindre de votre maximum pour qu'une répétition soit considérée comme une RME (par défaut 80%), Cela peut être calculé en consultant votre Max</string>
+    <string name="settings_mer_fatigue_info_dialog_paragraph_two">ex: si vous avez un Développé couché max de 100lbs et que vous faites une répétition à 80lbs. C'est au-dessus du seuil de 80% et donc une RME !</string>
+
+    <string name="settings_mer_weekly_goal_input_title">Objectif hebdomadaire de RME</string>
+    <string name="settings_mer_weekly_goal_info_dialog_title">Objectif hebdomadaire de RME</string>
+    <string name="settings_mer_weekly_goal_info_dialog_message">Les RME peuvent être utilisées pour suivre vos progrès en une semaine ! Fixez-vous un objectif hebdomadaire et célébrez vos succès !</string>
+
+</resources>

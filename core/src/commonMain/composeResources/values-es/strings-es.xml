@@ -1,0 +1,132 @@
+<resources>
+    <string name="dashboard_title">LIFT BRO</string>
+    <string name="dashboard_toolbar_trailing_button_content_description">Añadir Levantamiento</string>
+    <string name="dashboard_toolbar_leading_button_content_description">Ajustes</string>
+    <string name="dashboard_fab_content_description">Añadir Serie</string>
+    <string name="lbs">libras</string>
+    <string name="kg">kg</string>
+    <string name="reps">reps</string>
+    <string name="dashboard_footer_version">Versión: %s</string>
+
+
+    <string name="color_picker_dialog_red">rojo</string>
+    <string name="color_picker_dialog_green">verde</string>
+    <string name="color_picker_dialog_blue">azul</string>
+    <string name="color_picker_positive_cta">Guardar</string>
+    <string name="color_picker_negative_cta">Cancelar</string>
+
+    <string name="dashboard_footer_trailing_button_content_description">Calendario</string>
+    <string name="dashboard_footer_leading_button_content_description">Panel de control</string>
+
+    <string name="edit_lift_screen_add_variation_cta_content_description">Añadir Variación</string>
+    <string name="edit_lift_screen_warning_dialog_title">Advertencia</string>
+    <string name="edit_lift_screen_lift_warning_dialog_text">Esto eliminará todas las variaciones y series de este levantamiento. Esta acción no se puede deshacer</string>
+    <string name="edit_lift_screen_title">Editar Levantamiento</string>
+    <string name="create_lift_screen_title">Crear Levantamiento</string>
+    <string name="edit_lift_screen_delete_cta_content_description">Eliminar</string>
+    <string name="edit_lift_screen_save_cta_content_description">Guardar Levantamiento</string>
+
+    <string name="edit_lift_screen_lift_name_placeholder">ej: Sentadilla, Press de banca, Peso muerto</string>
+    <string name="edit_lift_screen_variation_name_placeholder">ej: Trasera, Frontal, Inclinado</string>
+    <string name="edit_lift_screen_variation_delete_cta_content_description">Eliminar Variación</string>
+
+    <string name="edit_lift_info_dialog_title">¿Qué es un Levantamiento?</string>
+    <string name="edit_lift_info_dialog_text">Un grupo de <b>Variaciones/Movimientos</b>\n\nej: Una Sentadilla puede tener muchas variaciones como Sentadilla Frontal y Trasera\n\nUna vez que nombres tu levantamiento, ¡puedes empezar a crear variaciones de ese levantamiento!\nPiénsalo como el "sufijo" de un movimiento\n\nPeso muerto *Rumano*\nSentadilla *Frontal*\nPress de banca *Inclinado*\n</string>
+    <string name="edit_lift_variation_heading">Variaciones</string>
+    <string name="edit_lift_variation_warning_dialog_text">Esto eliminará todas las series para esta variación. Esta acción no se puede deshacer</string>
+
+    <string name="edit_lift_screen_warning_dialog_positive_cta">¡De acuerdo!</string>
+    <string name="edit_lift_screen_warning_dialog_negative_cta">No importa</string>
+
+    <string name="dashboard_empty_title">¿Acaso levantas, hermano?</string>
+    <string name="dashboard_empty_primary_cta_title">Crear Levantamiento</string>
+    <string name="dashboard_empty_secondary_cta_title">Restaurar una copia de seguridad</string>
+
+    <string name="toolbar_back_button_content_description">Atrás</string>
+
+    <string name="backup_dialog_title">Ha pasado un tiempo...</string>
+    <string name="backup_dialog_message">Lift Bro es una aplicación solo local. Si pierdes tu teléfono, ¡todos tus datos se perderán! ¿Te gustaría hacer una copia de seguridad ahora?</string>
+    <string name="backup_dialog_primary_cta">Hacer copia de seguridad ahora</string>
+    <string name="backup_dialog_secondary_cta">Ignorar</string>
+
+
+    <string name="lift_card_empty_title">¡Sin series!</string>
+    <string name="lift_card_empty_subtitle">Toca para añadir una</string>
+
+    <string name="toolbar_update_button_content_description">Actualizar Lift Bro</string>
+    <string name="toolbar_calculator_button_content_description">Actualizar Lift Bro</string>
+
+    <string name="weight_selector_chin_title">%1$d%% de %2$s Máx</string>
+    <string name="weight_selector_chin_subtitle">%1$d%% de %2$s Máx</string>
+
+    <string name="date_selector_dialog_confirm_button_text">Ok</string>
+    <string name="date_selector_dialog_dismiss_button_text">Cerrar</string>
+    <string name="date_selector_title">En</string>
+
+    <string name="create_set_screen_title">Yo destrocé</string>
+    <string name="edit_set_screen_title">Tú destrozaste</string>
+    <string name="edit_set_screen_delete_acc_label">Eliminar</string>
+    <string name="edit_set_screen_save_cta_content_description">Guardar Serie</string>
+    <string name="edit_set_screen_create_lift_cta">Crear Levantamiento</string>
+
+    <string name="edit_set_screen_variation_selector_empty_state_title">Seleccionar Levantamiento</string>
+
+    <string name="edit_set_screen_variation_selector_lift_max">%s Máx: %s</string>
+    <string name="edit_set_screen_variation_selector_variation_max">%s Máx: %s</string>
+    <string name="edit_set_screen_variation_selector_no_lift_max">Ninguno</string>
+    <string name="edit_set_screen_variation_selector_no_variation_max">Ninguno</string>
+    <string name="edit_set_screen_extra_notes_label">Notas adicionales:</string>
+    <string name="edit_set_screen_extra_notes_placeholder">¡Hoy lo di todo!</string>
+
+    <string name="excercise_screen_title">Ejercicio</string>
+    <string name="excercise_screen_duplicate_cta">Duplicar última serie</string>
+    <string name="excercise_screen_new_set_cta">Añadir nueva serie</string>
+    <string name="excercise_string_title_date_format">d de MMMM -EEE</string>
+
+
+    <string name="onboarding_page_one_title">ELIGE\nTU\nLIFT BRO</string>
+    <string name="onboarding_page_one_cta">Continuar</string>
+    <string name="onboarding_leo_content_description">Lift Bro con pelo corto</string>
+    <string name="onboarding_lisa_content_description">Lift Bro con cola de caballo</string>
+
+
+    <string name="onboarding_page_two_title">¡VAMOSSS!</string>
+    <string name="onboarding_page_two_subtitle">¿Cómo te gustaría empezar?</string>
+    <string name="onboarding_page_three_title"></string>
+
+
+    <string name="workout_calendar_edit_daily_notes_cta">Editar notas diarias</string>
+
+    <string name="settings_title">Ajustes</string>
+
+    <string name="settings_uom_title">Unidad de medida predeterminada</string>
+    <string name="settings_theme_title">Tema</string>
+    <string name="settings_theme_option_one">Sistema</string>
+    <string name="settings_theme_option_two">Claro</string>
+    <string name="settings_theme_option_three">Oscuro</string>
+
+    <string name="settings_backup_restore_title">Copia de seguridad / Restaurar</string>
+    <string name="settings_backup_cta">Copia de seguridad</string>
+    <string name="settings_restore_cta">Restaurar</string>
+
+    <string name="settings_other_title">Otros:</string>
+    <string name="settings_other_discord_cta">¡Únete al Discord!</string>
+    <string name="settings_other_github_cta">Código fuente</string>
+
+    <string name="settings_experimental_title">Experimental</string>
+    <string name="settings_experimental_message">Las características aquí son experimentales y podrían romper la funcionalidad de la aplicación, ¡úsalas con precaución!</string>
+    <string name="settings_experimental_input_placeholder">¿Cuál es la palabra mágica?</string>
+    <string name="settings_experimental_input_password">pizza</string>
+
+    <string name="settings_mer_title">Repeticiones Máximamente Efectivas (MERs)</string>
+    <string name="settings_mer_enable_text">Mostrar cálculos de MER</string>
+    <string name="settings_mer_fatigue_input_title">Umbral de fatiga</string>
+    <string name="settings_mer_fatigue_info_dialog_title">Umbral de fatiga</string>
+    <string name="settings_mer_fatigue_info_dialog_paragraph_one">El % de fatiga que debes alcanzar de tu máximo para que una repetición sea considerada una MER (por defecto 80%). Esto se puede calcular observando tu máximo</string>
+    <string name="settings_mer_fatigue_info_dialog_paragraph_two">ej: si tienes un Press de banca máximo de 100 libras y haces una repetición a 80 libras. Esto está por encima del umbral del 80% y, por lo tanto, ¡es una MER!</string>
+
+    <string name="settings_mer_weekly_goal_input_title">Meta semanal de MER</string>
+    <string name="settings_mer_weekly_goal_info_dialog_title">Meta semanal de MER</string>
+    <string name="settings_mer_weekly_goal_info_dialog_message">¡Las MERs se pueden usar para seguir tu progreso en una semana! ¡Establece una meta semanal y celebra tus éxitos!</string>
+
+</resources>
