@@ -50,6 +50,7 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalLiftCardYValue
+import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
@@ -68,10 +69,12 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_footer_trailing_button_content_description
+import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.dashboard_title
 import lift_bro.core.generated.resources.dashboard_toolbar_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_toolbar_trailing_button_content_description
 import lift_bro.core.generated.resources.ic_calendar
+import lift_bro.core.generated.resources.reps
 import lift_bro.core.generated.resources.view_dashboard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -264,7 +267,7 @@ fun DashboardContent(
                                         if (showWeight.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
                                 }
                             ) {
-                                Text(text = if (showWeight.value == LiftCardYValue.Weight) "lbs" else "reps")
+                                Text(text = if (showWeight.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(Res.string.reps))
                             }
                         }
                     }
@@ -302,7 +305,7 @@ fun DashboardContent(
                     item(
                         span = { GridItemSpan(2) }
                     ) {
-                        Text("Version: ${BuildKonfig.VERSION_NAME}")
+                        Text(stringResource(Res.string.dashboard_footer_version, BuildKonfig.VERSION_NAME))
                     }
 
                     item {
