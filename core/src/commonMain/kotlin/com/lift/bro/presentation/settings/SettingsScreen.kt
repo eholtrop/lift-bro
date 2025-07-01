@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
@@ -14,7 +13,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import com.example.compose.ThemeMode
@@ -39,22 +36,46 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
-import com.lift.bro.ui.DecimalPicker
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.NumberPicker
 import com.lift.bro.ui.RadioField
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.dialog.InfoDialog
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.decimalFormat
 import kotlinx.coroutines.launch
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.settings_backup_cta
+import lift_bro.core.generated.resources.settings_backup_restore_title
+import lift_bro.core.generated.resources.settings_experimental_input_password
+import lift_bro.core.generated.resources.settings_experimental_input_placeholder
+import lift_bro.core.generated.resources.settings_experimental_message
+import lift_bro.core.generated.resources.settings_experimental_title
+import lift_bro.core.generated.resources.settings_mer_enable_text
+import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_paragraph_one
+import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_paragraph_two
+import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_title
+import lift_bro.core.generated.resources.settings_mer_fatigue_input_title
+import lift_bro.core.generated.resources.settings_mer_title
+import lift_bro.core.generated.resources.settings_mer_weekly_goal_info_dialog_message
+import lift_bro.core.generated.resources.settings_mer_weekly_goal_info_dialog_title
+import lift_bro.core.generated.resources.settings_mer_weekly_goal_input_title
+import lift_bro.core.generated.resources.settings_other_discord_cta
+import lift_bro.core.generated.resources.settings_other_github_cta
+import lift_bro.core.generated.resources.settings_other_title
+import lift_bro.core.generated.resources.settings_restore_cta
+import lift_bro.core.generated.resources.settings_theme_option_one
+import lift_bro.core.generated.resources.settings_theme_option_three
+import lift_bro.core.generated.resources.settings_theme_option_two
+import lift_bro.core.generated.resources.settings_theme_title
+import lift_bro.core.generated.resources.settings_title
+import lift_bro.core.generated.resources.settings_uom_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun SettingsScreen() {
     LiftingScaffold(
-        title = "Settings",
+        title = stringResource(Res.string.settings_title),
         content = { padding ->
 
             var showExperimental by remember { mutableStateOf(false) }
@@ -67,7 +88,7 @@ fun SettingsScreen() {
                 item {
 
                     SettingsRowItem(
-                        title = { Text("Backup / Restore") }
+                        title = { Text(stringResource(Res.string.settings_uom_title)) }
                     ) {
                         Row(
                             modifier = Modifier.selectableGroup(),
@@ -108,30 +129,30 @@ fun SettingsScreen() {
 
                 item {
                     SettingsRowItem(
-                        title = { Text("Theme") }
+                        title = { Text(stringResource(Res.string.settings_theme_title)) }
                     ) {
                         val themeMode by dependencies.settingsRepository.getThemeMode()
                             .collectAsState(ThemeMode.System)
                         Row {
                             RadioField(
-                                text = "Dark",
-                                selected = themeMode == ThemeMode.Dark,
+                                text = stringResource(Res.string.settings_theme_option_one),
+                                selected = themeMode == ThemeMode.System,
                                 fieldSelected = {
-                                    dependencies.settingsRepository.setThemeMode(ThemeMode.Dark)
+                                    dependencies.settingsRepository.setThemeMode(ThemeMode.System)
                                 }
                             )
                             RadioField(
-                                text = "Light",
+                                text = stringResource(Res.string.settings_theme_option_two),
                                 selected = themeMode == ThemeMode.Light,
                                 fieldSelected = {
                                     dependencies.settingsRepository.setThemeMode(ThemeMode.Light)
                                 }
                             )
                             RadioField(
-                                text = "System",
-                                selected = themeMode == ThemeMode.System,
+                                text = stringResource(Res.string.settings_theme_option_three),
+                                selected = themeMode == ThemeMode.Dark,
                                 fieldSelected = {
-                                    dependencies.settingsRepository.setThemeMode(ThemeMode.System)
+                                    dependencies.settingsRepository.setThemeMode(ThemeMode.Dark)
                                 }
                             )
                         }
@@ -140,7 +161,7 @@ fun SettingsScreen() {
 
                 item {
                     SettingsRowItem(
-                        title = { Text("Other:") },
+                        title = { Text(stringResource(Res.string.settings_other_title)) },
                         content = {
                             Button(
                                 colors = ButtonDefaults.textButtonColors(),
@@ -148,7 +169,7 @@ fun SettingsScreen() {
                                     dependencies.launchUrl("https://discord.gg/mgxQK8ma")
                                 }
                             ) {
-                                Text("Join the Discord! >")
+                                Text(stringResource(Res.string.settings_other_discord_cta))
                             }
 
                             Button(
@@ -157,15 +178,8 @@ fun SettingsScreen() {
                                     dependencies.launchUrl("https://www.github.com/eholtrop/lift-bro")
                                 }
                             ) {
-                                Text("Source Code >")
+                                Text(stringResource(Res.string.settings_other_github_cta))
                             }
-
-//                            Button(
-//                                colors = ButtonDefaults.textButtonColors(),
-//                                onClick = {}
-//                            ) {
-//                                Text("Release Notes")
-//                            }
                         }
                     )
                 }
@@ -175,30 +189,31 @@ fun SettingsScreen() {
                     if (showExperimental) {
                         Column {
                             Text(
-                                text = "Experimental",
+                                text = stringResource(Res.string.settings_experimental_title),
                                 style = MaterialTheme.typography.titleLarge
                             )
                             Text(
-                                text = "Features here are experimental, and could break app functionality, use with caution!",
+                                text = stringResource(Res.string.settings_experimental_message),
                                 style = MaterialTheme.typography.bodyMedium
                             )
                         }
                     } else {
                         Column {
                             Text(
-                                text = "Experimental",
+                                text = stringResource(Res.string.settings_experimental_title),
                                 style = MaterialTheme.typography.titleLarge
                             )
+                            val password = stringResource(Res.string.settings_experimental_input_password)
                             TextField(
                                 modifier = Modifier.fillParentMaxWidth(),
                                 value = value,
                                 onValueChange = {
                                     value = it
-                                    if (value.toLowerCase(Locale.current) == "pizza") {
+                                    if (value.toLowerCase(Locale.current) == password) {
                                         showExperimental = true
                                     }
                                 },
-                                placeholder = { Text("What's the magic word?") }
+                                placeholder = { Text(stringResource(Res.string.settings_experimental_input_placeholder)) }
                             )
                         }
                     }
@@ -207,7 +222,7 @@ fun SettingsScreen() {
                     item {
                         SettingsRowItem(
                             title = {
-                                Text("Maximally Effective Reps (MERs)")
+                                Text(stringResource(Res.string.settings_mer_title))
                             },
                             content = {
                                 val showMerCalcs by dependencies.settingsRepository.getMerSettings()
@@ -228,27 +243,29 @@ fun SettingsScreen() {
                                             }
                                         )
 
-                                        Text("Show MER calculations")
+                                        Text(stringResource(Res.string.settings_mer_enable_text))
                                     }
 
                                     Row {
                                         NumberPicker(
                                             modifier = Modifier.weight(1f),
-                                            title = "Fatigue Threshold",
+                                            title = stringResource(Res.string.settings_mer_fatigue_input_title),
                                             selectedNum = (showMerCalcs.threshold * 100).toInt(),
                                             numberChanged = {
                                                 dependencies.settingsRepository.setMerSettings(
-                                                    showMerCalcs.copy(threshold = it?.toFloat() ?: 0f)
+                                                    showMerCalcs.copy(
+                                                        threshold = it?.toFloat() ?: 0f
+                                                    )
                                                 )
                                             },
                                         )
 
                                         InfoDialogButton(
-                                            dialogTitle = { Text("Fatigue Threshold") },
+                                            dialogTitle = { Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_title)) },
                                             dialogMessage = {
-                                                Text("The % fatigue that you must hit of your max for a rep to be considered a MER (default 80%), This can be calculated by taking a look at your Max")
+                                                Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_paragraph_one))
                                                 Space(MaterialTheme.spacing.half)
-                                                Text("ex: if you have a 100lbs max Bench Press and you do one rep at 80lbs. This is above the threshold of 80% and therefore an MER!")
+                                                Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_paragraph_two))
                                             }
                                         )
                                     }
@@ -256,7 +273,7 @@ fun SettingsScreen() {
                                     Row {
                                         NumberPicker(
                                             modifier = Modifier.weight(1f),
-                                            title = "Weekly MER Goal",
+                                            title = stringResource(Res.string.settings_mer_weekly_goal_input_title),
                                             selectedNum = showMerCalcs.weeklyTotalGoal,
                                             numberChanged = {
                                                 dependencies.settingsRepository.setMerSettings(
@@ -266,9 +283,9 @@ fun SettingsScreen() {
                                         )
 
                                         InfoDialogButton(
-                                            dialogTitle = { Text("Weekly MER Goal") },
+                                            dialogTitle = { Text(stringResource(Res.string.settings_mer_weekly_goal_info_dialog_title)) },
                                             dialogMessage = {
-                                                Text("MER's can be used to track your progress in a week! Set yourself a weekly goal and celebrate your successes!")
+                                                Text(stringResource(Res.string.settings_mer_weekly_goal_info_dialog_message))
                                             }
                                         )
                                     }
@@ -285,7 +302,7 @@ fun SettingsScreen() {
 @Composable
 private fun BackupRow() {
     SettingsRowItem(
-        title = { Text("Backup / Restore") }
+        title = { Text(stringResource(Res.string.settings_backup_restore_title)) }
     ) {
         val scope = rememberCoroutineScope()
 
@@ -300,7 +317,7 @@ private fun BackupRow() {
                     }
                 }
             ) {
-                Text("Backup")
+                Text(stringResource(Res.string.settings_backup_cta))
             }
 
             Space(MaterialTheme.spacing.one)
@@ -313,7 +330,7 @@ private fun BackupRow() {
                     }
                 }
             ) {
-                Text("Restore")
+                Text(stringResource(Res.string.settings_restore_cta))
             }
         }
     }

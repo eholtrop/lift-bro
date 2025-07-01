@@ -98,4 +98,36 @@
 
     <string name="workout_calendar_edit_daily_notes_cta">Edit Daily Notes</string>
 
+    <string name="settings_title">Settings</string>
+
+    <string name="settings_uom_title">Default Unit of Measure</string>
+    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_option_one">System</string>
+    <string name="settings_theme_option_two">Light</string>
+    <string name="settings_theme_option_three">Dark</string>
+
+    <string name="settings_backup_restore_title">Backup / Restore</string>
+    <string name="settings_backup_cta">Backup</string>
+    <string name="settings_restore_cta">Restore</string>
+
+    <string name="settings_other_title">Other:</string>
+    <string name="settings_other_discord_cta">Join the Discord!</string>
+    <string name="settings_other_github_cta">Source Code</string>
+
+    <string name="settings_experimental_title">Experimental</string>
+    <string name="settings_experimental_message">Features here are experimental, and could break app functionality, use with caution!</string>
+    <string name="settings_experimental_input_placeholder">What's the magic word?</string>
+    <string name="settings_experimental_input_password">pizza</string>
+
+    <string name="settings_mer_title">Maximally Effective Reps (MERs)</string>
+    <string name="settings_mer_enable_text">Show MER calculations</string>
+    <string name="settings_mer_fatigue_input_title">Fatigue Threshold</string>
+    <string name="settings_mer_fatigue_info_dialog_title">Fatigue Threshold</string>
+    <string name="settings_mer_fatigue_info_dialog_paragraph_one">The % fatigue that you must hit of your max for a rep to be considered a MER (default 80%), This can be calculated by taking a look at your Max</string>
+    <string name="settings_mer_fatigue_info_dialog_paragraph_two">ex: if you have a 100lbs max Bench Press and you do one rep at 80lbs. This is above the threshold of 80% and therefore an MER!</string>
+
+    <string name="settings_mer_weekly_goal_input_title">Weekly MER Goal</string>
+    <string name="settings_mer_weekly_goal_info_dialog_title">Weekly MER Goal</string>
+    <string name="settings_mer_weekly_goal_info_dialog_message">MER's can be used to track your progress in a week! Set yourself a weekly goal and celebrate your successes!</string>
+
 </resources>
