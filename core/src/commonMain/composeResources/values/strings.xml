@@ -3,11 +3,33 @@
     <string name="dashboard_toolbar_trailing_button_content_description">Add Lift</string>
     <string name="dashboard_toolbar_leading_button_content_description">Settings</string>
     <string name="dashboard_fab_content_description">Add Set</string>
-
+    <string name="lbs">lbs</string>
+    <string name="kg">kg</string>
+    <string name="reps">reps</string>
+    <string name="dashboard_footer_version">Version: %s</string>
 
     <string name="dashboard_footer_trailing_button_content_description">Calendar</string>
     <string name="dashboard_footer_leading_button_content_description">Dashboard</string>
 
+    <string name="edit_lift_screen_add_variation_cta_content_description">Add Variation</string>
+    <string name="edit_lift_screen_warning_dialog_title">Warning</string>
+    <string name="edit_lift_screen_lift_warning_dialog_text">This will delete all variations and sets for this lift, This cannot be undone</string>
+    <string name="edit_lift_screen_title">Edit Lift</string>
+    <string name="create_lift_screen_title">Create Lift</string>
+    <string name="edit_lift_screen_delete_cta_content_description">Delete</string>
+    <string name="edit_lift_screen_save_cta_content_description">Save Lift</string>
+
+    <string name="edit_lift_screen_lift_name_placeholder">ex: Squat, Bench Press, Deadlift</string>
+    <string name="edit_lift_screen_variation_name_placeholder">ex: Back, Front, Incline</string>
+    <string name="edit_lift_screen_variation_delete_cta_content_description">Delete Variation</string>
+
+    <string name="edit_lift_info_dialog_title">What is a Lift?</string>
+    <string name="edit_lift_info_dialog_text">A group of <b>Variations/Movements</b>\n\nex: A Squat can have many variations such as Front and Back Squat\n\nOnce you name your lift you can start creating Variations of that lift!\nThink of it as the "suffix" of a movement\n\nRomanian *Deadlift*\nFront *Squat*\nIncline *Bench Press*\n</string>
+    <string name="edit_lift_variation_heading">Variations</string>
+    <string name="edit_lift_variation_warning_dialog_text">This will delete all sets for this variation, This cannot be undone</string>
+
+    <string name="edit_lift_screen_warning_dialog_positive_cta">Okay!</string>
+    <string name="edit_lift_screen_warning_dialog_negative_cta">Nevermind</string>
 
     <string name="dashboard_empty_title">Do you even Lift Bro?</string>
     <string name="dashboard_empty_primary_cta_title">Create Lift</string>

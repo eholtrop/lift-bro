@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -41,7 +40,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,7 +50,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
@@ -63,21 +60,26 @@ import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
-data class EditLiftState(
-    val lift: Lift,
-    val variations: SnapshotStateList<EditLiftVariationState>,
-    val isNew: Boolean,
-)
-
-data class EditLiftVariationState(
-    val id: String = uuid4().toString(),
-    val lift: Lift,
-    val name: String? = null,
-    val isNew: Boolean,
-)
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.create_lift_screen_title
+import lift_bro.core.generated.resources.edit_lift_info_dialog_text
+import lift_bro.core.generated.resources.edit_lift_info_dialog_title
+import lift_bro.core.generated.resources.edit_lift_screen_add_variation_cta_content_description
+import lift_bro.core.generated.resources.edit_lift_screen_delete_cta_content_description
+import lift_bro.core.generated.resources.edit_lift_screen_lift_name_placeholder
+import lift_bro.core.generated.resources.edit_lift_screen_lift_warning_dialog_text
+import lift_bro.core.generated.resources.edit_lift_screen_save_cta_content_description
+import lift_bro.core.generated.resources.edit_lift_screen_title
+import lift_bro.core.generated.resources.edit_lift_screen_variation_delete_cta_content_description
+import lift_bro.core.generated.resources.edit_lift_screen_variation_name_placeholder
+import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_negative_cta
+import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_positive_cta
+import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_title
+import lift_bro.core.generated.resources.edit_lift_variation_heading
+import lift_bro.core.generated.resources.edit_lift_variation_warning_dialog_text
+import org.jetbrains.compose.resources.stringArrayResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun EditLiftScreen(
@@ -114,15 +116,17 @@ internal fun EditLiftScreen(
 
     LaunchedEffect(initialVariations) {
         if (initialVariations.isEmpty()) {
-            variations.add(Variation(
-                name = ""
-            ))
+            variations.add(
+                Variation(
+                    name = ""
+                )
+            )
         }
     }
 
     if (showLiftDeleteWarning) {
         WarningDialog(
-            text = "This will delete all variations and sets for this lift, This cannot be undone",
+            text = stringResource(Res.string.edit_lift_screen_lift_warning_dialog_text),
             onDismiss = { showLiftDeleteWarning = false },
             onConfirm = {
                 coroutineScope.launch {
@@ -138,11 +142,13 @@ internal fun EditLiftScreen(
     }
 
     LiftingScaffold(
-        title = if (lift != null) "Edit Lift" else "Create Lift",
+        title = if (lift != null) stringResource(Res.string.edit_lift_screen_title) else stringResource(
+            Res.string.create_lift_screen_title
+        ),
         trailingContent = {
             TopBarIconButton(
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Delete",
+                contentDescription = stringResource(Res.string.edit_lift_screen_delete_cta_content_description),
                 onClick = {
                     showLiftDeleteWarning = true
                 },
@@ -150,7 +156,7 @@ internal fun EditLiftScreen(
         },
         fabProperties = FabProperties(
             fabIcon = Icons.Default.Edit,
-            contentDescription = "Save Lift",
+            contentDescription = stringResource(Res.string.edit_lift_screen_save_cta_content_description),
             fabClicked = {
                 dependencies.database.liftDataSource.save(
                     thisLift
@@ -187,27 +193,17 @@ internal fun EditLiftScreen(
                     onValueChange = { thisLift = thisLift.copy(name = it) },
                     placeholder = {
                         Text(
-                            text = "ex: Squat, Bench Press, Deadlift",
+                            text = stringResource(Res.string.edit_lift_screen_lift_name_placeholder),
                             textAlign = TextAlign.Center,
                         )
                     },
                     textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center)
                 )
                 InfoDialogButton(
-                    dialogTitle = { Text("What is a Lift?") },
+                    dialogTitle = { Text(stringResource(Res.string.edit_lift_info_dialog_title)) },
                     dialogMessage = {
                         Text(
-                            text =
-                                "A group of Variations/Movements\n" +
-                                        "\n" +
-                                        "ex: A Squat can have many variations such as Front and Back Squat\n" +
-                                        "\n" +
-                                        "Once you name your lift you can start creating Variations of that lift!\n" +
-                                        "Think of it as the \"suffix\" of a movement\n" +
-                                        "\n" +
-                                        "Romanian *Deadlift*\n" +
-                                        "Front *Squat*\n" +
-                                        "Incline *Bench Press*\n"
+                            text = stringResource(Res.string.edit_lift_info_dialog_text),
                         )
                     },
                 )
@@ -220,7 +216,7 @@ internal fun EditLiftScreen(
                     .semantics {
                         heading()
                     },
-                text = "Variations",
+                text = stringResource(Res.string.edit_lift_variation_heading),
                 style = MaterialTheme.typography.titleLarge
             )
 
@@ -238,7 +234,10 @@ internal fun EditLiftScreen(
                     }
 
                     LaunchedEffect(visibilityState.currentState) {
-                        if (!visibilityState.currentState && !visibilityState.targetState && variations.contains(variation)) {
+                        if (!visibilityState.currentState && !visibilityState.targetState && variations.contains(
+                                variation
+                            )
+                        ) {
                             dependencies.database.variantDataSource.delete(variation.id)
                             dependencies.database.setDataSource.deleteAll(variation.id)
                             variations.remove(variation)
@@ -247,7 +246,7 @@ internal fun EditLiftScreen(
 
                     if (showVariationWarning) {
                         WarningDialog(
-                            text = "This will delete all sets for this variation, This cannot be undone",
+                            text = stringResource(Res.string.edit_lift_variation_warning_dialog_text),
                             onDismiss = { showVariationWarning = false },
                             onConfirm = {
                                 visibilityState.targetState = false
@@ -296,7 +295,7 @@ internal fun EditLiftScreen(
                     focusLastItem = true
                 },
             ) {
-                Text("Add Variation")
+                Text(stringResource(Res.string.edit_lift_screen_add_variation_cta_content_description))
             }
         }
     }
@@ -304,7 +303,7 @@ internal fun EditLiftScreen(
 
 @Composable
 private fun WarningDialog(
-    title: String = "Warning",
+    title: String = stringResource(Res.string.edit_lift_screen_warning_dialog_title),
     text: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
@@ -315,15 +314,15 @@ private fun WarningDialog(
             Button(
                 colors = ButtonDefaults.outlinedButtonColors(),
                 onClick = onConfirm
-            ) { Text("Okay!") }
+            ) { Text(stringResource(Res.string.edit_lift_screen_warning_dialog_positive_cta)) }
         },
         dismissButton = {
             Button(
                 onClick = onDismiss
-            ) { Text("Nevermind") }
+            ) { Text(stringResource(Res.string.edit_lift_screen_warning_dialog_negative_cta)) }
         },
         title = { Text(title) },
-        icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = "Warning") },
+        icon = { Icon(imageVector = Icons.Default.Warning, contentDescription = null) },
         text = { Text(text) },
     )
 }
@@ -350,12 +349,12 @@ private fun VariationItem(
             value = variation.name ?: "",
             singleLine = true,
             onValueChange = onNameChange,
-            placeholder = { Text("e.g., Back, Front, Incline") },
+            placeholder = { Text(stringResource(Res.string.edit_lift_screen_variation_name_placeholder)) },
             suffix = { if (liftName.isNotBlank()) Text(liftName) },
             colors = TextFieldDefaults.transparentColors()
         )
         IconButton(onClick = onDelete) {
-            Icon(Icons.Default.Delete, contentDescription = "Delete Variation")
+            Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.edit_lift_screen_variation_delete_cta_content_description))
         }
     }
 }
