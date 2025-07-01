@@ -6,7 +6,7 @@
     <string name="lbs">lbs</string>
     <string name="kg">kg</string>
     <string name="reps">reps</string>
-    <string name="dashboard_footer_version">Version: %s</string>
+    <string name="dashboard_footer_version">Version: %1$s</string>
 
 
     <string name="color_picker_dialog_title">Select a Color</string>
