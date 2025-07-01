@@ -64,6 +64,14 @@ import com.lift.bro.utils.formattedWeight
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import kotlinx.datetime.LocalDate
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.color_picker_dialog_blue
+import lift_bro.core.generated.resources.color_picker_dialog_green
+import lift_bro.core.generated.resources.color_picker_dialog_red
+import lift_bro.core.generated.resources.color_picker_negative_cta
+import lift_bro.core.generated.resources.color_picker_positive_cta
+import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_positive_cta
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -150,7 +158,7 @@ fun LiftDetailsScreen(
                             }
                         },
                         label = {
-                            Text("Red")
+                            Text(stringResource(Res.string.color_picker_dialog_red))
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,
@@ -166,7 +174,7 @@ fun LiftDetailsScreen(
                             }
                         },
                         label = {
-                            Text("Green")
+                            Text(stringResource(Res.string.color_picker_dialog_green))
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,
@@ -182,7 +190,7 @@ fun LiftDetailsScreen(
                             }
                         },
                         label = {
-                            Text("Blue")
+                            Text(stringResource(Res.string.color_picker_dialog_blue))
                         },
                         keyboardOptions = KeyboardOptions.Default.copy(
                             keyboardType = KeyboardType.Number,
@@ -203,7 +211,7 @@ fun LiftDetailsScreen(
                         },
                         colors = ButtonDefaults.textButtonColors(),
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(Res.string.color_picker_negative_cta))
                     }
 
                     Space(MaterialTheme.spacing.half)
@@ -221,7 +229,7 @@ fun LiftDetailsScreen(
                         },
                         colors = ButtonDefaults.textButtonColors(),
                     ) {
-                        Text("Save")
+                        Text(stringResource(Res.string.color_picker_positive_cta))
                     }
                 }
             }
