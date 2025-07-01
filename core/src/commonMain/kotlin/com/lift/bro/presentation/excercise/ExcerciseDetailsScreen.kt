@@ -27,6 +27,7 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
@@ -43,6 +44,12 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.excercise_screen_duplicate_cta
+import lift_bro.core.generated.resources.excercise_screen_new_set_cta
+import lift_bro.core.generated.resources.excercise_screen_title
+import lift_bro.core.generated.resources.excercise_string_title_date_format
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ExcerciseDetailsScreen(
@@ -71,7 +78,7 @@ private fun ExcerciseDetailsScreen(
     excercise: Excercise,
 ) {
     LiftingScaffold(
-        title = "Excercise",
+        title = stringResource(Res.string.excercise_screen_title),
     ) { padding ->
         Card(
             modifier = Modifier.padding(padding)
@@ -83,11 +90,11 @@ private fun ExcerciseDetailsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    Text("Standard Deadlifts")
+                    Text(excercise.variation.fullName)
                 }
 
                 item {
-                    Text(excercise.date.toString("MMMM d - yyyy"))
+                    Text(excercise.date.toString(stringResource(Res.string.excercise_string_title_date_format)))
                 }
 
                 excercise.sets.forEach {
@@ -130,7 +137,7 @@ private fun ExcerciseDetailsScreen(
                             }
                         }
                     ) {
-                        Text("Duplicate Last Set")
+                        Text(stringResource(Res.string.excercise_screen_duplicate_cta))
                     }
                 }
 
@@ -143,7 +150,7 @@ private fun ExcerciseDetailsScreen(
                             ))
                         }
                     ) {
-                        Text("Add New Set")
+                        Text(stringResource(Res.string.excercise_screen_new_set_cta))
                     }
                 }
             }

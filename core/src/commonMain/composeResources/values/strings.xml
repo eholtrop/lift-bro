@@ -71,6 +71,11 @@
     <string name="edit_set_screen_extra_notes_label">Extra Notes:</string>
     <string name="edit_set_screen_extra_notes_placeholder">I killed it today!</string>
 
+    <string name="excercise_screen_title">Excercise</string>
+    <string name="excercise_screen_duplicate_cta">Duplicate Last Set</string>
+    <string name="excercise_screen_new_set_cta">Add New Set</string>
+    <string name="excercise_string_title_date_format">MMMM d - yyyy</string>
+
 
     <!-- ONBOARDING -->
     <string name="onboarding_page_one_title">CHOOSE\nYOUR\nLIFT BRO</string>
