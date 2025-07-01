@@ -69,9 +69,11 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.create_set_screen_title
+import lift_bro.core.generated.resources.edit_set_screen_create_lift_cta
 import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
+import lift_bro.core.generated.resources.edit_set_screen_save_cta_content_description
 import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
 import lift_bro.core.generated.resources.weight_selector_chin_subtitle
@@ -147,7 +149,7 @@ fun EditSetScreen(
     LiftingScaffold(
         fabProperties = FabProperties(
             fabIcon = Icons.Default.Edit,
-            contentDescription = "Save Set",
+            contentDescription = stringResource(Res.string.edit_set_screen_save_cta_content_description),
             fabEnabled = saveEnabled,
             fabClicked = {
                 coroutineScope.launch {
@@ -264,7 +266,8 @@ fun EditSetScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = variation?.fullName ?: stringResource(Res.string.edit_set_screen_variation_selector_empty_state_title),
+                            text = variation?.fullName
+                                ?: stringResource(Res.string.edit_set_screen_variation_selector_empty_state_title),
                             style = MaterialTheme.typography.titleLarge,
                         )
 
@@ -278,7 +281,9 @@ fun EditSetScreen(
                             Button(
                                 onClick = createLiftClicked,
                             ) {
-                                Text("Create Lift")
+                                Text(
+                                    stringResource(Res.string.edit_set_screen_create_lift_cta)
+                                )
                             }
                         } else {
                             val sets = dependencies.database.setDataSource.getAllForLift(

@@ -59,6 +59,8 @@
     <string name="create_set_screen_title">I Crushed</string>
     <string name="edit_set_screen_title">You Crushed</string>
     <string name="edit_set_screen_delete_acc_label">Delete</string>
+    <string name="edit_set_screen_save_cta_content_description">Save Set</string>
+    <string name="edit_set_screen_create_lift_cta">Create Lift</string>
 
     <string name="edit_set_screen_variation_selector_empty_state_title">Select Lift</string>
 
