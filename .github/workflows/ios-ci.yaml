@@ -50,23 +50,6 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      - name: Build and Upload to TestFlight (Beta Lane)
-        # Or you could have separate jobs/workflows for beta and app store.
-        # This example combines them, using conditionals.
-        if: github.ref == 'refs/heads/main' # Only deploy beta on pushes to main (or your dev branch)
-        env:
-          # Essential for Fastlane Match and App Store Connect API Key
-          FASTLANE_MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
-          MATCH_GIT_PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
-          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
-          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
-          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
-        run: |
-          bundle install
-          bundle exec fastlane ios beta
-        working-directory: ./fastlane # Or ./iosApp/fastlane if your Fastfile is there
-
       - name: Build and Submit to App Store (Release Lane)
         env:
           # Same essential Fastlane secrets as above

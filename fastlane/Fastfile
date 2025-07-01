@@ -119,7 +119,8 @@ platform :ios do
       readonly: true, # true for CI, false for local setup
       git_url: ENV["MATCH_GIT_URL"], # Set this in GitHub Actions secrets
       git_branch: "main", # Or your desired branch for Match
-      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"]
+      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
+      username: ENV["FASTLANE_USER"]
     )
   end
 
@@ -213,8 +214,8 @@ platform :ios do
 #       force: true, # Use with caution, overwrites existing metadata
       skip_metadata: true, # Set to true if you don't update metadata via Fastlane
       skip_screenshots: true, # Set to true if you don't upload screenshots via Fastlane
-#       submit_for_review: true, # Automatically submit for review after upload
-#       automatic_release: true, # Release immediately after review (or set a date)
+      submit_for_review: true, # Automatically submit for review after upload
+      automatic_release: true, # Release immediately after review (or set a date)
       # release_build_status: "READY_FOR_SALE" # Or other values if managing through App Store Connect
     )
   end
