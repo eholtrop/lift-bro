@@ -1,7 +1,6 @@
 appId: com.lift.bro
 
 ---
-
 - runFlow:
     file: onboarding_select_bro.yaml
 - tapOn: "Consent"

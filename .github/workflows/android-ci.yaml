@@ -20,6 +20,11 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v2
 
+      - name: Install Maestro CLI (Add Maestro to PATH)
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
