@@ -2,7 +2,7 @@ name: Android CI/CD
 
 on:
   push:
-    branches: [ main ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
+    branches: [ maestro_tests_ci ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
     paths:
       - 'androidApp/**'
       - 'core/**'
