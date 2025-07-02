@@ -136,7 +136,6 @@ fun TopBarButton(
     IconButton(
         modifier = Modifier.padding(
             start = MaterialTheme.spacing.one,
-            top = MaterialTheme.spacing.one,
         ),
         onClick = onClick,
         content = content,
