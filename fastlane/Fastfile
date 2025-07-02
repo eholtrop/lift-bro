@@ -52,6 +52,23 @@ platform :android do
 
     desc "Run the project tests"
     lane :test do |options|
+        android_emulator(
+            name: "test_emulator",
+            package: "system-images;android-36;google_apis;x86_64",
+            device: "Pixel 9",
+
+        )
+
+        # Wait for device and unlock screen
+        sh "adb wait-for-device"
+        sh "adb shell input keyevent 82"
+
+        # Install your app
+        gradle(task: "installDebug") # Assuming your app's package is defined in gradle
+
+        # Run Maestro tests
+        # Ensure Maestro CLI is in your PATH
+        sh "maestro test .maestro/" # Adjust path to your Maestro flows
         gradle(task: "test")
     end
 
