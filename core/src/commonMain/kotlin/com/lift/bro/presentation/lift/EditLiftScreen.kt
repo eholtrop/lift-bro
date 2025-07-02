@@ -221,7 +221,7 @@ internal fun EditLiftScreen(
             )
 
             LazyColumn(
-                modifier = Modifier.animateContentSize(),
+                modifier = Modifier.animateContentSize().fillMaxWidth(),
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
