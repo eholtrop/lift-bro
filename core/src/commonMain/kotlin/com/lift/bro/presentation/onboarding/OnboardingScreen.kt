@@ -11,6 +11,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -125,8 +126,7 @@ fun OnboardingBroScreen(
     Column(
         modifier = Modifier
             .onboardingBackground()
-            .navigationBarsPadding()
-            .statusBarsPadding()
+            .fillMaxHeight()
             .verticalScroll(rememberScrollState())
             .padding(
                 horizontal = MaterialTheme.spacing.one,
@@ -146,7 +146,6 @@ fun OnboardingBroScreen(
         val leoContentDescription = stringResource(Res.string.onboarding_leo_content_description)
         Card(
             modifier = Modifier.fillMaxWidth(.5f)
-                .testTag("LEO_CARD")
                 .aspectRatio(1f)
                 .semantics(mergeDescendants = true) {
                     contentDescription = leoContentDescription
