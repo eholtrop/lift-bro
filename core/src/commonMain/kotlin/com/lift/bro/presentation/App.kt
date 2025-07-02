@@ -108,8 +108,11 @@ fun App(
         }
 
         LaunchedEffect("initialize_sentry") {
-            Sentry.init { options ->
-                options.dsn = BuildKonfig.SENTRY_DSN
+            // only initialize sentry in release mode
+            if (!BuildConfig.isDebug) {
+                Sentry.init { options ->
+                    options.dsn = BuildKonfig.SENTRY_DSN
+                }
             }
         }
 
