@@ -284,7 +284,11 @@ fun LiftDetailsScreen(
                                     if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
                             }
                         ) {
-                            Text(text = if (yValue.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(Res.string.reps))
+                            Text(
+                                text = if (yValue.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(
+                                    Res.string.reps
+                                )
+                            )
                         }
                     }
                 }
@@ -399,18 +403,13 @@ private fun VariationCard(
                             }
                         }
 
-                        it.first to Pair(
-                            GraphData.DotGraphData(
-                                it.first,
-                                when (LocalLiftCardYValue.current.value) {
-                                    LiftCardYValue.Weight -> topLift.weight.toFloat()
-                                    LiftCardYValue.Reps -> topLift.reps.toFloat()
-                                }
-                            ),
-                            GraphData.LineGraphData(
-                                it.first,
-                                topLift.rpe?.toFloat()?.div(10f) ?: 0f
-                            )
+                        it.first to GraphData(
+                            date = it.first,
+                            dotGraphData = when (LocalLiftCardYValue.current.value) {
+                                LiftCardYValue.Weight -> topLift.weight.toFloat()
+                                LiftCardYValue.Reps -> topLift.reps.toFloat()
+                            },
+                            lineGraphData = topLift.rpe?.toFloat()?.div(10f) ?: 0f
                         )
                     },
                     state = rememberLazyListState(),
@@ -419,7 +418,9 @@ private fun VariationCard(
                         Text(
                             LocalDate.fromEpochDays(epochDays.toInt()).toString("MMM d"),
                             style = MaterialTheme.typography.titleSmall,
-                            color = if (selectedData?.toEpochDays()?.toLong() == epochDays) parentLift.color?.toColor()
+                            color = if (selectedData?.toEpochDays()
+                                    ?.toLong() == epochDays
+                            ) parentLift.color?.toColor()
                                 ?: MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
                     },

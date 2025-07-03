@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,9 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import kotlinx.datetime.LocalDate
+import kotlin.math.max
 import kotlin.math.min
 
 data class DotGraphColors(
@@ -41,28 +39,32 @@ data class DotGraphColors(
     val dotColorSelected: Color,
 )
 
-sealed class GraphData {
 
-    data class DotGraphData(
-        val x: LocalDate,
-        val y: Float
-    )
+data class DotGraphData(
+    val x: LocalDate,
+    val y: Float
+)
 
-    data class LineGraphData(
-        val x: LocalDate,
-        val y: Float
-    )
+data class LineGraphData(
+    val x: LocalDate,
+    val y: Float
+)
 
-}
+
+data class GraphData(
+    val date: LocalDate,
+    val dotGraphData: Float,
+    val lineGraphData: Float,
+)
 
 @Composable
 fun DotGraph(
     modifier: Modifier = Modifier,
-    graphData: List<Pair<LocalDate, Pair<GraphData.DotGraphData, GraphData.LineGraphData>>>,
+    graphData: List<Pair<LocalDate, GraphData>>,
     state: LazyListState = rememberLazyListState(),
     selectedData: LocalDate? = null,
-    maxX: LocalDate = graphData.maxOf { it.second.first.x },
-    maxY: Float = graphData.maxOf { it.second.first.y },
+    maxX: LocalDate = graphData.maxOf { it.first },
+    maxY: Float = graphData.maxOf { it.second.dotGraphData },
     xAxis: @Composable ((Long) -> Unit)? = null,
     yAxis: @Composable ((Float, Float) -> Unit)? = null,
     dataPointClicked: ((LocalDate) -> Unit)? = null,
@@ -103,7 +105,7 @@ fun DotGraph(
                         )
                     }
 
-                    val animatedGraph by animateOffsetAsState(
+                    val animateDotOffset by animateOffsetAsState(
                         targetValue = targetDotOffset
                     )
 
@@ -119,15 +121,16 @@ fun DotGraph(
                     ) {
                         canvasSize = size
                         targetDotOffset =
-                            targetDotOffset.copy(y = size.height - (point.second.first.y.div(maxY) * size.height))
-
-                        barHeight = min(size.height, point.second.second.y * size.height)
+                            targetDotOffset.copy(
+                                y = size.height - (point.second.dotGraphData.div(max(maxY, 1f)) * size.height)
+                            )
                         drawCircle(
                             color = dotColor,
                             radius = MaterialTheme.spacing.half.toPx(),
-                            center = animatedGraph
+                            center = animateDotOffset
                         )
 
+                        barHeight = min(size.height, point.second.lineGraphData * size.height)
                         drawRect(
                             color = dotColor.copy(alpha = .6f),
                             size = Size(size.width, animatedHeight),
@@ -142,8 +145,8 @@ fun DotGraph(
         }
 
         yAxis?.invoke(
-            graphData.minOf { it.second.first.y },
-            graphData.minOf { it.second.first.y }
+            graphData.minOf { it.second.dotGraphData },
+            graphData.minOf { it.second.dotGraphData }
         )
     }
 }
