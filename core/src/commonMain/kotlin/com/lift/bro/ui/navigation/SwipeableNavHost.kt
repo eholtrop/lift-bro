@@ -18,6 +18,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.util.lerp
+import com.lift.bro.config.BuildConfig
+import io.sentry.kotlin.multiplatform.Sentry
+import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.math.absoluteValue
 
 
@@ -44,6 +47,11 @@ fun SwipeableNavHost(
     LaunchedEffect(savedPagerState.currentPage) {
         navCoordinator.updateCurrentIndex(savedPagerState.currentPage)
         keyboard?.hide()
+    }
+    LaunchedEffect(savedPagerState.currentPage) {
+        if (!BuildConfig.isDebug) {
+            Sentry.addBreadcrumb(Breadcrumb.navigation("unknown", navCoordinator.currentPage.toString()))
+        }
     }
 
     var pagerSize: Size? by remember { mutableStateOf(null) }
