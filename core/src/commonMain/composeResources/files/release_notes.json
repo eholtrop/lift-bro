@@ -1,5 +1,13 @@
 [
   {
+    "versionId": "2025.07.06",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Add crash handling/error tracking for better usage tracking"
+    }
+  },
+  {
     "versionId": "2025.07.01",
     "type": "feature",
     "platform": "all",
