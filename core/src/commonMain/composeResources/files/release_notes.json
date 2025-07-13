@@ -1,5 +1,13 @@
 [
   {
+    "versionId": "2025.07.13",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Fix state retention on the workout calendar screen and edit/create set screens"
+    }
+  },
+  {
     "versionId": "2025.07.06",
     "type": "feature",
     "platform": "all",
