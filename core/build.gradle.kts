@@ -1,6 +1,6 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
-import java.text.SimpleDateFormat
-import java.util.Date
+import com.lift.bro.versionCode
+import com.lift.bro.versionName
 
 plugins {
     alias(libs.plugins.android.library)
@@ -39,9 +39,11 @@ kotlin {
         iosX64(),
         iosArm64(),
         iosSimulatorArm64()
-    ).forEach {
-        it.binaries.framework {
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
             baseName = "core"
+            binaryOption("bundleVersion", project.versionCode().toString())
+            binaryOption("bundleShortVersionString", project.versionName())
         }
     }
 
@@ -115,7 +117,8 @@ buildkonfig {
         buildConfigField(FieldSpec.Type.STRING, "ADMOB_AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as? String ?: System.getenv("LIFT_BRO_AD_UNIT_ID"))
         buildConfigField(FieldSpec.Type.STRING, "SENTRY_DSN", project.findProperty("LIFT_BRO_SENTRY_DSN") as? String ?: System.getenv("LIFT_BRO_SENTRY_DSN"))
 
-        buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", SimpleDateFormat("yyyy.MM.dd").format(Date()))
+        // if changed make sure to update android and iOS versions accordingly... this should be abstracted
+        buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", project.versionName())
     }
 }
 

@@ -1,5 +1,5 @@
-import java.text.SimpleDateFormat
-import java.util.Date
+import com.lift.bro.versionName
+import com.lift.bro.versionCode
 
 plugins {
     alias(libs.plugins.compose)
@@ -18,13 +18,9 @@ android {
         applicationId = "com.lift.bro"
         minSdk = 24
         targetSdk = 35
-        versionName = SimpleDateFormat("yyyy.MM.dd").format(Date())
+        versionName = project.versionName()
 
-        versionCode = if (project.hasProperty("buildNumber")) {
-            property("buildNumber").toString().toInt() + 156
-        } else {
-            1
-        }
+        versionCode = project.versionCode()
     }
     buildFeatures {
         compose = true
