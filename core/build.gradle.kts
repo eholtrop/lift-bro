@@ -91,6 +91,13 @@ kotlin {
             implementation(libs.app.update.ktx)
             implementation(libs.play.services.ads)
             implementation(compose.uiTooling)
+            implementation("com.google.mlkit:pose-detection-accurate:17.0.0")
+            implementation("androidx.camera.viewfinder:viewfinder-compose:1.5.0-beta01")
+            implementation("androidx.camera:camera-compose:1.5.0-beta01")
+            implementation("androidx.camera:camera-mlkit-vision:1.5.0-beta01")
+            implementation("androidx.camera:camera-lifecycle:1.5.0-beta01")
+
+            force("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
         }
 
         iosMain.dependencies {

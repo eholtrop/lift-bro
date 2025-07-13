@@ -24,6 +24,7 @@ appcompat = "1.7.0"
 uuid = "0.8.1"
 
 lexilabs-basic = "2.6.0"
+camera-lifecycle = "1.4.2"
 
 [libraries]
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing-ktx" }
@@ -53,6 +54,7 @@ app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.re
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera-lifecycle" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

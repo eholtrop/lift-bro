@@ -80,6 +80,9 @@ import lift_bro.core.generated.resources.weight_selector_chin_subtitle
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
 
+@Composable
+expect fun PoseDetector()
+
 data class EditSetState(
     val id: String,
     val variationId: String? = null,
@@ -175,7 +178,6 @@ fun EditSetScreen(
             }
         },
     ) { padding ->
-
         LazyColumn(
             modifier = Modifier.padding(padding).fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,

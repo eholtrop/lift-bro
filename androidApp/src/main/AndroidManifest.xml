@@ -5,6 +5,9 @@
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
+<!--    <uses-feature android:name="android.hardware.camera" android:required="true" />-->
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="false"
         android:label="Lift Bro"
