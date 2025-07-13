@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,6 +57,7 @@ import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.saver.MutableLocalDateSaver
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.utils.toColor
@@ -67,7 +69,6 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.workout_calendar_edit_daily_notes_cta
 import org.jetbrains.compose.resources.stringResource
 
-
 @Composable
 fun WorkoutCalendarScreen(
     modifier: Modifier = Modifier,
@@ -75,7 +76,8 @@ fun WorkoutCalendarScreen(
     excercises: List<Excercise>,
     logs: List<LiftingLog>,
 ) {
-    var selectedDate by remember { mutableStateOf(today) }
+
+    var selectedDate by rememberSaveable(saver = MutableLocalDateSaver) { mutableStateOf(today) }
 
     val setDateMap = excercises.groupBy { it.date }
 
