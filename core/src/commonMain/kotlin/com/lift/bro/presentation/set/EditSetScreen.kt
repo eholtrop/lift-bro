@@ -131,7 +131,7 @@ fun EditSetScreen(
     createLiftClicked: () -> Unit,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    var set by remember {
+    var set by remember(setId, variationId, liftId) {
         mutableStateOf(
             dependencies.database.setDataSource.get(setId)?.toUiState() ?: EditSetState(
                 id = uuid4().toString(),

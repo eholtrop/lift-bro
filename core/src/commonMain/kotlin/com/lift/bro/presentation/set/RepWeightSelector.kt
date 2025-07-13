@@ -196,7 +196,7 @@ private fun RepWeightTextField(
     keyboardType: KeyboardType,
     placeholder: @Composable () -> Unit = {},
 ) {
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(value)) }
+    var textFieldValue by remember(value) { mutableStateOf(TextFieldValue(value)) }
 
     var focusState by remember { mutableStateOf<FocusState?>(null) }
 
