@@ -3,9 +3,9 @@ name: Android CI/CD
 on:
   push:
     branches: [ main ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
-  paths:
-    - 'androidApp/**'
-    - 'core/**'
+    paths:
+      - 'androidApp/**'
+      - 'core/**'
 env:
   LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
   LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
@@ -26,7 +26,7 @@ jobs:
           distribution: "temurin"
           java-version: 17
 
-      - name: Set up Ruby 2.6
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.7.2
