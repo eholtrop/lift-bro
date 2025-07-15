@@ -61,7 +61,6 @@ fun SwipeableNavHost(
             pagerSize = this.size
         },
         state = savedPagerState,
-        beyondViewportPageCount = 2
     ) { currentPage ->
         // Animation to make the pages feel like they are disappearing to the side
         val animationModifier = Modifier.graphicsLayer {
