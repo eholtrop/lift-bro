@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
@@ -45,7 +44,9 @@ import com.example.compose.AppTheme
 import com.example.compose.amber
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.ui.Card
+import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
@@ -53,12 +54,16 @@ import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.ic_lift_bro_leo_light
 import lift_bro.core.generated.resources.ic_lift_bro_lisa_light
+import lift_bro.core.generated.resources.onboarding_consent_screen_subtitle
+import lift_bro.core.generated.resources.onboarding_consent_screen_title
 import lift_bro.core.generated.resources.onboarding_leo_content_description
 import lift_bro.core.generated.resources.onboarding_lisa_content_description
 import lift_bro.core.generated.resources.onboarding_page_one_cta
 import lift_bro.core.generated.resources.onboarding_page_one_title
-import lift_bro.core.generated.resources.onboarding_page_two_subtitle
-import lift_bro.core.generated.resources.onboarding_page_two_title
+import lift_bro.core.generated.resources.onboarding_skip_screen_subtitle
+import lift_bro.core.generated.resources.onboarding_skip_screen_title
+import lift_bro.core.generated.resources.privacy_policy
+import lift_bro.core.generated.resources.terms_and_conditions
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -100,13 +105,17 @@ fun OnboardingScreen(
                     dependencies.settingsRepository.setBro(it)
                     onboardingState += 1
                 }
-//            1 -> OnboardingUOMScreen { onboardingState = 2 }
-                1 -> OnboardingSkipScreen(
+
+                1 -> OnboardingConsentScreen {
+//                    ConsentDeviceUseCase().invoke()
+                    onboardingState += 1
+                }
+                2 -> OnboardingSkipScreen(
                     setupClicked = { onboardingState += 1 },
                     continueClicked = { dependencies.settingsRepository.setDeviceFtux(true) }
                 )
 
-                2 -> OnboardingSetupScreen { dependencies.settingsRepository.setDeviceFtux(true) }
+                3 -> OnboardingSetupScreen { dependencies.settingsRepository.setDeviceFtux(true) }
             }
         }
 
@@ -214,6 +223,89 @@ fun OnboardingBroScreen(
 }
 
 @Composable
+fun OnboardingConsentScreen(
+    consentAccepted: () -> Unit,
+) {
+    Column(
+        modifier = Modifier
+            .onboardingBackground()
+            .navigationBarsPadding()
+            .statusBarsPadding()
+            .padding(
+                horizontal = MaterialTheme.spacing.one,
+                vertical = MaterialTheme.spacing.two,
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(Res.string.onboarding_consent_screen_title),
+            style = MaterialTheme.typography.displayLarge
+        )
+
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(Res.string.onboarding_consent_screen_subtitle),
+            style = MaterialTheme.typography.titleLarge
+        )
+
+        Space()
+
+        Button(
+            modifier = Modifier
+                .height(Dp.AccessibilityMinimumSize),
+            onClick = { },
+            colors = ButtonDefaults.elevatedButtonColors(),
+        ) {
+            Text(
+                text = stringResource(Res.string.terms_and_conditions),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Black,
+            )
+        }
+
+        Button(
+            modifier = Modifier
+                .height(Dp.AccessibilityMinimumSize),
+            onClick = { },
+            colors = ButtonDefaults.elevatedButtonColors(),
+        ) {
+            Text(
+                text = stringResource(Res.string.privacy_policy),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium,
+                color = Color.Black,
+            )
+        }
+
+        Space()
+
+        var accepted by remember { mutableStateOf(false) }
+
+        ConsentCheckBoxField(
+            accepted = accepted,
+            acceptanceChanged = { accepted = it }
+        )
+
+        Button(
+            modifier = Modifier.height(Dp.AccessibilityMinimumSize),
+            onClick = { consentAccepted() },
+            colors = ButtonDefaults.elevatedButtonColors(
+                contentColor = Color.Black
+            ),
+            enabled = accepted
+        ) {
+            Text(
+                stringResource(Res.string.onboarding_page_one_cta),
+                style = MaterialTheme.typography.titleMedium,
+            )
+        }
+    }
+}
+
+@Composable
 fun OnboardingSkipScreen(
     setupClicked: () -> Unit,
     continueClicked: () -> Unit,
@@ -232,13 +324,13 @@ fun OnboardingSkipScreen(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(Res.string.onboarding_page_two_title),
+            text = stringResource(Res.string.onboarding_skip_screen_title),
             style = MaterialTheme.typography.displayLarge
         )
 
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = stringResource(Res.string.onboarding_page_two_subtitle),
+            text = stringResource(Res.string.onboarding_skip_screen_subtitle),
             style = MaterialTheme.typography.titleLarge
         )
 

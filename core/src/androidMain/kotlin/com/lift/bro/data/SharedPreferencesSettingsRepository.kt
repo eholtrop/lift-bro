@@ -5,14 +5,13 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.core.content.edit
 import com.example.compose.ThemeMode
-import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
+import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.presentation.onboarding.LiftBro
-import com.lift.bro.utils.debug
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
@@ -21,9 +20,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.util.UUID
 
 
 class SharedPreferencesSettingsRepository(
@@ -50,6 +49,37 @@ class SharedPreferencesSettingsRepository(
         }.onCompletion {
             sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener)
         }
+
+    // get id, if null generate a new one, store it, and return it
+    override fun getDeviceId(): String {
+        return sharedPreferences.getString("device_id", null) ?: UUID.randomUUID().toString().also {
+            sharedPreferences.edit { putString("device_id", it) }
+        }
+    }
+
+    override fun getDeviceConsent(): Flow<Consent?> {
+        return keyChangedFlow
+            .filter { it == "device_consent" }
+            .map {
+                sharedPreferences.getString("device_consent", null)?.let {
+                    Json.decodeFromString<Consent>(it)
+                }
+            }
+            .onStart {
+                emit(
+                    sharedPreferences.getString("device_consent", null)?.let {
+                        Json.decodeFromString<Consent>(it)
+                    }
+                )
+            }
+    }
+
+    override fun setDeviceConsent(consent: Consent) {
+        sharedPreferences.edit {
+            putString("device_consent", Json.encodeToString(consent))
+        }
+        keyChangedChannel.tryEmit("device_consent")
+    }
 
     override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
         return keyChangedFlow

@@ -94,9 +94,14 @@
     <string name="onboarding_lisa_content_description">Lift Bro With A Ponytail</string>
 
 
-    <string name="onboarding_page_two_title">LETS\nGOOOOO!</string>
-    <string name="onboarding_page_two_subtitle">How would you like to get things started?</string>
-    <string name="onboarding_page_three_title"></string>
+    <string name="onboarding_consent_screen_title">BEFORE WE GET STARTED</string>
+    <string name="onboarding_consent_screen_subtitle">Did you read these?</string>
+    <string name="onboarding_consent_screen_consent">I have read and agree to the %1$s and %2$s</string>
+    <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="privacy_policy">Privacy Policy</string>
+
+    <string name="onboarding_skip_screen_title">LETS\nGOOOOO!</string>
+    <string name="onboarding_skip_screen_subtitle">How would you like to get things started?</string>
 
     <string name="workout_calendar_edit_daily_notes_cta">Edit Daily Notes</string>
 
@@ -132,4 +137,7 @@
     <string name="settings_mer_weekly_goal_info_dialog_title">Weekly MER Goal</string>
     <string name="settings_mer_weekly_goal_info_dialog_message">MER's can be used to track your progress in a week! Set yourself a weekly goal and celebrate your successes!</string>
 
+
+    <string name="consent_dialog_title">We made some updates</string>
+    <string name="consent_dialog_cta">I Accept</string>
 </resources>

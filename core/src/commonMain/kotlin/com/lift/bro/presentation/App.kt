@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -41,14 +44,18 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
+import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.ConfettiExplosion
+import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.BackupAlertDialog
 import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
@@ -57,7 +64,11 @@ import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.consent_dialog_cta
+import lift_bro.core.generated.resources.consent_dialog_title
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
 
 
@@ -79,6 +90,35 @@ val LocalLiftCardYValue = compositionLocalOf<MutableState<LiftCardYValue>> {
 
 val LocalAdBannerProvider = compositionLocalOf<() -> Any> {
     error("No Ad Banner Provided")
+}
+
+@Composable
+fun CheckAppConsent() {
+    val hasConsent by HasDeviceConsentedUseCase().invoke().collectAsState(null)
+
+    if (hasConsent == false) {
+        var accepted by remember { mutableStateOf(false) }
+        AlertDialog(
+            title = { Text(stringResource(Res.string.consent_dialog_title)) },
+            text = {
+                ConsentCheckBoxField(
+                    accepted = accepted,
+                    acceptanceChanged = { accepted = it }
+                )
+            },
+            onDismissRequest = {},
+            confirmButton = {
+                Button(
+                    onClick = {
+                        ConsentDeviceUseCase().invoke()
+                    },
+                    enabled = accepted
+                ) {
+                    Text(stringResource(Res.string.consent_dialog_cta))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -107,6 +147,7 @@ fun App(
             }
         }
 
+
         LaunchedEffect("initialize_sentry") {
             // only initialize sentry in release mode
             if (!BuildConfig.isDebug) {
@@ -125,6 +166,9 @@ fun App(
                     }
                 }
 
+                if (navCoordinator.currentPage != Destination.Onboarding) {
+                    CheckAppConsent()
+                }
                 BackupAlertDialog()
 
                 Column {

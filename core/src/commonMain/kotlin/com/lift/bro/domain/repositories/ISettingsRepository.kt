@@ -6,16 +6,33 @@ import com.lift.bro.domain.models.Settings
 import com.lift.bro.presentation.onboarding.LiftBro
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class Consent(
+    val deviceId: String,
+    val consentDateTime: LocalDateTime,
+    val tncVersion: Double,
+    val privacyPolicyVersion: Double,
+    val appVersion: String
+)
 
 interface ISettingsRepository {
 
+    fun getDeviceId(): String
+
+    fun getDeviceConsent(): Flow<Consent?>
+
+    fun setDeviceConsent(consent: Consent)
+
     fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight>
+
+    fun saveUnitOfMeasure(uom: Settings.UnitOfWeight)
 
     fun getDeviceFtux(): Flow<Boolean>
 
     fun setDeviceFtux(ftux: Boolean)
-
-    fun saveUnitOfMeasure(uom: Settings.UnitOfWeight)
 
     fun getBackupSettings(): Flow<BackupSettings>
 
