@@ -20,6 +20,7 @@ import lift_bro.core.generated.resources.onboarding_consent_screen_consent_check
 import lift_bro.core.generated.resources.privacy_policy
 import lift_bro.core.generated.resources.terms_and_conditions
 import lift_bro.core.generated.resources.url_privacy_policy
+import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -52,7 +53,7 @@ fun ConsentCheckBoxField(
                 append(consent)
 
                 addLink(
-                    LinkAnnotation.Url(stringResource(Res.string.url_privacy_policy)),
+                    LinkAnnotation.Url(stringResource(Res.string.url_terms_and_conditions)),
                     start = consent.indexOf(tnc),
                     end = consent.indexOf(tnc) + tnc.length,
                 )

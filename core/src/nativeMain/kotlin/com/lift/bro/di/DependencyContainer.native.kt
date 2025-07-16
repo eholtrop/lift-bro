@@ -4,6 +4,9 @@ import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.UserDefaultsSettingsRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
+import platform.Foundation.NSDictionary
+import platform.Foundation.NSURL
+import platform.UIKit.UIApplication
 
 actual class DependencyContainer {
 
@@ -16,6 +19,14 @@ actual class DependencyContainer {
     }
 
     actual fun launchUrl(url: String) {
+        val nsUrl = NSURL.URLWithString(url)
+        if (nsUrl != null) {
+            UIApplication.sharedApplication.openURL(
+                url = nsUrl,
+                options = emptyMap<Any?, Any>(),
+                completionHandler = null
+            )
+        }
     }
 }
 

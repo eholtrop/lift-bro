@@ -6,4 +6,13 @@ appId: com.lift.bro
 - tapOn: "Consent"
 - tapOn: "Continue"
 - tapOn: "🦺 Restore from a Backup"
-- tapOn: "2025-07-16_09_53_26.json"
+- waitForAnimationToEnd:
+    timeout: 1000
+# Android
+- tapOn:
+    text: "2025-07-16_09_53_26.json"
+    optional: true
+# iOS
+- tapOn:
+    id: "2025-07-16_09_53_26.json, json"
+    optional: true

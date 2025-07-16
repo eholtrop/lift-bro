@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -137,6 +138,8 @@ fun OnboardingBroScreen(
     Column(
         modifier = Modifier
             .onboardingBackground()
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .fillMaxHeight()
             .verticalScroll(rememberScrollState())
             .padding(
@@ -325,6 +328,7 @@ fun OnboardingSkipScreen(
             .onboardingBackground()
             .navigationBarsPadding()
             .statusBarsPadding()
+            .fillMaxSize()
             .padding(
                 horizontal = MaterialTheme.spacing.one,
                 vertical = MaterialTheme.spacing.two,

@@ -1,13 +1,19 @@
 package com.lift.bro.data
 
+import com.benasher44.uuid.UUID
+import com.benasher44.uuid.Uuid
+import com.benasher44.uuid.uuid4
 import com.example.compose.ThemeMode
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
+import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import platform.Foundation.NSLog
 import platform.Foundation.NSUserDefaults
 
 class UserDefaultsSettingsRepository : ISettingsRepository {
@@ -39,6 +46,31 @@ class UserDefaultsSettingsRepository : ISettingsRepository {
             .onStart {
                 emit(block(key))
             }
+    }
+
+    override fun getDeviceId(): String {
+        return userDefaults.stringForKey("device_id") ?: uuid4().toString().also {
+            userDefaults.setObject(it, "device_id")
+        }
+    }
+
+    override fun getDeviceConsent(): Flow<Consent?> {
+        return subscribeToKey(
+            key = "consent",
+            block = { key ->
+                Log.d("", key)
+                userDefaults.stringForKey(key)?.let {
+                    Log.d("", it)
+                    Json.decodeFromString<Consent>(it)
+                }
+            }
+        )
+    }
+
+    override fun setDeviceConsent(consent: Consent) {
+        Log.d("", Json.encodeToString(consent))
+        userDefaults.setObject(Json.encodeToString(consent), "consent")
+        keyChanged("consent")
     }
 
     override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
