@@ -12,5 +12,5 @@ appId: com.lift.bro
 - tapOn: "Back"
 
 - tapOn: "Restore a Backup"
-- tapOn: "2025-06-12_15_51_15.json"
+- tapOn: "2025-07-16_09_53_26.json"
 - assertVisible: "LIFT BRO"

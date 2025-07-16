@@ -1,21 +1,35 @@
 # onboarding_tests.yaml
 appId: com.lift.bro
 ---
-# Test Case 1: The user chooses to skip onboarding and sees the empty state
+# Test Case: The user chooses to skip onboarding and sees the empty state
 - runFlow:
       file: flows/skip_onboarding.yaml
 - assertVisible: "Do you even Lift Bro?"
 
-## Test Case 2: The user can restore a backup from onboarding
+## Test Case: The user can view the privacy policy and terms and conditions
+- runFlow:
+    file: flows/onboarding_select_bro.yaml
+- tapOn: "Privacy Policy"
+- assertVisible: "North of 41 Tech"
+- assertVisible: "Privacy Policy"
+- runFlow:
+    file: flows/onboarding_select_bro.yaml
+- tapOn: "Terms & Conditions"
+- assertVisible: "North of 41 Tech"
+- assertVisible: "Terms and Conditions"
+
+## Test Case: The user can restore a backup from onboarding
 - runFlow:
       file: flows/skip_onboarding_with_backup.yaml
 - assertVisible: "LIFT BRO"
 - assertVisible: "Curl"
 - assertVisible: "30 lbs"
 
-## Test Case 3: The use goes through the full setup flow
+## Test Case: The user goes through the full setup flow
 - runFlow:
       file: flows/onboarding_select_bro.yaml
+- tapOn: "Consent"
+- tapOn: "Continue"
 - tapOn: "🙏 Help me setup some Lifts"
 - tapOn: "KG"
 - tapOn: "Squat"

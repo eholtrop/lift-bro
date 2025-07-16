@@ -18,11 +18,16 @@ appId: com.lift.bro
 - assertVisible:
     id: "com.google.android.inputmethod.latin:id/key_pos_del"
 - inputText: "Incline"
+- tapOn:
+      id: "android:id/input_method_nav_back"
 
 - tapOn: "Add Variation"
 - inputText: " "
 - tapOn:
     id: "com.google.android.inputmethod.latin:id/key_pos_del"
+- tapOn:
+    id: "android:id/input_method_nav_back"
+
 
 - tapOn: "Add Variation"
 - tapOn:

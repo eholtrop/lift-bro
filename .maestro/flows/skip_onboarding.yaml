@@ -4,4 +4,6 @@ appId: com.lift.bro
 
 - runFlow:
     file: onboarding_select_bro.yaml
+- tapOn: "Consent"
+- tapOn: "Continue"
 - tapOn: "🫡 Just put me in Coach!"

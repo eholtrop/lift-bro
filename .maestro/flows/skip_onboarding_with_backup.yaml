@@ -4,5 +4,7 @@ appId: com.lift.bro
 
 - runFlow:
     file: onboarding_select_bro.yaml
+- tapOn: "Consent"
+- tapOn: "Continue"
 - tapOn: "🦺 Restore from a Backup"
-- tapOn: "2025-07-01_20_20_58-048.json"
+- tapOn: "2025-07-16_09_53_26.json"
