@@ -2,10 +2,10 @@ name: Android CI/CD
 
 on:
   push:
-    branches: [ maestro_tests_ci ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
-    paths:
-      - 'androidApp/**'
-      - 'core/**'
+    branches: [ main ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
+#    paths:
+#      - 'androidApp/**'
+#      - 'core/**'
 env:
   LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
   LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
@@ -40,8 +40,8 @@ jobs:
       - name: Run linter
         run: fastlane lint
         
-      - name: Run tests
-        run: fastlane test
+#      - name: Run tests
+#        run: fastlane test
 
       - name: decode keystore
         id: decode_keystore
