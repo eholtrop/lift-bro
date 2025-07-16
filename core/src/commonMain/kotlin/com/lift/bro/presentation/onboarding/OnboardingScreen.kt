@@ -64,6 +64,8 @@ import lift_bro.core.generated.resources.onboarding_skip_screen_subtitle
 import lift_bro.core.generated.resources.onboarding_skip_screen_title
 import lift_bro.core.generated.resources.privacy_policy
 import lift_bro.core.generated.resources.terms_and_conditions
+import lift_bro.core.generated.resources.url_privacy_policy
+import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -107,7 +109,7 @@ fun OnboardingScreen(
                 }
 
                 1 -> OnboardingConsentScreen {
-//                    ConsentDeviceUseCase().invoke()
+                    ConsentDeviceUseCase().invoke()
                     onboardingState += 1
                 }
                 2 -> OnboardingSkipScreen(
@@ -252,10 +254,13 @@ fun OnboardingConsentScreen(
 
         Space()
 
+        val termsUrl = stringResource(Res.string.url_terms_and_conditions)
         Button(
             modifier = Modifier
                 .height(Dp.AccessibilityMinimumSize),
-            onClick = { },
+            onClick = {
+                dependencies.launchUrl(termsUrl)
+            },
             colors = ButtonDefaults.elevatedButtonColors(),
         ) {
             Text(
@@ -266,10 +271,13 @@ fun OnboardingConsentScreen(
             )
         }
 
+        val privacyUrl = stringResource(Res.string.url_privacy_policy)
         Button(
             modifier = Modifier
                 .height(Dp.AccessibilityMinimumSize),
-            onClick = { },
+            onClick = {
+                dependencies.launchUrl(privacyUrl)
+            },
             colors = ButtonDefaults.elevatedButtonColors(),
         ) {
             Text(
@@ -288,6 +296,8 @@ fun OnboardingConsentScreen(
             accepted = accepted,
             acceptanceChanged = { accepted = it }
         )
+
+        Space(MaterialTheme.spacing.half)
 
         Button(
             modifier = Modifier.height(Dp.AccessibilityMinimumSize),

@@ -1,0 +1,4 @@
+<resources>
+    <string name="url_terms_and_conditions">https://app.termly.io/policy-viewer/policy.html?policyUUID=bc17a69a-5f52-4235-b717-7c039cb7adef</string>
+    <string name="url_privacy_policy">https://app.termly.io/policy-viewer/policy.html?policyUUID=f1327329-7d60-4fe4-ad33-1550505d6897</string>
+</resources>
