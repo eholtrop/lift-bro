@@ -4,4 +4,7 @@ appId: com.lift.bro
 - clearState
 - launchApp
 - tapOn: "Lift Bro With A Ponytail"
+- scrollUntilVisible:
+    element:
+      text: "Continue"
 - tapOn: "Continue"

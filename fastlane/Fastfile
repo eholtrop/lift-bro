@@ -52,18 +52,23 @@ platform :android do
 
     desc "Run the project tests"
     lane :test do |options|
-        android_emulator(
-            name: "test_emulator",
-            package: "system-images;android-36;google_apis_playstore;x86_64",
-            device: "Nexus 5"
+         android_sdk_update(
+            compile_sdk_version: "36",
+            build_tools_version: "36.0.0",
+            additional_packages: [
+                "system-images;android-36;google_apis;x86_64",
+                "emulator"
+            ]
         )
-
-#         sh "adb wait-for-device"
-#         sh "adb shell input keyevent 82"
+        android_emulator(
+#             name: "maestro_test_emulator",
+#             package: "system-images;android-36;google_apis;x86_64",
+#             device: "Nexus 5"
+        )
 
         gradle(task: "clean assembleDebug")
         gradle(task: "installDebug")
-        sh "maestro test .maestro/"
+        sh "maestro test ../.maestro/"
     end
 
     desc "Run the project Linter"
