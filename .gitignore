@@ -19,3 +19,5 @@ Gemfile.lock
 secrets.properties
 
 node_modules/
+
+fastlane/report.xml

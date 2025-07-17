@@ -1,4 +1,4 @@
-name: Android CI/CD
+name: Android UI Tests
 
 on:
   push:
@@ -28,6 +28,11 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 17
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'system-images;android-36;google_apis;x86_64'
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
