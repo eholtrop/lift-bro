@@ -1,0 +1,10 @@
+{
+  "avd_list": [
+    {
+      "avd_name": "maestro_test_emulator",
+      "create_avd_package": "system-images;android-36;google_apis;x86_64",
+      "create_avd_device": "pixel_6",
+      "create_avd_additional_options": "--force"
+    }
+  ]
+}

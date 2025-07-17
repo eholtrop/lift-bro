@@ -23,6 +23,14 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Build the release artifact
 
+### android run_android_emulator
+
+```sh
+[bundle exec] fastlane android run_android_emulator
+```
+
+Install and run Emulator
+
 ### android test
 
 ```sh

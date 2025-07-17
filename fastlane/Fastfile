@@ -50,25 +50,29 @@ platform :android do
         gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
     end
 
+    desc "Install and run Emulator"
+    lane :run_android_emulator do
+#          android_sdk_update(
+#             compile_sdk_version:"36",
+#             build_tools_version:"36.0.0",
+#             additional_packages: [
+#                 "system-images;android-36;google_apis;x86_64",
+#                 "emulator"
+#             ]
+#         )
+        android_emulator(
+            name: "maestro_test_emulator",
+            package: "system-images;android-36;google_apis;x86_64",
+            device: "pixel_6"
+        )
+    end
+
     desc "Run the project tests"
     lane :test do |options|
-         android_sdk_update(
-            compile_sdk_version: "36",
-            build_tools_version: "36.0.0",
-            additional_packages: [
-                "system-images;android-36;google_apis;x86_64",
-                "emulator"
-            ]
+        automated_test_emulator_run(
+          AVD_setup_path: "fastlane/AVD_config.json",
+          shell_task: "./gradlew clean assembleDebug && ./gradlew installDebug && maestro test ../.maestro"
         )
-        android_emulator(
-#             name: "maestro_test_emulator",
-#             package: "system-images;android-36;google_apis;x86_64",
-#             device: "Nexus 5"
-        )
-
-        gradle(task: "clean assembleDebug")
-        gradle(task: "installDebug")
-        sh "maestro test ../.maestro/"
     end
 
     desc "Run the project Linter"

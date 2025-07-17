@@ -2,4 +2,5 @@
 #
 # Ensure this file is checked in to source control!
 gem 'fastlane-plugin-android_emulator'
-gem 'fastlane-plugin-android_sdk_update'
+gem 'fastlane-plugin-android_sdk_update', '=2.0.0'
+gem 'fastlane-plugin-automated_test_emulator_run'
