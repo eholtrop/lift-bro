@@ -1,5 +1,29 @@
 [
   {
+    "versionId": "2025.07.19",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Add Terms and Conditions to Settings Screen"
+    }
+  },
+  {
+    "versionId": "2025.07.19",
+    "type": "feature",
+    "platform": "android",
+    "note": {
+      "en": "Crash fixes when hitting back in certain states"
+    }
+  },
+  {
+    "versionId": "2025.07.19",
+    "type": "feature",
+    "platform": "android",
+    "note": {
+      "en": "Various UI updates and fixes"
+    }
+  },
+  {
     "versionId": "2025.07.13",
     "type": "feature",
     "platform": "all",
@@ -37,38 +61,6 @@
     "platform": "android",
     "note": {
       "en": "Fix issue on the settings page where you needed to close/open the app to get an update to register"
-    }
-  },
-  {
-    "versionId": "2025.06.22",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Add Release Notes!"
-    }
-  },
-  {
-    "versionId": "2025.06.22",
-    "type": "fix",
-    "platform": "iOS",
-    "note": {
-      "en": "Fix keyboard dismissal issues on iOS"
-    }
-  },
-  {
-    "versionId": "2025.06.22",
-    "type": "fix",
-    "platform": "iOS",
-    "note": {
-      "en": "Fix crash when restoring older backups"
-    }
-  },
-  {
-    "versionId": "2025.06.22",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Add links to github and discord to the settings page"
     }
   }
 ]
