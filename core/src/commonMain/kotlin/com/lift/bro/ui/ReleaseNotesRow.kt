@@ -133,6 +133,7 @@ fun ReleaseNotesDialog(
                             Text(it.note.en)
                         }
                     }
+                    Space(MaterialTheme.spacing.half)
                 }
             }
         },

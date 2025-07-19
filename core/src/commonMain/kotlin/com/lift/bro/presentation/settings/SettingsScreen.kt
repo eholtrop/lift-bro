@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.selection.selectableGroup
@@ -44,6 +45,7 @@ import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.privacy_policy
 import lift_bro.core.generated.resources.settings_backup_cta
 import lift_bro.core.generated.resources.settings_backup_restore_title
 import lift_bro.core.generated.resources.settings_experimental_input_password
@@ -69,6 +71,9 @@ import lift_bro.core.generated.resources.settings_theme_option_two
 import lift_bro.core.generated.resources.settings_theme_title
 import lift_bro.core.generated.resources.settings_title
 import lift_bro.core.generated.resources.settings_uom_title
+import lift_bro.core.generated.resources.terms_and_conditions
+import lift_bro.core.generated.resources.url_privacy_policy
+import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -160,31 +165,6 @@ fun SettingsScreen() {
                 }
 
                 item {
-                    SettingsRowItem(
-                        title = { Text(stringResource(Res.string.settings_other_title)) },
-                        content = {
-                            Button(
-                                colors = ButtonDefaults.textButtonColors(),
-                                onClick = {
-                                    dependencies.launchUrl("https://discord.gg/mgxQK8ma")
-                                }
-                            ) {
-                                Text(stringResource(Res.string.settings_other_discord_cta))
-                            }
-
-                            Button(
-                                colors = ButtonDefaults.textButtonColors(),
-                                onClick = {
-                                    dependencies.launchUrl("https://www.github.com/eholtrop/lift-bro")
-                                }
-                            ) {
-                                Text(stringResource(Res.string.settings_other_github_cta))
-                            }
-                        }
-                    )
-                }
-
-                item {
                     var value by remember { mutableStateOf("") }
                     if (showExperimental) {
                         Column {
@@ -203,7 +183,8 @@ fun SettingsScreen() {
                                 text = stringResource(Res.string.settings_experimental_title),
                                 style = MaterialTheme.typography.titleLarge
                             )
-                            val password = stringResource(Res.string.settings_experimental_input_password)
+                            val password =
+                                stringResource(Res.string.settings_experimental_input_password)
                             TextField(
                                 modifier = Modifier.fillParentMaxWidth(),
                                 value = value,
@@ -292,6 +273,46 @@ fun SettingsScreen() {
                                 }
                             }
                         )
+                    }
+                }
+                item {
+                    Column {
+                        Button(
+                            colors = ButtonDefaults.textButtonColors(),
+                            onClick = {
+                                dependencies.launchUrl("https://discord.gg/mgxQK8ma")
+                            }
+                        ) {
+                            Text(stringResource(Res.string.settings_other_discord_cta))
+                        }
+
+                        Button(
+                            colors = ButtonDefaults.textButtonColors(),
+                            onClick = {
+                                dependencies.launchUrl("https://www.github.com/eholtrop/lift-bro")
+                            }
+                        ) {
+                            Text(stringResource(Res.string.settings_other_github_cta))
+                        }
+                        val terms = stringResource(Res.string.url_terms_and_conditions)
+                        Button(
+                            colors = ButtonDefaults.textButtonColors(),
+                            onClick = {
+                                dependencies.launchUrl(terms)
+                            }
+                        ) {
+                            Text(stringResource(Res.string.terms_and_conditions))
+                        }
+
+                        val privacy = stringResource(Res.string.url_privacy_policy)
+                        Button(
+                            colors = ButtonDefaults.textButtonColors(),
+                            onClick = {
+                                dependencies.launchUrl(privacy)
+                            }
+                        ) {
+                            Text(stringResource(Res.string.privacy_policy))
+                        }
                     }
                 }
             }

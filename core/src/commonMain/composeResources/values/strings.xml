@@ -118,7 +118,7 @@
 
     <string name="settings_other_title">Other:</string>
     <string name="settings_other_discord_cta">Join the Discord!</string>
-    <string name="settings_other_github_cta">Source Code</string>
+    <string name="settings_other_github_cta">Check out the Source Code</string>
 
     <string name="settings_experimental_title">Experimental</string>
     <string name="settings_experimental_message">Features here are experimental, and could break app functionality, use with caution!</string>
