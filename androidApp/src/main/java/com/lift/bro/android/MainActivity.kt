@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
             )
             BackHandler {
                 if (!coordinator.onBackPressed()) {
-                    onBackPressed()
+                    finish()
                 }
             }
         }
