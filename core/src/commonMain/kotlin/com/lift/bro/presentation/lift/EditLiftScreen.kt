@@ -10,11 +10,18 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -50,6 +57,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
@@ -349,12 +358,25 @@ private fun VariationItem(
             value = variation.name ?: "",
             singleLine = true,
             onValueChange = onNameChange,
+            maxLines = 1,
             placeholder = { Text(stringResource(Res.string.edit_lift_screen_variation_name_placeholder)) },
-            suffix = { if (liftName.isNotBlank()) Text(liftName) },
+            suffix = {
+                if (liftName.isNotBlank()) {
+                    Text(
+                        text = if (liftName.length > 12) liftName.substring(0, 11) + "..." else liftName,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                }
+            },
             colors = TextFieldDefaults.transparentColors()
         )
         IconButton(onClick = onDelete) {
-            Icon(Icons.Default.Delete, contentDescription = stringResource(Res.string.edit_lift_screen_variation_delete_cta_content_description))
+            Icon(
+                Icons.Default.Delete,
+                contentDescription = stringResource(Res.string.edit_lift_screen_variation_delete_cta_content_description)
+            )
         }
     }
 }
