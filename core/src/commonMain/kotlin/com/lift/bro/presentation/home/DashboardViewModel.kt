@@ -11,6 +11,7 @@ import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LiftingLog
+import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
@@ -22,7 +23,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -38,7 +41,13 @@ class DashboardViewModel(
         variationRepository.listenAll(),
         setRepository.listenAll(),
         dependencies.database.logDataSource.getAll().asFlow().mapToList(Dispatchers.IO),
-    ) { lifts, variations, sets, logs ->
+        flow {
+            emit(SubscriptionType.Pro)
+            if (!Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.containsKey("pro")) {
+                emit(SubscriptionType.None)
+            }
+        },
+    ) { lifts, variations, sets, logs, subType ->
         DashboardState(
             showEmpty = lifts.isEmpty(),
             items = lifts.map { lift ->
@@ -60,12 +69,12 @@ class DashboardViewModel(
                 )
             }.sortedBy { it.state.lift.name.toLowerCase(Locale.current) }
                 .toMutableList<DashboardListItem>().apply {
-                    if (this.size == 0) {
+                    if (this.isEmpty()) {
 
                     } else if (this.size < 2) {
                         this.add(DashboardListItem.Ad)
                     } else {
-                        if (!Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.containsKey("pro")){
+                        if (subType == SubscriptionType.None) {
                             this.add(2, DashboardListItem.Ad)
                         }
                     }

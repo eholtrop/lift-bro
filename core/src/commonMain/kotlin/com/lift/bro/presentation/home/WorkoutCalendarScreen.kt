@@ -154,7 +154,7 @@ fun WorkoutCalendarScreen(
         }
 
 
-        if (subscriptionType == SubscriptionType.Pro) {
+        if (subscriptionType == SubscriptionType.None) {
             item {
                 AdBanner(modifier = Modifier.defaultMinSize(minHeight = 52.dp).fillMaxWidth())
             }

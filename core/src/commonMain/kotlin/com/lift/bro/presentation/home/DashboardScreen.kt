@@ -47,9 +47,11 @@ import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
+import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalLiftCardYValue
+import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.ui.Card
@@ -267,7 +269,11 @@ fun DashboardContent(
                                         if (showWeight.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
                                 }
                             ) {
-                                Text(text = if (showWeight.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(Res.string.reps))
+                                Text(
+                                    text = if (showWeight.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(
+                                        Res.string.reps
+                                    )
+                                )
                             }
                         }
                     }
@@ -286,11 +292,13 @@ fun DashboardContent(
                             if (item is DashboardListItem.Ad) GridItemSpan(2) else GridItemSpan(1)
                         }) { s ->
                         when (val state = s) {
-                            DashboardListItem.Ad -> AdBanner(
-                                modifier = Modifier.defaultMinSize(
-                                    minHeight = 52.dp
+                            DashboardListItem.Ad -> {
+                                AdBanner(
+                                    modifier = Modifier.defaultMinSize(
+                                        minHeight = 52.dp
+                                    )
                                 )
-                            )
+                            }
 
                             is DashboardListItem.LiftCard -> {
                                 LiftCard(
@@ -305,7 +313,12 @@ fun DashboardContent(
                     item(
                         span = { GridItemSpan(2) }
                     ) {
-                        Text(stringResource(Res.string.dashboard_footer_version, BuildKonfig.VERSION_NAME))
+                        Text(
+                            stringResource(
+                                Res.string.dashboard_footer_version,
+                                BuildKonfig.VERSION_NAME
+                            )
+                        )
                     }
 
                     item {

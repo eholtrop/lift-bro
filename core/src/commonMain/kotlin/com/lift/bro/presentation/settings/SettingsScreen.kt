@@ -1,5 +1,9 @@
 package com.lift.bro.presentation.settings
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -96,6 +100,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun SettingsScreen() {
+    var showPaywall by remember { mutableStateOf(false) }
+
     LiftingScaffold(
         title = stringResource(Res.string.settings_title),
         content = { padding ->
@@ -108,6 +114,37 @@ fun SettingsScreen() {
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
             ) {
+
+                if (subscriptionType == SubscriptionType.Pro) {
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Image(
+                                modifier = Modifier.size(128.dp),
+                                painter = painterResource(LocalLiftBro.current.iconRes()),
+                                contentDescription = ""
+                            )
+                            Text(
+                                "Thank you for the support!",
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Text(
+                                "You are a Lift PRO!!",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            Button(
+                                onClick = {
+                                    dependencies.launchManageSubscriptions()
+                                },
+                                colors = ButtonDefaults.textButtonColors()
+                            ) {
+                                Text("Manage Subscription")
+                            }
+                        }
+                    }
+                }
 
                 item {
                     SettingsRowItem(
@@ -219,27 +256,6 @@ fun SettingsScreen() {
                 }
                 if (showExperimental) {
                     item {
-
-                        var showPaywall by remember { mutableStateOf(false) }
-
-                        val options = remember {
-                            PaywallOptions(dismissRequest = { showPaywall = false }) {
-                                shouldDisplayDismissButton = true
-                            }
-                        }
-
-
-                        if (showPaywall) {
-                            ModalBottomSheet(
-                                sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-                                onDismissRequest = {
-                                    showPaywall = false
-                                }
-                            ) {
-                                Paywall(options)
-                            }
-                        }
-
                         when (subscriptionType) {
                             SubscriptionType.None -> {
                                 SettingsRowItem(
@@ -252,37 +268,10 @@ fun SettingsScreen() {
                                 }
                             }
 
-                            SubscriptionType.Pro -> {
-                                Column(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Image(
-                                        modifier = Modifier.size(128.dp),
-                                        painter = painterResource(LocalLiftBro.current.iconRes()),
-                                        contentDescription = ""
-                                    )
-                                    Text(
-                                        "Thank you for the support!",
-                                        style = MaterialTheme.typography.titleLarge,
-                                    )
-                                    Text(
-                                        "You are a Lift PRO!!",
-                                        style = MaterialTheme.typography.bodyLarge
-                                    )
-                                    Button(
-                                        onClick = {
-                                            dependencies.launchManageSubscriptions()
-                                        },
-                                        colors = ButtonDefaults.textButtonColors()
-                                    ) {
-                                        Text("Manage Subscription")
-                                    }
-                                }
-                            }
+                            else -> {}
                         }
 
-                        LaunchedEffect(Unit) {
+                        LaunchedEffect(showPaywall) {
                             Purchases.sharedInstance.getCustomerInfo(
                                 onError = { error ->
                                     Sentry.captureException(Throwable(message = error.message))
@@ -415,6 +404,21 @@ fun SettingsScreen() {
             }
         }
     )
+
+    val options = remember {
+        PaywallOptions(dismissRequest = { showPaywall = false }) {
+            shouldDisplayDismissButton = true
+        }
+    }
+
+
+    AnimatedVisibility(
+        visible = showPaywall,
+        enter = slideInVertically { it },
+        exit = slideOutVertically { it } + fadeOut()
+    ) {
+        Paywall(options)
+    }
 }
 
 @Composable
