@@ -32,6 +32,7 @@ import androidx.compose.ui.focus.FocusState
 import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -65,6 +66,7 @@ fun RepWeightSelector(
     ) {
 
         RepWeightTextField(
+            modifier = Modifier.testTag("reps"),
             value = set.reps?.toString() ?: "",
             onValueChanged = {
                 if (it.isBlank()) {
@@ -85,6 +87,7 @@ fun RepWeightSelector(
         Space(MaterialTheme.spacing.half)
 
         RepWeightTextField(
+            modifier = Modifier.testTag("weight"),
             value = set.weight.decimalFormat(),
             onValueChanged = {
                 weightChanged(it.toDoubleOrNull())
@@ -100,6 +103,7 @@ fun RepWeightSelector(
         )
 
         RepWeightTextField(
+            modifier = Modifier.testTag("rpe"),
             value = set.rpe?.toString() ?: "",
             onValueChanged = {
                 rpeChanged(it.toIntOrNull())

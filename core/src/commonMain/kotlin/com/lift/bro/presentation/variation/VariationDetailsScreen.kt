@@ -186,20 +186,18 @@ private fun VariationDetailsScreen(
                             ),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            entry.second.sortedByDescending { it.weight }
-                                .forEach { set ->
-                                    Column(
-                                        modifier = Modifier.weight(1f)
-                                            .defaultMinSize(minHeight = 44.dp)
-                                            .clickable(
+                            Column {
+                                entry.second.sortedByDescending { it.weight }
+                                    .forEach { set ->
+                                        SetInfoRow(
+                                            modifier = Modifier.clickable(
                                                 role = Role.Button,
                                                 onClick = { setClicked(set) }
-                                            ),
-                                        verticalArrangement = Arrangement.Center
-                                    ) {
-                                        SetInfoRow(set = set)
+                                            ).fillMaxWidth().defaultMinSize(minHeight = 44.dp),
+                                            set = set
+                                        )
                                     }
-                                }
+                            }
 
                             Space(MaterialTheme.spacing.half)
 

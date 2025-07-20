@@ -1,0 +1,48 @@
+appId: com.lift.bro
+---
+- runFlow:
+    file: flows/skip_onboarding_with_backup.yaml
+
+- tapOn: "Deadlift"
+- tapOn: "Regular Deadlift"
+- tapOn: "Add Set"
+
+# assert regular deadlift is selected by default
+- assertVisible: "Deadlift Max: 290 lbs"
+- assertVisible: "Regular Deadlift Max: 290 lbs"
+
+- tapOn:
+    id: "reps"
+- inputText: "3"
+
+- tapOn:
+    id: "weight"
+- inputText: "300"
+
+- tapOn:
+    id: "rpe"
+- inputText: "9"
+
+- tapOn: "Ecc"
+- inputText: "9"
+- tapOn: "Iso"
+- inputText: "9"
+- tapOn: "Con"
+- inputText: "9"
+
+- scrollUntilVisible:
+      element:
+          text: "I killed it today!"
+
+- tapOn: "I killed it today!"
+- inputText: "Cant wait for pizza..."
+
+- tapOn: "Save Set"
+
+# ensure celebration shows
+- assertVisible: "Congrats!!"
+
+# assert information is shown correctly
+- assertVisible: "3 x 300 lbs at 9rpe"
+- assertVisible: ""
+- assertVisible: "Cant wait for pizza..."
