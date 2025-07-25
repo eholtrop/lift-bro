@@ -132,11 +132,23 @@
     <string name="settings_mer_fatigue_info_dialog_paragraph_one">The % fatigue that you must hit of your max for a rep to be considered a MER (default 80%), This can be calculated by taking a look at your Max</string>
     <string name="settings_mer_fatigue_info_dialog_paragraph_two">ex: if you have a 100lbs max Bench Press and you do one rep at 80lbs. This is above the threshold of 80% and therefore an MER!</string>
 
-
     <string name="settings_twm_title">Total Weight Moved (TWM)</string>
     <string name="settings_twm_enable_text">Show TWM calculations where applicable</string>
     <string name="settings_twm_fatigue_info_dialog_title">Total Weight Moved</string>
     <string name="settings_twm_fatigue_info_dialog_paragraph_one">Total weight that you moved for a given set/excercise/workout!</string>
+
+
+    <string name="settings_emax_title">Estimate/Theoretical Max</string>
+    <string name="settings_emax_enable_text">Show estimated one rep maxes (eMax) where applicable</string>
+    <string name="settings_tmax_enable_text">Show theoretical one rep maxes (tMax) where applicable</string>
+    <string name="settings_emax_info_dialog_title">eMax/tMax</string>
+    <string name="settings_emax_formula">weight x (1 + reps/30)</string>
+    <string name="settings_emax_info_dialog_h1">eMax - Estimated Max</string>
+    <string name="settings_emax_info_dialog_p1">An estimate for your one rep max for a variation, when you DO NOT have a one rep max, when enabled this value will be shown and used in place for a "regular" one rep max</string>
+    <string name="settings_emax_info_dialog_p1_ex">ex: My heaviest deadlift is 5 x 225 lbs, following the formula\neMax = 225 x (1 + 5/30) = ~262 lbs!\nthis value will be used when calculating % max, mers, or celebrations!</string>
+    <string name="settings_emax_info_dialog_h2">tMax - Theoretical Max</string>
+    <string name="settings_emax_info_dialog_p2">An estimate for your one rep max for a variation when you DO have a one rep max, when enabled this value will be shown, but not used for calculations</string>
+    <string name="settings_emax_info_dialog_p2_ex">ex: My one rep deadlift is 250 lbs but I JUST killed a set and did 5 x 225 lbs, following our previous calculations I, in theory, could be lifting 262! This will be shown, but my actual (successful) ORM of 250 will still be used for calculations or celebrations</string>
 
 
     <string name="settings_mer_weekly_goal_input_title">Weekly MER Goal</string>

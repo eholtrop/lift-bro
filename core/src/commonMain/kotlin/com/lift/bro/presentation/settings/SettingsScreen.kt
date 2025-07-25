@@ -69,6 +69,16 @@ import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.privacy_policy
 import lift_bro.core.generated.resources.settings_backup_cta
 import lift_bro.core.generated.resources.settings_backup_restore_title
+import lift_bro.core.generated.resources.settings_emax_enable_text
+import lift_bro.core.generated.resources.settings_emax_formula
+import lift_bro.core.generated.resources.settings_emax_info_dialog_h1
+import lift_bro.core.generated.resources.settings_emax_info_dialog_h2
+import lift_bro.core.generated.resources.settings_emax_info_dialog_p1
+import lift_bro.core.generated.resources.settings_emax_info_dialog_p1_ex
+import lift_bro.core.generated.resources.settings_emax_info_dialog_p2
+import lift_bro.core.generated.resources.settings_emax_info_dialog_p2_ex
+import lift_bro.core.generated.resources.settings_emax_info_dialog_title
+import lift_bro.core.generated.resources.settings_emax_title
 import lift_bro.core.generated.resources.settings_experimental_input_password
 import lift_bro.core.generated.resources.settings_experimental_input_placeholder
 import lift_bro.core.generated.resources.settings_experimental_message
@@ -86,6 +96,7 @@ import lift_bro.core.generated.resources.settings_theme_option_three
 import lift_bro.core.generated.resources.settings_theme_option_two
 import lift_bro.core.generated.resources.settings_theme_title
 import lift_bro.core.generated.resources.settings_title
+import lift_bro.core.generated.resources.settings_tmax_enable_text
 import lift_bro.core.generated.resources.settings_twm_enable_text
 import lift_bro.core.generated.resources.settings_twm_fatigue_info_dialog_paragraph_one
 import lift_bro.core.generated.resources.settings_twm_fatigue_info_dialog_title
@@ -372,6 +383,96 @@ fun SettingsScreen() {
                                         )
 
                                         Text(stringResource(Res.string.settings_twm_enable_text))
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    item {
+                        SettingsRowItem(
+                            title = {
+                                Row {
+                                    Text(
+                                        modifier = Modifier.weight(1f),
+                                        text = stringResource(Res.string.settings_emax_title)
+                                    )
+
+                                    InfoDialogButton(
+                                        dialogTitle = { Text(stringResource(Res.string.settings_emax_info_dialog_title)) },
+                                        dialogMessage = {
+                                            Column {
+
+                                                Text(
+                                                    stringResource(Res.string.settings_emax_formula),
+                                                    style = MaterialTheme.typography.titleLarge,
+                                                )
+
+
+                                                Text(
+                                                    stringResource(Res.string.settings_emax_info_dialog_h1),
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                )
+                                                Text(
+                                                    stringResource(Res.string.settings_emax_info_dialog_p1),
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                )
+                                                Space(MaterialTheme.spacing.one)
+                                                Text(
+                                                    stringResource(Res.string.settings_emax_info_dialog_p1_ex),
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                )
+                                                Space(MaterialTheme.spacing.one)
+                                                Text(
+                                                    stringResource(Res.string.settings_emax_info_dialog_h2),
+                                                    style = MaterialTheme.typography.titleMedium,
+                                                )
+                                                Text(
+                                                    stringResource(Res.string.settings_emax_info_dialog_p2),
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                )
+                                                Space(MaterialTheme.spacing.one)
+                                                Text(
+                                                    stringResource(Res.string.settings_emax_info_dialog_p2_ex),
+                                                    style = MaterialTheme.typography.bodyMedium,
+                                                )
+                                            }
+                                        }
+                                    )
+                                }
+                            },
+                            content = {
+                                val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
+                                    .collectAsState(false)
+
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Checkbox(
+                                            checked = showTwm,
+                                            enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
+                                            onCheckedChange = {
+                                                dependencies.settingsRepository.showTotalWeightMoved(it)
+                                            }
+                                        )
+
+                                        Text(stringResource(Res.string.settings_emax_enable_text))
+                                    }
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Checkbox(
+                                            checked = showTwm,
+                                            enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
+                                            onCheckedChange = {
+                                                dependencies.settingsRepository.showTotalWeightMoved(it)
+                                            }
+                                        )
+
+                                        Text(stringResource(Res.string.settings_tmax_enable_text))
                                     }
                                 }
                             }
