@@ -70,6 +70,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.edit_daily_notes_dialog_confirm_cta
+import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
+import lift_bro.core.generated.resources.edit_daily_notes_dialog_placeholder
+import lift_bro.core.generated.resources.edit_daily_notes_dialog_title
 import lift_bro.core.generated.resources.workout_calendar_edit_daily_notes_cta
 import org.jetbrains.compose.resources.stringResource
 
@@ -194,7 +198,7 @@ fun WorkoutCalendarScreen(
                                     }
                                 }
                             ) {
-                                Text("Save")
+                                Text(stringResource(Res.string.edit_daily_notes_dialog_confirm_cta))
                             }
                         },
                         dismissButton = {
@@ -203,11 +207,11 @@ fun WorkoutCalendarScreen(
                                     showNotesDialog = false
                                 }
                             ) {
-                                Text("Cancel")
+                                Text(stringResource(Res.string.edit_daily_notes_dialog_dismiss_cta))
                             }
                         },
                         title = {
-                            Text("Notes for:\n${selectedDate.toString("EEEE, MMM d - yyyy")}")
+                            Text(stringResource(Res.string.edit_daily_notes_dialog_title, selectedDate.toString("EEEE, MMM d - yyyy")))
                         },
                         text = {
                             val focusRequester = FocusRequester()
@@ -217,7 +221,7 @@ fun WorkoutCalendarScreen(
                                 value = todaysNotes,
                                 onValueChange = { todaysNotes = it },
                                 placeholder = {
-                                    Text("Goals for today?\nFeeling especially spicy?\nSoreness or pain?")
+                                    Text(stringResource(Res.string.edit_daily_notes_dialog_placeholder))
                                 }
                             )
 
