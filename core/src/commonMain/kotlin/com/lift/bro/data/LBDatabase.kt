@@ -99,14 +99,15 @@ class SetDataSource(
             (set.weight?.div(maxWeight ?: 1))?.times(100)?.plus((set.reps ?: 0) * repFatigueCost)
                 ?.toInt()
 
-        return min(set.reps?.toInt() ?: 0, setFatigue?.minus(merFatigueThreshold ?: 0)?.div(4) ?: 0)
+        return min(set.reps?.toInt() ?: 0, setFatigue?.minus(merFatigueThreshold)?.div(4) ?: 0)
     }
 
     fun getAll(variationId: String): List<LBSet> {
         val sets = setQueries.getAllByVariation(variationId).executeAsList()
         return sets.map { set ->
             val localMax =
-                sets.maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }?.toInt()
+                sets.filter { it.variationId == set.variationId }
+                    .maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }?.toInt()
             val copy = set.toDomain().copy(
                 mer = calculateMer(set, localMax ?: 0)
             )
@@ -128,7 +129,8 @@ class SetDataSource(
     }.map { sets ->
         sets.map { set ->
             val localMax =
-                sets.maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }?.toInt()
+                sets.filter { it.variationId == set.variationId }
+                    .maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }?.toInt()
             set.toDomain().copy(
                 mer = calculateMer(set, localMax ?: 0)
             )
@@ -140,7 +142,8 @@ class SetDataSource(
             .map { sets ->
                 sets.map { set ->
                     val localMax =
-                        sets.maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }
+                        sets.filter { it.variationId == set.variationId }
+                            .maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }
                             ?.toInt()
                     set.toDomain().copy(
                         mer = calculateMer(set, localMax ?: 0)
@@ -154,7 +157,8 @@ class SetDataSource(
         setQueries.getAll().asFlow().mapToList(dispatcher).map { sets ->
             sets.map { set ->
                 val localMax =
-                    sets.maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }
+                    sets.filter { it.variationId == set.variationId }
+                        .maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }
                         ?.toInt()
                 set.toDomain().copy(
                     mer = calculateMer(set, localMax ?: 0)
