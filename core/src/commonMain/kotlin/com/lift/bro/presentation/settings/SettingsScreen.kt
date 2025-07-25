@@ -23,10 +23,8 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -39,11 +37,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.ClipMetadata
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import com.example.compose.ThemeMode
 import com.lift.bro.BackupService
+import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
@@ -53,18 +55,17 @@ import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.NumberPicker
 import com.lift.bro.ui.RadioField
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import com.revenuecat.purchases.kmp.Purchases
-import com.revenuecat.purchases.kmp.models.Offering
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.privacy_policy
 import lift_bro.core.generated.resources.settings_backup_cta
 import lift_bro.core.generated.resources.settings_backup_restore_title
@@ -76,14 +77,9 @@ import lift_bro.core.generated.resources.settings_mer_enable_text
 import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_paragraph_one
 import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_paragraph_two
 import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_title
-import lift_bro.core.generated.resources.settings_mer_fatigue_input_title
 import lift_bro.core.generated.resources.settings_mer_title
-import lift_bro.core.generated.resources.settings_mer_weekly_goal_info_dialog_message
-import lift_bro.core.generated.resources.settings_mer_weekly_goal_info_dialog_title
-import lift_bro.core.generated.resources.settings_mer_weekly_goal_input_title
 import lift_bro.core.generated.resources.settings_other_discord_cta
 import lift_bro.core.generated.resources.settings_other_github_cta
-import lift_bro.core.generated.resources.settings_other_title
 import lift_bro.core.generated.resources.settings_restore_cta
 import lift_bro.core.generated.resources.settings_theme_option_one
 import lift_bro.core.generated.resources.settings_theme_option_three
@@ -106,8 +102,8 @@ fun SettingsScreen() {
         title = stringResource(Res.string.settings_title),
         content = { padding ->
 
-            var showExperimental by remember { mutableStateOf(false) }
             var subscriptionType by LocalSubscriptionStatusProvider.current
+            var showExperimental by remember { mutableStateOf(subscriptionType == SubscriptionType.Pro) }
 
             LazyColumn(
                 modifier = Modifier.padding(padding),
@@ -292,7 +288,8 @@ fun SettingsScreen() {
                                 Row {
                                     Text(
                                         modifier = Modifier.weight(1f),
-                                        text = stringResource(Res.string.settings_mer_title))
+                                        text = stringResource(Res.string.settings_mer_title)
+                                    )
 
                                     InfoDialogButton(
                                         dialogTitle = { Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_title)) },
@@ -372,6 +369,22 @@ fun SettingsScreen() {
                             Text(stringResource(Res.string.privacy_policy))
                         }
                     }
+                }
+
+                item {
+                    Text(
+                        stringResource(
+                            Res.string.dashboard_footer_version,
+                            BuildKonfig.VERSION_NAME
+                        )
+                    )
+                }
+
+                item {
+                    val clipboard = LocalClipboard.current
+                    Text(
+                        "User Id: ${Purchases.sharedInstance.appUserID}"
+                    )
                 }
             }
         }
