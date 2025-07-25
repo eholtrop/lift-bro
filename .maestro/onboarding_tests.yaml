@@ -44,4 +44,6 @@ appId: com.lift.bro
 - assertVisible: "Squat"
 - assertVisible: "Press"
 - tapOn: "Squat"
+- tapOn: "Back"
+- tapOn: "Save Set"
 - assertVisible: "Back Squat"
