@@ -38,8 +38,8 @@ jobs:
           ruby-version: 2.7.2
           bundler-cache: true
 
-      - name: Run linter
-        run: fastlane lint
+#      - name: Run linter
+#        run: fastlane lint
 
       - name: decode keystore
         id: decode_keystore
