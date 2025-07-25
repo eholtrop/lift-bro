@@ -68,9 +68,6 @@ jobs:
         run: bundle exec fastlane ios test
 
       - name: Build and Submit to App Store (Release Lane)
-        env:
-          # Same essential Fastlane secrets as above
-          # Any other environment variables
         run: |
           bundle install
           bundle exec fastlane ios deploy
