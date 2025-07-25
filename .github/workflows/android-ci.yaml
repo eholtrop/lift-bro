@@ -6,6 +6,7 @@ on:
     paths:
       - 'androidApp/**'
       - 'core/**'
+      - '.github/workflows/android-ci.yaml'
 env:
   LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
   LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
