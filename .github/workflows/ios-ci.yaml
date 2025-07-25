@@ -1,4 +1,4 @@
-name: iOS CI/CD
+name: iOS UI Tests
 
 on:
   push:
@@ -48,11 +48,10 @@ jobs:
           ruby-version: 3.3
           bundler-cache: true
 
-      - name: Restore Fastlane Match Keys
-        run: |
-          echo "${{ secrets.MATCH_GIT_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
 #
       - name: Run tests
         run: bundle exec fastlane ios test
@@ -67,5 +66,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: build/artifacts/ios/iosApp.ipa # Adjust path to where gym outputs the IPA
+          path: build/artifacts/ios/iosApp.ipa
           if-no-files-found: ignore

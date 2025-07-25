@@ -127,7 +127,7 @@ platform :ios do
       git_url: ENV["MATCH_GIT_URL"], # Set this in GitHub Actions secrets
       git_branch: "main", # Or your desired branch for Match
       keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
-      username: "evanholtrop@gmail.com"
+      username: ENV["FASTLANE_USER"]
     )
   end
 
