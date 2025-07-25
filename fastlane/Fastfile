@@ -126,7 +126,8 @@ platform :ios do
       readonly: true, # true for CI, false for local setup if you're updating certs
       git_url: ENV["MATCH_GIT_URL"], # Set this in GitHub Actions secrets
       git_branch: "main", # Or your desired branch for Match
-      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"]
+      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
+      username: ENV["FASTLANE_USER"]
     )
   end
 
