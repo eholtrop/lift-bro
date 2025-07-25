@@ -200,6 +200,21 @@ class SharedPreferencesSettingsRepository(
         keyChangedChannel.tryEmit("mer_settings")
     }
 
+    override fun showTotalWeightMoved(show: Boolean) {
+        sharedPreferences.edit { putBoolean("show_twm", show) }
+        keyChangedChannel.tryEmit("show_twm")
+    }
+
+    override fun shouldShowTotalWeightMoved(): Flow<Boolean> {
+        return keyChangedFlow
+            .filter { it == "show_twm" }
+            .map {
+                sharedPreferences!!.getBoolean("show_twm", false)
+            }.onStart {
+                emit(sharedPreferences!!.getBoolean("show_twm", false))
+            }
+    }
+
     override fun getLatestReadReleaseNotes(): Flow<String?> {
         return keyChangedFlow
             .filter { "latest_read_release_notes" == it }

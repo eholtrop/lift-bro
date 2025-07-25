@@ -86,6 +86,10 @@ import lift_bro.core.generated.resources.settings_theme_option_three
 import lift_bro.core.generated.resources.settings_theme_option_two
 import lift_bro.core.generated.resources.settings_theme_title
 import lift_bro.core.generated.resources.settings_title
+import lift_bro.core.generated.resources.settings_twm_enable_text
+import lift_bro.core.generated.resources.settings_twm_fatigue_info_dialog_paragraph_one
+import lift_bro.core.generated.resources.settings_twm_fatigue_info_dialog_title
+import lift_bro.core.generated.resources.settings_twm_title
 import lift_bro.core.generated.resources.settings_uom_title
 import lift_bro.core.generated.resources.terms_and_conditions
 import lift_bro.core.generated.resources.url_privacy_policy
@@ -324,6 +328,50 @@ fun SettingsScreen() {
                                         )
 
                                         Text(stringResource(Res.string.settings_mer_enable_text))
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    item {
+                        SettingsRowItem(
+                            title = {
+                                Row {
+                                    Text(
+                                        modifier = Modifier.weight(1f),
+                                        text = stringResource(Res.string.settings_twm_title)
+                                    )
+
+                                    InfoDialogButton(
+                                        dialogTitle = { Text(stringResource(Res.string.settings_twm_fatigue_info_dialog_title)) },
+                                        dialogMessage = {
+                                            Column {
+                                                Text(stringResource(Res.string.settings_twm_fatigue_info_dialog_paragraph_one))
+                                            }
+                                        }
+                                    )
+                                }
+                            },
+                            content = {
+                                val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
+                                    .collectAsState(false)
+
+                                Column(
+                                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Checkbox(
+                                            checked = showTwm,
+                                            enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
+                                            onCheckedChange = {
+                                                dependencies.settingsRepository.showTotalWeightMoved(it)
+                                            }
+                                        )
+
+                                        Text(stringResource(Res.string.settings_twm_enable_text))
                                     }
                                 }
                             }

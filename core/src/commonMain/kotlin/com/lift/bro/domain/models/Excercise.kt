@@ -10,4 +10,6 @@ data class Excercise(
     val date: LocalDate,
 ) {
     val id = sets.firstOrNull()?.excerciseId
+
+    val totalWeightMoved = sets.sumOf { it.totalWeightMoved }
 }

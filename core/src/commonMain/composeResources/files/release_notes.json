@@ -1,5 +1,21 @@
 [
   {
+    "versionId": "2025.07.27",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Fix MER calculations on the calendar screen"
+    }
+  },
+  {
+    "versionId": "2025.07.27",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Add total weight moved to calendar and excercise details"
+    }
+  },
+  {
     "versionId": "2025.07.19",
     "type": "feature",
     "platform": "all",

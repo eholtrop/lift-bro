@@ -132,6 +132,13 @@
     <string name="settings_mer_fatigue_info_dialog_paragraph_one">The % fatigue that you must hit of your max for a rep to be considered a MER (default 80%), This can be calculated by taking a look at your Max</string>
     <string name="settings_mer_fatigue_info_dialog_paragraph_two">ex: if you have a 100lbs max Bench Press and you do one rep at 80lbs. This is above the threshold of 80% and therefore an MER!</string>
 
+
+    <string name="settings_twm_title">Total Weight Moved (TWM)</string>
+    <string name="settings_twm_enable_text">Show TWM calculations where applicable</string>
+    <string name="settings_twm_fatigue_info_dialog_title">Total Weight Moved</string>
+    <string name="settings_twm_fatigue_info_dialog_paragraph_one">Total weight that you moved for a given set/excercise/workout!</string>
+
+
     <string name="settings_mer_weekly_goal_input_title">Weekly MER Goal</string>
     <string name="settings_mer_weekly_goal_info_dialog_title">Weekly MER Goal</string>
     <string name="settings_mer_weekly_goal_info_dialog_message">MER's can be used to track your progress in a week! Set yourself a weekly goal and celebrate your successes!</string>
@@ -139,4 +146,11 @@
 
     <string name="consent_dialog_title">We made some updates</string>
     <string name="consent_dialog_cta">I Accept</string>
+
+    <string name="edit_daily_notes_dialog_title">Notes for: %1$s</string>
+    <string name="edit_daily_notes_dialog_placeholder">Goals for today?
+Feeling especially spicy?
+Soreness or pain?</string>
+    <string name="edit_daily_notes_dialog_confirm_cta">Save</string>
+    <string name="edit_daily_notes_dialog_dismiss_cta">Cancel</string>
 </resources>

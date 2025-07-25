@@ -27,7 +27,11 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.fullName
+import com.lift.bro.presentation.LocalSubscriptionStatusProvider
+import com.lift.bro.presentation.LocalTwmSettings
+import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
@@ -35,6 +39,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
@@ -77,6 +82,11 @@ fun ExcerciseDetailsScreen(
 private fun ExcerciseDetailsScreen(
     excercise: Excercise,
 ) {
+    val subscriptionType by LocalSubscriptionStatusProvider.current
+    val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
+        .map { it && subscriptionType == SubscriptionType.Pro }
+        .collectAsState(false)
+
     LiftingScaffold(
         title = stringResource(Res.string.excercise_screen_title),
     ) { padding ->
@@ -90,11 +100,26 @@ private fun ExcerciseDetailsScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 item {
-                    Text(excercise.variation.fullName)
+                    Text(
+                        excercise.variation.fullName,
+                        style = MaterialTheme.typography.titleLarge,
+                    )
                 }
 
                 item {
-                    Text(excercise.date.toString(stringResource(Res.string.excercise_string_title_date_format)))
+                    Text(
+                        excercise.date.toString(stringResource(Res.string.excercise_string_title_date_format)),
+                                style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+
+                if (showTwm) {
+                    item {
+                        Text(
+                            "Total Weight Moved: ${"${excercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
+                                    style = MaterialTheme.typography.labelLarge,
+                        )
+                    }
                 }
 
                 excercise.sets.forEach {

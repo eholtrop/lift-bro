@@ -55,6 +55,8 @@ import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
+import com.lift.bro.presentation.LocalTwmSettings
+import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.Calendar
@@ -62,6 +64,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.saver.MutableLocalDateSaver
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
+import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import com.revenuecat.purchases.kmp.Purchases
@@ -94,6 +97,8 @@ fun WorkoutCalendarScreen(
     val dailyLogs = logs.associateBy { it.date }
 
     val subscriptionType by LocalSubscriptionStatusProvider.current
+
+    val showTwm = LocalTwmSettings.current
 
     LazyColumn(
         modifier = modifier,
@@ -211,7 +216,12 @@ fun WorkoutCalendarScreen(
                             }
                         },
                         title = {
-                            Text(stringResource(Res.string.edit_daily_notes_dialog_title, selectedDate.toString("EEEE, MMM d - yyyy")))
+                            Text(
+                                stringResource(
+                                    Res.string.edit_daily_notes_dialog_title,
+                                    selectedDate.toString("EEEE, MMM d - yyyy")
+                                )
+                            )
                         },
                         text = {
                             val focusRequester = FocusRequester()
@@ -293,7 +303,7 @@ fun WorkoutCalendarScreen(
                                 withStyle(
                                     style = SpanStyle()
                                 ) {
-                                    append("${variation.name} ${variation.lift?.name}")
+                                    append("${variation.name} ${variation.lift?.name}".trim())
                                 }
 
                                 val mer = excercise.sets.sumOf { it.mer }
@@ -308,6 +318,13 @@ fun WorkoutCalendarScreen(
                             },
                             style = MaterialTheme.typography.titleMedium,
                         )
+
+                        if (showTwm && excercise.totalWeightMoved > 0.0) {
+                            Text(
+                                "twm: ${"${excercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
+                        }
 
                         excercise.sets.sortedByDescending { it.weight }
                             .forEach { set ->

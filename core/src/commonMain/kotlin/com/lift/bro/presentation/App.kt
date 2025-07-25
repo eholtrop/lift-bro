@@ -91,6 +91,10 @@ val LocalShowMERCalcs = compositionLocalOf<MERSettings?> {
     error("Show MER Calcs was not set")
 }
 
+val LocalTwmSettings = compositionLocalOf<Boolean> {
+    error("Show MER Calcs was not set")
+}
+
 val LocalLiftCardYValue = compositionLocalOf<MutableState<LiftCardYValue>> {
     error("Lift Card Y Value was not set")
 }
@@ -142,12 +146,14 @@ fun App(
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
         .collectAsState(UOM.POUNDS)
     val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
+    val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved().collectAsState(false)
     var subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
 
     CompositionLocalProvider(
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
         LocalUnitOfMeasure provides uom,
         LocalShowMERCalcs provides showMerCalcs,
+        LocalTwmSettings provides (twmSettings && subscriptionType.value == SubscriptionType.Pro),
         LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
         LocalSubscriptionStatusProvider provides subscriptionType
     ) {

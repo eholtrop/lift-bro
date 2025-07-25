@@ -46,6 +46,10 @@ interface ISettingsRepository {
 
     fun setMerSettings(merSettings: MERSettings)
 
+    fun showTotalWeightMoved(show: Boolean)
+
+    fun shouldShowTotalWeightMoved(): Flow<Boolean>
+
     fun getLatestReadReleaseNotes(): Flow<String?>
 
     fun setLatestReadReleaseNotes(versionId: String)
