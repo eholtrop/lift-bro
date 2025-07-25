@@ -3,9 +3,9 @@ name: iOS CI/CD
 on:
   push:
     branches: [ maestro-ci ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
-    paths:
-      - 'androidApp/**'
-      - 'core/**'
+#    paths:
+#      - 'androidApp/**'
+#      - 'core/**'
 #  schedule:
 #    - cron: '5 0 * * *' # run after midnight every day (run after midnight to avoid clashing with promotion
 #  workflow_dispatch:
@@ -52,26 +52,26 @@ jobs:
 #      - name: Run linter
 #        run: fastlane lint
 #
-#      - name: Run tests
-#        run: fastlane test
+      - name: Run tests
+        run: bundle exec fastlane ios test
 
 
-      - name: Set up iOS Simulator
-        run: |
-          SIMULATOR_NAME="iPhone 15 Pro"
-          DEVICE_TYPE_ID="com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro"
-          RUNTIME_ID="com.apple.CoreSimulator.SimRuntime.iOS-18-5"
-          
-          SIMULATOR_UDID=$(xcrun simctl list devices | grep "$SIMULATOR_NAME" | awk -F '[()]' '{print $2}')
-          if [ -z "$SIMULATOR_UDID" ]; then
-            SIMULATOR_UDID=$(xcrun simctl create "$SIMULATOR_NAME" "$DEVICE_TYPE_ID" "$RUNTIME_ID")
-            echo "Created simulator with UDID: $SIMULATOR_UDID"
-          else
-            echo "Simulator '$SIMULATOR_NAME' already exists with UDID: $SIMULATOR_UDID"
-          fi
-          xcrun simctl boot "$SIMULATOR_UDID" || true
-          echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
-        shell: bash
+#      - name: Set up iOS Simulator
+#        run: |
+#          SIMULATOR_NAME="iPhone 16 Pro"
+#          DEVICE_TYPE_ID="com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro"
+#          RUNTIME_ID="com.apple.CoreSimulator.SimRuntime.iOS-18-5"
+#
+#          SIMULATOR_UDID=$(xcrun simctl list devices | grep "$SIMULATOR_NAME" | awk -F '[()]' '{print $2}')
+#          if [ -z "$SIMULATOR_UDID" ]; then
+#            SIMULATOR_UDID=$(xcrun simctl create "$SIMULATOR_NAME" "$DEVICE_TYPE_ID" "$RUNTIME_ID")
+#            echo "Created simulator with UDID: $SIMULATOR_UDID"
+#          else
+#            echo "Simulator '$SIMULATOR_NAME' already exists with UDID: $SIMULATOR_UDID"
+#          fi
+#          xcrun simctl boot "$SIMULATOR_UDID" || true
+#          echo "SIMULATOR_UDID=$SIMULATOR_UDID" >> $GITHUB_ENV
+#        shell: bash
 
       - name: Run Fastlane iOS Maestro Lane
         run: bundle exec fastlane run_maestro_ios_tests

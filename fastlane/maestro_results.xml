@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<testsuites>
+  <testsuite name="Test Suite" device="iPhone 15 Pro - iOS 18.5 - 7F211A82-0768-4CB5-904B-262F0062A748" tests="6" failures="6" time="12">
+    <testcase id="create_set_from_variation_details_tests" name="create_set_from_variation_details_tests" classname="create_set_from_variation_details_tests" time="2" status="ERROR">
+      <failure>Unable to launch app com.lift.bro: An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+Simulator device failed to launch com.lift.bro.
+The request was denied by service delegate (SBMainWorkspace).
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+	The request to open "com.lift.bro" failed.
+	The request was denied by service delegate (SBMainWorkspace).
+</failure>
+    </testcase>
+    <testcase id="settings_tests" name="settings_tests" classname="settings_tests" time="2" status="ERROR">
+      <failure>Unable to launch app com.lift.bro: An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+Simulator device failed to launch com.lift.bro.
+The request was denied by service delegate (SBMainWorkspace).
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+	The request to open "com.lift.bro" failed.
+	The request was denied by service delegate (SBMainWorkspace).
+</failure>
+    </testcase>
+    <testcase id="edit_lift_tests" name="edit_lift_tests" classname="edit_lift_tests" time="2" status="ERROR">
+      <failure>Unable to launch app com.lift.bro: An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+Simulator device failed to launch com.lift.bro.
+The request was denied by service delegate (SBMainWorkspace).
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+	The request to open "com.lift.bro" failed.
+	The request was denied by service delegate (SBMainWorkspace).
+</failure>
+    </testcase>
+    <testcase id="onboarding_tests" name="onboarding_tests" classname="onboarding_tests" time="2" status="ERROR">
+      <failure>Unable to launch app com.lift.bro: An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+Simulator device failed to launch com.lift.bro.
+The request was denied by service delegate (SBMainWorkspace).
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+	The request to open "com.lift.bro" failed.
+	The request was denied by service delegate (SBMainWorkspace).
+</failure>
+    </testcase>
+    <testcase id="create_lift_tests" name="create_lift_tests" classname="create_lift_tests" time="2" status="ERROR">
+      <failure>Unable to launch app com.lift.bro: An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+Simulator device failed to launch com.lift.bro.
+The request was denied by service delegate (SBMainWorkspace).
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+	The request to open "com.lift.bro" failed.
+	The request was denied by service delegate (SBMainWorkspace).
+</failure>
+    </testcase>
+    <testcase id="empty_screen_tests" name="empty_screen_tests" classname="empty_screen_tests" time="2" status="ERROR">
+      <failure>Unable to launch app com.lift.bro: An error was encountered processing the command (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+Simulator device failed to launch com.lift.bro.
+The request was denied by service delegate (SBMainWorkspace).
+Underlying error (domain=FBSOpenApplicationServiceErrorDomain, code=1):
+	The request to open "com.lift.bro" failed.
+	The request was denied by service delegate (SBMainWorkspace).
+</failure>
+    </testcase>
+  </testsuite>
+</testsuites>

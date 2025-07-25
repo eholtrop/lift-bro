@@ -92,13 +92,21 @@ Sync iOS App Store Code Signing Identities using match
 
 Build the release artifact for iOS
 
+### ios build_debug
+
+```sh
+[bundle exec] fastlane ios build_debug
+```
+
+Build the debug artifact for iOS
+
 ### ios test
 
 ```sh
 [bundle exec] fastlane ios test
 ```
 
-Run tests for iOS
+
 
 ### ios lint
 

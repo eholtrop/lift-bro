@@ -146,62 +146,71 @@ platform :ios do
 
   desc "Build the release artifact for iOS"
   lane :build_release do |options|
-    # Ensure App Store profiles are available for release builds
     match_appstore
-
-    # Increment build number (optional, but good practice for CI)
-    # Fastlane's `increment_build_number` uses agvtool. Ensure your Xcode project
-    # is set up to use `$(CURRENT_PROJECT_VERSION)` for Build number.
-    # If your KMP versioning is handled purely by Gradle, you might need a custom script
-    # to update the Xcode project version/build number from Gradle properties.
-    # For now, let's assume simple increment.
-    increment_build_number(
-      xcodeproj: "iosApp/iosApp.xcodeproj" # Specify if not in root
-    )
-
-    # Build the iOS app (.ipa)
     gym(
-      scheme: "iosApp", # IMPORTANT: Replace with your actual iOS app scheme name (e.g., MyApp, MyKMPProject)
-#       workspace: "iosApp/iosApp.xcworkspace", # IMPORTANT: Point to your .xcworkspace file
+      scheme: "iosApp",
       project: "iosApp/iosApp.xcodeproj",
-      configuration: "Release", # Build in Release configuration
-      export_method: "app-store", # For TestFlight or App Store distribution
-      output_directory: "build/artifacts/ios", # Output IPA to a specific directory
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build/artifacts/ios",
       output_name: "ios_app_release.ipa",
       clean: true,
       silent: false,
-      # Ensure your Xcode project's build phases are set up to trigger Gradle
-      # for the shared module. If not, you might need a `before_build` hook here:
-#       before_build: -> (lane_context) { sh "cd ../ && ./gradlew :core:build" }
     )
   end
 
-  desc "Run tests for iOS"
-  lane :test do
-    # You can run both native iOS tests and KMP shared module tests here
-    # 1. KMP Shared Module Tests (Kotlin/Native)
-    sh "cd ../ && ./gradlew :shared:iosSimulatorArm64Test"
-    # sh "cd ../ && ./gradlew :shared:iosX64Test" # For x86_64 simulator
-
-    # 2. Native iOS Tests (Xcode)
-    # (Requires a test scheme in your Xcode project)
-    run_tests(
-      scheme: "iosAppTests", # Replace with your iOS test scheme name
-      workspace: "iosApp/iosApp.xcworkspace",
-      destination: "platform=iOS Simulator,name=iPhone 15", # Or your preferred simulator
-      clean: true
+  desc "Build the debug artifact for iOS"
+  lane :build_debug do |options|
+    match_development
+    gym(
+      scheme: "iosApp",
+      project: "iosApp/iosApp.xcodeproj",
+      configuration: "Debug",
+      sdk: "iphonesimulator",
+      export_method: "development",
+      output_directory: "build/artifacts/ios",
+      output_name: "ios_app_debug.ipa",
+      clean: true,
+      silent: false
     )
+  end
+
+  lane :test do |options|
+    # run simulator
+    simulator_name = options[:name] || "iPhone 15 Pro"
+    device_type_id = options[:device_type] || "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro"
+    runtime_id = options[:runtime] || "com.apple.CoreSimulator.SimRuntime.iOS-18-5"
+
+    # Check if simulator already exists
+    simulator_udid = sh("xcrun simctl list devices | grep '#{simulator_name}' | awk -F '[()]' '{print $2}'", log: false).strip
+
+    unless simulator_udid && !simulator_udid.empty?
+      UI.message "Simulator '#{simulator_name}' not found. Creating it..."
+      simulator_udid = sh("xcrun simctl create \"#{simulator_name}\" \"#{device_type_id}\" \"#{runtime_id}\"", log: true).strip
+      UI.success "Created simulator with UDID: #{simulator_udid}"
+    else
+      UI.success "Simulator '#{simulator_name}' already exists with UDID: #{simulator_udid}"
+    end
+
+    # Boot the simulator
+    UI.message "Booting simulator with UDID: #{simulator_udid}\""
+    begin
+      sh("xcrun simctl boot \"#{simulator_udid}\"", log: true)
+      UI.success "Simulator booted successfully!"
+    rescue => e
+      UI.message "Simulator might already be booted or an error occurred: #{e.message}"
+    end
+
+    # build/install app
+    build_debug(build_number: 1)
+
+    app_path = "../build/artifacts/ios/ios_app_debug.ipa"
+    sh "xcrun simctl install #{simulator_udid} \"#{app_path}\""
+    sh "maestro --device #{simulator_udid} test ../.maestro --format junit --output maestro_results.xml"
   end
 
   desc "Run Linter for iOS (e.g., SwiftLint)"
   lane :lint do
-    # If you use SwiftLint, ensure it's installed and configured.
-    # Example:
-    # swiftlint(
-    #   mode: :lint, # Or :autocorrect
-    #   strict: true
-    # )
-    # If no specific iOS linter, you might just skip this or add a placeholder.
     UI.message("No specific iOS linting configured in Fastfile.")
   end
 
