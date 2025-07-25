@@ -289,7 +289,22 @@ fun SettingsScreen() {
                     item {
                         SettingsRowItem(
                             title = {
-                                Text(stringResource(Res.string.settings_mer_title))
+                                Row {
+                                    Text(
+                                        modifier = Modifier.weight(1f),
+                                        text = stringResource(Res.string.settings_mer_title))
+
+                                    InfoDialogButton(
+                                        dialogTitle = { Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_title)) },
+                                        dialogMessage = {
+                                            Column {
+                                                Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_paragraph_one))
+                                                Space(MaterialTheme.spacing.half)
+                                                Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_paragraph_two))
+                                            }
+                                        }
+                                    )
+                                }
                             },
                             content = {
                                 val showMerCalcs by dependencies.settingsRepository.getMerSettings()
@@ -303,6 +318,7 @@ fun SettingsScreen() {
                                     ) {
                                         Checkbox(
                                             checked = showMerCalcs.enabled,
+                                            enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
                                             onCheckedChange = {
                                                 dependencies.settingsRepository.setMerSettings(
                                                     showMerCalcs.copy(enabled = it)
@@ -311,50 +327,6 @@ fun SettingsScreen() {
                                         )
 
                                         Text(stringResource(Res.string.settings_mer_enable_text))
-                                    }
-
-                                    Row {
-                                        NumberPicker(
-                                            modifier = Modifier.weight(1f),
-                                            title = stringResource(Res.string.settings_mer_fatigue_input_title),
-                                            selectedNum = (showMerCalcs.threshold * 100).toInt(),
-                                            numberChanged = {
-                                                dependencies.settingsRepository.setMerSettings(
-                                                    showMerCalcs.copy(
-                                                        threshold = it?.toFloat() ?: 0f
-                                                    )
-                                                )
-                                            },
-                                        )
-
-                                        InfoDialogButton(
-                                            dialogTitle = { Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_title)) },
-                                            dialogMessage = {
-                                                Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_paragraph_one))
-                                                Space(MaterialTheme.spacing.half)
-                                                Text(stringResource(Res.string.settings_mer_fatigue_info_dialog_paragraph_two))
-                                            }
-                                        )
-                                    }
-
-                                    Row {
-                                        NumberPicker(
-                                            modifier = Modifier.weight(1f),
-                                            title = stringResource(Res.string.settings_mer_weekly_goal_input_title),
-                                            selectedNum = showMerCalcs.weeklyTotalGoal,
-                                            numberChanged = {
-                                                dependencies.settingsRepository.setMerSettings(
-                                                    showMerCalcs.copy(weeklyTotalGoal = it)
-                                                )
-                                            },
-                                        )
-
-                                        InfoDialogButton(
-                                            dialogTitle = { Text(stringResource(Res.string.settings_mer_weekly_goal_info_dialog_title)) },
-                                            dialogMessage = {
-                                                Text(stringResource(Res.string.settings_mer_weekly_goal_info_dialog_message))
-                                            }
-                                        )
                                     }
                                 }
                             }
