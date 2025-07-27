@@ -442,33 +442,33 @@ fun SettingsScreen() {
                                 }
                             },
                             content = {
-                                val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
-                                    .collectAsState(false)
-
                                 Column(
                                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
                                 ) {
+                                    val emaxEnabled by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Checkbox(
-                                            checked = showTwm,
+                                            checked = emaxEnabled,
                                             enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
                                             onCheckedChange = {
-                                                dependencies.settingsRepository.showTotalWeightMoved(it)
+                                                dependencies.settingsRepository.setEMaxEnabled(it)
                                             }
                                         )
 
                                         Text(stringResource(Res.string.settings_emax_enable_text))
                                     }
+
+                                    val tmaxEnabled by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                     ) {
                                         Checkbox(
-                                            checked = showTwm,
+                                            checked = tmaxEnabled,
                                             enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
                                             onCheckedChange = {
-                                                dependencies.settingsRepository.showTotalWeightMoved(it)
+                                                dependencies.settingsRepository.setTMaxEnabled(it)
                                             }
                                         )
 

@@ -95,6 +95,14 @@ val LocalTwmSettings = compositionLocalOf<Boolean> {
     error("Show MER Calcs was not set")
 }
 
+val LocalEMaxSettings = compositionLocalOf<Boolean> {
+    error("Show eMax was not set")
+}
+
+val LocalTMaxSettings = compositionLocalOf<Boolean> {
+    error("Show tMax was not set")
+}
+
 val LocalLiftCardYValue = compositionLocalOf<MutableState<LiftCardYValue>> {
     error("Lift Card Y Value was not set")
 }
@@ -147,6 +155,8 @@ fun App(
         .collectAsState(UOM.POUNDS)
     val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
     val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved().collectAsState(false)
+    val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
+    val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
     var subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
 
     CompositionLocalProvider(
@@ -154,6 +164,8 @@ fun App(
         LocalUnitOfMeasure provides uom,
         LocalShowMERCalcs provides showMerCalcs,
         LocalTwmSettings provides (twmSettings && subscriptionType.value == SubscriptionType.Pro),
+        LocalEMaxSettings provides (emaxSettings && subscriptionType.value == SubscriptionType.Pro),
+        LocalTMaxSettings provides (tMaxSettings && subscriptionType.value == SubscriptionType.Pro),
         LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
         LocalSubscriptionStatusProvider provides subscriptionType
     ) {

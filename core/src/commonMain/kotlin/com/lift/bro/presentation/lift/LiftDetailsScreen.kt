@@ -50,7 +50,10 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.fullName
+import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalLiftCardYValue
+import com.lift.bro.presentation.LocalTMaxSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.theme.spacing
@@ -61,6 +64,7 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.formattedWeight
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
@@ -72,7 +76,6 @@ import lift_bro.core.generated.resources.color_picker_dialog_red
 import lift_bro.core.generated.resources.color_picker_dialog_title
 import lift_bro.core.generated.resources.color_picker_negative_cta
 import lift_bro.core.generated.resources.color_picker_positive_cta
-import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_positive_cta
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
@@ -296,7 +299,6 @@ fun LiftDetailsScreen(
                 items(variations) { variation ->
                     VariationCard(
                         variation = variation,
-                        parentLift = lift,
                         onClick = { variationClicked(variation.id) },
                         onSetClicked = onSetClicked
                     )
@@ -314,7 +316,6 @@ fun LiftDetailsScreen(
 @Composable
 private fun VariationCard(
     variation: Variation,
-    parentLift: Lift,
     onClick: (Variation) -> Unit,
     onSetClicked: (LBSet) -> Unit,
 ) {
@@ -347,29 +348,33 @@ private fun VariationCard(
                     modifier = Modifier.weight(1f)
                 ) {
                     Text(
-                        text = "${variation.name} ${parentLift.name}",
+                        text = variation.fullName,
                         style = MaterialTheme.typography.headlineSmall,
                     )
-                    val maxLift = sets
-                        .fold(null as LBSet?) { maxLift, currentSet ->
-                            when {
-                                maxLift == null || maxLift.weight < currentSet.weight -> currentSet
-                                else -> maxLift
-                            }
-                        }
 
                     when (LocalLiftCardYValue.current.value) {
                         LiftCardYValue.Weight -> {
                             Text(
-                                text = maxLift?.let { "${it.formattedWeight()} Max" }
-                                    ?: run { "No Sets" },
+                                text = when {
+                                    // and show tmax enabled
+                                    variation.eMax != null && variation.oneRepMax != null && LocalTMaxSettings.current ->
+                                        "${variation.oneRepMax.decimalFormat().uom()} max - (${variation.eMax.decimalFormat().uom()} tmax)"
+
+                                    variation.eMax != null && LocalEMaxSettings.current ->
+                                        "${variation.eMax.decimalFormat().uom()} emax"
+
+                                    variation.oneRepMax != null -> "${variation.oneRepMax.decimalFormat().uom()} max"
+
+                                    else -> "No max"
+                                },
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
 
                         LiftCardYValue.Reps -> {
                             Text(
-                                text = maxLift?.let { "${it.reps} Reps" } ?: run { "No Sets" },
+                                text = sets.maxOfOrNull { it.reps }?.let { "$it Reps" }
+                                    ?: run { "No Sets" },
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
@@ -420,7 +425,7 @@ private fun VariationCard(
                             style = MaterialTheme.typography.titleSmall,
                             color = if (selectedData?.toEpochDays()
                                     ?.toLong() == epochDays
-                            ) parentLift.color?.toColor()
+                            ) variation.lift?.color?.toColor()
                                 ?: MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                         )
                     },
@@ -430,7 +435,7 @@ private fun VariationCard(
                     },
                     colors = DotGraphColors(
                         dotColor = MaterialTheme.colorScheme.onSurface,
-                        dotColorSelected = parentLift.color?.toColor()
+                        dotColorSelected = variation.lift?.color?.toColor()
                             ?: MaterialTheme.colorScheme.primary
                     )
                 )
@@ -488,3 +493,6 @@ private fun VariationCard(
         }
     }
 }
+
+@Composable
+fun String.uom() = "$this ${LocalUnitOfMeasure.current.value}"

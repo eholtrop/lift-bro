@@ -1,5 +1,13 @@
 [
   {
+    "versionId": "2025.08.03",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Add estimated and theoretical maxes for pro users"
+    }
+  },
+  {
     "versionId": "2025.07.27",
     "type": "feature",
     "platform": "all",
@@ -12,7 +20,7 @@
     "type": "feature",
     "platform": "all",
     "note": {
-      "en": "Add total weight moved to calendar and excercise details"
+      "en": "Add total weight moved to calendar and excercise details for pro users"
     }
   },
   {

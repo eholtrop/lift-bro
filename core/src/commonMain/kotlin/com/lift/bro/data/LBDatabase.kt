@@ -51,7 +51,8 @@ class LBDatabase(
 
     val variantDataSource: IVariationRepository = VariationRepository(
         liftQueries = database.liftQueries,
-        variationQueries = database.variationQueries
+        variationQueries = database.variationQueries,
+        setQueries = database.setQueries
     )
 
     val setDataSource: SetDataSource = SetDataSource(
@@ -268,10 +269,17 @@ internal fun comliftbrodb.Lift.toDomain() = Lift(
     color = this.color?.toULong(),
 )
 
-internal fun comliftbrodb.Variation.toDomain(parentLift: Lift) = Variation(
+internal fun comliftbrodb.Variation.toDomain(
+    parentLift: Lift,
+    sets: List<LiftingSet>,
+) = Variation(
     id = this.id,
     lift = parentLift,
     name = this.name,
+    eMax = sets.maxOfOrNull {
+        (it.weight ?: 0.0) * (1 + ((it.reps ?: 0) / 30.0))
+    },
+    oneRepMax = sets.filter { it.reps == 1L }.maxOfOrNull { it.weight ?: 0.0 },
 )
 
 expect class DriverFactory {

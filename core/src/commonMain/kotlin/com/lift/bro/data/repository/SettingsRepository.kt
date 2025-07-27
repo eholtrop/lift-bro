@@ -15,12 +15,10 @@ import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeArithmeticException
 import kotlinx.datetime.LocalDate
 
 
@@ -164,6 +162,28 @@ class SettingsRepository(
     override fun setThemeMode(themeMode: ThemeMode) {
         dataSource.putString("theme_mode", themeMode.toString())
         keyChanged("theme_mode")
+    }
+
+    override fun eMaxEnabled(): Flow<Boolean> {
+        return subscribeToKey("emax_enabled") {
+            dataSource.getBool("emax_enabled", false)
+        }
+    }
+
+    override fun setEMaxEnabled(enabled: Boolean) {
+        dataSource.putBool("emax_enabled", enabled)
+        keyChanged("emax_enabled")
+    }
+
+    override fun tMaxEnabled(): Flow<Boolean> {
+        return subscribeToKey("tmax_enabled") {
+            dataSource.getBool("tmax_enabled", false)
+        }
+    }
+
+    override fun setTMaxEnabled(enabled: Boolean) {
+        dataSource.putBool("tmax_enabled", enabled)
+        keyChanged("tmax_enabled")
     }
 
     override fun showTotalWeightMoved(show: Boolean) {

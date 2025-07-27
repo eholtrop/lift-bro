@@ -7,19 +7,21 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.mapEach
 import comliftbrodb.LiftQueries
+import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class VariationRepository(
-
     private val liftQueries: LiftQueries,
+    private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
 ) : IVariationRepository {
 
@@ -33,38 +35,43 @@ class VariationRepository(
         }
     }
 
-    override fun getAll(liftId: String): List<Variation> {
-        val lift =  liftQueries.get(liftId).executeAsOneOrNull()?.toDomain()
-
-        return if (lift != null) {
-            variationQueries.getAllForLift(liftId).executeAsList().map { it.toDomain(lift) }
-        } else {
-            emptyList()
+    // only used for backup, will not populate emax/max
+    override fun getAll(): List<Variation> {
+        val parentLift = liftQueries.getAll().executeAsList().map { it.toDomain() }
+        return variationQueries.getAll().executeAsList().map { variation ->
+            variation.toDomain(
+                parentLift.first { it.id == variation.liftId },
+                emptyList()
+            )
         }
     }
 
-    override fun getAll(): List<Variation> {
-        val parentLift = liftQueries.getAll().executeAsList().map { it.toDomain() }
-        return variationQueries.getAll().executeAsList().map { variation -> variation.toDomain(parentLift.first { it.id == variation.liftId }) }
-    }
-
     override fun listenAll(liftId: String): Flow<List<Variation>> {
-        return liftQueries.get(liftId).asFlow().mapToOneOrNull(Dispatchers.IO)
-            .map { it?.toDomain() }
-            .flatMapLatest { lift ->
-                if (lift != null) {
-                    variationQueries.getAllForLift(lift.id).asFlow().mapToList(Dispatchers.IO)
-                        .mapEach { it.toDomain(lift) }
-                } else {
-                    flowOf(emptyList())
-                }
+        return combine(
+            liftQueries.get(liftId).asFlow().mapToOneOrNull(Dispatchers.IO).map { it?.toDomain() },
+            variationQueries.getAllForLift(liftId).asFlow().mapToList(Dispatchers.IO),
+            setQueries.getAll().asFlow().mapToList(Dispatchers.IO)
+        ) { lift, variations, sets ->
+            variations.map { variation ->
+                variation.toDomain(
+                    parentLift = lift!!,
+                    sets = sets.filter { it.variationId == variation.id }
+                )
             }
+        }
     }
 
     override fun listenAll(): Flow<List<Variation>> {
-        return variationQueries.getAll().asFlow().mapToList(Dispatchers.IO).map { variations ->
-            val lifts = liftQueries.getAll().executeAsList().map { it.toDomain() }
-            variations.map { variation -> variation.toDomain(lifts.first{ it.id == variation.liftId }) }
+        return combine(
+            variationQueries.getAll().asFlow().mapToList(Dispatchers.IO),
+            setQueries.getAll().asFlow().mapToList(Dispatchers.IO)
+        ) { variations, sets ->
+            variations.map { variation ->
+                variation.toDomain(
+                    parentLift = liftQueries.get(variation.liftId).executeAsOneOrNull()?.toDomain()!!,
+                    sets = sets.filter { it.variationId == variation.id }
+                )
+            }
         }
     }
 
@@ -77,8 +84,12 @@ class VariationRepository(
     override fun get(variationId: String?): Variation? {
         val variation = variationQueries.get(variationId ?: "").executeAsOneOrNull()
         val lift = liftQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
+        val sets = setQueries.getAllByVariation(variationId ?: "").executeAsList()
 
-        return variation?.toDomain(lift?.toDomain()!!)
+        return variation?.toDomain(
+            lift?.toDomain()!!,
+            sets
+        )
     }
 
 }

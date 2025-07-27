@@ -57,6 +57,14 @@ interface ISettingsRepository {
     fun getThemeMode(): Flow<ThemeMode>
 
     fun setThemeMode(themeMode: ThemeMode)
+
+    fun eMaxEnabled(): Flow<Boolean>
+
+    fun setEMaxEnabled(enabled: Boolean)
+
+    fun tMaxEnabled(): Flow<Boolean>
+
+    fun setTMaxEnabled(enabled: Boolean)
 }
 
 data class BackupSettings(
