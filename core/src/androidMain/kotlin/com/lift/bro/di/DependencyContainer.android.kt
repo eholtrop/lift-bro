@@ -6,7 +6,8 @@ import android.net.Uri
 import androidx.activity.ComponentActivity
 import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
-import com.lift.bro.data.SharedPreferencesSettingsRepository
+import com.lift.bro.data.datasource.UserPreferencesDataSource
+import com.lift.bro.data.repository.SettingsRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
@@ -34,7 +35,7 @@ actual class DependencyContainer {
     }
 
     actual val settingsRepository: ISettingsRepository by lazy {
-        SharedPreferencesSettingsRepository(context!!)
+        SettingsRepository(UserPreferencesDataSource(context!!))
     }
 
     actual fun launchUrl(url: String) {
