@@ -5,20 +5,19 @@ package com.lift.bro.presentation.home
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -26,8 +25,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,20 +40,16 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
-import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalLiftCardYValue
-import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
-import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardState
@@ -74,7 +69,6 @@ import lift_bro.core.generated.resources.dashboard_footer_trailing_button_conten
 import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.dashboard_title
 import lift_bro.core.generated.resources.dashboard_toolbar_leading_button_content_description
-import lift_bro.core.generated.resources.dashboard_toolbar_trailing_button_content_description
 import lift_bro.core.generated.resources.ic_calendar
 import lift_bro.core.generated.resources.reps
 import lift_bro.core.generated.resources.view_dashboard
@@ -161,11 +155,6 @@ fun DashboardContent(
             ) {
                 navCoordinator.present(Destination.Settings)
             }
-            TopBarIconButton(
-                imageVector = Icons.Default.Add,
-                contentDescription = stringResource(Res.string.dashboard_toolbar_trailing_button_content_description),
-                onClick = addLiftClicked,
-            )
         },
         fabProperties = FabProperties(
             fabIcon = Icons.Default.Add,
@@ -306,6 +295,24 @@ fun DashboardContent(
                                     onClick = liftClicked,
                                     value = showWeight.value
                                 )
+                            }
+                        }
+                    }
+
+                    val addButtonGridSize = if (dashboardState.items.size % 2 == 0) GridItemSpan(1) else GridItemSpan(2)
+                    item(
+                        span = { addButtonGridSize }
+                    ) {
+                        Box(
+                            modifier = Modifier.fillMaxSize()
+                                .then(if (addButtonGridSize.currentLineSpan == 1) Modifier.aspectRatio(1f) else Modifier)
+                        ) {
+                            Button(
+                                modifier = Modifier.align(Alignment.Center),
+                                onClick = addLiftClicked,
+                                colors = ButtonDefaults.outlinedButtonColors()
+                            ) {
+                                Text("Add Lift")
                             }
                         }
                     }
