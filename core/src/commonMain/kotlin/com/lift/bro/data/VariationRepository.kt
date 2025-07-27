@@ -54,7 +54,7 @@ class VariationRepository(
         ) { lift, variations, sets ->
             variations.map { variation ->
                 variation.toDomain(
-                    parentLift = lift!!,
+                    parentLift = lift,
                     sets = sets.filter { it.variationId == variation.id }
                 )
             }
@@ -68,7 +68,7 @@ class VariationRepository(
         ) { variations, sets ->
             variations.map { variation ->
                 variation.toDomain(
-                    parentLift = liftQueries.get(variation.liftId).executeAsOneOrNull()?.toDomain()!!,
+                    parentLift = liftQueries.get(variation.liftId).executeAsOneOrNull()?.toDomain(),
                     sets = sets.filter { it.variationId == variation.id }
                 )
             }
@@ -87,7 +87,7 @@ class VariationRepository(
         val sets = setQueries.getAllByVariation(variationId ?: "").executeAsList()
 
         return variation?.toDomain(
-            lift?.toDomain()!!,
+            lift?.toDomain(),
             sets
         )
     }

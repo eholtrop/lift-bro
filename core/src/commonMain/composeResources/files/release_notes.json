@@ -4,6 +4,14 @@
     "type": "feature",
     "platform": "all",
     "note": {
+      "en": "Add sorting to variation details"
+    }
+  },
+  {
+    "versionId": "2025.08.03",
+    "type": "feature",
+    "platform": "all",
+    "note": {
       "en": "Dashboard UI Improvements (move some buttons around)"
     }
   },
@@ -53,46 +61,6 @@
     "platform": "android",
     "note": {
       "en": "Various UI updates and fixes"
-    }
-  },
-  {
-    "versionId": "2025.07.13",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Fix state retention on the workout calendar screen and edit/create set screens"
-    }
-  },
-  {
-    "versionId": "2025.07.06",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Add crash handling/error tracking for better usage tracking"
-    }
-  },
-  {
-    "versionId": "2025.07.01",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Add French and Spanish translations"
-    }
-  },
-  {
-    "versionId": "2025.07.01",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Fix title and Date formatting on the Excercize screen"
-    }
-  },
-  {
-    "versionId": "2025.07.01",
-    "type": "feature",
-    "platform": "android",
-    "note": {
-      "en": "Fix issue on the settings page where you needed to close/open the app to get an update to register"
     }
   }
 ]

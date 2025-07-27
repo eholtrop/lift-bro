@@ -270,7 +270,7 @@ internal fun comliftbrodb.Lift.toDomain() = Lift(
 )
 
 internal fun comliftbrodb.Variation.toDomain(
-    parentLift: Lift,
+    parentLift: Lift?,
     sets: List<LiftingSet>,
 ) = Variation(
     id = this.id,
