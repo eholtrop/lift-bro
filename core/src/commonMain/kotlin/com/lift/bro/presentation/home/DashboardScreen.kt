@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -145,12 +146,19 @@ fun DashboardContent(
     var tab by rememberSaveable { mutableStateOf(defaultTab) }
 
     LiftingScaffold(
-        title = stringResource(Res.string.dashboard_title),
+        title = {
+            Icon(
+                modifier = Modifier.size(52.dp),
+                painter = painterResource(LocalLiftBro.current.iconRes()),
+                contentDescription = ""
+            )
+            Text(stringResource(Res.string.dashboard_title))
+        },
         leadingContent = {
         },
         trailingContent = {
             TopBarIconButton(
-                painter = painterResource(LocalLiftBro.current.iconRes()),
+                imageVector = Icons.Default.Settings,
                 contentDescription = stringResource(Res.string.dashboard_toolbar_leading_button_content_description)
             ) {
                 navCoordinator.present(Destination.Settings)

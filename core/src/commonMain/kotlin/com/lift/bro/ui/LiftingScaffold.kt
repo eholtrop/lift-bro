@@ -44,7 +44,7 @@ data class FabProperties(
 
 @Composable
 fun LiftingScaffold(
-    title: String,
+    title: @Composable () -> Unit,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     fabProperties: FabProperties? = null,
     leadingContent: @Composable () -> Unit = {

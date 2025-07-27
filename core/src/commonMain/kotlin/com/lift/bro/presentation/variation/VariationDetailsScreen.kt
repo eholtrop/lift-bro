@@ -111,7 +111,7 @@ private fun VariationDetailsScreen(
             contentDescription = "Add Set",
             fabClicked = addSetClicked,
         ),
-        title = "${variation.name} ${lift?.name}",
+        title = { Text("${variation.name} ${lift?.name}") },
     ) { padding ->
 
 

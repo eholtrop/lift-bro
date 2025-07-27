@@ -114,7 +114,7 @@ fun SettingsScreen() {
     var showPaywall by remember { mutableStateOf(false) }
 
     LiftingScaffold(
-        title = stringResource(Res.string.settings_title),
+        title = { Text(stringResource(Res.string.settings_title)) },
         content = { padding ->
 
             var subscriptionType by LocalSubscriptionStatusProvider.current

@@ -151,9 +151,9 @@ internal fun EditLiftScreen(
     }
 
     LiftingScaffold(
-        title = if (lift != null) stringResource(Res.string.edit_lift_screen_title) else stringResource(
-            Res.string.create_lift_screen_title
-        ),
+        title = {
+            Text(if (lift != null) stringResource(Res.string.edit_lift_screen_title) else stringResource(Res.string.create_lift_screen_title))
+        },
         trailingContent = {
             TopBarIconButton(
                 imageVector = Icons.Default.Delete,
@@ -363,7 +363,10 @@ private fun VariationItem(
             suffix = {
                 if (liftName.isNotBlank()) {
                     Text(
-                        text = if (liftName.length > 12) liftName.substring(0, 11) + "..." else liftName,
+                        text = if (liftName.length > 12) liftName.substring(
+                            0,
+                            11
+                        ) + "..." else liftName,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

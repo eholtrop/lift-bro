@@ -257,7 +257,7 @@ fun LiftDetailsScreen(
                 contentDescription = stringResource(Res.string.lift_details_fab_content_description),
                 fabClicked = addSetClicked,
             ),
-            title = lift.name,
+            title = { Text(lift.name) },
             trailingContent = {
                 TopBarButton(
                     onClick = {

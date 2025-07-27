@@ -158,7 +158,7 @@ fun EditSetScreen(
                 setSaved()
             },
         ),
-        title = stringResource(if (setId != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title),
+        title = { Text(stringResource(if (setId != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title)) },
         trailingContent = {
             if (setId != null) {
                 val navCoordinator = LocalNavCoordinator.current

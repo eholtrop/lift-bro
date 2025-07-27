@@ -88,7 +88,7 @@ private fun ExcerciseDetailsScreen(
         .collectAsState(false)
 
     LiftingScaffold(
-        title = stringResource(Res.string.excercise_screen_title),
+        title = { Text(stringResource(Res.string.excercise_screen_title)) },
     ) { padding ->
         Card(
             modifier = Modifier.padding(padding)
