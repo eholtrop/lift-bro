@@ -26,7 +26,9 @@ import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,7 +43,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
@@ -53,7 +58,9 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalLiftCardYValue
+import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTMaxSettings
+import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.excercise.SetInfoRow
 import com.lift.bro.ui.theme.spacing
@@ -358,12 +365,16 @@ private fun VariationCard(
                                 text = when {
                                     // and show tmax enabled
                                     variation.eMax != null && variation.oneRepMax != null && LocalTMaxSettings.current ->
-                                        "${variation.oneRepMax.decimalFormat().uom()} max - (${variation.eMax.decimalFormat().uom()} tmax)"
+                                        "${
+                                            variation.oneRepMax.decimalFormat().uom()
+                                        } max - (${variation.eMax.decimalFormat().uom()} tmax)"
 
                                     variation.eMax != null && LocalEMaxSettings.current ->
                                         "${variation.eMax.decimalFormat().uom()} emax"
 
-                                    variation.oneRepMax != null -> "${variation.oneRepMax.decimalFormat().uom()} max"
+                                    variation.oneRepMax != null -> "${
+                                        variation.oneRepMax.decimalFormat().uom()
+                                    } max"
 
                                     else -> "No max"
                                 },
@@ -445,14 +456,29 @@ private fun VariationCard(
                     Space(MaterialTheme.spacing.one)
 
                     val pair = setPoints.first { it.first == data }
+
                     Column(
-                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.half)
+                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one)
                     ) {
+
                         Text(
-                            modifier = Modifier.align(Alignment.Start),
-                            text = pair.first.toString(pattern = "EEEE MMM, d"),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurface
+                            text = buildAnnotatedString {
+                                withStyle(MaterialTheme.typography.titleMedium.toSpanStyle()) {
+                                    append(pair.first.toString(pattern = "EEEE MMM, d"))
+                                }
+                                withStyle(MaterialTheme.typography.bodyMedium.toSpanStyle()) {
+                                    if (LocalTwmSettings.current) {
+                                        append(" ")
+                                        append(
+                                            pair.second.sumOf { it.weight }.decimalFormat().uom()
+                                        )
+                                    }
+
+                                    if (LocalShowMERCalcs.current?.enabled == true) {
+                                        append(" (+${pair.second.sumOf { it.mer }}mer)")
+                                    }
+                                }
+                            }
                         )
 
                         Box(
