@@ -256,15 +256,15 @@ end # End of iOS platform block
 # Error Handling and Post-Actions
 # --------------------------------------------------
 # Actions that should always run after a lane finishes
-after_all do |lane|
-  # Clean up temporary files, keychains etc.
-  # `setup_ci` from `before_all` often handles most of this automatically.
-  UI.message("Fastlane lane '#{lane.name}' finished successfully.")
-end
-
-# Error handling block
-error do |lane, exception|
-  UI.user_error!("Fastlane lane '#{lane.name}' failed with error: #{exception.message}")
-  # You could add notifications here (e.g., Slack, email)
-  # slack(message: "Fastlane build failed for #{lane.name}: #{exception.message}", success: false)
-end
+# after_all do |lane|
+#   # Clean up temporary files, keychains etc.
+#   # `setup_ci` from `before_all` often handles most of this automatically.
+#   UI.message("Fastlane lane '#{lane.name}' finished successfully.")
+# end
+#
+# # Error handling block
+# error do |lane, exception|
+#   UI.user_error!("Fastlane lane '#{lane.name}' failed with error: #{exception.message}")
+#   # You could add notifications here (e.g., Slack, email)
+#   # slack(message: "Fastlane build failed for #{lane.name}: #{exception.message}", success: false)
+# end

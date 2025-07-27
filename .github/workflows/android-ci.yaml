@@ -62,7 +62,9 @@ jobs:
           STORE_PASSWORD: ${{ secrets.KEYSTORE_PW }}
           KEY_ALIAS: ${{ secrets.KEYSTORE_USR }}
           KEY_PASSWORD: ${{ secrets.KEY_PW }}
-        run: fastlane deploy build_number:$GITHUB_RUN_NUMBER
+        run: |
+          bundle install
+          bundle exec fastlane deploy build_number:$GITHUB_RUN_NUMBER
 
       - name: Upload Apk
         uses: actions/upload-artifact@v4
