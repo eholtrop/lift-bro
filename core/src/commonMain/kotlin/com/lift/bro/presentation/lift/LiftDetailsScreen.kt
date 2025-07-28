@@ -522,8 +522,10 @@ private fun VariationCard(
                                         )
                                     }
 
-                                    if (LocalShowMERCalcs.current?.enabled == true) {
-                                        append(" (+${pair.second.sumOf { it.mer }}mer)")
+                                    with(pair.second.sumOf { it.mer }) {
+                                        if (LocalShowMERCalcs.current?.enabled == true && this > 0) {
+                                            append(" (+${this}mer)")
+                                        }
                                     }
                                 }
                             }
