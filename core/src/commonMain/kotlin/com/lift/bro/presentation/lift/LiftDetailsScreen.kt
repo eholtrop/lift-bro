@@ -344,15 +344,19 @@ fun LiftDetailsScreen(
                     }
                 }
 
-                items(variations.let {
-                    when (sorting) {
-                        SortingOptions.Name -> it.sortedBy { it.name ?: "" }
-                        SortingOptions.NameReversed -> it.sortedByDescending { it.name ?: "" }
-                        SortingOptions.MaxSet -> it.sortedByDescending { it.oneRepMax ?: it.eMax ?: 0.0 }
-                        SortingOptions.MaxSetReversed -> it.sortedBy { it.oneRepMax ?: it.eMax ?: 0.0 }
-                    }
-                }) { variation ->
+                items(
+                    variations.let {
+                        when (sorting) {
+                            SortingOptions.Name -> it.sortedBy { it.name ?: "" }
+                            SortingOptions.NameReversed -> it.sortedByDescending { it.name ?: "" }
+                            SortingOptions.MaxSet -> it.sortedByDescending { it.oneRepMax ?: it.eMax ?: 0.0 }
+                            SortingOptions.MaxSetReversed -> it.sortedBy { it.oneRepMax ?: it.eMax ?: 0.0 }
+                        }
+                    },
+                    key = { it.id },
+                ) { variation ->
                     VariationCard(
+                        modifier = Modifier.animateItem(),
                         variation = variation,
                         onClick = { variationClicked(variation.id) },
                         onSetClicked = onSetClicked
@@ -370,13 +374,14 @@ fun LiftDetailsScreen(
 
 @Composable
 private fun VariationCard(
+    modifier: Modifier = Modifier,
     variation: Variation,
     onClick: (Variation) -> Unit,
     onSetClicked: (LBSet) -> Unit,
 ) {
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .background(
                 color = MaterialTheme.colorScheme.surface,
@@ -546,7 +551,6 @@ private fun VariationCard(
                     pair.second
                         .sortedByDescending { it.weight }
                         .forEach { set ->
-
                             SetInfoRow(
                                 modifier = Modifier
                                     .fillMaxSize()
