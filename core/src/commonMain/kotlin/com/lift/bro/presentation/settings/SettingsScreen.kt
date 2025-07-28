@@ -56,6 +56,7 @@ import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.RadioField
+import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
@@ -497,6 +498,19 @@ fun SettingsScreen() {
                             }
                         ) {
                             Text(stringResource(Res.string.settings_other_github_cta))
+                        }
+
+                        var showReleaseNotesDialog by remember { mutableStateOf(false) }
+                        if (showReleaseNotesDialog) {
+                            ReleaseNotesDialog { showReleaseNotesDialog = false }
+                        }
+                        Button(
+                            colors = ButtonDefaults.textButtonColors(),
+                            onClick = {
+                                showReleaseNotesDialog = true
+                            }
+                        ) {
+                            Text("Release Notes")
                         }
                         val terms = stringResource(Res.string.url_terms_and_conditions)
                         Button(
