@@ -12,7 +12,12 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.calculateMax
+import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
+import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
@@ -91,16 +96,18 @@ class SetDataSource(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) {
 
-    private fun calculateMer(set: LiftingSet, maxWeight: Int?): Int {
+    private fun calculateMer(set: LiftingSet, maxWeight: Double): Int {
+        if (maxWeight <= 0.0) return 0
         val repFatigueCost = 4
 
-        val merFatigueThreshold = 80
+        val weight = set.weight ?: 0.0
+        val reps = set.reps ?: 0
 
-        val setFatigue =
-            (set.weight?.div(maxWeight ?: 1))?.times(100)?.plus((set.reps ?: 0) * repFatigueCost)
-                ?.toInt()
+        val merFatigueThreshold = 80.0
 
-        return min(set.reps?.toInt() ?: 0, setFatigue?.minus(merFatigueThreshold)?.div(4) ?: 0)
+        val setFatigue = ((weight / maxWeight) * 100.0) + (reps * repFatigueCost)
+
+        return min(reps.toInt(), ((setFatigue - merFatigueThreshold) / 4.0).toInt())
     }
 
     fun getAll(variationId: String): List<LBSet> {
@@ -108,11 +115,11 @@ class SetDataSource(
         return sets.map { set ->
             val localMax =
                 sets.filter { it.variationId == set.variationId }
-                    .maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }?.toInt()
-            val copy = set.toDomain().copy(
-                mer = calculateMer(set, localMax ?: 0)
+                    .filter { it.date.toLocalDate() < set.date.toLocalDate() }
+                    .maxOfOrNull { calculateMax(it.reps, it.weight) }
+            set.toDomain().copy(
+                mer = localMax?.let { calculateMer(set, localMax) } ?: 0
             )
-            copy
         }
     }
 
@@ -131,9 +138,10 @@ class SetDataSource(
         sets.map { set ->
             val localMax =
                 sets.filter { it.variationId == set.variationId }
-                    .maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }?.toInt()
+                    .filter { it.date.toLocalDate() < set.date.toLocalDate() }
+                    .maxOfOrNull { calculateMax(it.reps, it.weight) }
             set.toDomain().copy(
-                mer = calculateMer(set, localMax ?: 0)
+                mer = localMax?.let { calculateMer(set, localMax) } ?: 0
             )
         }
     }
@@ -144,10 +152,10 @@ class SetDataSource(
                 sets.map { set ->
                     val localMax =
                         sets.filter { it.variationId == set.variationId }
-                            .maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }
-                            ?.toInt()
+                            .filter { it.date.toLocalDate() < set.date.toLocalDate() }
+                            .maxOfOrNull { calculateMax(it.reps, it.weight) }
                     set.toDomain().copy(
-                        mer = calculateMer(set, localMax ?: 0)
+                        mer = localMax?.let { calculateMer(set, localMax) } ?: 0
                     )
                 }
             }
@@ -159,10 +167,10 @@ class SetDataSource(
             sets.map { set ->
                 val localMax =
                     sets.filter { it.variationId == set.variationId }
-                        .maxOfOrNull { if (it.date > set.date) 0.0 else it.weight ?: 0.0 }
-                        ?.toInt()
+                        .filter { it.date.toLocalDate() < set.date.toLocalDate() }
+                        .maxOfOrNull { calculateMax(it.reps, it.weight) }
                 set.toDomain().copy(
-                    mer = calculateMer(set, localMax ?: 0)
+                    mer = localMax?.let { calculateMer(set, localMax) } ?: 0
                 )
             }
         }
@@ -276,8 +284,8 @@ internal fun comliftbrodb.Variation.toDomain(
     id = this.id,
     lift = parentLift,
     name = this.name,
-    eMax = sets.maxOfOrNull {
-        (it.weight ?: 0.0) * (1 + ((it.reps ?: 0) / 30.0))
+    eMax = sets.filter { (it.reps ?: 0) > 1 }.maxOfOrNull {
+        estimatedMax(it.reps?.toInt() ?: 1, it.weight ?: 0.0)
     },
     oneRepMax = sets.filter { it.reps == 1L }.maxOfOrNull { it.weight ?: 0.0 },
 )

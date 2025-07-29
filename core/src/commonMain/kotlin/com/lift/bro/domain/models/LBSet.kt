@@ -24,6 +24,20 @@ data class LBSet(
     val totalWeightMoved =  weight * reps
 }
 
+fun calculateMax(reps: Long?, weight: Double?) = calculateMax(reps?.toInt() ?: 0, weight ?: 0.0)
+
+fun calculateMax(reps: Int, weight: Double): Double {
+    return when (reps) {
+        1 -> weight
+        else -> estimatedMax(reps, weight)
+    }
+}
+
+fun estimatedMax(reps: Int, weight: Double): Double {
+    return weight * (1 + (reps / 30.0))
+}
+
+
 @Serializable
 data class Tempo(
     val down: Long = 3,

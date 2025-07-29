@@ -4,6 +4,14 @@
     "type": "feature",
     "platform": "all",
     "note": {
+      "en": "Fix MER Calculations"
+    }
+  },
+  {
+    "versionId": "2025.08.03",
+    "type": "feature",
+    "platform": "all",
+    "note": {
       "en": "Add sorting to variation details"
     }
   },
