@@ -420,7 +420,7 @@ private fun VariationCard(
                                     variation.eMax != null && variation.oneRepMax != null && LocalTMaxSettings.current ->
                                         "${
                                             variation.oneRepMax.decimalFormat().uom()
-                                        } max - (${variation.eMax.decimalFormat().uom()} tmax)"
+                                        } max${if(variation.eMax > variation.oneRepMax) "- (${variation.eMax.decimalFormat().uom()} tmax)" else ""}"
 
                                     variation.eMax != null && LocalEMaxSettings.current ->
                                         "${variation.eMax.decimalFormat().uom()} emax"
