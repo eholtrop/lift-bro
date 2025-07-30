@@ -31,7 +31,7 @@ class VariationRepository(
 
     override fun save(id: String, liftId: String, name: String?) {
         GlobalScope.launch {
-            variationQueries.save(id = id, liftId = liftId, name = name)
+            variationQueries.save(id = id, liftId = liftId, name = name, "", 0L)
         }
     }
 
