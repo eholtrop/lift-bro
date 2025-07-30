@@ -47,6 +47,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.SpanStyle
@@ -463,7 +468,8 @@ private fun VariationCard(
                 }
 
                 DotGraph(
-                    modifier = Modifier.fillMaxWidth().height(128.dp),
+                    modifier = Modifier.fillMaxWidth().height(128.dp)
+                        .padding(horizontal = MaterialTheme.spacing.quarter),
                     graphData = setPoints.map {
                         val topLift = it.second.maxBy {
                             when (LocalLiftCardYValue.current.value) {
