@@ -73,11 +73,7 @@ object BackupService {
         }
 
         backup.variations?.forEach {
-            dependencies.database.variantDataSource.save(
-                id = it.id,
-                liftId = it.lift!!.id,
-                name = it.name,
-            )
+            dependencies.database.variantDataSource.save(variation = it)
         }
 
         backup.lifts?.forEach {

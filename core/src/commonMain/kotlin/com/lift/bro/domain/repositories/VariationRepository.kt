@@ -7,7 +7,7 @@ interface IVariationRepository {
 
     suspend fun deleteAll()
 
-    fun save(id: String, liftId: String, name: String?)
+    fun save(variation: Variation)
 
     fun listenAll(liftId: String): Flow<List<Variation>>
 

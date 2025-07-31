@@ -158,11 +158,7 @@ fun VariationDialog(
                         onClick = {
                             isLoading = true
                             coroutineScope.launch(context = Dispatchers.IO) {
-                                dependencies.database.variantDataSource.save(
-                                    id = currentVariation.id,
-                                    liftId = currentVariation.lift!!.id,
-                                    name = currentVariation.name
-                                )
+                                dependencies.database.variantDataSource.save(currentVariation)
                                 onVariationSaved(currentVariation.id)
                             }
                         },

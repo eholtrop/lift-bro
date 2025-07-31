@@ -25,6 +25,8 @@ import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.automirrored.rounded.Sort
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material.icons.rounded.Sort
@@ -35,6 +37,7 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -356,7 +359,7 @@ fun LiftDetailsScreen(
                             SortingOptions.NameReversed -> it.sortedByDescending { it.name ?: "" }
                             SortingOptions.MaxSet -> it.sortedByDescending { it.oneRepMax ?: it.eMax ?: 0.0 }
                             SortingOptions.MaxSetReversed -> it.sortedBy { it.oneRepMax ?: it.eMax ?: 0.0 }
-                        }
+                        }.sortedByDescending { it.favourite }
                     },
                     key = { it.id },
                 ) { variation ->
@@ -412,10 +415,24 @@ private fun VariationCard(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = variation.fullName,
-                        style = MaterialTheme.typography.headlineSmall,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = variation.fullName,
+                            style = MaterialTheme.typography.headlineSmall,
+                        )
+                        IconButton(
+                            onClick = {
+                                dependencies.database.variantDataSource.save(variation.copy(favourite = !variation.favourite))
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = "Favourite"
+                            )
+                        }
+                    }
 
                     when (LocalLiftCardYValue.current.value) {
                         LiftCardYValue.Weight -> {

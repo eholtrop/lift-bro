@@ -1,7 +1,9 @@
 CREATE TABLE Variation (
     id TEXT NOT NULL PRIMARY KEY,
     liftId TEXT NOT NULL,
-    name TEXT
+    name TEXT,
+    notes TEXT,
+    favourite INTEGER NOT NULL DEFAULT 0
 );
 
 getAllForLift:
@@ -15,8 +17,8 @@ SELECT * FROM Variation WHERE id = ?;
 
 save:
 INSERT OR REPLACE
-INTO Variation(id, liftId, name)
-VALUES(?, ?, ?);
+INTO Variation(id, liftId, name, notes, favourite)
+VALUES(?, ?, ?, ?, ?);
 
 delete:
 DELETE FROM Variation WHERE id = ?;

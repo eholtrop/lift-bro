@@ -29,9 +29,15 @@ class VariationRepository(
         variationQueries.deleteAll()
     }
 
-    override fun save(id: String, liftId: String, name: String?) {
+    override fun save(variation: Variation) {
         GlobalScope.launch {
-            variationQueries.save(id = id, liftId = liftId, name = name)
+            variationQueries.save(
+                id = variation.id,
+                liftId = variation.lift?.id!!,
+                name = variation.name,
+                notes = variation.notes,
+                favourite = if (variation.favourite) 1 else 0
+            )
         }
     }
 
@@ -88,7 +94,7 @@ class VariationRepository(
 
         return variation?.toDomain(
             lift?.toDomain(),
-            sets
+            sets,
         )
     }
 
