@@ -359,7 +359,7 @@ fun LiftDetailsScreen(
                             SortingOptions.NameReversed -> it.sortedByDescending { it.name ?: "" }
                             SortingOptions.MaxSet -> it.sortedByDescending { it.oneRepMax ?: it.eMax ?: 0.0 }
                             SortingOptions.MaxSetReversed -> it.sortedBy { it.oneRepMax ?: it.eMax ?: 0.0 }
-                        }
+                        }.sortedByDescending { it.favourite }
                     },
                     key = { it.id },
                 ) { variation ->
@@ -415,19 +415,23 @@ private fun VariationCard(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Row {
-                        IconButton(
-                            onClick = {}
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = "Favourite"
-                            )
-                        }
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
                             text = variation.fullName,
                             style = MaterialTheme.typography.headlineSmall,
                         )
+                        IconButton(
+                            onClick = {
+                                dependencies.database.variantDataSource.save(variation.copy(favourite = !variation.favourite))
+                            }
+                        ) {
+                            Icon(
+                                imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = "Favourite"
+                            )
+                        }
                     }
 
                     when (LocalLiftCardYValue.current.value) {

@@ -155,11 +155,7 @@ fun OnboardingSetupScreen(
 
                             GlobalScope.launch {
                                 selectedVariations.toList().forEach {
-                                    dependencies.database.variantDataSource.save(
-                                        id = it.id,
-                                        liftId = it.lift!!.id,
-                                        name = it.name,
-                                    )
+                                    dependencies.database.variantDataSource.save(it)
                                 }
                                 selectedVariations.toList().map { it.lift }.filterNotNull()
                                     .forEach {

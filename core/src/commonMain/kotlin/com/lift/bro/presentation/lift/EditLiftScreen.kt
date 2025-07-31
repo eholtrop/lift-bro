@@ -172,11 +172,7 @@ internal fun EditLiftScreen(
                 )
                 coroutineScope.launch {
                     variations.filter { it.name != null }.forEach {
-                        dependencies.database.variantDataSource.save(
-                            id = it.id,
-                            liftId = thisLift.id,
-                            name = it.name
-                        )
+                        dependencies.database.variantDataSource.save(it)
                     }
                 }
                 liftSaved()

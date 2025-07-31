@@ -16,6 +16,8 @@ data class Variation(
     val name: String? = null,
     val eMax: Double? = null,
     val oneRepMax: Double? = null,
+    val favourite: Boolean = false,
+    val notes: String = "",
 )
 
 val Variation.fullName get() = "$name ${lift?.name}"
