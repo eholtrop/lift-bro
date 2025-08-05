@@ -2,7 +2,8 @@ package com.lift.bro.di
 
 import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
-import com.lift.bro.data.UserDefaultsSettingsRepository
+import com.lift.bro.data.datasource.UserPreferencesDataSource
+import com.lift.bro.data.repository.SettingsRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import platform.Foundation.NSDictionary
 import platform.Foundation.NSURL
@@ -12,7 +13,10 @@ actual class DependencyContainer {
 
     actual val database: LBDatabase by lazy { LBDatabase(DriverFactory()) }
 
-    actual val settingsRepository: ISettingsRepository by lazy { UserDefaultsSettingsRepository() }
+
+    actual val settingsRepository: ISettingsRepository by lazy {
+        SettingsRepository(UserPreferencesDataSource())
+    }
 
     actual fun launchCalculator() {
 

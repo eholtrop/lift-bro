@@ -18,6 +18,9 @@ import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.readString
 import io.github.vinceglb.filekit.writeString
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -53,7 +56,9 @@ object BackupService {
             type = FileKitType.File("application/json"),
             directory = backupDir
         )?.apply {
-            restore(Json.decodeFromString<Backup>(readString()))
+            withContext(Dispatchers.IO) {
+                restore(Json.decodeFromString<Backup>(readString()))
+            }
             return true
         } ?: kotlin.run {
             return false
