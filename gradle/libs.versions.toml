@@ -14,7 +14,7 @@ compose = "1.8.0"
 compose-multiplatform = "1.8.1"
 compose-compiiler = "2.1.0"
 
-google-services = "4.4.0"
+google-services = "4.4.3"
 detekt = "1.23.8"
 kotlinx-serialization = "1.6.3"
 kotlinx-datetime = "0.6.1"
@@ -22,6 +22,7 @@ app-update = "2.1.0"
 
 appcompat = "1.7.0"
 uuid = "0.8.1"
+firebase-crashlytics-gradle = "3.0.2"
 
 lexilabs-basic = "2.6.0"
 
@@ -66,6 +67,7 @@ sqldelight = { id = "app.cash.sqldelight", version.ref = "sqldelight" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-gradle" }
 detekt = { id = "io.gitlab.artubosch.dektekt", version.ref = "detekt" }
 
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.17.1" }

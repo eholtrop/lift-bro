@@ -15,6 +15,10 @@
 		B1A23C662E2D66E100525DEF /* PurchasesHybridCommon in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C652E2D66E100525DEF /* PurchasesHybridCommon */; };
 		B1A23C682E2D66E100525DEF /* PurchasesHybridCommonUI in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C672E2D66E100525DEF /* PurchasesHybridCommonUI */; };
 		B1A23C6B2E2D6A1F00525DEF /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C6A2E2D6A1F00525DEF /* Sentry */; };
+		B1DD777D2E43840E004C3183 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */; };
+		B1DD77802E438488004C3183 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B1DD777F2E438488004C3183 /* FirebaseAnalytics */; };
+		B1DD77822E438488004C3183 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = B1DD77812E438488004C3183 /* FirebaseAnalyticsCore */; };
+		B1DD77842E438488004C3183 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = B1DD77832E438488004C3183 /* FirebaseCrashlytics */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -38,6 +42,7 @@
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B11618252E0761C900672FF1 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
+		B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,8 +51,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				B17C1AE72E08C81200020BDE /* GoogleMobileAds in Frameworks */,
+				B1DD77822E438488004C3183 /* FirebaseAnalyticsCore in Frameworks */,
 				B1A23C662E2D66E100525DEF /* PurchasesHybridCommon in Frameworks */,
+				B1DD77842E438488004C3183 /* FirebaseCrashlytics in Frameworks */,
 				B1A23C682E2D66E100525DEF /* PurchasesHybridCommonUI in Frameworks */,
+				B1DD77802E438488004C3183 /* FirebaseAnalytics in Frameworks */,
 				B1A23C6B2E2D6A1F00525DEF /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -89,6 +97,7 @@
 				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
+				B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -158,6 +167,7 @@
 				B17C1AE52E08C81200020BDE /* XCRemoteSwiftPackageReference "swift-package-manager-google-mobile-ads" */,
 				B1535A812E1474DB0082F365 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 				B1A23C642E2D66E100525DEF /* XCRemoteSwiftPackageReference "purchases-hybrid-common" */,
+				B1DD777E2E438488004C3183 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			productRefGroup = 7555FF7C242A565900829871 /* Products */;
 			projectDirPath = "";
@@ -175,6 +185,7 @@
 			files = (
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
+				B1DD777D2E43840E004C3183 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,6 +463,14 @@
 				version = 15.0.0;
 			};
 		};
+		B1DD777E2E438488004C3183 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -474,6 +493,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = B1535A812E1474DB0082F365 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
 			productName = Sentry;
+		};
+		B1DD777F2E438488004C3183 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1DD777E2E438488004C3183 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		B1DD77812E438488004C3183 /* FirebaseAnalyticsCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1DD777E2E438488004C3183 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalyticsCore;
+		};
+		B1DD77832E438488004C3183 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B1DD777E2E438488004C3183 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

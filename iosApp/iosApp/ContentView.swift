@@ -5,7 +5,7 @@ import core
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController(
+        return MainViewControllerKt.MainViewController(
             bannerProvider: {
                 let banner = BannerView()
                 banner.adUnitID = "ca-app-pub-2361666372543198/2292302980"

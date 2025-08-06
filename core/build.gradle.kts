@@ -4,17 +4,15 @@ import com.lift.bro.versionName
 
 plugins {
     alias(libs.plugins.android.library)
-
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.multiplatform)
-
     alias(libs.plugins.sqldelight)
-
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
-
     alias(libs.plugins.buildkonfig)
     alias(libs.plugins.sentry)
+//    alias(libs.plugins.google.services)
+//    alias(libs.plugins.firebase.crashlytics)
 
     id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
@@ -87,6 +85,11 @@ kotlin {
             implementation(libs.revenuecat.core)
             implementation(libs.revenuecat.datetime)
             implementation(libs.revenuecat.ui)
+
+
+//            implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
+            implementation("dev.gitlive:firebase-crashlytics:2.1.0")
+            implementation("dev.gitlive:firebase-analytics:2.1.0")
         }
 
         androidMain.dependencies {
