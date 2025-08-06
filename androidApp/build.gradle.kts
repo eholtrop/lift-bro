@@ -6,7 +6,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics) apply false
+    alias(libs.plugins.google.services) apply false
 
     id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }

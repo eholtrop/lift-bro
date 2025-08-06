@@ -10,6 +10,7 @@ local.properties
 xcuserdata
 Gemfile.lock
 
+
 .kotlin/metadata/kotlinTransformedMetadataLibraries/
 
 .kotlin/metadata/kotlinTransformedCInteropMetadataLibraries/
@@ -21,3 +22,9 @@ secrets.properties
 node_modules/
 
 fastlane/report.xml
+
+androidApp/google-services.json
+
+iosApp/iosApp/GoogleService-Info.plist
+
+core/src/androidMain/google-services.json

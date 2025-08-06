@@ -67,6 +67,8 @@ import com.lift.bro.utils.logger.d
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.configure
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.initialize
 import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -97,6 +99,9 @@ val LocalTwmSettings = compositionLocalOf<Boolean> {
 
 val LocalEMaxSettings = compositionLocalOf<Boolean> {
     error("Show eMax was not set")
+}
+
+val LocalPlatformContext = compositionLocalOf<Any?> {
 }
 
 val LocalTMaxSettings = compositionLocalOf<Boolean> {
@@ -179,6 +184,7 @@ fun App(
         }
 
 
+        val context = LocalPlatformContext.current
         LaunchedEffect("initialize_sentry") {
             // only initialize sentry in release mode
             if (!BuildConfig.isDebug) {
@@ -186,6 +192,12 @@ fun App(
                     options.dsn = BuildKonfig.SENTRY_DSN
                 }
             }
+
+//            if (!BuildConfig.isDebug) {
+                Firebase.initialize(context)
+                delay(5000)
+                throw RuntimeException("Test Crash") // Force a crash
+//            }
         }
 
         LaunchedEffect("setup_revenuecat") {
