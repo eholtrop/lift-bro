@@ -1,5 +1,6 @@
 package com.lift.bro.presentation.settings
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,7 +23,7 @@ fun ThemeSettingsRow() {
     ) {
         val themeMode by dependencies.settingsRepository.getThemeMode()
             .collectAsState(ThemeMode.System)
-        Row {
+        Column {
             RadioField(
                 text = stringResource(Res.string.settings_theme_option_one),
                 selected = themeMode == ThemeMode.System,
