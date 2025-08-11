@@ -196,4 +196,15 @@ class SettingsRepository(
             dataSource.getBool(key, false)
         }
     }
+
+    override fun showDashboardProBanner(): Flow<Boolean> {
+        return subscribeToKey("show_dashboard_banner") {
+            dataSource.getBool("show_dashboard_banner", true)
+        }
+    }
+
+    override fun dashboardProBannerDismissed() {
+        dataSource.putBool("show_dashboard_banner", false)
+        keyChanged("show_dashboard_banner")
+    }
 }

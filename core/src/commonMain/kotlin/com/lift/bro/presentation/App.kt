@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -67,6 +68,8 @@ import com.lift.bro.utils.logger.d
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.configure
+import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
+import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.initialize
 import io.sentry.kotlin.multiplatform.Sentry
@@ -120,6 +123,10 @@ val LocalSubscriptionStatusProvider = compositionLocalOf<MutableState<Subscripti
     error("No Subscription Provided")
 }
 
+val LocalPaywallVisibility = compositionLocalOf<MutableState<Boolean>> {
+    error("No Subscription Provided")
+}
+
 @Composable
 fun CheckAppConsent() {
     val hasConsent by HasDeviceConsentedUseCase().invoke().collectAsState(null)
@@ -163,6 +170,7 @@ fun App(
     val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
     val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
     var subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
+    val showPaywall = remember { mutableStateOf(false) }
 
     CompositionLocalProvider(
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
@@ -172,7 +180,8 @@ fun App(
         LocalEMaxSettings provides (emaxSettings && subscriptionType.value == SubscriptionType.Pro),
         LocalTMaxSettings provides (tMaxSettings && subscriptionType.value == SubscriptionType.Pro),
         LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
-        LocalSubscriptionStatusProvider provides subscriptionType
+        LocalSubscriptionStatusProvider provides subscriptionType,
+        LocalPaywallVisibility provides showPaywall
     ) {
         LaunchedEffect("landing_selection") {
             dependencies.settingsRepository.getDeviceFtux().collectLatest {
@@ -233,6 +242,21 @@ fun App(
                     ) { route ->
                         AppRouter(route)
                     }
+                }
+
+
+                val options = remember {
+                    PaywallOptions(dismissRequest = { showPaywall.value = false }) {
+                        shouldDisplayDismissButton = true
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = showPaywall.value,
+                    enter = slideInVertically { it },
+                    exit = slideOutVertically { it } + fadeOut()
+                ) {
+                    Paywall(options)
                 }
 
                 // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix

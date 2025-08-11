@@ -1,5 +1,13 @@
 [
   {
+    "versionId": "2025.08.11",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Become a LIFT PRO!!!!!!"
+    }
+  },
+  {
     "versionId": "2025.08.03",
     "type": "feature",
     "platform": "all",
@@ -39,44 +47,4 @@
       "en": "Add estimated and theoretical maxes for pro users"
     }
   },
-  {
-    "versionId": "2025.07.27",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Fix MER calculations on the calendar screen"
-    }
-  },
-  {
-    "versionId": "2025.07.27",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Add total weight moved to calendar and excercise details for pro users"
-    }
-  },
-  {
-    "versionId": "2025.07.19",
-    "type": "feature",
-    "platform": "all",
-    "note": {
-      "en": "Add Terms and Conditions to Settings Screen"
-    }
-  },
-  {
-    "versionId": "2025.07.19",
-    "type": "feature",
-    "platform": "android",
-    "note": {
-      "en": "Crash fixes when hitting back in certain states"
-    }
-  },
-  {
-    "versionId": "2025.07.19",
-    "type": "feature",
-    "platform": "android",
-    "note": {
-      "en": "Various UI updates and fixes"
-    }
-  }
 ]

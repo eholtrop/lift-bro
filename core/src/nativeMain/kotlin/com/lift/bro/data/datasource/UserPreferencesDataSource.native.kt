@@ -29,6 +29,9 @@ actual class UserPreferencesDataSource {
     }
 
     actual fun getBool(key: String, default: Boolean): Boolean {
+        if (userDefaults.objectForKey(key) == null) {
+            userDefaults.setBool(default, key)
+        }
         return userDefaults.boolForKey(key)
     }
 

@@ -65,6 +65,11 @@ interface ISettingsRepository {
     fun tMaxEnabled(): Flow<Boolean>
 
     fun setTMaxEnabled(enabled: Boolean)
+
+
+    fun showDashboardProBanner(): Flow<Boolean>
+
+    fun dashboardProBannerDismissed()
 }
 
 data class BackupSettings(
