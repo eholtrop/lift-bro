@@ -14,11 +14,11 @@ plugins {
 
 android {
     namespace = "com.lift.bro"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.lift.bro"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionName = project.versionName()
 
         versionCode = project.versionCode()

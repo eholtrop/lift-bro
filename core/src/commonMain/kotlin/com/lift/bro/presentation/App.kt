@@ -8,7 +8,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
@@ -46,7 +44,6 @@ import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.UOM
-import com.lift.bro.domain.models.User
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
@@ -56,9 +53,9 @@ import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.calculator.WeightCalculatorBottomSheet
 import com.lift.bro.ui.dialog.BackupAlertDialog
 import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
@@ -127,6 +124,10 @@ val LocalPaywallVisibility = compositionLocalOf<MutableState<Boolean>> {
     error("No Subscription Provided")
 }
 
+val LocalCalculatorVisibility = compositionLocalOf<MutableState<Boolean>> {
+    error("No Calculator Visibility Provided")
+}
+
 @Composable
 fun CheckAppConsent() {
     val hasConsent by HasDeviceConsentedUseCase().invoke().collectAsState(null)
@@ -188,10 +189,12 @@ fun App(
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
         .collectAsState(UOM.POUNDS)
     val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
-    val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved().collectAsState(false)
+    val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved()
+        .collectAsState(false)
     val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
     val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
     val showPaywall = remember { mutableStateOf(false) }
+    val showCalculator = remember { mutableStateOf(false) }
 
     CompositionLocalProvider(
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
@@ -202,7 +205,8 @@ fun App(
         LocalTMaxSettings provides (tMaxSettings && subscriptionType.value == SubscriptionType.Pro),
         LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
         LocalSubscriptionStatusProvider provides subscriptionType,
-        LocalPaywallVisibility provides showPaywall
+        LocalPaywallVisibility provides showPaywall,
+        LocalCalculatorVisibility provides showCalculator
     ) {
         LaunchedEffect("landing_selection") {
             dependencies.settingsRepository.getDeviceFtux().collectLatest {
@@ -262,6 +266,8 @@ fun App(
                 ) {
                     Paywall(options)
                 }
+
+                WeightCalculatorBottomSheet()
 
                 // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix
                 var celebration by remember { mutableStateOf<CelebrationType>(CelebrationType.None) }
