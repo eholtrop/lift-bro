@@ -162,6 +162,25 @@ fun App(
     navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding)
 ) {
 
+    var subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
+    LaunchedEffect("setup_revenuecat") {
+        if (BuildConfig.isDebug) {
+            Purchases.logLevel = LogLevel.DEBUG
+        }
+
+        Purchases.configure(BuildKonfig.REVENUE_CAT_API_KEY)
+        Purchases.sharedInstance.getCustomerInfo(
+            onError = { error ->
+                Sentry.captureException(Throwable(message = error.message))
+            },
+            onSuccess = { success ->
+                if (success.entitlements.active.containsKey("pro")) {
+                    subscriptionType.value = SubscriptionType.Pro
+                }
+            }
+        )
+    }
+
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
         .collectAsState(UOM.POUNDS)
@@ -169,7 +188,6 @@ fun App(
     val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved().collectAsState(false)
     val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
     val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
-    var subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val showPaywall = remember { mutableStateOf(false) }
 
     CompositionLocalProvider(
@@ -205,24 +223,6 @@ fun App(
             if (!BuildConfig.isDebug) {
                 Firebase.initialize(context)
             }
-        }
-
-        LaunchedEffect("setup_revenuecat") {
-            if (BuildConfig.isDebug) {
-                Purchases.logLevel = LogLevel.DEBUG
-            }
-
-            Purchases.configure(BuildKonfig.REVENUE_CAT_API_KEY)
-            Purchases.sharedInstance.getCustomerInfo(
-                onError = { error ->
-                    Sentry.captureException(Throwable(message = error.message))
-                },
-                onSuccess = { success ->
-                    if (success.entitlements.active.containsKey("pro")) {
-                        subscriptionType.value = SubscriptionType.Pro
-                    }
-                }
-            )
         }
 
         AppTheme {
