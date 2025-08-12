@@ -12,6 +12,8 @@ import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
+import com.revenuecat.purchases.kmp.Purchases
+import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,7 +36,7 @@ class SettingsRepository(
         }
     }
 
-    private fun <R> subscribeToKey(key: String, block: (String) -> R): Flow<R> {
+    private fun <R> subscribeToKey(key: String, block: suspend (String) -> R): Flow<R> {
         return refreshKey
             .filter { it == key }
             .map(block)
@@ -126,7 +128,8 @@ class SettingsRepository(
         return subscribeToKey(
             key = "mer_settings",
             block = { key ->
-                dataSource.getSerializable<MERSettings>("mer_settings", null) ?: MERSettings()
+                dataSource.getSerializable<MERSettings>("mer_settings", null)
+                    ?: MERSettings(enabled = Purchases.sharedInstance.isUserPro())
             }
         )
     }
@@ -166,7 +169,7 @@ class SettingsRepository(
 
     override fun eMaxEnabled(): Flow<Boolean> {
         return subscribeToKey("emax_enabled") {
-            dataSource.getBool("emax_enabled", false)
+            dataSource.getBool("emax_enabled", Purchases.sharedInstance.isUserPro())
         }
     }
 
@@ -177,7 +180,7 @@ class SettingsRepository(
 
     override fun tMaxEnabled(): Flow<Boolean> {
         return subscribeToKey("tmax_enabled") {
-            dataSource.getBool("tmax_enabled", false)
+            dataSource.getBool("tmax_enabled", Purchases.sharedInstance.isUserPro())
         }
     }
 
@@ -193,7 +196,7 @@ class SettingsRepository(
 
     override fun shouldShowTotalWeightMoved(): Flow<Boolean> {
         return subscribeToKey("show_twm") { key ->
-            dataSource.getBool(key, false)
+            dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
         }
     }
 
@@ -208,3 +211,6 @@ class SettingsRepository(
         keyChanged("show_dashboard_banner")
     }
 }
+
+suspend fun Purchases.isUserPro() =
+    Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.contains("pro")
