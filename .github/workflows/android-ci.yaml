@@ -52,18 +52,18 @@ jobs:
 
       - name: Create Fastlane Json
         id: create-json-fastlane
-        uses: jsdaniell/create-json@1.2.3
+        uses: jsdaniell/create-json@v1.2.3
         with:
           name: "key.json"
           json: ${{ secrets.FASTLANE_JSON }}
 
       - name: Create Google Services Json
         id: create-json-google-services
-        uses: jsdaniell/create-json@1.2.3
+        uses: jsdaniell/create-json@v1.2.3
         with:
           name: "google-services.json"
           json: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
-          dir: 'core/androidMain'
+          dir: 'core/src/androidMain'
 
       - name: Run fastlane deploy
         env:
