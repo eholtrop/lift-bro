@@ -2,16 +2,20 @@ package com.lift.bro.presentation.excercise
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +32,9 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.SubscriptionType
+import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
-import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Card
@@ -44,6 +48,7 @@ import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -61,26 +66,32 @@ fun ExcerciseDetailsScreen(
     date: LocalDate,
     variationId: String,
 ) {
-    val sets by dependencies.database.setDataSource.listenAllForVariation(variationId)
+    val excercises by dependencies.database.setDataSource.listenAll()
         .map { it.filter { it.date.toLocalDate() == date } }
-        .map { it.sortedBy { it.date } }
+        .map {
+            it.groupBy { it.variationId }
+                .map {
+                    dependencies.database.variantDataSource.get(it.key) to it.value
+                }
+                .map {
+                    Excercise(
+                        sets = it.second,
+                        variation = it.first!!,
+                        date = date
+                    )
+                }
+        }
         .collectAsState(emptyList())
 
-    val variation = dependencies.database.variantDataSource.get(variationId)!!
-
     ExcerciseDetailsScreen(
-        excercise = Excercise(
-            sets = sets,
-            date = date,
-            variation = variation,
-        )
+        excercises = excercises
     )
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 private fun ExcerciseDetailsScreen(
-    excercise: Excercise,
+    excercises: List<Excercise>,
 ) {
     val subscriptionType by LocalSubscriptionStatusProvider.current
     val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
@@ -88,95 +99,118 @@ private fun ExcerciseDetailsScreen(
         .collectAsState(false)
 
     LiftingScaffold(
-        title = { Text(stringResource(Res.string.excercise_screen_title)) },
-    ) { padding ->
-        Card(
-            modifier = Modifier.padding(padding)
-                .padding(horizontal = MaterialTheme.spacing.one)
-                .fillMaxWidth()
-        ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth().animateContentSize(),
+        title = {
+            Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                item {
-                    Text(
-                        excercise.variation.fullName,
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                }
+                Text(stringResource(Res.string.excercise_screen_title))
 
-                item {
-                    Text(
-                        excercise.date.toString(stringResource(Res.string.excercise_string_title_date_format)),
-                                style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-
-                if (showTwm) {
-                    item {
-                        Text(
-                            "Total Weight Moved: ${"${excercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
-                                    style = MaterialTheme.typography.labelLarge,
-                        )
-                    }
-                }
-
-                excercise.sets.forEach {
-                    item(
-                        key = it.id
+                Text(
+                    excercises.firstOrNull()?.date?.toString(stringResource(Res.string.excercise_string_title_date_format))
+                        ?: "",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+        },
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.padding(padding).fillMaxWidth().animateContentSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.one),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+        ) {
+            items(excercises) { excercise ->
+                Card {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+
                         val coordinator = LocalNavCoordinator.current
-                        SetInfoRow(
-                            modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 52.dp)
-                                .clickable(
-                                    onClick = {
-                                        coordinator.present(Destination.EditSet(setId = it.id))
-                                    },
-                                    role = Role.Button
-                                )
-                                .padding(
-                                    horizontal = MaterialTheme.spacing.one,
-                                    vertical = MaterialTheme.spacing.half
-                                ).animateItem(),
-                            set = it
-                        )
-                    }
-                }
-
-                item {
-                    Button(
-                        onClick = {
-                            GlobalScope.launch {
-                                val baseSet = excercise.sets.maxByOrNull { it.date.toEpochMilliseconds() }
-
-                                if (baseSet != null) {
-                                    dependencies.database.setDataSource.save(
-                                        set = baseSet.copy(
-                                            id = uuid4().toString(),
-                                            // increment date by one to ensure this new list is the "Last Set"
-                                            date = baseSet.date.plus(1, DateTimeUnit.MILLISECOND)
-                                        )
-                                    )
+                        Column(
+                            modifier = Modifier.clickable(
+                                onClick = {
+                                    coordinator.present(Destination.VariationDetails(excercise.variation.id))
                                 }
+                            ),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(
+                                excercise.variation.fullName,
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+
+                            if (showTwm) {
+                                Text(
+                                    "Total Weight Moved: ${"${excercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
+                                    style = MaterialTheme.typography.labelLarge,
+                                )
+                            }
+
+                            excercise.variation.notes?.let {
+                                Text(
+                                    text = excercise.variation.notes,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
                             }
                         }
-                    ) {
-                        Text(stringResource(Res.string.excercise_screen_duplicate_cta))
+
+
+                        excercise.sets.forEach {
+                            val coordinator = LocalNavCoordinator.current
+                            SetInfoRow(
+                                modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 52.dp)
+                                    .clickable(
+                                        onClick = {
+                                            coordinator.present(Destination.EditSet(setId = it.id))
+                                        },
+                                        role = Role.Button
+                                    )
+                                    .padding(
+                                        horizontal = MaterialTheme.spacing.one,
+                                        vertical = MaterialTheme.spacing.half
+                                    ).animateItem(),
+                                set = it
+                            )
+                        }
+
+                        Button(
+                            colors = ButtonDefaults.outlinedButtonColors(),
+                            onClick = {
+                                GlobalScope.launch {
+                                    val baseSet =
+                                        excercise.sets.maxByOrNull { it.date.toEpochMilliseconds() }
+
+                                    if (baseSet != null) {
+                                        dependencies.database.setDataSource.save(
+                                            set = baseSet.copy(
+                                                id = uuid4().toString(),
+                                                // increment date by one to ensure this new list is the "Last Set"
+                                                date = baseSet.date.plus(
+                                                    1,
+                                                    DateTimeUnit.MILLISECOND
+                                                )
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        ) {
+                            Text(stringResource(Res.string.excercise_screen_duplicate_cta))
+                        }
                     }
                 }
+            }
 
-                item {
-                    val coordinator = LocalNavCoordinator.current
-                    Button(
-                        onClick = {
-                            coordinator.present(Destination.EditSet(
-                                variationId = excercise.variation.id,
-                            ))
-                        }
-                    ) {
-                        Text(stringResource(Res.string.excercise_screen_new_set_cta))
+            item {
+                val coordinator = LocalNavCoordinator.current
+                Button(
+                    onClick = {
+                        coordinator.present(
+                            Destination.EditSet()
+                        )
                     }
+                ) {
+                    Text(stringResource(Res.string.excercise_screen_new_set_cta))
                 }
             }
         }

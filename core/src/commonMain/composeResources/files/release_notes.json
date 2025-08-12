@@ -1,6 +1,14 @@
 [
   {
-    "versionId": "2025.08.11",
+    "versionId": "2025.08.16",
+    "type": "feature",
+    "platform": "all",
+    "note": {
+      "en": "Add notes per variation, Remember to squeeze that peach!"
+    }
+  },
+  {
+    "versionId": "2025.08.16",
     "type": "feature",
     "platform": "all",
     "note": {

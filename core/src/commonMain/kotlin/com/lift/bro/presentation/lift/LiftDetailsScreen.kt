@@ -70,6 +70,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
+import com.lift.bro.domain.models.maxText
 import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
@@ -437,22 +438,7 @@ private fun VariationCard(
                     when (LocalLiftCardYValue.current.value) {
                         LiftCardYValue.Weight -> {
                             Text(
-                                text = when {
-                                    // and show tmax enabled
-                                    variation.eMax != null && variation.oneRepMax != null && LocalTMaxSettings.current ->
-                                        "${
-                                            variation.oneRepMax.decimalFormat().uom()
-                                        } max${if(variation.eMax > variation.oneRepMax) "- (${variation.eMax.decimalFormat().uom()} tmax)" else ""}"
-
-                                    variation.eMax != null && LocalEMaxSettings.current ->
-                                        "${variation.eMax.decimalFormat().uom()} emax"
-
-                                    variation.oneRepMax != null -> "${
-                                        variation.oneRepMax.decimalFormat().uom()
-                                    } max"
-
-                                    else -> "No max"
-                                },
+                                text = variation.maxText(),
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }

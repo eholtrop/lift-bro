@@ -17,6 +17,8 @@ interface IVariationRepository {
 
     fun delete(id: String)
 
+    fun listen(id: String): Flow<Variation?>
+
     fun get(variationId: String?): Variation?
 
 }

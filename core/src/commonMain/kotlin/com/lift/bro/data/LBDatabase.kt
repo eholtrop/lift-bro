@@ -289,7 +289,7 @@ internal fun comliftbrodb.Variation.toDomain(
     },
     oneRepMax = sets.filter { it.reps == 1L }.maxOfOrNull { it.weight ?: 0.0 },
     favourite = if (this.favourite == 1L) true else false,
-    notes = this.notes ?: ""
+    notes = this.notes
 )
 
 expect class DriverFactory {

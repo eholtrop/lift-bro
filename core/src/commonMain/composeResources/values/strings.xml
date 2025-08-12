@@ -82,7 +82,7 @@
     <string name="excercise_screen_title">Excercise</string>
     <string name="excercise_screen_duplicate_cta">Duplicate Last Set</string>
     <string name="excercise_screen_new_set_cta">Add New Set</string>
-    <string name="excercise_string_title_date_format">MMMM d - yyyy</string>
+    <string name="excercise_string_title_date_format">EEEE, MMMM d - yyyy</string>
 
 
     <!-- ONBOARDING -->

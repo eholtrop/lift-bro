@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -84,6 +85,20 @@ class VariationRepository(
     override fun delete(id: String) {
         GlobalScope.launch {
             variationQueries.delete(id)
+        }
+    }
+
+    override fun listen(id: String): Flow<Variation?> {
+        return combine(
+            variationQueries.get(id).asFlow().mapToOneOrNull(Dispatchers.IO),
+            setQueries.getAllByVariation(id).asFlow().mapToList(Dispatchers.IO),
+        ) { variation, sets ->
+            val lift = liftQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
+
+            variation?.toDomain(
+                lift?.toDomain(),
+                sets
+            )
         }
     }
 
