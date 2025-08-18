@@ -12,9 +12,12 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		7555FF83242A565900829871 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* ContentView.swift */; };
 		B17C1AE72E08C81200020BDE /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = B17C1AE62E08C81200020BDE /* GoogleMobileAds */; };
+		B18EBA252E4A36FA0047798C /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B18EBA242E4A36FA0047798C /* StoreKit.framework */; };
 		B1A23C662E2D66E100525DEF /* PurchasesHybridCommon in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C652E2D66E100525DEF /* PurchasesHybridCommon */; };
 		B1A23C682E2D66E100525DEF /* PurchasesHybridCommonUI in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C672E2D66E100525DEF /* PurchasesHybridCommonUI */; };
 		B1A23C6B2E2D6A1F00525DEF /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C6A2E2D6A1F00525DEF /* Sentry */; };
+		B1D9A2052E4A3A7E00E189C2 /* StoreKitTestCertificate.cer in Resources */ = {isa = PBXBuildFile; fileRef = B1D9A2042E4A3A7E00E189C2 /* StoreKitTestCertificate.cer */; };
+		B1D9A2092E4A403D00E189C2 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = B1D9A2082E4A403D00E189C2 /* Configuration.storekit */; };
 		B1DD777D2E43840E004C3183 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */; };
 		B1DD77802E438488004C3183 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B1DD777F2E438488004C3183 /* FirebaseAnalytics */; };
 		B1DD77822E438488004C3183 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = B1DD77812E438488004C3183 /* FirebaseAnalyticsCore */; };
@@ -42,6 +45,9 @@
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B11618252E0761C900672FF1 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
+		B18EBA242E4A36FA0047798C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		B1D9A2042E4A3A7E00E189C2 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
+		B1D9A2082E4A403D00E189C2 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -53,6 +59,7 @@
 				B17C1AE72E08C81200020BDE /* GoogleMobileAds in Frameworks */,
 				B1DD77822E438488004C3183 /* FirebaseAnalyticsCore in Frameworks */,
 				B1A23C662E2D66E100525DEF /* PurchasesHybridCommon in Frameworks */,
+				B18EBA252E4A36FA0047798C /* StoreKit.framework in Frameworks */,
 				B1DD77842E438488004C3183 /* FirebaseCrashlytics in Frameworks */,
 				B1A23C682E2D66E100525DEF /* PurchasesHybridCommonUI in Frameworks */,
 				B1DD77802E438488004C3183 /* FirebaseAnalytics in Frameworks */,
@@ -74,6 +81,8 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				B1D9A2082E4A403D00E189C2 /* Configuration.storekit */,
+				B1D9A2042E4A3A7E00E189C2 /* StoreKitTestCertificate.cer */,
 				B11618242E0761C000672FF1 /* ci_scripts */,
 				7555FF7D242A565900829871 /* iosApp */,
 				B1A23C692E2D6A1F00525DEF /* Frameworks */,
@@ -113,6 +122,7 @@
 		B1A23C692E2D6A1F00525DEF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B18EBA242E4A36FA0047798C /* StoreKit.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -183,6 +193,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1D9A2052E4A3A7E00E189C2 /* StoreKitTestCertificate.cer in Resources */,
+				B1D9A2092E4A403D00E189C2 /* Configuration.storekit in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 				B1DD777D2E43840E004C3183 /* GoogleService-Info.plist in Resources */,
@@ -347,7 +359,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 34;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -372,7 +384,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.lift.bro;
 				PRODUCT_NAME = "Lift Bro";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match AppStore com.lift.bro";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "match Development com.lift.bro";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";

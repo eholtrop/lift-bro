@@ -28,3 +28,9 @@ androidApp/google-services.json
 iosApp/iosApp/GoogleService-Info.plist
 
 core/src/androidMain/google-services.json
+
+iosApp/Configuration.storekit
+
+iosApp/StoreKitTestCertificate.cer
+
+iosApp/SubscriptionKey_0AE80D1D.p8

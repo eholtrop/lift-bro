@@ -162,13 +162,16 @@ fun App(
     navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding)
 ) {
 
-    var subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
+    val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
+    val isAndroid = LocalPlatformContext.current != null
+
     LaunchedEffect("setup_revenuecat") {
         if (BuildConfig.isDebug) {
             Purchases.logLevel = LogLevel.DEBUG
         }
 
-        Purchases.configure(BuildKonfig.REVENUE_CAT_API_KEY)
+        Log.d("", isAndroid.toString())
+        Purchases.configure(if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS)
         Purchases.sharedInstance.getCustomerInfo(
             onError = { error ->
                 Sentry.captureException(Throwable(message = error.message))
@@ -224,6 +227,7 @@ fun App(
                 Firebase.initialize(context)
             }
         }
+
 
         AppTheme {
             Box(
