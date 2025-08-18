@@ -4,11 +4,7 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,33 +43,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
-import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalLiftCardYValue
-import com.lift.bro.presentation.LocalPaywallVisibility
-import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
-import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesRow
-import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
-import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
@@ -155,9 +143,6 @@ fun DashboardContent(
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ) {
     var tab by rememberSaveable { mutableStateOf(defaultTab) }
-    val showProBanner by dependencies.settingsRepository.showDashboardProBanner()
-        .collectAsState(false)
-    val subscriptionType by LocalSubscriptionStatusProvider.current
 
     LiftingScaffold(
         title = {
@@ -285,47 +270,6 @@ fun DashboardContent(
                                         Res.string.reps
                                     )
                                 )
-                            }
-                        }
-                    }
-
-                    if (showProBanner && subscriptionType != SubscriptionType.Pro) {
-                        item(
-                            span = { GridItemSpan(2) }
-                        ) {
-                            val showPaywall = LocalPaywallVisibility.current
-                            SettingsRowItem(
-                                modifier = Modifier.clickable { showPaywall.value = true },
-                                title = {
-                                    Column {
-                                        Text("Become a Lift Pro!")
-                                        Text(
-                                            text = "Sign up for an Ad free experience and extra tracking metrics!",
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-                                },
-                            ) {
-                                Row {
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = {
-                                            dependencies.settingsRepository.dashboardProBannerDismissed()
-                                        },
-                                        colors = ButtonDefaults.outlinedButtonColors()
-                                    ) {
-                                        Text("Not Now...")
-                                    }
-                                    Space(MaterialTheme.spacing.one)
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = {
-                                            showPaywall.value = true
-                                        }
-                                    ) {
-                                        Text("Learn More")
-                                    }
-                                }
                             }
                         }
                     }
