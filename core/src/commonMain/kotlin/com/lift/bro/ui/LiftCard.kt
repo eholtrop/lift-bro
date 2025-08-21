@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
@@ -271,6 +272,6 @@ fun LiftCard(
 }
 
 @Composable
-fun weightFormat(weight: Double): String {
-    return "${weight.decimalFormat()} ${LocalUnitOfMeasure.current.value}"
+fun weightFormat(weight: Double, uom: UOM = LocalUnitOfMeasure.current): String {
+    return "${weight.decimalFormat()} ${uom.value}"
 }

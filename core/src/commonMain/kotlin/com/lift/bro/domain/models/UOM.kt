@@ -11,9 +11,8 @@ enum class UOM(val value: String) {
 fun UOM.convert(value: Double, convertTo: UOM): Double {
     if (this == convertTo) return value
 
-    Log.d("DEBUGEH", "Converting")
     return when (this) {
-        UOM.KG -> value * 0.45356237
-        UOM.POUNDS -> value * 2.2046226218
+        UOM.KG -> value * 2.2046226218
+        UOM.POUNDS -> value * 0.45356237
     }
 }

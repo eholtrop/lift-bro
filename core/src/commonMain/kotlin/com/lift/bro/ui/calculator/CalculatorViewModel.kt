@@ -33,6 +33,7 @@ sealed class CalculatorEvent {
     data class DigitAdded(val digit: Int) : CalculatorEvent()
     data class OperatorSelected(val operation: Operator) : CalculatorEvent()
     data class ActionApplied(val action: Action) : CalculatorEvent()
+    data class ToggleUOMForIndex(val index: Int): CalculatorEvent()
 }
 
 class CalculatorViewModel(
@@ -60,10 +61,7 @@ class CalculatorViewModel(
                                 weight = lastSegment.weight.copy(newWeight)
                             )
                             state.copy(
-                                expression = state.expression.subList(
-                                    0,
-                                    state.expression.lastIndex
-                                ) + newSegment
+                                expression = state.expression.dropLast(1) + newSegment
                             )
                         }
 
@@ -86,10 +84,7 @@ class CalculatorViewModel(
                         operation = action.operation
                     )
                     state.copy(
-                        expression = state.expression.subList(
-                            0,
-                            state.expression.lastIndex
-                        ) + newSegment
+                        expression = state.expression.dropLast(1) + newSegment
                     )
                 }
 
@@ -119,10 +114,7 @@ class CalculatorViewModel(
                             }
                         }
                         state.copy(
-                            expression = state.expression.subList(
-                                0,
-                                state.expression.lastIndex
-                            ) + newSegment
+                            expression = state.expression.dropLast(1) + newSegment
                         )
                     }
 
@@ -143,10 +135,7 @@ class CalculatorViewModel(
                         val lastSegment = state.expression.last()
                         if (lastSegment.operation == null) {
                             state.copy(
-                                expression = state.expression.subList(
-                                    0,
-                                    state.expression.lastIndex
-                                ) + lastSegment.copy(
+                                expression = state.expression.dropLast(1) + lastSegment.copy(
                                     decimalApplied = true
                                 )
                             )
@@ -161,6 +150,17 @@ class CalculatorViewModel(
                             )
                         }
                     }
+                }
+
+                is CalculatorEvent.ToggleUOMForIndex -> {
+                    val segment = state.expression[action.index]
+                    val prefix = if (action.index == 0) emptyList() else state.expression.subList(0, action.index)
+                    val suffix = if (state.expression.lastIndex == action.index) emptyList() else state.expression.subList(action.index + 1, state.expression.lastIndex + 1)
+
+
+                    state.copy(
+                        expression = prefix + segment.copy(weight = segment.weight.copy(uom = segment.weight.uom.toggle())) + suffix
+                    )
                 }
             }
         }.map { state ->
@@ -188,7 +188,7 @@ class CalculatorViewModel(
         )
 
         return when (segment.operation) {
-            null -> segment.weight.value
+            null -> thisWeight
             Operator.Multiply -> calculateTotal(
                 listOf(
                     Segment(
@@ -210,5 +210,12 @@ class CalculatorViewModel(
             Operator.Add -> thisWeight + calculateTotal(expression.drop(1))
             Operator.Subtract -> thisWeight - calculateTotal(expression.drop(1))
         }
+    }
+}
+
+private fun UOM.toggle(): UOM {
+    return when (this) {
+        UOM.KG -> UOM.POUNDS
+        UOM.POUNDS -> UOM.KG
     }
 }

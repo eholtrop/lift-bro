@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.Backspace
@@ -35,6 +36,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalCalculatorVisibility
@@ -160,9 +168,9 @@ private fun WeightCalculatorInternal(
                 start = MaterialTheme.spacing.half,
                 end = MaterialTheme.spacing.half,
             )
-        .clickable {
+            .clickable {
 
-        }
+            }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -174,7 +182,42 @@ private fun WeightCalculatorInternal(
             )
 
             Text(
-                text = state.expression.fold("") { acc, segment -> "$acc ${segment.weight.value.decimalFormat(segment.decimalApplied)} ${segment.weight.uom.value} ${segment.operation?.char ?: ""}" },
+                text = buildAnnotatedString {
+                    state.expression.forEachIndexed { index, segment ->
+                        withStyle(MaterialTheme.typography.titleLarge.toSpanStyle()) {
+                            append(" ")
+                            append(segment.weight.value.decimalFormat(segment.decimalApplied))
+                        }
+
+                        withLink(
+                            link = LinkAnnotation.Clickable(
+                                tag = segment.toString(),
+                                styles = TextLinkStyles(
+                                    style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.secondary)
+                                        .toSpanStyle(),
+                                    pressedStyle = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.tertiary)
+                                        .toSpanStyle(),
+                                    hoveredStyle = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.primary)
+                                        .toSpanStyle(),
+                                )
+                            ) {
+                                viewModel.handleEvent(CalculatorEvent.ToggleUOMForIndex(index))
+                            }
+                        ) {
+                            if (state.expression.getOrNull(index - 1)?.operation?.bedmasIndex != 0) {
+                                append(" ")
+                                append(segment.weight.uom.value)
+                            }
+                        }
+
+                        segment.operation?.let {
+                            withStyle(MaterialTheme.typography.titleLarge.toSpanStyle()) {
+                                append(" ")
+                                append(it.char)
+                            }
+                        }
+                    }
+                },
                 style = MaterialTheme.typography.titleLarge
             )
         }
@@ -355,6 +398,7 @@ fun CalculatorButton(
         )
     }
 }
+
 @Composable
 fun CalculatorButton(
     modifier: Modifier = Modifier,
