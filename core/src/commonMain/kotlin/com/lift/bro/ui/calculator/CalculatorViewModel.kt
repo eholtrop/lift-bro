@@ -2,6 +2,9 @@ package com.lift.bro.ui.calculator
 
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.models.convert
+import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.SharingStarted
@@ -17,7 +20,8 @@ data class CalculatorState(
 
 data class Segment(
     val weight: Weight,
-    val operation: Operator? = null
+    val operation: Operator? = null,
+    val decimalApplied: Boolean = false,
 )
 
 data class Weight(
@@ -47,11 +51,13 @@ class CalculatorViewModel(
                     when (state.expression.last().operation == null) {
                         true -> {
                             val lastSegment = state.expression.last()
+                            val newWeight = when (lastSegment.decimalApplied) {
+                                false -> lastSegment.weight.value * 10 + action.digit
+                                true -> (lastSegment.weight.value.decimalFormat(true) + action.digit).toDouble()
+                            }
+
                             val newSegment = lastSegment.copy(
-                                weight = Weight(
-                                    lastSegment.weight.value * 10 + action.digit,
-                                    lastSegment.weight.uom
-                                )
+                                weight = lastSegment.weight.copy(newWeight)
                             )
                             state.copy(
                                 expression = state.expression.subList(
@@ -90,12 +96,28 @@ class CalculatorViewModel(
                 is CalculatorEvent.ActionApplied -> when (action.action) {
                     Action.Backspace -> {
                         val lastSegment = state.expression.last()
-                        val newSegment = lastSegment.copy(
-                            weight = Weight(
-                                (lastSegment.weight.value * 10).toInt().toDouble() / 10,
-                                lastSegment.weight.uom
-                            )
-                        )
+                        val newSegment = when {
+                            // if operation is present nullify it
+                            lastSegment.operation != null -> {
+                                lastSegment.copy(operation = null)
+                            }
+                            // else remove a digit from the last segment
+                            else -> {
+                                val newWeight = lastSegment.weight.value
+                                    .decimalFormat(lastSegment.decimalApplied)
+                                    .dropLast(1)
+                                    .toDouble()
+                                if (newWeight == lastSegment.weight.value) {
+                                    lastSegment.copy(decimalApplied = false)
+                                } else {
+                                    lastSegment.copy(
+                                        weight = lastSegment.weight.copy(
+                                            newWeight
+                                        )
+                                    )
+                                }
+                            }
+                        }
                         state.copy(
                             expression = state.expression.subList(
                                 0,
@@ -116,6 +138,29 @@ class CalculatorViewModel(
                             )
                         )
                     )
+
+                    Action.Decimal -> {
+                        val lastSegment = state.expression.last()
+                        if (lastSegment.operation == null) {
+                            state.copy(
+                                expression = state.expression.subList(
+                                    0,
+                                    state.expression.lastIndex
+                                ) + lastSegment.copy(
+                                    decimalApplied = true
+                                )
+                            )
+                        } else {
+                            state.copy(
+                                expression = state.expression + Segment(
+                                    weight = Weight(
+                                        0.0,
+                                        UOM.POUNDS
+                                    ), decimalApplied = true
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }.map { state ->
@@ -144,8 +189,24 @@ class CalculatorViewModel(
 
         return when (segment.operation) {
             null -> segment.weight.value
-            Operator.Multiply -> thisWeight * nextWeight + calculateTotal(expression.drop(2))
-            Operator.Divide -> thisWeight / nextWeight + calculateTotal(expression.drop(2))
+            Operator.Multiply -> calculateTotal(
+                listOf(
+                    Segment(
+                        Weight(thisWeight * nextWeight, defaultUOM),
+                        nextSegment?.operation
+                    )
+                ) + expression.drop(2)
+            )
+
+            Operator.Divide -> calculateTotal(
+                listOf(
+                    Segment(
+                        Weight(thisWeight * nextWeight, defaultUOM),
+                        nextSegment?.operation
+                    )
+                ) + expression.drop(2)
+            )
+
             Operator.Add -> thisWeight + calculateTotal(expression.drop(1))
             Operator.Subtract -> thisWeight - calculateTotal(expression.drop(1))
         }

@@ -7,13 +7,23 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Backspace
+import androidx.compose.material.icons.filled.Backspace
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,11 +34,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalCalculatorVisibility
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.decimalFormat
 
@@ -58,6 +70,7 @@ enum class Action {
     Backspace,
     Clear,
     Equals,
+    Decimal,
 }
 
 @Composable
@@ -141,7 +154,13 @@ private fun WeightCalculatorInternal(
                 bottomEnd = CornerSize(0.dp),
                 bottomStart = CornerSize(0.dp)
             )
-        ).clickable {
+        ).navigationBarsPadding()
+            .padding(
+                top = MaterialTheme.spacing.one,
+                start = MaterialTheme.spacing.half,
+                end = MaterialTheme.spacing.half,
+            )
+        .clickable {
 
         }
     ) {
@@ -149,31 +168,26 @@ private fun WeightCalculatorInternal(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.End,
         ) {
-
-
             Text(
                 text = weightFormat(state.total),
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineLarge,
             )
 
             Text(
-                text = state.expression.fold("") { acc, segment -> "$acc ${segment.weight.value.decimalFormat()} ${segment.weight.uom.value} ${segment.operation?.char ?: ""}" },
-                style = MaterialTheme.typography.bodyLarge
+                text = state.expression.fold("") { acc, segment -> "$acc ${segment.weight.value.decimalFormat(segment.decimalApplied)} ${segment.weight.uom.value} ${segment.operation?.char ?: ""}" },
+                style = MaterialTheme.typography.titleLarge
             )
         }
 
         KeyPad(
+            modifier = Modifier.padding(vertical = MaterialTheme.spacing.one),
             digitClicked = { viewModel.handleEvent(CalculatorEvent.DigitAdded(it)) },
             operatorClicked = { viewModel.handleEvent(CalculatorEvent.OperatorSelected(it)) },
-            actionClicked = { viewModel.handleEvent(CalculatorEvent.ActionApplied(it)) }
+            actionClicked = { viewModel.handleEvent(CalculatorEvent.ActionApplied(it)) },
+            decimalClicked = { viewModel.handleEvent(CalculatorEvent.ActionApplied(Action.Decimal)) }
         )
 
         Row {
-            Button(
-                onClick = {}
-            ) {
-                Text("Copy to Clipboard")
-            }
             Space()
             Button(
                 onClick = {}
@@ -183,7 +197,7 @@ private fun WeightCalculatorInternal(
             Button(
                 onClick = {}
             ) {
-                Text("Done")
+                Text("Clipboard")
             }
         }
     }
@@ -191,64 +205,128 @@ private fun WeightCalculatorInternal(
 
 @Composable
 fun KeyPad(
+    modifier: Modifier = Modifier,
     digitClicked: (Int) -> Unit,
     operatorClicked: (Operator) -> Unit,
-    actionClicked: (Action) -> Unit
+    actionClicked: (Action) -> Unit,
+    decimalClicked: () -> Unit,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(MaterialTheme.spacing.half),
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(MaterialTheme.spacing.half)
 ) {
-    Column {
-        Row {
-            CalculatorButton("1") {
+    Column(
+        modifier = modifier,
+        verticalArrangement = verticalArrangement
+    ) {
+        Row(
+            horizontalArrangement = horizontalArrangement
+        ) {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                text = "1"
+            ) {
                 digitClicked(1)
             }
-            CalculatorButton("2") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "2"
+            ) {
                 digitClicked(2)
             }
-            CalculatorButton("3") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "3"
+            ) {
                 digitClicked(3)
             }
-            CalculatorButton("/") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "/"
+            ) {
                 operatorClicked(Operator.Divide)
             }
         }
-        Row {
-            CalculatorButton("4") {
+        Row(
+            horizontalArrangement = horizontalArrangement
+        ) {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "4"
+            ) {
                 digitClicked(4)
             }
-            CalculatorButton("5") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "5"
+            ) {
                 digitClicked(5)
             }
-            CalculatorButton("6") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "6"
+            ) {
                 digitClicked(6)
             }
-            CalculatorButton("x") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "x"
+            ) {
                 operatorClicked(Operator.Multiply)
             }
         }
-        Row {
-            CalculatorButton("7") {
+        Row(
+            horizontalArrangement = horizontalArrangement
+        ) {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "7"
+            ) {
                 digitClicked(7)
             }
-            CalculatorButton("8") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "8"
+            ) {
                 digitClicked(8)
             }
-            CalculatorButton("9") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "9"
+            ) {
                 digitClicked(9)
             }
-            CalculatorButton("+") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "+"
+            ) {
                 operatorClicked(Operator.Add)
             }
         }
-        Row {
-            CalculatorButton(".") {
-//                currentWeight = currentWeight * 10 + 1
+        Row(
+            horizontalArrangement = horizontalArrangement
+        ) {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "."
+            ) {
+                decimalClicked()
             }
-            CalculatorButton("0") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "0"
+            ) {
                 digitClicked(0)
             }
-            CalculatorButton("<--") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                vector = Icons.AutoMirrored.Filled.Backspace,
+                contentDescription = "Backspace"
+            ) {
                 actionClicked(Action.Backspace)
             }
-            CalculatorButton("-") {
+            CalculatorButton(
+                modifier = calculatorButtonModifier(),
+                "-"
+            ) {
                 operatorClicked(Operator.Subtract)
             }
         }
@@ -256,13 +334,42 @@ fun KeyPad(
 }
 
 @Composable
+fun RowScope.calculatorButtonModifier(): Modifier =
+    Modifier.weight(1f)
+        .aspectRatio(1f)
+
+@Composable
 fun CalculatorButton(
+    modifier: Modifier = Modifier,
     text: String,
     onClick: () -> Unit
 ) {
     Button(
-        onClick = onClick
+        modifier = modifier,
+        onClick = onClick,
+        colors = ButtonDefaults.elevatedButtonColors()
     ) {
-        Text(text)
+        Text(
+            text,
+            style = MaterialTheme.typography.titleLarge
+        )
+    }
+}
+@Composable
+fun CalculatorButton(
+    modifier: Modifier = Modifier,
+    vector: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit
+) {
+    Button(
+        modifier = modifier,
+        onClick = onClick,
+        colors = ButtonDefaults.elevatedButtonColors()
+    ) {
+        Icon(
+            imageVector = vector,
+            contentDescription = contentDescription
+        )
     }
 }
