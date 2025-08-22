@@ -7,6 +7,11 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -15,6 +20,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -36,10 +42,12 @@ import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -59,7 +67,9 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.presentation.LocalCalculatorVisibility
+import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
@@ -69,6 +79,7 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.painterResource
 
 enum class Digit(digit: Int) {
     One(1),
@@ -144,17 +155,7 @@ fun WeightCalculatorBottomSheet(
                 ) {
                     var localTotal = total / 2
 
-                    val plates = listOf(
-                        Plate(45.0, UOM.POUNDS, MaterialTheme.colorScheme.primary),
-                        Plate(35.0, UOM.POUNDS, MaterialTheme.colorScheme.secondary),
-                        Plate(25.0, UOM.POUNDS, MaterialTheme.colorScheme.tertiary),
-                        Plate(10.0, UOM.POUNDS, MaterialTheme.colorScheme.primary),
-                        Plate(5.0, UOM.POUNDS, MaterialTheme.colorScheme.secondary),
-                        Plate(2.5, UOM.POUNDS, MaterialTheme.colorScheme.tertiary),
-                        Plate(1.0, UOM.POUNDS, MaterialTheme.colorScheme.primary),
-                    )
-
-                    Space(128.dp)
+                    Space(72.dp)
                     AnimatedVisibility(
                         visible = showCalculator.value,
                         enter = slideInHorizontally { -it } + fadeIn(),
@@ -168,6 +169,16 @@ fun WeightCalculatorBottomSheet(
                         )
                     }
 
+                    val plates = listOf(
+                        Plate(45.0, UOM.POUNDS, MaterialTheme.colorScheme.primary),
+                        Plate(35.0, UOM.POUNDS, MaterialTheme.colorScheme.secondary),
+                        Plate(25.0, UOM.POUNDS, MaterialTheme.colorScheme.tertiary),
+                        Plate(10.0, UOM.POUNDS, MaterialTheme.colorScheme.primary),
+                        Plate(5.0, UOM.POUNDS, MaterialTheme.colorScheme.secondary),
+                        Plate(2.5, UOM.POUNDS, MaterialTheme.colorScheme.tertiary),
+                        Plate(1.0, UOM.POUNDS, MaterialTheme.colorScheme.primary),
+                    )
+
                     plates.sortedByDescending { it.weight }.forEach { plate ->
                         val numPlates = (localTotal / plate.weight).toInt()
                         localTotal = localTotal % plate.weight
@@ -176,9 +187,9 @@ fun WeightCalculatorBottomSheet(
                             var showPlate by remember { mutableStateOf(false) }
 
                             AnimatedVisibility(
-                                visible = showPlate,
-                                enter = slideInHorizontally { it },
-                                exit = slideOutHorizontally { it }
+                                visible = showPlate && showCalculator.value,
+                                enter = slideInHorizontally(animationSpec = tween(easing = EaseIn)) { it * 5 },
+                                exit = slideOutHorizontally(tween(easing = EaseOut)) { it } + fadeOut()
                             ) {
                                 PlateBox(
                                     plate = plate
@@ -186,7 +197,7 @@ fun WeightCalculatorBottomSheet(
                             }
 
                             LaunchedEffect(Unit) {
-                                delay(100L * index)
+                                delay(50L * index)
                                 showPlate = true
                             }
                         }
@@ -205,10 +216,20 @@ fun WeightCalculatorBottomSheet(
                     modifier = Modifier.padding(bottom = MaterialTheme.spacing.one),
                     shape = MaterialTheme.shapes.medium,
                 ) {
-                    Text(
+                    Row(
                         modifier = Modifier.padding(all = MaterialTheme.spacing.half),
-                        text = "We're gonna need a bigger bar... 🧔‍♂️"
-                    )
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(LocalTextStyle.current.lineHeight.value.dp),
+                            painter = painterResource(LocalLiftBro.current.iconRes()),
+                            contentDescription = null,
+                        )
+                        Space(MaterialTheme.spacing.half)
+                        Text(
+                            text = "We're gonna need a bigger bar... 🧔‍♂️"
+                        )
+                    }
                 }
 
                 Space(MaterialTheme.spacing.one)
@@ -248,11 +269,26 @@ fun PlateBox(
         )
             .background(
                 color = plate.color,
-                shape = MaterialTheme.shapes.small
+                shape = MaterialTheme.shapes.small,
+            ).border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface,
+                shape = MaterialTheme.shapes.small,
             ),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = plate.weight.decimalFormat())
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            CompositionLocalProvider(
+                LocalTextStyle provides MaterialTheme.typography.titleSmall,
+            ) {
+                Text(text = plate.weight.decimalFormat())
+//                if (LocalUnitOfMeasure.current != plate.uom) {
+                    Text(text = LocalUnitOfMeasure.current.value)
+//                }
+            }
+        }
     }
 }
 
