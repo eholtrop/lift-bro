@@ -153,7 +153,7 @@ fun WeightCalculatorBottomSheet(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
                 ) {
-                    var localTotal = total / 2
+                    var localTotal = (total / 2) - 45 // subtract the weight of the bar
 
                     Space(72.dp)
                     AnimatedVisibility(
