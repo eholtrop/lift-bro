@@ -139,10 +139,10 @@ fun WeightCalculatorBottomSheet(
         Column(
             modifier = Modifier.fillMaxSize(),
         ) {
-            Space()
+            Space(modifier = Modifier.animateContentSize())
 
             Box(
-                modifier = Modifier.wrapContentHeight().fillMaxWidth(),
+                modifier = Modifier.wrapContentHeight().fillMaxWidth().weight(1f),
                 contentAlignment = Alignment.CenterStart
             ) {
 
@@ -204,10 +204,11 @@ fun WeightCalculatorBottomSheet(
                     }
                 }
             }
-            Space()
+
+            Space(MaterialTheme.spacing.one)
 
             AnimatedVisibility(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
+                modifier = Modifier.align(Alignment.CenterHorizontally).animateContentSize(),
                 visible = total > 1000,
                 enter = fadeIn(),
                 exit = fadeOut(),
@@ -355,6 +356,7 @@ private fun WeightCalculatorInternal(
             AnimatedText(
                 text = weightFormat(state.total),
                 style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.onSurface,
                 transitionForChar = { char, index ->
                     if (char.isDigit()) {
                         AnimatedTextDefaults.transitionForChar(this, char, index)
@@ -403,7 +405,8 @@ private fun WeightCalculatorInternal(
                         }
                     }
                 },
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 
