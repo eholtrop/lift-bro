@@ -1,10 +1,14 @@
 package com.lift.bro.ui.calculator
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalCalculatorVisibility
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.ui.AnimatedText
+import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
@@ -176,9 +182,16 @@ private fun WeightCalculatorInternal(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.End,
         ) {
-            Text(
+            AnimatedText(
                 text = weightFormat(state.total),
                 style = MaterialTheme.typography.headlineLarge,
+                transitionForChar = { char, index ->
+                    if (char.isDigit()) {
+                        AnimatedTextDefaults.transitionForChar(this, char, index)
+                    } else {
+                        EnterTransition.None togetherWith ExitTransition.None
+                    }
+                }
             )
 
             Text(
@@ -188,7 +201,7 @@ private fun WeightCalculatorInternal(
                             if (index != 0) {
                                 append(" ")
                             }
-                            append(segment.weight?.value.decimalFormat(segment.decimalApplied))
+                            append(segment.weight.value.decimalFormat(segment.decimalApplied))
                         }
 
                         withLink(
@@ -208,7 +221,7 @@ private fun WeightCalculatorInternal(
                         ) {
                             if (state.expression.getOrNull(index - 1)?.operation?.bedmasIndex != 0) {
                                 append("\u00A0")
-                                append(segment.weight?.uom?.value ?: "")
+                                append(segment.weight.uom.value)
                             }
                         }
 
