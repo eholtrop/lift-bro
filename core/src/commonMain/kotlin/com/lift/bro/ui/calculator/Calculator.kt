@@ -185,8 +185,10 @@ private fun WeightCalculatorInternal(
                 text = buildAnnotatedString {
                     state.expression.forEachIndexed { index, segment ->
                         withStyle(MaterialTheme.typography.titleLarge.toSpanStyle()) {
-                            append(" ")
-                            append(segment.weight.value.decimalFormat(segment.decimalApplied))
+                            if (index != 0) {
+                                append(" ")
+                            }
+                            append(segment.weight?.value.decimalFormat(segment.decimalApplied))
                         }
 
                         withLink(
@@ -205,8 +207,8 @@ private fun WeightCalculatorInternal(
                             }
                         ) {
                             if (state.expression.getOrNull(index - 1)?.operation?.bedmasIndex != 0) {
-                                append(" ")
-                                append(segment.weight.uom.value)
+                                append("\u00A0")
+                                append(segment.weight?.uom?.value ?: "")
                             }
                         }
 
@@ -229,20 +231,6 @@ private fun WeightCalculatorInternal(
             actionClicked = { viewModel.handleEvent(CalculatorEvent.ActionApplied(it)) },
             decimalClicked = { viewModel.handleEvent(CalculatorEvent.ActionApplied(Action.Decimal)) }
         )
-
-        Row {
-            Space()
-            Button(
-                onClick = {}
-            ) {
-                Text("Cancel")
-            }
-            Button(
-                onClick = {}
-            ) {
-                Text("Clipboard")
-            }
-        }
     }
 }
 

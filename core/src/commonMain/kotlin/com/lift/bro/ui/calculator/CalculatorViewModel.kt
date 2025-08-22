@@ -33,7 +33,7 @@ sealed class CalculatorEvent {
     data class DigitAdded(val digit: Int) : CalculatorEvent()
     data class OperatorSelected(val operation: Operator) : CalculatorEvent()
     data class ActionApplied(val action: Action) : CalculatorEvent()
-    data class ToggleUOMForIndex(val index: Int): CalculatorEvent()
+    data class ToggleUOMForIndex(val index: Int) : CalculatorEvent()
 }
 
 class CalculatorViewModel(
@@ -49,9 +49,12 @@ class CalculatorViewModel(
         .scan(initialState) { state, action ->
             when (action) {
                 is CalculatorEvent.DigitAdded -> {
-                    when (state.expression.last().operation == null) {
+                    when (state.expression.lastOrNull()?.operation == null) {
                         true -> {
-                            val lastSegment = state.expression.last()
+                            val lastSegment = state.expression.lastOrNull() ?: Segment(
+                                Weight(0.0, defaultUOM),
+                                null
+                            )
                             val newWeight = when (lastSegment.decimalApplied) {
                                 false -> lastSegment.weight.value * 10 + action.digit
                                 true -> (lastSegment.weight.value.decimalFormat(true) + action.digit).toDouble()
@@ -90,22 +93,23 @@ class CalculatorViewModel(
 
                 is CalculatorEvent.ActionApplied -> when (action.action) {
                     Action.Backspace -> {
-                        val lastSegment = state.expression.last()
+                        val lastSegment = state.expression.lastOrNull()
                         val newSegment = when {
+                            lastSegment == null -> null
                             // if operation is present nullify it
                             lastSegment.operation != null -> {
                                 lastSegment.copy(operation = null)
                             }
-                            // else remove a digit from the last segment
+
                             else -> {
                                 val newWeight = lastSegment.weight.value
                                     .decimalFormat(lastSegment.decimalApplied)
                                     .dropLast(1)
-                                    .toDouble()
-                                if (newWeight == lastSegment.weight.value) {
-                                    lastSegment.copy(decimalApplied = false)
-                                } else {
-                                    lastSegment.copy(
+                                    .toDoubleOrNull()
+                                when (newWeight) {
+                                    lastSegment.weight.value -> lastSegment.copy(decimalApplied = false)
+                                    null -> null
+                                    else -> lastSegment.copy(
                                         weight = lastSegment.weight.copy(
                                             newWeight
                                         )
@@ -114,7 +118,9 @@ class CalculatorViewModel(
                             }
                         }
                         state.copy(
-                            expression = state.expression.dropLast(1) + newSegment
+                            expression = state.expression.dropLast(1) + if (newSegment != null) listOf(
+                                newSegment
+                            ) else emptyList()
                         )
                     }
 
@@ -132,15 +138,15 @@ class CalculatorViewModel(
                     )
 
                     Action.Decimal -> {
-                        val lastSegment = state.expression.last()
-                        if (lastSegment.operation == null) {
-                            state.copy(
+                        val lastSegment = state.expression.lastOrNull()
+
+                        when {
+                            lastSegment != null && lastSegment.operation == null -> state.copy(
                                 expression = state.expression.dropLast(1) + lastSegment.copy(
                                     decimalApplied = true
                                 )
                             )
-                        } else {
-                            state.copy(
+                            else -> state.copy(
                                 expression = state.expression + Segment(
                                     weight = Weight(
                                         0.0,
@@ -154,12 +160,23 @@ class CalculatorViewModel(
 
                 is CalculatorEvent.ToggleUOMForIndex -> {
                     val segment = state.expression[action.index]
-                    val prefix = if (action.index == 0) emptyList() else state.expression.subList(0, action.index)
-                    val suffix = if (state.expression.lastIndex == action.index) emptyList() else state.expression.subList(action.index + 1, state.expression.lastIndex + 1)
+                    val prefix = if (action.index == 0) emptyList() else state.expression.subList(
+                        0,
+                        action.index
+                    )
+                    val suffix =
+                        if (state.expression.lastIndex == action.index) emptyList() else state.expression.subList(
+                            action.index + 1,
+                            state.expression.lastIndex + 1
+                        )
 
 
                     state.copy(
-                        expression = prefix + segment.copy(weight = segment.weight.copy(uom = segment.weight.uom.toggle())) + suffix
+                        expression = prefix + segment.copy(weight = segment.weight.let {
+                            it.copy(
+                                uom = it.uom.toggle()
+                            )
+                        }) + suffix
                     )
                 }
             }
