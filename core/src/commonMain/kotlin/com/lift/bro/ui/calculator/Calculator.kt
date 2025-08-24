@@ -391,7 +391,7 @@ private fun WeightCalculatorInternal(
                                 viewModel.handleEvent(CalculatorEvent.ToggleUOMForIndex(index))
                             }
                         ) {
-                            if (state.expression.getOrNull(index - 1)?.operation?.bedmasIndex != 0) {
+                            if (state.expression.getOrNull(index - 1)?.operation != Operator.Multiply) {
                                 append("\u00A0")
                                 append(segment.weight.uom.value)
                             }
@@ -430,92 +430,48 @@ fun KeyPad(
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(MaterialTheme.spacing.half),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(MaterialTheme.spacing.half)
 ) {
+    // 0 is always at the bottom
+    val digits = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9).reversed()
+
     Column(
         modifier = modifier,
         verticalArrangement = verticalArrangement
     ) {
-        Row(
-            horizontalArrangement = horizontalArrangement
-        ) {
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                text = "1"
+        digits.chunked(3).forEachIndexed { index, row ->
+
+            Row(
+                horizontalArrangement = horizontalArrangement
             ) {
-                digitClicked(1)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "2"
-            ) {
-                digitClicked(2)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "3"
-            ) {
-                digitClicked(3)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "/"
-            ) {
-                operatorClicked(Operator.Divide)
-            }
-        }
-        Row(
-            horizontalArrangement = horizontalArrangement
-        ) {
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "4"
-            ) {
-                digitClicked(4)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "5"
-            ) {
-                digitClicked(5)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "6"
-            ) {
-                digitClicked(6)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "x"
-            ) {
-                operatorClicked(Operator.Multiply)
-            }
-        }
-        Row(
-            horizontalArrangement = horizontalArrangement
-        ) {
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "7"
-            ) {
-                digitClicked(7)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "8"
-            ) {
-                digitClicked(8)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "9"
-            ) {
-                digitClicked(9)
-            }
-            CalculatorButton(
-                modifier = calculatorButtonModifier(),
-                "+"
-            ) {
-                operatorClicked(Operator.Add)
+                row.forEach {
+                    CalculatorButton(
+                        modifier = calculatorButtonModifier(),
+                        text = it.toString()
+                    ) {
+                        digitClicked(it)
+                    }
+                }
+                when (index) {
+                    0 -> CalculatorButton(
+                            modifier = calculatorButtonModifier(),
+                            "/"
+                        ) {
+                            operatorClicked(Operator.Divide)
+                        }
+                    1 ->
+                        CalculatorButton(
+                            modifier = calculatorButtonModifier(),
+                            "x"
+                        ) {
+                            operatorClicked(Operator.Multiply)
+                        }
+                    2 ->
+                        CalculatorButton(
+                            modifier = calculatorButtonModifier(),
+                            "+"
+                        ) {
+                            operatorClicked(Operator.Add)
+                        }
+                }
             }
         }
         Row(

@@ -218,7 +218,7 @@ class CalculatorViewModel(
             Operator.Divide -> calculateTotal(
                 listOf(
                     Segment(
-                        Weight(thisWeight * nextWeight, defaultUOM),
+                        Weight(thisWeight / nextWeight, defaultUOM),
                         nextSegment?.operation
                     )
                 ) + expression.drop(2)
