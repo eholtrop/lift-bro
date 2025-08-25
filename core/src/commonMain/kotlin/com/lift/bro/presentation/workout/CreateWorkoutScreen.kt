@@ -1,5 +1,6 @@
 package com.lift.bro.presentation.workout
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -32,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
@@ -46,6 +49,7 @@ import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
@@ -80,6 +84,7 @@ fun CreateWorkoutScreen(
 ) {
     val sets by dependencies.database.setDataSource.listenAll().collectAsState(emptyList())
     var workout by remember(date) { mutableStateOf(Workout(date = date, exercises = emptyList())) }
+    var showVariationDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(sets) {
         workout = workout.copy(
@@ -135,43 +140,36 @@ fun CreateWorkoutScreen(
             }
 
             item {
-                var query by remember { mutableStateOf("") }
-
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = "") },
-                    placeholder = { Text("Add Exercise") },
-                    value = query,
-                    onValueChange = { query = it },
-                )
-
-                val variations by dependencies.database.variantDataSource.listenAll()
-                    .filterEach {
-                        it.fullName.contains(query, ignoreCase = true)
-                    }
-                    .map { it.take(5) }
-                    .collectAsState(emptyList())
-
-                DropdownMenu(
-                    expanded = query.isNotBlank(),
-                    onDismissRequest = { query = "" }
-                ) {
-                    variations.forEach { variation ->
-                        DropdownMenuItem(
-                            text = {
-                                Text(variation.fullName)
-                            },
-                            onClick = {
-                                query = ""
-                                workout = workout.copy(
-                                    exercises = workout.exercises + Exercise(
-                                        sets = emptyList(),
-                                        variation = variation
-                                    )
-                                )
-                            }
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .defaultMinSize(minHeight = 52.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = MaterialTheme.shapes.medium
                         )
-                    }
+                        .clip(
+                            shape = MaterialTheme.shapes.medium
+                        )
+                        .clickable(
+                            onClick = {
+                                showVariationDialog = true
+                            },
+                            role = Role.Button
+                        ).padding(
+                            horizontal = MaterialTheme.spacing.one,
+                            vertical = MaterialTheme.spacing.half
+                        ),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Search,
+                        contentDescription = null,
+                    )
+                    Space(MaterialTheme.spacing.half)
+                    Text(
+                        "Add Exercise",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
 
@@ -285,4 +283,20 @@ fun CreateWorkoutScreen(
             }
         }
     }
+
+    VariationSearchDialog(
+        visible = showVariationDialog,
+        onDismissRequest = {
+            showVariationDialog = false
+        },
+        variationSelected = {
+            showVariationDialog = false
+            workout = workout.copy(
+                exercises = workout.exercises + Exercise(
+                    sets = emptyList(),
+                    variation = it
+                )
+            )
+        }
+    )
 }

@@ -45,10 +45,11 @@ class VariationRepository(
     // only used for backup, will not populate emax/max
     override fun getAll(): List<Variation> {
         val parentLift = liftQueries.getAll().executeAsList().map { it.toDomain() }
+        val sets = setQueries.getAll().executeAsList()
         return variationQueries.getAll().executeAsList().map { variation ->
             variation.toDomain(
                 parentLift.first { it.id == variation.liftId },
-                emptyList()
+                sets.filter { it.variationId == variation.id }
             )
         }
     }
