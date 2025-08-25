@@ -442,7 +442,7 @@ fun KeyPad(
             Row(
                 horizontalArrangement = horizontalArrangement
             ) {
-                row.forEach {
+                row.sortedBy { it }.forEach {
                     CalculatorButton(
                         modifier = calculatorButtonModifier(),
                         text = it.toString()
