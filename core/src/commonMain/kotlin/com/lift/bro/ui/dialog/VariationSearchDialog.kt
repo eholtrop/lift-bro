@@ -23,9 +23,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -74,7 +76,6 @@ fun VariationSearchDialog(
     }
 
     Box {
-
         AnimatedVisibility(
             visible = show,
             enter = fadeIn(),
@@ -103,6 +104,15 @@ fun VariationSearchDialog(
                     modifier = Modifier.fillMaxWidth().statusBarsPadding()
                         .focusRequester(focusRequester),
                     leadingIcon = { Icon(Icons.Default.Search, contentDescription = "") },
+                    trailingIcon = {
+                        IconButton(
+                            onClick = {
+                                onDismissRequest()
+                            }
+                        ) {
+                            Icon(Icons.Default.Close, contentDescription = "Close")
+                        }
+                    },
                     placeholder = { Text("Add Exercise") },
                     value = query,
                     onValueChange = { query = it },
