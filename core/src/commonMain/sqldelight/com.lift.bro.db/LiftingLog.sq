@@ -7,7 +7,7 @@ CREATE TABLE LiftingLog (
     vibe_check INTEGER
 );
 
-getAllByVariation:
+getByDate:
 SELECT * FROM LiftingLog WHERE date = ?;
 
 getAll:

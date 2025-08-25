@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -53,11 +55,14 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.domain.models.fullName
+import com.lift.bro.domain.models.maxText
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
+import com.lift.bro.presentation.variation.render
 import com.lift.bro.presentation.workout.SetInfoRow
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.Space
@@ -66,6 +71,7 @@ import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.saver.MutableLocalDateSaver
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
+import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
@@ -304,6 +310,73 @@ fun CalendarWorkoutCard(
     workout: Workout,
     variationClicked: (Variation, LocalDate) -> Unit,
 ) {
+
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        )
+    ) {
+        workout.exercises.forEach { exercise ->
+            val variation = exercise.variation
+            Row(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+
+                Column(
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            variation.fullName,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        if (variation.favourite) {
+                            Space(MaterialTheme.spacing.half)
+                            Icon(
+                                modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
+                                imageVector = Icons.Default.Star,
+                                contentDescription = "Favourite"
+                            )
+                        }
+                    }
+                    Text(
+                        variation.maxText(),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                    val latestSet = dependencies.database.setDataSource.getAll(variation.id)
+                        .maxByOrNull { it.date }
+
+                    if (latestSet != null) {
+                        Text(
+                            text = "${latestSet.date.toString("MMM d")}: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        latestSet.tempo.render()
+                        if (latestSet.notes.isNotBlank()) {
+                            Text(
+                                latestSet.notes,
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
+                    }
+                }
+
+                Box(
+                    modifier = Modifier.background(
+                        color = variation.lift?.color?.toColor()
+                            ?: MaterialTheme.colorScheme.primary,
+                        shape = CircleShape,
+                    ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
+                    content = {}
+                )
+            }
+        }
+    }
+
     workout.exercises.forEach { exercise ->
         Card(
             modifier = modifier,
