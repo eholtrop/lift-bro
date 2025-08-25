@@ -61,6 +61,8 @@ import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.workout.SetInfoRow
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.saver.MutableLocalDateSaver
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
@@ -99,7 +101,8 @@ fun WorkoutCalendarScreen(
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(MaterialTheme.spacing.one),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
         item {
@@ -239,8 +242,9 @@ fun WorkoutCalendarScreen(
                 }
 
                 Row(
-                    modifier = Modifier.animateContentSize(),
+                    modifier = Modifier.animateContentSize().fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
                 ) {
                     Text(
                         text = selectedDate.toString("EEEE, MMM d - yyyy"),
@@ -276,8 +280,11 @@ fun WorkoutCalendarScreen(
                     variationClicked = variationClicked,
                 )
             } else {
+                val nc = LocalNavCoordinator.current
                 Button(
-                    onClick = {},
+                    onClick = {
+                        nc.present(Destination.CreateWorkout(selectedDate))
+                    },
                     colors = ButtonDefaults.elevatedButtonColors()
                 ) {
                     Text("Start a Workout!")

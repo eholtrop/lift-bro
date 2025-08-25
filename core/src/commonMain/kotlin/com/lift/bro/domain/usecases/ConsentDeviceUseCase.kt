@@ -33,5 +33,4 @@ class HasDeviceConsentedUseCase(
 
     operator fun invoke(): Flow<Boolean> = settingsRepository.getDeviceConsent()
         .map { it != null }
-        .debug("DEBUGEH")
 }

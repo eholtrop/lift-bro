@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
@@ -73,7 +74,7 @@ fun MERSettingsRow() {
                 ) {
                     Checkbox(
                         checked = showMerCalcs.enabled,
-                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
+                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
                         onCheckedChange = {
                             dependencies.settingsRepository.setMerSettings(
                                 showMerCalcs.copy(enabled = it)

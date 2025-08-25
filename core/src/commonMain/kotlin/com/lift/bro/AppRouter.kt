@@ -10,6 +10,7 @@ import com.lift.bro.presentation.onboarding.OnboardingScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
+import com.lift.bro.presentation.workout.CreateWorkoutScreen
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 
@@ -34,13 +35,14 @@ fun AppRouter(route: Destination) {
                     navCoordinator.present(Destination.EditSet(null, null, null))
                 },
                 setClicked = { variation, date ->
-                    navCoordinator.present(Destination.EditExcercise(variationId = variation.id, localDate =  date))
+                    navCoordinator.present(Destination.CreateWorkout(localDate =  date))
                 }
             )
 
-        is Destination.EditExcercise -> WorkoutDetailsScreen(
+        is Destination.EditWorkout -> WorkoutDetailsScreen(
             date = route.localDate,
         )
+        is Destination.CreateWorkout -> CreateWorkoutScreen(route.localDate)
 
         is Destination.EditLift -> EditLiftScreen(
             liftId = route.liftId,
@@ -57,6 +59,7 @@ fun AppRouter(route: Destination) {
                 setId = route.setId,
                 variationId = route.variationId,
                 liftId = route.liftId,
+                date = route.date,
                 setSaved = {
                     navCoordinator.onBackPressed(keepStack = false)
                 },

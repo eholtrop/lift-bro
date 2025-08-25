@@ -67,6 +67,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.create_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_create_lift_cta
@@ -127,6 +128,7 @@ fun EditSetScreen(
     setId: String?,
     variationId: String?,
     liftId: String?,
+    date: Instant?,
     setSaved: () -> Unit,
     createLiftClicked: () -> Unit,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
@@ -136,6 +138,7 @@ fun EditSetScreen(
             dependencies.database.setDataSource.get(setId)?.toUiState() ?: EditSetState(
                 id = uuid4().toString(),
                 variationId = variationId,
+                date = date ?: Clock.System.now()
             )
         )
     }

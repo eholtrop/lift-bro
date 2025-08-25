@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
@@ -97,7 +98,7 @@ fun eMaxSettingsRow() {
                 ) {
                     Checkbox(
                         checked = emaxEnabled,
-                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
+                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
                         onCheckedChange = {
                             dependencies.settingsRepository.setEMaxEnabled(it)
                         }
