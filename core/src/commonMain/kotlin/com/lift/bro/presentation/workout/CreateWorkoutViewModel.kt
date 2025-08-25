@@ -1,5 +1,6 @@
 package com.lift.bro.presentation.workout
 
+import androidx.annotation.RestrictTo
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.SetDataSource
@@ -9,6 +10,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.utils.debug
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftingLogQueries
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
@@ -44,6 +46,7 @@ class CreateWorkoutViewModel(
     initialState: CreateWorkoutState,
     setRepository: SetDataSource = dependencies.database.setDataSource,
     liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource,
+    coroutineScope: CoroutineScope
 ) {
 
     private val inputs: Channel<CreateWorkoutEvent> = Channel()
@@ -57,42 +60,50 @@ class CreateWorkoutViewModel(
         liftLogRepository.getByDate(initialState.date).asFlow().mapToOneOrNull(Dispatchers.IO),
         flowOf(initialState),
     ) { sets, log, initialState ->
-            CreateWorkoutState(
-                date = initialState.date,
-                exercises = sets.filter { it.date.toLocalDate() == initialState.date }.groupBy { it.variationId }
-                    .map { (id, sets) ->
-                        Exercise(
-                            sets = sets,
-                            variation = dependencies.database.variantDataSource.get(id)!!
-                        )
-                    },
-                notes = log?.notes ?: ""
-            )
-        }
+        CreateWorkoutState(
+            date = initialState.date,
+            exercises = sets.filter { it.date.toLocalDate() == initialState.date }
+                .groupBy { it.variationId }
+                .map { (id, sets) ->
+                    Exercise(
+                        sets = sets,
+                        variation = dependencies.database.variantDataSource.get(id)!!
+                    )
+                },
+            notes = log?.notes ?: ""
+        )
+    }
         .flatMapLatest { state ->
             inputs.receiveAsFlow()
-                .debug("DEBUGEH").scan(state) { state, event ->
-                when (event) {
-                    is CreateWorkoutEvent.AddExercise -> state.copy(exercises = state.exercises + Exercise(sets = emptyList(), variation = event.variation))
-                    is CreateWorkoutEvent.UpdateNotes -> {
-                        val log = liftLogRepository.getByDate(initialState.date).executeAsOneOrNull()?.copy(
-                            notes = event.notes
+                .scan(state) { state, event ->
+                    when (event) {
+                        is CreateWorkoutEvent.AddExercise -> state.copy(
+                            exercises = state.exercises + Exercise(
+                                sets = emptyList(),
+                                variation = event.variation
+                            )
                         )
-                        liftLogRepository.save(
-                            id = log?.id ?: com.benasher44.uuid.uuid4().toString(),
-                            date = initialState.date,
-                            notes = event.notes,
-                            vibe_check = log?.vibe_check
-                        )
-                        state.copy(notes = event.notes)
+
+                        is CreateWorkoutEvent.UpdateNotes -> {
+                            val log =
+                                liftLogRepository.getByDate(initialState.date).executeAsOneOrNull()
+                                    ?.copy(
+                                        notes = event.notes
+                                    )
+                            liftLogRepository.save(
+                                id = log?.id ?: com.benasher44.uuid.uuid4().toString(),
+                                date = initialState.date,
+                                notes = event.notes,
+                                vibe_check = log?.vibe_check
+                            )
+                            state.copy(notes = event.notes)
+                        }
                     }
                 }
-            }
         }
         .stateIn(
-            GlobalScope,
+            coroutineScope,
             SharingStarted.WhileSubscribed(),
-            initialState
+            initialState,
         )
-
 }

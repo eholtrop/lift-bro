@@ -59,10 +59,12 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import comliftbrodb.LiftingLog
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -78,26 +80,27 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.excercise_screen_duplicate_cta
 import org.jetbrains.compose.resources.stringResource
 
-private val CreateWorkoutViewModelSaver = object: Saver<CreateWorkoutViewModel, String> {
+private class CreateWorkoutViewModelSaver(private val scope: CoroutineScope): Saver<CreateWorkoutViewModel, String> {
 
     override fun SaverScope.save(value: CreateWorkoutViewModel): String? {
         return Json.encodeToString(value.state.value)
     }
 
     override fun restore(value: String): CreateWorkoutViewModel? {
-        return CreateWorkoutViewModel(Json.decodeFromString(value))
+        return CreateWorkoutViewModel(Json.decodeFromString(value), coroutineScope = scope)
     }
 }
 
 @Composable
 fun CreateWorkoutScreen(
     date: LocalDate,
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
     val viewModel: CreateWorkoutViewModel = rememberSaveable(
         key = date.toString(),
-        saver = CreateWorkoutViewModelSaver,
+        saver = CreateWorkoutViewModelSaver(coroutineScope),
         init = {
-            CreateWorkoutViewModel(CreateWorkoutState(date))
+            CreateWorkoutViewModel(CreateWorkoutState(date), coroutineScope = coroutineScope)
         }
     )
     CreateWorkoutScreenInternal(
