@@ -58,6 +58,7 @@ import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.VariationCard
 import com.lift.bro.ui.dialog.CreateVariationDialog
+import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
@@ -142,6 +143,7 @@ fun EditSetScreen(
             )
         )
     }
+    var showVariationDialog by remember { mutableStateOf(false) }
 
     val variation =
         dependencies.database.variantDataSource.get(set.variationId)
@@ -253,9 +255,8 @@ fun EditSetScreen(
                             shape = MaterialTheme.shapes.large
                         )
                         .clickable(
-                            enabled = set.variationId != null,
                             onClick = {
-                                set = set.copy(variationId = null)
+                                showVariationDialog = true
                             },
                             role = Role.DropdownList
                         )
@@ -277,17 +278,7 @@ fun EditSetScreen(
                         Space(MaterialTheme.spacing.one)
 
                         if (variation == null) {
-                            VariationSelector(
-                                variationSelected = { set = set.copy(variationId = it) },
-                                initialLiftId = liftId,
-                            )
-                            Button(
-                                onClick = createLiftClicked,
-                            ) {
-                                Text(
-                                    stringResource(Res.string.edit_set_screen_create_lift_cta)
-                                )
-                            }
+                            Text("You got this!")
                         } else {
                             val sets = dependencies.database.setDataSource.getAllForLift(
                                 variation.lift?.id ?: ""
@@ -303,148 +294,57 @@ fun EditSetScreen(
                 }
             }
 
-            if (variation != null) {
-                item {
-                    TempoSelector(
-                        modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                        up = set.up?.toInt(),
-                        hold = set.hold?.toInt(),
-                        down = set.down?.toInt(),
-                        downChanged = { set = set.copy(down = it?.toLong()) },
-                        holdChanged = { set = set.copy(hold = it?.toLong()) },
-                        upChanged = { set = set.copy(up = it?.toLong()) },
+            item {
+                TempoSelector(
+                    modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
+                    up = set.up?.toInt(),
+                    hold = set.hold?.toInt(),
+                    down = set.down?.toInt(),
+                    downChanged = { set = set.copy(down = it?.toLong()) },
+                    holdChanged = { set = set.copy(hold = it?.toLong()) },
+                    upChanged = { set = set.copy(up = it?.toLong()) },
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+
+                DateSelector(
+                    date = set.date,
+                    dateChanged = { set = set.copy(date = it) }
+                )
+
+                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(horizontal = MaterialTheme.spacing.one),
+                ) {
+                    Text(
+                        stringResource(Res.string.edit_set_screen_extra_notes_label),
+                        style = MaterialTheme.typography.titleMedium
                     )
 
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-
-                    DateSelector(
-                        date = set.date,
-                        dateChanged = { set = set.copy(date = it) }
-                    )
-
-                    Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(horizontal = MaterialTheme.spacing.one),
-                    ) {
-                        Text(
-                            stringResource(Res.string.edit_set_screen_extra_notes_label),
-                            style = MaterialTheme.typography.titleMedium
-                        )
-
-                        TextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = set.notes,
-                            singleLine = true,
-                            placeholder = {
-                                Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
-                            },
-                            onValueChange = {
-                                set = set.copy(notes = it)
-                            },
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-internal fun VariationSelector(
-    modifier: Modifier = Modifier,
-    initialLiftId: String?,
-    variationSelected: (String) -> Unit,
-) {
-    val lifts by dependencies.database.variantDataSource.listenAll().map {
-        it.groupBy { it.lift }
-            .toList()
-            .sortedBy { it.first!!.id }
-    }.collectAsState(emptyList())
-
-    var expandedLift: Lift? by remember { mutableStateOf(null) }
-
-    LaunchedEffect(lifts) {
-        if (initialLiftId != null) {
-            expandedLift = lifts.firstOrNull { it.first?.id == initialLiftId }?.first
-        }
-    }
-
-    var showCreateVariationDialog: Boolean by remember { mutableStateOf(false) }
-
-    if (showCreateVariationDialog) {
-        CreateVariationDialog(
-            parentLiftId = expandedLift!!.id,
-            onDismissRequest = { showCreateVariationDialog = false },
-            onVariationCreated = {
-                variationSelected(it)
-                showCreateVariationDialog = false
-            }
-        )
-    }
-
-    Column(
-        modifier = modifier.padding(horizontal = MaterialTheme.spacing.half),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        lifts.forEach { map ->
-            val lift = map.first
-            val variations = map.second
-            Row(
-                modifier = Modifier
-                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                    .clip(MaterialTheme.shapes.small)
-                    .clickable(
-                        role = Role.Button,
-                        onClick = {
-                            expandedLift = if (expandedLift == lift) null else lift
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = set.notes,
+                        singleLine = true,
+                        placeholder = {
+                            Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
+                        },
+                        onValueChange = {
+                            set = set.copy(notes = it)
                         },
                     )
-                    .padding(horizontal = MaterialTheme.spacing.half),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier
-                        .weight(1f),
-                    text = map.first?.name ?: "",
-                )
-                Icon(
-                    imageVector = if (expandedLift == lift) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null
-                )
-            }
-
-            AnimatedVisibility(lift == expandedLift) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    map.second.chunked(2).forEach { variations ->
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-                        ) {
-                            variations.forEach { variation ->
-                                VariationCard(
-                                    modifier = Modifier.padding(MaterialTheme.spacing.quarter)
-                                        .weight(1f),
-                                    variation = variation,
-                                    onClick = { variationSelected(variation.id) }
-                                )
-                            }
-                        }
-                    }
-
-                    Button(
-                        modifier = Modifier.wrapContentWidth().minimumInteractiveComponentSize(),
-                        colors = ButtonDefaults.outlinedButtonColors(),
-                        onClick = {
-                            showCreateVariationDialog = true
-                        }
-                    ) {
-                        Text("Create ${map.first?.name ?: ""} Variation")
-                    }
                 }
             }
         }
     }
+
+    VariationSearchDialog(
+        visible = showVariationDialog,
+        onDismissRequest = { showVariationDialog = false },
+        variationSelected = {
+            showVariationDialog = false
+            set = set.copy(variationId = it.id)
+        }
+    )
 }
