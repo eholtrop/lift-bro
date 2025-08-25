@@ -322,10 +322,15 @@ fun CalendarWorkoutCard(
             val variation = exercise.variation
             Row(
                 modifier = Modifier.fillMaxWidth()
+                    .clickable(
+                        onClick = { variationClicked(variation, workout.date) }
+                    )
+                    .padding(MaterialTheme.spacing.one),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-
                 Column(
-                    verticalArrangement = Arrangement.Center
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center,
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
@@ -347,101 +352,28 @@ fun CalendarWorkoutCard(
                         variation.maxText(),
                         style = MaterialTheme.typography.bodyMedium
                     )
-                    val latestSet = dependencies.database.setDataSource.getAll(variation.id)
-                        .maxByOrNull { it.date }
+                    val differingWeights = exercise.sets.any { set -> exercise.sets.firstOrNull()?.weight != set.weight }
 
-                    if (latestSet != null) {
+                    val keySet = if (differingWeights) {
+                        exercise.sets.maxByOrNull { it.weight }
+                    } else {
+                        exercise.sets.maxByOrNull { it.reps }
+                    }
+
+                    if (keySet != null) {
                         Text(
-                            text = "${latestSet.date.toString("MMM d")}: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
+                            text = "${weightFormat(keySet.weight)} x ${keySet.reps}",
                             style = MaterialTheme.typography.bodyMedium
                         )
-                        latestSet.tempo.render()
-                        if (latestSet.notes.isNotBlank()) {
+                        keySet.tempo.render()
+                        if (keySet.notes.isNotBlank()) {
                             Text(
-                                latestSet.notes,
+                                keySet.notes,
                                 style = MaterialTheme.typography.labelMedium
                             )
                         }
                     }
                 }
-
-                Box(
-                    modifier = Modifier.background(
-                        color = variation.lift?.color?.toColor()
-                            ?: MaterialTheme.colorScheme.primary,
-                        shape = CircleShape,
-                    ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
-                    content = {}
-                )
-            }
-        }
-    }
-
-    workout.exercises.forEach { exercise ->
-        Card(
-            modifier = modifier,
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
-                contentColor = MaterialTheme.colorScheme.onSurface
-            )
-        ) {
-            val variation = exercise.variation
-
-            Row(
-                modifier = Modifier.padding(
-                    horizontal = MaterialTheme.spacing.one,
-                    vertical = MaterialTheme.spacing.half
-                ),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f)
-                        .clickable(
-                            role = Role.Button,
-                            onClick = { variationClicked(variation, workout.date) }
-                        )
-                ) {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(
-                                style = SpanStyle()
-                            ) {
-                                append("${variation.name} ${variation.lift?.name}".trim())
-                            }
-
-                            val mer = exercise.sets.sumOf { it.mer }
-                            if (mer > 0 && LocalShowMERCalcs.current?.enabled == true) {
-                                withStyle(
-                                    style = MaterialTheme.typography.labelSmall.toSpanStyle()
-                                ) {
-                                    append(" ")
-                                    append("(+${mer}mer)")
-                                }
-                            }
-                        },
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-
-                    if (LocalTwmSettings.current && exercise.totalWeightMoved > 0.0) {
-                        Text(
-                            "twm: ${"${exercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-
-                    exercise.sets.sortedByDescending { it.weight }
-                        .forEach { set ->
-                            Column(
-                                modifier = Modifier.fillMaxWidth()
-                                    .defaultMinSize(minHeight = 44.dp),
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                SetInfoRow(set = set)
-                            }
-                        }
-                }
-
-                Space(MaterialTheme.spacing.half)
 
                 Box(
                     modifier = Modifier.background(
