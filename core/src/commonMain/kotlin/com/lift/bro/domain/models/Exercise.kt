@@ -4,10 +4,17 @@ import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Excercise(
+data class Workout(
+    val date: LocalDate,
+    val warmup: String = "",
+    val exercises: List<Exercise>,
+    val finisher: String = "",
+)
+
+@Serializable
+data class Exercise(
     val sets: List<LBSet>,
     val variation: Variation,
-    val date: LocalDate,
 ) {
     val id = sets.firstOrNull()?.excerciseId
 

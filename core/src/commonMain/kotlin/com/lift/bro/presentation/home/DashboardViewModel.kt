@@ -9,9 +9,10 @@ import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Excercise
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.SubscriptionType
+import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
@@ -23,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
@@ -79,19 +79,21 @@ class DashboardViewModel(
                         }
                     }
                 }.toList(),
-            excercises = sets.groupBy { it.date.toLocalDate() }.map { dateSetsEntry ->
+            workouts = sets.groupBy { it.date.toLocalDate() }.map { dateSetsEntry ->
                 val date = dateSetsEntry.key
-                dateSetsEntry.value.groupBy { it.variationId }.map { map ->
-                    val variation = variations.firstOrNull { it.id == map.key }
-                    variation?.let {
-                        Excercise(
-                            date = date,
-                            variation = variation,
-                            sets = map.value
-                        )
-                    }
-                }
-            }.flatten().filterNotNull(),
+                Workout(
+                    date = date,
+                    exercises = dateSetsEntry.value.groupBy { it.variationId }.map { map ->
+                        val variation = variations.firstOrNull { it.id == map.key }
+                        variation?.let {
+                            Exercise(
+                                variation = variation,
+                                sets = map.value
+                            )
+                        }
+                    }.filterNotNull()
+                )
+            },
             logs = logs.map {
                 LiftingLog(
                     id = it.id,

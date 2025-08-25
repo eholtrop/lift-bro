@@ -43,10 +43,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
-import com.lift.bro.domain.models.Excercise
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalUnitOfMeasure
@@ -79,7 +80,7 @@ import org.jetbrains.compose.resources.stringResource
 data class DashboardState(
     val showEmpty: Boolean,
     val items: List<DashboardListItem>,
-    val excercises: List<Excercise>,
+    val workouts: List<Workout>,
     val logs: List<LiftingLog>,
 )
 
@@ -350,7 +351,7 @@ fun DashboardContent(
                 WorkoutCalendarScreen(
                     modifier = Modifier.padding(padding),
                     variationClicked = setClicked,
-                    excercises = dashboardState.excercises,
+                    workouts = dashboardState.workouts,
                     logs = dashboardState.logs,
                 )
             }

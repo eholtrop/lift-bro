@@ -1,9 +1,10 @@
 package com.lift.bro.preview
 
 import androidx.compose.runtime.Composable
-import com.lift.bro.domain.models.Excercise
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.home.DashboardContent
 import com.lift.bro.presentation.home.DashboardListItem
 import com.lift.bro.presentation.home.DashboardState
@@ -24,56 +25,7 @@ fun DashboardLiftScreenPreview(isDarkMode: Boolean) {
         DashboardContent(
             dashboardState = dashboardPreviewState
                 .copy(
-                    excercises = listOf(
-                        Excercise(
-                            sets = listOf(
-                                LBSet(
-                                    id = "0",
-                                    variationId = "0",
-                                    date = Clock.System.now(),
-                                    notes = ""
-                                )
-                            ),
-                            variation = Variation(id = "0"),
-                            date = today
-                        ),
-                        Excercise(
-                            sets = listOf(
-                                LBSet(
-                                    id = "0",
-                                    variationId = "0",
-                                    date = Clock.System.now(),
-                                    notes = ""
-                                )
-                            ),
-                            variation = Variation(id = "0"),
-                            date = today
-                        ),
-                        Excercise(
-                            sets = listOf(
-                                LBSet(
-                                    id = "0",
-                                    variationId = "0",
-                                    date = Clock.System.now(),
-                                    notes = ""
-                                )
-                            ),
-                            variation = Variation(id = "0"),
-                            date = today
-                        ),
-                        Excercise(
-                            sets = listOf(
-                                LBSet(
-                                    id = "0",
-                                    variationId = "0",
-                                    date = Clock.System.now(),
-                                    notes = ""
-                                )
-                            ),
-                            variation = Variation(id = "0"),
-                            date = today
-                        )
-                    )
+                    workouts = emptyList<Workout>()
                 ),
             defaultTab = Tab.Lifts,
             addLiftClicked = {},
@@ -130,6 +82,6 @@ fun DashboardCalendarScreenPreview_Dark() {
 val dashboardPreviewState = DashboardState(
     showEmpty = false,
     items = LiftCardPreviewStates.All.map { DashboardListItem.LiftCard(it) },
-    excercises = emptyList(),
+    workouts = emptyList(),
     logs = emptyList(),
 )

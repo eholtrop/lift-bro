@@ -1,7 +1,7 @@
 package com.lift.bro
 
 import androidx.compose.runtime.Composable
-import com.lift.bro.presentation.excercise.ExcerciseDetailsScreen
+import com.lift.bro.presentation.workout.WorkoutDetailsScreen
 import com.lift.bro.presentation.home.DashboardScreen
 import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
@@ -10,7 +10,6 @@ import com.lift.bro.presentation.onboarding.OnboardingScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
-import com.lift.bro.ui.dialog.EditVariationDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 
@@ -39,9 +38,8 @@ fun AppRouter(route: Destination) {
                 }
             )
 
-        is Destination.EditExcercise -> ExcerciseDetailsScreen(
+        is Destination.EditExcercise -> WorkoutDetailsScreen(
             date = route.localDate,
-            variationId = route.variationId
         )
 
         is Destination.EditLift -> EditLiftScreen(

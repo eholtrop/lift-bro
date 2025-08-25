@@ -18,12 +18,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -49,16 +49,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Excercise
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
-import com.lift.bro.presentation.excercise.SetInfoRow
+import com.lift.bro.presentation.workout.SetInfoRow
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.saver.MutableLocalDateSaver
@@ -67,8 +67,6 @@ import com.lift.bro.ui.today
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
-import com.revenuecat.purchases.kmp.Purchases
-import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -84,21 +82,19 @@ import org.jetbrains.compose.resources.stringResource
 fun WorkoutCalendarScreen(
     modifier: Modifier = Modifier,
     variationClicked: (Variation, LocalDate) -> Unit,
-    excercises: List<Excercise>,
+    workouts: List<Workout>,
     logs: List<LiftingLog>,
 ) {
 
     var selectedDate by rememberSaveable(saver = MutableLocalDateSaver) { mutableStateOf(today) }
 
-    val setDateMap = excercises.groupBy { it.date }
+    val setDateMap = workouts.associateBy { it.date }
 
-    val selectedDateSets: List<Excercise> = setDateMap[selectedDate] ?: emptyList()
+    val selectedWorkout: Workout? = setDateMap[selectedDate]
 
     val dailyLogs = logs.associateBy { it.date }
 
     val subscriptionType by LocalSubscriptionStatusProvider.current
-
-    val showTwm = LocalTwmSettings.current
 
     LazyColumn(
         modifier = modifier,
@@ -144,7 +140,7 @@ fun WorkoutCalendarScreen(
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
                             ) {
-                                setDateMap[date]?.map {
+                                setDateMap[date]?.exercises?.map {
                                     it.variation.lift?.color?.toColor()
                                         ?: MaterialTheme.colorScheme.primary
                                 }?.take(4)?.forEachIndexed { index, color ->
@@ -272,88 +268,110 @@ fun WorkoutCalendarScreen(
             }
         }
 
-        items(
-            selectedDateSets
-        ) { excercise ->
-            Card(
-                modifier = Modifier.animateItem(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    contentColor = MaterialTheme.colorScheme.onSurface
+        item {
+            if (selectedWorkout != null) {
+                CalendarWorkoutCard(
+                    modifier = Modifier.animateItem(),
+                    workout = selectedWorkout,
+                    variationClicked = variationClicked,
                 )
-            ) {
-                val variation = excercise.variation
-
-                Row(
-                    modifier = Modifier.padding(
-                        horizontal = MaterialTheme.spacing.one,
-                        vertical = MaterialTheme.spacing.half
-                    ),
-                    verticalAlignment = Alignment.CenterVertically
+            } else {
+                Button(
+                    onClick = {},
+                    colors = ButtonDefaults.elevatedButtonColors()
                 ) {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                            .clickable(
-                                role = Role.Button,
-                                onClick = { variationClicked(variation, selectedDate) }
-                            )
-                    ) {
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(
-                                    style = SpanStyle()
-                                ) {
-                                    append("${variation.name} ${variation.lift?.name}".trim())
-                                }
-
-                                val mer = excercise.sets.sumOf { it.mer }
-                                if (mer > 0 && LocalShowMERCalcs.current?.enabled == true) {
-                                    withStyle(
-                                        style = MaterialTheme.typography.labelSmall.toSpanStyle()
-                                    ) {
-                                        append(" ")
-                                        append("(+${mer}mer)")
-                                    }
-                                }
-                            },
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-
-                        if (showTwm && excercise.totalWeightMoved > 0.0) {
-                            Text(
-                                "twm: ${"${excercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
-                                style = MaterialTheme.typography.bodyMedium,
-                            )
-                        }
-
-                        excercise.sets.sortedByDescending { it.weight }
-                            .forEach { set ->
-                                Column(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .defaultMinSize(minHeight = 44.dp),
-                                    verticalArrangement = Arrangement.Center
-                                ) {
-                                    SetInfoRow(set = set)
-                                }
-                            }
-                    }
-
-                    Space(MaterialTheme.spacing.half)
-
-                    Box(
-                        modifier = Modifier.background(
-                            color = variation.lift?.color?.toColor()
-                                ?: MaterialTheme.colorScheme.primary,
-                            shape = CircleShape,
-                        ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
-                        content = {}
-                    )
+                    Text("Start a Workout!")
                 }
             }
         }
 
         item {
             Spacer(modifier = Modifier.height(72.dp))
+        }
+    }
+}
+
+@Composable
+fun CalendarWorkoutCard(
+    modifier: Modifier = Modifier,
+    workout: Workout,
+    variationClicked: (Variation, LocalDate) -> Unit,
+) {
+    workout.exercises.forEach { exercise ->
+        Card(
+            modifier = modifier,
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            val variation = exercise.variation
+
+            Row(
+                modifier = Modifier.padding(
+                    horizontal = MaterialTheme.spacing.one,
+                    vertical = MaterialTheme.spacing.half
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                        .clickable(
+                            role = Role.Button,
+                            onClick = { variationClicked(variation, workout.date) }
+                        )
+                ) {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle()
+                            ) {
+                                append("${variation.name} ${variation.lift?.name}".trim())
+                            }
+
+                            val mer = exercise.sets.sumOf { it.mer }
+                            if (mer > 0 && LocalShowMERCalcs.current?.enabled == true) {
+                                withStyle(
+                                    style = MaterialTheme.typography.labelSmall.toSpanStyle()
+                                ) {
+                                    append(" ")
+                                    append("(+${mer}mer)")
+                                }
+                            }
+                        },
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+
+                    if (LocalTwmSettings.current && exercise.totalWeightMoved > 0.0) {
+                        Text(
+                            "twm: ${"${exercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+
+                    exercise.sets.sortedByDescending { it.weight }
+                        .forEach { set ->
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                                    .defaultMinSize(minHeight = 44.dp),
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                SetInfoRow(set = set)
+                            }
+                        }
+                }
+
+                Space(MaterialTheme.spacing.half)
+
+                Box(
+                    modifier = Modifier.background(
+                        color = variation.lift?.color?.toColor()
+                            ?: MaterialTheme.colorScheme.primary,
+                        shape = CircleShape,
+                    ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
+                    content = {}
+                )
+            }
         }
     }
 }

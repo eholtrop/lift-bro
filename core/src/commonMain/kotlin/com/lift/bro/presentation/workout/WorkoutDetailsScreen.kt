@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.excercise
+package com.lift.bro.presentation.workout
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
@@ -29,10 +29,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Excercise
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.SubscriptionType
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalUnitOfMeasure
@@ -48,7 +48,6 @@ import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -62,11 +61,10 @@ import lift_bro.core.generated.resources.excercise_string_title_date_format
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun ExcerciseDetailsScreen(
+fun WorkoutDetailsScreen(
     date: LocalDate,
-    variationId: String,
 ) {
-    val excercises by dependencies.database.setDataSource.listenAll()
+    val workout by dependencies.database.setDataSource.listenAll()
         .map { it.filter { it.date.toLocalDate() == date } }
         .map {
             it.groupBy { it.variationId }
@@ -74,29 +72,40 @@ fun ExcerciseDetailsScreen(
                     dependencies.database.variantDataSource.get(it.key) to it.value
                 }
                 .map {
-                    Excercise(
+                    Exercise(
                         sets = it.second,
                         variation = it.first!!,
-                        date = date
                     )
                 }
         }
-        .collectAsState(emptyList())
+        .map {
+            Workout(
+                date = date,
+                warmup = "",
+                exercises = it,
+                finisher = "",
+            )
+        }
+        .collectAsState(null)
 
-    ExcerciseDetailsScreen(
-        excercises = excercises
-    )
+    workout?.let {
+        WorkoutDetailsScreen(
+            workout = it
+        )
+    }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun ExcerciseDetailsScreen(
-    excercises: List<Excercise>,
+private fun WorkoutDetailsScreen(
+    workout: Workout,
 ) {
     val subscriptionType by LocalSubscriptionStatusProvider.current
     val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
         .map { it && subscriptionType == SubscriptionType.Pro }
         .collectAsState(false)
+
+    val exercises = workout.exercises
 
     LiftingScaffold(
         title = {
@@ -106,8 +115,7 @@ private fun ExcerciseDetailsScreen(
                 Text(stringResource(Res.string.excercise_screen_title))
 
                 Text(
-                    excercises.firstOrNull()?.date?.toString(stringResource(Res.string.excercise_string_title_date_format))
-                        ?: "",
+                    workout.date.toString(stringResource(Res.string.excercise_string_title_date_format)),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -119,7 +127,7 @@ private fun ExcerciseDetailsScreen(
             contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.one),
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
         ) {
-            items(excercises) { excercise ->
+            items(exercises) { exercise ->
                 Card {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -129,33 +137,33 @@ private fun ExcerciseDetailsScreen(
                         Column(
                             modifier = Modifier.clickable(
                                 onClick = {
-                                    coordinator.present(Destination.VariationDetails(excercise.variation.id))
+                                    coordinator.present(Destination.VariationDetails(exercise.variation.id))
                                 }
                             ),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                excercise.variation.fullName,
+                                exercise.variation.fullName,
                                 style = MaterialTheme.typography.titleLarge,
                             )
 
                             if (showTwm) {
                                 Text(
-                                    "Total Weight Moved: ${"${excercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
+                                    "Total Weight Moved: ${"${exercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
                                     style = MaterialTheme.typography.labelLarge,
                                 )
                             }
 
-                            excercise.variation.notes?.let {
+                            exercise.variation.notes?.let {
                                 Text(
-                                    text = excercise.variation.notes,
+                                    text = exercise.variation.notes,
                                     style = MaterialTheme.typography.bodyMedium
                                 )
                             }
                         }
 
 
-                        excercise.sets.forEach {
+                        exercise.sets.forEach {
                             val coordinator = LocalNavCoordinator.current
                             SetInfoRow(
                                 modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 52.dp)
@@ -178,7 +186,7 @@ private fun ExcerciseDetailsScreen(
                             onClick = {
                                 GlobalScope.launch {
                                     val baseSet =
-                                        excercise.sets.maxByOrNull { it.date.toEpochMilliseconds() }
+                                        exercise.sets.maxByOrNull { it.date.toEpochMilliseconds() }
 
                                     if (baseSet != null) {
                                         dependencies.database.setDataSource.save(
