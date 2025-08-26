@@ -29,12 +29,15 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -318,71 +321,91 @@ fun CalendarWorkoutCard(
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
-        workout.exercises.forEach { exercise ->
-            val variation = exercise.variation
-            Row(
-                modifier = Modifier.fillMaxWidth()
-                    .clickable(
-                        onClick = { variationClicked(variation, workout.date) }
-                    )
-                    .padding(MaterialTheme.spacing.one),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
+        Column {
+            if (workout.warmup != null || workout.finisher != null) {
+                Row {
+                    CompositionLocalProvider(
+                        LocalTextStyle provides MaterialTheme.typography.labelMedium,
                     ) {
-                        Text(
-                            variation.fullName,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        if (variation.favourite) {
-                            Space(MaterialTheme.spacing.half)
-                            Icon(
-                                modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
-                                imageVector = Icons.Default.Star,
-                                contentDescription = "Favourite"
-                            )
+                        Column {
+                            Text(text = "Warmup")
+                            Text(text = workout.warmup ?: "")
                         }
-                    }
-                    Text(
-                        variation.maxText(),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    val differingWeights = exercise.sets.any { set -> exercise.sets.firstOrNull()?.weight != set.weight }
-
-                    val keySet = if (differingWeights) {
-                        exercise.sets.maxByOrNull { it.weight }
-                    } else {
-                        exercise.sets.maxByOrNull { it.reps }
-                    }
-
-                    if (keySet != null) {
-                        Text(
-                            text = "${weightFormat(keySet.weight)} x ${keySet.reps}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        keySet.tempo.render()
-                        if (keySet.notes.isNotBlank()) {
-                            Text(
-                                keySet.notes,
-                                style = MaterialTheme.typography.labelMedium
-                            )
+                        Space()
+                        Column {
+                            Text(text = "Warmup")
+                            Text(text = workout.finisher ?: "")
                         }
                     }
                 }
+            }
+            workout.exercises.forEach { exercise ->
+                val variation = exercise.variation
+                Row(
+                    modifier = Modifier.fillMaxWidth()
+                        .clickable(
+                            onClick = { variationClicked(variation, workout.date) }
+                        )
+                        .padding(MaterialTheme.spacing.one),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                variation.fullName,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            if (variation.favourite) {
+                                Space(MaterialTheme.spacing.half)
+                                Icon(
+                                    modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
+                                    imageVector = Icons.Default.Star,
+                                    contentDescription = "Favourite"
+                                )
+                            }
+                        }
+                        Text(
+                            variation.maxText(),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        val differingWeights =
+                            exercise.sets.any { set -> exercise.sets.firstOrNull()?.weight != set.weight }
 
-                Box(
-                    modifier = Modifier.background(
-                        color = variation.lift?.color?.toColor()
-                            ?: MaterialTheme.colorScheme.primary,
-                        shape = CircleShape,
-                    ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
-                    content = {}
-                )
+                        val keySet = if (differingWeights) {
+                            exercise.sets.maxByOrNull { it.weight }
+                        } else {
+                            exercise.sets.maxByOrNull { it.reps }
+                        }
+
+                        if (keySet != null) {
+                            Text(
+                                text = "${weightFormat(keySet.weight)} x ${keySet.reps}",
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                            keySet.tempo.render()
+                            if (keySet.notes.isNotBlank()) {
+                                Text(
+                                    keySet.notes,
+                                    style = MaterialTheme.typography.labelMedium
+                                )
+                            }
+                        }
+                    }
+
+                    Box(
+                        modifier = Modifier.background(
+                            color = variation.lift?.color?.toColor()
+                                ?: MaterialTheme.colorScheme.primary,
+                            shape = CircleShape,
+                        ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
+                        content = {}
+                    )
+                }
             }
         }
     }

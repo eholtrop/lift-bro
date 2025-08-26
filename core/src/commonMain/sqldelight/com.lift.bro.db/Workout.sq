@@ -1,0 +1,28 @@
+import kotlinx.datetime.LocalDate;
+
+CREATE TABLE Workout (
+    id TEXT NOT NULL PRIMARY KEY,
+    finisher TEXT DEFAULT NULL,
+    warmup TEXT DEFAULT NULL,
+    date INTEGER AS LocalDate NOT NULL
+);
+
+get:
+SELECT * FROM Workout WHERE id = ?;
+
+getByDate:
+SELECT * FROM Workout WHERE date = ?;
+
+getAll:
+SELECT * FROM Workout;
+
+save:
+INSERT OR REPLACE
+INTO Workout(id, finisher, warmup, date)
+VALUES(?, ?, ?, ?);
+
+delete:
+DELETE FROM Workout WHERE id = ?;
+
+deleteAll:
+DELETE FROM Workout;

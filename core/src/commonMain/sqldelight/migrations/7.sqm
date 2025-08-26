@@ -1,0 +1,8 @@
+import kotlinx.datetime.LocalDate;
+
+CREATE TABLE Workout (
+    id TEXT NOT NULL PRIMARY KEY,
+    finisher TEXT DEFAULT NULL,
+    warmup TEXT DEFAULT NULL,
+    date INTEGER AS LocalDate NOT NULL
+);

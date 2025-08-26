@@ -1,7 +1,6 @@
 package com.lift.bro
 
 import androidx.compose.runtime.Composable
-import com.lift.bro.presentation.workout.WorkoutDetailsScreen
 import com.lift.bro.presentation.home.DashboardScreen
 import com.lift.bro.presentation.home.DashboardViewModel
 import com.lift.bro.presentation.lift.EditLiftScreen
@@ -39,7 +38,7 @@ fun AppRouter(route: Destination) {
                 }
             )
 
-        is Destination.EditWorkout -> WorkoutDetailsScreen(
+        is Destination.EditWorkout -> CreateWorkoutScreen(
             date = route.localDate,
         )
         is Destination.CreateWorkout -> CreateWorkoutScreen(route.localDate)

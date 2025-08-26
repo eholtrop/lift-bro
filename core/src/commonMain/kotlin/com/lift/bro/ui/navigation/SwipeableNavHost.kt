@@ -28,7 +28,8 @@ import kotlin.math.absoluteValue
 fun SwipeableNavHost(
     modifier: Modifier = Modifier,
     navCoordinator: NavCoordinator,
-    content: @Composable (Destination) -> Unit
+    key: (Destination) -> Any = { it.hashCode() },
+    content: @Composable (Destination) -> Unit,
 ) {
     val pages by navCoordinator.pagesAsFlow.collectAsState(emptyList())
     val currentPage by navCoordinator.currentPageAsFlow.collectAsState(null)
@@ -59,6 +60,9 @@ fun SwipeableNavHost(
     HorizontalPager(
         modifier = modifier.graphicsLayer {
             pagerSize = this.size
+        },
+        key = {
+            key(pages[it])
         },
         state = savedPagerState,
     ) { currentPage ->

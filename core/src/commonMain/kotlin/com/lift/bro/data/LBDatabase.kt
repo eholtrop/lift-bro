@@ -15,14 +15,13 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
+import comliftbrodb.Workout
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -45,6 +44,7 @@ class LBDatabase(
             driverFactory.provideDbDriver(LiftBroDB.Schema),
             LiftingSetAdapter = LiftingSet.Adapter(dateAdapter = instantAdapter),
             LiftingLogAdapter = LiftingLog.Adapter(dateAdapter = dateAdapter),
+            WorkoutAdapter = Workout.Adapter(dateAdapter = dateAdapter),
         )
     }
 
@@ -66,6 +66,8 @@ class LBDatabase(
     )
 
     val logDataSource = database.liftingLogQueries
+
+    val workoutDataSource = database.workoutQueries
 }
 
 private val instantAdapter = object : ColumnAdapter<Instant, Long> {
@@ -162,17 +164,33 @@ class SetDataSource(
 
     fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
 
-    fun listenAll(): Flow<List<LBSet>> =
+    fun listenAll(
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
+        variationId: String? = null,
+    ): Flow<List<LBSet>> =
         setQueries.getAll().asFlow().mapToList(dispatcher).map { sets ->
-            sets.map { set ->
-                val localMax =
-                    sets.filter { it.variationId == set.variationId }
-                        .filter { it.date.toLocalDate() < set.date.toLocalDate() }
-                        .maxOfOrNull { calculateMax(it.reps, it.weight) }
-                set.toDomain().copy(
-                    mer = localMax?.let { calculateMer(set, localMax) } ?: 0
-                )
-            }
+            sets
+                .filter {
+                    val date = it.date.toLocalDate()
+                    when {
+                        startDate == null && endDate == null -> true
+                        startDate != null && endDate != null -> date >= startDate && date <= endDate
+                        startDate != null -> date >= startDate
+                        endDate != null -> date <= endDate
+                        else -> true
+                    }
+                }
+                .filter { variationId == null || it.variationId == variationId }
+                .map { set ->
+                    val localMax =
+                        sets.filter { it.variationId == set.variationId }
+                            .filter { it.date.toLocalDate() < set.date.toLocalDate() }
+                            .maxOfOrNull { calculateMax(it.reps, it.weight) }
+                    set.toDomain().copy(
+                        mer = localMax?.let { calculateMer(set, localMax) } ?: 0
+                    )
+                }
         }
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()

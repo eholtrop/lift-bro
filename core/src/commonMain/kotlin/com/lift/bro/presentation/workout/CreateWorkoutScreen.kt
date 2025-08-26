@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Note
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
@@ -23,7 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,12 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Exercise
-import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
 import com.lift.bro.presentation.LocalTwmSettings
@@ -56,18 +50,11 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.decimalFormat
-import com.lift.bro.utils.toLocalDate
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toString
-import comliftbrodb.LiftingLog
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -97,10 +84,10 @@ fun CreateWorkoutScreen(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
     val viewModel: CreateWorkoutViewModel = rememberSaveable(
-        key = date.toString(),
+        date.toString(),
         saver = CreateWorkoutViewModelSaver(coroutineScope),
         init = {
-            CreateWorkoutViewModel(CreateWorkoutState(date), coroutineScope = coroutineScope)
+            CreateWorkoutViewModel(CreateWorkoutState(date = date), coroutineScope = coroutineScope)
         }
     )
     CreateWorkoutScreenInternal(
@@ -152,22 +139,54 @@ fun CreateWorkoutScreenInternal(
 
             item {
                 Row {
-                    Button(
-                        modifier = Modifier.weight(1f),
-                        onClick = {},
-                        colors = ButtonDefaults.outlinedButtonColors()
-                    ) {
-                        Text("Add Warmup")
+                    if (state.warmup != null) {
+                        var warmup by remember { mutableStateOf(state.warmup ?: "") }
+                        TextField(
+                            modifier = Modifier.weight(1f),
+                            value = warmup,
+                            label = { Text("Warmup") },
+                            placeholder = { Text("High Knees") },
+                            onValueChange = {
+                                warmup = it
+                                viewModel.handleEvent(CreateWorkoutEvent.UpdateWarmup(it))
+                            },
+                        )
+                    } else {
+                        Button(
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                viewModel.handleEvent(CreateWorkoutEvent.UpdateWarmup(""))
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors()
+                        ) {
+                            Text("Add Warmup")
+                        }
                     }
 
                     Space(MaterialTheme.spacing.half)
 
-                    Button(
-                        modifier = Modifier.weight(1f),
-                        onClick = {},
-                        colors = ButtonDefaults.outlinedButtonColors()
-                    ) {
-                        Text("Add Finisher")
+                    if (state.finisher !=  null) {
+                        var finisher by remember { mutableStateOf(state.finisher ?: "") }
+                        TextField(
+                            modifier = Modifier.weight(1f),
+                            value = finisher,
+                            label = { Text("Finisher") },
+                            placeholder = { Text("Burpees") },
+                            onValueChange = {
+                                finisher = it
+                                viewModel.handleEvent(CreateWorkoutEvent.UpdateWarmup(it))
+                            },
+                        )
+                    } else {
+                        Button(
+                            modifier = Modifier.weight(1f),
+                            onClick = {
+                                viewModel.handleEvent(CreateWorkoutEvent.UpdateFinisher(""))
+                            },
+                            colors = ButtonDefaults.outlinedButtonColors()
+                        ) {
+                            Text("Add Finisher")
+                        }
                     }
                 }
             }
@@ -282,7 +301,7 @@ fun CreateWorkoutScreenInternal(
                                     )
                                 }
                             ) {
-                                Text("Warm Up")
+                                Text("Add Set")
                             }
                         } else {
                             Button(

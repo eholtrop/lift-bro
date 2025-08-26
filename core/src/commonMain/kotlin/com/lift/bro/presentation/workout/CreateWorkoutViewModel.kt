@@ -1,13 +1,20 @@
 package com.lift.bro.presentation.workout
 
 import androidx.annotation.RestrictTo
+import androidx.compose.ui.platform.LocalGraphicsContext
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
+import com.benasher44.uuid.*
 import com.lift.bro.data.SetDataSource
+import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Workout
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.AddExercise
 import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.CoroutineScope
@@ -30,21 +37,26 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CreateWorkoutState(
+    val id: String = uuid4().toString(),
     val date: LocalDate,
-    val warmup: String = "",
+    val warmup: String? = null,
     val exercises: List<Exercise> = emptyList(),
-    val finisher: String = "",
+    val finisher: String? = null,
     val notes: String = "",
 )
 
 sealed class CreateWorkoutEvent {
     data class UpdateNotes(val notes: String) : CreateWorkoutEvent()
     data class AddExercise(val variation: Variation) : CreateWorkoutEvent()
+
+    data class UpdateFinisher(val finisher: String) : CreateWorkoutEvent()
+
+    data class UpdateWarmup(val warmup: String) : CreateWorkoutEvent()
 }
 
 class CreateWorkoutViewModel(
     initialState: CreateWorkoutState,
-    setRepository: SetDataSource = dependencies.database.setDataSource,
+    workoutRepository: WorkoutRepository = WorkoutRepository(dependencies.database),
     liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource,
     coroutineScope: CoroutineScope
 ) {
@@ -56,28 +68,24 @@ class CreateWorkoutViewModel(
     }
 
     val state: StateFlow<CreateWorkoutState> = combine(
-        setRepository.listenAll(),
+        workoutRepository.get(initialState.date),
         liftLogRepository.getByDate(initialState.date).asFlow().mapToOneOrNull(Dispatchers.IO),
         flowOf(initialState),
-    ) { sets, log, initialState ->
+    ) { workout, log, initialState ->
         CreateWorkoutState(
-            date = initialState.date,
-            exercises = sets.filter { it.date.toLocalDate() == initialState.date }
-                .groupBy { it.variationId }
-                .map { (id, sets) ->
-                    Exercise(
-                        sets = sets,
-                        variation = dependencies.database.variantDataSource.get(id)!!
-                    )
-                },
-            notes = log?.notes ?: ""
+            id = workout.id,
+            date = workout.date,
+            exercises = workout.exercises,
+            notes = log?.notes ?: "",
+            finisher = workout.finisher,
+            warmup = workout.warmup,
         )
     }
         .flatMapLatest { state ->
             inputs.receiveAsFlow()
                 .scan(state) { state, event ->
                     when (event) {
-                        is CreateWorkoutEvent.AddExercise -> state.copy(
+                        is AddExercise -> state.copy(
                             exercises = state.exercises + Exercise(
                                 sets = emptyList(),
                                 variation = event.variation
@@ -91,12 +99,29 @@ class CreateWorkoutViewModel(
                                         notes = event.notes
                                     )
                             liftLogRepository.save(
-                                id = log?.id ?: com.benasher44.uuid.uuid4().toString(),
+                                id = log?.id ?: uuid4().toString(),
                                 date = initialState.date,
                                 notes = event.notes,
                                 vibe_check = log?.vibe_check
                             )
                             state.copy(notes = event.notes)
+                        }
+
+                        is CreateWorkoutEvent.UpdateFinisher -> {
+                            if (event.finisher.isNotBlank()) {
+                                workoutRepository.save(
+                                    state.copy(finisher = event.finisher).toWorkout()
+                                )
+                            }
+                            state.copy(finisher = event.finisher)
+                        }
+                        is CreateWorkoutEvent.UpdateWarmup -> {
+                            if (event.warmup.isNotBlank()) {
+                                workoutRepository.save(
+                                    state.copy(warmup = event.warmup).toWorkout()
+                                )
+                            }
+                            state.copy(warmup = event.warmup)
                         }
                     }
                 }
@@ -107,3 +132,11 @@ class CreateWorkoutViewModel(
             initialState,
         )
 }
+
+private fun CreateWorkoutState.toWorkout(): Workout = Workout(
+    id = this.id,
+    date = this.date,
+    warmup = this.warmup,
+    exercises = this.exercises,
+    finisher = this.finisher
+)
