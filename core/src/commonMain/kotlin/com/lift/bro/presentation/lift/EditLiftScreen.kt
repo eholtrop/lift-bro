@@ -127,7 +127,8 @@ internal fun EditLiftScreen(
         if (initialVariations.isEmpty()) {
             variations.add(
                 Variation(
-                    name = ""
+                    name = "",
+                    lift = lift
                 )
             )
         }
@@ -296,7 +297,7 @@ internal fun EditLiftScreen(
 
             Button(
                 onClick = {
-                    variations.add(Variation(name = ""))
+                    variations.add(Variation(name = "", lift = lift))
                     focusLastItem = true
                 },
             ) {
