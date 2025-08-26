@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -174,7 +175,7 @@ fun CreateWorkoutScreenInternal(
                             placeholder = { Text("Burpees") },
                             onValueChange = {
                                 finisher = it
-                                viewModel.handleEvent(CreateWorkoutEvent.UpdateWarmup(it))
+                                viewModel.handleEvent(CreateWorkoutEvent.UpdateFinisher(it))
                             },
                         )
                     } else {

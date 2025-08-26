@@ -72,7 +72,7 @@ class VariationRepository(
     override fun listenAll(): Flow<List<Variation>> {
         return combine(
             variationQueries.getAll().asFlow().mapToList(Dispatchers.IO),
-            setQueries.getAll().asFlow().mapToList(Dispatchers.IO)
+            setQueries.getAll().asFlow().mapToList(Dispatchers.IO),
         ) { variations, sets ->
             variations.map { variation ->
                 variation.toDomain(
