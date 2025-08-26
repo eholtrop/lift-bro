@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 
 data class CalculatorState(
-    val total: Double,
+    val total: String,
     val expression: List<Segment>,
 )
 
@@ -129,7 +129,7 @@ class CalculatorViewModel(
                         expression = listOf(
                             Segment(
                                 Weight(
-                                    state.total,
+                                    state.total.toDoubleOrNull() ?: 0.0,
                                     UOM.POUNDS
                                 ),
                                 null
@@ -181,9 +181,15 @@ class CalculatorViewModel(
                 }
             }
         }.map { state ->
-            state.copy(
-                total = calculateTotal(state.expression)
-            )
+            try {
+                state.copy(
+                    total = calculateTotal(state.expression).decimalFormat()
+                )
+            } catch (arithmeticException: ArithmeticException) {
+                state.copy(
+                    total = "..."
+                )
+            }
         }.stateIn(
             scope = GlobalScope,
             started = SharingStarted.WhileSubscribed(),
@@ -194,6 +200,8 @@ class CalculatorViewModel(
         if (expression.isEmpty()) return 0.0
         val segment = expression.first()
         val nextSegment = expression.getOrNull(1)
+
+        if (segment.operation == Operator.Divide && nextSegment?.weight?.value == 0.0) throw ArithmeticException("Cannot divide by zero")
 
         val thisWeight = segment.weight.uom.convert(
             segment.weight.value,
@@ -218,7 +226,7 @@ class CalculatorViewModel(
             Operator.Divide -> calculateTotal(
                 listOf(
                     Segment(
-                        Weight(thisWeight / nextWeight, defaultUOM),
+                        Weight(thisWeight / if (nextWeight == 0.0) 1.0 else nextWeight, defaultUOM),
                         nextSegment?.operation
                     )
                 ) + expression.drop(2)

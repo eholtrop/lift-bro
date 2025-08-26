@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.EaseIn
@@ -14,11 +15,13 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -58,6 +61,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
@@ -69,6 +73,7 @@ import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.presentation.LocalCalculatorVisibility
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.presentation.home.concernedIconRes
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
@@ -286,7 +291,7 @@ fun PlateBox(
             ) {
                 Text(text = plate.weight.decimalFormat())
 //                if (LocalUnitOfMeasure.current != plate.uom) {
-                    Text(text = LocalUnitOfMeasure.current.value)
+                Text(text = LocalUnitOfMeasure.current.value)
 //                }
             }
         }
@@ -304,7 +309,7 @@ fun WeightCalculator(
         modifier = modifier,
         viewModel = CalculatorViewModel(
             initialState = CalculatorState(
-                total = weight,
+                total = weight.decimalFormat(),
                 expression = listOf(
                     Segment(
                         Weight(
@@ -329,7 +334,11 @@ private fun WeightCalculatorInternal(
     val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state.total) {
-        weightChanged(state.total)
+        state.total.toDoubleOrNull()?.let {
+            weightChanged(it)
+        } ?: run {
+
+        }
     }
 
     Column(
@@ -353,18 +362,34 @@ private fun WeightCalculatorInternal(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.End,
         ) {
-            AnimatedText(
-                text = weightFormat(state.total),
-                style = MaterialTheme.typography.headlineLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                transitionForChar = { char, index ->
-                    if (char.isDigit()) {
-                        AnimatedTextDefaults.transitionForChar(this, char, index)
-                    } else {
-                        EnterTransition.None togetherWith ExitTransition.None
+                Row {
+                    AnimatedText(
+                        text = state.total.toDoubleOrNull()?.let { weightFormat(it) }
+                            ?: run { state.total },
+                        style = MaterialTheme.typography.headlineLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        transitionForChar = { char, index ->
+                            if (char.isDigit()) {
+                                AnimatedTextDefaults.transitionForChar(this, char, index)
+                            } else {
+                                EnterTransition.None togetherWith ExitTransition.None
+                            }
+                        }
+                    )
+
+                    AnimatedVisibility(
+                        visible = state.total.toDoubleOrNull() == null,
+                        enter = fadeIn(),
+                        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd),
+                    ) {
+                        Space(MaterialTheme.spacing.half)
+                        Image(
+                            modifier = Modifier.size(MaterialTheme.typography.headlineLarge.lineHeight.value.dp),
+                            painter = painterResource(LocalLiftBro.current.concernedIconRes()),
+                            contentDescription = null
+                        )
                     }
-                }
-            )
+            }
 
             Text(
                 text = buildAnnotatedString {
@@ -452,11 +477,12 @@ fun KeyPad(
                 }
                 when (index) {
                     0 -> CalculatorButton(
-                            modifier = calculatorButtonModifier(),
-                            "/"
-                        ) {
-                            operatorClicked(Operator.Divide)
-                        }
+                        modifier = calculatorButtonModifier(),
+                        "/"
+                    ) {
+                        operatorClicked(Operator.Divide)
+                    }
+
                     1 ->
                         CalculatorButton(
                             modifier = calculatorButtonModifier(),
@@ -464,6 +490,7 @@ fun KeyPad(
                         ) {
                             operatorClicked(Operator.Multiply)
                         }
+
                     2 ->
                         CalculatorButton(
                             modifier = calculatorButtonModifier(),
