@@ -1,9 +1,11 @@
 package com.lift.bro.ui.navigation
 
+import com.benasher44.uuid.uuid4
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed interface Destination {
 
     @Serializable
@@ -13,7 +15,7 @@ sealed interface Destination {
     data object Onboarding: Destination
 
     @Serializable
-    object Dashboard : Destination
+    data object Dashboard : Destination
 
     @Serializable
     data class LiftDetails(val liftId: String) : Destination
@@ -43,5 +45,5 @@ sealed interface Destination {
     ) : Destination
 
     @Serializable
-    object Settings : Destination
+    data object Settings : Destination
 }

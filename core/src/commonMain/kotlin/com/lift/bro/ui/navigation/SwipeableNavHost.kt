@@ -21,6 +21,8 @@ import androidx.compose.ui.util.lerp
 import com.lift.bro.config.BuildConfig
 import io.sentry.kotlin.multiplatform.Sentry
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import kotlin.math.absoluteValue
 
 
@@ -28,7 +30,7 @@ import kotlin.math.absoluteValue
 fun SwipeableNavHost(
     modifier: Modifier = Modifier,
     navCoordinator: NavCoordinator,
-    key: (Destination) -> Any = { it.hashCode() },
+    key: (Destination) -> Any = { Json.encodeToString(it) },
     content: @Composable (Destination) -> Unit,
 ) {
     val pages by navCoordinator.pagesAsFlow.collectAsState(emptyList())
