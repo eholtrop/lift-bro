@@ -44,11 +44,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TriStateCheckbox
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -56,12 +59,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.LookaheadScope
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
@@ -150,28 +156,57 @@ fun WeightCalculatorBottomSheet(
                 modifier = Modifier.wrapContentHeight().fillMaxWidth().weight(1f),
                 contentAlignment = Alignment.CenterStart
             ) {
+                var includeBarBell by rememberSaveable { mutableStateOf(true) }
 
-                CalculatorBarBell(visible = showCalculator.value)
+                CalculatorBarBell(
+                    visible = showCalculator.value,
+                )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
                 ) {
-                    var localTotal = (total - 45) / 2 // subtract the weight of the bar
+                    var localTotal =
+                        (total - if (includeBarBell) 45 else 0) / 2 // subtract the weight of the bar
 
-                    Space(72.dp)
                     AnimatedVisibility(
                         visible = showCalculator.value,
                         enter = slideInHorizontally { -it } + fadeIn(),
                         exit = slideOutHorizontally { -it } + fadeOut()
                     ) {
-                        Box(
-                            modifier = Modifier.background(
-                                color = Color.DarkGray,
-                                shape = MaterialTheme.shapes.extraSmall
-                            ).size(16.dp, 36.dp)
-                        )
+                        Row(
+                            modifier = Modifier
+                                .clickable(
+                                    onClick = { includeBarBell = !includeBarBell },
+                                    role = Role.Checkbox,
+                                )
+                                .minimumInteractiveComponentSize()
+                                .padding(start = MaterialTheme.spacing.half),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+//                            Checkbox(
+//                                modifier = Modifier.size(24.dp),
+//                                checked = includeBarBell,
+//                                onCheckedChange = { includeBarBell = it }
+//                            )
+                            TriStateCheckbox(
+                                state = ToggleableState(includeBarBell),
+                                onClick = null
+                            )
+                            Text(
+                                modifier = Modifier.padding(start = MaterialTheme.spacing.half),
+                                text = "45 ${LocalUnitOfMeasure.current.value}",
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Space(MaterialTheme.spacing.half)
+                            Box(
+                                modifier = Modifier.background(
+                                    color = Color.DarkGray,
+                                    shape = MaterialTheme.shapes.extraSmall
+                                ).size(16.dp, 36.dp)
+                            )
+                        }
                     }
 
                     val plates = listOf(
@@ -259,9 +294,7 @@ data class Plate(
     val weight: Double,
     val uom: UOM,
     val color: Color,
-) {
-
-}
+)
 
 @Composable
 fun PlateBox(
@@ -362,33 +395,33 @@ private fun WeightCalculatorInternal(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.End,
         ) {
-                Row {
-                    AnimatedText(
-                        text = state.total.toDoubleOrNull()?.let { weightFormat(it) }
-                            ?: run { state.total },
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        transitionForChar = { char, index ->
-                            if (char.isDigit()) {
-                                AnimatedTextDefaults.transitionForChar(this, char, index)
-                            } else {
-                                EnterTransition.None togetherWith ExitTransition.None
-                            }
+            Row {
+                AnimatedText(
+                    text = state.total.toDoubleOrNull()?.let { weightFormat(it) }
+                        ?: run { state.total },
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    transitionForChar = { char, index ->
+                        if (char.isDigit()) {
+                            AnimatedTextDefaults.transitionForChar(this, char, index)
+                        } else {
+                            EnterTransition.None togetherWith ExitTransition.None
                         }
-                    )
-
-                    AnimatedVisibility(
-                        visible = state.total.toDoubleOrNull() == null,
-                        enter = fadeIn(),
-                        exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd),
-                    ) {
-                        Space(MaterialTheme.spacing.half)
-                        Image(
-                            modifier = Modifier.size(MaterialTheme.typography.headlineLarge.lineHeight.value.dp),
-                            painter = painterResource(LocalLiftBro.current.concernedIconRes()),
-                            contentDescription = null
-                        )
                     }
+                )
+
+                AnimatedVisibility(
+                    visible = state.total.toDoubleOrNull() == null,
+                    enter = fadeIn(),
+                    exit = fadeOut() + shrinkOut(shrinkTowards = Alignment.CenterEnd),
+                ) {
+                    Space(MaterialTheme.spacing.half)
+                    Image(
+                        modifier = Modifier.size(MaterialTheme.typography.headlineLarge.lineHeight.value.dp),
+                        painter = painterResource(LocalLiftBro.current.concernedIconRes()),
+                        contentDescription = null
+                    )
+                }
             }
 
             Text(

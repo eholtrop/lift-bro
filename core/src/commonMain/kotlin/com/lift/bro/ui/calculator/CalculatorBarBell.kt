@@ -5,15 +5,15 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +27,7 @@ import com.lift.bro.ui.theme.spacing
 
 @Composable
 fun CalculatorBarBell(
-    visible: Boolean
+    visible: Boolean,
 ) {
     AnimatedVisibility(
         visible = visible,
@@ -43,14 +43,9 @@ fun CalculatorBarBell(
                 )
             )
                 .fillMaxWidth(.75f)
-                .height(24.dp),
+                .height(28.dp),
             contentAlignment = Alignment.CenterStart
         ) {
-            Text(
-                modifier = Modifier.padding(start = MaterialTheme.spacing.half),
-                text = "45 ${LocalUnitOfMeasure.current.value}",
-                style = MaterialTheme.typography.titleSmall,
-            )
         }
     }
 }
