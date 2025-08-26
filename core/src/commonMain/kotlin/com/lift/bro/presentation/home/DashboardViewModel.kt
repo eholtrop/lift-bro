@@ -7,15 +7,15 @@ import app.cash.sqldelight.coroutines.mapToList
 import com.lift.bro.BackupService
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
+import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.SubscriptionType
-import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
+import com.lift.bro.utils.combine
 import com.lift.bro.utils.toLocalDate
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
@@ -24,7 +24,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -33,6 +32,7 @@ class DashboardViewModel(
     initialState: DashboardState? = null,
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.database.variantDataSource,
+    workoutRepository: WorkoutRepository = WorkoutRepository(dependencies.database),
     setRepository: SetDataSource = dependencies.database.setDataSource,
     scope: CoroutineScope = GlobalScope
 ) {
@@ -41,13 +41,14 @@ class DashboardViewModel(
         variationRepository.listenAll(),
         setRepository.listenAll(),
         dependencies.database.logDataSource.getAll().asFlow().mapToList(Dispatchers.IO),
+        workoutRepository.getAll(),
         flow {
             emit(SubscriptionType.Pro)
             if (!Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.containsKey("pro")) {
                 emit(SubscriptionType.None)
             }
         },
-    ) { lifts, variations, sets, logs, subType ->
+    ) { lifts, variations, sets, logs, workouts, subType ->
         DashboardState(
             showEmpty = lifts.isEmpty(),
             items = lifts.map { lift ->
@@ -79,21 +80,7 @@ class DashboardViewModel(
                         }
                     }
                 }.toList(),
-            workouts = sets.groupBy { it.date.toLocalDate() }.map { dateSetsEntry ->
-                val date = dateSetsEntry.key
-                Workout(
-                    date = date,
-                    exercises = dateSetsEntry.value.groupBy { it.variationId }.map { map ->
-                        val variation = variations.firstOrNull { it.id == map.key }
-                        variation?.let {
-                            Exercise(
-                                variation = variation,
-                                sets = map.value
-                            )
-                        }
-                    }.filterNotNull()
-                )
-            },
+            workouts = workouts,
             logs = logs.map {
                 LiftingLog(
                     id = it.id,

@@ -3,6 +3,7 @@ package com.lift.bro.utils
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine as flowCombine
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
@@ -29,3 +30,31 @@ public fun <T, R> Flow<List<T>>.mapEach(transform: (T) -> R): Flow<List<R>> = th
  * Filters each item in the list based on the filter provided
  */
 public fun <T> Flow<List<T>>.filterEach(filter: (T) -> Boolean): Flow<List<T>> = this.map { it.filter(filter) }
+
+fun <T1, T2, T3, T4, T5, T6, R> combine(
+    flow1: Flow<T1>,
+    flow2: Flow<T2>,
+    flow3: Flow<T3>,
+    flow4: Flow<T4>,
+    flow5: Flow<T5>,
+    flow6: Flow<T6>,
+    transform: suspend (T1, T2, T3, T4, T5, T6) -> R
+): Flow<R> {
+    return flowCombine(
+        flow1,
+        flow2,
+        flow3,
+        flow4,
+        flow5,
+        flow6
+    ) { arr ->
+        transform(
+            arr[0] as T1,
+            arr[1] as T2,
+            arr[2] as T3,
+            arr[3] as T4,
+            arr[4] as T5,
+            arr[5] as T6,
+        )
+    }
+}

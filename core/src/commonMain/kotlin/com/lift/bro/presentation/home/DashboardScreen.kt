@@ -99,7 +99,7 @@ fun DashboardScreen(
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
-    setClicked: (Variation, LocalDate) -> Unit,
+    setClicked: (Workout, LocalDate) -> Unit,
 ) {
 
     val state by remember { viewModel }.state.collectAsState(null)
@@ -140,7 +140,7 @@ fun DashboardContent(
     addLiftClicked: () -> Unit,
     liftClicked: (Lift) -> Unit,
     addSetClicked: () -> Unit,
-    setClicked: (Variation, LocalDate) -> Unit,
+    setClicked: (Workout, LocalDate) -> Unit,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ) {
     var tab by rememberSaveable { mutableStateOf(defaultTab) }
@@ -350,7 +350,7 @@ fun DashboardContent(
             Tab.RecentSets -> {
                 WorkoutCalendarScreen(
                     modifier = Modifier.padding(padding),
-                    variationClicked = setClicked,
+                    workoutClicked = setClicked,
                     workouts = dashboardState.workouts,
                     logs = dashboardState.logs,
                 )

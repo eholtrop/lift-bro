@@ -11,15 +11,12 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
+import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
@@ -32,10 +29,26 @@ class WorkoutRepository(
         database.setDataSource.listenAll(),
         database.variantDataSource.listenAll(),
     ) { workouts, sets, variations ->
-        workouts.map { workout ->
+        val dateToWorkoutSetMap: MutableMap<LocalDate, Pair<List<LBSet>?, comliftbrodb.Workout?>> = mutableMapOf()
+        sets.groupBy { it.date.toLocalDate() }.forEach {
+            dateToWorkoutSetMap[it.key] = it.value to null
+        }
+        workouts.associateBy { it.date }.map {
+            dateToWorkoutSetMap[it.key] = dateToWorkoutSetMap[it.key]?.first to it.value
+        }
+
+        dateToWorkoutSetMap.map { (date, pair) ->
+            val workout = pair.second ?: comliftbrodb.Workout(
+                id = uuid4().toString(),
+                finisher = null,
+                warmup = null,
+                date = date,
+            )
+            val sets = pair.first ?: emptyList()
+
             WorkoutConverter.toDomain(
                 workout = workout,
-                sets = sets.filter { it.date == workout.date },
+                sets = sets.filter { it.date.toLocalDate() == workout.date },
                 variations = variations,
             )
         }

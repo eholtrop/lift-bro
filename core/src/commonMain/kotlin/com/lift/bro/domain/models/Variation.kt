@@ -25,7 +25,7 @@ data class Variation(
     val notes: String? = null,
 )
 
-val Variation.fullName get() = "$name ${lift?.name}"
+val Variation.fullName get() = "$name ${lift?.name}".trim()
 
 @Composable
 fun Variation.maxText(): String {

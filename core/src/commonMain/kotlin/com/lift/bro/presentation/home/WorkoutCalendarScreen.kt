@@ -92,7 +92,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun WorkoutCalendarScreen(
     modifier: Modifier = Modifier,
-    variationClicked: (Variation, LocalDate) -> Unit,
+    workoutClicked: (Workout, LocalDate) -> Unit,
     workouts: List<Workout>,
     logs: List<LiftingLog>,
 ) {
@@ -286,7 +286,7 @@ fun WorkoutCalendarScreen(
                 CalendarWorkoutCard(
                     modifier = Modifier.animateItem(),
                     workout = selectedWorkout,
-                    variationClicked = variationClicked,
+                    workoutClicked = workoutClicked,
                 )
             } else {
                 val nc = LocalNavCoordinator.current
@@ -311,7 +311,7 @@ fun WorkoutCalendarScreen(
 fun CalendarWorkoutCard(
     modifier: Modifier = Modifier,
     workout: Workout,
-    variationClicked: (Variation, LocalDate) -> Unit,
+    workoutClicked: (Workout, LocalDate) -> Unit,
 ) {
 
     Card(
@@ -321,32 +321,43 @@ fun CalendarWorkoutCard(
             contentColor = MaterialTheme.colorScheme.onSurface
         )
     ) {
-        Column {
+        Column(
+            modifier = Modifier.clickable(
+                onClick = { workoutClicked(workout, workout.date) }
+            )
+                .padding(MaterialTheme.spacing.one)
+        ) {
             if (workout.warmup != null || workout.finisher != null) {
-                Row {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
                     CompositionLocalProvider(
                         LocalTextStyle provides MaterialTheme.typography.labelMedium,
                     ) {
-                        Column {
-                            Text(text = "Warmup")
-                            Text(text = workout.warmup ?: "")
+                        if (workout.warmup != null) {
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(text = "Warmup:")
+                                Text(text = workout.warmup)
+                            }
                         }
-                        Space()
-                        Column {
-                            Text(text = "Warmup")
-                            Text(text = workout.finisher ?: "")
+                        if (workout.finisher != null) {
+                            Column(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text(text = "Finisher:")
+                                Text(text = workout.finisher)
+                            }
                         }
                     }
                 }
+                Space(MaterialTheme.spacing.half)
             }
             workout.exercises.forEach { exercise ->
                 val variation = exercise.variation
                 Row(
-                    modifier = Modifier.fillMaxWidth()
-                        .clickable(
-                            onClick = { variationClicked(variation, workout.date) }
-                        )
-                        .padding(MaterialTheme.spacing.one),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Column(
