@@ -53,6 +53,21 @@ Problems with the current setup:
 1. Stores context statically
 2. Easy to inject in a non testable way
 
+# Release Schedule
+
+## Android
+Android is released to `open testing` whenever code is pushed to `main`. This can be accessed by opting into the Play Store Beta Public Beta
+
+This beta build is promoted to production every Saturday at midnight!
+
+## iOS
+Currently iOS is very manual, I tried to "vibe code" a CI solution similar to android but it failed miserably...
+
+Need to spend some time on this in the future. Until then! Manual (I try to release once a week same as android)
+
+### Goal for iOS
+Release to testflight nightly, promote to production every Saturday at midnight
+
 # UI Testing
 ui tests are run using maestro, to install follow this link
 
