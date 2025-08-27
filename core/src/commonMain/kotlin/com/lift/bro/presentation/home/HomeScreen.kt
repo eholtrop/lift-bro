@@ -49,9 +49,11 @@ import lift_bro.core.generated.resources.view_dashboard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+
 @Composable
-fun HomeScreen() {
-    val viewModel = rememberSaveable(
+@OptIn(ExperimentalMaterial3Api::class)
+fun HomeScreen(
+    viewModel: HomeViewModel = rememberSaveable(
         Unit,
         saver = object : Saver<HomeViewModel, String> {
             override fun restore(value: String): HomeViewModel {
@@ -63,17 +65,7 @@ fun HomeScreen() {
             }
         },
         init = { HomeViewModel() }
-    )
-
-    HomeScreenContent(
-        viewModel = viewModel
-    )
-}
-
-@Composable
-@OptIn(ExperimentalMaterial3Api::class)
-private fun HomeScreenContent(
-    viewModel: HomeViewModel,
+    ),
     navCoordinator: NavCoordinator = LocalNavCoordinator.current
 ) {
     val state by viewModel.state.collectAsState()

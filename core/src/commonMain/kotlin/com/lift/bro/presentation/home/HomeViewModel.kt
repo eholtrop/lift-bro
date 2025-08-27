@@ -51,7 +51,7 @@ class HomeViewModel(
     val state: StateFlow<HomeState> = liftRepository.listenAll()
         .flatMapLatest { lifts ->
             events.receiveAsFlow().scan(
-                initial = if (lifts.isEmpty()) HomeState.Empty else HomeState.Content(Tab.Dashboard)
+                initial = if (lifts.isEmpty()) HomeState.Empty else HomeState.Content((initialState as? HomeState.Content)?.selectedTab ?: Tab.Dashboard)
             ) { state, event ->
                 when (state) {
                     is HomeState.Content -> {

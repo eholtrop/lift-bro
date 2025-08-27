@@ -66,7 +66,7 @@ sealed interface WorkoutCalendarEvent {
 }
 
 class WorkoutCalendarViewModel(
-    initialState: WorkoutCalendarState = WorkoutCalendarState(),
+    initialState: WorkoutCalendarState? = null,
     workoutRepository: WorkoutRepository = WorkoutRepository(database = dependencies.database),
     logQueries: LiftingLogQueries = dependencies.database.logDataSource,
 ) {
@@ -93,17 +93,18 @@ class WorkoutCalendarViewModel(
             selectedWorkout = workouts.find { it.date == today }
         )
     }.flatMapLatest { state ->
-        events.receiveAsFlow().scan(state) { state, event ->
-            when (event) {
-                is WorkoutCalendarEvent.AddWorkoutClicked -> state
-                is WorkoutCalendarEvent.DateSelected -> state.copy(selectedWorkout = state.workouts.find { it.date == event.date })
-                is WorkoutCalendarEvent.WorkoutClicked -> state
+        events.receiveAsFlow()
+            .scan(state.copy(selectedWorkout = initialState?.selectedWorkout)) { state, event ->
+                when (event) {
+                    is WorkoutCalendarEvent.AddWorkoutClicked -> state
+                    is WorkoutCalendarEvent.DateSelected -> state.copy(selectedWorkout = state.workouts.find { it.date == event.date })
+                    is WorkoutCalendarEvent.WorkoutClicked -> state
+                }
             }
-        }
     }
         .stateIn(
             scope = GlobalScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = initialState
+            initialValue = initialState ?: WorkoutCalendarState()
         )
 }
