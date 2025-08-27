@@ -50,6 +50,7 @@ import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
@@ -57,16 +58,27 @@ import org.jetbrains.compose.resources.stringResource
 import kotlin.math.max
 import kotlin.text.Typography.nbsp
 
+
+@Serializable
 data class LiftCardState(
     val lift: Lift,
     val values: List<Pair<LocalDate, LiftCardData>>,
 )
 
+
+@Serializable
 data class LiftCardData(
     val weight: Double,
     val reps: Int,
     val rpe: Int?,
-    private val offset: Offset = Offset.Zero,
+    private val offset: LBOffset = LBOffset(),
+)
+
+
+@Serializable
+data class LBOffset(
+    val x: Float = 0f,
+    val y: Float = 0f
 )
 
 enum class LiftCardYValue {
@@ -83,7 +95,7 @@ fun LiftCard(
     val lift = state.lift
     val max =
         if (value == LiftCardYValue.Reps) state.values.maxOfOrNull { it.second.reps.toDouble() }
-            ?: 0.0 else state.lift.maxWeight
+            ?: 0.0 else state.lift.maxWeight ?: state.values.maxOfOrNull { it.second.weight }
     val min = state.values.minOfOrNull {
         when (value) {
             LiftCardYValue.Reps -> 0.0

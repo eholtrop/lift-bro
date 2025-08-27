@@ -211,7 +211,7 @@ fun App(
         LaunchedEffect("landing_selection") {
             dependencies.settingsRepository.getDeviceFtux().collectLatest {
                 when (it) {
-                    true -> navCoordinator.setRoot(Destination.Dashboard)
+                    true -> navCoordinator.setRoot(Destination.Home)
                     false -> navCoordinator.setRoot(Destination.Onboarding)
                 }
             }

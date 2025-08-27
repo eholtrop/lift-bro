@@ -1,8 +1,8 @@
 package com.lift.bro
 
 import androidx.compose.runtime.Composable
-import com.lift.bro.presentation.home.DashboardScreen
-import com.lift.bro.presentation.home.DashboardViewModel
+import com.lift.bro.config.BuildConfig
+import com.lift.bro.presentation.home.HomeScreen
 import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
 import com.lift.bro.presentation.onboarding.OnboardingScreen
@@ -12,31 +12,22 @@ import com.lift.bro.presentation.variation.VariationDetailsScreen
 import com.lift.bro.presentation.workout.CreateWorkoutScreen
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 
 @Composable
 fun AppRouter(route: Destination) {
     val navCoordinator = LocalNavCoordinator.current
+    if (BuildConfig.isDebug) {
+        Log.d("DEBUGEH", "route: $route")
+    }
+
     when (route) {
         is Destination.Unknown -> {}
 
         is Destination.Onboarding -> OnboardingScreen()
 
-        Destination.Dashboard ->
-            DashboardScreen(
-                viewModel = DashboardViewModel(),
-                addLiftClicked = {
-                    navCoordinator.present(Destination.EditLift(null))
-                },
-                liftClicked = {
-                    navCoordinator.present(Destination.LiftDetails(it.id))
-                },
-                addSetClicked = {
-                    navCoordinator.present(Destination.EditSet(null, null, null))
-                },
-                setClicked = { variation, date ->
-                    navCoordinator.present(Destination.CreateWorkout(localDate =  date))
-                }
-            )
+        Destination.Home -> HomeScreen()
 
         is Destination.EditWorkout -> CreateWorkoutScreen(
             date = route.localDate,

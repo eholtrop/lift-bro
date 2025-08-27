@@ -1,0 +1,25 @@
+# onboarding_tests.yaml
+appId: com.lift.bro
+
+---
+- launchApp
+#- runFlow:
+#    file: flows/skip_onboarding_with_backup.yaml
+
+- tapOn: "Deadlift"
+- assertVisible: "Regular Deadlift"
+
+- tapOn: "Back"
+
+- tapOn: "Settings"
+- assertVisible: "Backup / Restore"
+
+- tapOn: "Back"
+
+- tapOn: "Add Set"
+- assertVisible: "You Crushed"
+
+- tapOn: "Back"
+
+- tapOn: "New Update Downloaded!"
+- assertVisible: "2025.08.30"

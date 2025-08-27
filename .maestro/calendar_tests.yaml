@@ -1,0 +1,37 @@
+# onboarding_tests.yaml
+appId: com.lift.bro
+
+---
+- launchApp
+#- runFlow:
+#    file: flows/skip_onboarding_with_backup.yaml
+
+- tapOn: "Calendar"
+- assertVisible: "August - 2025"
+
+- tapOn: "Previous Month"
+- assertVisible: "July - 2025"
+
+- tapOn: "Next Month"
+- assertVisible: "August - 2025"
+
+- assertVisible: "Wednesday, Aug 27 - 2025"
+- assertVisible: "Start a Workout!"
+- tapOn: "Start a Workout!"
+- assertVisible: "Add Warmup"
+- tapOn: "Back"
+- tapOn: "25"
+
+
+- scrollUntilVisible:
+      element:
+          text: "DB Bench Press"
+- assertVisible: "No max"
+- assertVisible: "95 lbs x 5"
+- tapOn: "Zercher Squat"
+- assertVisible: "5 x 95 lbs"
+
+- tapOn: "Back"
+
+- tapOn: "Edit Daily Notes"
+- assertVisible: "Save"

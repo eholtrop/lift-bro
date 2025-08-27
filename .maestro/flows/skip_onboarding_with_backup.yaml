@@ -10,9 +10,9 @@ appId: com.lift.bro
     timeout: 1000
 # Android
 - tapOn:
-    text: "2025-07-16_09_53_26.json"
+    text: "2025-08-27_11_40_37.json"
     optional: true
 # iOS
 - tapOn:
-    id: "2025-07-16_09_53_26.json, json"
+    id: "2025-08-27_11_40_37.json, json"
     optional: true

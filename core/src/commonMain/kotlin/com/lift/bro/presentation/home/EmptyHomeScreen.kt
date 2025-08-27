@@ -31,6 +31,7 @@ import lift_bro.core.generated.resources.ic_lift_bro_lisa
 import lift_bro.core.generated.resources.ic_lift_bro_lisa_concerned
 import lift_bro.core.generated.resources.ic_lift_bro_lisa_concerned_light
 import lift_bro.core.generated.resources.ic_lift_bro_lisa_dark
+import lift_bro.core.generated.resources.ic_lift_bro_lisa_light
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -59,7 +60,7 @@ fun LiftBro.darkIconRes(): DrawableResource {
 fun LiftBro.lightIconRes(): DrawableResource {
     return when (this) {
         LiftBro.Leo -> Res.drawable.ic_lift_bro_leo_light
-        LiftBro.Lisa -> Res.drawable.ic_lift_bro_lisa_concerned_light
+        LiftBro.Lisa -> Res.drawable.ic_lift_bro_lisa_light
     }
 }
 
