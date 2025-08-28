@@ -59,6 +59,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -81,6 +82,7 @@ import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.home.concernedIconRes
 import com.lift.bro.presentation.home.iconRes
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
@@ -90,6 +92,7 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.delay
+import kotlinx.io.discardingSink
 import org.jetbrains.compose.resources.painterResource
 
 enum class Digit(digit: Int) {
@@ -338,33 +341,38 @@ fun WeightCalculator(
     weightSubmitted: (Double?) -> Unit,
     defaultUOM: UOM = LocalUnitOfMeasure.current,
 ) {
-    WeightCalculatorInternal(
-        modifier = modifier,
-        viewModel = CalculatorViewModel(
-            initialState = CalculatorState(
-                total = weight.decimalFormat(),
-                expression = listOf(
-                    Segment(
-                        Weight(
-                            value = weight,
-                            uom = defaultUOM
-                        )
+    val interactor = rememberInteractor(
+        initialState = CalculatorState(
+            total = weight.decimalFormat(),
+            expression = listOf(
+                Segment(
+                    Weight(
+                        value = weight,
+                        uom = defaultUOM
                     )
                 )
-            ),
-            defaultUOM = defaultUOM
+            )
         ),
-        weightChanged = weightSubmitted
+        reducers = calculatorReducers(defaultUOM),
+    )
+
+    val state by interactor.state.collectAsState()
+
+    WeightCalculatorInternal(
+        modifier = modifier,
+        state = state,
+        weightChanged = weightSubmitted,
+        dispatcher = { interactor.invoke(it) }
     )
 }
 
 @Composable
 private fun WeightCalculatorInternal(
     modifier: Modifier = Modifier,
-    viewModel: CalculatorViewModel,
+    state: CalculatorState,
+    dispatcher: (CalculatorEvent) -> Unit,
     weightChanged: (Double) -> Unit = {}
 ) {
-    val state by viewModel.state.collectAsState()
 
     LaunchedEffect(state.total) {
         state.total.toDoubleOrNull()?.let {
@@ -446,7 +454,7 @@ private fun WeightCalculatorInternal(
                                         .toSpanStyle(),
                                 )
                             ) {
-                                viewModel.handleEvent(CalculatorEvent.ToggleUOMForIndex(index))
+                                dispatcher(CalculatorEvent.ToggleUOMForIndex(index))
                             }
                         ) {
                             if (state.expression.getOrNull(index - 1)?.operation != Operator.Multiply) {
@@ -470,10 +478,10 @@ private fun WeightCalculatorInternal(
 
         KeyPad(
             modifier = Modifier.padding(vertical = MaterialTheme.spacing.one),
-            digitClicked = { viewModel.handleEvent(CalculatorEvent.DigitAdded(it)) },
-            operatorClicked = { viewModel.handleEvent(CalculatorEvent.OperatorSelected(it)) },
-            actionClicked = { viewModel.handleEvent(CalculatorEvent.ActionApplied(it)) },
-            decimalClicked = { viewModel.handleEvent(CalculatorEvent.ActionApplied(Action.Decimal)) }
+            digitClicked = { dispatcher(CalculatorEvent.DigitAdded(it)) },
+            operatorClicked = { dispatcher(CalculatorEvent.OperatorSelected(it)) },
+            actionClicked = { dispatcher(CalculatorEvent.ActionApplied(it)) },
+            decimalClicked = { dispatcher(CalculatorEvent.ActionApplied(Action.Decimal)) }
         )
     }
 }

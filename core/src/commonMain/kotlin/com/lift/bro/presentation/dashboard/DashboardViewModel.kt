@@ -6,15 +6,11 @@ import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
-import com.lift.bro.data.VariationRepository
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo

@@ -10,6 +10,7 @@ import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.presentation.SideEffect
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
@@ -91,7 +92,6 @@ sealed interface WorkoutCalendarEvent {
 }
 
 typealias Reducer<State, Event> = (State, Event) -> State
-typealias SideEffect<State, Event> = suspend (State, Event) -> Unit
 
 val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> = { state, event ->
     when (event) {
