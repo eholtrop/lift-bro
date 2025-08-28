@@ -52,6 +52,7 @@ import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.variation.render
@@ -75,9 +76,9 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun WorkoutCalendarContent(
     modifier: Modifier = Modifier,
-    viewModel: WorkoutCalendarViewModel = rememberWorkoutCalendarViewModel(),
+    interactor: Interactor<WorkoutCalendarState, WorkoutCalendarEvent> = rememberWorkoutCalendarInteractor(),
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by interactor.state.collectAsState()
 
     val selectedDate = state.selectedDate.first
 
@@ -103,7 +104,7 @@ fun WorkoutCalendarContent(
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
                 dateSelected = {
-                    viewModel.handleEvent(
+                    interactor(
                         WorkoutCalendarEvent.DateSelected(it)
                     )
                 },
@@ -268,7 +269,7 @@ fun WorkoutCalendarContent(
                 null -> {
                     Button(
                         onClick = {
-                            viewModel.handleEvent(WorkoutCalendarEvent.AddWorkoutClicked(selectedDate))
+                            interactor(WorkoutCalendarEvent.AddWorkoutClicked(selectedDate))
                         },
                         colors = ButtonDefaults.elevatedButtonColors()
                     ) {
@@ -280,7 +281,7 @@ fun WorkoutCalendarContent(
                         modifier = Modifier.animateItem(),
                         workout = workout,
                         workoutClicked = { workout, date ->
-                            viewModel.handleEvent(WorkoutCalendarEvent.WorkoutClicked(workout))
+                            interactor(WorkoutCalendarEvent.WorkoutClicked(workout))
                         },
                     )
                 }

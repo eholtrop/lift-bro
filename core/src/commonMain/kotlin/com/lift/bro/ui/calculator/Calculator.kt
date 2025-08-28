@@ -362,7 +362,7 @@ fun WeightCalculator(
         modifier = modifier,
         state = state,
         weightChanged = weightSubmitted,
-        dispatcher = { interactor.invoke(it) }
+        dispatcher = { interactor(it) }
     )
 }
 

@@ -7,7 +7,10 @@ import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
@@ -23,25 +26,29 @@ typealias SideEffect<State, Event> = suspend (State, Event) -> Unit
 
 class Interactor<State, Event>(
     initialState: State,
+    source: Flow<State>,
     coroutineScope: CoroutineScope,
-    private val reducers: List<Reducer<State, Event>> = emptyList(),
-    private val sideEffects: List<SideEffect<State, Event>> = emptyList(),
+    private val reducers: List<Reducer<State, Event>>,
+    private val sideEffects: List<SideEffect<State, Event>>,
+    stateResolver: (initial: State, source: State) -> State = { _, s -> s },
 ) {
-    private val event: Channel<Event> = Channel()
+    private val events: Channel<Event> = Channel()
 
-    operator fun invoke(event: Event) {}
+    operator fun invoke(event: Event) = events.trySend(event)
 
-    val state = event.receiveAsFlow()
-        .scan(initialState) { state, event ->
-            val newState = reducers.fold(state) { s, reducer ->
-                reducer(
-                    s,
-                    event
-                )
+    val state = source.flatMapLatest { sourceState ->
+        events.receiveAsFlow()
+            .scan(stateResolver(initialState, sourceState)) { state, event ->
+                val newState = reducers.fold(state) { s, reducer ->
+                    reducer(
+                        s,
+                        event
+                    )
+                }
+                sideEffects.forEach { sideEffect -> sideEffect(newState, event) }
+                newState
             }
-            sideEffects.forEach { sideEffect -> sideEffect(newState, event) }
-            newState
-        }
+    }
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(),
@@ -52,21 +59,25 @@ class Interactor<State, Event>(
 @Composable
 inline fun <reified State, Event> rememberInteractor(
     initialState: State,
+    source: Flow<State> = flow { emit(initialState) },
     reducers: List<Reducer<State, Event>> = emptyList(),
     sideEffects: List<SideEffect<State, Event>> = emptyList(),
     viewModelScope: CoroutineScope = rememberCoroutineScope(),
+    noinline stateResolver: (initial: State, source: State) -> State = { _, s -> s },
 ): Interactor<State, Event> {
     return rememberSaveable(
         initialState,
         saver = object : Saver<Interactor<State, Event>, String> {
             override fun SaverScope.save(value: Interactor<State, Event>): String? {
-                return Json.encodeToString(value.state)
+                return Json.encodeToString(value.state.value)
             }
 
             override fun restore(value: String): Interactor<State, Event>? {
                 return Interactor(
-                    Json.decodeFromString<State>(value),
-                    viewModelScope,
+                    initialState = Json.decodeFromString<State>(value),
+                    coroutineScope = viewModelScope,
+                    stateResolver = stateResolver,
+                    source = source,
                     reducers = reducers,
                     sideEffects = sideEffects,
                 )
@@ -74,8 +85,10 @@ inline fun <reified State, Event> rememberInteractor(
         }
     ) {
         Interactor(
-            initialState,
-            viewModelScope,
+            initialState = initialState,
+            coroutineScope = viewModelScope,
+            stateResolver = stateResolver,
+            source = source,
             reducers = reducers,
             sideEffects = sideEffects,
         )

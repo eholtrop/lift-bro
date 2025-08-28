@@ -10,7 +10,9 @@ import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
@@ -60,6 +62,38 @@ fun navigationSideEffects(
     )
 }
 
+fun workoutCalendarSourceData(
+    workoutRepository: WorkoutRepository = WorkoutRepository(database = dependencies.database),
+    logQueries: LiftingLogQueries = dependencies.database.logDataSource
+) = combine(
+    workoutRepository.getAll(),
+    logQueries.getAll().asFlow().mapToList(Dispatchers.IO)
+) { workouts, logs ->
+    WorkoutCalendarState(
+        workouts = workouts,
+        logs = logs.map {
+            LiftingLog(
+                id = it.id,
+                date = it.date,
+                notes = it.notes ?: "",
+                vibe = it.vibe_check?.toInt()
+            )
+        },
+        selectedDate = today to workouts.find { it.date == today }
+    )
+}
+
+@Composable
+fun rememberWorkoutCalendarInteractor(
+    sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = navigationSideEffects()
+) = rememberInteractor(
+    initialState = WorkoutCalendarState(selectedDate = today to null),
+    stateResolver = { initial, source -> source.copy(selectedDate = initial.selectedDate) },
+    source = workoutCalendarSourceData(),
+    reducers = listOf(WorkoutCalendarReducer),
+    sideEffects = sideEffects
+)
+
 @Composable
 fun rememberWorkoutCalendarViewModel(
     sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = navigationSideEffects()
@@ -91,9 +125,7 @@ sealed interface WorkoutCalendarEvent {
     data class DateSelected(val date: LocalDate) : WorkoutCalendarEvent
 }
 
-typealias Reducer<State, Event> = (State, Event) -> State
-
-val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> = { state, event ->
+val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> = Reducer { state, event ->
     when (event) {
         is WorkoutCalendarEvent.AddWorkoutClicked -> state
         is WorkoutCalendarEvent.DateSelected -> state.copy(selectedDate = event.date to state.workouts.find { it.date == event.date })
