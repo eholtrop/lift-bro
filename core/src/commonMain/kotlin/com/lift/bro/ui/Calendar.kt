@@ -1,5 +1,8 @@
 package com.lift.bro.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,12 +24,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -167,6 +172,31 @@ private fun CalendarContent(
             )
 
             Space()
+
+            AnimatedVisibility(
+                visible = selection != today,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                Button(
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent,
+                    ),
+                    onClick = {
+                        dateSelected(today)
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(CALENDAR_INITIAL_PAGE)
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.CalendarToday,
+                        contentDescription = "Today",
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                }
+            }
 
             Button(
                 colors = ButtonDefaults.buttonColors(

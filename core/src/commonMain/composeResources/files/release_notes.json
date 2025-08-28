@@ -4,6 +4,14 @@
     "type": "feature",
     "platform": "all",
     "note": {
+      "en": "Add \"Today\" button to workout calendar"
+    }
+  },
+  {
+    "versionId": "2025.08.30",
+    "type": "feature",
+    "platform": "all",
+    "note": {
       "en": "Update Calendar with new Workout Flow"
     }
   },
