@@ -158,57 +158,57 @@ fun SettingsScreen() {
 //                    }
 //                }
 
-                item {
-                    Text(
-                        modifier = Modifier.semantics {
-                            heading()
-                        },
-                        text = "Pro Features",
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
-                }
-
-                item {
-                    when (subscriptionType) {
-                        SubscriptionType.None -> {
-                            SettingsRowItem(
-                                modifier = Modifier.clickable { showPaywall = true },
-                                title = { Text("Become Pro!") },
-                            ) {
-                                Row {
-                                    Text("Sign up for an Ad free experience and extra premium tracking metrics!")
-                                }
-                            }
-                        }
-
-                        else -> {}
-                    }
-
-                    LaunchedEffect(showPaywall) {
-                        Purchases.sharedInstance.getCustomerInfo(
-                            onError = { error ->
-                                Sentry.captureException(Throwable(message = error.message))
-                            },
-                            onSuccess = { success ->
-                                if (success.entitlements.active.containsKey("pro")) {
-                                    subscriptionType = SubscriptionType.Pro
-                                }
-                            }
-                        )
-                    }
-                }
-
-                item {
-                    MERSettingsRow()
-                }
-
-                item {
-                    TWMSettingsRow()
-                }
-
-                item {
-                    eMaxSettingsRow()
-                }
+//                item {
+//                    Text(
+//                        modifier = Modifier.semantics {
+//                            heading()
+//                        },
+//                        text = "Pro Features",
+//                        style = MaterialTheme.typography.headlineMedium,
+//                    )
+//                }
+//
+//                item {
+//                    when (subscriptionType) {
+//                        SubscriptionType.None -> {
+//                            SettingsRowItem(
+//                                modifier = Modifier.clickable { showPaywall = true },
+//                                title = { Text("Become Pro!") },
+//                            ) {
+//                                Row {
+//                                    Text("Sign up for an Ad free experience and extra premium tracking metrics!")
+//                                }
+//                            }
+//                        }
+//
+//                        else -> {}
+//                    }
+//
+//                    LaunchedEffect(showPaywall) {
+//                        Purchases.sharedInstance.getCustomerInfo(
+//                            onError = { error ->
+//                                Sentry.captureException(Throwable(message = error.message))
+//                            },
+//                            onSuccess = { success ->
+//                                if (success.entitlements.active.containsKey("pro")) {
+//                                    subscriptionType = SubscriptionType.Pro
+//                                }
+//                            }
+//                        )
+//                    }
+//                }
+//
+//                item {
+//                    MERSettingsRow()
+//                }
+//
+//                item {
+//                    TWMSettingsRow()
+//                }
+//
+//                item {
+//                    eMaxSettingsRow()
+//                }
 
                 item {
                     Column {
