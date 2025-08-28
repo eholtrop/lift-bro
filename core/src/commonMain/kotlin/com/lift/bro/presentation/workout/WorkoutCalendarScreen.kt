@@ -40,7 +40,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -58,11 +57,7 @@ import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.LocalNavCoordinator
-import com.lift.bro.ui.saver.MutableLocalDateSaver
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.today
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
@@ -80,12 +75,11 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun WorkoutCalendarContent(
     modifier: Modifier = Modifier,
-    workoutClicked: (Workout, LocalDate) -> Unit,
     viewModel: WorkoutCalendarViewModel = rememberWorkoutCalendarViewModel(),
 ) {
     val state by viewModel.state.collectAsState()
 
-    val selectedDate = state.selectedWorkout?.date ?: today
+    val selectedDate = state.selectedDate.first
 
     val setDateMap = state.workouts.associateBy { it.date }
 
@@ -270,12 +264,11 @@ fun WorkoutCalendarContent(
         }
 
         item {
-            when (val workout = state.selectedWorkout) {
+            when (val workout = state.selectedDate.second) {
                 null -> {
-                    val navCoordinator = LocalNavCoordinator.current
                     Button(
                         onClick = {
-                            navCoordinator.present(Destination.CreateWorkout(selectedDate))
+                            viewModel.handleEvent(WorkoutCalendarEvent.AddWorkoutClicked(selectedDate))
                         },
                         colors = ButtonDefaults.elevatedButtonColors()
                     ) {
@@ -286,7 +279,9 @@ fun WorkoutCalendarContent(
                     CalendarWorkoutCard(
                         modifier = Modifier.animateItem(),
                         workout = workout,
-                        workoutClicked = workoutClicked,
+                        workoutClicked = { workout, date ->
+                            viewModel.handleEvent(WorkoutCalendarEvent.WorkoutClicked(workout))
+                        },
                     )
                 }
             }

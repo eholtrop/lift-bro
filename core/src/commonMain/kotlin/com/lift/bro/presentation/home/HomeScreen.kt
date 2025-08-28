@@ -189,9 +189,6 @@ fun HomeScreen(
                         Tab.WorkoutCalendar -> {
                             WorkoutCalendarContent(
                                 modifier = Modifier.padding(padding),
-                                workoutClicked = { workout, date ->
-                                    navCoordinator.present(Destination.CreateWorkout(date))
-                                },
                             )
                         }
                     }

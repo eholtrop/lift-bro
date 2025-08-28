@@ -10,10 +10,9 @@ import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.presentation.dashboard.DashboardEvent
-import com.lift.bro.presentation.dashboard.DashboardState
-import com.lift.bro.presentation.dashboard.DashboardViewModel
-import com.lift.bro.ui.LiftCardState
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.today
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
@@ -36,13 +34,35 @@ import kotlinx.serialization.json.Json
 @Serializable
 data class WorkoutCalendarState(
     val workouts: List<Workout> = emptyList(),
-    val selectedWorkout: Workout? = null,
+    val selectedDate: Pair<LocalDate, Workout?>,
     val logs: List<LiftingLog> = emptyList()
 )
 
+@Composable
+fun navigationSideEffects(
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current
+): List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> {
+    return listOf(
+        { state, event ->
+            when (event) {
+                is WorkoutCalendarEvent.AddWorkoutClicked -> navCoordinator.present(
+                    Destination.CreateWorkout(event.onDate)
+                )
+
+                is WorkoutCalendarEvent.WorkoutClicked -> navCoordinator.present(
+                    Destination.CreateWorkout(event.workout.date)
+                )
+
+                else -> {}
+            }
+        }
+    )
+}
 
 @Composable
-fun rememberWorkoutCalendarViewModel(): WorkoutCalendarViewModel {
+fun rememberWorkoutCalendarViewModel(
+    sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = navigationSideEffects()
+): WorkoutCalendarViewModel {
     return rememberSaveable(
         saver = object : Saver<WorkoutCalendarViewModel, String> {
             override fun SaverScope.save(value: WorkoutCalendarViewModel): String? {
@@ -50,23 +70,41 @@ fun rememberWorkoutCalendarViewModel(): WorkoutCalendarViewModel {
             }
 
             override fun restore(value: String): WorkoutCalendarViewModel? {
-                return WorkoutCalendarViewModel(Json.decodeFromString(value))
+                return WorkoutCalendarViewModel(
+                    initialState = Json.decodeFromString(value),
+                    sideEffects = sideEffects,
+                )
             }
         },
         init = {
-            WorkoutCalendarViewModel()
+            WorkoutCalendarViewModel(
+                sideEffects = sideEffects
+            )
         }
     )
 }
 
 sealed interface WorkoutCalendarEvent {
-    object AddWorkoutClicked : WorkoutCalendarEvent
+    data class AddWorkoutClicked(val onDate: LocalDate) : WorkoutCalendarEvent
     data class WorkoutClicked(val workout: Workout) : WorkoutCalendarEvent
     data class DateSelected(val date: LocalDate) : WorkoutCalendarEvent
 }
 
+typealias Reducer<State, Event> = (State, Event) -> State
+typealias SideEffect<State, Event> = suspend (State, Event) -> Unit
+
+val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> = { state, event ->
+    when (event) {
+        is WorkoutCalendarEvent.AddWorkoutClicked -> state
+        is WorkoutCalendarEvent.DateSelected -> state.copy(selectedDate = event.date to state.workouts.find { it.date == event.date })
+        is WorkoutCalendarEvent.WorkoutClicked -> state
+    }
+}
+
 class WorkoutCalendarViewModel(
     initialState: WorkoutCalendarState? = null,
+    reducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> = WorkoutCalendarReducer,
+    sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = emptyList(),
     workoutRepository: WorkoutRepository = WorkoutRepository(database = dependencies.database),
     logQueries: LiftingLogQueries = dependencies.database.logDataSource,
 ) {
@@ -90,21 +128,23 @@ class WorkoutCalendarViewModel(
                     vibe = it.vibe_check?.toInt()
                 )
             },
-            selectedWorkout = workouts.find { it.date == today }
+            selectedDate = today to workouts.find { it.date == today }
         )
     }.flatMapLatest { state ->
         events.receiveAsFlow()
-            .scan(state.copy(selectedWorkout = initialState?.selectedWorkout)) { state, event ->
-                when (event) {
-                    is WorkoutCalendarEvent.AddWorkoutClicked -> state
-                    is WorkoutCalendarEvent.DateSelected -> state.copy(selectedWorkout = state.workouts.find { it.date == event.date })
-                    is WorkoutCalendarEvent.WorkoutClicked -> state
+            .scan(
+                initial = state.copy(selectedDate = initialState?.selectedDate ?: state.selectedDate),
+            ) { state, event ->
+                val newState = reducer(state, event)
+                sideEffects.forEach {
+                    it(newState, event)
                 }
+                newState
             }
     }
         .stateIn(
             scope = GlobalScope,
             started = SharingStarted.WhileSubscribed(),
-            initialValue = initialState ?: WorkoutCalendarState()
+            initialValue = initialState ?: WorkoutCalendarState(selectedDate = today to null)
         )
 }
