@@ -88,7 +88,7 @@ fun rememberWorkoutCalendarInteractor(
     sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = navigationSideEffects()
 ) = rememberInteractor(
     initialState = WorkoutCalendarState(selectedDate = today to null),
-    stateResolver = { initial, source -> source.copy(selectedDate = initial.selectedDate) },
+    stateResolver = { initial, source -> source.copy(selectedDate = initial?.selectedDate ?: source.selectedDate) },
     source = workoutCalendarSourceData(),
     reducers = listOf(WorkoutCalendarReducer),
     sideEffects = sideEffects

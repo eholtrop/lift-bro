@@ -10,21 +10,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Warning
@@ -47,7 +41,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -58,9 +51,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
@@ -87,7 +77,6 @@ import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_positiv
 import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_title
 import lift_bro.core.generated.resources.edit_lift_variation_heading
 import lift_bro.core.generated.resources.edit_lift_variation_warning_dialog_text
-import org.jetbrains.compose.resources.stringArrayResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -96,13 +85,12 @@ fun EditLiftScreen(
     liftSaved: () -> Unit,
     liftDeleted: () -> Unit,
 ) {
-    val lift by dependencies.database.liftDataSource.get(liftId).collectAsState(null)
-    val variations by dependencies.database.variantDataSource.listenAll(liftId ?: "")
-        .collectAsState(emptyList())
+    val interactor = rememberEditLiftInteractor(liftId)
+    val state by interactor.state.collectAsState()
 
     EditLiftScreen(
-        lift = lift,
-        initialVariations = variations,
+        state = state,
+        dispatcher = { interactor(it) },
         liftSaved = liftSaved,
         liftDeleted = liftDeleted,
     )
@@ -110,29 +98,13 @@ fun EditLiftScreen(
 
 @Composable
 internal fun EditLiftScreen(
-    lift: Lift?,
-    initialVariations: List<Variation>,
+    state: EditLiftState,
+    dispatcher: (EditLiftEvent) -> Unit,
     liftSaved: () -> Unit,
     liftDeleted: () -> Unit,
     coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
-    var thisLift by remember(lift) { mutableStateOf(lift ?: Lift()) }
-    val variations =
-        remember(initialVariations) { (initialVariations).toMutableStateList() }
     var showLiftDeleteWarning by remember { mutableStateOf(false) }
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-
-    LaunchedEffect(initialVariations) {
-        if (initialVariations.isEmpty()) {
-            variations.add(
-                Variation(
-                    name = "",
-                    lift = lift
-                )
-            )
-        }
-    }
 
     if (showLiftDeleteWarning) {
         WarningDialog(
@@ -140,11 +112,7 @@ internal fun EditLiftScreen(
             onDismiss = { showLiftDeleteWarning = false },
             onConfirm = {
                 coroutineScope.launch {
-                    variations.forEach {
-                        dependencies.database.setDataSource.deleteAll(it.id)
-                        dependencies.database.variantDataSource.delete(it.id)
-                    }
-                    dependencies.database.liftDataSource.delete(lift?.id ?: "")
+                    dispatcher(EditLiftEvent.DeleteLift)
                     liftDeleted()
                 }
             }
@@ -153,7 +121,11 @@ internal fun EditLiftScreen(
 
     LiftingScaffold(
         title = {
-            Text(if (lift != null) stringResource(Res.string.edit_lift_screen_title) else stringResource(Res.string.create_lift_screen_title))
+            Text(
+                if (state.id != null) stringResource(Res.string.edit_lift_screen_title) else stringResource(
+                    Res.string.create_lift_screen_title
+                )
+            )
         },
         trailingContent = {
             TopBarIconButton(
@@ -168,140 +140,130 @@ internal fun EditLiftScreen(
             fabIcon = Icons.Default.Edit,
             contentDescription = stringResource(Res.string.edit_lift_screen_save_cta_content_description),
             fabClicked = {
-                dependencies.database.liftDataSource.save(
-                    thisLift
-                )
-                coroutineScope.launch {
-                    variations.filter { it.name != null }.forEach {
-                        dependencies.database.variantDataSource.save(it)
-                    }
-                }
+                dispatcher(EditLiftEvent.Save)
                 liftSaved()
             },
         ),
     ) { padding ->
-        Column(
-            modifier = Modifier.padding(padding).fillMaxWidth(),
+        LazyColumn(
+            modifier = Modifier.padding(padding).animateContentSize().fillMaxWidth(),
+            contentPadding = PaddingValues(MaterialTheme.spacing.one),
             horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
         ) {
-            Space(MaterialTheme.spacing.one)
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                TextField(
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent,
-                        errorContainerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                    ),
-                    value = thisLift.name,
-                    onValueChange = { thisLift = thisLift.copy(name = it) },
-                    placeholder = {
-                        Text(
-                            text = stringResource(Res.string.edit_lift_screen_lift_name_placeholder),
-                            textAlign = TextAlign.Center,
-                        )
-                    },
-                    textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center)
-                )
-                InfoDialogButton(
-                    dialogTitle = { Text(stringResource(Res.string.edit_lift_info_dialog_title)) },
-                    dialogMessage = {
-                        Text(
-                            text = stringResource(Res.string.edit_lift_info_dialog_text),
-                        )
-                    },
-                )
-            }
-            Space(MaterialTheme.spacing.two)
-
-            Text(
-                modifier = Modifier.align(Alignment.Start)
-                    .padding(start = MaterialTheme.spacing.one)
-                    .semantics {
-                        heading()
-                    },
-                text = stringResource(Res.string.edit_lift_variation_heading),
-                style = MaterialTheme.typography.titleLarge
-            )
-
-            LazyColumn(
-                modifier = Modifier.animateContentSize().fillMaxWidth(),
-                contentPadding = PaddingValues(MaterialTheme.spacing.one),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
-            ) {
-                itemsIndexed(variations, { index, variation -> variation.id }) { index, variation ->
-
-                    var showVariationWarning by remember { mutableStateOf(false) }// 1. Create a transition state for each item's visibility
-                    val visibilityState = remember {
-                        MutableTransitionState(true)
-                    }
-
-                    LaunchedEffect(visibilityState.currentState) {
-                        if (!visibilityState.currentState && !visibilityState.targetState && variations.contains(
-                                variation
+            stickyHeader {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    TextField(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = MaterialTheme.spacing.one),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                            errorContainerColor = Color.Transparent,
+                            disabledContainerColor = Color.Transparent,
+                        ),
+                        value = state.name,
+                        onValueChange = { dispatcher(EditLiftEvent.NameChanged(it)) },
+                        placeholder = {
+                            Text(
+                                text = stringResource(Res.string.edit_lift_screen_lift_name_placeholder),
+                                textAlign = TextAlign.Center,
                             )
+                        },
+                        textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center),
+                        trailingIcon = {
+                            InfoDialogButton(
+                                dialogTitle = { Text(stringResource(Res.string.edit_lift_info_dialog_title)) },
+                                dialogMessage = {
+                                    Text(
+                                        text = stringResource(Res.string.edit_lift_info_dialog_text),
+                                    )
+                                },
+                            )
+                        }
+                    )
+                    Space(MaterialTheme.spacing.two)
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier.semantics {
+                                    heading()
+                                },
+                            text = stringResource(Res.string.edit_lift_variation_heading),
+                            style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Space(MaterialTheme.spacing.half)
+                        IconButton(
+                            onClick = {
+                                dispatcher(EditLiftEvent.AddVariation)
+                            },
                         ) {
-                            dependencies.database.variantDataSource.delete(variation.id)
-                            dependencies.database.setDataSource.deleteAll(variation.id)
-                            variations.remove(variation)
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = stringResource(Res.string.edit_lift_screen_add_variation_cta_content_description),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
-
-                    if (showVariationWarning) {
-                        WarningDialog(
-                            text = stringResource(Res.string.edit_lift_variation_warning_dialog_text),
-                            onDismiss = { showVariationWarning = false },
-                            onConfirm = {
-                                visibilityState.targetState = false
-                                showVariationWarning = false
-                            }
-                        )
-                    }
-
-                    AnimatedVisibility(
-                        visibleState = visibilityState,
-                        enter = fadeIn() + slideInVertically(),
-                        exit = fadeOut()
-                    ) {
-                        VariationItem(
-                            modifier = Modifier.animateItem(),
-                            focusRequester = focusRequester,
-                            variation = variation,
-                            liftName = thisLift.name,
-                            onNameChange = {
-                                variations[index] = variations[index].copy(name = it)
-                            },
-                            onDelete = {
-                                if (initialVariations.contains(variation)) {
-                                    showVariationWarning = true
-                                } else {
-                                    visibilityState.targetState = false
-                                }
-                            }
-                        )
-                    }
                 }
             }
 
-            var focusLastItem by remember { mutableStateOf(false) }
-            LaunchedEffect(focusLastItem) {
-                if (focusLastItem) {
-                    focusRequester.requestFocus()
-                    keyboardController?.show()
-                    focusLastItem = false
-                }
-            }
+            itemsIndexed(
+                state.variations,
+                { index, variation -> variation.variation.id }) { index, card ->
 
-            Button(
-                onClick = {
-                    variations.add(Variation(name = "", lift = lift))
-                    focusLastItem = true
-                },
-            ) {
-                Text(stringResource(Res.string.edit_lift_screen_add_variation_cta_content_description))
+                var showVariationWarning by remember { mutableStateOf(false) }// 1. Create a transition state for each item's visibility
+//                val visibilityState = remember {
+//                    MutableTransitionState(true)
+//                }
+
+//                LaunchedEffect(visibilityState.currentState) {
+//                    if (!visibilityState.currentState && !visibilityState.targetState && state.variations.contains(
+//                            card
+//                        )
+//                    ) {
+//                        dispatcher(EditLiftEvent.VariationRemoved(card.variation))
+//                    }
+//                }
+
+                if (showVariationWarning) {
+                    WarningDialog(
+                        text = stringResource(Res.string.edit_lift_variation_warning_dialog_text),
+                        onDismiss = { showVariationWarning = false },
+                        onConfirm = {
+                            dispatcher(EditLiftEvent.VariationRemoved(card.variation))
+//                            visibilityState.targetState = false
+                            showVariationWarning = false
+                        }
+                    )
+                }
+
+//                AnimatedVisibility(
+//                    visibleState = visibilityState,
+//                    enter = fadeIn() + slideInVertically(),
+//                    exit = fadeOut()
+//                ) {
+                    VariationItem(
+                        modifier = Modifier.animateItem(),
+                        focusRequester = FocusRequester(),
+                        variation = card.variation,
+                        liftName = state.name,
+                        onNameChange = {
+                            dispatcher(EditLiftEvent.VariationNameChanged(card.variation, it))
+                        },
+                        onDelete = {
+                            if (card.shouldShowDeleteWarning) {
+                                showVariationWarning = true
+                            } else {
+                                dispatcher(EditLiftEvent.VariationRemoved(card.variation))
+                            }
+                        }
+                    )
+//                }
             }
         }
     }
