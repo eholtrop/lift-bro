@@ -346,25 +346,28 @@ fun LiftDetailsScreen(
             items(
                 state.variations.let {
                     when (sorting) {
-                        SortingOptions.Name -> it.sortedBy { it.name ?: "" }
-                        SortingOptions.NameReversed -> it.sortedByDescending { it.name ?: "" }
+                        SortingOptions.Name -> it.sortedBy { it.variation.name ?: "" }
+                        SortingOptions.NameReversed -> it.sortedByDescending { it.variation.name ?: "" }
                         SortingOptions.MaxSet -> it.sortedByDescending {
-                            it.oneRepMax ?: it.eMax ?: 0.0
+                            it.variation.oneRepMax ?: it.variation.eMax ?: 0.0
                         }
 
                         SortingOptions.MaxSetReversed -> it.sortedBy {
-                            it.oneRepMax ?: it.eMax ?: 0.0
+                            it.variation.oneRepMax ?: it.variation.eMax ?: 0.0
                         }
-                    }.sortedByDescending { it.favourite }
+                    }.sortedByDescending { it.variation.favourite }
                 },
-                key = { it.id },
-            ) { variation ->
+                key = { it.variation.id },
+            ) { cardState ->
                 VariationCard(
                     modifier = Modifier.animateItem(),
-                    variation = variation,
+                    state = cardState,
                     onClick = { dispatcher(LiftDetailsEvent.VariationClicked(it)) },
                     onSetClicked = {
                         dispatcher(LiftDetailsEvent.SetClicked(it))
+                    },
+                    favouriteToggled = {
+                        dispatcher(LiftDetailsEvent.ToggleFavourite(it))
                     }
                 )
             }
@@ -380,11 +383,13 @@ fun LiftDetailsScreen(
 @Composable
 private fun VariationCard(
     modifier: Modifier = Modifier,
-    variation: Variation,
+    state: VariationCardState,
     onClick: (Variation) -> Unit,
     onSetClicked: (LBSet) -> Unit,
+    favouriteToggled: (Variation) -> Unit
 ) {
-
+    val variation = state.variation
+    val sets = state.sets
     Box(
         modifier = modifier.fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
@@ -395,10 +400,6 @@ private fun VariationCard(
         Column(
             modifier = Modifier.fillMaxWidth(),
         ) {
-
-            val sets by dependencies.database.setDataSource.listenAllForVariation(variation.id)
-                .collectAsState(emptyList())
-
             Row(
                 modifier = Modifier.clickable {
                     onClick(variation)
@@ -421,11 +422,7 @@ private fun VariationCard(
                         )
                         IconButton(
                             onClick = {
-                                dependencies.database.variantDataSource.save(
-                                    variation.copy(
-                                        favourite = !variation.favourite
-                                    )
-                                )
+                                favouriteToggled(variation)
                             }
                         ) {
                             Icon(
@@ -575,8 +572,6 @@ private fun VariationCard(
                             )
                         }
                 }
-            } else {
-
             }
 
         }

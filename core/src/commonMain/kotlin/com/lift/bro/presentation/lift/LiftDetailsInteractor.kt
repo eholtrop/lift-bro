@@ -10,11 +10,13 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.workout.workoutCalendarSourceData
 import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.Destination.*
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.utils.combine
 import com.lift.bro.utils.toColor
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import kotlin.collections.listOf
 
@@ -22,13 +24,22 @@ import kotlin.collections.listOf
 data class LiftDetailsState(
     val liftName: String? = null,
     val liftColor: ULong? = null,
-    val variations: List<Variation> = emptyList(),
+    val variations: List<VariationCardState> = emptyList(),
+)
+
+@Serializable
+data class VariationCardState(
+    val variation: Variation,
+    val sets: List<LBSet>,
 )
 
 sealed interface LiftDetailsEvent {
     data class LiftColorChanged(val color: ULong) : LiftDetailsEvent
     data class VariationClicked(val variation: Variation) : LiftDetailsEvent
     data class SetClicked(val lbSet: LBSet) : LiftDetailsEvent
+
+    data class ToggleFavourite(val variation: Variation) : LiftDetailsEvent
+
     data object AddSetClicked : LiftDetailsEvent
 
     data object EditLiftClicked : LiftDetailsEvent
@@ -43,17 +54,24 @@ fun rememberLiftDetailsInteractor(
     source = combine(
         dependencies.database.liftDataSource.get(liftId),
         dependencies.database.variantDataSource.listenAll(liftId),
-    ) { lift, variations ->
+        dependencies.database.setDataSource.listenAllForLift(liftId)
+            .map { it.groupBy { it.variationId } }
+    ) { lift, variations, sets ->
         LiftDetailsState(
             liftName = lift?.name ?: "",
             liftColor = lift?.color,
-            variations = variations,
+            variations = variations.map {
+                VariationCardState(
+                    variation = it,
+                    sets = sets[it.id] ?: emptyList()
+                )
+            },
         )
     },
     sideEffects = listOf { state, event ->
         when (event) {
             LiftDetailsEvent.AddSetClicked -> navCoordinator.present(
-                Destination.EditSet(
+                EditSet(
                     liftId = liftId
                 )
             )
@@ -67,26 +85,35 @@ fun rememberLiftDetailsInteractor(
                     )
                 )
             }
+
             is LiftDetailsEvent.SetClicked ->
                 navCoordinator.present(
-                    Destination.EditSet(
+                    EditSet(
                         setId = event.lbSet.id
                     )
                 )
 
             is LiftDetailsEvent.VariationClicked ->
                 navCoordinator.present(
-                    Destination.VariationDetails(
+                    VariationDetails(
                         variationId = event.variation.id
                     )
                 )
 
             is LiftDetailsEvent.EditLiftClicked ->
                 navCoordinator.present(
-                    Destination.EditLift(
+                    EditLift(
                         liftId = liftId
                     )
                 )
+
+            is LiftDetailsEvent.ToggleFavourite -> {
+                dependencies.database.variantDataSource.save(
+                    event.variation.copy(
+                        favourite = !event.variation.favourite
+                    )
+                )
+            }
         }
     }
 )

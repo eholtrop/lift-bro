@@ -127,62 +127,67 @@ fun RepWeightSelector(
                         Row(
                             modifier = Modifier.fillMaxWidth()
                                 .background(
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.onPrimary,
                                     shape = MaterialTheme.shapes.medium
                                 )
                                 .padding(vertical = MaterialTheme.spacing.quarter),
                         ) {
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally,
+                            CompositionLocalProvider(
+
+                                LocalContentColor provides Color.DarkGray,
                             ) {
-                                Text("RPE")
-                                Text("10")
-                                Text("9")
-                                Text("8")
-                                Text("7")
-                                Text("6")
-                                Text("5")
-                                Text("1-4")
-                            }
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Text("RIR")
-                                Text("0")
-                                Text("1")
-                                Text("2")
-                                Text("3")
-                                Text("4")
-                                Text("5-6")
-                                Text("6+")
-                            }
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Text("%")
-                                Text("100")
-                                Text("95")
-                                Text("90")
-                                Text("85")
-                                Text("75")
-                                Text("60")
-                                Text("50")
-                            }
-                            Column(
-                                modifier = Modifier.weight(1f),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                Text("Vibe")
-                                Text("\uD83D\uDC80")
-                                Text("\uD83E\uDD75")
-                                Text("\uD83D\uDE30")
-                                Text("\uD83D\uDE05")
-                                Text("\uD83D\uDCAA")
-                                Text("\uD83D\uDE42")
-                                Text("\uD83E\uDD29")
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Text("RPE")
+                                    Text("10")
+                                    Text("9")
+                                    Text("8")
+                                    Text("7")
+                                    Text("6")
+                                    Text("5")
+                                    Text("1-4")
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Text("RIR")
+                                    Text("0")
+                                    Text("1")
+                                    Text("2")
+                                    Text("3")
+                                    Text("4")
+                                    Text("5-6")
+                                    Text("6+")
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Text("%")
+                                    Text("100")
+                                    Text("95")
+                                    Text("90")
+                                    Text("85")
+                                    Text("75")
+                                    Text("60")
+                                    Text("50")
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Text("Vibe")
+                                    Text("\uD83D\uDC80")
+                                    Text("\uD83E\uDD75")
+                                    Text("\uD83D\uDE30")
+                                    Text("\uD83D\uDE05")
+                                    Text("\uD83D\uDCAA")
+                                    Text("\uD83D\uDE42")
+                                    Text("\uD83E\uDD29")
+                                }
                             }
                         }
                     }
