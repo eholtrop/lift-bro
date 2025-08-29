@@ -5,10 +5,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -36,7 +39,7 @@ class Interactor<State, Event>(
 
     operator fun invoke(event: Event) = events.trySend(event)
 
-    val state = source.flatMapLatest { sourceState ->
+    val state: StateFlow<State> = source.flatMapLatest { sourceState ->
         events.receiveAsFlow()
             .scan(stateResolver(initialState, sourceState)) { state, event ->
                 val newState = reducers.fold(state) { s, reducer ->
@@ -69,10 +72,13 @@ inline fun <reified State, Event> rememberInteractor(
         initialState,
         saver = object : Saver<Interactor<State, Event>, String> {
             override fun SaverScope.save(value: Interactor<State, Event>): String? {
-                return Json.encodeToString(value.state.value)
+                val json = Json.encodeToString(value.state.value)
+                Log.d("DEBUGEH", "Saving state: $json")
+                return json
             }
 
             override fun restore(value: String): Interactor<State, Event>? {
+                Log.d("DEBUGEH", "Restoring state: $value")
                 return Interactor(
                     initialState = Json.decodeFromString<State>(value),
                     coroutineScope = viewModelScope,
