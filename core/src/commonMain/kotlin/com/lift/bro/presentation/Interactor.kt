@@ -22,7 +22,7 @@ import kotlinx.serialization.json.Json
 
 
 fun interface Reducer<State, Event> {
-    operator fun invoke(state: State, event: Event): State
+    suspend operator fun invoke(state: State, event: Event): State
 }
 
 typealias SideEffect<State, Event> = suspend (State, Event) -> Unit

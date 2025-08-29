@@ -60,6 +60,7 @@ import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
+import com.lift.bro.utils.debug
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
@@ -80,8 +81,6 @@ fun WorkoutCalendarContent(
 ) {
     val state by interactor.state.collectAsState()
 
-    val selectedDate = state.selectedDate.first
-
     val setDateMap = state.workouts.associateBy { it.date }
 
     val dailyLogs = state.logs.associateBy { it.date }
@@ -99,7 +98,7 @@ fun WorkoutCalendarContent(
             Calendar(
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight(),
-                selectedDate = selectedDate,
+                selectedDate = state.date,
                 contentPadding = PaddingValues(0.dp),
                 horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
@@ -122,7 +121,7 @@ fun WorkoutCalendarContent(
                                     )
                                     .size(8.dp).align(Alignment.TopStart),
                                 imageVector = Icons.Default.Edit,
-                                tint = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                                tint = if (date == state.date) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                                 contentDescription = null
                             )
                         }
@@ -141,7 +140,7 @@ fun WorkoutCalendarContent(
                                 }?.take(4)?.forEachIndexed { index, color ->
                                     Box(
                                         modifier = Modifier.background(
-                                            color = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else color,
+                                            color = if (date == state.date) MaterialTheme.colorScheme.onPrimary else color,
                                             shape = CircleShape,
                                         ).size(4.dp)
                                     )
@@ -171,9 +170,9 @@ fun WorkoutCalendarContent(
         item {
             Column {
                 var showNotesDialog by remember { mutableStateOf(false) }
-                var todaysNotes by remember(selectedDate) {
+                var todaysNotes by remember(state.date) {
                     mutableStateOf(
-                        dailyLogs[selectedDate]?.notes ?: ""
+                        dailyLogs[state.date]?.notes ?: ""
                     )
                 }
 
@@ -185,10 +184,10 @@ fun WorkoutCalendarContent(
                                 onClick = {
                                     GlobalScope.launch {
                                         dependencies.database.logDataSource.save(
-                                            id = dailyLogs[selectedDate]?.id ?: uuid4().toString(),
-                                            date = dailyLogs[selectedDate]?.date ?: selectedDate,
+                                            id = dailyLogs[state.date]?.id ?: uuid4().toString(),
+                                            date = dailyLogs[state.date]?.date ?: state.date,
                                             notes = todaysNotes,
-                                            vibe_check = dailyLogs[selectedDate]?.vibe?.toLong()
+                                            vibe_check = dailyLogs[state.date]?.vibe?.toLong()
                                         )
                                         showNotesDialog = false
                                     }
@@ -210,7 +209,7 @@ fun WorkoutCalendarContent(
                             Text(
                                 stringResource(
                                     Res.string.edit_daily_notes_dialog_title,
-                                    selectedDate.toString("EEEE, MMM d - yyyy")
+                                    state.date.toString("EEEE, MMM d - yyyy")
                                 )
                             )
                         },
@@ -239,7 +238,7 @@ fun WorkoutCalendarContent(
                     horizontalArrangement = Arrangement.Start,
                 ) {
                     Text(
-                        text = selectedDate.toString("EEEE, MMM d - yyyy"),
+                        text = state.date.toString("EEEE, MMM d - yyyy"),
                         style = MaterialTheme.typography.titleLarge
                     )
                     IconButton(
@@ -255,7 +254,7 @@ fun WorkoutCalendarContent(
                     }
                 }
 
-                dailyLogs[selectedDate]?.let {
+                dailyLogs[state.date]?.let {
                     Text(
                         text = it.notes,
                         style = MaterialTheme.typography.labelMedium
@@ -265,11 +264,11 @@ fun WorkoutCalendarContent(
         }
 
         item {
-            when (val workout = state.selectedDate.second) {
+            when (val workout = state.workout) {
                 null -> {
                     Button(
                         onClick = {
-                            interactor(WorkoutCalendarEvent.AddWorkoutClicked(selectedDate))
+                            interactor(WorkoutCalendarEvent.AddWorkoutClicked(state.date))
                         },
                         colors = ButtonDefaults.elevatedButtonColors()
                     ) {
