@@ -223,22 +223,22 @@ class SetDataSource(
     suspend fun delete(setId: String) {
         setQueries.delete(setId)
     }
-
-    private fun LiftingSet.toDomain() = LBSet(
-        id = this.id,
-        variationId = this.variationId,
-        weight = this.weight ?: 0.0,
-        reps = this.reps ?: 1,
-        tempo = Tempo(
-            down = this.tempoDown ?: 3,
-            hold = this.tempoHold ?: 1,
-            up = this.tempoUp ?: 1,
-        ),
-        date = this.date,
-        notes = this.notes,
-        rpe = this.rpe?.toInt(),
-    )
 }
+
+fun LiftingSet.toDomain() = LBSet(
+    id = this.id,
+    variationId = this.variationId,
+    weight = this.weight ?: 0.0,
+    reps = this.reps ?: 1,
+    tempo = Tempo(
+        down = this.tempoDown ?: 3,
+        hold = this.tempoHold ?: 1,
+        up = this.tempoUp ?: 1,
+    ),
+    date = this.date,
+    notes = this.notes,
+    rpe = this.rpe?.toInt(),
+)
 
 class LiftDataSource(
     private val liftQueries: LiftQueries,
@@ -302,10 +302,10 @@ internal fun comliftbrodb.Variation.toDomain(
     id = this.id,
     lift = parentLift,
     name = this.name,
-    eMax = sets.filter { (it.reps ?: 0) > 1 }.maxOfOrNull {
+    eMax = sets.filter { (it.reps ?: 0) > 1 }.maxByOrNull {
         estimatedMax(it.reps?.toInt() ?: 1, it.weight ?: 0.0)
-    },
-    oneRepMax = sets.filter { it.reps == 1L }.maxOfOrNull { it.weight ?: 0.0 },
+    }?.toDomain(),
+    oneRepMax = sets.filter { it.reps == 1L }.maxByOrNull { it.weight ?: 0.0 }?.toDomain(),
     favourite = if (this.favourite == 1L) true else false,
     notes = this.notes
 )

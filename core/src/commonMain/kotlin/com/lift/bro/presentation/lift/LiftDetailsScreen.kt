@@ -52,8 +52,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
-import com.lift.bro.data.LBDatabase
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
@@ -72,6 +70,8 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.estimateMax
+import com.lift.bro.utils.oneRepMax
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import kotlinx.datetime.LocalDate
@@ -349,11 +349,11 @@ fun LiftDetailsScreen(
                         SortingOptions.Name -> it.sortedBy { it.variation.name ?: "" }
                         SortingOptions.NameReversed -> it.sortedByDescending { it.variation.name ?: "" }
                         SortingOptions.MaxSet -> it.sortedByDescending {
-                            it.variation.oneRepMax ?: it.variation.eMax ?: 0.0
+                            it.variation.oneRepMax?.oneRepMax ?: it.variation.eMax?.estimateMax ?: 0.0
                         }
 
                         SortingOptions.MaxSetReversed -> it.sortedBy {
-                            it.variation.oneRepMax ?: it.variation.eMax ?: 0.0
+                            it.variation.oneRepMax?.oneRepMax ?: it.variation.eMax?.estimateMax ?: 0.0
                         }
                     }.sortedByDescending { it.variation.favourite }
                 },

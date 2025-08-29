@@ -114,7 +114,7 @@ fun eMaxSettingsRow() {
                 ) {
                     Checkbox(
                         checked = tmaxEnabled,
-                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
+                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
                         onCheckedChange = {
                             dependencies.settingsRepository.setTMaxEnabled(it)
                         }
