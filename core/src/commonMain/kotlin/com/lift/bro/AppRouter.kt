@@ -62,22 +62,6 @@ fun AppRouter(route: Destination) {
         is Destination.LiftDetails ->
             LiftDetailsScreen(
                 liftId = route.liftId,
-                editLiftClicked = {
-                    navCoordinator.present(Destination.EditLift(route.liftId))
-                },
-                variationClicked = {
-                    navCoordinator.present(
-                        Destination.VariationDetails(
-                            variationId = it
-                        )
-                    )
-                },
-                addSetClicked = {
-                    navCoordinator.present(Destination.EditSet(liftId = route.liftId))
-                },
-                onSetClicked = {
-                    navCoordinator.present(Destination.EditSet(setId = it.id))
-                },
             )
 
         Destination.Settings -> SettingsScreen()

@@ -87,19 +87,23 @@ import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
+fun LiftDetailsScreen(
+    liftId: String
+) {
+    with(rememberLiftDetailsInteractor(liftId = liftId)) {
+        LiftDetailsScreen(
+            state.collectAsState().value
+
+        ) { invoke(it) }
+    }
+}
+
+@Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun LiftDetailsScreen(
-    liftId: String,
-    editLiftClicked: () -> Unit,
-    variationClicked: (String) -> Unit,
-    addSetClicked: () -> Unit,
-    onSetClicked: (LBSet) -> Unit,
-    database: LBDatabase = dependencies.database,
+    state: LiftDetailsState,
+    dispatcher: (LiftDetailsEvent) -> Unit,
 ) {
-    val lift by database.liftDataSource.get(liftId).collectAsState(null)
-
-    val variations by database.variantDataSource.listenAll(liftId).collectAsState(emptyList())
-
     var showColorPicker by remember { mutableStateOf(false) }
 
     if (showColorPicker) {
@@ -112,7 +116,7 @@ fun LiftDetailsScreen(
 
             val defaultColor = MaterialTheme.colorScheme.primary
 
-            var color by remember { mutableStateOf(lift?.color?.toColor() ?: defaultColor) }
+            var color by remember { mutableStateOf(state.liftColor?.toColor() ?: defaultColor) }
 
             Column(
                 modifier = Modifier.background(
@@ -231,13 +235,7 @@ fun LiftDetailsScreen(
 
                     Button(
                         onClick = {
-                            lift?.let {
-                                dependencies.database.liftDataSource.save(
-                                    it.copy(
-                                        color = color.value
-                                    )
-                                )
-                            }
+                            dispatcher(LiftDetailsEvent.LiftColorChanged(color.value))
                             showColorPicker = false
                         },
                         colors = ButtonDefaults.textButtonColors(),
@@ -249,116 +247,130 @@ fun LiftDetailsScreen(
         }
     }
 
-    lift?.let { lift ->
-        LiftingScaffold(
-            fabProperties = FabProperties(
-                fabIcon = Icons.Default.Add,
-                contentDescription = stringResource(Res.string.lift_details_fab_content_description),
-                fabClicked = addSetClicked,
-            ),
-            title = { Text(lift.name) },
-            trailingContent = {
-                TopBarButton(
-                    onClick = {
-                        showColorPicker = true
-                    }
-                ) {
-                    Box(
-                        modifier = Modifier.background(
-                            color = lift.color?.toColor() ?: MaterialTheme.colorScheme.primary,
-                        ).fillMaxSize()
-                    ) { }
+    LiftingScaffold(
+        fabProperties = FabProperties(
+            fabIcon = Icons.Default.Add,
+            contentDescription = stringResource(Res.string.lift_details_fab_content_description),
+            fabClicked = {
+                dispatcher(LiftDetailsEvent.AddSetClicked)
+            },
+        ),
+        title = { Text(state.liftName ?: "") },
+        trailingContent = {
+            TopBarButton(
+                onClick = {
+                    showColorPicker = true
                 }
-                TopBarIconButton(
-                    Icons.Default.Edit,
-                    contentDescription = "Edit",
-                    onClick = editLiftClicked,
+            ) {
+                Box(
+                    modifier = Modifier.background(
+                        color = state.liftColor?.toColor() ?: MaterialTheme.colorScheme.primary,
+                    ).fillMaxSize()
+                ) { }
+            }
+            TopBarIconButton(
+                Icons.Default.Edit,
+                contentDescription = "Edit",
+                onClick = {
+                    dispatcher(LiftDetailsEvent.EditLiftClicked)
+                },
+            )
+        }
+    ) { padding ->
+
+        var sorting by remember { mutableStateOf(SortingOptions.Name) }
+
+        LazyColumn(
+            modifier = Modifier.padding(padding),
+            contentPadding = PaddingValues(MaterialTheme.spacing.one),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+        ) {
+            item {
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Button(
+                        onClick = {
+                            try {
+                                sorting = SortingOptions.values()[sorting.ordinal + 1]
+                            } catch (e: Exception) {
+                                sorting = SortingOptions.values()[0]
+                            }
+                        }
+                    ) {
+                        Icon(
+                            modifier = when (sorting) {
+                                SortingOptions.Name -> Modifier
+                                SortingOptions.NameReversed -> Modifier.graphicsLayer {
+                                    scaleY = -1f
+                                }
+
+                                SortingOptions.MaxSet -> Modifier
+                                SortingOptions.MaxSetReversed -> Modifier.graphicsLayer {
+                                    scaleY = -1f
+                                }
+                            },
+                            imageVector = Icons.AutoMirrored.Rounded.Sort,
+                            contentDescription = "Sort By"
+                        )
+                        Space(MaterialTheme.spacing.half)
+                        Text(
+                            text = when (sorting) {
+                                SortingOptions.Name -> "Name"
+                                SortingOptions.NameReversed -> "Name"
+                                SortingOptions.MaxSet -> "One Rep Max"
+                                SortingOptions.MaxSetReversed -> "One Rep Max"
+                            }
+                        )
+                    }
+
+                    Space(MaterialTheme.spacing.half)
+
+                    val yValue = LocalLiftCardYValue.current
+                    Button(
+                        onClick = {
+                            yValue.value =
+                                if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
+                        }
+                    ) {
+                        Text(
+                            text = if (yValue.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(
+                                Res.string.reps
+                            )
+                        )
+                    }
+                }
+            }
+
+            items(
+                state.variations.let {
+                    when (sorting) {
+                        SortingOptions.Name -> it.sortedBy { it.name ?: "" }
+                        SortingOptions.NameReversed -> it.sortedByDescending { it.name ?: "" }
+                        SortingOptions.MaxSet -> it.sortedByDescending {
+                            it.oneRepMax ?: it.eMax ?: 0.0
+                        }
+
+                        SortingOptions.MaxSetReversed -> it.sortedBy {
+                            it.oneRepMax ?: it.eMax ?: 0.0
+                        }
+                    }.sortedByDescending { it.favourite }
+                },
+                key = { it.id },
+            ) { variation ->
+                VariationCard(
+                    modifier = Modifier.animateItem(),
+                    variation = variation,
+                    onClick = { dispatcher(LiftDetailsEvent.VariationClicked(it)) },
+                    onSetClicked = {
+                        dispatcher(LiftDetailsEvent.SetClicked(it))
+                    }
                 )
             }
-        ) { padding ->
 
-            var sorting by remember { mutableStateOf(SortingOptions.Name) }
-
-            LazyColumn(
-                modifier = Modifier.padding(padding),
-                contentPadding = PaddingValues(MaterialTheme.spacing.one),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
-            ) {
-                item {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Button(
-                            onClick = {
-                                try {
-                                    sorting = SortingOptions.values()[sorting.ordinal + 1]
-                                } catch (e: Exception) {
-                                    sorting = SortingOptions.values()[0]
-                                }
-                            }
-                        ) {
-                            Icon(
-                                modifier = when (sorting) {
-                                    SortingOptions.Name -> Modifier
-                                    SortingOptions.NameReversed -> Modifier.graphicsLayer { scaleY = -1f }
-                                    SortingOptions.MaxSet -> Modifier
-                                    SortingOptions.MaxSetReversed -> Modifier.graphicsLayer { scaleY = -1f }
-                                },
-                                imageVector = Icons.AutoMirrored.Rounded.Sort,
-                                contentDescription = "Sort By"
-                            )
-                            Space(MaterialTheme.spacing.half)
-                            Text(
-                                text = when (sorting) {
-                                    SortingOptions.Name -> "Name"
-                                    SortingOptions.NameReversed -> "Name"
-                                    SortingOptions.MaxSet -> "One Rep Max"
-                                    SortingOptions.MaxSetReversed -> "One Rep Max"
-                                }
-                            )
-                        }
-
-                        Space(MaterialTheme.spacing.half)
-
-                        val yValue = LocalLiftCardYValue.current
-                        Button(
-                            onClick = {
-                                yValue.value =
-                                    if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
-                            }
-                        ) {
-                            Text(
-                                text = if (yValue.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(
-                                    Res.string.reps
-                                )
-                            )
-                        }
-                    }
-                }
-
-                items(
-                    variations.let {
-                        when (sorting) {
-                            SortingOptions.Name -> it.sortedBy { it.name ?: "" }
-                            SortingOptions.NameReversed -> it.sortedByDescending { it.name ?: "" }
-                            SortingOptions.MaxSet -> it.sortedByDescending { it.oneRepMax ?: it.eMax ?: 0.0 }
-                            SortingOptions.MaxSetReversed -> it.sortedBy { it.oneRepMax ?: it.eMax ?: 0.0 }
-                        }.sortedByDescending { it.favourite }
-                    },
-                    key = { it.id },
-                ) { variation ->
-                    VariationCard(
-                        modifier = Modifier.animateItem(),
-                        variation = variation,
-                        onClick = { variationClicked(variation.id) },
-                        onSetClicked = onSetClicked
-                    )
-                }
-
-                item {
-                    Spacer(modifier = Modifier.height(72.dp))
-                }
+            item {
+                Spacer(modifier = Modifier.height(72.dp))
             }
         }
     }
@@ -409,7 +421,11 @@ private fun VariationCard(
                         )
                         IconButton(
                             onClick = {
-                                dependencies.database.variantDataSource.save(variation.copy(favourite = !variation.favourite))
+                                dependencies.database.variantDataSource.save(
+                                    variation.copy(
+                                        favourite = !variation.favourite
+                                    )
+                                )
                             }
                         ) {
                             Icon(
