@@ -1,85 +1,63 @@
 package com.lift.bro.presentation.dashboard
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.SaverScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.utils.toLocalDate
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 
 @Serializable
 data class DashboardState(
-    val items: List<DashboardListItem> = emptyList()
+    val items: List<DashboardListItem> = emptyList(),
 )
 
 @Serializable
 sealed class DashboardListItem {
     @Serializable
-    data class LiftCard(val state: LiftCardState) : DashboardListItem()
+    data class LiftCard(val state: LiftCardState): DashboardListItem()
 
     @Serializable
-    data object Ad : DashboardListItem()
+    data object Ad: DashboardListItem()
 
     @Serializable
-    data object ReleaseNotes : DashboardListItem()
-}
-
-@Composable
-fun rememberDashboardViewModel(): DashboardViewModel {
-    return rememberSaveable(
-        saver = object : Saver<DashboardViewModel, String> {
-            override fun SaverScope.save(value: DashboardViewModel): String? {
-                return Json.encodeToString(value.state.value)
-            }
-
-            override fun restore(value: String): DashboardViewModel? {
-                return DashboardViewModel(Json.decodeFromString(value))
-            }
-        },
-        init = {
-            DashboardViewModel()
-        }
-    )
+    data object ReleaseNotes: DashboardListItem()
 }
 
 sealed interface DashboardEvent {
+    data object AddLiftClicked: DashboardEvent
+    data class LiftClicked(val liftId: String): DashboardEvent
 }
 
-class DashboardViewModel(
-    initialState: DashboardState = DashboardState(),
+@Composable
+fun rememberDashboardInteractor(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.database.variantDataSource,
     setRepository: SetDataSource = dependencies.database.setDataSource,
-    scope: CoroutineScope = GlobalScope
-) {
-
-    val input: Channel<DashboardEvent> = Channel()
-
-    fun handleEvent(event: DashboardEvent) {
-        input.trySend(event)
-    }
-
-    val state: StateFlow<DashboardState> = combine(
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+): Interactor<DashboardState, DashboardEvent> = rememberInteractor(
+    initialState = DashboardState(),
+    sideEffects = listOf { state, event ->
+        when (event) {
+            DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
+            is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.EditLift(event.liftId))
+        }
+    },
+    source = combine(
         liftRepository.listenAll(),
         variationRepository.listenAll(),
         setRepository.listenAll(),
@@ -123,9 +101,5 @@ class DashboardViewModel(
                 add(0, DashboardListItem.ReleaseNotes)
             }
         )
-    }.stateIn(
-        scope = scope,
-        started = SharingStarted.WhileSubscribed(),
-        initialValue = initialState,
-    )
-}
+    }
+)

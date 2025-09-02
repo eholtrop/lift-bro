@@ -36,8 +36,6 @@ sealed class HomeEvent {
 
     data object SettingsClicked : HomeEvent()
 
-    data class LiftClicked(val liftId: String) : HomeEvent()
-
     data object AddLiftClicked : HomeEvent()
 }
 
@@ -59,7 +57,6 @@ fun rememberHomeInteractor(
                         HomeEvent.CalendarClicked -> state.copy(selectedTab = Tab.WorkoutCalendar)
                         HomeEvent.AddSetClicked -> state
                         HomeEvent.AddLiftClicked -> state
-                        is HomeEvent.LiftClicked -> state
                         HomeEvent.SettingsClicked -> state
                     }
                 }
@@ -74,7 +71,6 @@ fun rememberHomeInteractor(
             HomeEvent.CalendarClicked -> {}
             HomeEvent.AddSetClicked -> navCoordinator.present(EditSet())
             is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
-            is HomeEvent.LiftClicked -> navCoordinator.present(EditLift(liftId = event.liftId))
             HomeEvent.SettingsClicked -> navCoordinator.present(Settings)
         }
     }

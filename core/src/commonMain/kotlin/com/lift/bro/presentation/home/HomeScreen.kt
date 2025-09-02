@@ -160,12 +160,6 @@ fun HomeScreen(
                         Tab.Dashboard -> {
                             DashboardContent(
                                 modifier = Modifier.padding(padding),
-                                addLiftClicked = {
-                                    interactor(HomeEvent.AddLiftClicked)
-                                },
-                                liftClicked = { lift ->
-                                    interactor(HomeEvent.LiftClicked(lift.id))
-                                },
                             )
                         }
 

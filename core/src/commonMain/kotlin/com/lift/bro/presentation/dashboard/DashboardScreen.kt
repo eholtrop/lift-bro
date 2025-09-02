@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -28,7 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
@@ -36,8 +35,6 @@ import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.ReleaseNotesRow
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.reps
@@ -46,11 +43,9 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun DashboardContent(
     modifier: Modifier = Modifier,
-    addLiftClicked: () -> Unit,
-    liftClicked: (Lift) -> Unit,
-    viewModel: DashboardViewModel = rememberDashboardViewModel(),
+    interactor: Interactor<DashboardState, DashboardEvent> = rememberDashboardInteractor(),
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by interactor.state.collectAsState()
 
     val showWeight = LocalLiftCardYValue.current
     LazyVerticalGrid(
@@ -98,7 +93,7 @@ fun DashboardContent(
                 is DashboardListItem.LiftCard -> {
                     LiftCard(
                         state = state.state,
-                        onClick = liftClicked,
+                        onClick = { interactor(DashboardEvent.LiftClicked(state.state.lift.id)) },
                         value = showWeight.value
                     )
                 }
@@ -126,7 +121,9 @@ fun DashboardContent(
             ) {
                 Button(
                     modifier = Modifier.align(Alignment.Center),
-                    onClick = addLiftClicked,
+                    onClick = {
+                        interactor(DashboardEvent.AddLiftClicked)
+                    },
                     colors = ButtonDefaults.outlinedButtonColors()
                 ) {
                     Text("Add Lift")
