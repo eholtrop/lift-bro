@@ -56,6 +56,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
@@ -71,6 +72,8 @@ import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.estimateMax
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.oneRepMax
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
@@ -90,20 +93,20 @@ import org.jetbrains.compose.resources.stringResource
 fun LiftDetailsScreen(
     liftId: String
 ) {
-    with(rememberLiftDetailsInteractor(liftId = liftId)) {
-        LiftDetailsScreen(
-            state.collectAsState().value
-
-        ) { invoke(it) }
-    }
+    LiftDetailsScreen(
+        interactor = rememberLiftDetailsInteractor(liftId = liftId)
+    )
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun LiftDetailsScreen(
-    state: LiftDetailsState,
-    dispatcher: (LiftDetailsEvent) -> Unit,
+    interactor: Interactor<LiftDetailsState, LiftDetailsEvent>
 ) {
+    val state by interactor.state.collectAsState()
+
+    Log.d(message = state.toString())
+
     var showColorPicker by remember { mutableStateOf(false) }
 
     if (showColorPicker) {
@@ -235,7 +238,7 @@ fun LiftDetailsScreen(
 
                     Button(
                         onClick = {
-                            dispatcher(LiftDetailsEvent.LiftColorChanged(color.value))
+                            interactor(LiftDetailsEvent.LiftColorChanged(color.value))
                             showColorPicker = false
                         },
                         colors = ButtonDefaults.textButtonColors(),
@@ -252,7 +255,7 @@ fun LiftDetailsScreen(
             fabIcon = Icons.Default.Add,
             contentDescription = stringResource(Res.string.lift_details_fab_content_description),
             fabClicked = {
-                dispatcher(LiftDetailsEvent.AddSetClicked)
+                interactor(LiftDetailsEvent.AddSetClicked)
             },
         ),
         title = { Text(state.liftName ?: "") },
@@ -272,7 +275,7 @@ fun LiftDetailsScreen(
                 Icons.Default.Edit,
                 contentDescription = "Edit",
                 onClick = {
-                    dispatcher(LiftDetailsEvent.EditLiftClicked)
+                    interactor(LiftDetailsEvent.EditLiftClicked)
                 },
             )
         }
@@ -362,12 +365,12 @@ fun LiftDetailsScreen(
                 VariationCard(
                     modifier = Modifier.animateItem(),
                     state = cardState,
-                    onClick = { dispatcher(LiftDetailsEvent.VariationClicked(it)) },
+                    onClick = { interactor(LiftDetailsEvent.VariationClicked(it)) },
                     onSetClicked = {
-                        dispatcher(LiftDetailsEvent.SetClicked(it))
+                        interactor(LiftDetailsEvent.SetClicked(it))
                     },
                     favouriteToggled = {
-                        dispatcher(LiftDetailsEvent.ToggleFavourite(it))
+                        interactor(LiftDetailsEvent.ToggleFavourite(it))
                     }
                 )
             }

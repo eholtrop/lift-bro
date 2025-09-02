@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
@@ -45,13 +44,16 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import com.benasher44.uuid.uuid4
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.ui.FabProperties
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
@@ -62,7 +64,6 @@ import lift_bro.core.generated.resources.edit_lift_screen_add_variation_cta_cont
 import lift_bro.core.generated.resources.edit_lift_screen_delete_cta_content_description
 import lift_bro.core.generated.resources.edit_lift_screen_lift_name_placeholder
 import lift_bro.core.generated.resources.edit_lift_screen_lift_warning_dialog_text
-import lift_bro.core.generated.resources.edit_lift_screen_save_cta_content_description
 import lift_bro.core.generated.resources.edit_lift_screen_title
 import lift_bro.core.generated.resources.edit_lift_screen_variation_delete_cta_content_description
 import lift_bro.core.generated.resources.edit_lift_screen_variation_name_placeholder
@@ -79,12 +80,9 @@ fun EditLiftScreen(
     liftSaved: () -> Unit,
     liftDeleted: () -> Unit,
 ) {
-    val interactor = rememberEditLiftInteractor(liftId)
-    val state by interactor.state.collectAsState()
 
     EditLiftScreen(
-        state = state,
-        dispatcher = { interactor(it) },
+        interactor = if (liftId != null) rememberEditLiftInteractor(liftId) else rememberCreateLiftInteractor(),
         liftSaved = liftSaved,
         liftDeleted = liftDeleted,
     )
@@ -92,12 +90,13 @@ fun EditLiftScreen(
 
 @Composable
 internal fun EditLiftScreen(
-    state: EditLiftState,
-    dispatcher: (EditLiftEvent) -> Unit,
+    interactor: Interactor<EditLiftState, EditLiftEvent>,
     liftSaved: () -> Unit,
     liftDeleted: () -> Unit,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
+    val state by interactor.state.collectAsState()
+
     var showLiftDeleteWarning by remember { mutableStateOf(false) }
 
     if (showLiftDeleteWarning) {
@@ -106,7 +105,7 @@ internal fun EditLiftScreen(
             onDismiss = { showLiftDeleteWarning = false },
             onConfirm = {
                 coroutineScope.launch {
-                    dispatcher(EditLiftEvent.DeleteLift)
+                    interactor(EditLiftEvent.DeleteLift)
                     liftDeleted()
                 }
             }
@@ -122,13 +121,15 @@ internal fun EditLiftScreen(
             )
         },
         trailingContent = {
-            TopBarIconButton(
-                imageVector = Icons.Default.Delete,
-                contentDescription = stringResource(Res.string.edit_lift_screen_delete_cta_content_description),
-                onClick = {
-                    showLiftDeleteWarning = true
-                },
-            )
+            if (state.showDelete) {
+                TopBarIconButton(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(Res.string.edit_lift_screen_delete_cta_content_description),
+                    onClick = {
+                        showLiftDeleteWarning = true
+                    },
+                )
+            }
         },
     ) { padding ->
         LazyColumn(
@@ -151,7 +152,7 @@ internal fun EditLiftScreen(
                             disabledContainerColor = Color.Transparent,
                         ),
                         value = state.name,
-                        onValueChange = { dispatcher(EditLiftEvent.NameChanged(it)) },
+                        onValueChange = { interactor(EditLiftEvent.NameChanged(it)) },
                         placeholder = {
                             Text(
                                 text = stringResource(Res.string.edit_lift_screen_lift_name_placeholder),
@@ -186,7 +187,7 @@ internal fun EditLiftScreen(
                         Space(MaterialTheme.spacing.half)
                         IconButton(
                             onClick = {
-                                dispatcher(EditLiftEvent.AddVariation)
+                                interactor(EditLiftEvent.AddVariation)
                             },
                         ) {
                             Icon(
@@ -211,7 +212,7 @@ internal fun EditLiftScreen(
                         text = stringResource(Res.string.edit_lift_variation_warning_dialog_text),
                         onDismiss = { showVariationWarning = false },
                         onConfirm = {
-                            dispatcher(EditLiftEvent.VariationRemoved(variation))
+                            interactor(EditLiftEvent.VariationRemoved(variation))
                             showVariationWarning = false
                         }
                     )
@@ -222,13 +223,13 @@ internal fun EditLiftScreen(
                     variation = variation,
                     liftName = state.name,
                     onNameChange = {
-                        dispatcher(EditLiftEvent.VariationNameChanged(variation, it))
+                        interactor(EditLiftEvent.VariationNameChanged(variation, it))
                     },
                     onDelete = {
                         if (variation.eMax != null || variation.oneRepMax != null) {
                             showVariationWarning = true
                         } else {
-                            dispatcher(EditLiftEvent.VariationRemoved(variation))
+                            interactor(EditLiftEvent.VariationRemoved(variation))
                         }
                     }
                 )
@@ -242,7 +243,7 @@ private fun WarningDialog(
     title: String = stringResource(Res.string.edit_lift_screen_warning_dialog_title),
     text: String,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -270,7 +271,7 @@ private fun VariationItem(
     focusRequester: FocusRequester = FocusRequester(),
     onNameChange: (String) -> Unit,
     onDelete: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
@@ -298,7 +299,10 @@ private fun VariationItem(
             suffix = {
                 if (liftName.isNotBlank()) {
                     Text(
-                        text = if (liftName.length > 12) liftName.substring(0, 11) + "..." else liftName,
+                        text = if (liftName.length > 12) liftName.substring(
+                            0,
+                            11
+                        ) + "..." else liftName,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

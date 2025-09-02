@@ -36,6 +36,9 @@ sealed class DashboardListItem {
 
     @Serializable
     data object ReleaseNotes: DashboardListItem()
+
+    @Serializable
+    data object AddLiftButton: DashboardListItem()
 }
 
 sealed interface DashboardEvent {
@@ -54,7 +57,7 @@ fun rememberDashboardInteractor(
     sideEffects = listOf { state, event ->
         when (event) {
             DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
-            is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.EditLift(event.liftId))
+            is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
         }
     },
     source = combine(
@@ -99,6 +102,7 @@ fun rememberDashboardInteractor(
                     add(DashboardListItem.Ad)
                 }
                 add(0, DashboardListItem.ReleaseNotes)
+                add(DashboardListItem.AddLiftButton)
             }
         )
     }

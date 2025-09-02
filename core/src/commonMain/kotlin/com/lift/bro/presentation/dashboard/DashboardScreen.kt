@@ -31,6 +31,7 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.ads.AdBanner
+import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.ReleaseNotesRow
@@ -79,9 +80,9 @@ fun DashboardContent(
 
         items(
             state.items,
-            span = { item -> GridItemSpan(item.gridSize()) }
+            span = { item -> GridItemSpan(item.gridSize(state.items.size)) }
         ) { item ->
-            when (val state = item) {
+            when (val dli = item) {
                 DashboardListItem.Ad -> {
                     AdBanner(
                         modifier = Modifier.defaultMinSize(
@@ -92,8 +93,8 @@ fun DashboardContent(
 
                 is DashboardListItem.LiftCard -> {
                     LiftCard(
-                        state = state.state,
-                        onClick = { interactor(DashboardEvent.LiftClicked(state.state.lift.id)) },
+                        state = dli.state,
+                        onClick = { interactor(LiftClicked(dli.state.lift.id)) },
                         value = showWeight.value
                     )
                 }
@@ -103,30 +104,26 @@ fun DashboardContent(
                         modifier = Modifier.height(72.dp)
                     )
                 }
-            }
-        }
 
-        val addButtonGridSize =
-            if (state.items.size % 2 == 0) GridItemSpan(1) else GridItemSpan(2)
-        item(
-            span = { addButtonGridSize }
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .then(
-                        if (addButtonGridSize.currentLineSpan == 1) Modifier.aspectRatio(
-                            1f
-                        ) else Modifier
-                    )
-            ) {
-                Button(
-                    modifier = Modifier.align(Alignment.Center),
-                    onClick = {
-                        interactor(DashboardEvent.AddLiftClicked)
-                    },
-                    colors = ButtonDefaults.outlinedButtonColors()
-                ) {
-                    Text("Add Lift")
+                DashboardListItem.AddLiftButton -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                            .then(
+                                if (dli.gridSize(state.items.size) == 1) Modifier.aspectRatio(
+                                    1f
+                                ) else Modifier
+                            )
+                    ) {
+                        Button(
+                            modifier = Modifier.align(Alignment.Center),
+                            onClick = {
+                                interactor(DashboardEvent.AddLiftClicked)
+                            },
+                            colors = ButtonDefaults.elevatedButtonColors()
+                        ) {
+                            Text("Add Lift")
+                        }
+                    }
                 }
             }
         }
@@ -148,8 +145,9 @@ fun DashboardContent(
     }
 }
 
-private fun DashboardListItem.gridSize(): Int = when (this) {
+private fun DashboardListItem.gridSize(listSize: Int = 0): Int = when (this) {
     DashboardListItem.Ad -> 2
     is DashboardListItem.LiftCard -> 1
     DashboardListItem.ReleaseNotes -> 2
+    DashboardListItem.AddLiftButton -> if (listSize % 2 == 0) 1 else 2
 }

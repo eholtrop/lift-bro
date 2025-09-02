@@ -15,8 +15,9 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,6 +34,8 @@ data class EditLiftState(
             name = name,
             color = liftColor?.color?.value
         )
+
+    val showDelete = name.isNotBlank() && variations.isNotEmpty() && liftColor != null
 }
 
 
@@ -56,6 +59,7 @@ sealed class EditLiftEvent {
 }
 
 val EditLiftReducer = Reducer<EditLiftState, EditLiftEvent> { state, event ->
+    Log.d(message = event.toString())
     when (event) {
         is EditLiftEvent.NameChanged -> state.copy(name = event.name)
         is EditLiftEvent.VariationNameChanged -> state.copy(
@@ -85,6 +89,7 @@ fun editLiftSideEffects(
     variationRepository: IVariationRepository = dependencies.database.variantDataSource,
     setRepository: SetDataSource = dependencies.database.setDataSource,
 ): SideEffect<EditLiftState, EditLiftEvent> = { state: EditLiftState, event: EditLiftEvent ->
+    Log.d(message = event.toString())
     when (event) {
         EditLiftEvent.DeleteLift -> {
             if (state.id != null) {
@@ -103,6 +108,7 @@ fun editLiftSideEffects(
         }
 
         is EditLiftEvent.NameChanged -> {
+            Log.d(message = state.lift.toString())
             dependencies.database.liftDataSource.save(state.lift.copy(name = event.name))
         }
 
@@ -120,22 +126,50 @@ fun editLiftSideEffects(
 }
 
 @Composable
+fun rememberCreateLiftInteractor(
+): Interactor<EditLiftState, EditLiftEvent> {
+    val id = uuid4().toString()
+    return rememberInteractor(
+        initialState = EditLiftState(id = id),
+        source = combine(
+            dependencies.database.liftDataSource.get(id),
+            dependencies.database.variantDataSource.listenAll(id),
+        ) { lift, variations ->
+            Log.d(message = lift.toString())
+            EditLiftState(
+                id = id,
+                name = lift?.name ?: "",
+                variations = variations.sortedBy { it.name?.toLowerCase(Locale.current) }
+                    .sortedBy { !it.favourite }
+                    .sortedBy { !it.name.isNullOrBlank() },
+            )
+        },
+        reducers = listOf(EditLiftReducer),
+        sideEffects = listOf(editLiftSideEffects())
+    )
+}
+
+@Composable
 fun rememberEditLiftInteractor(
-    liftId: String?,
-): Interactor<EditLiftState, EditLiftEvent> = rememberInteractor(
-    initialState = EditLiftState(id = liftId),
-    source = combine(
-        dependencies.database.liftDataSource.get(liftId).filterNotNull(),
-        dependencies.database.variantDataSource.listenAll(liftId ?: ""),
-    ) { lift, variations ->
-        EditLiftState(
-            id = lift.id,
-            name = lift.name,
-            variations = variations.sortedBy { it.name?.toLowerCase(Locale.current) }
-                .sortedBy { !it.favourite }
-                .sortedBy { !it.name.isNullOrBlank() },
-        )
-    },
-    reducers = listOf(EditLiftReducer),
-    sideEffects = listOf(editLiftSideEffects())
-)
+    liftId: String,
+): Interactor<EditLiftState, EditLiftEvent> {
+    val thisId = liftId
+    return rememberInteractor(
+        initialState = EditLiftState(id = thisId),
+        source = combine(
+            dependencies.database.liftDataSource.get(thisId),
+            dependencies.database.variantDataSource.listenAll(thisId),
+        ) { lift, variations ->
+            Log.d(message = lift.toString())
+            EditLiftState(
+                id = lift?.id,
+                name = lift?.name ?: "",
+                variations = variations.sortedBy { it.name?.toLowerCase(Locale.current) }
+                    .sortedBy { !it.favourite }
+                    .sortedBy { !it.name.isNullOrBlank() },
+            )
+        },
+        reducers = listOf(EditLiftReducer),
+        sideEffects = listOf(editLiftSideEffects())
+    )
+}
