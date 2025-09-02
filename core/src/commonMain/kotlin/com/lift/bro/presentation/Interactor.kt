@@ -8,12 +8,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
@@ -52,6 +55,7 @@ class Interactor<State, Event>(
                 newState
             }
     }
+        .flowOn(Dispatchers.IO)
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(),
