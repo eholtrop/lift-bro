@@ -37,7 +37,7 @@ appId: com.lift.bro
 - tapOn: "I killed it today!"
 - inputText: "Cant wait for pizza..."
 
-- tapOn: "Save Set"
+- tapOn: "Back"
 
 # ensure celebration shows
 - assertVisible: "Congrats!!"

@@ -1,7 +1,7 @@
 appId: com.lift.bro
 ---
 - runFlow:
-      file: flows/skip_onboarding_with_backup.yaml
+    file: flows/skip_onboarding_with_backup.yaml
 
 - tapOn: "Deadlift"
 - tapOn: "Edit"
@@ -9,11 +9,15 @@ appId: com.lift.bro
 
 - tapOn: "Okay!"
 
-- assertNotVisible: "Sumo"
+- assertNotVisible: "Deadlift"
 
 - tapOn: "Add Variation"
 - inputText: "Wacky"
 
-- tapOn: "Save Lift"
+- tapOn: "Back"
 
-#- scrollUntilVisible: "Wacky Deadlift"
+- scrollUntilVisible:
+    element:
+      text: "Wacky Deadlift"
+
+- assertNotVisible: "Wacky Deadlift"

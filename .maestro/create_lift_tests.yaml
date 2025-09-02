@@ -9,36 +9,22 @@ appId: com.lift.bro
 - tapOn: "ex: Squat, Bench Press, Deadlift"
 - inputText: "Bench Press"
 
-- tapOn: "Delete Variation"
-- assertNotVisible:
-    text: "Delete Variation"
-
 # Add all 3 types of variations, one populated, one "tampered with" and one empty
 - tapOn: "Add Variation"
-
-# used to ensure that the keyboard is visible when add variation is clicked
-- assertVisible:
-    id: "com.google.android.inputmethod.latin:id/key_pos_del"
-- inputText: "Incline"
-- tapOn:
-      id: "android:id/input_method_nav_back"
-
-- tapOn: "Add Variation"
+- tapOn: "ex: Back, Front, Incline"
 - inputText: " "
-- tapOn:
-    id: "com.google.android.inputmethod.latin:id/key_pos_del"
-- tapOn:
-    id: "android:id/input_method_nav_back"
-
 
 - tapOn: "Add Variation"
-- tapOn: "Back"
+- tapOn: "ex: Back, Front, Incline"
+- inputText: "Incline"
 
-- tapOn: "Save Lift"
+- tapOn: "Add Variation"
+
+- tapOn: "Back"
 - tapOn: "Bench Press"
 
+- assertVisible: "Bench Press"
 - assertVisible: "Incline Bench Press"
-- assertVisible: " Bench Press"
 
 - tapOn: "Edit"
 - tapOn: "Delete"

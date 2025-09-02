@@ -3,8 +3,8 @@ appId: com.lift.bro
 
 ---
 - launchApp
-#- runFlow:
-#    file: flows/skip_onboarding_with_backup.yaml
+- runFlow:
+    file: flows/skip_onboarding_with_backup.yaml
 
 - tapOn: "Deadlift"
 - assertVisible: "Regular Deadlift"
@@ -17,7 +17,7 @@ appId: com.lift.bro
 - tapOn: "Back"
 
 - tapOn: "Add Set"
-- assertVisible: "You Crushed"
+- assertVisible: "I Crushed"
 
 - tapOn: "Back"
 

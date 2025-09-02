@@ -54,7 +54,7 @@ import com.lift.bro.utils.AccessibilityMinimumSize
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.ic_lift_bro_leo_light
-import lift_bro.core.generated.resources.ic_lift_bro_lisa_concerned_light
+import lift_bro.core.generated.resources.ic_lift_bro_lisa_light
 import lift_bro.core.generated.resources.onboarding_consent_screen_subtitle
 import lift_bro.core.generated.resources.onboarding_consent_screen_title
 import lift_bro.core.generated.resources.onboarding_leo_content_description
@@ -203,7 +203,7 @@ fun OnboardingBroScreen(
             ) {
                 Image(
                     modifier = Modifier.weight(1f),
-                    painter = painterResource(Res.drawable.ic_lift_bro_lisa_concerned_light),
+                    painter = painterResource(Res.drawable.ic_lift_bro_lisa_light),
                     contentDescription = null
                 )
             }

@@ -12,6 +12,7 @@ import com.lift.bro.utils.estimateMax
 import com.lift.bro.utils.formattedReps
 import com.lift.bro.utils.oneRepMax
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * A domain model to represent the variation class
@@ -24,10 +25,11 @@ data class Variation(
     val id: String = uuid4().toString(),
     val lift: Lift? = null,
     val name: String? = null,
-    val eMax: LBSet? = null,
-    val oneRepMax: LBSet? = null,
+    val reps: Long = 1,
     val favourite: Boolean = false,
     val notes: String? = null,
+    val eMax: LBSet? = null,
+    val oneRepMax: LBSet? = null,
 )
 
 val Variation.fullName get() = "$name ${lift?.name}".trim()

@@ -35,7 +35,7 @@ data class EditLiftState(
             color = liftColor?.color?.value
         )
 
-    val showDelete = name.isNotBlank() && variations.isNotEmpty() && liftColor != null
+    val showDelete = name.isNotBlank() || variations.isNotEmpty() || liftColor != null
 }
 
 
@@ -134,7 +134,6 @@ fun rememberCreateLiftInteractor(): Interactor<EditLiftState, EditLiftEvent> {
             dependencies.database.liftDataSource.get(id),
             dependencies.database.variantDataSource.listenAll(id),
         ) { lift, variations ->
-            Log.d(message = lift.toString())
             EditLiftState(
                 id = id,
                 name = lift?.name ?: "",
