@@ -21,11 +21,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,47 +33,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.workout.SetInfoRow
-import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.toString
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.edit_daily_notes_dialog_confirm_cta
-import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
-import org.jetbrains.compose.resources.stringResource
-import kotlin.collections.List
-import kotlin.collections.forEach
-import kotlin.collections.groupBy
-import kotlin.collections.map
-import kotlin.collections.maxOf
-import kotlin.collections.sortedByDescending
-import kotlin.collections.toList
+import com.lift.bro.utils.toString
 
 private enum class Grouping {
     Date,
@@ -89,27 +70,20 @@ fun VariationDetailsScreen(
     addSetClicked: () -> Unit,
     setClicked: (LBSet) -> Unit,
 ) {
-    val variation by dependencies.database.variantDataSource.listen(variationId)
-        .collectAsState(null)
-    val sets = dependencies.database.setDataSource.getAll(variation?.id ?: "")
-
-    variation?.let {
-        VariationDetailsScreen(
-            variation = it,
-            sets = sets,
-            addSetClicked = addSetClicked,
-            setClicked = setClicked,
-        )
-    }
+    VariationDetailsScreen(
+        interactor = rememberVariationDetailInteractor(variationId),
+        addSetClicked = addSetClicked,
+        setClicked = setClicked,
+    )
 }
 
 @Composable
 private fun VariationDetailsScreen(
-    variation: Variation,
-    sets: List<LBSet>,
+    interactor: Interactor<VariationDetailsState, VariationDetailsEvent>,
     addSetClicked: () -> Unit,
     setClicked: (LBSet) -> Unit,
 ) {
+    val state by interactor.state.collectAsState()
 
     var grouping by rememberSaveable { mutableStateOf(Grouping.Date) }
 
@@ -123,12 +97,12 @@ private fun VariationDetailsScreen(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(variation.fullName)
+                Text(state.variation.fullName)
 
                 Space(MaterialTheme.spacing.half)
 
                 Text(
-                    text = variation.maxText(),
+                    text = state.variation.maxText(),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -139,78 +113,28 @@ private fun VariationDetailsScreen(
         LazyColumn(
             modifier = Modifier.padding(padding),
             contentPadding = PaddingValues(MaterialTheme.spacing.one),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                var showNotesDialog by remember { mutableStateOf(false) }
 
-                if (showNotesDialog) {
-                    var variationNotes by remember(variation) { mutableStateOf(variation.notes) }
-                    AlertDialog(
-                        onDismissRequest = { showNotesDialog = false },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    GlobalScope.launch {
-                                        dependencies.database.variantDataSource.save(
-                                            variation = variation.copy(notes = variationNotes)
-                                        )
-                                        showNotesDialog = false
-                                    }
-                                }
-                            ) {
-                                Text(stringResource(Res.string.edit_daily_notes_dialog_confirm_cta))
-                            }
-                        },
-                        dismissButton = {
-                            Button(
-                                onClick = {
-                                    showNotesDialog = false
-                                }
-                            ) {
-                                Text(stringResource(Res.string.edit_daily_notes_dialog_dismiss_cta))
-                            }
-                        },
-                        title = {
-                            Text(
-                                text = "${variation.fullName} notes"
-                            )
-                        },
-                        text = {
-                            val focusRequester = FocusRequester()
-                            TextField(
-                                modifier = Modifier.defaultMinSize(minHeight = 128.dp)
-                                    .focusRequester(focusRequester),
-                                value = variationNotes ?: "",
-                                placeholder = { Text("Squeeze your peach!\nBreath!\nKeep knees past toes") },
-                                onValueChange = { variationNotes = it },
-                            )
-
-                            LaunchedEffect(Unit) {
-                                focusRequester.requestFocus()
-                            }
-                        }
+                if (state.variation.notes != null) {
+                    TextField(
+                        label = { Text("Notes") },
+                        placeholder = { Text("Toes pointed out, Squeeze core...") },
+                        modifier = Modifier.fillMaxWidth(),
+                        value = state.variation.notes ?: "",
+                        onValueChange = { interactor(VariationDetailsEvent.NotesUpdated(it)) }
                     )
-                }
-
-                Row(
-                    modifier = Modifier.clickable(
+                } else {
+                    Button(
                         onClick = {
-                            showNotesDialog = true
-                        }
-                    ).fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = variation.notes?.ifBlank { "No Notes" } ?: "No Notes",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Space(MaterialTheme.spacing.half)
-                    Icon(
-                        imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Notes",
-                    )
+                            interactor(VariationDetailsEvent.NotesUpdated(""))
+                        },
+                        colors = ButtonDefaults.elevatedButtonColors()
+                    ) {
+                        Text("Add Notes")
+                    }
                 }
             }
 
@@ -245,6 +169,8 @@ private fun VariationDetailsScreen(
                     }
                 }
             }
+
+            val sets = state.cards.map { it.sets }.flatten()
 
             val items: List<Pair<String, List<LBSet>>> = when (grouping) {
                 Grouping.Date -> sets.groupBy { it.date.toLocalDate() }.toList()
@@ -296,7 +222,7 @@ private fun VariationDetailsScreen(
 
                             Box(
                                 modifier = Modifier.background(
-                                    color = variation.lift?.color?.toColor()
+                                    color = state.variation.lift?.color?.toColor()
                                         ?: MaterialTheme.colorScheme.primary,
                                     shape = CircleShape,
                                 ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
