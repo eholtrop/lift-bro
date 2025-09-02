@@ -14,8 +14,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.today
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
