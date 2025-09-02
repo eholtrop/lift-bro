@@ -1,24 +1,20 @@
 package com.lift.bro.presentation.lift
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
-import com.lift.bro.presentation.workout.workoutCalendarSourceData
-import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.Destination.*
+import com.lift.bro.ui.navigation.Destination.EditLift
+import com.lift.bro.ui.navigation.Destination.EditSet
+import com.lift.bro.ui.navigation.Destination.VariationDetails
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
-import com.lift.bro.utils.combine
-import com.lift.bro.utils.toColor
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
-import kotlin.collections.listOf
 
 @Serializable
 data class LiftDetailsState(

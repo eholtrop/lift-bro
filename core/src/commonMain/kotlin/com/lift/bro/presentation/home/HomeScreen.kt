@@ -21,11 +21,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.SaverScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
@@ -36,8 +34,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
@@ -53,22 +49,9 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
-    viewModel: HomeViewModel = rememberSaveable(
-        Unit,
-        saver = object : Saver<HomeViewModel, String> {
-            override fun restore(value: String): HomeViewModel {
-                return HomeViewModel(Json.decodeFromString(value))
-            }
-
-            override fun SaverScope.save(value: HomeViewModel): String {
-                return Json.encodeToString(value.state.value)
-            }
-        },
-        init = { HomeViewModel() }
-    ),
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current
+    interactor: Interactor<HomeState, HomeEvent> = rememberHomeInteractor(),
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by interactor.state.collectAsState()
 
     when (val currentState = state) {
         is HomeState.Content -> {
@@ -88,18 +71,18 @@ fun HomeScreen(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(Res.string.dashboard_toolbar_leading_button_content_description)
                     ) {
-                        navCoordinator.present(Destination.Settings)
+                        interactor(HomeEvent.SettingsClicked)
                     }
                 },
                 fabProperties = FabProperties(
                     fabIcon = Icons.Default.Add,
                     contentDescription = stringResource(Res.string.dashboard_fab_content_description),
-                    fabClicked = { navCoordinator.present(Destination.EditSet()) },
+                    fabClicked = { interactor(HomeEvent.AddSetClicked) },
                     preFab = {
                         Button(
                             modifier = Modifier.size(72.dp, 52.dp),
                             onClick = {
-                                viewModel.handleEvent(HomeEvents.DashboardClicked)
+                                interactor(HomeEvent.DashboardClicked)
                             },
                             shape = RoundedCornerShape(
                                 topStartPercent = 50,
@@ -135,7 +118,7 @@ fun HomeScreen(
                         Button(
                             modifier = Modifier.size(72.dp, 52.dp),
                             onClick = {
-                                viewModel.handleEvent(HomeEvents.CalendarClicked)
+                                interactor(HomeEvent.CalendarClicked)
                             },
                             shape = RoundedCornerShape(
                                 topStartPercent = 25,
@@ -178,10 +161,10 @@ fun HomeScreen(
                             DashboardContent(
                                 modifier = Modifier.padding(padding),
                                 addLiftClicked = {
-                                    navCoordinator.present(Destination.EditLift(null))
+                                    interactor(HomeEvent.AddLiftClicked)
                                 },
                                 liftClicked = { lift ->
-                                    navCoordinator.present(Destination.LiftDetails(lift.id))
+                                    interactor(HomeEvent.LiftClicked(lift.id))
                                 },
                             )
                         }
@@ -198,7 +181,7 @@ fun HomeScreen(
 
         HomeState.Empty -> EmptyHomeScreen(
             addLiftClicked = {
-                navCoordinator.present(Destination.EditLift(null))
+                interactor(HomeEvent.AddLiftClicked)
             },
             loadDefaultLifts = {}
         )
