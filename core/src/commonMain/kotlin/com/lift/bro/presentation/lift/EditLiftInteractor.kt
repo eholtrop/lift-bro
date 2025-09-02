@@ -126,8 +126,7 @@ fun editLiftSideEffects(
 }
 
 @Composable
-fun rememberCreateLiftInteractor(
-): Interactor<EditLiftState, EditLiftEvent> {
+fun rememberCreateLiftInteractor(): Interactor<EditLiftState, EditLiftEvent> {
     val id = uuid4().toString()
     return rememberInteractor(
         initialState = EditLiftState(id = id),

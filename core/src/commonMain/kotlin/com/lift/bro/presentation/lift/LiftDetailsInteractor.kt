@@ -7,6 +7,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.EditLift
 import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.navigation.Destination.VariationDetails
@@ -67,7 +68,7 @@ fun rememberLiftDetailsInteractor(
     sideEffects = listOf { state, event ->
         when (event) {
             LiftDetailsEvent.AddSetClicked -> navCoordinator.present(
-                EditSet(
+                Destination.CreateSet(
                     liftId = liftId
                 )
             )

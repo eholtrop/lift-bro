@@ -52,6 +52,7 @@ fun NumberPicker(
         suffix = suffix,
         prefix = prefix,
         value = value,
+        isError = selectedNum == null,
         onValueChange = {
             numberChanged(it.text.toIntOrNull())
             value = it

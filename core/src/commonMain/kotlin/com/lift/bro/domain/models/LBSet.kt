@@ -15,7 +15,7 @@ data class LBSet(
     val reps: Long = 1,
     val tempo: Tempo = Tempo(),
     val date: Instant = Clock.System.now(),
-    val notes: String,
+    val notes: String = "",
     val rpe: Int? = null,
     val mer: Int = 0,
 ) {

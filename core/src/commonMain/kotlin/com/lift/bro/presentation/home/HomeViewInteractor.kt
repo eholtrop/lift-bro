@@ -69,7 +69,7 @@ fun rememberHomeInteractor(
         when (event) {
             HomeEvent.DashboardClicked -> {}
             HomeEvent.CalendarClicked -> {}
-            HomeEvent.AddSetClicked -> navCoordinator.present(EditSet())
+            HomeEvent.AddSetClicked -> navCoordinator.present(CreateSet())
             is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
             HomeEvent.SettingsClicked -> navCoordinator.present(Settings)
         }

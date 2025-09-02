@@ -214,7 +214,7 @@ private fun WorkoutDetailsScreen(
                 Button(
                     onClick = {
                         coordinator.present(
-                            Destination.EditSet()
+                            Destination.CreateSet()
                         )
                     }
                 ) {

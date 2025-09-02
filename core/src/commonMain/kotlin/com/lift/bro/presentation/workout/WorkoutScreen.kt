@@ -269,7 +269,7 @@ fun CreateWorkoutScreenInternal(
                                 colors = ButtonDefaults.elevatedButtonColors(),
                                 onClick = {
                                     coordinator.present(
-                                        Destination.EditSet(
+                                        Destination.CreateSet(
                                             variationId = exercise.variation.id,
                                             date = state.date.atStartOfDayIn(TimeZone.currentSystemDefault()),
                                         )

@@ -143,7 +143,7 @@ fun LiftCard(
                         .clip(MaterialTheme.shapes.medium)
                         .clickable(
                             onClick = {
-                                coordinator.present(Destination.EditSet(liftId = lift.id))
+                                coordinator.present(Destination.CreateSet(liftId = lift.id))
                             },
                             role = Role.Button,
                         ),

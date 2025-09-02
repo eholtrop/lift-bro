@@ -6,176 +6,147 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.unit.Dp
-import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
-import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.fullName
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.DateSelector
-import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
-import com.lift.bro.ui.VariationCard
-import com.lift.bro.ui.dialog.CreateVariationDialog
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.formattedWeight
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.create_set_screen_title
-import lift_bro.core.generated.resources.edit_set_screen_create_lift_cta
 import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
-import lift_bro.core.generated.resources.edit_set_screen_save_cta_content_description
 import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
 import lift_bro.core.generated.resources.weight_selector_chin_subtitle
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
 
-data class EditSetState(
-    val id: String,
-    val variationId: String? = null,
-    val weight: Double? = 0.0,
-    val reps: Long? = 1,
-    val down: Long? = 3,
-    val hold: Long? = 1,
-    val up: Long? = 1,
-    val date: Instant = Clock.System.now(),
-    val notes: String = "",
-    val rpe: Int? = null,
-)
-
-private fun LBSet.toUiState() = EditSetState(
-    id = this.id,
-    variationId = this.variationId,
-    weight = this.weight,
-    reps = this.reps,
-    down = this.tempo.down,
-    hold = this.tempo.hold,
-    up = this.tempo.up,
-    date = this.date,
-    notes = this.notes,
-    rpe = this.rpe,
-)
-
-private fun EditSetState.toDomain() = LBSet(
-    id = this.id,
-    variationId = this.variationId!!,
-    weight = this.weight!!,
-    reps = this.reps!!,
-    tempo = Tempo
-        (
-        down = this.down!!,
-        hold = this.hold!!,
-        up = this.up!!
-    ),
-    date = this.date,
-    notes = this.notes,
-    rpe = this.rpe,
-)
+@Composable
+fun EditSetScreen(
+    variationId: String?,
+    date: Instant?,
+) {
+    EditSetScreen(
+        interactor = rememberCreateSetInteractor(
+            variationId = variationId,
+            date = date
+        ),
+    )
+}
 
 @Composable
 fun EditSetScreen(
-    setId: String?,
-    variationId: String?,
-    liftId: String?,
-    date: Instant?,
-    setSaved: () -> Unit,
-    createLiftClicked: () -> Unit,
-    coroutineScope: CoroutineScope = rememberCoroutineScope()
+    setId: String,
 ) {
-    var set by remember(setId, variationId, liftId) {
-        mutableStateOf(
-            dependencies.database.setDataSource.get(setId)?.toUiState() ?: EditSetState(
-                id = uuid4().toString(),
-                variationId = variationId,
-                date = date ?: Clock.System.now()
-            )
+    EditSetScreen(
+        interactor = rememberEditSetInteractor(
+            setId = setId,
+        ),
+    )
+}
+
+@Composable
+fun EditSetScreen(
+    interactor: Interactor<EditSetState?, EditSetEvent>,
+) {
+    val state by interactor.state.collectAsState()
+
+    state?.let { set ->
+        EditSetScreen(
+            set = set,
+            dateChanged = {
+                interactor(EditSetEvent.DateSelected(it))
+            },
+            deleteSetClicked = {
+                interactor(EditSetEvent.DeleteSetClicked)
+            },
+            repChanged = {
+                interactor(EditSetEvent.RepChanged(it))
+            },
+            weightChanged = {
+                interactor(EditSetEvent.WeightChanged(it))
+            },
+            rpeChanged = {
+                interactor(EditSetEvent.RpeChanged(it))
+            },
+            eccChanged = {
+                interactor(EditSetEvent.EccChanged(it))
+            },
+            isoChanged = {
+                interactor(EditSetEvent.IsoChanged(it))
+            },
+            conChanged = {
+                interactor(EditSetEvent.ConChanged(it))
+            },
+            notesChanged = {
+                interactor(EditSetEvent.NotesChanged(it))
+            },
+            variationChanged = {
+                interactor(EditSetEvent.VariationSelected(it))
+            },
         )
     }
+}
+
+@Composable
+fun EditSetScreen(
+    set: EditSetState,
+    deleteSetClicked: () -> Unit,
+    repChanged: (Long?) -> Unit = {},
+    weightChanged: (Double?) -> Unit = {},
+    rpeChanged: (Int?) -> Unit = {},
+    dateChanged: (Instant) -> Unit = {},
+    eccChanged: (Int?) -> Unit = {},
+    isoChanged: (Int?) -> Unit = {},
+    conChanged: (Int?) -> Unit = {},
+    notesChanged: (String) -> Unit = {},
+    variationChanged: (variationId: String) -> Unit = {},
+) {
     var showVariationDialog by remember { mutableStateOf(false) }
 
-    val variation =
-        dependencies.database.variantDataSource.get(set.variationId)
-
-    val saveEnabled =
-        set.variationId != null && set.reps != null && set.down != null && set.hold != null && set.up != null && set.weight != null
+    val variation = set.variation
 
     LiftingScaffold(
-        fabProperties = FabProperties(
-            fabIcon = Icons.Default.Edit,
-            contentDescription = stringResource(Res.string.edit_set_screen_save_cta_content_description),
-            fabEnabled = saveEnabled,
-            fabClicked = {
-                coroutineScope.launch {
-                    dependencies.database.setDataSource.save(set.toDomain())
-                }
-                setSaved()
-            },
-        ),
-        title = { Text(stringResource(if (setId != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title)) },
+        title = { Text(stringResource(if (set.id != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title)) },
         trailingContent = {
-            if (setId != null) {
+            if (set.id != null) {
                 val navCoordinator = LocalNavCoordinator.current
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
                     contentDescription = stringResource(Res.string.edit_set_screen_delete_acc_label),
-                    onClick = {
-                        coroutineScope.launch {
-                            dependencies.database.setDataSource.delete(setId)
-                            navCoordinator.onBackPressed()
-                        }
-                    }
+                    onClick = deleteSetClicked
                 )
             }
         },
@@ -192,9 +163,9 @@ fun EditSetScreen(
                 ) {
                     RepWeightSelector(
                         set = set,
-                        repChanged = { set = set.copy(reps = it) },
-                        weightChanged = { set = set.copy(weight = it) },
-                        rpeChanged = { set = set.copy(rpe = it) }
+                        repChanged = repChanged,
+                        weightChanged = weightChanged,
+                        rpeChanged = rpeChanged,
                     )
 
                     val sets = dependencies.database.setDataSource.getAllForLift(
@@ -205,7 +176,7 @@ fun EditSetScreen(
                     val variationMax = sets.filter { it.variationId == variation?.id }
                         .maxByOrNull { it.weight }
 
-                    AnimatedVisibility(set.variationId != null) {
+                    AnimatedVisibility(set.variation != null) {
                         Box(
                             modifier = Modifier.padding(
                                 vertical = MaterialTheme.spacing.half,
@@ -297,19 +268,19 @@ fun EditSetScreen(
             item {
                 TempoSelector(
                     modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
-                    up = set.up?.toInt(),
-                    hold = set.hold?.toInt(),
-                    down = set.down?.toInt(),
-                    downChanged = { set = set.copy(down = it?.toLong()) },
-                    holdChanged = { set = set.copy(hold = it?.toLong()) },
-                    upChanged = { set = set.copy(up = it?.toLong()) },
+                    up = set.concentric?.toInt(),
+                    hold = set.isometric?.toInt(),
+                    down = set.eccentric?.toInt(),
+                    downChanged = eccChanged,
+                    holdChanged = isoChanged,
+                    upChanged = conChanged,
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
 
                 DateSelector(
                     date = set.date,
-                    dateChanged = { set = set.copy(date = it) }
+                    dateChanged = dateChanged
                 )
 
                 Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
@@ -323,15 +294,18 @@ fun EditSetScreen(
                         style = MaterialTheme.typography.titleMedium
                     )
 
+                    var notes by remember(set.notes) { mutableStateOf(set.notes) }
+
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
-                        value = set.notes,
+                        value = notes,
                         singleLine = true,
                         placeholder = {
                             Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
                         },
                         onValueChange = {
-                            set = set.copy(notes = it)
+                            notes = it
+                            notesChanged(it)
                         },
                     )
                 }
@@ -344,7 +318,7 @@ fun EditSetScreen(
         onDismissRequest = { showVariationDialog = false },
         variationSelected = {
             showVariationDialog = false
-            set = set.copy(variationId = it.id)
+            variationChanged(it.id)
         }
     )
 }

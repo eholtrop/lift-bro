@@ -57,7 +57,7 @@ fun rememberVariationDetailInteractor(
         sideEffects = listOf { state, event ->
             when (event) {
                 VariationDetailsEvent.AddSetClicked -> {
-                    navCoordinator.present(Destination.EditSet(null))
+                    navCoordinator.present(Destination.CreateSet())
                 }
 
                 is VariationDetailsEvent.NotesUpdated -> {

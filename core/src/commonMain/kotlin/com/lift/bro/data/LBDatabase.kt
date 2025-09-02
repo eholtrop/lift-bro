@@ -14,6 +14,7 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
+import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftQueries
@@ -96,7 +97,7 @@ class SetDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) {
+): ISetRepository {
 
     private fun calculateMer(set: LiftingSet, maxWeight: Double): Int {
         if (maxWeight <= 0.0) return 0
@@ -195,7 +196,7 @@ class SetDataSource(
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 
-    suspend fun save(set: LBSet) {
+    override suspend fun save(set: LBSet) {
         withContext(dispatcher) {
             setQueries.save(
                 id = set.id,
@@ -223,6 +224,8 @@ class SetDataSource(
     suspend fun delete(setId: String) {
         setQueries.delete(setId)
     }
+
+    override fun listen(id: String): Flow<LBSet?> = setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 }
 
 fun LiftingSet.toDomain() = LBSet(

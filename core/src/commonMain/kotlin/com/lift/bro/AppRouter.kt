@@ -48,16 +48,12 @@ fun AppRouter(route: Destination) {
         is Destination.EditSet ->
             EditSetScreen(
                 setId = route.setId,
-                variationId = route.variationId,
-                liftId = route.liftId,
-                date = route.date,
-                setSaved = {
-                    navCoordinator.onBackPressed(keepStack = false)
-                },
-                createLiftClicked = {
-                    navCoordinator.present(Destination.EditLift(null))
-                },
             )
+
+        is Destination.CreateSet -> EditSetScreen(
+            variationId = route.variationId,
+            date = route.date,
+        )
 
         is Destination.LiftDetails ->
             LiftDetailsScreen(
@@ -70,17 +66,15 @@ fun AppRouter(route: Destination) {
                 variationId = route.variationId,
                 addSetClicked = {
                     navCoordinator.present(
-                        Destination.EditSet(
-                            null,
-                            null,
-                            route.variationId
+                        Destination.CreateSet(
+                            variationId = route.variationId
                         )
                     )
                 },
                 setClicked = {
                     navCoordinator.present(
                         Destination.EditSet(
-                            setId = it.id, null, null
+                            setId = it.id
                         )
                     )
                 }

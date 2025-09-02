@@ -67,7 +67,8 @@ fun RepWeightSelector(
 
         RepWeightTextField(
             modifier = Modifier.testTag("reps"),
-            value = set.reps?.toString() ?: "",
+            value = set.reps?.toString(),
+            error = set.reps == null,
             onValueChanged = {
                 if (it.isBlank()) {
                     repChanged(null)
@@ -89,6 +90,7 @@ fun RepWeightSelector(
         RepWeightTextField(
             modifier = Modifier.testTag("weight"),
             value = set.weight.decimalFormat(),
+            error = set.weight == null,
             onValueChanged = {
                 weightChanged(it.toDoubleOrNull())
             },
@@ -200,14 +202,15 @@ fun RepWeightSelector(
 @Composable
 private fun RepWeightTextField(
     modifier: Modifier = Modifier,
-    value: String,
+    value: String?,
+    error: Boolean = false,
     onValueChanged: (String) -> Unit,
     keyboardType: KeyboardType,
     placeholder: @Composable () -> Unit = {},
 ) {
     var focusState by remember { mutableStateOf<FocusState?>(null) }
 
-    var textFieldValue by remember { mutableStateOf(TextFieldValue(value)) }
+    var textFieldValue by remember { mutableStateOf(TextFieldValue(value ?: "")) }
 
     BasicTextField(
         modifier = modifier.width(IntrinsicSize.Min)
@@ -226,8 +229,13 @@ private fun RepWeightTextField(
             .border(
                 width = 1.dp,
                 shape = MaterialTheme.shapes.small,
-                color = if (focusState?.isFocused == true) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
-            ).padding(
+                color = when {
+                    error -> MaterialTheme.colorScheme.error
+                    focusState?.isFocused == true -> MaterialTheme.colorScheme.secondary
+                    else -> MaterialTheme.colorScheme.onBackground
+                }
+            )
+            .padding(
                 horizontal = MaterialTheme.spacing.half,
                 vertical = MaterialTheme.spacing.half,
             ).defaultMinSize(

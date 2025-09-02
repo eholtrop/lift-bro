@@ -27,7 +27,11 @@ sealed interface Destination {
 
     @Serializable
     data class EditSet(
-        val setId: String? = null,
+        val setId: String,
+    ) : Destination
+
+    @Serializable
+    data class CreateSet(
         val liftId: String? = null,
         val variationId: String? = null,
         val date: Instant? = null
