@@ -30,6 +30,7 @@ data class Variation(
     val notes: String? = null,
     val eMax: LBSet? = null,
     val oneRepMax: LBSet? = null,
+    val maxReps: LBSet? = null,
 )
 
 val Variation.fullName get() = "$name ${lift?.name}".trim()

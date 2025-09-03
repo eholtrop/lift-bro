@@ -42,20 +42,22 @@ class Interactor<State, Event>(
 
     operator fun invoke(event: Event) = events.trySend(event)
 
-    val state: StateFlow<State> = source.flatMapLatest { sourceState ->
-        events.receiveAsFlow()
-            .scan(stateResolver(initialState, sourceState)) { state, event ->
-                val newState = reducers.fold(state) { s, reducer ->
-                    reducer(
-                        s,
-                        event
-                    )
-                }
-                sideEffects.forEach { sideEffect -> sideEffect(newState, event) }
-                newState
-            }
-    }
+    val state: StateFlow<State> = source
         .flowOn(Dispatchers.IO)
+        .flatMapLatest { sourceState ->
+            events.receiveAsFlow()
+                .scan(stateResolver(initialState, sourceState)) { state, event ->
+                    val newState = reducers.fold(state) { s, reducer ->
+                        reducer(
+                            s,
+                            event
+                        )
+                    }
+                    sideEffects.forEach { sideEffect -> sideEffect(newState, event) }
+                    newState
+                }
+        }
+        .flowOn(Dispatchers.Default)
         .stateIn(
             scope = coroutineScope,
             started = SharingStarted.WhileSubscribed(),
@@ -74,7 +76,7 @@ inline fun <reified State, Event> rememberInteractor(
 ): Interactor<State, Event> {
     return rememberSaveable(
         initialState,
-        saver = object : Saver<Interactor<State, Event>, String> {
+        saver = object: Saver<Interactor<State, Event>, String> {
             override fun SaverScope.save(value: Interactor<State, Event>): String? {
                 val json = Json.encodeToString(value.state.value)
                 Log.d("DEBUGEH", "Saving state: $json")

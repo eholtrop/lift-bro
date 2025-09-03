@@ -63,6 +63,8 @@ import kotlin.text.Typography.nbsp
 data class LiftCardState(
     val lift: Lift,
     val values: List<Pair<LocalDate, LiftCardData>>,
+    val maxWeight: Double? = null,
+    val maxReps: Double? = null,
 )
 
 
@@ -93,9 +95,7 @@ fun LiftCard(
     value: LiftCardYValue = LiftCardYValue.Weight
 ) {
     val lift = state.lift
-    val max =
-        if (value == LiftCardYValue.Reps) state.values.maxOfOrNull { it.second.reps.toDouble() }
-            ?: 0.0 else state.lift.maxWeight ?: state.values.maxOfOrNull { it.second.weight }
+    val max = if (value == LiftCardYValue.Reps) state.maxReps ?: 0.0 else state.maxWeight ?: 0.0
     val min = state.values.minOfOrNull {
         when (value) {
             LiftCardYValue.Reps -> 0.0

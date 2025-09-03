@@ -5,6 +5,9 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.mapEach
 import comliftbrodb.LiftQueries
 import comliftbrodb.SetQueries
@@ -15,16 +18,22 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlin.time.Clock.System.now
 
 class VariationRepository(
     private val liftQueries: LiftQueries,
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
-) : IVariationRepository {
+): IVariationRepository {
 
     override suspend fun deleteAll() {
         variationQueries.deleteAll()
@@ -45,7 +54,7 @@ class VariationRepository(
     // only used for backup, will not populate emax/max
     override fun getAll(): List<Variation> {
         val parentLift = liftQueries.getAll().executeAsList().map { it.toDomain() }
-        val sets = setQueries.getAll().executeAsList()
+        val sets = setQueries.getAll(Long.MAX_VALUE).executeAsList()
         return variationQueries.getAll().executeAsList().map { variation ->
             variation.toDomain(
                 parentLift.firstOrNull { it.id == variation.liftId },
@@ -58,7 +67,7 @@ class VariationRepository(
         return combine(
             liftQueries.get(liftId).asFlow().mapToOneOrNull(Dispatchers.IO).map { it?.toDomain() },
             variationQueries.getAllForLift(liftId).asFlow().mapToList(Dispatchers.IO),
-            setQueries.getAll().asFlow().mapToList(Dispatchers.IO)
+            setQueries.getAll(Long.MAX_VALUE).asFlow().mapToList(Dispatchers.IO)
         ) { lift, variations, sets ->
             variations.map { variation ->
                 variation.toDomain(
@@ -69,19 +78,39 @@ class VariationRepository(
         }
     }
 
-    override fun listenAll(): Flow<List<Variation>> {
-        return combine(
-            variationQueries.getAll().asFlow().mapToList(Dispatchers.IO),
-            setQueries.getAll().asFlow().mapToList(Dispatchers.IO),
-        ) { variations, sets ->
-            variations.map { variation ->
-                variation.toDomain(
-                    parentLift = liftQueries.get(variation.liftId).executeAsOneOrNull()?.toDomain(),
-                    sets = sets.filter { it.variationId == variation.id }
-                )
+    override fun listenAll(): Flow<List<Variation>> =
+        variationQueries.getAll().asFlow().mapToList(Dispatchers.IO)
+            .flatMapLatest { variations ->
+                val flows = variations.map { variation ->
+                    combine(
+                        liftQueries.get(variation.liftId).asFlow().mapToOneOrNull(Dispatchers.IO),
+                        setQueries.getOneRepMaxForVariation(variation.id, Instant.DISTANT_FUTURE)
+                            .asFlow().mapToOneOrNull(
+                                Dispatchers.IO
+                            ),
+                        setQueries.getEMaxForVariation(variation.id, Instant.DISTANT_FUTURE)
+                            .asFlow()
+                            .mapToOneOrNull(
+                                Dispatchers.IO
+                            ),
+                        setQueries.getMaxRepsForVariation(variation.id, Instant.DISTANT_FUTURE)
+                            .asFlow()
+                            .mapToOneOrNull(Dispatchers.IO),
+                    ) { lift, orm, emax, reps ->
+                        variation.toDomain(
+                            lift?.toDomain(),
+                            listOfNotNull(orm, emax, reps)
+                        )
+                    }
+                }
+                merge(
+                    *flows.toTypedArray()
+                ).scan(emptyList()) { acc, value -> acc + value }
+
+//                merge(
+//                    *flows.toTypedArray()
+//                ).scan(emptyList()) { acc, value -> acc + value }
             }
-        }
-    }
 
     override fun delete(id: String) {
         GlobalScope.launch {
@@ -92,7 +121,7 @@ class VariationRepository(
     override fun listen(id: String): Flow<Variation?> {
         return combine(
             variationQueries.get(id).asFlow().mapToOneOrNull(Dispatchers.IO),
-            setQueries.getAllByVariation(id).asFlow().mapToList(Dispatchers.IO),
+            setQueries.getAllByVariation(id, Long.MAX_VALUE).asFlow().mapToList(Dispatchers.IO),
         ) { variation, sets ->
             val lift = liftQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
 
@@ -106,7 +135,7 @@ class VariationRepository(
     override fun get(variationId: String?): Variation? {
         val variation = variationQueries.get(variationId ?: "").executeAsOneOrNull()
         val lift = liftQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
-        val sets = setQueries.getAllByVariation(variationId ?: "").executeAsList()
+        val sets = setQueries.getAllByVariation(variationId ?: "", Long.MAX_VALUE).executeAsList()
 
         return variation?.toDomain(
             lift?.toDomain(),

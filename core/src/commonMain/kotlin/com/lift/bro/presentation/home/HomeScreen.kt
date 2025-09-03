@@ -34,6 +34,8 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description

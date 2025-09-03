@@ -104,7 +104,6 @@ internal object LiftCardPreviewStates {
             id = "2",
             name = "Squat",
             color = null,
-            maxWeight = 130.0,
         ),
         values = listOf(
             LocalDate.parse("2023-01-01") to LiftCardData(100.0, 2, 2),
@@ -117,7 +116,6 @@ internal object LiftCardPreviewStates {
             id = "3",
             name = "Deadlift",
             color = null,
-            maxWeight = 135.0,
         ),
         values = listOf(
             LocalDate.parse("2023-01-01") to LiftCardData(135.0, 2, 2),

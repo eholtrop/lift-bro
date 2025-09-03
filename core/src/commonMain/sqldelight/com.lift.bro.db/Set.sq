@@ -14,10 +14,33 @@ CREATE TABLE LiftingSet (
 );
 
 getAllByVariation:
-SELECT * FROM LiftingSet WHERE variationId = ?;
+SELECT * FROM LiftingSet
+WHERE variationId = ?
+ORDER BY date DESC
+LIMIT :limit;
+
+getOneRepMaxForVariation:
+SELECT * FROM LiftingSet
+WHERE variationId = :variationId AND reps = 1 AND date < :before
+ORDER BY weight DESC
+LIMIT 1;
+
+getEMaxForVariation:
+SELECT * FROM LiftingSet
+WHERE variationId = :variationId AND date < :before
+ORDER BY weight * reps DESC
+LIMIT 1;
+
+getMaxRepsForVariation:
+SELECT * FROM LiftingSet
+WHERE variationId = :variationId AND date < :before
+ORDER BY reps DESC
+LIMIT 1;
 
 getAll:
-SELECT * FROM LiftingSet;
+SELECT * FROM LiftingSet
+ORDER BY date DESC
+LIMIT :limit;
 
 get:
 SELECT * FROM LiftingSet WHERE id = ?;

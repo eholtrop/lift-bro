@@ -16,6 +16,8 @@ import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.utils.debug
+import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
@@ -29,6 +31,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -71,7 +74,7 @@ class LBDatabase(
     val workoutDataSource = database.workoutQueries
 }
 
-private val instantAdapter = object : ColumnAdapter<Instant, Long> {
+private val instantAdapter = object: ColumnAdapter<Instant, Long> {
 
     override fun decode(databaseValue: Long): Instant {
         return Instant.fromEpochMilliseconds(databaseValue)
@@ -82,7 +85,7 @@ private val instantAdapter = object : ColumnAdapter<Instant, Long> {
     }
 }
 
-private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
+private val dateAdapter = object: ColumnAdapter<LocalDate, Long> {
 
     override fun decode(databaseValue: Long): LocalDate {
         return LocalDate.fromEpochDays(databaseValue.toInt())
@@ -96,7 +99,7 @@ private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
 class SetDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ISetRepository {
 
     private fun calculateMer(set: LiftingSet, maxWeight: Double): Int {
@@ -113,44 +116,48 @@ class SetDataSource(
         return min(reps.toInt(), ((setFatigue - merFatigueThreshold) / 4.0).toInt())
     }
 
-    fun getAll(variationId: String): List<LBSet> {
-        val sets = setQueries.getAllByVariation(variationId).executeAsList()
-        return sets.map { set ->
+    fun getAll(variationId: String, limit: Long = Long.MAX_VALUE): List<LBSet> {
+        return setQueries.getAllByVariation(variationId, limit).executeAsList().map { set ->
+            val oneRepMax = setQueries.getOneRepMaxForVariation(variationId, before = set.date)
+                .executeAsOneOrNull()
+            val eMax =
+                setQueries.getEMaxForVariation(variationId, before = set.date).executeAsOneOrNull()
+
             val localMax =
-                sets.filter { it.variationId == set.variationId }
-                    .filter { it.date.toLocalDate() < set.date.toLocalDate() }
-                    .maxOfOrNull { calculateMax(it.reps, it.weight) }
-            set.toDomain().copy(
-                mer = localMax?.let { calculateMer(set, localMax) } ?: 0
-            )
+                listOf(oneRepMax, eMax).maxOfOrNull { calculateMax(it?.reps, it?.weight) }
+
+            localMax?.let {
+                set.toDomain().copy(mer = calculateMer(set, localMax))
+            } ?: run {
+                set.toDomain()
+            }
         }
     }
 
-    fun getAllForLift(liftId: String): List<LBSet> =
+    fun getAllForLift(liftId: String, limit: Long = Long.MAX_VALUE): List<LBSet> =
         variationQueries.getAllForLift(liftId).executeAsList().map {
-            getAll(variationId = it.id)
+            getAll(variationId = it.id, limit)
         }
             .fold(emptyList()) { list, subList -> list + subList }
 
-    fun listenAllForLift(liftId: String): Flow<List<LBSet>> = combine(
-        variationQueries.getAllForLift(liftId).asFlow().mapToList(dispatcher),
-        setQueries.getAll().asFlow().mapToList(dispatcher),
-    ) { variations, sets ->
-        sets.filter { set -> variations.any { it.id == set.variationId } }
-    }.map { sets ->
-        sets.map { set ->
-            val localMax =
-                sets.filter { it.variationId == set.variationId }
-                    .filter { it.date.toLocalDate() < set.date.toLocalDate() }
-                    .maxOfOrNull { calculateMax(it.reps, it.weight) }
-            set.toDomain().copy(
-                mer = localMax?.let { calculateMer(set, localMax) } ?: 0
-            )
-        }
-    }
+    fun listenAllForLift(liftId: String, limit: Long = Long.MAX_VALUE): Flow<List<LBSet>> =
+        variationQueries
+            .getAllForLift(liftId).asFlow().mapToList(dispatcher)
+            .flatMapLatest { variations ->
+                combine(
+                    *variations.map {
+                        setQueries.getAllByVariation(it.id, limit).asFlow().mapToList(dispatcher)
+                    }.toTypedArray()
+                ) { sets ->
+                    sets.toList().flatten().map { it.toDomain() }
+                }
+            }
 
-    fun listenAllForVariation(variationId: String): Flow<List<LBSet>> =
-        setQueries.getAllByVariation(variationId).asFlow().mapToList(dispatcher)
+
+    fun listenAllForVariation(
+        variationId: String,
+    ): Flow<List<LBSet>> =
+        setQueries.getAllByVariation(variationId, Long.MAX_VALUE).asFlow().mapToList(dispatcher)
             .map { sets ->
                 sets.map { set ->
                     val localMax =
@@ -163,14 +170,16 @@ class SetDataSource(
                 }
             }
 
-    fun getAll(): List<LBSet> = setQueries.getAll().executeAsList().map { it.toDomain() }
+    fun getAll(): List<LBSet> =
+        setQueries.getAll(Long.MAX_VALUE).executeAsList().map { it.toDomain() }
 
     fun listenAll(
         startDate: LocalDate? = null,
         endDate: LocalDate? = null,
         variationId: String? = null,
+        limit: Long = Long.MAX_VALUE,
     ): Flow<List<LBSet>> =
-        setQueries.getAll().asFlow().mapToList(dispatcher).map { sets ->
+        setQueries.getAll(limit).asFlow().mapToList(dispatcher).map { sets ->
             sets
                 .filter {
                     val date = it.date.toLocalDate()
@@ -225,7 +234,8 @@ class SetDataSource(
         setQueries.delete(setId)
     }
 
-    override fun listen(id: String): Flow<LBSet?> = setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
+    override fun listen(id: String): Flow<LBSet?> =
+        setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 }
 
 fun LiftingSet.toDomain() = LBSet(
@@ -247,28 +257,14 @@ class LiftDataSource(
     private val liftQueries: LiftQueries,
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
     fun get(id: String?): Flow<Lift?> =
         liftQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 
-    fun listenAll(): Flow<List<Lift>> = combine(
-        liftQueries.getAll().asFlow().mapToList(dispatcher),
-        variationQueries.getAll().asFlow().mapToList(dispatcher),
-        setQueries.getAll().asFlow().mapToList(dispatcher),
-    ) { lifts, variations, sets ->
-        lifts.map { lift ->
-            lift.toDomain().copy(
-                maxWeight = sets.filter { set ->
-                    variations.filter { it.liftId == lift.id }
-                        .any { it.id == set.variationId }
-                }.maxOfOrNull { it.weight ?: 0.0 }
-            )
-        }
-    }
+    fun listenAll(): Flow<List<Lift>> = liftQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
 
-    // TODO: make sure to populate maxWeight here
     fun getAll(): List<Lift> =
         liftQueries.getAll().executeAsList().map { it.toDomain() }
 
@@ -308,14 +304,15 @@ internal fun comliftbrodb.Variation.toDomain(
     eMax = sets.filter { (it.reps ?: 0) > 1 }.maxByOrNull {
         estimatedMax(it.reps?.toInt() ?: 1, it.weight ?: 0.0)
     }?.toDomain(),
+    maxReps = sets.maxByOrNull { it.reps ?: 0L }?.toDomain(),
     oneRepMax = sets.filter { it.reps == 1L }.maxByOrNull { it.weight ?: 0.0 }?.toDomain(),
-    favourite = if (this.favourite == 1L) true else false,
+    favourite = this.favourite == 1L,
     notes = this.notes
 )
 
 expect class DriverFactory {
 
     fun provideDbDriver(
-        schema: SqlSchema<QueryResult.AsyncValue<Unit>>
+        schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
     ): SqlDriver
 }

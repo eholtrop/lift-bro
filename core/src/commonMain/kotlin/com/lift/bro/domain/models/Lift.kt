@@ -8,5 +8,4 @@ data class Lift(
     val id: String = uuid4().toString(),
     val name: String = "",
     val color: ULong? = null,
-    val maxWeight: Double? = null,
 )

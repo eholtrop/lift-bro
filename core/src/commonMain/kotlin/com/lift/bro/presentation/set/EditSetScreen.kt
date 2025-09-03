@@ -169,7 +169,8 @@ fun EditSetScreen(
                     )
 
                     val sets = dependencies.database.setDataSource.getAllForLift(
-                        variation?.lift?.id ?: ""
+                        variation?.lift?.id ?: "",
+                        Long.MAX_VALUE,
                     )
 
                     val liftMax = sets.maxByOrNull { it.weight }

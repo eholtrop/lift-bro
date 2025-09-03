@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
@@ -13,11 +12,14 @@ import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
+import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
-import com.revenuecat.purchases.kmp.Purchases
-import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
 
@@ -52,7 +54,7 @@ fun rememberDashboardInteractor(
     variationRepository: IVariationRepository = dependencies.database.variantDataSource,
     setRepository: SetDataSource = dependencies.database.setDataSource,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
-): Interactor<DashboardState, DashboardEvent> = rememberInteractor(
+): Interactor<DashboardState, DashboardEvent> = rememberInteractor<DashboardState, DashboardEvent>(
     initialState = DashboardState(),
     sideEffects = listOf { state, event ->
         when (event) {
@@ -60,50 +62,47 @@ fun rememberDashboardInteractor(
             is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
         }
     },
-    source = combine(
-        liftRepository.listenAll(),
-        variationRepository.listenAll(),
-        setRepository.listenAll(),
-        flow {
-            emit(SubscriptionType.Pro)
-            if (!Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.containsKey("pro")) {
-                emit(SubscriptionType.None)
-            }
-        }
-    ) { lifts, variations, sets, subType ->
-        val liftItems: List<DashboardListItem> =
-            variations.groupBy { it.lift?.id }.map { (liftId, liftVariations) ->
-                val liftSets =
-                    sets.filter { set -> liftVariations.any { set.variationId == it.id } }
-                lifts.firstOrNull { it.id == liftId }?.let {
-                    DashboardListItem.LiftCard(
-                        LiftCardState(
-                            lift = it,
-                            values = liftSets.groupBy { it.date.toLocalDate() }.map {
-                                it.key to LiftCardData(
-                                    it.value.maxOf { it.weight },
-                                    it.value.maxOf { it.reps }.toInt(),
-                                    it.value.maxOfOrNull { it.rpe ?: 0 },
+    source = variationRepository.listenAll()
+        .flatMapLatest { variations ->
+            val cards = variations.groupBy { it.lift }.map { (lift, liftVariations) ->
+                dependencies.database.setDataSource.listenAllForLift(lift?.id ?: "", 20)
+                    .map { sets ->
+                        lift?.let {
+                            DashboardListItem.LiftCard(
+                                LiftCardState(
+                                    lift = it,
+                                    values = sets.groupBy { it.date.toLocalDate() }.map {
+                                        it.key to LiftCardData(
+                                            it.value.maxOf { it.weight },
+                                            it.value.maxOf { it.reps }.toInt(),
+                                            it.value.maxOfOrNull { it.rpe ?: 0 },
+                                        )
+                                    }.sortedByDescending { it.first }.take(5).reversed(),
+                                    maxWeight = liftVariations.maxOfOrNull { it.oneRepMax?.weight ?: 0.0 },
+                                    maxReps = liftVariations.maxOfOrNull { it.maxReps?.reps?.toDouble() ?: 0.0 },
                                 )
-                            }.sortedByDescending { it.first }.take(5).reversed(),
-                        )
+                            )
+                        }
+                    }.filterNotNull().map { it as DashboardListItem }
+            }
+            combine(*cards.toTypedArray()) { arr ->
+                val variations = dependencies.database.variantDataSource.getAll()
+                arr.toList()
+                    .sortedBy { (it as? DashboardListItem.LiftCard)?.state?.lift?.name }
+                    .sortedByDescending { item -> variations.any { (item as? DashboardListItem.LiftCard)?.state?.lift?.id == it.lift?.id && it.favourite } }
+            }
+                .map { items ->
+                    DashboardState(
+                        items = items.toMutableList().apply {
+                            if (this.size > 2) {
+                                add(2, DashboardListItem.Ad)
+                            } else {
+                                add(DashboardListItem.Ad)
+                            }
+                            add(0, DashboardListItem.ReleaseNotes)
+                            add(DashboardListItem.AddLiftButton)
+                        }
                     )
                 }
-            }.filterNotNull()
-                .sortedBy { it.state.lift.name }
-                .sortedByDescending { item -> variations.any { item.state.lift.id == it.lift?.id && it.favourite } }
-
-
-        DashboardState(
-            items = liftItems.toMutableList().apply {
-                if (this.size > 2) {
-                    add(2, DashboardListItem.Ad)
-                } else {
-                    add(DashboardListItem.Ad)
-                }
-                add(0, DashboardListItem.ReleaseNotes)
-                add(DashboardListItem.AddLiftButton)
-            }
-        )
-    }
+        },
 )
