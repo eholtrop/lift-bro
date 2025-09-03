@@ -103,6 +103,11 @@ data class ComposeCalendarShapes(
 private const val CALENDAR_MAX_MONTH_SIZE = 48
 private const val CALENDAR_INITIAL_PAGE = CALENDAR_MAX_MONTH_SIZE / 2
 
+@Composable
+fun rememberCalendarState() = rememberPagerState(
+    initialPage = CALENDAR_INITIAL_PAGE,
+    pageCount = { CALENDAR_MAX_MONTH_SIZE }
+)
 
 /**
  * A Jetpack Compose Calendar Implementation
@@ -112,6 +117,7 @@ fun Calendar(
     modifier: Modifier = Modifier,
     selectedDate: LocalDate,
     contentPadding: PaddingValues,
+    pagerState: PagerState = rememberCalendarState(),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
@@ -120,10 +126,6 @@ fun Calendar(
     Column(
         modifier = modifier,
     ) {
-        val pagerState = rememberPagerState(
-            initialPage = CALENDAR_INITIAL_PAGE,
-            pageCount = { CALENDAR_MAX_MONTH_SIZE }
-        )
 
         CalendarContent(
             pagerState = pagerState,
@@ -132,7 +134,7 @@ fun Calendar(
             horizontalArrangement = horizontalArrangement,
             verticalArrangement = verticalArrangement,
             dateDecorations = dateDecorations,
-            contentPadding = contentPadding
+            contentPadding = contentPadding,
         )
     }
 }
@@ -351,4 +353,4 @@ fun CalendarDate(
     }
 }
 
-private val PagerState.currentMonth get() = today.plus(DatePeriod(months = currentPage - CALENDAR_INITIAL_PAGE))
+val PagerState.currentMonth get() = today.plus(DatePeriod(months = currentPage - CALENDAR_INITIAL_PAGE))

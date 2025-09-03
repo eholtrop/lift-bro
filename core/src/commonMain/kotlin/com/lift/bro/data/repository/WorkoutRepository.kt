@@ -23,13 +23,18 @@ import kotlinx.datetime.LocalDate
 class WorkoutRepository(
     private val database: LBDatabase = dependencies.database,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : IWorkoutRepository {
-    override fun getAll(): Flow<List<Workout>> = combine(
-        database.workoutDataSource.getAll().asFlow().mapToList(dispatcher),
-        database.setDataSource.listenAll(),
+): IWorkoutRepository {
+
+    override fun getAll(
+        startDate: LocalDate,
+        endDate: LocalDate,
+    ): Flow<List<Workout>> = combine(
+        database.workoutDataSource.getAll(startDate = startDate, endDate = endDate).asFlow().mapToList(dispatcher),
+        database.setDataSource.listenAll(startDate = startDate, endDate = endDate),
         database.variantDataSource.listenAll(),
     ) { workouts, sets, variations ->
-        val dateToWorkoutSetMap: MutableMap<LocalDate, Pair<List<LBSet>?, comliftbrodb.Workout?>> = mutableMapOf()
+        val dateToWorkoutSetMap: MutableMap<LocalDate, Pair<List<LBSet>?, comliftbrodb.Workout?>> =
+            mutableMapOf()
         sets.groupBy { it.date.toLocalDate() }.forEach {
             dateToWorkoutSetMap[it.key] = it.value to null
         }

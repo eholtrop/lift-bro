@@ -6,7 +6,10 @@ import kotlinx.datetime.LocalDate
 
 interface IWorkoutRepository {
 
-    fun getAll(): Flow<List<Workout>>
+    fun getAll(
+        startDate: LocalDate = LocalDate.fromEpochDays(0),
+        endDate: LocalDate = LocalDate.fromEpochDays(Int.MAX_VALUE),
+    ): Flow<List<Workout>>
 
     fun get(id: String): Flow<Workout?>
 

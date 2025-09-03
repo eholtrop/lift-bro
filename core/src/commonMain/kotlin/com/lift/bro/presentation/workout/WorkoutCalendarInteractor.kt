@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.Reducer
@@ -18,7 +19,10 @@ import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import kotlinx.datetime.minus
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -26,12 +30,12 @@ data class WorkoutCalendarState(
     val workouts: List<Workout> = emptyList(),
     val date: LocalDate,
     val workout: Workout?,
-    val logs: List<LiftingLog> = emptyList()
+    val logs: List<LiftingLog> = emptyList(),
 )
 
 @Composable
 fun navigationSideEffects(
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> {
     return listOf { state, event ->
         when (event) {
@@ -50,9 +54,12 @@ fun navigationSideEffects(
 
 fun workoutCalendarSourceData(
     workoutRepository: WorkoutRepository = WorkoutRepository(database = dependencies.database),
-    logQueries: LiftingLogQueries = dependencies.database.logDataSource
+    logQueries: LiftingLogQueries = dependencies.database.logDataSource,
 ) = combine(
-    workoutRepository.getAll(),
+    workoutRepository.getAll(
+        LocalDate(today.year, today.month, 1),
+        LocalDate(today.year, today.month, today.month.daysIn)
+    ),
     logQueries.getAll().asFlow().mapToList(Dispatchers.IO)
 ) { workouts, logs ->
     WorkoutCalendarState(
@@ -72,7 +79,7 @@ fun workoutCalendarSourceData(
 
 @Composable
 fun rememberWorkoutCalendarInteractor(
-    sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = navigationSideEffects()
+    sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = navigationSideEffects(),
 ) = rememberInteractor(
     initialState = WorkoutCalendarState(
         date = today,
@@ -90,10 +97,30 @@ fun rememberWorkoutCalendarInteractor(
 )
 
 sealed interface WorkoutCalendarEvent {
-    data class AddWorkoutClicked(val onDate: LocalDate) : WorkoutCalendarEvent
-    data class WorkoutClicked(val workout: Workout) : WorkoutCalendarEvent
-    data class DateSelected(val date: LocalDate) : WorkoutCalendarEvent
+    data class AddWorkoutClicked(val onDate: LocalDate): WorkoutCalendarEvent
+    data class WorkoutClicked(val workout: Workout): WorkoutCalendarEvent
+    data class DateSelected(val date: LocalDate): WorkoutCalendarEvent
+
+    data class LoadMonth(val year: Int, val month: Month): WorkoutCalendarEvent
 }
+
+private val Month.daysIn: Int
+    get() =
+        when (this) {
+            Month.JANUARY -> 31
+            Month.FEBRUARY -> 28
+            Month.MARCH -> 31
+            Month.APRIL -> 30
+            Month.MAY -> 31
+            Month.JUNE -> 30
+            Month.JULY -> 31
+            Month.AUGUST -> 31
+            Month.SEPTEMBER -> 30
+            Month.OCTOBER -> 31
+            Month.NOVEMBER -> 30
+            Month.DECEMBER -> 31
+            else -> 0
+        }
 
 val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> =
     Reducer { state, event ->
@@ -105,5 +132,13 @@ val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> 
             )
 
             is WorkoutCalendarEvent.WorkoutClicked -> state
+            is WorkoutCalendarEvent.LoadMonth -> {
+                state.copy(
+                    workouts = state.workouts + dependencies.workoutRepository.getAll(
+                        LocalDate(event.year, event.month, 1),
+                        LocalDate(event.year, event.month, event.month.daysIn)
+                    ).first()
+                )
+            }
         }
     }

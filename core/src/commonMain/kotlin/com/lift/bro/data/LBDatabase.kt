@@ -1,5 +1,6 @@
 package com.lift.bro.data
 
+import androidx.compose.ui.unit.IntRect
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -37,6 +38,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toInstant
 import kotlin.math.min
 
 class LBDatabase(
@@ -171,34 +176,35 @@ class SetDataSource(
             }
 
     fun getAll(): List<LBSet> =
-        setQueries.getAll(Long.MAX_VALUE).executeAsList().map { it.toDomain() }
+        setQueries.getAll(
+            limit = Long.MAX_VALUE,
+            startDate = Instant.DISTANT_PAST,
+            endDate = Instant.DISTANT_FUTURE
+        ).executeAsList().map { it.toDomain() }
+
+    fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())
+
+    fun LocalDate.atEndOfDayIn(): Instant = this.atTime(23, 59, 59, 999).toInstant(TimeZone.currentSystemDefault())
 
     fun listenAll(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
+        startDate: LocalDate = LocalDate.fromEpochDays(0),
+        endDate: LocalDate = Instant.DISTANT_FUTURE.toLocalDate(),
         variationId: String? = null,
         limit: Long = Long.MAX_VALUE,
     ): Flow<List<LBSet>> =
-        setQueries.getAll(limit).asFlow().mapToList(dispatcher).map { sets ->
+        setQueries.getAll(
+            limit = limit,
+            startDate = startDate.atStartOfDayIn(),
+            endDate = endDate.atEndOfDayIn()
+        ).asFlow().mapToList(dispatcher).map { sets ->
             sets
-                .filter {
-                    val date = it.date.toLocalDate()
-                    when {
-                        startDate == null && endDate == null -> true
-                        startDate != null && endDate != null -> date >= startDate && date <= endDate
-                        startDate != null -> date >= startDate
-                        endDate != null -> date <= endDate
-                        else -> true
-                    }
-                }
                 .filter { variationId == null || it.variationId == variationId }
                 .map { set ->
-                    val localMax =
-                        sets.filter { it.variationId == set.variationId }
-                            .filter { it.date.toLocalDate() < set.date.toLocalDate() }
-                            .maxOfOrNull { calculateMax(it.reps, it.weight) }
+                    val orm = setQueries.getOneRepMaxForVariation(variationId = set.variationId, before = set.date).executeAsOneOrNull()?.weight
+                    val emax = setQueries.getEMaxForVariation(variationId = set.variationId, before = set.date).executeAsOneOrNull()?.weight
+
                     set.toDomain().copy(
-                        mer = localMax?.let { calculateMer(set, localMax) } ?: 0
+                        mer = (orm ?: emax)?.let { calculateMer(set, it) } ?: 0
                     )
                 }
         }
@@ -263,7 +269,8 @@ class LiftDataSource(
     fun get(id: String?): Flow<Lift?> =
         liftQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 
-    fun listenAll(): Flow<List<Lift>> = liftQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
+    fun listenAll(): Flow<List<Lift>> =
+        liftQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
 
     fun getAll(): List<Lift> =
         liftQueries.getAll().executeAsList().map { it.toDomain() }

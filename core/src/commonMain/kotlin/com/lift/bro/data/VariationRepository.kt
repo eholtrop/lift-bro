@@ -27,6 +27,8 @@ import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.atStartOfDayIn
 import kotlin.time.Clock.System.now
 
 class VariationRepository(
@@ -54,7 +56,7 @@ class VariationRepository(
     // only used for backup, will not populate emax/max
     override fun getAll(): List<Variation> {
         val parentLift = liftQueries.getAll().executeAsList().map { it.toDomain() }
-        val sets = setQueries.getAll(Long.MAX_VALUE).executeAsList()
+        val sets = setQueries.getAll(limit = Long.MAX_VALUE, startDate = Instant.DISTANT_PAST, endDate = Instant.DISTANT_FUTURE).executeAsList()
         return variationQueries.getAll().executeAsList().map { variation ->
             variation.toDomain(
                 parentLift.firstOrNull { it.id == variation.liftId },
@@ -67,7 +69,7 @@ class VariationRepository(
         return combine(
             liftQueries.get(liftId).asFlow().mapToOneOrNull(Dispatchers.IO).map { it?.toDomain() },
             variationQueries.getAllForLift(liftId).asFlow().mapToList(Dispatchers.IO),
-            setQueries.getAll(Long.MAX_VALUE).asFlow().mapToList(Dispatchers.IO)
+            setQueries.getAll(limit = Long.MAX_VALUE, startDate = Instant.DISTANT_PAST, endDate = Instant.DISTANT_FUTURE).asFlow().mapToList(Dispatchers.IO)
         ) { lift, variations, sets ->
             variations.map { variation ->
                 variation.toDomain(

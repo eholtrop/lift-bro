@@ -39,6 +39,7 @@ LIMIT 1;
 
 getAll:
 SELECT * FROM LiftingSet
+WHERE date > :startDate AND date < :endDate
 ORDER BY date DESC
 LIMIT :limit;
 

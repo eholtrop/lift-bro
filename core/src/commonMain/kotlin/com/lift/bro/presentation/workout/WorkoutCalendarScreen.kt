@@ -58,9 +58,13 @@ import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.currentMonth
+import com.lift.bro.ui.rememberCalendarState
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
@@ -87,6 +91,8 @@ fun WorkoutCalendarContent(
 
     val subscriptionType by LocalSubscriptionStatusProvider.current
 
+    val calendarState = rememberCalendarState()
+
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(MaterialTheme.spacing.one),
@@ -95,6 +101,14 @@ fun WorkoutCalendarContent(
     ) {
 
         item {
+
+            LaunchedEffect(calendarState.currentMonth) {
+                interactor(WorkoutCalendarEvent.LoadMonth(
+                    calendarState.currentMonth.year,
+                    calendarState.currentMonth.month
+                ))
+            }
+
             Calendar(
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight(),
@@ -107,6 +121,7 @@ fun WorkoutCalendarContent(
                         WorkoutCalendarEvent.DateSelected(it)
                     )
                 },
+                pagerState = calendarState,
                 dateDecorations = { date, day ->
                     Box(
                         modifier = Modifier.fillMaxSize(),

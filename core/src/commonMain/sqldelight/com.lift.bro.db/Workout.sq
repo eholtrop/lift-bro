@@ -14,7 +14,7 @@ getByDate:
 SELECT * FROM Workout WHERE date = ?;
 
 getAll:
-SELECT * FROM Workout;
+SELECT * FROM Workout WHERE date < :endDate AND date > :startDate;
 
 save:
 INSERT OR REPLACE
