@@ -197,7 +197,7 @@ class SetDataSource(
         setQueries.getAll(
             limit = limit,
             startDate = startDate.atStartOfDayIn(),
-            endDate = endDate.atEndOfDayIn()
+            endDate = endDate.atEndOfDayIn(),
         ).asFlow().mapToList(dispatcher).map { sets ->
             sets
                 .filter { variationId == null || it.variationId == variationId }
@@ -228,6 +228,10 @@ class SetDataSource(
                 rpe = set.rpe?.toLong(),
             )
         }
+    }
+
+    override suspend fun delete(lbSet: LBSet) {
+        setQueries.delete(lbSet.id)
     }
 
     suspend fun deleteAll(variationId: String) {

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,6 +36,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,35 +47,103 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
+import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.Reducer
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.toString
+import kotlinx.coroutines.flow.map
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class VariationSearchState(
+    val visible: Boolean,
+    val query: String,
+    val placeholder: String,
+    val variations: List<Variation>,
+) {
+    val filteredVariations
+        get() = variations.filter { it.fullName.contains(query, ignoreCase = true) }
+            .sortedBy { it.name }
+            .sortedByDescending { it.favourite }
+}
+
+sealed interface VariationSearchEvent {
+    data class QueryChanged(val query: String): VariationSearchEvent
+
+    data class VariationSelected(val variation: Variation): VariationSearchEvent
+
+    data object Dismiss: VariationSearchEvent
+}
+
+@Composable
+fun VariationSearchDialog(
+    visible: Boolean,
+    query: String = "",
+    textFieldPlaceholder: String,
+    onDismissRequest: () -> Unit,
+    onVariationSelected: (Variation) -> Unit,
+) {
+    VariationSearchDialog(
+        onDismissRequest = onDismissRequest,
+        variationSelected = onVariationSelected,
+        interactor = rememberInteractor(
+            initialState = VariationSearchState(
+                visible = visible,
+                query = query,
+                placeholder = textFieldPlaceholder,
+                variations = emptyList()
+            ),
+            source = {
+                dependencies.variationRepository.listenAll()
+                    .map {
+                        VariationSearchState(
+                            visible = visible,
+                            query = query,
+                            placeholder = textFieldPlaceholder,
+                            variations = it
+                        )
+                    }
+            },
+            reducers = listOf(
+                Reducer { state, event ->
+                    when (event) {
+                        is VariationSearchEvent.QueryChanged -> state.copy(query = event.query)
+                        VariationSearchEvent.Dismiss -> state
+                        is VariationSearchEvent.VariationSelected -> state
+                    }
+                }
+            ),
+            sideEffects = listOf { state, event ->
+                when (event) {
+                    VariationSearchEvent.Dismiss -> onDismissRequest()
+                    is VariationSearchEvent.QueryChanged -> {}
+                    is VariationSearchEvent.VariationSelected -> onVariationSelected(event.variation)
+                }
+            }
+        )
+    )
+}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun VariationSearchDialog(
-    visible: Boolean,
     onDismissRequest: () -> Unit,
     variationSelected: (Variation) -> Unit,
+    interactor: Interactor<VariationSearchState, VariationSearchEvent>,
 ) {
-    var show by remember { mutableStateOf(visible) }
-    var query by remember { mutableStateOf("") }
+    val state by interactor.state.collectAsState()
 
-    var variations by remember { mutableStateOf(emptyList<Variation>()) }
-
-
-    LaunchedEffect(query) {
-        variations = dependencies.database.variantDataSource.getAll()
-            .filter { it.fullName.contains(query, ignoreCase = true) }
-    }
+    var show by remember { mutableStateOf(state.visible) }
 
     Box {
         AnimatedVisibility(
@@ -100,6 +170,8 @@ fun VariationSearchDialog(
                 exit = slideOutVertically { -it },
             ) {
                 val focusRequester = FocusRequester()
+                var text by remember { mutableStateOf(state.query) }
+
                 TextField(
                     modifier = Modifier.fillMaxWidth().statusBarsPadding()
                         .focusRequester(focusRequester),
@@ -113,9 +185,12 @@ fun VariationSearchDialog(
                             Icon(Icons.Default.Close, contentDescription = "Close")
                         }
                     },
-                    placeholder = { Text("Add Exercise") },
-                    value = query,
-                    onValueChange = { query = it },
+                    placeholder = { Text(state.placeholder) },
+                    value = text,
+                    onValueChange = {
+                        text = it
+                        interactor(VariationSearchEvent.QueryChanged(it))
+                    },
                 )
                 LaunchedEffect(Unit) {
                     focusRequester.requestFocus()
@@ -125,26 +200,29 @@ fun VariationSearchDialog(
             Space(MaterialTheme.spacing.one)
 
             AnimatedVisibility(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).imePadding(),
                 visible = show,
                 enter = slideInVertically { it },
                 exit = slideOutVertically { it },
             ) {
                 VariationSearchContent(
                     modifier = Modifier.fillMaxWidth(),
-                    variations = variations,
-                    variationSelected = variationSelected
+                    variations = state.filteredVariations,
+                    variationSelected = {
+                        variationSelected(it)
+//                        interactor(VariationSearchEvent.VariationSelected(it))
+                    }
                 )
             }
         }
     }
 
-    BackHandler(visible) {
+    BackHandler(state.visible) {
         onDismissRequest()
     }
 
-    LaunchedEffect(visible) {
-        show = visible
+    LaunchedEffect(state.visible) {
+        show = state.visible
     }
 }
 
@@ -170,9 +248,8 @@ private fun VariationSearchContent(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
         ) {
             items(
-                variations.sortedBy { it.name }
-                    .sortedByDescending { it.favourite },
-                key = { it.id }) { variation ->
+                variations
+            ) { variation ->
                 Column(
                     modifier = Modifier.animateItem()
                         .fillMaxWidth()

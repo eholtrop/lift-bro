@@ -76,10 +76,10 @@
     <string name="edit_set_screen_variation_selector_variation_max">%s Max: %s</string>
     <string name="edit_set_screen_variation_selector_no_lift_max">None</string>
     <string name="edit_set_screen_variation_selector_no_variation_max">None</string>
-    <string name="edit_set_screen_extra_notes_label">Extra Notes:</string>
+    <string name="edit_set_screen_extra_notes_label">Extra Notes: (optional)</string>
     <string name="edit_set_screen_extra_notes_placeholder">I killed it today!</string>
 
-    <string name="excercise_screen_title">Excercise</string>
+    <string name="excercise_screen_title">Exercise</string>
     <string name="excercise_screen_duplicate_cta">Duplicate Last Set</string>
     <string name="excercise_screen_new_set_cta">Add New Set</string>
     <string name="excercise_string_title_date_format">EEEE, MMMM d - yyyy</string>

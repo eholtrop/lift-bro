@@ -34,53 +34,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 
 @Composable
-fun EditVariationDialog(
-    modifier: Modifier = Modifier,
-    variationId: String,
-    onDismissRequest: () -> Unit,
-    onVariationSaved: (String) -> Unit,
-    properties: DialogProperties = DialogProperties()
-) {
-    val variation = dependencies.database.variantDataSource.get(variationId)
-
-    VariationDialog(
-        modifier = modifier,
-        onDismissRequest = onDismissRequest,
-        title = "Edit Variation",
-        properties = properties,
-        variation = variation!!,
-        onVariationSaved = onVariationSaved,
-    )
-}
-
-
-@Composable
-fun CreateVariationDialog(
-    modifier: Modifier = Modifier,
-    parentLiftId: String,
-    onDismissRequest: () -> Unit,
-    onVariationCreated: (String) -> Unit,
-    properties: DialogProperties = DialogProperties()
-) {
-    val parentLift by dependencies.database.liftDataSource.get(parentLiftId)
-        .collectAsState(null)
-
-    if (parentLift != null) {
-
-        VariationDialog(
-            modifier = modifier,
-            onDismissRequest = onDismissRequest,
-            title = "Create Variation",
-            properties = properties,
-            variation = Variation(
-                lift = parentLift,
-            ),
-            onVariationSaved = onVariationCreated,
-        )
-    }
-}
-
-@Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun VariationDialog(
     modifier: Modifier = Modifier,

@@ -33,6 +33,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.DateSelector
+import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TempoSelector
@@ -141,8 +142,7 @@ fun EditSetScreen(
     LiftingScaffold(
         title = { Text(stringResource(if (set.id != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title)) },
         trailingContent = {
-            if (set.id != null) {
-                val navCoordinator = LocalNavCoordinator.current
+            Fade(visible = set.saveEnabled) {
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
                     contentDescription = stringResource(Res.string.edit_set_screen_delete_acc_label),
@@ -316,8 +316,9 @@ fun EditSetScreen(
 
     VariationSearchDialog(
         visible = showVariationDialog,
+        textFieldPlaceholder = "Select Lift",
         onDismissRequest = { showVariationDialog = false },
-        variationSelected = {
+        onVariationSelected = {
             showVariationDialog = false
             variationChanged(it.id)
         }

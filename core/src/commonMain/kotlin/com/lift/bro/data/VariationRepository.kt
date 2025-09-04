@@ -18,6 +18,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMap
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -105,13 +106,9 @@ class VariationRepository(
                         )
                     }
                 }
-                merge(
+                combine(
                     *flows.toTypedArray()
-                ).scan(emptyList()) { acc, value -> acc + value }
-
-//                merge(
-//                    *flows.toTypedArray()
-//                ).scan(emptyList()) { acc, value -> acc + value }
+                ) { arr -> arr.toList() }
             }
 
     override fun delete(id: String) {

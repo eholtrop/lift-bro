@@ -313,10 +313,11 @@ fun CreateWorkoutScreenInternal(
 
     VariationSearchDialog(
         visible = showVariationDialog,
+        textFieldPlaceholder = "Add Exercise",
         onDismissRequest = {
             showVariationDialog = false
         },
-        variationSelected = {
+        onVariationSelected = {
             showVariationDialog = false
             eventHandler(CreateWorkoutEvent.AddExercise(it))
         }

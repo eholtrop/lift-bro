@@ -129,7 +129,7 @@ fun rememberCreateLiftInteractor(): Interactor<EditLiftState, EditLiftEvent> {
     val id = uuid4().toString()
     return rememberInteractor(
         initialState = EditLiftState(id = id),
-        source = combine(
+        source = {combine(
             dependencies.database.liftDataSource.get(id),
             dependencies.database.variantDataSource.listenAll(id),
         ) { lift, variations ->
@@ -140,7 +140,7 @@ fun rememberCreateLiftInteractor(): Interactor<EditLiftState, EditLiftEvent> {
                     .sortedBy { !it.favourite }
                     .sortedBy { !it.name.isNullOrBlank() },
             )
-        },
+        }},
         reducers = listOf(EditLiftReducer),
         sideEffects = listOf(editLiftSideEffects())
     )
@@ -153,7 +153,7 @@ fun rememberEditLiftInteractor(
     val thisId = liftId
     return rememberInteractor(
         initialState = EditLiftState(id = thisId),
-        source = combine(
+        source = {combine(
             dependencies.database.liftDataSource.get(thisId),
             dependencies.database.variantDataSource.listenAll(thisId),
         ) { lift, variations ->
@@ -165,7 +165,7 @@ fun rememberEditLiftInteractor(
                     .sortedBy { !it.favourite }
                     .sortedBy { !it.name.isNullOrBlank() },
             )
-        },
+        }},
         reducers = listOf(EditLiftReducer),
         sideEffects = listOf(editLiftSideEffects())
     )

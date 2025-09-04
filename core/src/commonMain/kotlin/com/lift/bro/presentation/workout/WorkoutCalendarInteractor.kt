@@ -20,9 +20,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -58,7 +60,8 @@ fun workoutCalendarSourceData(
 ) = combine(
     workoutRepository.getAll(
         LocalDate(today.year, today.month, 1),
-        LocalDate(today.year, today.month, today.month.daysIn)
+        LocalDate(today.year, today.month, 1)
+            .plus(1, DateTimeUnit.MONTH),
     ),
     logQueries.getAll().asFlow().mapToList(Dispatchers.IO)
 ) { workouts, logs ->
@@ -81,6 +84,7 @@ fun workoutCalendarSourceData(
 fun rememberWorkoutCalendarInteractor(
     sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = navigationSideEffects(),
 ) = rememberInteractor(
+//    Unit,
     initialState = WorkoutCalendarState(
         date = today,
         workout = null
@@ -91,7 +95,7 @@ fun rememberWorkoutCalendarInteractor(
             workout = if (initial.date != source.date) initial.workout else source.workout,
         )
     },
-    source = workoutCalendarSourceData(),
+    source = {workoutCalendarSourceData()},
     reducers = listOf(WorkoutCalendarReducer),
     sideEffects = sideEffects,
 )

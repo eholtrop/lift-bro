@@ -40,7 +40,7 @@ fun rememberVariationDetailInteractor(
 ): Interactor<VariationDetailsState, VariationDetailsEvent> =
     rememberInteractor(
         initialState = VariationDetailsState(Variation()),
-        source = combine(
+        source = {combine(
             dependencies.database.variantDataSource.listen(variationId),
             dependencies.database.setDataSource.listenAllForVariation(variationId)
         ) { variation, sets ->
@@ -53,7 +53,7 @@ fun rememberVariationDetailInteractor(
                     )
                 }
             )
-        },
+        }},
         sideEffects = listOf { state, event ->
             when (event) {
                 VariationDetailsEvent.AddSetClicked -> {

@@ -46,7 +46,7 @@ fun rememberWorkoutInteractor(
 ): Interactor<CreateWorkoutState, CreateWorkoutEvent> =
     rememberInteractor(
         initialState = CreateWorkoutState(date = date),
-        source = combine(
+        source = {combine(
             WorkoutRepository(dependencies.database).get(date),
             dependencies.database.logDataSource.getByDate(date).asFlow().mapToOneOrNull(Dispatchers.IO),
         ) { workout, log ->
@@ -58,7 +58,7 @@ fun rememberWorkoutInteractor(
                 finisher = workout.finisher,
                 warmup = workout.warmup,
             )
-        },
+        }},
         reducers = listOf(WorkoutReducer),
         sideEffects = listOf(workoutSideEffects()),
         stateResolver = { initial, source ->

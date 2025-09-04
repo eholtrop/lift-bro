@@ -68,7 +68,7 @@ class Interactor<State, Event>(
 @Composable
 inline fun <reified State, Event> rememberInteractor(
     initialState: State,
-    source: Flow<State> = flow { emit(initialState) },
+    crossinline source: (State) -> Flow<State> = { flow { emit(initialState) } },
     reducers: List<Reducer<State, Event>> = emptyList(),
     sideEffects: List<SideEffect<State, Event>> = emptyList(),
     viewModelScope: CoroutineScope = rememberCoroutineScope(),
@@ -77,30 +77,33 @@ inline fun <reified State, Event> rememberInteractor(
     return rememberSaveable(
         initialState,
         saver = object: Saver<Interactor<State, Event>, String> {
+
             override fun SaverScope.save(value: Interactor<State, Event>): String? {
                 val json = Json.encodeToString(value.state.value)
-                Log.d("Interactor Saver", "Saving state: $json")
+                Log.d("Interactor Saver", "Saving ${State::class.simpleName}: $json")
                 return json
             }
 
             override fun restore(value: String): Interactor<State, Event>? {
-                Log.d("Interactor Saver", "Restoring state: $value")
+                Log.d("Interactor Saver", "Restoring ${State::class.simpleName}: $value")
+                val obj = Json.decodeFromString<State>(value)
                 return Interactor(
-                    initialState = Json.decodeFromString<State>(value),
+                    initialState = obj,
                     coroutineScope = viewModelScope,
                     stateResolver = stateResolver,
-                    source = source,
+                    source = source(obj),
                     reducers = reducers,
                     sideEffects = sideEffects,
                 )
             }
         }
     ) {
+        Log.d("Interactor Saver", "Initialize ${State::class.simpleName}: $initialState")
         Interactor(
             initialState = initialState,
             coroutineScope = viewModelScope,
             stateResolver = stateResolver,
-            source = source,
+            source = source(initialState),
             reducers = reducers,
             sideEffects = sideEffects,
         )

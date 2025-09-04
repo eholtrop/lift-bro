@@ -517,7 +517,7 @@ private fun VariationCard(
 
                     Space(MaterialTheme.spacing.one)
 
-                    val pair = setPoints.first { it.first == data }
+                    val pair = setPoints.firstOrNull { it.first == data }
 
                     Column(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one)
@@ -526,17 +526,17 @@ private fun VariationCard(
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(MaterialTheme.typography.titleMedium.toSpanStyle()) {
-                                    append(pair.first.toString(pattern = "EEEE MMM, d"))
+                                    append(pair?.first?.toString(pattern = "EEEE MMM, d"))
                                 }
                                 withStyle(MaterialTheme.typography.bodyMedium.toSpanStyle()) {
                                     if (LocalTwmSettings.current) {
                                         append(" ")
                                         append(
-                                            pair.second.sumOf { it.weight }.decimalFormat().uom()
+                                            pair?.second?.sumOf { it.weight }.decimalFormat().uom()
                                         )
                                     }
 
-                                    with(pair.second.sumOf { it.mer }) {
+                                    with(pair?.second?.sumOf { it.mer } ?: 0) {
                                         if (LocalShowMERCalcs.current?.enabled == true && this > 0) {
                                             append(" (+${this}mer)")
                                         }
@@ -553,13 +553,13 @@ private fun VariationCard(
                         )
                     }
 
-                    if (pair.second.isNotEmpty()) {
+                    if (pair?.second?.isNotEmpty() == true) {
                         Space(MaterialTheme.spacing.half)
                     }
 
-                    pair.second
-                        .sortedByDescending { it.weight }
-                        .forEach { set ->
+                    pair?.second
+                        ?.sortedByDescending { it.weight }
+                        ?.forEach { set ->
                             SetInfoRow(
                                 modifier = Modifier
                                     .fillMaxSize()

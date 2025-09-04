@@ -20,33 +20,38 @@ enum class Tab {
 @Serializable
 sealed interface HomeState {
     @Serializable
-    data object Loading : HomeState
+    data object Loading: HomeState
 
     @Serializable
-    data object Empty : HomeState
+    data object Empty: HomeState
 
     @Serializable
-    data class Content(val selectedTab: Tab) : HomeState
+    data class Content(val selectedTab: Tab): HomeState
 }
 
 sealed class HomeEvent {
-    data object DashboardClicked : HomeEvent()
-    data object CalendarClicked : HomeEvent()
-    data object AddSetClicked : HomeEvent()
+    data object DashboardClicked: HomeEvent()
+    data object CalendarClicked: HomeEvent()
+    data object AddSetClicked: HomeEvent()
 
-    data object SettingsClicked : HomeEvent()
+    data object SettingsClicked: HomeEvent()
 
-    data object AddLiftClicked : HomeEvent()
+    data object AddLiftClicked: HomeEvent()
 }
 
 @Composable
 fun rememberHomeInteractor(
     initialTab: Tab = Tab.Dashboard,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<HomeState, HomeEvent> = rememberInteractor(
+//    initialTab,
     initialState = HomeState.Loading,
-    source = dependencies.database.liftDataSource.listenAll().map {
-        if (it.isEmpty()) HomeState.Empty else HomeState.Content(initialTab)
+    source = { state ->
+        dependencies.database.liftDataSource.listenAll().map {
+            if (it.isEmpty()) HomeState.Empty else HomeState.Content(
+                (state as? HomeState.Content)?.selectedTab ?: initialTab
+            )
+        }
     },
     reducers = listOf(
         Reducer { state, event ->

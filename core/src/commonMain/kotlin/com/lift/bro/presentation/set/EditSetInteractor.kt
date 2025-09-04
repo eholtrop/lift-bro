@@ -14,6 +14,8 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.utils.debug
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -27,8 +29,8 @@ import kotlinx.serialization.Serializable
 data class EditSetState(
     val id: String?,
     val variation: Variation? = null,
-    val weight: Double? = 0.0,
-    val reps: Long? = 1,
+    val weight: Double? = null,
+    val reps: Long? = null,
     val eccentric: Long? = 3,
     val isometric: Long? = 1,
     val concentric: Long? = 1,
@@ -66,41 +68,57 @@ fun rememberEditSetInteractor(
     setId: String,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.database.variantDataSource,
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> = rememberInteractor(
     initialState = null,
-    source = setRepository.listen(setId)
-        .flatMapLatest { set ->
-            if (set == null) {
-                flow {
-                    emit(EditSetState(id = setId))
-                }
-            } else {
-                variationRepository.listen(set.variationId).map { variation ->
-                    set.toUiState(variation)
+    source = {
+        setRepository.listen(setId)
+            .flatMapLatest { set ->
+                if (set == null) {
+                    flow {
+                        emit(EditSetState(id = setId))
+                    }
+                } else {
+                    variationRepository.listen(set.variationId).map { variation ->
+                        set.toUiState(variation)
+                    }
                 }
             }
-        },
+    },
     reducers = reducers,
-    sideEffects = sideEffects
+    sideEffects = sideEffects + { _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
 )
 
 @Composable
 fun rememberCreateSetInteractor(
     variationId: String?,
     date: Instant?,
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> {
     val id = uuid4().toString()
     return rememberInteractor(
         initialState = null,
-        source = dependencies.setRepository.listen(id)
-            .map { it ?: LBSet(id = id, variationId = variationId ?: "", date = date ?: Clock.System.now()) }
-            .flatMapLatest { set ->
-                dependencies.variationRepository.listen(set.variationId)
-                    .map { variation ->
-                        set.toUiState(variation)
+        source = {
+            dependencies.setRepository.listen(id)
+                .flatMapLatest { set ->
+                    if (set == null) {
+                        flow {
+                            emit(
+                                EditSetState(
+                                    id = id,
+                                    date = date ?: Clock.System.now(),
+                                    variation = dependencies.variationRepository.get(variationId)
+                                )
+                            )
+                        }
+                    } else {
+                        dependencies.variationRepository.listen(set.variationId).map { variation ->
+                            set.toUiState(variation)
+                        }
                     }
-            },
-        sideEffects = sideEffects,
+                }
+        },
+        sideEffects = sideEffects + { _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() },
         reducers = reducers,
     )
 }
@@ -123,6 +141,12 @@ private val reducers: List<Reducer<EditSetState?, EditSetEvent>> = listOf(
 )
 
 private val sideEffects: List<SideEffect<EditSetState?, EditSetEvent>> = listOf { state, event ->
+    if (event is EditSetEvent.DeleteSetClicked) {
+        state?.toDomain()?.let {
+            dependencies.setRepository.delete(it)
+        }
+    }
+
     state?.let {
         when (event) {
             is EditSetEvent.ConChanged ->
@@ -164,7 +188,9 @@ private val sideEffects: List<SideEffect<EditSetState?, EditSetEvent>> = listOf 
 
             else -> null
         }?.also {
-            dependencies.setRepository.save(it)
+            if (state.saveEnabled) {
+                dependencies.setRepository.save(it)
+            }
         }
     }
 }

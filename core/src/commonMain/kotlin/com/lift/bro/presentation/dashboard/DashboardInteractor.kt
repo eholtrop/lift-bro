@@ -71,6 +71,7 @@ fun rememberDashboardInteractor(
     setRepository: SetDataSource = dependencies.database.setDataSource,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<DashboardState, DashboardEvent> = rememberInteractor<DashboardState, DashboardEvent>(
+//    null,
     initialState = DashboardState(),
     sideEffects = listOf { state, event ->
         when (event) {
@@ -78,57 +79,60 @@ fun rememberDashboardInteractor(
             is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
         }
     },
-    source = combine(
-        liftRepository.listenAll().onStart { emit(emptyList()) },
-        variationRepository.listenAll().onStart { emit(emptyList()) }
-    ) { lifts, variations -> lifts to variations }
-        .flatMapLatest { (lifts, variations) ->
-            val variationsByLift = variations.groupBy { it.lift?.id }
-            val cards: List<Flow<DashboardListItem?>> = lifts.map { lift ->
-                val liftVariations = variationsByLift[lift.id] ?: emptyList()
-                setRepository.listenAllForLift(lift.id, 20)
-                    .map { sets ->
-                        DashboardListItem.LiftCard.Loaded(
-                            LiftCardState(
-                                lift = lift,
-                                values = sets.groupBy { it.date.toLocalDate() }.map {
-                                    it.key to LiftCardData(
-                                        it.value.maxOf { it.weight },
-                                        it.value.maxOf { it.reps }.toInt(),
-                                        it.value.maxOfOrNull { it.rpe ?: 0 },
-                                    )
-                                }.sortedByDescending { it.first }.take(5).reversed(),
-                                maxWeight = liftVariations.maxOfOrNull {
-                                    it.oneRepMax?.weight ?: 0.0
-                                },
-                                maxReps = liftVariations.maxOfOrNull {
-                                    it.maxReps?.reps?.toDouble() ?: 0.0
-                                },
+    source = {
+        combine(
+            liftRepository.listenAll().onStart { emit(emptyList()) },
+            variationRepository.listenAll().onStart { emit(emptyList()) }
+        ) { lifts, variations -> lifts to variations }
+            .flatMapLatest { (lifts, variations) ->
+                val variationsByLift = variations.groupBy { it.lift?.id }
+                val cards: List<Flow<DashboardListItem?>> = lifts.map { lift ->
+                    val liftVariations = variationsByLift[lift.id] ?: emptyList()
+                    setRepository.listenAllForLift(lift.id, 20)
+                        .map { sets ->
+                            DashboardListItem.LiftCard.Loaded(
+                                LiftCardState(
+                                    lift = lift,
+                                    values = sets.groupBy { it.date.toLocalDate() }.map {
+                                        it.key to LiftCardData(
+                                            it.value.maxOf { it.weight },
+                                            it.value.maxOf { it.reps }.toInt(),
+                                            it.value.maxOfOrNull { it.rpe ?: 0 },
+                                        )
+                                    }.sortedByDescending { it.first }.take(5).reversed(),
+                                    maxWeight = liftVariations.maxOfOrNull {
+                                        it.oneRepMax?.weight ?: 0.0
+                                    },
+                                    maxReps = liftVariations.maxOfOrNull {
+                                        it.maxReps?.reps?.toDouble() ?: 0.0
+                                    },
+                                )
                             )
+                        }
+                }
+
+                combine(
+                    *cards.map { it.onStart { emit(DashboardListItem.LiftCard.Loading) } }
+                        .toTypedArray()
+                ) { it.toList().filterNotNull() }
+                    .debounce { 100L }
+                    .map { cards ->
+                        cards.sortedBy { (it as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.name }
+                            .sortedByDescending { item -> variations.any { (item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id && it.favourite } }
+                    }
+                    .map { items ->
+                        DashboardState(
+                            items = items.toMutableList().apply {
+                                if (this.size > 2) {
+                                    add(2, DashboardListItem.Ad)
+                                } else {
+                                    add(DashboardListItem.Ad)
+                                }
+                                add(0, DashboardListItem.ReleaseNotes)
+                                add(DashboardListItem.AddLiftButton)
+                            }
                         )
                     }
             }
-
-            combine(
-                *cards.map { it.onStart { emit(DashboardListItem.LiftCard.Loading) } }.toTypedArray()
-            ) { it.toList().filterNotNull() }
-                .debounce { 100L }
-                .map { cards ->
-                    cards.sortedBy { (it as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.name }
-                        .sortedByDescending { item -> variations.any { (item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id && it.favourite } }
-                }
-                .map { items ->
-                    DashboardState(
-                        items = items.toMutableList().apply {
-                            if (this.size > 2) {
-                                add(2, DashboardListItem.Ad)
-                            } else {
-                                add(DashboardListItem.Ad)
-                            }
-                            add(0, DashboardListItem.ReleaseNotes)
-                            add(DashboardListItem.AddLiftButton)
-                        }
-                    )
-                }
-        },
+    },
 )

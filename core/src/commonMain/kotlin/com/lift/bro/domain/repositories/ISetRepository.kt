@@ -8,4 +8,6 @@ interface ISetRepository {
     fun listen(id: String): Flow<LBSet?>
 
     suspend fun save(lbSet: LBSet)
+
+    suspend fun delete(lbSet: LBSet)
 }

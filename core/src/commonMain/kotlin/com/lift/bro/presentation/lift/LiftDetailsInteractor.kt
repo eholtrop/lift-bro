@@ -48,7 +48,7 @@ fun rememberLiftDetailsInteractor(
     navCoordinator: NavCoordinator = LocalNavCoordinator.current
 ): Interactor<LiftDetailsState, LiftDetailsEvent> = rememberInteractor(
     initialState = LiftDetailsState(),
-    source = combine(
+    source = {combine(
         dependencies.database.liftDataSource.get(liftId),
         dependencies.database.variantDataSource.listenAll(liftId),
         dependencies.database.setDataSource.listenAllForLift(liftId)
@@ -64,7 +64,7 @@ fun rememberLiftDetailsInteractor(
                 )
             },
         )
-    },
+    }},
     sideEffects = listOf { state, event ->
         when (event) {
             LiftDetailsEvent.AddSetClicked -> navCoordinator.present(
