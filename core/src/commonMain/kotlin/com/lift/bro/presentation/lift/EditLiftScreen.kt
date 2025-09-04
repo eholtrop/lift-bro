@@ -2,7 +2,10 @@
 
 package com.lift.bro.presentation.lift
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -173,28 +176,34 @@ internal fun EditLiftScreen(
                     )
                     Space(MaterialTheme.spacing.two)
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                    AnimatedVisibility(
+                        visible = state.name.isNotBlank() || state.variations.isNotEmpty(),
+                        enter = fadeIn(),
+                        exit = fadeOut(),
                     ) {
-                        Text(
-                            modifier = Modifier.semantics {
-                                heading()
-                            },
-                            text = stringResource(Res.string.edit_lift_variation_heading),
-                            style = MaterialTheme.typography.titleLarge
-                        )
-
-                        Space(MaterialTheme.spacing.half)
-                        IconButton(
-                            onClick = {
-                                interactor(EditLiftEvent.AddVariation)
-                            },
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = stringResource(Res.string.edit_lift_screen_add_variation_cta_content_description),
-                                tint = MaterialTheme.colorScheme.primary
+                            Text(
+                                modifier = Modifier.semantics {
+                                    heading()
+                                },
+                                text = stringResource(Res.string.edit_lift_variation_heading),
+                                style = MaterialTheme.typography.titleLarge
                             )
+
+                            Space(MaterialTheme.spacing.half)
+                            IconButton(
+                                onClick = {
+                                    interactor(EditLiftEvent.AddVariation)
+                                },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = stringResource(Res.string.edit_lift_screen_add_variation_cta_content_description),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
                 }

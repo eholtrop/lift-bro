@@ -79,12 +79,12 @@ inline fun <reified State, Event> rememberInteractor(
         saver = object: Saver<Interactor<State, Event>, String> {
             override fun SaverScope.save(value: Interactor<State, Event>): String? {
                 val json = Json.encodeToString(value.state.value)
-                Log.d("DEBUGEH", "Saving state: $json")
+                Log.d("Interactor Saver", "Saving state: $json")
                 return json
             }
 
             override fun restore(value: String): Interactor<State, Event>? {
-                Log.d("DEBUGEH", "Restoring state: $value")
+                Log.d("Interactor Saver", "Restoring state: $value")
                 return Interactor(
                     initialState = Json.decodeFromString<State>(value),
                     coroutineScope = viewModelScope,

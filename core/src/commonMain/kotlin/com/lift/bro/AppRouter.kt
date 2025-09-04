@@ -20,7 +20,7 @@ import com.lift.bro.utils.logger.d
 fun AppRouter(route: Destination) {
     val navCoordinator = LocalNavCoordinator.current
     if (BuildConfig.isDebug) {
-        Log.d("DEBUGEH", "route: $route")
+        Log.d("App Router Navigation", "route: $route")
     }
 
     when (route) {

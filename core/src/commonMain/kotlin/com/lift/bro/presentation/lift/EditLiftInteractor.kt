@@ -50,12 +50,12 @@ data class LiftColor(
 val LiftColor.color: Color get() = Color(a, r, g, b)
 
 sealed class EditLiftEvent {
-    data class NameChanged(val name: String) : EditLiftEvent()
-    data class VariationNameChanged(val variation: Variation, val name: String) : EditLiftEvent()
-    data object AddVariation : EditLiftEvent()
-    data class VariationRemoved(val variation: Variation) : EditLiftEvent()
+    data class NameChanged(val name: String): EditLiftEvent()
+    data class VariationNameChanged(val variation: Variation, val name: String): EditLiftEvent()
+    data object AddVariation: EditLiftEvent()
+    data class VariationRemoved(val variation: Variation): EditLiftEvent()
 
-    data object DeleteLift : EditLiftEvent()
+    data object DeleteLift: EditLiftEvent()
 }
 
 val EditLiftReducer = Reducer<EditLiftState, EditLiftEvent> { state, event ->
@@ -108,7 +108,6 @@ fun editLiftSideEffects(
         }
 
         is EditLiftEvent.NameChanged -> {
-            Log.d(message = state.lift.toString())
             dependencies.database.liftDataSource.save(state.lift.copy(name = event.name))
         }
 

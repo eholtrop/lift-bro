@@ -165,7 +165,7 @@ fun LiftCard(
                 val animatedGraphNodes =
                     remember { mutableStateMapOf<LocalDate, Pair<Animatable<Offset, AnimationVector2D>, Animatable<Float, AnimationVector1D>?>>() }
 
-                LaunchedEffect(value, canvasSize) {
+                LaunchedEffect(value, canvasSize, state.values) {
                     val height = canvasSize.height
                     val width = canvasSize.width
                     val spacing = width.div(5)

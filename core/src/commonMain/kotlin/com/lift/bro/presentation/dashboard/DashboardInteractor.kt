@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
@@ -16,10 +17,16 @@ import com.lift.bro.utils.debug
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.scan
 import kotlinx.serialization.Serializable
 
 
@@ -30,8 +37,16 @@ data class DashboardState(
 
 @Serializable
 sealed class DashboardListItem {
+
     @Serializable
-    data class LiftCard(val state: LiftCardState): DashboardListItem()
+    sealed class LiftCard: DashboardListItem() {
+
+        @Serializable
+        data class Loaded(val state: LiftCardState): LiftCard()
+
+        @Serializable
+        data object Loading: LiftCard()
+    }
 
     @Serializable
     data object Ad: DashboardListItem()
@@ -48,6 +63,7 @@ sealed interface DashboardEvent {
     data class LiftClicked(val liftId: String): DashboardEvent
 }
 
+
 @Composable
 fun rememberDashboardInteractor(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
@@ -62,35 +78,45 @@ fun rememberDashboardInteractor(
             is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
         }
     },
-    source = variationRepository.listenAll()
-        .flatMapLatest { variations ->
-            val cards = variations.groupBy { it.lift }.map { (lift, liftVariations) ->
-                dependencies.database.setDataSource.listenAllForLift(lift?.id ?: "", 20)
+    source = combine(
+        liftRepository.listenAll().onStart { emit(emptyList()) },
+        variationRepository.listenAll().onStart { emit(emptyList()) }
+    ) { lifts, variations -> lifts to variations }
+        .flatMapLatest { (lifts, variations) ->
+            val variationsByLift = variations.groupBy { it.lift?.id }
+            val cards: List<Flow<DashboardListItem?>> = lifts.map { lift ->
+                val liftVariations = variationsByLift[lift.id] ?: emptyList()
+                setRepository.listenAllForLift(lift.id, 20)
                     .map { sets ->
-                        lift?.let {
-                            DashboardListItem.LiftCard(
-                                LiftCardState(
-                                    lift = it,
-                                    values = sets.groupBy { it.date.toLocalDate() }.map {
-                                        it.key to LiftCardData(
-                                            it.value.maxOf { it.weight },
-                                            it.value.maxOf { it.reps }.toInt(),
-                                            it.value.maxOfOrNull { it.rpe ?: 0 },
-                                        )
-                                    }.sortedByDescending { it.first }.take(5).reversed(),
-                                    maxWeight = liftVariations.maxOfOrNull { it.oneRepMax?.weight ?: 0.0 },
-                                    maxReps = liftVariations.maxOfOrNull { it.maxReps?.reps?.toDouble() ?: 0.0 },
-                                )
+                        DashboardListItem.LiftCard.Loaded(
+                            LiftCardState(
+                                lift = lift,
+                                values = sets.groupBy { it.date.toLocalDate() }.map {
+                                    it.key to LiftCardData(
+                                        it.value.maxOf { it.weight },
+                                        it.value.maxOf { it.reps }.toInt(),
+                                        it.value.maxOfOrNull { it.rpe ?: 0 },
+                                    )
+                                }.sortedByDescending { it.first }.take(5).reversed(),
+                                maxWeight = liftVariations.maxOfOrNull {
+                                    it.oneRepMax?.weight ?: 0.0
+                                },
+                                maxReps = liftVariations.maxOfOrNull {
+                                    it.maxReps?.reps?.toDouble() ?: 0.0
+                                },
                             )
-                        }
-                    }.filterNotNull().map { it as DashboardListItem }
+                        )
+                    }
             }
-            combine(*cards.toTypedArray()) { arr ->
-                val variations = dependencies.database.variantDataSource.getAll()
-                arr.toList()
-                    .sortedBy { (it as? DashboardListItem.LiftCard)?.state?.lift?.name }
-                    .sortedByDescending { item -> variations.any { (item as? DashboardListItem.LiftCard)?.state?.lift?.id == it.lift?.id && it.favourite } }
-            }
+
+            combine(
+                *cards.map { it.onStart { emit(DashboardListItem.LiftCard.Loading) } }.toTypedArray()
+            ) { it.toList().filterNotNull() }
+                .debounce { 100L }
+                .map { cards ->
+                    cards.sortedBy { (it as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.name }
+                        .sortedByDescending { item -> variations.any { (item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id && it.favourite } }
+                }
                 .map { items ->
                     DashboardState(
                         items = items.toMutableList().apply {

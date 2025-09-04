@@ -34,6 +34,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
@@ -149,12 +151,12 @@ class SetDataSource(
         variationQueries
             .getAllForLift(liftId).asFlow().mapToList(dispatcher)
             .flatMapLatest { variations ->
-                combine(
+                merge(
                     *variations.map {
                         setQueries.getAllByVariation(it.id, limit).asFlow().mapToList(dispatcher)
                     }.toTypedArray()
-                ) { sets ->
-                    sets.toList().flatten().map { it.toDomain() }
+                ).scan(emptyList()) { acc, sets ->
+                    acc + sets.map { it.toDomain() }
                 }
             }
 
