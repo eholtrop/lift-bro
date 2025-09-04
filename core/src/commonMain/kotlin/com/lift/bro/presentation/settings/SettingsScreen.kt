@@ -19,6 +19,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,6 +43,7 @@ import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
+import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.Space
@@ -80,17 +82,29 @@ fun SettingsScreen() {
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
             ) {
 
-                if (subscriptionType == SubscriptionType.Pro) {
-                    item {
-                        Column(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally
+                item {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val bro = LocalLiftBro.current
+                        IconButton(
+                            modifier = Modifier.size(128.dp),
+                            onClick = {
+                                dependencies.settingsRepository.setBro(
+                                    when (bro) {
+                                        LiftBro.Leo -> LiftBro.Lisa
+                                        LiftBro.Lisa -> LiftBro.Leo
+                                    }
+                                )
+                            }
                         ) {
                             Image(
-                                modifier = Modifier.size(128.dp),
-                                painter = painterResource(LocalLiftBro.current.iconRes()),
+                                painter = painterResource(bro.iconRes()),
                                 contentDescription = ""
                             )
+                        }
+                        if (subscriptionType == SubscriptionType.Pro) {
                             Text(
                                 "Thank you for the support!",
                                 style = MaterialTheme.typography.titleLarge,
@@ -107,6 +121,8 @@ fun SettingsScreen() {
                             ) {
                                 Text("Manage Subscription")
                             }
+                        } else {
+
                         }
                     }
                 }
@@ -121,42 +137,6 @@ fun SettingsScreen() {
                 item {
                     ThemeSettingsRow()
                 }
-
-//                item {
-//                    var value by remember { mutableStateOf("") }
-//                    if (showExperimental) {
-//                        Column {
-//                            Text(
-//                                text = stringResource(Res.string.settings_experimental_title),
-//                                style = MaterialTheme.typography.titleLarge
-//                            )
-//                            Text(
-//                                text = stringResource(Res.string.settings_experimental_message),
-//                                style = MaterialTheme.typography.bodyMedium
-//                            )
-//                        }
-//                    } else {
-//                        Column {
-//                            Text(
-//                                text = stringResource(Res.string.settings_experimental_title),
-//                                style = MaterialTheme.typography.titleLarge
-//                            )
-//                            val password =
-//                                stringResource(Res.string.settings_experimental_input_password)
-//                            TextField(
-//                                modifier = Modifier.fillParentMaxWidth(),
-//                                value = value,
-//                                onValueChange = {
-//                                    value = it
-//                                    if (value.toLowerCase(Locale.current) == password) {
-//                                        showExperimental = true
-//                                    }
-//                                },
-//                                placeholder = { Text(stringResource(Res.string.settings_experimental_input_placeholder)) }
-//                            )
-//                        }
-//                    }
-//                }
 
                 item {
                     Text(
@@ -303,7 +283,7 @@ fun SettingsScreen() {
 fun SettingsRowItem(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
 
     Column(
