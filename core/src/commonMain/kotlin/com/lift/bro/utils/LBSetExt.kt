@@ -19,7 +19,7 @@ internal val LBSet.formattedReps: String get() = "${this.formattedTempo} x ${thi
 
 internal val LBSet.oneRepMax: Double? get() = if (this.reps == 1L) weight else null
 
-internal val LBSet.estimateMax: Double? get() = if (this.reps > 1) estimatedMax(this.reps.toInt(), this.weight) else null
+internal val LBSet.estimateMax: Double? get() = estimatedMax(this.reps.toInt(), this.weight)
 
 @Composable
 internal fun LBSet.prettyPrintSet(

@@ -60,6 +60,7 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.debug
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import com.revenuecat.purchases.kmp.LogLevel
@@ -274,6 +275,7 @@ fun App(
 
                 LaunchedEffect(Unit) {
                     GetCelebrationTypeUseCase()
+                        .debug("DEBUGEH")
                         .collectLatest {
                             celebration = it
                         }
@@ -316,10 +318,8 @@ fun App(
                                     Space(MaterialTheme.spacing.half)
                                     Text(
                                         text = when (val cel = celebration) {
-                                            CelebrationType.FirstLift -> "That's a new Personal Record!"
-                                            CelebrationType.FirstVariation -> "That's a new Personal Record!"
-                                            is CelebrationType.NewLiftMax -> "That's a new ${cel.liftName} Personal Record!"
-                                            is CelebrationType.NewVariationMax -> "That's a new ${cel.variationName} Personal Record!"
+                                            is CelebrationType.NewEMax -> "New estimated Max!"
+                                            is CelebrationType.NewOneRepMax -> "New one rep max!"
                                             CelebrationType.None -> ""
                                         },
                                         style = MaterialTheme.typography.bodyLarge,
