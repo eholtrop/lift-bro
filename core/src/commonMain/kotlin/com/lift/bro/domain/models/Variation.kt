@@ -33,7 +33,7 @@ data class Variation(
     val maxReps: LBSet? = null,
 )
 
-val Variation.fullName get() = "$name ${lift?.name}".trim()
+val Variation.fullName get() = "${name ?: ""}  ${lift?.name}".trim()
 
 @Composable
 fun Variation.maxText(): AnnotatedString {
