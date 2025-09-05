@@ -6,14 +6,19 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.benasher44.uuid.*
 import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
+import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
+import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
-import com.lift.bro.presentation.workout.CreateWorkoutEvent.AddExercise
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.*
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -34,10 +39,10 @@ data class CreateWorkoutState(
 sealed class CreateWorkoutEvent {
     data class UpdateNotes(val notes: String) : CreateWorkoutEvent()
     data class AddExercise(val variation: Variation) : CreateWorkoutEvent()
-
     data class UpdateFinisher(val finisher: String) : CreateWorkoutEvent()
-
     data class UpdateWarmup(val warmup: String) : CreateWorkoutEvent()
+    data class DuplicateSet(val set: LBSet) : CreateWorkoutEvent()
+    data class DeleteSet(val set: LBSet) : CreateWorkoutEvent()
 }
 
 @Composable
@@ -75,27 +80,31 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
             )
         )
 
-        is CreateWorkoutEvent.UpdateNotes -> {
+        is UpdateNotes -> {
             state.copy(notes = event.notes)
         }
 
-        is CreateWorkoutEvent.UpdateFinisher -> {
+        is UpdateFinisher -> {
             state.copy(finisher = event.finisher)
         }
 
-        is CreateWorkoutEvent.UpdateWarmup -> {
+        is UpdateWarmup -> {
             state.copy(warmup = event.warmup)
         }
+
+        is DuplicateSet -> state
+        is DeleteSet -> state
     }
 }
 
 fun workoutSideEffects(
-    workoutRepository: WorkoutRepository = WorkoutRepository(dependencies.database),
+    workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
+    setRepository: ISetRepository = dependencies.setRepository,
     liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource
 ): SideEffect<CreateWorkoutState, CreateWorkoutEvent> = { state, event ->
     when (event) {
 
-        is CreateWorkoutEvent.UpdateNotes -> {
+        is UpdateNotes -> {
             val log = liftLogRepository.getByDate(state.date).executeAsOneOrNull()?.copy(
                 notes = event.notes
             )
@@ -107,15 +116,27 @@ fun workoutSideEffects(
             )
         }
 
-        is CreateWorkoutEvent.UpdateFinisher -> {
+        is UpdateFinisher -> {
             workoutRepository.save(
                 state.copy(finisher = event.finisher).toWorkout()
             )
         }
 
-        is CreateWorkoutEvent.UpdateWarmup -> {
+        is UpdateWarmup -> {
             workoutRepository.save(
                 state.copy(warmup = event.warmup).toWorkout()
+            )
+        }
+
+        is DuplicateSet -> {
+            setRepository.save(
+                lbSet = event.set.copy(id = uuid4().toString())
+            )
+        }
+
+        is DeleteSet -> {
+            setRepository.delete(
+                lbSet = event.set
             )
         }
 

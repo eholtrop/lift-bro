@@ -47,10 +47,10 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
 import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.workout.SetInfoRow
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toColor

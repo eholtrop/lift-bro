@@ -64,12 +64,12 @@ import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.presentation.workout.SetInfoRow
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toString
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton

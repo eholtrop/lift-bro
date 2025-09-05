@@ -1,7 +1,9 @@
 package com.lift.bro.presentation.workout
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,12 +15,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
+import androidx.compose.material.icons.filled.ContentCopy
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -31,9 +36,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.benasher44.uuid.uuid4
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
 import com.lift.bro.presentation.Interactor
@@ -41,19 +45,17 @@ import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toString
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.plus
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.excercise_screen_duplicate_cta
 import org.jetbrains.compose.resources.stringResource
@@ -61,7 +63,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun CreateWorkoutScreen(
-    interactor: Interactor<CreateWorkoutState, CreateWorkoutEvent>
+    interactor: Interactor<CreateWorkoutState, CreateWorkoutEvent>,
 ) {
     val state by interactor.state.collectAsState()
 
@@ -75,7 +77,7 @@ fun CreateWorkoutScreen(
 @Composable
 fun CreateWorkoutScreenInternal(
     state: CreateWorkoutState,
-    eventHandler: (CreateWorkoutEvent) -> Unit = {}
+    eventHandler: (CreateWorkoutEvent) -> Unit = {},
 ) {
     var showVariationDialog by remember { mutableStateOf(false) }
 
@@ -108,7 +110,12 @@ fun CreateWorkoutScreenInternal(
                         notes = it
                         eventHandler(CreateWorkoutEvent.UpdateNotes(it))
                     },
-                    leadingIcon = { Icon(imageVector = Icons.AutoMirrored.Filled.Notes, contentDescription = null) }
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.Notes,
+                            contentDescription = null
+                        )
+                    }
                 )
             }
 
@@ -140,7 +147,7 @@ fun CreateWorkoutScreenInternal(
 
                     Space(MaterialTheme.spacing.half)
 
-                    if (state.finisher !=  null) {
+                    if (state.finisher != null) {
                         var finisher by remember { mutableStateOf(state.finisher ?: "") }
                         TextField(
                             modifier = Modifier.weight(1f),
@@ -202,7 +209,7 @@ fun CreateWorkoutScreenInternal(
 
             items(state.exercises) { exercise ->
                 Card(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().animateContentSize(),
                 ) {
                     Column {
                         val coordinator = LocalNavCoordinator.current
@@ -245,13 +252,73 @@ fun CreateWorkoutScreenInternal(
                         }
 
 
-                        exercise.sets.forEach {
+                        exercise.sets.forEachIndexed { index, set ->
                             val coordinator = LocalNavCoordinator.current
+
+                            var showOptionsDialog by remember { mutableStateOf(false) }
+
+                            if (showOptionsDialog) {
+                                ModalBottomSheet(
+                                    onDismissRequest = {
+                                        showOptionsDialog = false
+                                    }
+                                ) {
+                                    Column {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                                                .clickable(
+                                                    onClick = {
+                                                        eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                                                        showOptionsDialog = false
+                                                    },
+                                                    role = Role.Button
+                                                ).padding(
+                                                    horizontal = MaterialTheme.spacing.one,
+                                                ),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.Delete,
+                                                contentDescription = "Delete"
+                                            )
+                                            Space(MaterialTheme.spacing.half)
+                                            Text("Delete")
+                                        }
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                                                .clickable(
+                                                    onClick = {
+                                                        eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                                                        showOptionsDialog = false
+                                                    },
+                                                    role = Role.Button
+                                                ).padding(
+                                                    horizontal = MaterialTheme.spacing.one,
+                                                ),
+                                            verticalAlignment = Alignment.CenterVertically,
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.ContentCopy,
+                                                contentDescription = "Copy"
+                                            )
+                                            Space(MaterialTheme.spacing.half)
+                                            Text("Copy")
+                                        }
+                                    }
+                                }
+                            }
+
                             SetInfoRow(
                                 modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 52.dp)
-                                    .clickable(
+                                    .animateItem()
+                                    .combinedClickable(
                                         onClick = {
-                                            coordinator.present(Destination.EditSet(setId = it.id))
+                                            coordinator.present(Destination.EditSet(setId = set.id))
+                                        },
+                                        onLongClick = {
+                                            showOptionsDialog = true
                                         },
                                         role = Role.Button
                                     )
@@ -259,7 +326,7 @@ fun CreateWorkoutScreenInternal(
                                         horizontal = MaterialTheme.spacing.one,
                                         vertical = MaterialTheme.spacing.half
                                     ).animateItem(),
-                                set = it
+                                set = set
                             )
                         }
 
@@ -283,23 +350,7 @@ fun CreateWorkoutScreenInternal(
                                 modifier = Modifier.align(Alignment.CenterHorizontally),
                                 colors = ButtonDefaults.elevatedButtonColors(),
                                 onClick = {
-                                    GlobalScope.launch {
-                                        val baseSet =
-                                            exercise.sets.maxByOrNull { it.date.toEpochMilliseconds() }
-
-                                        if (baseSet != null) {
-                                            dependencies.database.setDataSource.save(
-                                                set = baseSet.copy(
-                                                    id = uuid4().toString(),
-                                                    // increment date by one to ensure this new list is the "Last Set"
-                                                    date = baseSet.date.plus(
-                                                        1,
-                                                        DateTimeUnit.MILLISECOND
-                                                    )
-                                                )
-                                            )
-                                        }
-                                    }
+                                    eventHandler(CreateWorkoutEvent.DuplicateSet(exercise.sets.last()))
                                 }
                             ) {
                                 Text(stringResource(Res.string.excercise_screen_duplicate_cta))

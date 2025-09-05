@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
@@ -29,14 +30,12 @@ import org.jetbrains.compose.resources.stringResource
 fun DateSelector(
     modifier: Modifier = Modifier,
     date: Instant,
-    dateChanged: (Instant) -> Unit
+    dateChanged: (Instant) -> Unit,
 ) {
     var openDialog by remember { mutableStateOf(false) }
 
     val pickerState = rememberDatePickerState(
-        date.toLocalDateTime(TimeZone.currentSystemDefault()).toInstant(
-            TimeZone.UTC
-        ).toEpochMilliseconds()
+        date.toEpochMilliseconds()
     )
 
     if (openDialog) {
@@ -48,8 +47,6 @@ fun DateSelector(
                         openDialog = false
                         dateChanged(
                             Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
-                                .toLocalDateTime(TimeZone.UTC)
-                                .toInstant(TimeZone.currentSystemDefault())
                         )
                     },
                     enabled = pickerState.selectedDateMillis != null,
@@ -74,8 +71,7 @@ fun DateSelector(
     LineItem(
         modifier = modifier,
         title = stringResource(Res.string.date_selector_title),
-        description = Instant.fromEpochMilliseconds(pickerState.selectedDateMillis!!)
-            .toString("MMMM d - yyyy"),
+        description = date.toString("MMMM d - yyyy"),
         onClick = {
             openDialog = true
         }
