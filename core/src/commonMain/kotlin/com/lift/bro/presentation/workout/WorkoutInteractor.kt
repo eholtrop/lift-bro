@@ -60,7 +60,7 @@ fun rememberWorkoutInteractor(
                 CreateWorkoutState(
                     id = workout.id,
                     date = workout.date,
-                    exercises = workout.exercises,
+                    exercises = (workout.exercises + state.exercises).distinctBy { it.variation.id },
                     notes = log?.notes ?: "",
                     finisher = workout.finisher,
                     warmup = workout.warmup,
