@@ -57,7 +57,18 @@ import com.lift.bro.utils.toString
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.excercise_screen_duplicate_cta
+import lift_bro.core.generated.resources.workout_variation_card_primary_cta
+import lift_bro.core.generated.resources.workout_screen_title
+import lift_bro.core.generated.resources.workout_notes_placeholder
+import lift_bro.core.generated.resources.workout_warmup_label
+import lift_bro.core.generated.resources.workout_warmup_placeholder
+import lift_bro.core.generated.resources.workout_add_warmup_cta
+import lift_bro.core.generated.resources.workout_finisher_label
+import lift_bro.core.generated.resources.workout_finisher_placeholder
+import lift_bro.core.generated.resources.workout_add_finisher_cta
+import lift_bro.core.generated.resources.workout_add_exercise_cta
+import lift_bro.core.generated.resources.workout_set_options_copy_cta
+import lift_bro.core.generated.resources.workout_set_options_delete_cta
 import org.jetbrains.compose.resources.stringResource
 
 
@@ -86,7 +97,7 @@ fun CreateWorkoutScreenInternal(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Workout")
+                Text(stringResource(Res.string.workout_screen_title))
                 Text(
                     state.date.toString("EEEE, MMMM d, yyyy"),
                     style = MaterialTheme.typography.bodyMedium,
@@ -105,7 +116,7 @@ fun CreateWorkoutScreenInternal(
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = notes,
-                    placeholder = { Text("Notes") },
+                    placeholder = { Text(stringResource(Res.string.workout_notes_placeholder)) },
                     onValueChange = {
                         notes = it
                         eventHandler(CreateWorkoutEvent.UpdateNotes(it))
@@ -126,8 +137,8 @@ fun CreateWorkoutScreenInternal(
                         TextField(
                             modifier = Modifier.weight(1f),
                             value = warmup,
-                            label = { Text("Warmup") },
-                            placeholder = { Text("High Knees") },
+                            label = { Text(stringResource(Res.string.workout_warmup_label)) },
+                            placeholder = { Text(stringResource(Res.string.workout_warmup_placeholder)) },
                             onValueChange = {
                                 warmup = it
                                 eventHandler(CreateWorkoutEvent.UpdateWarmup(it))
@@ -141,7 +152,7 @@ fun CreateWorkoutScreenInternal(
                             },
                             colors = ButtonDefaults.outlinedButtonColors()
                         ) {
-                            Text("Add Warmup")
+                            Text(stringResource(Res.string.workout_add_warmup_cta))
                         }
                     }
 
@@ -152,8 +163,8 @@ fun CreateWorkoutScreenInternal(
                         TextField(
                             modifier = Modifier.weight(1f),
                             value = finisher,
-                            label = { Text("Finisher") },
-                            placeholder = { Text("Burpees") },
+                            label = { Text(stringResource(Res.string.workout_finisher_label)) },
+                            placeholder = { Text(stringResource(Res.string.workout_finisher_placeholder)) },
                             onValueChange = {
                                 finisher = it
                                 eventHandler(CreateWorkoutEvent.UpdateFinisher(it))
@@ -167,7 +178,7 @@ fun CreateWorkoutScreenInternal(
                             },
                             colors = ButtonDefaults.outlinedButtonColors()
                         ) {
-                            Text("Add Finisher")
+                            Text(stringResource(Res.string.workout_add_finisher_cta))
                         }
                     }
                 }
@@ -201,7 +212,7 @@ fun CreateWorkoutScreenInternal(
                     )
                     Space(MaterialTheme.spacing.half)
                     Text(
-                        "Add Exercise",
+                        stringResource(Res.string.workout_add_exercise_cta),
                         style = MaterialTheme.typography.titleMedium
                     )
                 }
@@ -280,10 +291,10 @@ fun CreateWorkoutScreenInternal(
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.Delete,
-                                                contentDescription = "Delete"
+                                                contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
                                             )
                                             Space(MaterialTheme.spacing.half)
-                                            Text("Delete")
+                                            Text(stringResource(Res.string.workout_set_options_delete_cta))
                                         }
                                         Row(
                                             modifier = Modifier.fillMaxWidth()
@@ -301,10 +312,10 @@ fun CreateWorkoutScreenInternal(
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Default.ContentCopy,
-                                                contentDescription = "Copy"
+                                                contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
                                             )
                                             Space(MaterialTheme.spacing.half)
-                                            Text("Copy")
+                                            Text(stringResource(Res.string.workout_set_options_copy_cta))
                                         }
                                     }
                                 }
@@ -353,7 +364,7 @@ fun CreateWorkoutScreenInternal(
                                     eventHandler(CreateWorkoutEvent.DuplicateSet(exercise.sets.last()))
                                 }
                             ) {
-                                Text(stringResource(Res.string.excercise_screen_duplicate_cta))
+                                Text(stringResource(Res.string.workout_variation_card_primary_cta))
                             }
                         }
                     }
@@ -364,7 +375,7 @@ fun CreateWorkoutScreenInternal(
 
     VariationSearchDialog(
         visible = showVariationDialog,
-        textFieldPlaceholder = "Add Exercise",
+        textFieldPlaceholder = stringResource(Res.string.workout_add_exercise_cta),
         onDismissRequest = {
             showVariationDialog = false
         },

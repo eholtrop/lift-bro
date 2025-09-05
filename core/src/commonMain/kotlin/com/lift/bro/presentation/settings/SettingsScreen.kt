@@ -55,9 +55,17 @@ import io.sentry.kotlin.multiplatform.Sentry
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.privacy_policy
+import lift_bro.core.generated.resources.settings_become_pro_description
+import lift_bro.core.generated.resources.settings_become_pro_title
+import lift_bro.core.generated.resources.settings_manage_subscription_cta
 import lift_bro.core.generated.resources.settings_other_discord_cta
 import lift_bro.core.generated.resources.settings_other_github_cta
+import lift_bro.core.generated.resources.settings_pro_features_header
+import lift_bro.core.generated.resources.settings_pro_status_text
+import lift_bro.core.generated.resources.settings_pro_thanks_title
+import lift_bro.core.generated.resources.settings_release_notes_cta
 import lift_bro.core.generated.resources.settings_title
+import lift_bro.core.generated.resources.settings_user_id_label
 import lift_bro.core.generated.resources.terms_and_conditions
 import lift_bro.core.generated.resources.url_privacy_policy
 import lift_bro.core.generated.resources.url_terms_and_conditions
@@ -106,11 +114,11 @@ fun SettingsScreen() {
                         }
                         if (subscriptionType == SubscriptionType.Pro) {
                             Text(
-                                "Thank you for the support!",
+                                stringResource(Res.string.settings_pro_thanks_title),
                                 style = MaterialTheme.typography.titleLarge,
                             )
                             Text(
-                                "You are a Lift PRO!!",
+                                stringResource(Res.string.settings_pro_status_text),
                                 style = MaterialTheme.typography.bodyLarge
                             )
                             Button(
@@ -119,7 +127,7 @@ fun SettingsScreen() {
                                 },
                                 colors = ButtonDefaults.textButtonColors()
                             ) {
-                                Text("Manage Subscription")
+                                Text(stringResource(Res.string.settings_manage_subscription_cta))
                             }
                         } else {
 
@@ -143,7 +151,7 @@ fun SettingsScreen() {
                         modifier = Modifier.semantics {
                             heading()
                         },
-                        text = "Pro Features",
+                        text = stringResource(Res.string.settings_pro_features_header),
                         style = MaterialTheme.typography.headlineMedium,
                     )
                 }
@@ -153,10 +161,10 @@ fun SettingsScreen() {
                         SubscriptionType.None -> {
                             SettingsRowItem(
                                 modifier = Modifier.clickable { showPaywall = true },
-                                title = { Text("Become Pro!") },
+                                title = { Text(stringResource(Res.string.settings_become_pro_title)) },
                             ) {
                                 Row {
-                                    Text("Sign up for an Ad free experience and extra premium tracking metrics!")
+                                    Text(stringResource(Res.string.settings_become_pro_description))
                                 }
                             }
                         }
@@ -220,7 +228,7 @@ fun SettingsScreen() {
                                 showReleaseNotesDialog = true
                             }
                         ) {
-                            Text("Release Notes")
+                            Text(stringResource(Res.string.settings_release_notes_cta))
                         }
                         val terms = stringResource(Res.string.url_terms_and_conditions)
                         Button(
@@ -256,7 +264,7 @@ fun SettingsScreen() {
                 item {
                     val clipboard = LocalClipboard.current
                     Text(
-                        "User Id: ${Purchases.sharedInstance.appUserID}"
+                        stringResource(Res.string.settings_user_id_label, Purchases.sharedInstance.appUserID)
                     )
                 }
             }

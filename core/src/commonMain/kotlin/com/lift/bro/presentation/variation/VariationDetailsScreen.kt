@@ -56,6 +56,14 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.lift_details_fab_content_description
+import lift_bro.core.generated.resources.variation_details_notes_label
+import lift_bro.core.generated.resources.variation_details_notes_placeholder
+import lift_bro.core.generated.resources.variation_details_add_notes_cta
+import lift_bro.core.generated.resources.variation_details_tempo_down_cd
+import lift_bro.core.generated.resources.variation_details_tempo_up_cd
+import org.jetbrains.compose.resources.stringResource
 
 private enum class Grouping {
     Date,
@@ -90,7 +98,7 @@ private fun VariationDetailsScreen(
     LiftingScaffold(
         fabProperties = FabProperties(
             fabIcon = Icons.Default.Add,
-            contentDescription = "Add Set",
+            contentDescription = stringResource(Res.string.lift_details_fab_content_description),
             fabClicked = addSetClicked,
         ),
         title = {
@@ -120,8 +128,8 @@ private fun VariationDetailsScreen(
 
                 if (state.variation.notes != null) {
                     TextField(
-                        label = { Text("Notes") },
-                        placeholder = { Text("Toes pointed out, Squeeze core...") },
+                        label = { Text(stringResource(Res.string.variation_details_notes_label)) },
+                        placeholder = { Text(stringResource(Res.string.variation_details_notes_placeholder)) },
                         modifier = Modifier.fillMaxWidth(),
                         value = state.variation.notes ?: "",
                         onValueChange = { interactor(VariationDetailsEvent.NotesUpdated(it)) }

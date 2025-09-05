@@ -48,6 +48,38 @@ import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.rep_weight_selector_times_symbol
+import lift_bro.core.generated.resources.rep_weight_selector_rpe_placeholder
+import lift_bro.core.generated.resources.rep_weight_selector_info_title
+import lift_bro.core.generated.resources.rep_weight_selector_info_p1
+import lift_bro.core.generated.resources.rep_weight_selector_info_p2
+import lift_bro.core.generated.resources.rep_weight_selector_table_col_rpe
+import lift_bro.core.generated.resources.rep_weight_selector_table_col_rir
+import lift_bro.core.generated.resources.rep_weight_selector_table_col_percent
+import lift_bro.core.generated.resources.rep_weight_selector_table_col_vibe
+import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_10
+import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_9
+import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_8
+import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_7
+import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_6
+import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_5
+import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_1_4
+import lift_bro.core.generated.resources.rep_weight_selector_table_rir_0
+import lift_bro.core.generated.resources.rep_weight_selector_table_rir_1
+import lift_bro.core.generated.resources.rep_weight_selector_table_rir_2
+import lift_bro.core.generated.resources.rep_weight_selector_table_rir_3
+import lift_bro.core.generated.resources.rep_weight_selector_table_rir_4
+import lift_bro.core.generated.resources.rep_weight_selector_table_rir_5_6
+import lift_bro.core.generated.resources.rep_weight_selector_table_rir_6_plus
+import lift_bro.core.generated.resources.rep_weight_selector_table_percent_100
+import lift_bro.core.generated.resources.rep_weight_selector_table_percent_95
+import lift_bro.core.generated.resources.rep_weight_selector_table_percent_90
+import lift_bro.core.generated.resources.rep_weight_selector_table_percent_85
+import lift_bro.core.generated.resources.rep_weight_selector_table_percent_75
+import lift_bro.core.generated.resources.rep_weight_selector_table_percent_60
+import lift_bro.core.generated.resources.rep_weight_selector_table_percent_50
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RepWeightSelector(
@@ -82,7 +114,7 @@ fun RepWeightSelector(
         Space(MaterialTheme.spacing.half)
 
         Text(
-            text = "x",
+            text = stringResource(Res.string.rep_weight_selector_times_symbol),
             style = MaterialTheme.typography.titleLarge,
         )
         Space(MaterialTheme.spacing.half)
@@ -112,16 +144,16 @@ fun RepWeightSelector(
             },
             keyboardType = KeyboardType.Number,
             placeholder = {
-                Text("RPE")
+                Text(stringResource(Res.string.rep_weight_selector_rpe_placeholder))
             }
         )
 
         InfoDialogButton(
-            dialogTitle = { Text("RPE:\nRate of Perceived Exertion") },
+            dialogTitle = { Text(stringResource(Res.string.rep_weight_selector_info_title)) },
             dialogMessage = {
                 Column {
-                    Text("A Scale that can be used to track the effort used for a given set")
-                    Text("Can be calculated based on the \"Reps in Reserve\", % of max weight, or Vibes!")
+                    Text(stringResource(Res.string.rep_weight_selector_info_p1))
+                    Text(stringResource(Res.string.rep_weight_selector_info_p2))
                     Space(MaterialTheme.spacing.half)
                     CompositionLocalProvider(
                         LocalContentColor provides MaterialTheme.colorScheme.onSurface
@@ -142,46 +174,46 @@ fun RepWeightSelector(
                                     modifier = Modifier.weight(1f),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
-                                    Text("RPE")
-                                    Text("10")
-                                    Text("9")
-                                    Text("8")
-                                    Text("7")
-                                    Text("6")
-                                    Text("5")
-                                    Text("1-4")
+                                    Text(stringResource(Res.string.rep_weight_selector_table_col_rpe))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_10))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_9))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_8))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_7))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_6))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_5))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_1_4))
                                 }
                                 Column(
                                     modifier = Modifier.weight(1f),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
-                                    Text("RIR")
-                                    Text("0")
-                                    Text("1")
-                                    Text("2")
-                                    Text("3")
-                                    Text("4")
-                                    Text("5-6")
-                                    Text("6+")
+                                    Text(stringResource(Res.string.rep_weight_selector_table_col_rir))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_0))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_1))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_2))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_3))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_4))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_5_6))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_6_plus))
                                 }
                                 Column(
                                     modifier = Modifier.weight(1f),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
-                                    Text("%")
-                                    Text("100")
-                                    Text("95")
-                                    Text("90")
-                                    Text("85")
-                                    Text("75")
-                                    Text("60")
-                                    Text("50")
+                                    Text(stringResource(Res.string.rep_weight_selector_table_col_percent))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_100))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_95))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_90))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_85))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_75))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_60))
+                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_50))
                                 }
                                 Column(
                                     modifier = Modifier.weight(1f),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
-                                    Text("Vibe")
+                                    Text(stringResource(Res.string.rep_weight_selector_table_col_vibe))
                                     Text("\uD83D\uDC80")
                                     Text("\uD83E\uDD75")
                                     Text("\uD83D\uDE30")

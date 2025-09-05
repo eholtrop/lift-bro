@@ -46,10 +46,15 @@ import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.create_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
+import lift_bro.core.generated.resources.edit_set_screen_encouragement
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
 import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
+import lift_bro.core.generated.resources.edit_set_screen_variation_selector_lift_max
+import lift_bro.core.generated.resources.edit_set_screen_variation_selector_no_lift_max
+import lift_bro.core.generated.resources.edit_set_screen_variation_selector_no_variation_max
+import lift_bro.core.generated.resources.edit_set_screen_variation_selector_variation_max
 import lift_bro.core.generated.resources.weight_selector_chin_subtitle
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
@@ -250,7 +255,7 @@ fun EditSetScreen(
                         Space(MaterialTheme.spacing.one)
 
                         if (variation == null) {
-                            Text("You got this!")
+                            Text(stringResource(Res.string.edit_set_screen_encouragement))
                         } else {
                             val sets = dependencies.database.setDataSource.getAllForLift(
                                 variation.lift?.id ?: ""
@@ -259,8 +264,20 @@ fun EditSetScreen(
                             val liftMax = sets.maxByOrNull { it.weight }
                             val variationMax = sets.filter { it.variationId == variation.id }
                                 .maxByOrNull { it.weight }
-                            Text("${variation.lift?.name ?: ""} Max: ${liftMax?.formattedWeight() ?: "None"}")
-                            Text("${variation.fullName} Max: ${variationMax?.formattedWeight() ?: "None"}")
+                            Text(
+                                text = stringResource(
+                                    Res.string.edit_set_screen_variation_selector_lift_max,
+                                    variation.lift?.name ?: stringResource(Res.string.edit_set_screen_variation_selector_no_lift_max),
+                                    liftMax?.formattedWeight() ?: stringResource(Res.string.edit_set_screen_variation_selector_no_lift_max),
+                                )
+                            )
+                            Text(
+                                text = stringResource(
+                                    Res.string.edit_set_screen_variation_selector_variation_max,
+                                    variation.fullName,
+                                    variationMax?.formattedWeight() ?: stringResource(Res.string.edit_set_screen_variation_selector_no_variation_max),
+                                )
+                            )
                         }
                     }
                 }
@@ -316,7 +333,7 @@ fun EditSetScreen(
 
     VariationSearchDialog(
         visible = showVariationDialog,
-        textFieldPlaceholder = "Select Lift",
+        textFieldPlaceholder = stringResource(Res.string.edit_set_screen_variation_selector_empty_state_title),
         onDismissRequest = { showVariationDialog = false },
         onVariationSelected = {
             showVariationDialog = false

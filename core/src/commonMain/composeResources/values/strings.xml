@@ -79,10 +79,17 @@
     <string name="edit_set_screen_extra_notes_label">Extra Notes: (optional)</string>
     <string name="edit_set_screen_extra_notes_placeholder">I killed it today!</string>
 
-    <string name="excercise_screen_title">Exercise</string>
-    <string name="excercise_screen_duplicate_cta">Duplicate Last Set</string>
-    <string name="excercise_screen_new_set_cta">Add New Set</string>
-    <string name="excercise_string_title_date_format">EEEE, MMMM d - yyyy</string>
+    <string name="workout_screen_title">Workout</string>
+    <string name="workout_notes_placeholder">Notes</string>
+    <string name="workout_warmup_label">Warmup</string>
+    <string name="workout_warmup_placeholder">High Knees</string>
+    <string name="workout_add_warmup_cta">Add Warmup</string>
+    <string name="workout_finisher_label">Finisher</string>
+    <string name="workout_finisher_placeholder">Burpees</string>
+    <string name="workout_add_finisher_cta">Add Finisher</string>
+    <string name="workout_add_exercise_cta">Add Exercise</string>
+    <string name="workout_variation_card_primary_cta">Duplicate Last Set</string>
+    <string name="workout_variation_card_secondary_cta">Add Set</string>
 
 
     <!-- ONBOARDING -->
@@ -165,4 +172,55 @@ Feeling especially spicy?
 Soreness or pain?</string>
     <string name="edit_daily_notes_dialog_confirm_cta">Save</string>
     <string name="edit_daily_notes_dialog_dismiss_cta">Cancel</string>
+
+    <string name="workout_set_options_delete_cta">Delete</string>
+    <string name="workout_set_options_copy_cta">Copy</string>
+
+    <string name="settings_pro_thanks_title">Thank you for the support!</string>
+    <string name="settings_pro_status_text">You are a Lift PRO!!</string>
+    <string name="settings_manage_subscription_cta">Manage Subscription</string>
+    <string name="settings_pro_features_header">Pro Features</string>
+    <string name="settings_become_pro_title">Become Pro!</string>
+    <string name="settings_become_pro_description">Sign up for an Ad free experience and extra premium tracking metrics!</string>
+    <string name="settings_release_notes_cta">Release Notes</string>
+    <string name="settings_user_id_label">User Id: %1$s</string>
+
+    <string name="edit_set_screen_encouragement">You got this!</string>
+    <string name="rep_weight_selector_times_symbol">x</string>
+    <string name="rep_weight_selector_rpe_placeholder">RPE</string>
+    <string name="rep_weight_selector_info_title">RPE:\nRate of Perceived Exertion</string>
+    <string name="rep_weight_selector_info_p1">A Scale that can be used to track the effort used for a given set</string>
+    <string name="rep_weight_selector_info_p2">Can be calculated based on the "Reps in Reserve", % of max weight, or Vibes!</string>
+    <string name="rep_weight_selector_table_col_rpe">RPE</string>
+    <string name="rep_weight_selector_table_col_rir">RIR</string>
+    <string name="rep_weight_selector_table_col_percent">%</string>
+    <string name="rep_weight_selector_table_col_vibe">Vibe</string>
+    <string name="rep_weight_selector_table_rpe_10">10</string>
+    <string name="rep_weight_selector_table_rpe_9">9</string>
+    <string name="rep_weight_selector_table_rpe_8">8</string>
+    <string name="rep_weight_selector_table_rpe_7">7</string>
+    <string name="rep_weight_selector_table_rpe_6">6</string>
+    <string name="rep_weight_selector_table_rpe_5">5</string>
+    <string name="rep_weight_selector_table_rpe_1_4">1-4</string>
+    <string name="rep_weight_selector_table_rir_0">0</string>
+    <string name="rep_weight_selector_table_rir_1">1</string>
+    <string name="rep_weight_selector_table_rir_2">2</string>
+    <string name="rep_weight_selector_table_rir_3">3</string>
+    <string name="rep_weight_selector_table_rir_4">4</string>
+    <string name="rep_weight_selector_table_rir_5_6">5-6</string>
+    <string name="rep_weight_selector_table_rir_6_plus">6+</string>
+    <string name="rep_weight_selector_table_percent_100">100</string>
+    <string name="rep_weight_selector_table_percent_95">95</string>
+    <string name="rep_weight_selector_table_percent_90">90</string>
+    <string name="rep_weight_selector_table_percent_85">85</string>
+    <string name="rep_weight_selector_table_percent_75">75</string>
+    <string name="rep_weight_selector_table_percent_60">60</string>
+    <string name="rep_weight_selector_table_percent_50">50</string>
+
+    <string name="variation_details_notes_label">Notes</string>
+    <string name="variation_details_notes_placeholder">Toes pointed out, Squeeze core...</string>
+    <string name="variation_details_add_notes_cta">Add Notes</string>
+    <string name="variation_details_tempo_down_cd">Down</string>
+    <string name="variation_details_tempo_up_cd">Up</string>
+
 </resources>
