@@ -37,12 +37,12 @@ data class CreateWorkoutState(
 )
 
 sealed class CreateWorkoutEvent {
-    data class UpdateNotes(val notes: String) : CreateWorkoutEvent()
-    data class AddExercise(val variation: Variation) : CreateWorkoutEvent()
-    data class UpdateFinisher(val finisher: String) : CreateWorkoutEvent()
-    data class UpdateWarmup(val warmup: String) : CreateWorkoutEvent()
-    data class DuplicateSet(val set: LBSet) : CreateWorkoutEvent()
-    data class DeleteSet(val set: LBSet) : CreateWorkoutEvent()
+    data class UpdateNotes(val notes: String): CreateWorkoutEvent()
+    data class AddExercise(val variation: Variation): CreateWorkoutEvent()
+    data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
+    data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
+    data class DuplicateSet(val set: LBSet): CreateWorkoutEvent()
+    data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
 }
 
 @Composable
@@ -51,24 +51,24 @@ fun rememberWorkoutInteractor(
 ): Interactor<CreateWorkoutState, CreateWorkoutEvent> =
     rememberInteractor(
         initialState = CreateWorkoutState(date = date),
-        source = {combine(
-            WorkoutRepository(dependencies.database).get(date),
-            dependencies.database.logDataSource.getByDate(date).asFlow().mapToOneOrNull(Dispatchers.IO),
-        ) { workout, log ->
-            CreateWorkoutState(
-                id = workout.id,
-                date = workout.date,
-                exercises = workout.exercises,
-                notes = log?.notes ?: "",
-                finisher = workout.finisher,
-                warmup = workout.warmup,
-            )
-        }},
+        source = { state ->
+            combine(
+                WorkoutRepository(dependencies.database).get(date),
+                dependencies.database.logDataSource.getByDate(date).asFlow()
+                    .mapToOneOrNull(Dispatchers.IO),
+            ) { workout, log ->
+                CreateWorkoutState(
+                    id = workout.id,
+                    date = workout.date,
+                    exercises = workout.exercises,
+                    notes = log?.notes ?: "",
+                    finisher = workout.finisher,
+                    warmup = workout.warmup,
+                )
+            }
+        },
         reducers = listOf(WorkoutReducer),
-        sideEffects = listOf(workoutSideEffects()),
-        stateResolver = { initial, source ->
-            source.copy(exercises = source.exercises + initial.exercises.filter { it.sets.isEmpty() })
-        }
+        sideEffects = listOf(workoutSideEffects())
     )
 
 val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { state, event ->
@@ -100,7 +100,7 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
 fun workoutSideEffects(
     workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
     setRepository: ISetRepository = dependencies.setRepository,
-    liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource
+    liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource,
 ): SideEffect<CreateWorkoutState, CreateWorkoutEvent> = { state, event ->
     when (event) {
 
