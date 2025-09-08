@@ -20,8 +20,10 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -133,7 +135,7 @@ fun CreateWorkoutScreenInternal(
             item {
                 Row {
                     if (state.warmup != null) {
-                        var warmup by remember { mutableStateOf(state.warmup ?: "") }
+                        var warmup by remember { mutableStateOf(state.warmup) }
                         TextField(
                             modifier = Modifier.weight(1f),
                             value = warmup,
@@ -159,7 +161,7 @@ fun CreateWorkoutScreenInternal(
                     Space(MaterialTheme.spacing.half)
 
                     if (state.finisher != null) {
-                        var finisher by remember { mutableStateOf(state.finisher ?: "") }
+                        var finisher by remember { mutableStateOf(state.finisher) }
                         TextField(
                             modifier = Modifier.weight(1f),
                             value = finisher,
@@ -219,152 +221,169 @@ fun CreateWorkoutScreenInternal(
             }
 
             items(state.exercises) { exercise ->
-                Card(
-                    modifier = Modifier.fillMaxWidth().animateContentSize(),
-                ) {
-                    Column {
-                        val coordinator = LocalNavCoordinator.current
-                        Column(
-                            modifier = Modifier.fillMaxWidth().clickable(
-                                onClick = {
-                                    coordinator.present(Destination.VariationDetails(exercise.variation.id))
+                exercise.variationSets.forEach { (_, variation, sets) ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth().animateContentSize(),
+                    ) {
+                        Column {
+                            val coordinator = LocalNavCoordinator.current
+                            Column(
+                                modifier = Modifier.fillMaxWidth().clickable(
+                                    onClick = {
+                                        coordinator.present(Destination.VariationDetails(variation.id))
+                                    }
+                                )
+                                    .padding(
+                                        top = MaterialTheme.spacing.threeQuarters,
+                                        start = MaterialTheme.spacing.one,
+                                    ),
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        variation.fullName,
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+
+                                    Space()
+                                    IconButton(
+                                        onClick = {
+                                            eventHandler(CreateWorkoutEvent.DeleteExercise(exercise))
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = "Delete Exercise"
+                                        )
+                                    }
                                 }
-                            )
-                                .padding(
-                                    top = MaterialTheme.spacing.threeQuarters,
-                                    start = MaterialTheme.spacing.one,
-                                ),
-                        ) {
-                            Text(
-                                exercise.variation.fullName,
-                                style = MaterialTheme.typography.titleLarge,
-                            )
 
-                            Text(
-                                exercise.variation.maxText(),
-                                style = MaterialTheme.typography.bodyLarge,
-                            )
-
-                            if (LocalTwmSettings.current) {
                                 Text(
-                                    "Total Weight Moved: ${"${exercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
-                                    style = MaterialTheme.typography.labelLarge,
+                                    exercise.variationSets.first().variation.maxText(),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                )
+
+                                if (LocalTwmSettings.current) {
+                                    Text(
+                                        "Total Weight Moved: ${"${exercise.totalWeightMoved.decimalFormat()} ${LocalUnitOfMeasure.current.value}"}",
+                                        style = MaterialTheme.typography.labelLarge,
+                                    )
+                                }
+
+                                exercise.variationSets.first().variation.notes?.let {
+                                    if (it.isNotBlank()) {
+                                        Text(
+                                            text = it,
+                                            style = MaterialTheme.typography.bodyMedium
+                                        )
+                                    }
+                                }
+                            }
+
+                            exercise.variationSets.first().sets.forEachIndexed { index, set ->
+                                val coordinator = LocalNavCoordinator.current
+
+                                var showOptionsDialog by remember { mutableStateOf(false) }
+
+                                if (showOptionsDialog) {
+                                    ModalBottomSheet(
+                                        onDismissRequest = {
+                                            showOptionsDialog = false
+                                        }
+                                    ) {
+                                        Column {
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth()
+                                                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                                                    .clickable(
+                                                        onClick = {
+                                                            eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                                                            showOptionsDialog = false
+                                                        },
+                                                        role = Role.Button
+                                                    ).padding(
+                                                        horizontal = MaterialTheme.spacing.one,
+                                                    ),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Delete,
+                                                    contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
+                                                )
+                                                Space(MaterialTheme.spacing.half)
+                                                Text(stringResource(Res.string.workout_set_options_delete_cta))
+                                            }
+                                            Row(
+                                                modifier = Modifier.fillMaxWidth()
+                                                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                                                    .clickable(
+                                                        onClick = {
+                                                            eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                                                            showOptionsDialog = false
+                                                        },
+                                                        role = Role.Button
+                                                    ).padding(
+                                                        horizontal = MaterialTheme.spacing.one,
+                                                    ),
+                                                verticalAlignment = Alignment.CenterVertically,
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.ContentCopy,
+                                                    contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
+                                                )
+                                                Space(MaterialTheme.spacing.half)
+                                                Text(stringResource(Res.string.workout_set_options_copy_cta))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                SetInfoRow(
+                                    modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 52.dp)
+                                        .animateItem()
+                                        .combinedClickable(
+                                            onClick = {
+                                                coordinator.present(Destination.EditSet(setId = set.id))
+                                            },
+                                            onLongClick = {
+                                                showOptionsDialog = true
+                                            },
+                                            role = Role.Button
+                                        )
+                                        .padding(
+                                            horizontal = MaterialTheme.spacing.one,
+                                            vertical = MaterialTheme.spacing.half
+                                        ).animateItem(),
+                                    set = set
                                 )
                             }
 
-                            exercise.variation.notes?.let {
-                                if (it.isNotBlank()) {
-                                    Text(
-                                        text = it,
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                }
-                            }
-                        }
-
-
-                        exercise.sets.forEachIndexed { index, set ->
-                            val coordinator = LocalNavCoordinator.current
-
-                            var showOptionsDialog by remember { mutableStateOf(false) }
-
-                            if (showOptionsDialog) {
-                                ModalBottomSheet(
-                                    onDismissRequest = {
-                                        showOptionsDialog = false
+                            if (exercise.variationSets.isEmpty()) {
+                                Button(
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    colors = ButtonDefaults.elevatedButtonColors(),
+                                    onClick = {
+                                        coordinator.present(
+                                            Destination.CreateSet(
+                                                variationId = exercise.variationSets.first().variation.id,
+                                                date = state.date.atStartOfDayIn(TimeZone.currentSystemDefault()),
+                                            )
+                                        )
                                     }
                                 ) {
-                                    Column {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth()
-                                                .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                                                .clickable(
-                                                    onClick = {
-                                                        eventHandler(CreateWorkoutEvent.DeleteSet(set))
-                                                        showOptionsDialog = false
-                                                    },
-                                                    role = Role.Button
-                                                ).padding(
-                                                    horizontal = MaterialTheme.spacing.one,
-                                                ),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.Delete,
-                                                contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
-                                            )
-                                            Space(MaterialTheme.spacing.half)
-                                            Text(stringResource(Res.string.workout_set_options_delete_cta))
-                                        }
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth()
-                                                .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                                                .clickable(
-                                                    onClick = {
-                                                        eventHandler(CreateWorkoutEvent.DeleteSet(set))
-                                                        showOptionsDialog = false
-                                                    },
-                                                    role = Role.Button
-                                                ).padding(
-                                                    horizontal = MaterialTheme.spacing.one,
-                                                ),
-                                            verticalAlignment = Alignment.CenterVertically,
-                                        ) {
-                                            Icon(
-                                                imageVector = Icons.Default.ContentCopy,
-                                                contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
-                                            )
-                                            Space(MaterialTheme.spacing.half)
-                                            Text(stringResource(Res.string.workout_set_options_copy_cta))
-                                        }
+                                    Text("Add Set")
+                                }
+                            } else {
+                                Button(
+                                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                                    colors = ButtonDefaults.elevatedButtonColors(),
+                                    onClick = {
+                                        eventHandler(CreateWorkoutEvent.DuplicateSet(exercise.variationSets.first().sets.last()))
                                     }
+                                ) {
+                                    Text(stringResource(Res.string.workout_variation_card_primary_cta))
                                 }
-                            }
-
-                            SetInfoRow(
-                                modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 52.dp)
-                                    .animateItem()
-                                    .combinedClickable(
-                                        onClick = {
-                                            coordinator.present(Destination.EditSet(setId = set.id))
-                                        },
-                                        onLongClick = {
-                                            showOptionsDialog = true
-                                        },
-                                        role = Role.Button
-                                    )
-                                    .padding(
-                                        horizontal = MaterialTheme.spacing.one,
-                                        vertical = MaterialTheme.spacing.half
-                                    ).animateItem(),
-                                set = set
-                            )
-                        }
-
-                        if (exercise.sets.isEmpty()) {
-                            Button(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                colors = ButtonDefaults.elevatedButtonColors(),
-                                onClick = {
-                                    coordinator.present(
-                                        Destination.CreateSet(
-                                            variationId = exercise.variation.id,
-                                            date = state.date.atStartOfDayIn(TimeZone.currentSystemDefault()),
-                                        )
-                                    )
-                                }
-                            ) {
-                                Text("Add Set")
-                            }
-                        } else {
-                            Button(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                colors = ButtonDefaults.elevatedButtonColors(),
-                                onClick = {
-                                    eventHandler(CreateWorkoutEvent.DuplicateSet(exercise.sets.last()))
-                                }
-                            ) {
-                                Text(stringResource(Res.string.workout_variation_card_primary_cta))
                             }
                         }
                     }

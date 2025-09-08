@@ -6,11 +6,13 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.benasher44.uuid.*
 import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.exerciseRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
@@ -43,6 +45,8 @@ sealed class CreateWorkoutEvent {
     data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
     data class DuplicateSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
+
+    data class DeleteExercise(val exercise: Exercise): CreateWorkoutEvent()
 }
 
 @Composable
@@ -73,12 +77,7 @@ fun rememberWorkoutInteractor(
 
 val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { state, event ->
     when (event) {
-        is AddExercise -> state.copy(
-            exercises = state.exercises + Exercise(
-                sets = emptyList(),
-                variation = event.variation
-            )
-        )
+        is AddExercise -> state
 
         is UpdateNotes -> {
             state.copy(notes = event.notes)
@@ -94,6 +93,7 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
 
         is DuplicateSet -> state
         is DeleteSet -> state
+        is DeleteExercise -> state
     }
 }
 
@@ -140,7 +140,25 @@ fun workoutSideEffects(
             )
         }
 
-        is AddExercise -> {}
+        is AddExercise -> {
+            dependencies.exerciseRepository.save(
+                Exercise(
+                    id = uuid4().toString(),
+                    workoutId = state.id,
+                    variationSets = listOf(
+                        VariationSets(
+                            id = uuid4().toString(),
+                            variation = event.variation,
+                            sets = emptyList()
+                        )
+                    )
+                )
+            )
+        }
+
+        is DeleteExercise -> {
+            dependencies.exerciseRepository.delete(event.exercise.id)
+        }
     }
 }
 

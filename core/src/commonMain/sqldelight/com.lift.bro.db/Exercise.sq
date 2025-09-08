@@ -1,0 +1,54 @@
+CREATE TABLE Exercise (
+    id TEXT NOT NULL PRIMARY KEY,
+    workoutId TEXT NOT NULL
+);
+
+CREATE TABLE ExerciseVariation (
+    id TEXT NOT NULL PRIMARY KEY,
+    exerciseId TEXT NOT NULL,
+    varationId TEXT NOT NULL
+);
+
+get:
+SELECT * FROM Exercise WHERE id = :id;
+
+getByWorkoutId:
+SELECT * FROM Exercise WHERE workoutId = :workoutId;
+
+getExcercisesByDate:
+SELECT * FROM Exercise
+JOIN Workout ON Workout.id = Exercise.id
+WHERE Workout.date < :endDate AND date > :startDate;
+
+save:
+INSERT OR REPLACE
+INTO Exercise(id, workoutId)
+VALUES(?, ?);
+
+delete:
+DELETE FROM Exercise WHERE id = :id;
+
+deleteVariations:
+DELETE FROM ExerciseVariation WHERE exerciseId = :exerciseId;
+
+getExercizeVariationsByDate:
+SELECT * FROM ExerciseVariation
+JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
+JOIN Workout ON Workout.id = Exercise.workoutId
+WHERE Workout.date < :endDate AND date > :startDate;
+
+getExerciseVariations:
+SELECT * FROM ExerciseVariation WHERE exerciseId = :exerciseId;
+
+getExerciseVariationsByWorkoutId:
+SELECT ExerciseVariation.* FROM ExerciseVariation
+JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
+WHERE Exercise.workoutId = :workoutId;
+
+getAllExerciseVariations:
+SELECT * FROM ExerciseVariation;
+
+saveVariation:
+INSERT OR REPLACE
+INTO ExerciseVariation(id, exerciseId, varationId)
+VALUES(?, ?, ?);

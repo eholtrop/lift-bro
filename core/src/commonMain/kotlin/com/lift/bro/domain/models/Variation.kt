@@ -14,6 +14,8 @@ import com.lift.bro.utils.oneRepMax
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
+typealias VariationId = String
+
 /**
  * A domain model to represent the variation class
  *
@@ -22,7 +24,7 @@ import kotlinx.serialization.Transient
  */
 @Serializable
 data class Variation(
-    val id: String = uuid4().toString(),
+    val id: VariationId = uuid4().toString(),
     val lift: Lift? = null,
     val name: String? = null,
     val reps: Long = 1,

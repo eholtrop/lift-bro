@@ -1,6 +1,5 @@
 package com.lift.bro.data
 
-import androidx.compose.ui.unit.IntRect
 import app.cash.sqldelight.ColumnAdapter
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
@@ -9,6 +8,8 @@ import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import com.lift.bro.db.LiftBroDB
+import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
@@ -17,7 +18,6 @@ import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.utils.debug
 import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftQueries
@@ -31,7 +31,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
@@ -79,6 +78,33 @@ class LBDatabase(
     val logDataSource = database.liftingLogQueries
 
     val workoutDataSource = database.workoutQueries
+
+    val exerciseQueries = database.exerciseQueries
+
+    private val variationAdapter = object: ColumnAdapter<comliftbrodb.Variation, String> {
+
+        override fun decode(databaseValue: String): comliftbrodb.Variation {
+            return database.variationQueries.get(databaseValue).executeAsOne()
+
+        }
+
+        override fun encode(value: comliftbrodb.Variation): String {
+            return value.id
+        }
+    }
+
+    private fun exerciseAdapter(
+        getVariation: (String) -> comliftbrodb.Exercise,
+    ) = object: ColumnAdapter<comliftbrodb.Exercise, String> {
+
+        override fun decode(databaseValue: String): comliftbrodb.Exercise {
+            return getVariation(databaseValue)
+        }
+
+        override fun encode(value: comliftbrodb.Exercise): String {
+            return value.id
+        }
+    }
 }
 
 private val instantAdapter = object: ColumnAdapter<Instant, Long> {

@@ -19,8 +19,6 @@ data class LBSet(
     val rpe: Int? = null,
     val mer: Int = 0,
 ) {
-    val excerciseId = variationId + date.toLocalDate().toString("dd-MM-yyyy")
-
     val totalWeightMoved =  weight * reps
 }
 

@@ -1,0 +1,10 @@
+CREATE TABLE Exercise (
+    id TEXT NOT NULL PRIMARY KEY,
+    workoutId TEXT NOT NULL
+);
+
+CREATE TABLE ExerciseVariation (
+    id TEXT NOT NULL PRIMARY KEY,
+    exerciseId TEXT NOT NULL,
+    varationId TEXT NOT NULL
+);

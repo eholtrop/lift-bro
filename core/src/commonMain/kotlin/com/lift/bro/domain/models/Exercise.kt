@@ -3,11 +3,17 @@ package com.lift.bro.domain.models
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Exercise(
-    val sets: List<LBSet>,
+data class VariationSets(
+    val id: String,
     val variation: Variation,
-) {
-    val id = sets.firstOrNull()?.excerciseId
+    val sets: List<LBSet>
+)
 
-    val totalWeightMoved = sets.sumOf { it.totalWeightMoved }
+@Serializable
+data class Exercise(
+    val id: String,
+    val workoutId: String,
+    val variationSets: List<VariationSets>,
+) {
+    val totalWeightMoved = variationSets.sumOf { it.sets.sumOf { it.totalWeightMoved } }
 }
