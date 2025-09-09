@@ -12,6 +12,7 @@ import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.ISetRepository
@@ -41,12 +42,15 @@ data class CreateWorkoutState(
 sealed class CreateWorkoutEvent {
     data class UpdateNotes(val notes: String): CreateWorkoutEvent()
     data class AddExercise(val variation: Variation): CreateWorkoutEvent()
+    data class AddSuperSet(val exercise: Exercise, val variation: Variation): CreateWorkoutEvent()
     data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
     data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
     data class DuplicateSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
-
     data class DeleteExercise(val exercise: Exercise): CreateWorkoutEvent()
+
+    data class DeleteVariation(val variationSets: VariationSets):
+        CreateWorkoutEvent()
 }
 
 @Composable
@@ -93,7 +97,11 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
 
         is DuplicateSet -> state
         is DeleteSet -> state
-        is DeleteExercise -> state
+        is DeleteExercise -> state.copy(exercises = state.exercises - event.exercise)
+        is AddSuperSet -> state
+        is DeleteVariation -> state.copy(exercises = state.exercises.map {
+                it.copy(variationSets = it.variationSets - event.variationSets)
+        })
     }
 }
 
@@ -141,6 +149,10 @@ fun workoutSideEffects(
         }
 
         is AddExercise -> {
+            workoutRepository.save(
+                state.toWorkout()
+            )
+
             dependencies.exerciseRepository.save(
                 Exercise(
                     id = uuid4().toString(),
@@ -159,6 +171,42 @@ fun workoutSideEffects(
         is DeleteExercise -> {
             dependencies.exerciseRepository.delete(event.exercise.id)
         }
+
+        is DeleteVariation -> {
+            dependencies.exerciseRepository.deleteVariationSets(
+                event.variationSets.id
+            )
+
+            event.variationSets.sets.forEach {
+                dependencies.setRepository.delete(it)
+            }
+
+
+            state.exercises.forEach {
+                if (it.variationSets.isEmpty()) {
+                    dependencies.exerciseRepository.delete(it.id)
+                }
+            }
+        }
+
+        is AddSuperSet -> {
+            dependencies.exerciseRepository.save(
+                Exercise(
+                    id = event.exercise.id,
+                    workoutId = event.exercise.workoutId,
+                    variationSets = event.exercise.variationSets +
+                            VariationSets(
+                                id = uuid4().toString(),
+                                variation = event.variation,
+                                sets = emptyList()
+                            )
+                )
+            )
+        }
+    }
+
+    if (state.finisher == null && state.warmup == null && state.exercises.isEmpty()) {
+        workoutRepository.delete(state.toWorkout())
     }
 }
 

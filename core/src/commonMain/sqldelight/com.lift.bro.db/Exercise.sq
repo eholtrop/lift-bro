@@ -28,8 +28,14 @@ VALUES(?, ?);
 delete:
 DELETE FROM Exercise WHERE id = :id;
 
-deleteVariations:
+deleteVariationsById:
+DELETE FROM ExerciseVariation WHERE id = :id;
+
+deleteVariationsByExercise:
 DELETE FROM ExerciseVariation WHERE exerciseId = :exerciseId;
+
+deleteVariationBy:
+DELETE FROM ExerciseVariation WHERE exerciseId = :exerciseId AND varationId = :variationId;
 
 getExercizeVariationsByDate:
 SELECT * FROM ExerciseVariation

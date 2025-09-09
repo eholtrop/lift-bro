@@ -16,6 +16,7 @@ import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import com.lift.bro.utils.debug
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
@@ -82,7 +83,19 @@ class ExerciseRepository(
     override suspend fun delete(id: String) {
         withContext(Dispatchers.IO) {
             database.exerciseQueries.delete(id)
-            database.exerciseQueries.deleteVariations(id)
+            database.exerciseQueries.deleteVariationsByExercise(id)
+        }
+    }
+
+    override suspend fun deleteVariation(exerciseId: String, variationId: String) {
+        withContext(Dispatchers.IO) {
+            database.exerciseQueries.deleteVariationBy(exerciseId, variationId)
+        }
+    }
+
+    override suspend fun deleteVariationSets(variationSetId: String) {
+        withContext(Dispatchers.IO) {
+            database.exerciseQueries.deleteVariationsById(variationSetId)
         }
     }
 }

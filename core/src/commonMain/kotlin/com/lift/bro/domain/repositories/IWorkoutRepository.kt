@@ -16,4 +16,6 @@ interface IWorkoutRepository {
     fun get(date: LocalDate): Flow<Workout?>
 
     suspend fun save(workout: Workout)
+
+    suspend fun delete(workout: Workout)
 }

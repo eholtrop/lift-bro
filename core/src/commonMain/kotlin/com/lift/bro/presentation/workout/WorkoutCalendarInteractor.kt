@@ -52,6 +52,25 @@ data class WorkoutCalendarState(
 )
 
 @Composable
+fun rememberWorkoutCalendarInteractor(
+    initialDate: LocalDate = today,
+) = rememberInteractor(
+    initialState = WorkoutCalendarState(
+        date = initialDate,
+        workout = null
+    ),
+    stateResolver = { initial, source ->
+        source.copy(
+            date = if (initial.date != source.date) initial.date else source.date,
+            workout = if (initial.date != source.date) initial.workout else source.workout,
+        )
+    },
+    source = { workoutCalendarSourceData() },
+    reducers = listOf(WorkoutCalendarReducer),
+    sideEffects = navigationSideEffects() + dataSideEffects(),
+)
+
+@Composable
 private fun navigationSideEffects(
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> {
@@ -184,25 +203,6 @@ fun GetGhostSetsForMonthUseCase(
             )
         }
 }
-
-@Composable
-fun rememberWorkoutCalendarInteractor(
-    sideEffects: List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> = navigationSideEffects() + dataSideEffects(),
-) = rememberInteractor(
-    initialState = WorkoutCalendarState(
-        date = today,
-        workout = null
-    ),
-    stateResolver = { initial, source ->
-        source.copy(
-            date = if (initial.date != source.date) initial.date else source.date,
-            workout = if (initial.date != source.date) initial.workout else source.workout,
-        )
-    },
-    source = { workoutCalendarSourceData() },
-    reducers = listOf(WorkoutCalendarReducer),
-    sideEffects = sideEffects,
-)
 
 sealed interface WorkoutCalendarEvent {
     data class AddWorkoutClicked(val onDate: LocalDate): WorkoutCalendarEvent

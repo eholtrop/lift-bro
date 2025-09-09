@@ -293,6 +293,7 @@ fun WorkoutCalendarContent(
                 null -> {
                     Button(
                         onClick = {
+                            Log.d(message = "add workout clicked")
                             interactor(WorkoutCalendarEvent.AddWorkoutClicked(state.date))
                         },
                         colors = ButtonDefaults.elevatedButtonColors()

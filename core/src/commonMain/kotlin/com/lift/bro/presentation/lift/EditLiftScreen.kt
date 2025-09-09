@@ -248,7 +248,7 @@ internal fun EditLiftScreen(
 }
 
 @Composable
-private fun WarningDialog(
+fun WarningDialog(
     title: String = stringResource(Res.string.edit_lift_screen_warning_dialog_title),
     text: String,
     onConfirm: () -> Unit,

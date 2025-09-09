@@ -14,8 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
@@ -30,6 +33,8 @@ class WorkoutRepository(
     ): Flow<List<Workout>> = database.workoutDataSource.getAll(startDate = startDate, endDate = endDate).asFlow()
             .mapToList(dispatcher)
             .flatMapLatest { workouts ->
+                if (workouts.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
+
                 combine(
                     *workouts.map { workout ->
                         dependencies.exerciseRepository.get(workout.id).map {
@@ -77,5 +82,16 @@ class WorkoutRepository(
                 date = workout.date,
             )
         }
+    }
+
+    override suspend fun delete(workout: Workout) {
+        withContext(dispatcher) {
+            database.workoutDataSource.delete(workout.id)
+            workout.exercises.forEach {
+                database.exerciseQueries.delete(it.id)
+                database.exerciseQueries.deleteVariationsByExercise(it.id)
+            }
+        }
+
     }
 }
