@@ -60,9 +60,6 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.variation_details_notes_label
 import lift_bro.core.generated.resources.variation_details_notes_placeholder
-import lift_bro.core.generated.resources.variation_details_add_notes_cta
-import lift_bro.core.generated.resources.variation_details_tempo_down_cd
-import lift_bro.core.generated.resources.variation_details_tempo_up_cd
 import org.jetbrains.compose.resources.stringResource
 
 private enum class Grouping {

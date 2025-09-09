@@ -13,6 +13,7 @@ import com.lift.bro.utils.formattedReps
 import com.lift.bro.utils.oneRepMax
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlin.math.roundToInt
 
 typealias VariationId = String
 
@@ -35,7 +36,7 @@ data class Variation(
     val maxReps: LBSet? = null,
 )
 
-val Variation.fullName get() = "${name ?: ""}  ${lift?.name}".trim()
+val Variation.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
 
 @Composable
 fun Variation.maxText(): AnnotatedString {
@@ -48,8 +49,8 @@ fun Variation.maxText(): AnnotatedString {
                     "${
                         oneRepMax.weight.decimalFormat().uom()
                     } max${
-                        if (eMax.estimateMax!! > oneRepMax.oneRepMax!!)" - (${
-                            eMax.estimateMax.decimalFormat().uom()
+                        if (eMax.estimateMax!! > oneRepMax.oneRepMax!!) " - (${
+                            eMax.estimateMax?.roundToInt()
                         } tmax)" else ""
                     }"
                 )
@@ -60,12 +61,13 @@ fun Variation.maxText(): AnnotatedString {
                 } max"
             )
 
-            eMax?.estimateMax != null && LocalEMaxSettings.current -> {
-                append("${eMax.estimateMax.decimalFormat().uom()} emax")
-                append(" (${eMax.weight.decimalFormat()} x ${eMax.reps})")
+            eMax?.estimateMax != null -> {
+                append("${eMax.reps} x ${eMax.weight.decimalFormat().uom()}")
+                if (LocalEMaxSettings.current) {
+                    append(" (${eMax.estimateMax?.roundToInt()} emax)")
+                }
             }
 
-            else -> append("No max")
         }
     }
 }

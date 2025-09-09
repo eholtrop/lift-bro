@@ -27,6 +27,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.atTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -34,22 +37,50 @@ data class CreateWorkoutState(
     val id: String = uuid4().toString(),
     val date: LocalDate,
     val warmup: String? = null,
-    val exercises: List<Exercise> = emptyList(),
+    val exercises: List<ExerciseItem> = emptyList(),
     val finisher: String? = null,
     val notes: String = "",
 )
 
+@Serializable
+data class ExerciseItem(
+    val id: String,
+    val variations: List<VariationItem>,
+)
+
+@Serializable
+sealed interface VariationItem {
+
+    val id: String
+
+    val variation: Variation
+
+    @Serializable
+    data class WithSets(
+        override val id: String,
+        override val variation: Variation,
+        val sets: List<LBSet>,
+    ): VariationItem
+
+    @Serializable
+    data class WithoutSets(
+        override val id: String,
+        override val variation: Variation,
+        val lastSet: LBSet,
+    ): VariationItem
+}
+
 sealed class CreateWorkoutEvent {
     data class UpdateNotes(val notes: String): CreateWorkoutEvent()
     data class AddExercise(val variation: Variation): CreateWorkoutEvent()
-    data class AddSuperSet(val exercise: Exercise, val variation: Variation): CreateWorkoutEvent()
+    data class AddSuperSet(val exercise: ExerciseItem, val variation: Variation): CreateWorkoutEvent()
     data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
     data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
     data class DuplicateSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
-    data class DeleteExercise(val exercise: Exercise): CreateWorkoutEvent()
+    data class DeleteExercise(val exercise: ExerciseItem): CreateWorkoutEvent()
 
-    data class DeleteVariation(val variationSets: VariationSets):
+    data class DeleteVariation(val variation: VariationItem):
         CreateWorkoutEvent()
 }
 
@@ -68,7 +99,29 @@ fun rememberWorkoutInteractor(
                 CreateWorkoutState(
                     id = workout.id,
                     date = workout.date,
-                    exercises = workout.exercises,
+                    exercises = workout.exercises.map {
+                        ExerciseItem(
+                            id = it.id,
+                            variations = it.variationSets.map { variationSets ->
+                                if (variationSets.sets.isEmpty()) {
+                                    VariationItem.WithoutSets(
+                                        id = variationSets.id,
+                                        variation = variationSets.variation,
+                                        lastSet = dependencies.database.setDataSource.getAll(
+                                            variationSets.variation.id,
+                                            1
+                                        ).first()
+                                    )
+                                } else {
+                                    VariationItem.WithSets(
+                                        id = variationSets.id,
+                                        variation = variationSets.variation,
+                                        sets = variationSets.sets
+                                    )
+                                }
+                            }
+                        )
+                    },
                     notes = log?.notes ?: "",
                     finisher = workout.finisher,
                     warmup = workout.warmup,
@@ -100,7 +153,7 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
         is DeleteExercise -> state.copy(exercises = state.exercises - event.exercise)
         is AddSuperSet -> state
         is DeleteVariation -> state.copy(exercises = state.exercises.map {
-                it.copy(variationSets = it.variationSets - event.variationSets)
+            it.copy(variations = it.variations - event.variation)
         })
     }
 }
@@ -138,7 +191,10 @@ fun workoutSideEffects(
 
         is DuplicateSet -> {
             setRepository.save(
-                lbSet = event.set.copy(id = uuid4().toString())
+                lbSet = event.set.copy(
+                    id = uuid4().toString(),
+                    date = state.date.atStartOfDayIn(TimeZone.currentSystemDefault())
+                )
             )
         }
 
@@ -174,33 +230,32 @@ fun workoutSideEffects(
 
         is DeleteVariation -> {
             dependencies.exerciseRepository.deleteVariationSets(
-                event.variationSets.id
+                event.variation.id
             )
 
-            event.variationSets.sets.forEach {
-                dependencies.setRepository.delete(it)
+            when (event.variation) {
+                is VariationItem.WithSets -> {
+                    event.variation.sets.forEach {
+                        dependencies.setRepository.delete(it)
+                    }
+                }
+                is VariationItem.WithoutSets -> {}
             }
 
 
-            state.exercises.forEach {
-                if (it.variationSets.isEmpty()) {
-                    dependencies.exerciseRepository.delete(it.id)
+
+
+            state.exercises.forEach { exercise ->
+                if (exercise.variations.isEmpty()) {
+                    dependencies.exerciseRepository.delete(exercise.id)
                 }
             }
         }
 
         is AddSuperSet -> {
-            dependencies.exerciseRepository.save(
-                Exercise(
-                    id = event.exercise.id,
-                    workoutId = event.exercise.workoutId,
-                    variationSets = event.exercise.variationSets +
-                            VariationSets(
-                                id = uuid4().toString(),
-                                variation = event.variation,
-                                sets = emptyList()
-                            )
-                )
+            dependencies.exerciseRepository.saveVariation(
+                exerciseId = event.exercise.id,
+                variationId = event.variation.id
             )
         }
     }
@@ -214,6 +269,29 @@ private fun CreateWorkoutState.toWorkout(): Workout = Workout(
     id = this.id,
     date = this.date,
     warmup = this.warmup,
-    exercises = this.exercises,
+    exercises = this.exercises.map {
+        Exercise(
+            id = it.id,
+            workoutId = this.id,
+            variationSets = it.variations.map { variation ->
+                when (variation) {
+                    is VariationItem.WithSets -> {
+                        VariationSets(
+                            id = variation.id,
+                            variation = variation.variation,
+                            sets = variation.sets
+                        )
+                    }
+                    is VariationItem.WithoutSets -> {
+                        VariationSets(
+                            id = variation.id,
+                            variation = variation.variation,
+                            sets = emptyList()
+                        )
+                    }
+                }
+            }
+        )
+    },
     finisher = this.finisher
 )

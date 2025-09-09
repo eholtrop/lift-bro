@@ -4,6 +4,7 @@ package com.lift.bro.presentation.workout
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,11 +14,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
@@ -27,18 +31,19 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,17 +53,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
-import app.cash.sqldelight.ColumnAdapter
-import com.lift.bro.domain.models.Exercise
-import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
 import com.lift.bro.presentation.Interactor
@@ -76,24 +77,12 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
-import com.lift.bro.utils.formattedWeight
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.workout_variation_card_primary_cta
 import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_notes_placeholder
-import lift_bro.core.generated.resources.workout_warmup_label
-import lift_bro.core.generated.resources.workout_warmup_placeholder
-import lift_bro.core.generated.resources.workout_add_warmup_cta
-import lift_bro.core.generated.resources.workout_finisher_label
-import lift_bro.core.generated.resources.workout_finisher_placeholder
-import lift_bro.core.generated.resources.workout_add_finisher_cta
 import lift_bro.core.generated.resources.workout_add_exercise_cta
 import lift_bro.core.generated.resources.workout_set_options_copy_cta
 import lift_bro.core.generated.resources.workout_set_options_delete_cta
@@ -115,7 +104,7 @@ fun CreateWorkoutScreen(
 
 sealed class VariationDialogReason {
     object AddExercise: VariationDialogReason()
-    data class Superset(val exercise: Exercise): VariationDialogReason()
+    data class Superset(val exercise: ExerciseItem): VariationDialogReason()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -178,48 +167,27 @@ fun CreateWorkoutScreenInternal(
                 }
             }
 
-            items(state.exercises) { exercise ->
-                val pagerState = rememberPagerState(pageCount = { exercise.variationSets.size })
+            itemsIndexed(state.exercises) { index, exercise ->
+                val pagerState = rememberPagerState(pageCount = { exercise.variations.size })
                 val coroutineScope = rememberCoroutineScope()
                 HorizontalPager(
                     state = pagerState,
                     contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.one),
                     pageSpacing = MaterialTheme.spacing.two.times(-2),
                 ) { page ->
-                    val vSets = exercise.variationSets[page]
-                    VariationSetCard(
+                    val vSets = exercise.variations[page]
+
+                    VariationItemCard(
                         modifier = Modifier.animateContentSize()
-                            .zIndex(if (page == pagerState.currentPage) 1f else 0f)
-                            .graphicsLayer {
-                                val pageOffset = (
-                                        (pagerState.currentPage - page) + pagerState
-                                            .currentPageOffsetFraction
-                                        ).absoluteValue
-
-                                alpha = lerp(
-                                    start = 0.5f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                )
-                                scaleY = lerp(
-                                    start = 0.8f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                )
-                                scaleX = lerp(
-                                    start = 0.8f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                )
-                            },
+                            .variationCardAnimation(pagerState, page),
                         variationSet = vSets,
-                        eventHandler = eventHandler
+                        eventHandler = eventHandler,
+                        index = if (pagerState.pageCount > 1) page else null,
                     ) {
-
                         Row(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            exercise.variationSets.getOrNull(page - 1)?.let { previous ->
+                            exercise.variations.getOrNull(page - 1)?.let { previous ->
                                 FooterButton(
                                     onClick = {
                                         coroutineScope.launch {
@@ -237,12 +205,14 @@ fun CreateWorkoutScreenInternal(
                                     Column(
                                         horizontalAlignment = Alignment.Start,
                                     ) {
-                                        previous.sets.firstOrNull()?.let {
-                                            Text(
-                                                "${it.reps} x ${weightFormat(it.weight)}",
-                                                style = MaterialTheme.typography.labelMedium,
-                                            )
-                                        }
+
+                                        (previous as? VariationItem.WithSets)?.sets?.firstOrNull()
+                                            ?.let {
+                                                Text(
+                                                    "${it.reps} x ${weightFormat(it.weight)}",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                )
+                                            }
                                         Text(
                                             previous.variation.fullName,
                                             style = MaterialTheme.typography.labelSmall,
@@ -268,28 +238,30 @@ fun CreateWorkoutScreenInternal(
                                             )
                                         }
                                     ) {
-                                        val first = exercise.variationSets.first()
+                                        val first = exercise.variations.first()
                                         Column(
                                             modifier = Modifier.weight(1f),
                                             horizontalAlignment = Alignment.End,
                                         ) {
-                                            first.sets.lastOrNull()?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                    maxLines = 1,
-                                                )
-                                            }
+                                            (first as? VariationItem.WithSets)?.sets?.lastOrNull()
+                                                ?.let {
+                                                    Text(
+                                                        "${it.reps} x ${weightFormat(it.weight)}",
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                        maxLines = 1,
+                                                    )
+                                                }
                                             Text(
                                                 first.variation.fullName,
                                                 style = MaterialTheme.typography.labelSmall,
+                                                textAlign = TextAlign.End
                                             )
                                         }
                                     }
                                 }
 
-                                exercise.variationSets.getOrNull(page + 1) != null -> {
-                                    val next = exercise.variationSets[page + 1]
+                                exercise.variations.getOrNull(page + 1) != null -> {
+                                    val next = exercise.variations[page + 1]
                                     FooterButton(
                                         onClick = {
                                             coroutineScope.launch {
@@ -306,15 +278,17 @@ fun CreateWorkoutScreenInternal(
                                         Column(
                                             horizontalAlignment = Alignment.End,
                                         ) {
-                                            next.sets.lastOrNull()?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                )
-                                            }
+                                            (next as? VariationItem.WithSets)?.sets?.lastOrNull()
+                                                ?.let {
+                                                    Text(
+                                                        "${it.reps} x ${weightFormat(it.weight)}",
+                                                        style = MaterialTheme.typography.labelMedium,
+                                                    )
+                                                }
                                             Text(
                                                 next.variation.fullName,
                                                 style = MaterialTheme.typography.labelSmall,
+                                                textAlign = TextAlign.End
                                             )
                                         }
                                     }
@@ -350,14 +324,14 @@ fun CreateWorkoutScreenInternal(
             showVariationDialog = null
         },
         onVariationSelected = {
-            when (showVariationDialog) {
+            when (val reason = showVariationDialog) {
                 VariationDialogReason.AddExercise ->
                     eventHandler(CreateWorkoutEvent.AddExercise(it))
 
                 is VariationDialogReason.Superset ->
                     eventHandler(
                         CreateWorkoutEvent.AddSuperSet(
-                            exercise = (showVariationDialog as VariationDialogReason.Superset).exercise,
+                            exercise = reason.exercise,
                             it
                         )
                     )
@@ -388,7 +362,11 @@ private fun FooterButton(
                 it()
                 Space(MaterialTheme.spacing.half)
             }
-            content()
+            CompositionLocalProvider(
+                LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+            ) {
+                content()
+            }
             trailingIcon?.let {
                 Space(MaterialTheme.spacing.half)
                 it()
@@ -397,15 +375,42 @@ private fun FooterButton(
     }
 }
 
+private fun Modifier.variationCardAnimation(pagerState: PagerState, page: Int) = this
+    .zIndex(if (page == pagerState.currentPage) 1f else 0f)
+    .graphicsLayer {
+        val pageOffset = (
+                (pagerState.currentPage - page) + pagerState
+                    .currentPageOffsetFraction
+                ).absoluteValue
+
+        alpha = lerp(
+            start = 0.5f,
+            stop = 1f,
+            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+        )
+        scaleY = lerp(
+            start = 0.8f,
+            stop = 1f,
+            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+        )
+        scaleX = lerp(
+            start = 0.8f,
+            stop = 1f,
+            fraction = 1f - pageOffset.coerceIn(0f, 1f)
+        )
+    }
+
+
 @Composable
-fun VariationSetCard(
+fun VariationItemCard(
     modifier: Modifier,
-    variationSet: VariationSets,
+    variationSet: VariationItem,
     eventHandler: (CreateWorkoutEvent) -> Unit,
+    index: Int? = null,
     footer: @Composable () -> Unit = {},
 ) {
     val variation = variationSet.variation
-    val sets = variationSet.sets
+    val sets = (variationSet as? VariationItem.WithSets)?.sets ?: emptyList()
 
     Card(
         modifier = modifier.animateContentSize(),
@@ -433,8 +438,9 @@ fun VariationSetCard(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val prefix = index?.let { 'A'.plus(index).plus(".") } ?: ""
                         Text(
-                            variation.fullName,
+                            "$prefix ${variation.fullName}".trim(),
                             style = MaterialTheme.typography.titleLarge,
                         )
 
@@ -479,7 +485,8 @@ fun VariationSetCard(
                         Text(
                             "Total Weight Moved: ${
                                 "${
-                                    variationSet.sets.sumOf { it.reps * it.weight }.decimalFormat()
+                                    sets.sumOf { it.reps * it.weight }
+                                        .decimalFormat()
                                 } ${LocalUnitOfMeasure.current.value}"
                             }",
                             style = MaterialTheme.typography.labelLarge,
@@ -497,96 +504,143 @@ fun VariationSetCard(
                 }
             }
 
-            sets.forEachIndexed { index, set ->
+            when (variationSet) {
+                is VariationItem.WithSets -> {
+                    variationSet.sets.forEachIndexed { index, set ->
 
-                var showOptionsDialog by remember { mutableStateOf(false) }
+                        var showOptionsDialog by remember { mutableStateOf(false) }
 
-                if (showOptionsDialog) {
-                    ModalBottomSheet(
-                        onDismissRequest = {
-                            showOptionsDialog = false
-                        }
-                    ) {
-                        Column {
-                            Row(
-                                modifier = Modifier
-                                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                                    .clickable(
-                                        onClick = {
-                                            eventHandler(
-                                                CreateWorkoutEvent.DeleteSet(
-                                                    set
-                                                )
-                                            )
-                                            showOptionsDialog = false
-                                        },
-                                        role = Role.Button
-                                    ).padding(
-                                        horizontal = MaterialTheme.spacing.one,
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically,
+                        if (showOptionsDialog) {
+                            ModalBottomSheet(
+                                onDismissRequest = {
+                                    showOptionsDialog = false
+                                }
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
-                                )
-                                Space(MaterialTheme.spacing.half)
-                                Text(stringResource(Res.string.workout_set_options_delete_cta))
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                                    .clickable(
-                                        onClick = {
-                                            eventHandler(
-                                                CreateWorkoutEvent.DuplicateSet(
-                                                    set
-                                                )
-                                            )
-                                            showOptionsDialog = false
-                                        },
-                                        role = Role.Button
-                                    ).padding(
-                                        horizontal = MaterialTheme.spacing.one,
-                                    ),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
+                                Column {
+                                    Row(
+                                        modifier = Modifier
+                                            .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                                            .clickable(
+                                                onClick = {
+                                                    eventHandler(
+                                                        CreateWorkoutEvent.DeleteSet(
+                                                            set
+                                                        )
+                                                    )
+                                                    showOptionsDialog = false
+                                                },
+                                                role = Role.Button
+                                            ).padding(
+                                                horizontal = MaterialTheme.spacing.one,
+                                            ),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Delete,
+                                            contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
+                                        )
+                                        Space(MaterialTheme.spacing.half)
+                                        Text(stringResource(Res.string.workout_set_options_delete_cta))
+                                    }
+                                    Row(
+                                        modifier = Modifier
+                                            .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                                            .clickable(
+                                                onClick = {
+                                                    eventHandler(
+                                                        CreateWorkoutEvent.DuplicateSet(
+                                                            set
+                                                        )
+                                                    )
+                                                    showOptionsDialog = false
+                                                },
+                                                role = Role.Button
+                                            ).padding(
+                                                horizontal = MaterialTheme.spacing.one,
+                                            ),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
 
-                                Icon(
-                                    imageVector = Icons.Default.ContentCopy,
-                                    contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
-                                )
-                                Space(MaterialTheme.spacing.half)
-                                Text(stringResource(Res.string.workout_set_options_copy_cta))
+                                        Icon(
+                                            imageVector = Icons.Default.ContentCopy,
+                                            contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
+                                        )
+                                        Space(MaterialTheme.spacing.half)
+                                        Text(stringResource(Res.string.workout_set_options_copy_cta))
+                                    }
+                                }
                             }
                         }
+
+                        val coordinator = LocalNavCoordinator.current
+                        SetInfoRow(
+                            modifier = Modifier
+                                .defaultMinSize(minHeight = 52.dp)
+                                .combinedClickable(
+                                    onClick = {
+                                        coordinator.present(
+                                            Destination.EditSet(
+                                                setId = set.id
+                                            )
+                                        )
+                                    },
+                                    onLongClick = {
+                                        showOptionsDialog = true
+                                    },
+                                    role = Role.Button
+                                )
+                                .padding(
+                                    horizontal = MaterialTheme.spacing.one,
+                                    vertical = MaterialTheme.spacing.half
+                                ),
+                            set = set
+                        )
                     }
                 }
 
-                val coordinator = LocalNavCoordinator.current
-                SetInfoRow(
-                    modifier = Modifier
-                        .defaultMinSize(minHeight = 52.dp)
-                        .combinedClickable(
-                            onClick = {
-                                coordinator.present(
-                                    Destination.EditSet(
-                                        setId = set.id
-                                    )
+                is VariationItem.WithoutSets -> {
+
+                    CompositionLocalProvider(
+                        LocalContentColor provides MaterialTheme.colorScheme.onSurface,
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .padding(horizontal = MaterialTheme.spacing.half)
+                                .clickable(
+                                    onClick = {
+                                        eventHandler(
+                                            CreateWorkoutEvent.DuplicateSet(variationSet.lastSet)
+                                        )
+                                    },
+                                    role = Role.Button
                                 )
-                            },
-                            onLongClick = {
-                                showOptionsDialog = true
-                            },
-                            role = Role.Button
-                        )
-                        .padding(
-                            horizontal = MaterialTheme.spacing.one,
-                            vertical = MaterialTheme.spacing.half
-                        ),
-                    set = set
-                )
+                                .border(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.tertiary,
+                                    shape = MaterialTheme.shapes.small,
+                                )
+                                .clip(MaterialTheme.shapes.small)
+                                .padding(horizontal = MaterialTheme.spacing.half, vertical = MaterialTheme.spacing.half),
+                        ) {
+                            Text(
+                                text = "Most Recent Set - ${variationSet.lastSet.date.toString("EEEE, MMM d, yyyy")}",
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                            SetInfoRow(
+                                set = variationSet.lastSet,
+                                trailing = {
+                                    Icon(
+                                        imageVector = Icons.Default.ContentCopy,
+                                        contentDescription = "Copy Set",
+                                        tint = MaterialTheme.colorScheme.tertiary,
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
             }
+
 
             if (sets.isEmpty()) {
                 val coordinator = LocalNavCoordinator.current

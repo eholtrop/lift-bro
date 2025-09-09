@@ -87,6 +87,17 @@ class ExerciseRepository(
         }
     }
 
+    override suspend fun saveVariation(exerciseId: String, variationId: String) {
+        withContext(Dispatchers.IO) {
+            database.exerciseQueries.saveVariation(
+                id = uuid4().toString(),
+                exerciseId = exerciseId,
+                varationId = variationId,
+            )
+
+        }
+    }
+
     override suspend fun deleteVariation(exerciseId: String, variationId: String) {
         withContext(Dispatchers.IO) {
             database.exerciseQueries.deleteVariationBy(exerciseId, variationId)

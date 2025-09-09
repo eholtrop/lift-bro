@@ -2,6 +2,7 @@ package com.lift.bro.presentation.workout
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -159,17 +160,22 @@ fun WorkoutCalendarContent(
                                         ?: MaterialTheme.colorScheme.primary
                                 } ?: emptyList()
 
-                                val setColors = state.unallocatedVariationSets.filter { it.sets.any { it.date.toLocalDate() == date } }
-                                    .map { it.variation.lift?.color?.toColor() ?: MaterialTheme.colorScheme.primary }
+                                val setColors =
+                                    state.unallocatedVariationSets.filter { it.sets.any { it.date.toLocalDate() == date } }
+                                        .map {
+                                            it.variation.lift?.color?.toColor()
+                                                ?: MaterialTheme.colorScheme.primary
+                                        }
 
-                                (workoutVariationColors + setColors).take(4).forEachIndexed { index, color ->
-                                    Box(
-                                        modifier = Modifier.background(
-                                            color = if (date == state.date) MaterialTheme.colorScheme.onPrimary else color,
-                                            shape = CircleShape,
-                                        ).size(4.dp)
-                                    )
-                                }
+                                (workoutVariationColors + setColors).take(4)
+                                    .forEachIndexed { index, color ->
+                                        Box(
+                                            modifier = Modifier.background(
+                                                color = if (date == state.date) MaterialTheme.colorScheme.onPrimary else color,
+                                                shape = CircleShape,
+                                            ).size(4.dp)
+                                        )
+                                    }
                             }
                         }
                     }
@@ -314,31 +320,35 @@ fun WorkoutCalendarContent(
             }
         }
 
-        if (state.unallocatedVariationSets.isNotEmpty()) {
+        if (state.unallocatedVariationSets.any { it.sets.any { it.date.toLocalDate() == state.date } }) {
             item {
-                Text("Other Gains!!, Tap to add to Workout")
-            }
-        }
-
-        state.unallocatedVariationSets.filter { it.sets.any { it.date.toLocalDate() == state.date } }.forEach {
-            item {
-                VariationSet(
-                    modifier = Modifier.clickable(
-                        onClick = {
-                            interactor(
-                                WorkoutCalendarEvent.AddToWorkout(
-                                    date = state.date,
-                                    variation = it.variation
-                                )
-                            )
-                        },
-                        role = Role.Button
-                    ),
-                    variation = it.variation,
-                    sets = it.sets,
+                Text(
+                    text = "Other Gains!!, Tap to add to Workout",
+                    style = MaterialTheme.typography.labelMedium
                 )
             }
         }
+
+        state.unallocatedVariationSets.filter { it.sets.any { it.date.toLocalDate() == state.date } }
+            .forEach {
+                item {
+                    VariationSet(
+                        modifier = Modifier.clickable(
+                            onClick = {
+                                interactor(
+                                    WorkoutCalendarEvent.AddToWorkout(
+                                        date = state.date,
+                                        variation = it.variation
+                                    )
+                                )
+                            },
+                            role = Role.Button
+                        ),
+                        variation = it.variation,
+                        sets = it.sets,
+                    )
+                }
+            }
 
 
         item {
@@ -365,7 +375,8 @@ fun CalendarWorkoutCard(
             modifier = Modifier.clickable(
                 onClick = { workoutClicked(workout, workout.date) }
             )
-                .padding(MaterialTheme.spacing.one)
+                .padding(MaterialTheme.spacing.one),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
         ) {
             if (workout.warmup != null || workout.finisher != null) {
                 Row(
@@ -392,15 +403,24 @@ fun CalendarWorkoutCard(
                         }
                     }
                 }
-                Space(MaterialTheme.spacing.half)
             }
 
             workout.exercises.forEach { exercise ->
-                exercise.variationSets.forEach { (id, variation, sets) ->
-                    VariationSet(
-                        variation = variation,
-                        sets = sets
+                Column(
+                    modifier = Modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.outline,
+                        shape = MaterialTheme.shapes.small,
                     )
+                        .padding(MaterialTheme.spacing.half)
+                ) {
+                    exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
+                        VariationSet(
+                            index = if (exercise.variationSets.size > 1) index else null,
+                            variation = variation,
+                            sets = sets
+                        )
+                    }
                 }
             }
         }
@@ -411,6 +431,7 @@ fun CalendarWorkoutCard(
 fun VariationSet(
     modifier: Modifier = Modifier,
     variation: Variation,
+    index: Int? = null,
     sets: List<LBSet>,
 ) {
     Row(
@@ -424,8 +445,11 @@ fun VariationSet(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val prefix = index?.let { 'A'.plus(index).plus(".") } ?: ""
+
                 Text(
-                    variation.fullName,
+                    "$prefix ${variation.fullName}".trim(),
+
                     style = MaterialTheme.typography.titleMedium
                 )
                 if (variation.favourite) {
