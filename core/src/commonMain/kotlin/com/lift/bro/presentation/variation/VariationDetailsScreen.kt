@@ -16,13 +16,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -32,14 +36,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
@@ -92,6 +100,8 @@ private fun VariationDetailsScreen(
 
     var grouping by rememberSaveable { mutableStateOf(Grouping.Date) }
 
+    var editName by rememberSaveable { mutableStateOf(false) }
+    var name by remember(state.variation.name) { mutableStateOf(state.variation.name ?: "") }
     LiftingScaffold(
         fabProperties = FabProperties(
             fabIcon = Icons.Default.Add,
@@ -100,21 +110,51 @@ private fun VariationDetailsScreen(
         ),
         title = {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(state.variation.fullName)
-
-                Space(MaterialTheme.spacing.half)
-
-                Text(
-                    text = state.variation.maxText(),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                if (editName) {
+                    TextField(
+                        modifier = Modifier.wrapContentWidth(),
+                        value = name,
+                        suffix = {
+                            Text(
+                                state.variation.lift?.name ?: "",
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
+                        },
+                        textStyle = MaterialTheme.typography.headlineMedium,
+                        onValueChange = {
+                            name = it
+                            interactor(VariationDetailsEvent.NameUpdated(it))
+                        },
+                    )
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.medium)
+                            .clickable(
+                                onClick = {
+                                    editName = true
+                                },
+                                role = Role.Button
+                            )
+                            .padding(
+                                horizontal = MaterialTheme.spacing.one
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+                    ) {
+                        Text(state.variation.fullName)
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit Title"
+                        )
+                    }
+                }
             }
         },
     ) { padding ->
-
-
         LazyColumn(
             modifier = Modifier.padding(padding),
             contentPadding = PaddingValues(MaterialTheme.spacing.one),
@@ -122,9 +162,21 @@ private fun VariationDetailsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
+                Text(
+                    text = state.variation.maxText(),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
 
+            item {
                 if (state.variation.notes != null) {
                     TextField(
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Default.Notes,
+                                contentDescription = null
+                            )
+                        },
                         label = { Text(stringResource(Res.string.variation_details_notes_label)) },
                         placeholder = { Text(stringResource(Res.string.variation_details_notes_placeholder)) },
                         modifier = Modifier.fillMaxWidth(),
