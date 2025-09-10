@@ -87,6 +87,7 @@ class VariationRepository(
                 variation.toDomain(
                     parentLift = lift,
                     sets = sets.filter { it.variationId == variation.id }
+                        .map { it.toDomain() }
                 )
             }
         }
@@ -138,7 +139,7 @@ class VariationRepository(
 
             variation?.toDomain(
                 lift?.toDomain(),
-                sets
+                sets.map { it.toDomain() }
             )
         }
     }
@@ -150,7 +151,7 @@ class VariationRepository(
 
         return variation?.toDomain(
             lift?.toDomain(),
-            sets,
+            sets.map { it.toDomain() },
         )
     }
 }

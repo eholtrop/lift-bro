@@ -80,6 +80,9 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_notes_placeholder
@@ -183,6 +186,7 @@ fun CreateWorkoutScreenInternal(
                         variationSet = vSets,
                         eventHandler = eventHandler,
                         index = if (pagerState.pageCount > 1) page else null,
+                        date = state.date
                     ) {
                         Row(
                             modifier = Modifier.fillMaxWidth()
@@ -406,6 +410,7 @@ fun VariationItemCard(
     modifier: Modifier,
     variationSet: VariationItem,
     eventHandler: (CreateWorkoutEvent) -> Unit,
+    date: LocalDate,
     index: Int? = null,
     footer: @Composable () -> Unit = {},
 ) {
@@ -650,7 +655,7 @@ fun VariationItemCard(
                         coordinator.present(
                             Destination.CreateSet(
                                 variationId = variation.id,
-                                date = sets.firstOrNull()?.date ?: Clock.System.now(),
+                                date = date.atStartOfDayIn(TimeZone.currentSystemDefault()),
                             )
                         )
                     }

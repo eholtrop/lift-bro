@@ -15,6 +15,7 @@ CREATE TABLE LiftingSet (
 
 getAllByVariation:
 SELECT * FROM LiftingSet
+JOIN Variation ON Variation.id = LiftingSet.variationId
 WHERE variationId = ?
 ORDER BY date DESC
 LIMIT :limit;

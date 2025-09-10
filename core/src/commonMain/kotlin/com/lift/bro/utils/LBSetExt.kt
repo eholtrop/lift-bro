@@ -28,7 +28,14 @@ internal fun LBSet.prettyPrintSet(
     withStyle(
         style = SpanStyle(),
     ) {
-        append("$reps x ${weight.decimalFormat()} ${uom.value}")
+        if (bodyWeightRep == true) {
+            append("$reps x bw")
+            if (weight > 0.0) {
+                append(" + ${weight.decimalFormat()} ${uom.value}")
+            }
+        } else {
+            append("$reps x ${weight.decimalFormat()} ${uom.value}")
+        }
     }
     if (LocalTwmSettings.current && totalWeightMoved > 0.0) {
         withStyle(

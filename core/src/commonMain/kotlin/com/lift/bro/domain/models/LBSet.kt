@@ -18,6 +18,7 @@ data class LBSet(
     val notes: String = "",
     val rpe: Int? = null,
     val mer: Int = 0,
+    val bodyWeightRep: Boolean? = null,
 ) {
     val totalWeightMoved =  weight * reps
 }

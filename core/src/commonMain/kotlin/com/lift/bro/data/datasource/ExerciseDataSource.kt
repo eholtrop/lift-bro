@@ -1,9 +1,6 @@
 package com.lift.bro.data.datasource
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.buildLBSet
 import com.lift.bro.data.toDomain
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
@@ -74,9 +71,9 @@ class LBExerciseDataSource(
                                 color = variation.lift_color?.toULong(),
                                 name = variation.lift_name,
                             ),
-                            oneRepMax = orm?.toDomain(),
-                            eMax = volume?.toDomain(),
-                            maxReps = reps?.toDomain(),
+                            oneRepMax = orm?.toDomain()?.copy(bodyWeightRep = variation.body_weight?.let { it == 1L }),
+                            eMax = volume?.toDomain()?.copy(bodyWeightRep = variation.body_weight?.let { it == 1L }),
+                            maxReps = reps?.toDomain()?.copy(bodyWeightRep = variation.body_weight?.let { it == 1L }),
                         )
                     }
                 }.toTypedArray()
@@ -89,9 +86,10 @@ class LBExerciseDataSource(
                 workoutId = workoutId,
                 variationSets = exerciseVariations.filter { it.exerciseId == exercise.id }
                     .map { ev ->
+                        val variation = variations.first { it.id == ev.varationId }
                         VariationSets(
                             id = ev.id,
-                            variation = variations.first { it.id == ev.varationId },
+                            variation = variation,
                             sets = sets.filter { it.variationId == ev.varationId }
                                 .filter { it.date.toLocalDate() == it.date_ } // date_ is the workout date...
                                 .map {
@@ -107,7 +105,8 @@ class LBExerciseDataSource(
                                             down = it.tempoDown ?: 3,
                                             hold = it.tempoHold ?: 1,
                                             up = it.tempoUp ?: 1,
-                                        )
+                                        ),
+                                        bodyWeightRep = variation.bodyWeight
                                     )
                                 }
                         )

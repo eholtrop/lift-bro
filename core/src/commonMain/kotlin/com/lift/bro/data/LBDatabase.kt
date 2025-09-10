@@ -21,6 +21,7 @@ import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.GetAll
+import comliftbrodb.GetAllByVariation
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
@@ -115,12 +116,12 @@ class SetDataSource(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ISetDatasource {
 
-    private fun calculateMer(set: LiftingSet, maxWeight: Double): Int {
+    private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {
         if (maxWeight <= 0.0) return 0
         val repFatigueCost = 4
 
-        val weight = set.weight ?: 0.0
-        val reps = set.reps ?: 0
+        val weight = setWeight ?: 0.0
+        val reps = setReps ?: 0
 
         val merFatigueThreshold = 80.0
 
@@ -140,7 +141,7 @@ class SetDataSource(
                 listOf(oneRepMax, eMax).maxOfOrNull { calculateMax(it?.reps, it?.weight) }
 
             localMax?.let {
-                set.toDomain().copy(mer = calculateMer(set, localMax))
+                set.toDomain().copy(mer = calculateMer(setWeight = set.weight, setReps = set.reps, maxWeight = localMax))
             } ?: run {
                 set.toDomain()
             }
@@ -171,6 +172,7 @@ class SetDataSource(
                     notes = it.notes,
                     rpe = it.rpe?.toInt(),
                     mer = 0,
+                    bodyWeightRep = it.body_weight?.let { it == 1L },
                 )
             }
 
@@ -178,7 +180,7 @@ class SetDataSource(
     fun listenAllForVariation(
         variationId: String,
     ): Flow<List<LBSet>> =
-        setQueries.getAllByVariation(variationId, Long.MAX_VALUE).asFlow().mapToList(dispatcher)
+        setQueries.getAllByVariation(variationId, Long.MAX_VALUE).flowToList(dispatcher)
             .map { sets ->
                 sets.map { set ->
                     val localMax =
@@ -186,7 +188,7 @@ class SetDataSource(
                             .filter { it.date.toLocalDate() < set.date.toLocalDate() }
                             .maxOfOrNull { calculateMax(it.reps, it.weight) }
                     set.toDomain().copy(
-                        mer = localMax?.let { calculateMer(set, localMax) } ?: 0
+                        mer = localMax?.let { calculateMer(set.weight, set.reps, localMax) } ?: 0
                     )
                 }
             }
@@ -226,7 +228,7 @@ class SetDataSource(
                     val emax = setQueries.getEMaxForVariation(variationId = set.variationId, before = set.date).executeAsOneOrNull()?.weight
 
                     set.toDomain().copy(
-                        mer = (orm ?: emax)?.let { calculateMer(set, it) } ?: 0
+                        mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0
                     )
                 }
         }
@@ -283,6 +285,23 @@ fun LiftingSet.toDomain() = LBSet(
     date = this.date,
     notes = this.notes,
     rpe = this.rpe?.toInt(),
+
+)
+
+fun GetAllByVariation.toDomain() = LBSet(
+    id = this.id,
+    variationId = this.variationId,
+    weight = this.weight ?: 0.0,
+    reps = this.reps ?: 1,
+    tempo = Tempo(
+        down = this.tempoDown ?: 3,
+        hold = this.tempoHold ?: 1,
+        up = this.tempoUp ?: 1,
+    ),
+    date = this.date,
+    notes = this.notes,
+    rpe = this.rpe?.toInt(),
+    bodyWeightRep = this.body_weight?.let { it == 1L },
 )
 
 class LiftDataSource(
@@ -345,16 +364,16 @@ internal fun comliftbrodb.GetAll.toDomain(): Variation {
 
 internal fun comliftbrodb.Variation.toDomain(
     parentLift: Lift?,
-    sets: List<LiftingSet>,
+    sets: List<LBSet>,
 ) = Variation(
     id = this.id,
     lift = parentLift,
     name = this.name,
-    eMax = sets.filter { (it.reps ?: 0) > 1 }.maxByOrNull {
-        estimatedMax(it.reps?.toInt() ?: 1, it.weight ?: 0.0)
-    }?.toDomain(),
-    maxReps = sets.maxByOrNull { it.reps ?: 0L }?.toDomain(),
-    oneRepMax = sets.filter { it.reps == 1L }.maxByOrNull { it.weight ?: 0.0 }?.toDomain(),
+    eMax = sets.filter { it.reps > 1 }.maxByOrNull {
+        estimatedMax(it.reps.toInt(), it.weight)
+    },
+    maxReps = sets.maxByOrNull { it.reps },
+    oneRepMax = sets.filter { it.reps == 1L }.maxByOrNull { it.weight },
     favourite = this.favourite == 1L,
     notes = this.notes,
     bodyWeight = this.body_weight?.let { it == 1L },
