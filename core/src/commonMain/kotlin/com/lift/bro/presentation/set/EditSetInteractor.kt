@@ -8,7 +8,7 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.ISetDatasource
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
@@ -16,11 +16,9 @@ import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
-import com.lift.bro.utils.debug
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
@@ -66,7 +64,7 @@ sealed interface EditSetEvent {
 @Composable
 fun rememberEditSetInteractor(
     setId: String,
-    setRepository: ISetRepository = dependencies.setRepository,
+    setRepository: ISetDatasource = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.database.variantDataSource,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> = rememberInteractor(

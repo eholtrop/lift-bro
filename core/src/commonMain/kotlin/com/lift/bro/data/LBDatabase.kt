@@ -7,19 +7,20 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
+import com.lift.bro.data.datasource.LBExerciseDataSource
+import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.db.LiftBroDB
-import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
-import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.ISetDatasource
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
+import comliftbrodb.GetAll
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
@@ -79,32 +80,11 @@ class LBDatabase(
 
     val workoutDataSource = database.workoutQueries
 
-    val exerciseQueries = database.exerciseQueries
-
-    private val variationAdapter = object: ColumnAdapter<comliftbrodb.Variation, String> {
-
-        override fun decode(databaseValue: String): comliftbrodb.Variation {
-            return database.variationQueries.get(databaseValue).executeAsOne()
-
-        }
-
-        override fun encode(value: comliftbrodb.Variation): String {
-            return value.id
-        }
-    }
-
-    private fun exerciseAdapter(
-        getVariation: (String) -> comliftbrodb.Exercise,
-    ) = object: ColumnAdapter<comliftbrodb.Exercise, String> {
-
-        override fun decode(databaseValue: String): comliftbrodb.Exercise {
-            return getVariation(databaseValue)
-        }
-
-        override fun encode(value: comliftbrodb.Exercise): String {
-            return value.id
-        }
-    }
+    val exerciseDataSource = LBExerciseDataSource(
+        exerciseQueries = database.exerciseQueries,
+        setQueries = database.setQueries,
+        variationQueries = database.variationQueries
+    )
 }
 
 private val instantAdapter = object: ColumnAdapter<Instant, Long> {
@@ -133,7 +113,7 @@ class SetDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-): ISetRepository {
+): ISetDatasource {
 
     private fun calculateMer(set: LiftingSet, maxWeight: Double): Int {
         if (maxWeight <= 0.0) return 0
@@ -174,16 +154,24 @@ class SetDataSource(
             .fold(emptyList()) { list, subList -> list + subList }
 
     fun listenAllForLift(liftId: String, limit: Long = Long.MAX_VALUE): Flow<List<LBSet>> =
-        variationQueries
-            .getAllForLift(liftId).asFlow().mapToList(dispatcher)
-            .flatMapLatest { variations ->
-                merge(
-                    *variations.map {
-                        setQueries.getAllByVariation(it.id, limit).asFlow().mapToList(dispatcher)
-                    }.toTypedArray()
-                ).scan(emptyList()) { acc, sets ->
-                    acc + sets.map { it.toDomain() }
-                }
+        setQueries.getAllForLift(liftId = liftId, startDate = Instant.DISTANT_PAST, endDate = Instant.DISTANT_FUTURE, limit = limit)
+            .flowToList()
+            .mapEach {
+                LBSet(
+                    id = it.id,
+                    variationId = it.variationId,
+                    weight = it.weight ?: 0.0,
+                    reps = it.reps ?: 1,
+                    tempo = Tempo(
+                        down = it.tempoDown ?: 3,
+                        hold = it.tempoHold ?: 1,
+                        up = it.tempoUp ?: 1,
+                    ),
+                    date = it.date,
+                    notes = it.notes,
+                    rpe = it.rpe?.toInt(),
+                    mer = 0,
+                )
             }
 
 
@@ -203,11 +191,17 @@ class SetDataSource(
                 }
             }
 
-    fun getAll(): List<LBSet> =
+    fun getAll(
+        limit: Long = Long.MAX_VALUE,
+        startDate: Instant? = null,
+        endDate: Instant? = null,
+        variationId: String? = null,
+    ): List<LBSet> =
         setQueries.getAll(
-            limit = Long.MAX_VALUE,
-            startDate = Instant.DISTANT_PAST,
-            endDate = Instant.DISTANT_FUTURE
+            limit = limit,
+            startDate = startDate,
+            endDate = endDate,
+            variationId = variationId
         ).executeAsList().map { it.toDomain() }
 
     fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())
@@ -215,18 +209,18 @@ class SetDataSource(
     fun LocalDate.atEndOfDayIn(): Instant = this.atTime(23, 59, 59, 999).toInstant(TimeZone.currentSystemDefault())
 
     fun listenAll(
-        startDate: LocalDate = LocalDate.fromEpochDays(0),
-        endDate: LocalDate = Instant.DISTANT_FUTURE.toLocalDate(),
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
         variationId: String? = null,
         limit: Long = Long.MAX_VALUE,
     ): Flow<List<LBSet>> =
         setQueries.getAll(
             limit = limit,
-            startDate = startDate.atStartOfDayIn(),
-            endDate = endDate.atEndOfDayIn(),
+            startDate = startDate?.atStartOfDayIn(),
+            endDate = endDate?.atEndOfDayIn(),
+            variationId = variationId,
         ).asFlow().mapToList(dispatcher).map { sets ->
             sets
-                .filter { variationId == null || it.variationId == variationId }
                 .map { set ->
                     val orm = setQueries.getOneRepMaxForVariation(variationId = set.variationId, before = set.date).executeAsOneOrNull()?.weight
                     val emax = setQueries.getEMaxForVariation(variationId = set.variationId, before = set.date).executeAsOneOrNull()?.weight
@@ -332,6 +326,21 @@ internal fun comliftbrodb.Lift.toDomain() = Lift(
     name = this.name,
     color = this.color?.toULong(),
 )
+
+internal fun comliftbrodb.GetAll.toDomain(): Variation {
+    return Variation(
+        id = this.id,
+        lift = Lift(
+            id = this.lift_id,
+            name = this.lift_name,
+            color = this.lift_color?.toULong(),
+        ),
+        name = this.name,
+        eMax = null,
+        maxReps = null,
+        oneRepMax = null,
+    )
+}
 
 internal fun comliftbrodb.Variation.toDomain(
     parentLift: Lift?,

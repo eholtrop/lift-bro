@@ -3,7 +3,7 @@ package com.lift.bro.domain.repositories
 import com.lift.bro.domain.models.LBSet
 import kotlinx.coroutines.flow.Flow
 
-interface ISetRepository {
+interface ISetDatasource {
 
     fun listen(id: String): Flow<LBSet?>
 

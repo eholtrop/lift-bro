@@ -5,8 +5,8 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LBDatabase
+import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.exerciseRepository
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -14,11 +14,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
@@ -30,14 +28,13 @@ class WorkoutRepository(
     override fun getAll(
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Flow<List<Workout>> = database.workoutDataSource.getAll(startDate = startDate, endDate = endDate).asFlow()
-            .mapToList(dispatcher)
+    ): Flow<List<Workout>> = database.workoutDataSource.getAll(startDate = startDate, endDate = endDate).flowToList(dispatcher)
             .flatMapLatest { workouts ->
                 if (workouts.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
 
                 combine(
                     *workouts.map { workout ->
-                        dependencies.exerciseRepository.get(workout.id).map {
+                        database.exerciseDataSource.listen(workout.id).map {
                             Workout(
                                 id = workout.id,
                                 date = workout.date,
@@ -57,7 +54,7 @@ class WorkoutRepository(
     override fun get(date: LocalDate): Flow<Workout> =
         database.workoutDataSource.getByDate(date = date).asFlow().mapToOneOrNull(dispatcher)
             .flatMapLatest { workout ->
-                dependencies.exerciseRepository.get(workout?.id ?: "").map { exercises ->
+                database.exerciseDataSource.listen(workout?.id ?: "").map { exercises ->
                     workout?.let {
                         Workout(
                             id = workout.id,
@@ -88,8 +85,8 @@ class WorkoutRepository(
         withContext(dispatcher) {
             database.workoutDataSource.delete(workout.id)
             workout.exercises.forEach {
-                database.exerciseQueries.delete(it.id)
-                database.exerciseQueries.deleteVariationsByExercise(it.id)
+                database.exerciseDataSource.delete(it.id)
+                database.exerciseDataSource.delete(it.id)
             }
         }
 

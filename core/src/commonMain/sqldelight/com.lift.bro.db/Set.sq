@@ -21,26 +21,49 @@ LIMIT :limit;
 
 getOneRepMaxForVariation:
 SELECT * FROM LiftingSet
-WHERE variationId = :variationId AND reps = 1 AND date < :before
+WHERE variationId = :variationId AND reps = 1
+AND date < :before OR :before = NULL
 ORDER BY weight DESC
 LIMIT 1;
 
 getEMaxForVariation:
 SELECT * FROM LiftingSet
-WHERE variationId = :variationId AND date < :before
+WHERE variationId = :variationId
+AND date < :before OR :before = NULL
 ORDER BY weight * reps DESC
 LIMIT 1;
 
 getMaxRepsForVariation:
 SELECT * FROM LiftingSet
-WHERE variationId = :variationId AND date < :before
+WHERE variationId = :variationId
+AND date < :before OR :before = NULL
 ORDER BY reps DESC
 LIMIT 1;
 
 getAll:
 SELECT * FROM LiftingSet
-WHERE date >= :startDate AND date <= :endDate
+WHERE date >= :startDate OR :startDate = NULL
+AND date <= :endDate OR :endDate = NULL
+AND variationId = :variationId OR :variationId = NULL
 ORDER BY date DESC
+LIMIT :limit;
+
+getAllForLift:
+SELECT * FROM LiftingSet
+JOIN Variation ON Variation.id = LiftingSet.variationId
+WHERE Variation.liftId = :liftId
+AND date >= :startDate OR :startDate = NULL
+AND date <= :endDate OR :endDate = NULL
+ORDER BY date DESC
+LIMIT :limit;
+
+getByWorkoutId:
+SELECT * FROM LiftingSet
+JOIN ExerciseVariation ON ExerciseVariation.varationId = LiftingSet.variationId
+JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
+JOIN Workout ON Workout.id = Exercise.workoutId
+WHERE Workout.id = :workoutId
+ORDER BY LiftingSet.date DESC
 LIMIT :limit;
 
 get:

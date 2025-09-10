@@ -88,7 +88,7 @@ fun rememberDashboardInteractor(
                 val variationsByLift = variations.groupBy { it.lift?.id }
                 val cards: List<Flow<DashboardListItem?>> = lifts.map { lift ->
                     val liftVariations = variationsByLift[lift.id] ?: emptyList()
-                    setRepository.listenAllForLift(lift.id, 20)
+                    setRepository.listenAllForLift(lift.id, 50)
                         .map { sets ->
                             DashboardListItem.LiftCard.Loaded(
                                 LiftCardState(

@@ -4,21 +4,14 @@ import androidx.compose.runtime.Composable
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.SetDataSource
-import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.exerciseRepository
-import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
@@ -34,11 +27,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
-import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 
@@ -99,7 +93,7 @@ private fun dataSideEffects(
 
                 if (workout != null) {
                     Log.d(message = "workout not null")
-                    dependencies.exerciseRepository.save(
+                    dependencies.database.exerciseDataSource.save(
                         Exercise(
                             id = uuid4().toString(),
                             workoutId = workout.id,
@@ -123,7 +117,7 @@ private fun dataSideEffects(
                         )
                     )
                     Log.d(message = "workout saved")
-                    dependencies.exerciseRepository.save(
+                    dependencies.database.exerciseDataSource.save(
                         Exercise(
                             id = uuid4().toString(),
                             workoutId = uuid4().toString(),
@@ -179,30 +173,31 @@ fun workoutCalendarSourceData(
 fun GetGhostSetsForMonthUseCase(
     year: Int,
     month: Month,
-): Flow<List<VariationSets>> = combine(
-    dependencies.database.setDataSource.listenAll(
-        startDate = LocalDate(year, month, 1),
-        endDate = LocalDate(today.year, today.month, 1)
-            .plus(1, DateTimeUnit.MONTH)
-    ),
-    dependencies.database.exerciseQueries.getExercizeVariationsByDate(
-        startDate = LocalDate(year, month, 1),
-        endDate = LocalDate(today.year, today.month, 1)
-            .plus(1, DateTimeUnit.MONTH)
-    ).asFlow().mapToList(Dispatchers.IO),
-    dependencies.variationRepository.listenAll(),
-) { sets, exerciseVariations, allVariations ->
-
-    sets.filter { set -> exerciseVariations.none { it.varationId == set.variationId } }
-        .groupBy { it.variationId }
-        .map { (id, sets) ->
-            VariationSets(
-                id = id,
-                sets = sets,
-                variation = allVariations.first { it.id == id }
-            )
-        }
-}
+): Flow<List<VariationSets>> = flow { emit(emptyList()) }
+//    combine(
+//    dependencies.database.setDataSource.listenAll(
+//        startDate = LocalDate(year, month, 1),
+//        endDate = LocalDate(today.year, today.month, 1)
+//            .plus(1, DateTimeUnit.MONTH)
+//    ),
+//    dependencies.database.exerciseDataSource.getExercizeVariationsByDate(
+//        startDate = LocalDate(year, month, 1),
+//        endDate = LocalDate(today.year, today.month, 1)
+//            .plus(1, DateTimeUnit.MONTH)
+//    ).asFlow().mapToList(Dispatchers.IO),
+//    dependencies.variationRepository.listenAll(),
+//) { sets, exerciseVariations, allVariations ->
+//
+//    sets.filter { set -> exerciseVariations.none { it.varationId == set.variationId } }
+//        .groupBy { it.variationId }
+//        .map { (id, sets) ->
+//            VariationSets(
+//                id = id,
+//                sets = sets,
+//                variation = allVariations.first { it.id == id }
+//            )
+//        }
+//}
 
 sealed interface WorkoutCalendarEvent {
     data class AddWorkoutClicked(val onDate: LocalDate): WorkoutCalendarEvent

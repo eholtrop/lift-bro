@@ -6,16 +6,14 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.benasher44.uuid.*
 import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.exerciseRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.ISetDatasource
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
@@ -29,7 +27,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.atTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -160,7 +157,7 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
 
 fun workoutSideEffects(
     workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
-    setRepository: ISetRepository = dependencies.setRepository,
+    setRepository: ISetDatasource = dependencies.setRepository,
     liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource,
 ): SideEffect<CreateWorkoutState, CreateWorkoutEvent> = { state, event ->
     when (event) {
@@ -209,7 +206,7 @@ fun workoutSideEffects(
                 state.toWorkout()
             )
 
-            dependencies.exerciseRepository.save(
+            dependencies.database.exerciseDataSource.save(
                 Exercise(
                     id = uuid4().toString(),
                     workoutId = state.id,
@@ -225,11 +222,11 @@ fun workoutSideEffects(
         }
 
         is DeleteExercise -> {
-            dependencies.exerciseRepository.delete(event.exercise.id)
+            dependencies.database.exerciseDataSource.delete(event.exercise.id)
         }
 
         is DeleteVariation -> {
-            dependencies.exerciseRepository.deleteVariationSets(
+            dependencies.database.exerciseDataSource.removeVariaiton(
                 event.variation.id
             )
 
@@ -247,13 +244,13 @@ fun workoutSideEffects(
 
             state.exercises.forEach { exercise ->
                 if (exercise.variations.isEmpty()) {
-                    dependencies.exerciseRepository.delete(exercise.id)
+                    dependencies.database.exerciseDataSource.delete(exercise.id)
                 }
             }
         }
 
         is AddSuperSet -> {
-            dependencies.exerciseRepository.saveVariation(
+            dependencies.database.exerciseDataSource.addVariation(
                 exerciseId = event.exercise.id,
                 variationId = event.variation.id
             )
