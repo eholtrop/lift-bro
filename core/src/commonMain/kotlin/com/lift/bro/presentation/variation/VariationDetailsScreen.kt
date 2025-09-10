@@ -29,15 +29,18 @@ import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Notes
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -162,10 +165,36 @@ private fun VariationDetailsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             item {
-                Text(
-                    text = state.variation.maxText(),
-                    style = MaterialTheme.typography.bodyLarge
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = state.variation.maxText(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+
+                    Row(
+                        modifier = Modifier.minimumInteractiveComponentSize()
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable(
+                                onClick = {
+                                    interactor(VariationDetailsEvent.ToggleBodyWeight)
+                                }
+                            ).padding(
+                                all = MaterialTheme.spacing.half
+                            ),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = state.variation.bodyWeight ?: false,
+                            onCheckedChange = null
+                        )
+                        Space(MaterialTheme.spacing.half)
+                        Text(
+                            "Body Weight \uD83E\uDD38"
+                        )
+                    }
+                }
             }
 
             item {

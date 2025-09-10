@@ -34,6 +34,7 @@ data class Variation(
     val eMax: LBSet? = null,
     val oneRepMax: LBSet? = null,
     val maxReps: LBSet? = null,
+    val bodyWeight: Boolean? = null,
 )
 
 val Variation.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
@@ -43,6 +44,10 @@ fun Variation.maxText(): AnnotatedString {
 
     return buildAnnotatedString {
         when {
+            bodyWeight == true -> {
+                append(maxReps?.reps?.toString() ?: "0")
+                append(" reps")
+            }
             // and show tmax enabled
             eMax?.estimateMax != null && oneRepMax?.oneRepMax != null && LocalTMaxSettings.current ->
                 append(

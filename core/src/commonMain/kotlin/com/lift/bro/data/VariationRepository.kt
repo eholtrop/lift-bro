@@ -42,7 +42,8 @@ class VariationRepository(
                 liftId = variation.lift?.id!!,
                 name = variation.name,
                 notes = variation.notes,
-                favourite = if (variation.favourite) 1 else 0
+                favourite = if (variation.favourite) 1 else 0,
+                body_weight = variation.bodyWeight?.let { if (it) 1 else 0 }
             )
         }
     }
@@ -96,9 +97,12 @@ class VariationRepository(
             combine(
                 *variations.map { variation ->
                     combine(
-                        setQueries.getOneRepMaxForVariation(variation.id, Instant.DISTANT_FUTURE).flowToOneOrNull(),
-                        setQueries.getEMaxForVariation(variation.id, Instant.DISTANT_FUTURE).flowToOneOrNull(),
-                        setQueries.getMaxRepsForVariation(variation.id, Instant.DISTANT_FUTURE).flowToOneOrNull(),
+                        setQueries.getOneRepMaxForVariation(variation.id, Instant.DISTANT_FUTURE)
+                            .flowToOneOrNull(),
+                        setQueries.getEMaxForVariation(variation.id, Instant.DISTANT_FUTURE)
+                            .flowToOneOrNull(),
+                        setQueries.getMaxRepsForVariation(variation.id, Instant.DISTANT_FUTURE)
+                            .flowToOneOrNull(),
                     ) { orm, volume, reps ->
                         Variation(
                             id = variation.id,

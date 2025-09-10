@@ -339,6 +339,7 @@ internal fun comliftbrodb.GetAll.toDomain(): Variation {
         eMax = null,
         maxReps = null,
         oneRepMax = null,
+        bodyWeight = this.body_weight?.let { it == 1L },
     )
 }
 
@@ -355,7 +356,8 @@ internal fun comliftbrodb.Variation.toDomain(
     maxReps = sets.maxByOrNull { it.reps ?: 0L }?.toDomain(),
     oneRepMax = sets.filter { it.reps == 1L }.maxByOrNull { it.weight ?: 0.0 }?.toDomain(),
     favourite = this.favourite == 1L,
-    notes = this.notes
+    notes = this.notes,
+    bodyWeight = this.body_weight?.let { it == 1L },
 )
 
 expect class DriverFactory {

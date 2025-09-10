@@ -35,6 +35,8 @@ sealed interface VariationDetailsEvent {
     data object AddSetClicked: VariationDetailsEvent
 
     data class NameUpdated(val name: String): VariationDetailsEvent
+
+    data object ToggleBodyWeight: VariationDetailsEvent
 }
 
 @Composable
@@ -81,6 +83,12 @@ fun rememberVariationDetailInteractor(
                         state.variation.copy(name = event.name)
                     )
                 }
+
+                VariationDetailsEvent.ToggleBodyWeight -> {
+                    dependencies.variationRepository.save(
+                        state.variation.copy(bodyWeight = state.variation.bodyWeight?.not() ?: true)
+                    )
+                }
             }
         },
         reducers = listOf(
@@ -94,6 +102,7 @@ fun rememberVariationDetailInteractor(
                     VariationDetailsEvent.AddSetClicked -> state
                     is VariationDetailsEvent.SetClicked -> state
                     is VariationDetailsEvent.NameUpdated -> state
+                    VariationDetailsEvent.ToggleBodyWeight -> state
                 }
             }
         )
