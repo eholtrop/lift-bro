@@ -49,8 +49,11 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
+import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Workout
@@ -59,8 +62,10 @@ import com.lift.bro.domain.models.maxText
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.ads.AdBanner
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Calendar
+import com.lift.bro.ui.CalendarMonth
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.currentMonth
 import com.lift.bro.ui.rememberCalendarState
@@ -68,12 +73,18 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
+import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import kotlinx.datetime.plus
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_confirm_cta
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
@@ -88,11 +99,6 @@ fun WorkoutCalendarContent(
     interactor: Interactor<WorkoutCalendarState, WorkoutCalendarEvent> = rememberWorkoutCalendarInteractor(),
 ) {
     val state by interactor.state.collectAsState()
-
-    val setDateMap = state.workouts.associateBy { it.date }
-
-    val dailyLogs = state.logs.associateBy { it.date }
-
     val subscriptionType by LocalSubscriptionStatusProvider.current
 
     val calendarState = rememberCalendarState()
@@ -105,82 +111,30 @@ fun WorkoutCalendarContent(
     ) {
 
         item {
-
-            LaunchedEffect(calendarState.currentMonth) {
-                interactor(
-                    WorkoutCalendarEvent.LoadMonth(
-                        calendarState.currentMonth.year,
-                        calendarState.currentMonth.month
-                    )
-                )
-            }
-
             Calendar(
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight(),
-                selectedDate = state.date,
+                selectedDate = state.selectedDate,
                 contentPadding = PaddingValues(0.dp),
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
                 dateSelected = {
                     interactor(
                         WorkoutCalendarEvent.DateSelected(it)
                     )
                 },
                 pagerState = calendarState,
-                dateDecorations = { date, day ->
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        if (dailyLogs[date] != null) {
-                            Icon(
-                                modifier = Modifier
-                                    .padding(
-                                        top = MaterialTheme.spacing.quarter,
-                                        start = MaterialTheme.spacing.quarter,
-                                    )
-                                    .size(8.dp).align(Alignment.TopStart),
-                                imageVector = Icons.Default.Edit,
-                                tint = if (date == state.date) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
-                                contentDescription = null
-                            )
-                        }
-
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            day()
-                            Space(MaterialTheme.spacing.quarter)
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-                            ) {
-                                val workoutVariationColors = setDateMap[date]?.exercises?.map {
-                                    it.variationSets.firstOrNull()?.variation?.lift?.color?.toColor()
-                                        ?: MaterialTheme.colorScheme.primary
-                                } ?: emptyList()
-
-                                val setColors =
-                                    state.unallocatedSets.filter { it.second.any { it.date.toLocalDate() == date } }
-                                        .map {
-                                            it.first.lift?.color?.toColor()
-                                                ?: MaterialTheme.colorScheme.primary
-                                        }
-
-                                (workoutVariationColors + setColors).take(4)
-                                    .forEachIndexed { index, color ->
-                                        Box(
-                                            modifier = Modifier.background(
-                                                color = if (date == state.date) MaterialTheme.colorScheme.onPrimary else color,
-                                                shape = CircleShape,
-                                            ).size(4.dp)
-                                        )
-                                    }
-                            }
-                        }
+                dateDecorations = { date, decoration -> }
+            ) { year, month ->
+                WorkoutCalendarMonth(
+                    year,
+                    month,
+                    selectedDate = state.selectedDate,
+                    dateSelected = {
+                        interactor(
+                            WorkoutCalendarEvent.DateSelected(it)
+                        )
                     }
-                }
-            )
+                )
+            }
         }
 
 
@@ -201,11 +155,7 @@ fun WorkoutCalendarContent(
         item {
             Column {
                 var showNotesDialog by remember { mutableStateOf(false) }
-                var todaysNotes by remember(state.date) {
-                    mutableStateOf(
-                        dailyLogs[state.date]?.notes ?: ""
-                    )
-                }
+                var todaysNotes by remember { mutableStateOf(state.log?.notes ?: "") }
 
                 if (showNotesDialog) {
                     AlertDialog(
@@ -215,10 +165,10 @@ fun WorkoutCalendarContent(
                                 onClick = {
                                     GlobalScope.launch {
                                         dependencies.database.logDataSource.save(
-                                            id = dailyLogs[state.date]?.id ?: uuid4().toString(),
-                                            date = dailyLogs[state.date]?.date ?: state.date,
+                                            id = state.log?.id ?: uuid4().toString(),
+                                            date = state.log?.date ?: state.selectedDate,
                                             notes = todaysNotes,
-                                            vibe_check = dailyLogs[state.date]?.vibe?.toLong()
+                                            vibe_check = state.log?.vibe?.toLong()
                                         )
                                         showNotesDialog = false
                                     }
@@ -240,7 +190,7 @@ fun WorkoutCalendarContent(
                             Text(
                                 stringResource(
                                     Res.string.edit_daily_notes_dialog_title,
-                                    state.date.toString("EEEE, MMM d - yyyy")
+                                    state.selectedDate.toString("EEEE, MMM d - yyyy")
                                 )
                             )
                         },
@@ -269,7 +219,7 @@ fun WorkoutCalendarContent(
                     horizontalArrangement = Arrangement.Start,
                 ) {
                     Text(
-                        text = state.date.toString("EEEE, MMM d - yyyy"),
+                        text = state.selectedDate.toString("EEEE, MMM d - yyyy"),
                         style = MaterialTheme.typography.titleLarge
                     )
                     IconButton(
@@ -285,9 +235,9 @@ fun WorkoutCalendarContent(
                     }
                 }
 
-                dailyLogs[state.date]?.let {
+                state.log?.notes?.let {
                     Text(
-                        text = it.notes,
+                        text = it,
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
@@ -295,12 +245,12 @@ fun WorkoutCalendarContent(
         }
 
         item {
-            when (val workout = state.workout) {
+            when (val workout = state.selectedWorkout) {
                 null -> {
                     Button(
                         onClick = {
                             Log.d(message = "add workout clicked")
-                            interactor(WorkoutCalendarEvent.AddWorkoutClicked(state.date))
+                            interactor(WorkoutCalendarEvent.AddWorkoutClicked(state.selectedDate))
                         },
                         colors = ButtonDefaults.elevatedButtonColors()
                     ) {
@@ -320,16 +270,21 @@ fun WorkoutCalendarContent(
             }
         }
 
-        if (state.unallocatedSets.any { it.second.any { it.date.toLocalDate() == state.date } }) {
+        if (state.potentialExercises.isNotEmpty()) {
             item {
-                Text(
-                    text = "Other Gains!!, Tap to add to Workout",
-                    style = MaterialTheme.typography.labelMedium
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
+                ) {
+                    Text(
+                        text = "Other Gains!! Tap to add to Workout",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
         }
 
-        state.unallocatedSets.filter { it.second.any { it.date.toLocalDate() == state.date } }
+        state.potentialExercises
             .forEach {
                 item {
                     VariationSet(
@@ -337,7 +292,7 @@ fun WorkoutCalendarContent(
                             onClick = {
                                 interactor(
                                     WorkoutCalendarEvent.AddToWorkout(
-                                        date = state.date,
+                                        date = state.selectedDate,
                                         variation = it.first
                                     )
                                 )
@@ -498,4 +453,105 @@ fun VariationSet(
             content = {}
         )
     }
+}
+
+@Composable
+fun WorkoutCalendarMonth(
+    year: Int,
+    month: Month,
+    selectedDate: LocalDate? = null,
+    dateSelected: (LocalDate) -> Unit,
+) {
+    val monthState by rememberInteractor<WorkoutMonthState, WorkoutCalendarEvent>(
+        initialState = WorkoutMonthState(year, month),
+        source = {
+            combine(
+                dependencies.workoutRepository.getAll(
+                    LocalDate(year, month, 1),
+                    LocalDate(year, month, 1)
+                        .plus(1, DateTimeUnit.MONTH),
+                ).mapEach { workout ->
+                    workout.date to workout.exercises.map { it.variationSets.map { it.variation.lift?.color } }
+                        .flatten()
+                },
+                FetchVariationSetsForRange(
+                    year,
+                    month,
+                ).map {
+                    it.groupBy { it.second.firstOrNull()?.date?.toLocalDate() }
+                        .mapValues { entry ->
+                            entry.value.map { it.first.lift?.color }
+                        }
+                        .toList()
+
+                },
+                dependencies.database.logDataSource.getAll().flowToList(),
+            ) { workouts, unallocatedSets, logs ->
+                WorkoutMonthState(
+                    year = year,
+                    month = month,
+                    colors = (workouts + unallocatedSets).toMap(),
+                    logs = logs.map {
+                        LiftingLog(
+                            id = it.id,
+                            date = it.date,
+                            notes = it.notes ?: "",
+                            vibe = it.vibe_check?.toInt()
+                        )
+                    }.associateBy { it.date },
+                )
+            }
+
+        }
+    ).state.collectAsState()
+
+
+    CalendarMonth(
+        year = year,
+        month = month,
+        selection = selectedDate,
+        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
+        dateSelected = dateSelected,
+        dateDecorations = { date, day ->
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (monthState.logs[date] != null) {
+                    Icon(
+                        modifier = Modifier
+                            .padding(
+                                top = MaterialTheme.spacing.quarter,
+                                start = MaterialTheme.spacing.quarter,
+                            )
+                            .size(8.dp).align(Alignment.TopStart),
+                        imageVector = Icons.Default.Edit,
+                        tint = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+                        contentDescription = null
+                    )
+                }
+
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    day()
+                    Space(MaterialTheme.spacing.quarter)
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                    ) {
+                        monthState.colors[date]?.forEachIndexed { index, color ->
+                            Box(
+                                modifier = Modifier.background(
+                                    color = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else color?.toColor()
+                                        ?: MaterialTheme.colorScheme.primary,
+                                    shape = CircleShape,
+                                ).size(4.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    )
 }

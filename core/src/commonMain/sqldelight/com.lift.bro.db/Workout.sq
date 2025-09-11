@@ -11,7 +11,7 @@ get:
 SELECT * FROM Workout WHERE id = ?;
 
 getByDate:
-SELECT * FROM Workout WHERE date = ?;
+SELECT * FROM Workout WHERE date = ? LIMIT 1;
 
 getAll:
 SELECT * FROM Workout WHERE date < :endDate AND date > :startDate;

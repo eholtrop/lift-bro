@@ -1,5 +1,6 @@
 package com.lift.bro.data.repository
 
+import androidx.compose.animation.core.infiniteRepeatable
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
@@ -61,7 +62,8 @@ class WorkoutRepository(
                             id = workout.id,
                             date = workout.date,
                             warmup = workout.warmup,
-                            exercises = exercises,
+                            exercises = exercises.toList(),
+                            finisher = workout.finisher,
                         )
                     } ?: Workout(
                         id = uuid4().toString(),

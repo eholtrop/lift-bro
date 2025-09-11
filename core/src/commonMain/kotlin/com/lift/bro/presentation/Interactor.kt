@@ -50,7 +50,7 @@ class Interactor<State, Event>(
         .flatMapLatest { sourceState ->
             events.receiveAsFlow()
                 .debug("Interactor Event")
-                .scan(stateResolver(initialState, sourceState)) { state, event ->
+                .scan(stateResolver(state.value ?: initialState, sourceState)) { state, event ->
                     val newState = reducers.fold(state) { s, reducer ->
                         reducer(
                             s,

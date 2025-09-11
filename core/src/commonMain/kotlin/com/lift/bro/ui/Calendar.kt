@@ -53,6 +53,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
@@ -122,6 +123,17 @@ fun Calendar(
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
     dateSelected: (LocalDate) -> Unit,
+    contentForMonth: @Composable (year: Int, month: Month) -> Unit = { year, month ->
+        CalendarMonth(
+            year = year,
+            month = month,
+            selection = selectedDate,
+            dateSelected = dateSelected,
+            dateDecorations = dateDecorations,
+            verticalArrangement = verticalArrangement,
+            horizontalArrangement = horizontalArrangement,
+        )
+    },
 ) {
     Column(
         modifier = modifier,
@@ -131,10 +143,8 @@ fun Calendar(
             pagerState = pagerState,
             selection = selectedDate,
             dateSelected = dateSelected,
-            horizontalArrangement = horizontalArrangement,
-            verticalArrangement = verticalArrangement,
-            dateDecorations = dateDecorations,
             contentPadding = contentPadding,
+            contentForMonth = contentForMonth
         )
     }
 }
@@ -147,10 +157,8 @@ private fun CalendarContent(
     pagerState: PagerState,
     selection: LocalDate?,
     contentPadding: PaddingValues,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateSelected: (LocalDate) -> Unit,
-    dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
+    contentForMonth: @Composable (year: Int, month: Month) -> Unit
 ) {
 
     val coroutineScope = rememberCoroutineScope()
@@ -264,41 +272,55 @@ private fun CalendarContent(
             beyondViewportPageCount = 1
         ) { page ->
             val currentMonth = today.plus(DatePeriod(months = page - CALENDAR_INITIAL_PAGE))
-            val startDate = currentMonth.minus(DatePeriod(days = today.dayOfMonth - 1))
+            contentForMonth(currentMonth.year, currentMonth.month)
+        }
+    }
+}
 
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = verticalArrangement
+@Composable
+fun CalendarMonth(
+    modifier: Modifier = Modifier,
+    year: Int,
+    month: Month,
+    selection: LocalDate?,
+    dateSelected: (LocalDate) -> Unit,
+    dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
+    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
+) {
+    val startDate by remember(year, month) { mutableStateOf(LocalDate(year, month, 1)) }
+
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = verticalArrangement
+    ) {
+        for (weekOffset in 0..5) {
+            val currentWeek =
+                startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal))
+                    .plus(DatePeriod(days = 7 * weekOffset))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = horizontalArrangement
             ) {
+                for (dayOffset in 0..6) {
+                    val currentDay = currentWeek.plus(DatePeriod(days = dayOffset))
 
-                for (weekOffset in 0..5) {
-                    val currentWeek =
-                        startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal))
-                            .plus(DatePeriod(days = 7 * weekOffset))
-
-                    Row(
+                    CalendarDate(
                         modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = horizontalArrangement
-                    ) {
-                        for (dayOffset in 0..6) {
-                            val currentDay = currentWeek.plus(DatePeriod(days = dayOffset))
-
-                            CalendarDate(
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .aspectRatio(1f),
-                                date = currentDay,
-                                style = when {
-                                    selection == currentDay -> CalendarDateStyle.Selected
-                                    currentDay.month == currentMonth.month -> CalendarDateStyle.Enabled
-                                    else -> CalendarDateStyle.Disabled
-                                },
-                                decorations = dateDecorations,
-                                onClick = dateSelected,
-                            )
-                        }
-                    }
+                            .weight(1f)
+                            .aspectRatio(1f),
+                        date = currentDay,
+                        style = when {
+                            selection == currentDay -> CalendarDateStyle.Selected
+                            currentDay.month == month -> CalendarDateStyle.Enabled
+                            else -> CalendarDateStyle.Disabled
+                        },
+                        decorations = dateDecorations,
+                        onClick = dateSelected,
+                    )
                 }
             }
         }
@@ -315,7 +337,7 @@ fun CalendarDate(
     date: LocalDate,
     style: CalendarDateStyle,
     onClick: (LocalDate) -> Unit,
-    decorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit
+    decorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
 ) {
 
     val backgroundColor = when (style) {

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.benasher44.uuid.*
+import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
@@ -90,8 +91,7 @@ fun rememberWorkoutInteractor(
         source = { state ->
             combine(
                 WorkoutRepository(dependencies.database).get(date),
-                dependencies.database.logDataSource.getByDate(date).asFlow()
-                    .mapToOneOrNull(Dispatchers.IO),
+                dependencies.database.logDataSource.getByDate(date).flowToOneOrNull(),
             ) { workout, log ->
                 CreateWorkoutState(
                     id = workout.id,

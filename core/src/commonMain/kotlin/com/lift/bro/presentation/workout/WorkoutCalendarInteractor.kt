@@ -1,12 +1,9 @@
 package com.lift.bro.presentation.workout
 
 import androidx.compose.runtime.Composable
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.datasource.flowToList
+import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
@@ -16,7 +13,6 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
-import com.lift.bro.domain.repositories.ISetDatasource
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
@@ -25,52 +21,53 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.today
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
-import com.lift.bro.utils.toString
 import comliftbrodb.LiftingLogQueries
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
+
+@Serializable
+data class WorkoutMonthState(
+    val year: Int,
+    val month: Month,
+    val colors: Map<LocalDate?, List<ULong?>> = emptyMap(),
+    val logs: Map<LocalDate, LiftingLog> = emptyMap(),
+)
+
+@Serializable
+sealed class WorkoutMonthEvent
 
 @Serializable
 data class WorkoutCalendarState(
-    val workouts: List<Workout> = emptyList(),
-    val date: LocalDate,
-    val workout: Workout?,
-    val unallocatedSets: List<Pair<Variation, List<LBSet>>> = emptyList(),
-    val logs: List<LiftingLog> = emptyList(),
-
-    )
+    val selectedDate: LocalDate = today,
+    val selectedWorkout: Workout? = null,
+    val potentialExercises: List<Pair<Variation, List<LBSet>>> = emptyList(),
+    val log: LiftingLog? = null,
+)
 
 @Composable
 fun rememberWorkoutCalendarInteractor(
     initialDate: LocalDate = today,
 ) = rememberInteractor(
     initialState = WorkoutCalendarState(
-        date = initialDate,
-        workout = null
+        selectedDate = initialDate,
     ),
     stateResolver = { initial, source ->
         source.copy(
-            date = if (initial.date != source.date) initial.date else source.date,
-            workout = if (initial.date != source.date) initial.workout else source.workout,
+            selectedDate = if (initial.selectedDate != source.selectedDate) initial.selectedDate else source.selectedDate,
+            selectedWorkout = if (initial.selectedDate != source.selectedDate) initial.selectedWorkout else source.selectedWorkout,
+            potentialExercises = if (initial.selectedDate != source.selectedDate) initial.potentialExercises else source.potentialExercises,
+            log = if (initial.selectedDate != source.selectedDate) initial.log else source.log,
         )
     },
-    source = { state -> workoutCalendarSourceData(state) },
+    source = { workoutCalendarSourceData() },
     reducers = listOf(WorkoutCalendarReducer),
     sideEffects = navigationSideEffects() + dataSideEffects(),
 )
@@ -98,11 +95,9 @@ private fun dataSideEffects(
 ): List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> {
     return listOf { state, event ->
         when (event) {
-            is WorkoutCalendarEvent.LoadMonth -> {}
             is WorkoutCalendarEvent.AddWorkoutClicked -> {}
             is WorkoutCalendarEvent.AddToWorkout -> {
-                val workout = dependencies.workoutRepository.get(event.date).first()
-
+                val workout = state.selectedWorkout
                 if (workout != null) {
                     dependencies.database.exerciseDataSource.save(
                         Exercise(
@@ -120,7 +115,7 @@ private fun dataSideEffects(
                 } else {
                     dependencies.workoutRepository.save(
                         Workout(
-                            id = state.workout?.id ?: uuid4().toString(),
+                            id = state.selectedWorkout?.id ?: uuid4().toString(),
                             date = event.date,
                             exercises = emptyList()
                         )
@@ -141,47 +136,40 @@ private fun dataSideEffects(
                 }
             }
 
-            is WorkoutCalendarEvent.DateSelected -> {}
             is WorkoutCalendarEvent.WorkoutClicked -> {}
+            is WorkoutCalendarEvent.DateSelected -> {}
         }
     }
 }
 
 fun workoutCalendarSourceData(
-    state: WorkoutCalendarState,
+    selectedDate: LocalDate = today,
     workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
     logQueries: LiftingLogQueries = dependencies.database.logDataSource,
 ) = combine(
-    workoutRepository.getAll(
-        LocalDate(state.date.year, state.date.month, 1),
-        LocalDate(state.date.year, state.date.month, 1)
-            .plus(1, DateTimeUnit.MONTH),
-    ),
-    logQueries.getAll().flowToList(),
-    FetchSetsWithoutWorkoutsUseCase(
-        today.year,
-        today.month,
+    workoutRepository.get(selectedDate),
+    logQueries.getByDate(selectedDate).flowToOneOrNull(),
+    FetchVariationSetsForRange(
+        selectedDate.year,
+        selectedDate.month
     )
-) { workouts, logs, unallocatedSets ->
+) { workout, log, unallocatedSets ->
     WorkoutCalendarState(
-        workouts = workouts,
-        logs = logs.map {
+        selectedDate = selectedDate,
+        selectedWorkout = workout,
+        log = log?.let {
             LiftingLog(
                 id = it.id,
-                date = it.date,
+                date = selectedDate,
                 notes = it.notes ?: "",
-                vibe = it.vibe_check?.toInt()
+                vibe = it.vibe_check?.toInt() ?: 0
             )
         },
-        date = today,
-        unallocatedSets = unallocatedSets
-            .toList()
-            .sortedBy { it.first.fullName },
-        workout = workouts.find { it.date == today }
+        potentialExercises = unallocatedSets,
     )
 }
 
-fun FetchSetsWithoutWorkoutsUseCase(
+fun FetchVariationSetsForRange(
     year: Int,
     month: Month,
 ): Flow<List<Pair<Variation, List<LBSet>>>> = combine(
@@ -192,8 +180,6 @@ fun FetchSetsWithoutWorkoutsUseCase(
     ),
     dependencies.variationRepository.listenAll().map { it.associateBy { it.id } },
 ) { sets, variations ->
-    Log.d(message = "sets: ${sets.minOf { it.date.toLocalDate() }.toString("yyyy-MM")}")
-
     sets.groupBy { variations[it.variationId]!! }
         .toList()
 }
@@ -201,9 +187,9 @@ fun FetchSetsWithoutWorkoutsUseCase(
 sealed interface WorkoutCalendarEvent {
     data class AddWorkoutClicked(val onDate: LocalDate): WorkoutCalendarEvent
     data class WorkoutClicked(val workout: Workout): WorkoutCalendarEvent
+
     data class DateSelected(val date: LocalDate): WorkoutCalendarEvent
     data class AddToWorkout(val date: LocalDate, val variation: Variation): WorkoutCalendarEvent
-    data class LoadMonth(val year: Int, val month: Month): WorkoutCalendarEvent
 }
 
 private val Month.daysIn: Int
@@ -228,24 +214,37 @@ val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> 
     Reducer { state, event ->
         when (event) {
             is WorkoutCalendarEvent.AddWorkoutClicked -> state
-            is WorkoutCalendarEvent.DateSelected -> state.copy(
-                date = event.date,
-                workout = state.workouts.find { it.date == event.date }
-            )
 
             is WorkoutCalendarEvent.WorkoutClicked -> state
-            is WorkoutCalendarEvent.LoadMonth -> state.copy(
-                workouts = (state.workouts + dependencies.workoutRepository.getAll(
-                    LocalDate(state.date.year, state.date.month, 1),
-                    LocalDate(state.date.year, state.date.month, 1)
-                        .plus(1, DateTimeUnit.MONTH),
-                ).first()).distinct(),
-                unallocatedSets = (state.unallocatedSets + FetchSetsWithoutWorkoutsUseCase(
-                    event.year,
-                    event.month,
-                ).first()).distinct()
-            )
+
 
             is WorkoutCalendarEvent.AddToWorkout -> state
+            is WorkoutCalendarEvent.DateSelected -> {
+                val selectedDate = event.date
+                combine(
+                    dependencies.workoutRepository.get(selectedDate),
+                    dependencies.database.logDataSource.getByDate(selectedDate).flowToOneOrNull(),
+                    FetchVariationSetsForRange(
+                        selectedDate.year,
+                        selectedDate.month
+                    )
+                ) { workout, log, unallocatedSets ->
+                    WorkoutCalendarState(
+                        selectedDate = selectedDate,
+                        selectedWorkout = workout,
+                        log = log?.let {
+                            LiftingLog(
+                                id = it.id,
+                                date = selectedDate,
+                                notes = it.notes ?: "",
+                                vibe = it.vibe_check?.toInt() ?: 0
+                            )
+                        },
+                        potentialExercises = unallocatedSets
+                            .filter { it.second.any { it.date.toLocalDate() == selectedDate } }
+                            .filter { ev -> workout?.exercises?.none { exercise -> exercise.variationSets.any { it.variation.id == ev.first.id } } == true },
+                    )
+                }.first()
+            }
         }
     }
