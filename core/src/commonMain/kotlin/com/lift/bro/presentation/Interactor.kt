@@ -15,12 +15,14 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -47,6 +49,7 @@ class Interactor<State, Event>(
         .flowOn(Dispatchers.IO)
         .flatMapLatest { sourceState ->
             events.receiveAsFlow()
+                .debug("Interactor Event")
                 .scan(stateResolver(initialState, sourceState)) { state, event ->
                     val newState = reducers.fold(state) { s, reducer ->
                         reducer(
@@ -54,7 +57,9 @@ class Interactor<State, Event>(
                             event
                         )
                     }
-                    sideEffects.forEach { sideEffect -> sideEffect(newState, event) }
+                    withContext(Dispatchers.Default) {
+                        sideEffects.forEach { sideEffect -> sideEffect(newState, event) }
+                    }
                     newState
                 }
         }

@@ -11,16 +11,6 @@ getAllForLift:
 SELECT * FROM Variation WHERE liftId = ?;
 
 getAll:
--- WITH
---     OneRepMax AS (
---         SELECT * FROM LiftingSet ORDER BY weight
---     ),
---     MaxVolume AS (
---         SELECT * FROM LiftingSet ORDER BY weight * reps
---     ),
---     MaxReps AS (
---         SELECT * FROM LiftingSet ORDER BY reps
---     )
 SELECT
     Variation.id AS id,
     Variation.favourite AS favourite,
@@ -31,41 +21,26 @@ SELECT
     Lift.id AS lift_id,
     Lift.color AS lift_color,
     Lift.name AS lift_name
-
---     orm.id AS orm_id,
---     orm.weight AS orm_weight,
---     orm.notes AS orm_notes,
---     orm.tempoDown AS orm_tempo_down,
---     orm.tempoUp AS orm_tempo_up,
---     orm.tempoHold AS orm_tempo_hold,
---     orm.reps AS orm_reps,
---     orm.rpe AS orm_rpe,
---     orm.date AS orm_date,
---
---     reps.id AS max_reps_id,
---     reps.weight AS max_reps_weight,
---     reps.notes AS max_reps_notes,
---     reps.tempoDown AS max_reps_tempo_down,
---     reps.tempoUp AS max_reps_tempo_up,
---     reps.tempoHold AS max_reps_tempo_hold,
---     reps.reps AS max_reps_reps,
---     reps.rpe AS max_reps_rpe,
---     reps.date AS max_reps_date,
---
---     volume.id AS max_volume_id,
---     volume.weight AS max_volume_weight,
---     volume.notes AS max_volume_notes,
---     volume.tempoDown AS max_volume_tempo_down,
---     volume.tempoUp AS max_volume_tempo_up,
---     volume.tempoHold AS max_volume_tempo_hold,
---     volume.reps AS max_volume_reps,
---     volume.rpe AS max_volume_rpe,
---     volume.date AS max_volume_date
 FROM Variation
 JOIN Lift ON Lift.id = Variation.liftId
--- LEFT JOIN OneRepMax orm ON orm.variationId = Variation.id
--- LEFT JOIN MaxReps reps ON reps.variationId = Variation.id
--- LEFT JOIN MaxVolume volume ON volume.variationId = Variation.id
+;
+
+getAllForWorkout:
+SELECT
+    Variation.id AS id,
+    Variation.favourite AS favourite,
+    Variation.name AS name,
+    Variation.notes AS notes,
+    Variation.body_weight AS body_weight,
+
+    Lift.id AS lift_id,
+    Lift.color AS lift_color,
+    Lift.name AS lift_name
+FROM Variation
+JOIN Lift ON Lift.id = Variation.liftId
+JOIN ExerciseVariation ON ExerciseVariation.varationId = Variation.id
+JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
+WHERE :workoutId IS NULL OR Exercise.workoutId = :workoutId
 ;
 
 get:

@@ -47,9 +47,28 @@ getExerciseVariations:
 SELECT * FROM ExerciseVariation WHERE exerciseId = :exerciseId;
 
 getExerciseVariationsByWorkoutId:
-SELECT ExerciseVariation.* FROM ExerciseVariation
+SELECT
+    ExerciseVariation.id AS exercise_variation_id,
+    ExerciseVariation.varationId AS variation_id,
+    ExerciseVariation.exerciseId AS exercise_id,
+
+    Variation.name AS variation_name,
+    Variation.liftId AS lift_id,
+    Variation.body_weight AS variation_is_body_weight,
+    Variation.notes AS variation_notes,
+    Variation.favourite AS variation_is_favourite,
+
+    Exercise.workoutId AS workout_id,
+
+    Lift.id AS lift_id,
+    Lift.name AS lift_name,
+    Lift.color AS lift_color
+ FROM ExerciseVariation
+JOIN Variation ON Variation.id = ExerciseVariation.varationId
+JOIN Lift ON Lift.id = Variation.liftId
 JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
-WHERE Exercise.workoutId = :workoutId;
+WHERE Exercise.workoutId = :workoutId
+;
 
 getAllExerciseVariations:
 SELECT * FROM ExerciseVariation;

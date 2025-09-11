@@ -8,6 +8,10 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.utils.combine
+import com.lift.bro.utils.debug
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.ExerciseQueries
 import comliftbrodb.SetQueries
@@ -18,8 +22,12 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
+import kotlin.collections.emptyList
 
 interface ExerciseDataSource {
 
@@ -50,47 +58,56 @@ class LBExerciseDataSource(
         workoutId: String,
     ): Flow<List<Exercise>> = combine(
         exerciseQueries.getByWorkoutId(workoutId).flowToList(dispatcher),
-        exerciseQueries.getExerciseVariationsByWorkoutId(workoutId).flowToList(dispatcher),
+        exerciseQueries.getExerciseVariationsByWorkoutId(workoutId).flowToList(dispatcher)
+            .flatMapLatest { variationSets ->
+                if (variationSets.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
+
+                combine(
+                    *variationSets.map { exercise ->
+                        combine(
+                            setQueries.getOneRepMaxForVariation(
+                                exercise.variation_id,
+                                Instant.DISTANT_FUTURE
+                            ).flowToOneOrNull(),
+                            setQueries.getEMaxForVariation(exercise.variation_id, Instant.DISTANT_FUTURE)
+                                .flowToOneOrNull(),
+                            setQueries.getMaxRepsForVariation(exercise.variation_id, Instant.DISTANT_FUTURE)
+                                .flowToOneOrNull(),
+                        ) { orm, volume, reps ->
+                            exercise.exercise_variation_id to Variation(
+                                id = exercise.variation_id,
+                                name = exercise.variation_name,
+                                notes = exercise.variation_notes,
+                                favourite = exercise.variation_is_favourite == 1L,
+                                lift = Lift(
+                                    id = exercise.lift_id,
+                                    color = exercise.lift_color?.toULong(),
+                                    name = exercise.lift_name,
+                                ),
+                                oneRepMax = orm?.toDomain()
+                                    ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                eMax = volume?.toDomain()
+                                    ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                maxReps = reps?.toDomain()
+                                    ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                            )
+                        }
+                    }.toTypedArray()
+                ) { it.toList() }
+            },
         setQueries.getByWorkoutId(workoutId = workoutId, limit = Long.MAX_VALUE)
             .flowToList(dispatcher),
-        variationQueries.getAll().flowToList(dispatcher).flatMapLatest { variations ->
-            combine(
-                *variations.map { variation ->
-                    combine(
-                        setQueries.getOneRepMaxForVariation(variation.id, Instant.DISTANT_FUTURE).flowToOneOrNull(),
-                        setQueries.getEMaxForVariation(variation.id, Instant.DISTANT_FUTURE).flowToOneOrNull(),
-                        setQueries.getMaxRepsForVariation(variation.id, Instant.DISTANT_FUTURE).flowToOneOrNull(),
-                    ) { orm, volume, reps ->
-                        Variation(
-                            id = variation.id,
-                            name = variation.name,
-                            notes = variation.notes,
-                            favourite = variation.favourite == 1L,
-                            lift = Lift(
-                                id = variation.lift_id,
-                                color = variation.lift_color?.toULong(),
-                                name = variation.lift_name,
-                            ),
-                            oneRepMax = orm?.toDomain()?.copy(bodyWeightRep = variation.body_weight?.let { it == 1L }),
-                            eMax = volume?.toDomain()?.copy(bodyWeightRep = variation.body_weight?.let { it == 1L }),
-                            maxReps = reps?.toDomain()?.copy(bodyWeightRep = variation.body_weight?.let { it == 1L }),
-                        )
-                    }
-                }.toTypedArray()
-            ) { it.toList() }
-        },
-    ) { exercises, exerciseVariations, sets, variations ->
+    ) { exercises, exerciseVariations, sets ->
         exercises.map { exercise ->
             Exercise(
                 id = exercise.id,
                 workoutId = workoutId,
-                variationSets = exerciseVariations.filter { it.exerciseId == exercise.id }
-                    .map { ev ->
-                        val variation = variations.first { it.id == ev.varationId }
+                variationSets = exerciseVariations
+                    .map { (id, variation) ->
                         VariationSets(
-                            id = ev.id,
+                            id = id,
                             variation = variation,
-                            sets = sets.filter { it.variationId == ev.varationId }
+                            sets = sets.filter { it.variationId == variation.id }
                                 .filter { it.date.toLocalDate() == it.date_ } // date_ is the workout date...
                                 .map {
                                     LBSet(

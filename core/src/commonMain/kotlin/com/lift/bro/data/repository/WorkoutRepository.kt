@@ -9,6 +9,7 @@ import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import com.lift.bro.utils.debug
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

@@ -161,9 +161,9 @@ fun WorkoutCalendarContent(
                                 } ?: emptyList()
 
                                 val setColors =
-                                    state.unallocatedVariationSets.filter { it.sets.any { it.date.toLocalDate() == date } }
+                                    state.unallocatedSets.filter { it.second.any { it.date.toLocalDate() == date } }
                                         .map {
-                                            it.variation.lift?.color?.toColor()
+                                            it.first.lift?.color?.toColor()
                                                 ?: MaterialTheme.colorScheme.primary
                                         }
 
@@ -320,7 +320,7 @@ fun WorkoutCalendarContent(
             }
         }
 
-        if (state.unallocatedVariationSets.any { it.sets.any { it.date.toLocalDate() == state.date } }) {
+        if (state.unallocatedSets.any { it.second.any { it.date.toLocalDate() == state.date } }) {
             item {
                 Text(
                     text = "Other Gains!!, Tap to add to Workout",
@@ -329,7 +329,7 @@ fun WorkoutCalendarContent(
             }
         }
 
-        state.unallocatedVariationSets.filter { it.sets.any { it.date.toLocalDate() == state.date } }
+        state.unallocatedSets.filter { it.second.any { it.date.toLocalDate() == state.date } }
             .forEach {
                 item {
                     VariationSet(
@@ -338,14 +338,14 @@ fun WorkoutCalendarContent(
                                 interactor(
                                     WorkoutCalendarEvent.AddToWorkout(
                                         date = state.date,
-                                        variation = it.variation
+                                        variation = it.first
                                     )
                                 )
                             },
                             role = Role.Button
                         ),
-                        variation = it.variation,
-                        sets = it.sets,
+                        variation = it.first,
+                        sets = it.second,
                     )
                 }
             }
