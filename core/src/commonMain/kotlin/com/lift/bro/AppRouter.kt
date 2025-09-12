@@ -9,7 +9,7 @@ import com.lift.bro.presentation.onboarding.OnboardingScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
-import com.lift.bro.presentation.workout.CreateWorkoutScreen
+import com.lift.bro.presentation.workout.WorkoutScreen
 import com.lift.bro.presentation.workout.rememberWorkoutInteractor
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
@@ -30,10 +30,10 @@ fun AppRouter(route: Destination) {
 
         Destination.Home -> HomeScreen()
 
-        is Destination.EditWorkout -> CreateWorkoutScreen(
+        is Destination.EditWorkout -> WorkoutScreen(
             interactor = rememberWorkoutInteractor(route.localDate),
         )
-        is Destination.CreateWorkout -> CreateWorkoutScreen(rememberWorkoutInteractor(route.localDate))
+        is Destination.CreateWorkout -> WorkoutScreen(rememberWorkoutInteractor(route.localDate))
 
         is Destination.EditLift -> EditLiftScreen(
             liftId = route.liftId,

@@ -1,8 +1,6 @@
 package com.lift.bro.presentation.workout
 
 import androidx.compose.runtime.Composable
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.benasher44.uuid.*
 import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.data.repository.WorkoutRepository
@@ -22,8 +20,6 @@ import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.*
 import comliftbrodb.LiftingLogQueries
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -78,7 +74,7 @@ sealed class CreateWorkoutEvent {
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteExercise(val exercise: ExerciseItem): CreateWorkoutEvent()
 
-    data class DeleteVariation(val variation: VariationItem):
+    data class DeleteVariation(val exerciseVariation: VariationItem):
         CreateWorkoutEvent()
 }
 
@@ -96,10 +92,10 @@ fun rememberWorkoutInteractor(
                 CreateWorkoutState(
                     id = workout.id,
                     date = workout.date,
-                    exercises = workout.exercises.map {
+                    exercises = workout.exercises.map { exercise ->
                         ExerciseItem(
-                            id = it.id,
-                            variations = it.variationSets.map { variationSets ->
+                            id = exercise.id,
+                            variations = exercise.variationSets.map { variationSets ->
                                 if (variationSets.sets.isEmpty()) {
                                     VariationItem.WithoutSets(
                                         id = variationSets.id,
@@ -150,7 +146,7 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
         is DeleteExercise -> state.copy(exercises = state.exercises - event.exercise)
         is AddSuperSet -> state
         is DeleteVariation -> state.copy(exercises = state.exercises.map {
-            it.copy(variations = it.variations - event.variation)
+            it.copy(variations = it.variations - event.exerciseVariation)
         })
     }
 }
@@ -202,22 +198,15 @@ fun workoutSideEffects(
         }
 
         is AddExercise -> {
-            workoutRepository.save(
-                state.toWorkout()
+            val newId = uuid4().toString()
+            dependencies.database.exerciseDataSource.addExercise(
+                workoutId = state.id,
+                exerciseId = newId
             )
 
-            dependencies.database.exerciseDataSource.save(
-                Exercise(
-                    id = uuid4().toString(),
-                    workoutId = state.id,
-                    variationSets = listOf(
-                        VariationSets(
-                            id = uuid4().toString(),
-                            variation = event.variation,
-                            sets = emptyList()
-                        )
-                    )
-                )
+            dependencies.database.exerciseDataSource.addVariation(
+                exerciseId = newId,
+                variationId = event.variation.id
             )
         }
 
@@ -226,21 +215,18 @@ fun workoutSideEffects(
         }
 
         is DeleteVariation -> {
-            dependencies.database.exerciseDataSource.removeVariaiton(
-                event.variation.id
-            )
-
-            when (event.variation) {
+            when (event.exerciseVariation) {
                 is VariationItem.WithSets -> {
-                    event.variation.sets.forEach {
+                    event.exerciseVariation.sets.forEach {
                         dependencies.setRepository.delete(it)
                     }
                 }
                 is VariationItem.WithoutSets -> {}
             }
 
-
-
+            dependencies.database.exerciseDataSource.removeVariaiton(
+                exerciseVariationId = event.exerciseVariation.id
+            )
 
             state.exercises.forEach { exercise ->
                 if (exercise.variations.isEmpty()) {

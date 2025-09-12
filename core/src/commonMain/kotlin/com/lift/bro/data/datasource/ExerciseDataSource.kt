@@ -45,6 +45,7 @@ interface ExerciseDataSource {
     suspend fun removeVariation(exerciseId: String, variationId: VariationId)
 
     suspend fun removeVariaiton(exerciseVariationId: String)
+    suspend fun addExercise(workoutId: String, exerciseId: String = uuid4().toString())
 }
 
 class LBExerciseDataSource(
@@ -69,27 +70,35 @@ class LBExerciseDataSource(
                                 exercise.variation_id,
                                 Instant.DISTANT_FUTURE
                             ).flowToOneOrNull(),
-                            setQueries.getEMaxForVariation(exercise.variation_id, Instant.DISTANT_FUTURE)
-                                .flowToOneOrNull(),
-                            setQueries.getMaxRepsForVariation(exercise.variation_id, Instant.DISTANT_FUTURE)
-                                .flowToOneOrNull(),
+                            setQueries.getEMaxForVariation(
+                                exercise.variation_id,
+                                Instant.DISTANT_FUTURE
+                            ).flowToOneOrNull(),
+                            setQueries.getMaxRepsForVariation(
+                                exercise.variation_id,
+                                Instant.DISTANT_FUTURE
+                            ).flowToOneOrNull(),
                         ) { orm, volume, reps ->
-                            exercise.exercise_variation_id to Variation(
-                                id = exercise.variation_id,
-                                name = exercise.variation_name,
-                                notes = exercise.variation_notes,
-                                favourite = exercise.variation_is_favourite == 1L,
-                                lift = Lift(
-                                    id = exercise.lift_id,
-                                    color = exercise.lift_color?.toULong(),
-                                    name = exercise.lift_name,
-                                ),
-                                oneRepMax = orm?.toDomain()
-                                    ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
-                                eMax = volume?.toDomain()
-                                    ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
-                                maxReps = reps?.toDomain()
-                                    ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                            Triple(
+                                exercise.exercise_variation_id,
+                                exercise.exercise_id,
+                                Variation(
+                                    id = exercise.variation_id,
+                                    name = exercise.variation_name,
+                                    notes = exercise.variation_notes,
+                                    favourite = exercise.variation_is_favourite == 1L,
+                                    lift = Lift(
+                                        id = exercise.lift_id,
+                                        color = exercise.lift_color?.toULong(),
+                                        name = exercise.lift_name,
+                                    ),
+                                    oneRepMax = orm?.toDomain()
+                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                    eMax = volume?.toDomain()
+                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                    maxReps = reps?.toDomain()
+                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                )
                             )
                         }
                     }.toTypedArray()
@@ -103,7 +112,8 @@ class LBExerciseDataSource(
                 id = exercise.id,
                 workoutId = workoutId,
                 variationSets = exerciseVariations
-                    .map { (id, variation) ->
+                    .filter { it.second == exercise.id }
+                    .map { (id, eId, variation) ->
                         VariationSets(
                             id = id,
                             variation = variation,
@@ -153,6 +163,18 @@ class LBExerciseDataSource(
         withContext(dispatcher) {
             exerciseQueries.delete(id)
             exerciseQueries.deleteVariationsByExercise(id)
+        }
+    }
+
+    override suspend fun addExercise(
+        workoutId: String,
+        exerciseId: String,
+    ) {
+        withContext(dispatcher) {
+            exerciseQueries.save(
+                id = exerciseId,
+                workoutId = workoutId,
+            )
         }
     }
 

@@ -3,22 +3,18 @@
 package com.lift.bro.presentation.workout
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -31,7 +27,6 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -79,7 +74,6 @@ import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -94,12 +88,12 @@ import kotlin.math.absoluteValue
 
 
 @Composable
-fun CreateWorkoutScreen(
+fun WorkoutScreen(
     interactor: Interactor<CreateWorkoutState, CreateWorkoutEvent>,
 ) {
     val state by interactor.state.collectAsState()
 
-    CreateWorkoutScreenInternal(
+    WorkoutScreenInternal(
         state = state,
         eventHandler = { interactor(it) }
     )
@@ -112,7 +106,7 @@ sealed class VariationDialogReason {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateWorkoutScreenInternal(
+fun WorkoutScreenInternal(
     state: CreateWorkoutState,
     eventHandler: (CreateWorkoutEvent) -> Unit = {},
 ) {
