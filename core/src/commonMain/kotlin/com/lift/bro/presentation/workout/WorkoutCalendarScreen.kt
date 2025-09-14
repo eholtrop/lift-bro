@@ -49,13 +49,15 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.datasource.flowToList
+import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.workoutRepository
+import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.maxText
@@ -67,24 +69,23 @@ import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Calendar
 import com.lift.bro.ui.CalendarMonth
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.currentMonth
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.rememberCalendarState
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
-import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toColor
-import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
-import kotlinx.datetime.plus
+import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_confirm_cta
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
@@ -137,7 +138,6 @@ fun WorkoutCalendarContent(
             }
         }
 
-
         if (subscriptionType == SubscriptionType.None) {
             item {
                 AdBanner(modifier = Modifier.defaultMinSize(minHeight = 52.dp).fillMaxWidth())
@@ -153,163 +153,265 @@ fun WorkoutCalendarContent(
         }
 
         item {
-            Column {
-                var showNotesDialog by remember { mutableStateOf(false) }
-                var todaysNotes by remember { mutableStateOf(state.log?.notes ?: "") }
-
-                if (showNotesDialog) {
-                    AlertDialog(
-                        onDismissRequest = { showNotesDialog = false },
-                        confirmButton = {
-                            Button(
-                                onClick = {
-                                    GlobalScope.launch {
-                                        dependencies.database.logDataSource.save(
-                                            id = state.log?.id ?: uuid4().toString(),
-                                            date = state.log?.date ?: state.selectedDate,
-                                            notes = todaysNotes,
-                                            vibe_check = state.log?.vibe?.toLong()
-                                        )
-                                        showNotesDialog = false
-                                    }
-                                }
-                            ) {
-                                Text(stringResource(Res.string.edit_daily_notes_dialog_confirm_cta))
-                            }
-                        },
-                        dismissButton = {
-                            Button(
-                                onClick = {
-                                    showNotesDialog = false
-                                }
-                            ) {
-                                Text(stringResource(Res.string.edit_daily_notes_dialog_dismiss_cta))
-                            }
-                        },
-                        title = {
-                            Text(
-                                stringResource(
-                                    Res.string.edit_daily_notes_dialog_title,
-                                    state.selectedDate.toString("EEEE, MMM d - yyyy")
-                                )
-                            )
-                        },
-                        text = {
-                            val focusRequester = FocusRequester()
-                            TextField(
-                                modifier = Modifier.defaultMinSize(minHeight = 128.dp)
-                                    .focusRequester(focusRequester),
-                                value = todaysNotes,
-                                onValueChange = { todaysNotes = it },
-                                placeholder = {
-                                    Text(stringResource(Res.string.edit_daily_notes_dialog_placeholder))
-                                }
-                            )
-
-                            LaunchedEffect(Unit) {
-                                focusRequester.requestFocus()
-                            }
-                        }
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.animateContentSize().fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start,
-                ) {
-                    Text(
-                        text = state.selectedDate.toString("EEEE, MMM d - yyyy"),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    IconButton(
-                        onClick = {
-                            showNotesDialog = true
-                        }
-                    ) {
-                        Icon(
-                            modifier = Modifier.size(12.dp),
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta)
-                        )
-                    }
-                }
-
-                state.log?.notes?.let {
-                    Text(
-                        text = it,
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-            }
+            DailyWorkoutDetails(
+                date = state.selectedDate
+            )
         }
-
-        item {
-            when (val workout = state.selectedWorkout) {
-                null -> {
-                    Button(
-                        onClick = {
-                            Log.d(message = "add workout clicked")
-                            interactor(WorkoutCalendarEvent.AddWorkoutClicked(state.selectedDate))
-                        },
-                        colors = ButtonDefaults.elevatedButtonColors()
-                    ) {
-                        Text("Start a Workout!")
-                    }
-                }
-
-                else -> {
-                    CalendarWorkoutCard(
-                        modifier = Modifier.animateItem(),
-                        workout = workout,
-                        workoutClicked = { workout, date ->
-                            interactor(WorkoutCalendarEvent.WorkoutClicked(workout))
-                        },
-                    )
-                }
-            }
-        }
-
-        if (state.potentialExercises.isNotEmpty()) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start,
-                ) {
-                    Text(
-                        text = "Other Gains!! Tap to add to Workout",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
-        }
-
-        state.potentialExercises
-            .forEach {
-                item {
-                    VariationSet(
-                        modifier = Modifier.clickable(
-                            onClick = {
-                                interactor(
-                                    WorkoutCalendarEvent.AddToWorkout(
-                                        date = state.selectedDate,
-                                        variation = it.first
-                                    )
-                                )
-                            },
-                            role = Role.Button
-                        ),
-                        variation = it.first,
-                        sets = it.second,
-                    )
-                }
-            }
 
 
         item {
             Spacer(modifier = Modifier.height(72.dp))
         }
     }
+}
+
+@Serializable
+data class DailyWorkoutDetailsState(
+    val selectedDate: LocalDate,
+    val log: LiftingLog?,
+    val selectedWorkout: Workout?,
+    val potentialExercises: List<Pair<Variation, List<LBSet>>>,
+)
+
+sealed interface DailyWorkoutDetailsEvent {
+    data object CreateWorkoutClicked: DailyWorkoutDetailsEvent
+    data class OpenWorkoutClicked(val exerciseId: ExerciseId?, val variationId: VariationId?):
+        DailyWorkoutDetailsEvent
+
+    data class AddToWorkout(val variationId: VariationId): DailyWorkoutDetailsEvent
+}
+
+@Composable
+fun rememberDailyWorkoutDetailsInteractor(
+    date: LocalDate,
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+): Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> =
+    rememberInteractor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent>(
+        initialState = DailyWorkoutDetailsState(
+            selectedDate = date,
+            log = null,
+            selectedWorkout = null,
+            potentialExercises = emptyList(),
+        ),
+        sideEffects = listOf { state, event ->
+            when (event) {
+                is DailyWorkoutDetailsEvent.CreateWorkoutClicked -> navCoordinator.present(
+                    Destination.CreateWorkout(state.selectedDate)
+                )
+
+                is DailyWorkoutDetailsEvent.OpenWorkoutClicked -> navCoordinator.present(
+                    Destination.EditWorkout(
+                        state.selectedDate
+                    )
+                )
+
+                is DailyWorkoutDetailsEvent.AddToWorkout -> {
+                    val exerciseId = uuid4().toString()
+                    val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
+
+                    with(dependencies.workoutRepository) {
+                        addVariation(exerciseId, event.variationId)
+                        Log.d(message = "adding exercise to workout")
+                        addExercise(workoutId, exerciseId)
+                        Log.d(message = "adding variation to exercise")
+
+                        state.selectedWorkout?.id?.let {
+                            Log.d(message = "saving workout")
+                            save(
+                                Workout(
+                                    workoutId,
+                                    date = state.selectedDate
+                                )
+                            )
+                        }
+                    }
+                }
+
+            }
+        }
+    ) { state ->
+        combine(
+            dependencies.workoutRepository.get(date),
+            dependencies.database.logDataSource.getByDate(date).flowToOneOrNull(),
+            FetchVariationSetsForRange(
+                date,
+                date
+            )
+        ) { workout, log, sets ->
+            DailyWorkoutDetailsState(
+                selectedDate = date,
+                selectedWorkout = workout,
+                log = log?.let {
+                    LiftingLog(
+                        id = it.id,
+                        date = date,
+                        notes = it.notes ?: "",
+                        vibe = it.vibe_check?.toInt() ?: 0
+                    )
+                },
+                potentialExercises = sets
+                    .filter { vs -> workout?.exercises?.none { it.variationSets.any { it.variation.id == vs.first.id } } == true }
+            )
+        }
+    }
+
+@Composable
+fun DailyWorkoutDetails(
+    date: LocalDate,
+    interactor: Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> = rememberDailyWorkoutDetailsInteractor(
+        date
+    ),
+) {
+    val state by interactor.state.collectAsState()
+
+    Column {
+        var showNotesDialog by remember { mutableStateOf(false) }
+        var todaysNotes by remember { mutableStateOf(state.log?.notes ?: "") }
+
+        if (showNotesDialog) {
+            AlertDialog(
+                onDismissRequest = { showNotesDialog = false },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            GlobalScope.launch {
+                                dependencies.database.logDataSource.save(
+                                    id = state.log?.id ?: uuid4().toString(),
+                                    date = state.log?.date ?: state.selectedDate,
+                                    notes = todaysNotes,
+                                    vibe_check = state.log?.vibe?.toLong()
+                                )
+                                showNotesDialog = false
+                            }
+                        }
+                    ) {
+                        Text(stringResource(Res.string.edit_daily_notes_dialog_confirm_cta))
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = {
+                            showNotesDialog = false
+                        }
+                    ) {
+                        Text(stringResource(Res.string.edit_daily_notes_dialog_dismiss_cta))
+                    }
+                },
+                title = {
+                    Text(
+                        stringResource(
+                            Res.string.edit_daily_notes_dialog_title,
+                            state.selectedDate.toString("EEEE, MMM d - yyyy")
+                        )
+                    )
+                },
+                text = {
+                    val focusRequester = FocusRequester()
+                    TextField(
+                        modifier = Modifier.defaultMinSize(minHeight = 128.dp)
+                            .focusRequester(focusRequester),
+                        value = todaysNotes,
+                        onValueChange = { todaysNotes = it },
+                        placeholder = {
+                            Text(stringResource(Res.string.edit_daily_notes_dialog_placeholder))
+                        }
+                    )
+
+                    LaunchedEffect(Unit) {
+                        focusRequester.requestFocus()
+                    }
+                }
+            )
+        }
+
+        Row(
+            modifier = Modifier.animateContentSize().fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Text(
+                text = state.selectedDate.toString("EEEE, MMM d - yyyy"),
+                style = MaterialTheme.typography.titleLarge
+            )
+            IconButton(
+                onClick = {
+                    showNotesDialog = true
+                }
+            ) {
+                Icon(
+                    modifier = Modifier.size(12.dp),
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta)
+                )
+            }
+        }
+
+        state.log?.notes?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+    }
+
+    val workout = state.selectedWorkout
+    when {
+        workout == null || (workout.exercises.isEmpty() && workout.warmup.isNullOrBlank() && workout.finisher.isNullOrBlank()) -> {
+            Button(
+                onClick = {
+                    Log.d(message = "add workout clicked")
+                    interactor(DailyWorkoutDetailsEvent.CreateWorkoutClicked)
+                },
+                colors = ButtonDefaults.elevatedButtonColors()
+            ) {
+                Text("Start a Workout!")
+            }
+        }
+
+        else -> {
+            CalendarWorkoutCard(
+                workout = workout,
+                workoutClicked = { workout, date ->
+                    interactor(DailyWorkoutDetailsEvent.OpenWorkoutClicked(null, null))
+                },
+            )
+        }
+    }
+
+    if (state.potentialExercises.isNotEmpty()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+        ) {
+            Text(
+                text = "Other Gains! Tap to add to Workout",
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+
+    }
+
+    state.potentialExercises
+        .forEach {
+            VariationSet(
+                modifier = Modifier.clickable(
+                    onClick = {
+                        interactor(
+                            DailyWorkoutDetailsEvent.AddToWorkout(
+                                variationId = it.first.id,
+                            )
+                        )
+                    },
+                    role = Role.Button
+                ),
+                variation = it.first,
+                sets = it.second,
+            )
+
+        }
+
+
+    Spacer(modifier = Modifier.height(72.dp))
 }
 
 @Composable
@@ -462,49 +564,7 @@ fun WorkoutCalendarMonth(
     selectedDate: LocalDate? = null,
     dateSelected: (LocalDate) -> Unit,
 ) {
-    val monthState by rememberInteractor<WorkoutMonthState, WorkoutCalendarEvent>(
-        initialState = WorkoutMonthState(year, month),
-        source = {
-            combine(
-                dependencies.workoutRepository.getAll(
-                    LocalDate(year, month, 1),
-                    LocalDate(year, month, 1)
-                        .plus(1, DateTimeUnit.MONTH),
-                ).mapEach { workout ->
-                    workout.date to workout.exercises.map { it.variationSets.map { it.variation.lift?.color } }
-                        .flatten()
-                },
-                FetchVariationSetsForRange(
-                    year,
-                    month,
-                ).map {
-                    it.groupBy { it.second.firstOrNull()?.date?.toLocalDate() }
-                        .mapValues { entry ->
-                            entry.value.map { it.first.lift?.color }
-                        }
-                        .toList()
-
-                },
-                dependencies.database.logDataSource.getAll().flowToList(),
-            ) { workouts, unallocatedSets, logs ->
-                WorkoutMonthState(
-                    year = year,
-                    month = month,
-                    colors = (workouts + unallocatedSets).toMap(),
-                    logs = logs.map {
-                        LiftingLog(
-                            id = it.id,
-                            date = it.date,
-                            notes = it.notes ?: "",
-                            vibe = it.vibe_check?.toInt()
-                        )
-                    }.associateBy { it.date },
-                )
-            }
-
-        }
-    ).state.collectAsState()
-
+    val monthState by rememberWorkoutMonthInteractor(year, month).state.collectAsState()
 
     CalendarMonth(
         year = year,
@@ -540,6 +600,7 @@ fun WorkoutCalendarMonth(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
                     ) {
+
                         monthState.colors[date]?.forEachIndexed { index, color ->
                             Box(
                                 modifier = Modifier.background(

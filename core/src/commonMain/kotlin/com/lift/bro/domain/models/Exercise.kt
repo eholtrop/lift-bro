@@ -2,6 +2,8 @@ package com.lift.bro.domain.models
 
 import kotlinx.serialization.Serializable
 
+typealias ExerciseId = String
+
 @Serializable
 data class VariationSets(
     val id: String,

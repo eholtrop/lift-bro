@@ -17,5 +17,16 @@ interface IWorkoutRepository {
 
     suspend fun save(workout: Workout)
 
+    suspend fun addVariation(
+        exerciseId: String,
+        variationId: String,
+    )
+
+    suspend fun removeVariation(exerciseVariationId: String)
+
+    suspend fun deleteExercise(exerciseId: String)
+
+    suspend fun addExercise(workoutId: String, exerciseId: String)
+
     suspend fun delete(workout: Workout)
 }

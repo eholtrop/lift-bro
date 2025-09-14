@@ -12,7 +12,6 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
@@ -33,16 +32,6 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 
-@Serializable
-data class WorkoutMonthState(
-    val year: Int,
-    val month: Month,
-    val colors: Map<LocalDate?, List<ULong?>> = emptyMap(),
-    val logs: Map<LocalDate, LiftingLog> = emptyMap(),
-)
-
-@Serializable
-sealed class WorkoutMonthEvent
 
 @Serializable
 data class WorkoutCalendarState(
@@ -149,7 +138,7 @@ fun workoutCalendarSourceData(
 ) = combine(
     workoutRepository.get(selectedDate),
     logQueries.getByDate(selectedDate).flowToOneOrNull(),
-    FetchVariationSetsForRange(
+    FetchVariationSetsForMonth(
         selectedDate.year,
         selectedDate.month
     )
@@ -165,11 +154,12 @@ fun workoutCalendarSourceData(
                 vibe = it.vibe_check?.toInt() ?: 0
             )
         },
-        potentialExercises = unallocatedSets,
+        potentialExercises = unallocatedSets
+            .filter { it.second.any { it.date.toLocalDate() == selectedDate } },
     )
 }
 
-fun FetchVariationSetsForRange(
+fun FetchVariationSetsForMonth(
     year: Int,
     month: Month,
 ): Flow<List<Pair<Variation, List<LBSet>>>> = combine(
@@ -177,6 +167,20 @@ fun FetchVariationSetsForRange(
         LocalDate(year = year, month = month, 1),
         LocalDate(year = year, month = month, 1)
             .plus(1, DateTimeUnit.MONTH),
+    ),
+    dependencies.variationRepository.listenAll().map { it.associateBy { it.id } },
+) { sets, variations ->
+    sets.groupBy { variations[it.variationId]!! }
+        .toList()
+}
+
+fun FetchVariationSetsForRange(
+    startDate: LocalDate,
+    endDate: LocalDate
+): Flow<List<Pair<Variation, List<LBSet>>>> = combine(
+    dependencies.database.setDataSource.listenAll(
+        startDate = startDate,
+        endDate = endDate
     ),
     dependencies.variationRepository.listenAll().map { it.associateBy { it.id } },
 ) { sets, variations ->
@@ -206,7 +210,7 @@ val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> 
                 combine(
                     dependencies.workoutRepository.get(selectedDate),
                     dependencies.database.logDataSource.getByDate(selectedDate).flowToOneOrNull(),
-                    FetchVariationSetsForRange(
+                    FetchVariationSetsForMonth(
                         selectedDate.year,
                         selectedDate.month
                     )
@@ -223,8 +227,7 @@ val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> 
                             )
                         },
                         potentialExercises = unallocatedSets
-                            .filter { it.second.any { it.date.toLocalDate() == selectedDate } }
-                            .filter { ev -> workout?.exercises?.none { exercise -> exercise.variationSets.any { it.variation.id == ev.first.id } } == true },
+                            .filter { it.second.any { it.date.toLocalDate() == selectedDate } },
                     )
                 }.first()
             }

@@ -74,11 +74,11 @@ class Interactor<State, Event>(
 @Composable
 inline fun <reified State, Event> rememberInteractor(
     initialState: State,
-    crossinline source: (State) -> Flow<State> = { flow { emit(initialState) } },
     reducers: List<Reducer<State, Event>> = emptyList(),
     sideEffects: List<SideEffect<State, Event>> = emptyList(),
     viewModelScope: CoroutineScope = rememberCoroutineScope(),
     noinline stateResolver: (initial: State, source: State) -> State = { _, s -> s },
+    crossinline source: (State) -> Flow<State> = { flow { emit(initialState) } },
 ): Interactor<State, Event> {
     return rememberSaveable(
         initialState,

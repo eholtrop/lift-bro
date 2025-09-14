@@ -21,6 +21,7 @@ import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.*
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -67,7 +68,9 @@ sealed interface VariationItem {
 sealed class CreateWorkoutEvent {
     data class UpdateNotes(val notes: String): CreateWorkoutEvent()
     data class AddExercise(val variation: Variation): CreateWorkoutEvent()
-    data class AddSuperSet(val exercise: ExerciseItem, val variation: Variation): CreateWorkoutEvent()
+    data class AddSuperSet(val exercise: ExerciseItem, val variation: Variation):
+        CreateWorkoutEvent()
+
     data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
     data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
     data class DuplicateSet(val set: LBSet): CreateWorkoutEvent()
@@ -86,7 +89,14 @@ fun rememberWorkoutInteractor(
         initialState = CreateWorkoutState(date = date),
         source = { state ->
             combine(
-                WorkoutRepository(dependencies.database).get(date),
+                WorkoutRepository(dependencies.database).get(date)
+                    .map {
+                        it ?: Workout(
+                            id = uuid4().toString(),
+                            date = date,
+                            exercises = emptyList(),
+                        )
+                    },
                 dependencies.database.logDataSource.getByDate(date).flowToOneOrNull(),
             ) { workout, log ->
                 CreateWorkoutState(
@@ -199,19 +209,15 @@ fun workoutSideEffects(
 
         is AddExercise -> {
             val newId = uuid4().toString()
-            dependencies.database.exerciseDataSource.addExercise(
-                workoutId = state.id,
-                exerciseId = newId
-            )
-
-            dependencies.database.exerciseDataSource.addVariation(
-                exerciseId = newId,
-                variationId = event.variation.id
-            )
+            with (dependencies.workoutRepository) {
+                addVariation(newId, event.variation.id)
+                addExercise(state.id, newId)
+                save(state.toWorkout())
+            }
         }
 
         is DeleteExercise -> {
-            dependencies.database.exerciseDataSource.delete(event.exercise.id)
+            dependencies.workoutRepository.deleteExercise(event.exercise.id)
         }
 
         is DeleteVariation -> {
@@ -221,16 +227,17 @@ fun workoutSideEffects(
                         dependencies.setRepository.delete(it)
                     }
                 }
+
                 is VariationItem.WithoutSets -> {}
             }
 
-            dependencies.database.exerciseDataSource.removeVariaiton(
+            dependencies.workoutRepository.removeVariation(
                 exerciseVariationId = event.exerciseVariation.id
             )
 
             state.exercises.forEach { exercise ->
                 if (exercise.variations.isEmpty()) {
-                    dependencies.database.exerciseDataSource.delete(exercise.id)
+                    dependencies.workoutRepository.deleteExercise(exercise.id)
                 }
             }
         }
@@ -265,6 +272,7 @@ private fun CreateWorkoutState.toWorkout(): Workout = Workout(
                             sets = variation.sets
                         )
                     }
+
                     is VariationItem.WithoutSets -> {
                         VariationSets(
                             id = variation.id,
