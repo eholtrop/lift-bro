@@ -29,7 +29,9 @@ class WorkoutRepository(
     override fun getAll(
         startDate: LocalDate,
         endDate: LocalDate,
-    ): Flow<List<Workout>> = database.workoutDataSource.getAll(startDate = startDate, endDate = endDate).flowToList(dispatcher)
+    ): Flow<List<Workout>> =
+        database.workoutDataSource.getAll(startDate = startDate, endDate = endDate)
+            .flowToList(dispatcher)
             .flatMapLatest { workouts ->
                 if (workouts.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
 
@@ -55,16 +57,15 @@ class WorkoutRepository(
     override fun get(date: LocalDate): Flow<Workout?> =
         database.workoutDataSource.getByDate(date = date).flowToOneOrNull()
             .flatMapLatest { workout ->
-                when (workout) {
-                    null -> flow<Workout?> { emit(null) }
-                    else -> database.exerciseDataSource.listen(workout.id).map { exercises ->
-                            Workout(
-                                id = workout.id,
-                                date = workout.date,
-                                warmup = workout.warmup,
-                                exercises = exercises.toList(),
-                                finisher = workout.finisher,
-                            )
+                database.exerciseDataSource.listen(workout?.id ?: "").map { exercises ->
+                    workout?.let {
+                        Workout(
+                            id = workout.id,
+                            date = workout.date,
+                            warmup = workout.warmup,
+                            exercises = exercises.toList(),
+                            finisher = workout.finisher,
+                        )
                     }
                 }
             }
@@ -82,7 +83,7 @@ class WorkoutRepository(
 
     override suspend fun addVariation(
         exerciseId: ExerciseId,
-        variationId: VariationId
+        variationId: VariationId,
     ) {
         database.exerciseDataSource.addVariation(
             exerciseId = exerciseId,

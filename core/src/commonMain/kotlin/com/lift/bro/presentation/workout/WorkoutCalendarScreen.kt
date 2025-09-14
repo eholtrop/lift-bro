@@ -206,7 +206,6 @@ fun rememberDailyWorkoutDetailsInteractor(
                 is DailyWorkoutDetailsEvent.AddToWorkout -> {
                     val exerciseId = uuid4().toString()
                     val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
-
                     with(dependencies.workoutRepository) {
                         addVariation(exerciseId, event.variationId)
                         addExercise(workoutId, exerciseId)
@@ -226,12 +225,12 @@ fun rememberDailyWorkoutDetailsInteractor(
         }
     ) { state ->
         combine(
-            dependencies.workoutRepository.get(date).debug("flow 1"),
-            dependencies.database.logDataSource.getByDate(date).flowToOneOrNull().debug("flow 2"),
+            dependencies.workoutRepository.get(date),
+            dependencies.database.logDataSource.getByDate(date).flowToOneOrNull(),
             FetchVariationSetsForRange(
                 date,
                 date
-            ).debug("flow 3")
+            )
         ) { workout, log, sets ->
             DailyWorkoutDetailsState(
                 selectedDate = date,
