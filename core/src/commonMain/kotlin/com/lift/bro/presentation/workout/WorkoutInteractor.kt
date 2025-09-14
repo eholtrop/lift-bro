@@ -97,7 +97,7 @@ fun rememberWorkoutInteractor(
         initialState = CreateWorkoutState(date = date),
         source = { state ->
             combine(
-                WorkoutRepository(dependencies.database).get(date)
+                dependencies.workoutRepository.get(date)
                     .map {
                         it ?: Workout(
                             id = uuid4().toString(),

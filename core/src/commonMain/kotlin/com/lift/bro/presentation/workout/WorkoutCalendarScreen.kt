@@ -75,6 +75,7 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.rememberCalendarState
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
+import com.lift.bro.utils.debug
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
@@ -225,12 +226,12 @@ fun rememberDailyWorkoutDetailsInteractor(
         }
     ) { state ->
         combine(
-            dependencies.workoutRepository.get(date),
-            dependencies.database.logDataSource.getByDate(date).flowToOneOrNull(),
+            dependencies.workoutRepository.get(date).debug("flow 1"),
+            dependencies.database.logDataSource.getByDate(date).flowToOneOrNull().debug("flow 2"),
             FetchVariationSetsForRange(
                 date,
                 date
-            )
+            ).debug("flow 3")
         ) { workout, log, sets ->
             DailyWorkoutDetailsState(
                 selectedDate = date,
@@ -244,7 +245,7 @@ fun rememberDailyWorkoutDetailsInteractor(
                     )
                 },
                 potentialExercises = sets
-                    .filter { vs -> workout?.exercises?.none { it.variationSets.any { it.variation.id == vs.first.id } } == true }
+                    .filter { vs -> (workout?.exercises ?: emptyList()).none { it.variationSets.any { it.variation.id == vs.first.id } } }
             )
         }
     }

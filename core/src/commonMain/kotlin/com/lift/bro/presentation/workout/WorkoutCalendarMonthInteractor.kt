@@ -66,8 +66,8 @@ fun rememberWorkoutMonthInteractor(
                         ?: emptyList()).map { it.variationSets.map { it.variation.lift?.color } }
                         .flatten() +
                             unallocatedSets
-                                .filter { it.second.all { it.date.toLocalDate() == date } }
-                                .filter { workoutMap[date]?.exercises?.none { it.variationSets.any { it.variation.id == it.variation.id } } == true }
+                                .filter { it.second.any { it.date.toLocalDate() == date } }
+                                .filter { vs -> (workoutMap[date]?.exercises ?: emptyList()).none { it.variationSets.any { it.variation.id == vs.first.id } } }
                                 .map { it.first.lift?.color }
                 },
                 logs = logs.map {

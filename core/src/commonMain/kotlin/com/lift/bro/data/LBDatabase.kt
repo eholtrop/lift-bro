@@ -137,7 +137,13 @@ class SetDataSource(
                 listOf(oneRepMax, eMax).maxOfOrNull { calculateMax(it?.reps, it?.weight) }
 
             localMax?.let {
-                set.toDomain().copy(mer = calculateMer(setWeight = set.weight, setReps = set.reps, maxWeight = localMax))
+                set.toDomain().copy(
+                    mer = calculateMer(
+                        setWeight = set.weight,
+                        setReps = set.reps,
+                        maxWeight = localMax
+                    )
+                )
             } ?: run {
                 set.toDomain()
             }
@@ -151,7 +157,12 @@ class SetDataSource(
             .fold(emptyList()) { list, subList -> list + subList }
 
     fun listenAllForLift(liftId: String, limit: Long = Long.MAX_VALUE): Flow<List<LBSet>> =
-        setQueries.getAllForLift(liftId = liftId, startDate = Instant.DISTANT_PAST, endDate = Instant.DISTANT_FUTURE, limit = limit)
+        setQueries.getAllForLift(
+            liftId = liftId,
+            startDate = Instant.DISTANT_PAST,
+            endDate = Instant.DISTANT_FUTURE,
+            limit = limit
+        )
             .flowToList()
             .mapEach {
                 LBSet(
@@ -204,7 +215,8 @@ class SetDataSource(
 
     fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())
 
-    fun LocalDate.atEndOfDayIn(): Instant = this.atTime(23, 59, 59, 999).toInstant(TimeZone.currentSystemDefault())
+    fun LocalDate.atEndOfDayIn(): Instant =
+        this.atTime(23, 59, 59, 999).toInstant(TimeZone.currentSystemDefault())
 
     fun listenAll(
         startDate: LocalDate? = null,
@@ -217,17 +229,24 @@ class SetDataSource(
             startDate = startDate?.atStartOfDayIn(),
             endDate = endDate?.atEndOfDayIn(),
             variationId = variationId,
-        ).asFlow().mapToList(dispatcher).map { sets ->
-            sets
-                .map { set ->
-                    val orm = setQueries.getOneRepMaxForVariation(variationId = set.variationId, before = set.date).executeAsOneOrNull()?.weight
-                    val emax = setQueries.getEMaxForVariation(variationId = set.variationId, before = set.date).executeAsOneOrNull()?.weight
+        ).flowToList()
+            .map { sets ->
+                sets
+                    .map { set ->
+                        val orm = setQueries.getOneRepMaxForVariation(
+                            variationId = set.variationId,
+                            before = set.date
+                        ).executeAsOneOrNull()?.weight
+                        val emax = setQueries.getEMaxForVariation(
+                            variationId = set.variationId,
+                            before = set.date
+                        ).executeAsOneOrNull()?.weight
 
-                    set.toDomain().copy(
-                        mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0
-                    )
-                }
-        }
+                        set.toDomain().copy(
+                            mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0
+                        )
+                    }
+            }
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 
@@ -282,7 +301,7 @@ fun LiftingSet.toDomain() = LBSet(
     notes = this.notes,
     rpe = this.rpe?.toInt(),
 
-)
+    )
 
 fun GetAllByVariation.toDomain() = LBSet(
     id = this.id,
