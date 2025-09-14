@@ -14,7 +14,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -32,8 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.home.darkIconRes
-import com.lift.bro.presentation.home.iconRes
-import com.lift.bro.presentation.home.lightIconRes
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import org.jetbrains.compose.resources.painterResource

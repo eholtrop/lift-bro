@@ -1,7 +1,7 @@
 package com.lift.bro.presentation.workout
 
 import androidx.compose.runtime.Composable
-import com.benasher44.uuid.*
+import com.benasher44.uuid.uuid4
 import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
@@ -18,7 +18,15 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
-import com.lift.bro.presentation.workout.CreateWorkoutEvent.*
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.AddExercise
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.AddSuperSet
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.DeleteExercise
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.DeleteSet
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.DeleteVariation
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.DuplicateSet
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateFinisher
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateNotes
+import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateWarmup
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map

@@ -29,7 +29,6 @@ import lift_bro.core.generated.resources.ic_lift_bro_leo_dark
 import lift_bro.core.generated.resources.ic_lift_bro_leo_light
 import lift_bro.core.generated.resources.ic_lift_bro_lisa
 import lift_bro.core.generated.resources.ic_lift_bro_lisa_concerned
-import lift_bro.core.generated.resources.ic_lift_bro_lisa_concerned_light
 import lift_bro.core.generated.resources.ic_lift_bro_lisa_dark
 import lift_bro.core.generated.resources.ic_lift_bro_lisa_light
 import org.jetbrains.compose.resources.DrawableResource

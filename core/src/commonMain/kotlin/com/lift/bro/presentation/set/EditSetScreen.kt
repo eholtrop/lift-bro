@@ -39,7 +39,6 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.dialog.VariationSearchDialog
-import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.formattedWeight
 import kotlinx.datetime.Instant

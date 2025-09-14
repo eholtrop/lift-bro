@@ -9,10 +9,8 @@ import com.lift.bro.presentation.LocalTMaxSettings
 import com.lift.bro.presentation.lift.uom
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.estimateMax
-import com.lift.bro.utils.formattedReps
 import com.lift.bro.utils.oneRepMax
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlin.math.roundToInt
 
 typealias VariationId = String

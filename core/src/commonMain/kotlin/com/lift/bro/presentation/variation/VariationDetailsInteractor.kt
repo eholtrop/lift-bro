@@ -8,8 +8,8 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.rememberInteractor
-import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.Destination.*
+import com.lift.bro.ui.navigation.Destination.CreateSet
+import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.utils.toString

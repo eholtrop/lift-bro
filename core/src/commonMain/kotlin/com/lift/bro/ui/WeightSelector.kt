@@ -12,23 +12,12 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.keyframesWithSpline
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -38,18 +27,9 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.models.fullName
-import com.lift.bro.ui.theme.spacing
-import com.lift.bro.domain.models.UOM
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.weight_selector_chin_subtitle
-import lift_bro.core.generated.resources.weight_selector_chin_title
-import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
 
 val FloatVectorConverter: TwoWayConverter<Float, AnimationVector1D> = TwoWayConverter(

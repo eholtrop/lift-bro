@@ -3,18 +3,12 @@ package com.lift.bro.domain.usecases
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.estimateMax
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.scan
-import kotlin.text.compareTo
 
 object GetCelebrationTypeUseCase {
     operator fun invoke(

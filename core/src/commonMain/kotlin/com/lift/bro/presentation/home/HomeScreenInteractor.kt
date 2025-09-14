@@ -5,12 +5,13 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.rememberInteractor
-import com.lift.bro.ui.navigation.Destination.*
+import com.lift.bro.ui.navigation.Destination.CreateSet
+import com.lift.bro.ui.navigation.Destination.EditLift
+import com.lift.bro.ui.navigation.Destination.Settings
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
-import kotlin.collections.listOf
 
 enum class Tab {
     Dashboard,

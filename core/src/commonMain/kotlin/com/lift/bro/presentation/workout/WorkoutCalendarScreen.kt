@@ -75,13 +75,10 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.rememberCalendarState
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
@@ -211,12 +208,9 @@ fun rememberDailyWorkoutDetailsInteractor(
 
                     with(dependencies.workoutRepository) {
                         addVariation(exerciseId, event.variationId)
-                        Log.d(message = "adding exercise to workout")
                         addExercise(workoutId, exerciseId)
-                        Log.d(message = "adding variation to exercise")
 
                         state.selectedWorkout?.id?.let {
-                            Log.d(message = "saving workout")
                             save(
                                 Workout(
                                     workoutId,
@@ -359,7 +353,6 @@ fun DailyWorkoutDetails(
         workout == null || (workout.exercises.isEmpty() && workout.warmup.isNullOrBlank() && workout.finisher.isNullOrBlank()) -> {
             Button(
                 onClick = {
-                    Log.d(message = "add workout clicked")
                     interactor(DailyWorkoutDetailsEvent.CreateWorkoutClicked)
                 },
                 colors = ButtonDefaults.elevatedButtonColors()

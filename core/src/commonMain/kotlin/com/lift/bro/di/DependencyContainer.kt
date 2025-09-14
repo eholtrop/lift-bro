@@ -2,7 +2,6 @@ package com.lift.bro.di
 
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.repository.WorkoutRepository
-import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.ISetDatasource
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository

@@ -8,10 +8,6 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
-import com.lift.bro.utils.combine
-import com.lift.bro.utils.debug
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.ExerciseQueries
 import comliftbrodb.SetQueries
@@ -23,11 +19,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEmpty
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
-import kotlin.collections.emptyList
 
 interface ExerciseDataSource {
 

@@ -47,7 +47,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import com.benasher44.uuid.uuid4
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.LiftingScaffold
@@ -55,8 +54,6 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res

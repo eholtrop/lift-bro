@@ -4,7 +4,6 @@ import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
-import com.lift.bro.utils.debug
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock

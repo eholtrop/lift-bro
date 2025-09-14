@@ -5,7 +5,6 @@ import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.datasource.UserPreferencesDataSource
 import com.lift.bro.data.repository.SettingsRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
-import platform.Foundation.NSDictionary
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 

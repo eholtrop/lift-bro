@@ -11,8 +11,6 @@ import com.lift.bro.data.repository.SettingsRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
-import io.github.vinceglb.filekit.manualFileKitCoreInitialization
-
 
 
 actual class DependencyContainer {

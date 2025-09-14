@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
 import com.lift.bro.presentation.LocalAdBannerProvider
-import platform.UIKit.UITextView
 import platform.UIKit.UIView
 
 @Composable

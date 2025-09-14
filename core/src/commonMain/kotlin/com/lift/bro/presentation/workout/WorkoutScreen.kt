@@ -78,9 +78,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.workout_screen_title
-import lift_bro.core.generated.resources.workout_notes_placeholder
 import lift_bro.core.generated.resources.workout_add_exercise_cta
+import lift_bro.core.generated.resources.workout_notes_placeholder
+import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_set_options_copy_cta
 import lift_bro.core.generated.resources.workout_set_options_delete_cta
 import org.jetbrains.compose.resources.stringResource

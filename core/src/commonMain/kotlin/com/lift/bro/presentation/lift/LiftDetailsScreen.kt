@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -36,7 +35,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -64,8 +62,6 @@ import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.toString
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.LiftingScaffold
@@ -73,14 +69,14 @@ import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.estimateMax
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.oneRepMax
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
+import com.lift.bro.utils.toString
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.color_picker_dialog_blue
@@ -108,8 +104,6 @@ fun LiftDetailsScreen(
     interactor: Interactor<LiftDetailsState, LiftDetailsEvent>
 ) {
     val state by interactor.state.collectAsState()
-
-    Log.d(message = state.toString())
 
     var showColorPicker by remember { mutableStateOf(false) }
 

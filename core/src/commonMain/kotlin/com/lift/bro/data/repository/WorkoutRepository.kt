@@ -1,10 +1,7 @@
 package com.lift.bro.data.repository
 
-import androidx.compose.animation.core.infiniteRepeatable
 import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.di.dependencies
@@ -12,7 +9,6 @@ import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
-import com.lift.bro.utils.debug
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO

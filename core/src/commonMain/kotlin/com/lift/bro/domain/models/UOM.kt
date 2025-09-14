@@ -1,8 +1,5 @@
 package com.lift.bro.domain.models
 
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
-
 enum class UOM(val value: String) {
     KG("kg"),
     POUNDS("lbs")

@@ -23,12 +23,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
-import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.DropDownButton
-import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch

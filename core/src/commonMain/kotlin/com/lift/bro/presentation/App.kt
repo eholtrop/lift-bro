@@ -60,9 +60,6 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.debug
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.configure
@@ -172,7 +169,6 @@ fun App(
             Purchases.logLevel = LogLevel.DEBUG
         }
 
-        Log.d("", isAndroid.toString())
         Purchases.configure(if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS)
         Purchases.sharedInstance.getCustomerInfo(
             onError = { error ->
@@ -275,7 +271,6 @@ fun App(
 
                 LaunchedEffect(Unit) {
                     GetCelebrationTypeUseCase()
-                        .debug("DEBUGEH")
                         .collectLatest {
                             celebration = it
                         }

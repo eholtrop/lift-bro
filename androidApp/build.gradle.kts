@@ -1,5 +1,5 @@
-import com.lift.bro.versionName
 import com.lift.bro.versionCode
+import com.lift.bro.versionName
 
 plugins {
     alias(libs.plugins.compose)

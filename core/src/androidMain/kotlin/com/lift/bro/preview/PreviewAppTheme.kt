@@ -12,7 +12,6 @@ import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.JetpackComposeCoordinator
 import com.lift.bro.ui.navigation.LocalNavCoordinator
-import kotlin.random.Random
 
 @Composable
 internal fun PreviewAppTheme(

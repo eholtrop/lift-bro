@@ -6,11 +6,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.window.ComposeUIViewController
-import com.lift.bro.config.BuildConfig
 import com.lift.bro.presentation.App
 import com.lift.bro.presentation.LocalAdBannerProvider
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.initialize
 import platform.UIKit.UIView
 
 fun MainViewController(

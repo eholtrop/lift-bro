@@ -1,14 +1,12 @@
 package com.lift.bro.preview
 
 import androidx.compose.runtime.Composable
-import com.example.compose.AppTheme
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import kotlin.math.max
 
 @Preview
 @Composable

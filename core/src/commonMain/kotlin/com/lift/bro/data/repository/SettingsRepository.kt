@@ -10,8 +10,6 @@ import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.presentation.onboarding.LiftBro
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlinx.coroutines.GlobalScope
@@ -55,7 +53,6 @@ class SettingsRepository(
         return subscribeToKey(
             key = "consent",
             block = { key ->
-                Log.d("", key)
                 dataSource.getSerializable<Consent>(key, null)
             }
         )

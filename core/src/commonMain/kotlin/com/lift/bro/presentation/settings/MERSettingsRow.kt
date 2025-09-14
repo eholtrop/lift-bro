@@ -20,22 +20,11 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.settings_emax_enable_text
-import lift_bro.core.generated.resources.settings_emax_formula
-import lift_bro.core.generated.resources.settings_emax_info_dialog_h1
-import lift_bro.core.generated.resources.settings_emax_info_dialog_h2
-import lift_bro.core.generated.resources.settings_emax_info_dialog_p1
-import lift_bro.core.generated.resources.settings_emax_info_dialog_p1_ex
-import lift_bro.core.generated.resources.settings_emax_info_dialog_p2
-import lift_bro.core.generated.resources.settings_emax_info_dialog_p2_ex
-import lift_bro.core.generated.resources.settings_emax_info_dialog_title
-import lift_bro.core.generated.resources.settings_emax_title
 import lift_bro.core.generated.resources.settings_mer_enable_text
 import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_paragraph_one
 import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_paragraph_two
 import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_title
 import lift_bro.core.generated.resources.settings_mer_title
-import lift_bro.core.generated.resources.settings_tmax_enable_text
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

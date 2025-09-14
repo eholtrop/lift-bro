@@ -1,7 +1,5 @@
 package com.lift.bro.ui
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,19 +17,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.semantics.Role
 import com.lift.bro.di.dependencies
 import com.lift.bro.ui.dialog.InfoDialog
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.today
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toInstant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import lift_bro.core.generated.resources.Res

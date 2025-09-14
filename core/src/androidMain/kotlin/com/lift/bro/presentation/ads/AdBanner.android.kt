@@ -13,7 +13,6 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.admanager.AdManagerAdRequest
 import com.google.android.gms.ads.admanager.AdManagerAdView
-import com.lift.bro.core.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
 
 @Composable

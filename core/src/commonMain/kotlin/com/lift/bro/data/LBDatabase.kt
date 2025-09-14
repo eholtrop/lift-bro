@@ -20,7 +20,6 @@ import com.lift.bro.domain.repositories.ISetDatasource
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
-import comliftbrodb.GetAll
 import comliftbrodb.GetAllByVariation
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
@@ -33,10 +32,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.merge
-import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant

@@ -1,10 +1,7 @@
 package com.lift.bro.domain.models
 
-import com.lift.bro.utils.toLocalDate
-import com.lift.bro.utils.toString
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -15,8 +15,6 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.Serializable
 
@@ -59,7 +57,6 @@ sealed class EditLiftEvent {
 }
 
 val EditLiftReducer = Reducer<EditLiftState, EditLiftEvent> { state, event ->
-    Log.d(message = event.toString())
     when (event) {
         is EditLiftEvent.NameChanged -> state.copy(name = event.name)
         is EditLiftEvent.VariationNameChanged -> state.copy(
@@ -89,7 +86,6 @@ fun editLiftSideEffects(
     variationRepository: IVariationRepository = dependencies.database.variantDataSource,
     setRepository: SetDataSource = dependencies.database.setDataSource,
 ): SideEffect<EditLiftState, EditLiftEvent> = { state: EditLiftState, event: EditLiftEvent ->
-    Log.d(message = event.toString())
     when (event) {
         EditLiftEvent.DeleteLift -> {
             if (state.id != null) {
@@ -157,7 +153,6 @@ fun rememberEditLiftInteractor(
             dependencies.database.liftDataSource.get(thisId),
             dependencies.database.variantDataSource.listenAll(thisId),
         ) { lift, variations ->
-            Log.d(message = lift.toString())
             EditLiftState(
                 id = lift?.id,
                 name = lift?.name ?: "",
