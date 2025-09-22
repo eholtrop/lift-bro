@@ -68,6 +68,8 @@ import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.initialize
 import io.sentry.kotlin.multiplatform.Sentry
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -125,6 +127,9 @@ val LocalPaywallVisibility = compositionLocalOf<MutableState<Boolean>> {
 val LocalCalculatorVisibility = compositionLocalOf<MutableState<Boolean>> {
     error("No Calculator Visibility Provided")
 }
+
+@OptIn(DelicateCoroutinesApi::class)
+val ApplicationScope = GlobalScope
 
 @Composable
 fun CheckAppConsent() {

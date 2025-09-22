@@ -14,6 +14,7 @@ import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.ISetDatasource
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
@@ -28,8 +29,12 @@ import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateFinisher
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateNotes
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateWarmup
 import comliftbrodb.LiftingLogQueries
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -216,11 +221,13 @@ fun workoutSideEffects(
         }
 
         is AddExercise -> {
-            val newId = uuid4().toString()
-            with (dependencies.workoutRepository) {
-                addVariation(newId, event.variation.id)
-                addExercise(state.id, newId)
-                save(state.toWorkout())
+            ApplicationScope.launch {
+                val newId = uuid4().toString()
+                with (dependencies.workoutRepository) {
+                    addVariation(newId, event.variation.id)
+                    addExercise(state.id, newId)
+                    save(state.toWorkout())
+                }
             }
         }
 
