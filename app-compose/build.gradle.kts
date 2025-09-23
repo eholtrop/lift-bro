@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.sqldelight)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.buildkonfig)
     alias(libs.plugins.sentry)
 //    alias(libs.plugins.google.services)
 //    alias(libs.plugins.firebase.crashlytics)
@@ -62,6 +61,11 @@ kotlin {
 
 
         commonMain.dependencies {
+            implementation(project(":presentation"))
+            implementation(project(":domain"))
+            implementation(project(":data"))
+
+
             // Compose Multiplatform
             implementation(compose.ui)
             implementation(compose.runtime)
@@ -118,18 +122,6 @@ kotlin {
     }
 }
 
-buildkonfig {
-
-    defaultConfigs {
-        packageName = "com.lift.bro.core.buildconfig"
-        buildConfigField(FieldSpec.Type.STRING, "ADMOB_APP_ID", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as? String ?: System.getenv("LIFT_BRO_ADMOB_APP_ID"))
-        buildConfigField(FieldSpec.Type.STRING, "ADMOB_AD_UNIT_ID", project.findProperty("LIFT_BRO_AD_UNIT_ID") as? String ?: System.getenv("LIFT_BRO_AD_UNIT_ID"))
-        buildConfigField(FieldSpec.Type.STRING, "SENTRY_DSN", project.findProperty("LIFT_BRO_SENTRY_DSN") as? String ?: System.getenv("LIFT_BRO_SENTRY_DSN"))
-        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY_AND", project.findProperty("revenueCatApiKeyAndroid") as? String ?: System.getenv("REVENUE_CAT_API_KEY"))
-        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY_IOS", project.findProperty("revenueCatApiKeyiOS") as? String ?: System.getenv("REVENUE_CAT_API_KEY"))
-        buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", project.versionName())
-    }
-}
 
 android {
     namespace = "com.lift.bro.core"

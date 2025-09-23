@@ -15,8 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.BackupService
+import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.presentation.LocalLiftBro
-import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res

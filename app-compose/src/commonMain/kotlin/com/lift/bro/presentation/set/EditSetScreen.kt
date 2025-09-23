@@ -30,7 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.fullName
+import com.lift.bro.utils.fullName
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.DateSelector
 import com.lift.bro.ui.Fade

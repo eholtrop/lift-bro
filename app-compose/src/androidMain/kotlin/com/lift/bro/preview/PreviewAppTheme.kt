@@ -5,10 +5,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 import com.example.compose.AppTheme
 import com.lift.bro.di.DependencyContainer
+import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.JetpackComposeCoordinator
 import com.lift.bro.ui.navigation.LocalNavCoordinator

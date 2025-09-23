@@ -1,10 +1,10 @@
 package com.lift.bro
 
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
-import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.today

@@ -3,7 +3,6 @@ package com.lift.bro.presentation.workout
 import androidx.compose.runtime.Composable
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.datasource.flowToOneOrNull
-import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.workoutRepository
@@ -12,7 +11,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.repositories.ISetDatasource
+import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.Interactor
@@ -29,12 +28,9 @@ import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateFinisher
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateNotes
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateWarmup
 import comliftbrodb.LiftingLogQueries
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -176,7 +172,7 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
 
 fun workoutSideEffects(
     workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
-    setRepository: ISetDatasource = dependencies.setRepository,
+    setRepository: ISetRepository = dependencies.setRepository,
     liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource,
 ): SideEffect<CreateWorkoutState, CreateWorkoutEvent> = { state, event ->
     when (event) {

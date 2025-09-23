@@ -16,7 +16,7 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
-import com.lift.bro.domain.repositories.ISetDatasource
+import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
@@ -110,7 +110,7 @@ class SetDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-): ISetDatasource {
+): ISetRepository {
 
     private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {
         if (maxWeight <= 0.0) return 0

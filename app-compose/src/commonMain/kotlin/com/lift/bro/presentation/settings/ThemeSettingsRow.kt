@@ -5,8 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import com.example.compose.ThemeMode
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.ui.RadioField
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.settings_theme_option_one

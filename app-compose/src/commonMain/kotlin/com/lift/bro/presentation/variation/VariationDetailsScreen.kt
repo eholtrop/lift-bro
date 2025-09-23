@@ -51,8 +51,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.domain.models.fullName
-import com.lift.bro.domain.models.maxText
+import com.lift.bro.utils.fullName
+import com.lift.bro.utils.maxText
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties

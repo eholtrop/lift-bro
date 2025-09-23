@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.ui.navigation.LocalSnackbarHostState
 import lift_bro.core.generated.resources.DMSans_Black
 import lift_bro.core.generated.resources.DMSans_Bold
@@ -98,9 +99,6 @@ private val DarkColors = darkColorScheme(
     scrim = md_theme_dark_scrim,
 )
 
-enum class ThemeMode {
-    Light, Dark, System
-}
 
 
 @Composable

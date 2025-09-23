@@ -59,8 +59,8 @@ import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.models.fullName
-import com.lift.bro.domain.models.maxText
+import com.lift.bro.utils.fullName
+import com.lift.bro.utils.maxText
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.ads.AdBanner
@@ -75,7 +75,6 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.rememberCalendarState
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
-import com.lift.bro.utils.debug
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
@@ -435,20 +434,21 @@ fun CalendarWorkoutCard(
                     CompositionLocalProvider(
                         LocalTextStyle provides MaterialTheme.typography.labelMedium,
                     ) {
-                        if (workout.warmup != null) {
+                        workout.warmup?.let {
                             Column(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(text = "Warmup:")
-                                Text(text = workout.warmup)
+                                Text(text = it)
                             }
+
                         }
-                        if (workout.finisher != null) {
+                        workout.finisher?.let {
                             Column(
                                 modifier = Modifier.weight(1f)
                             ) {
                                 Text(text = "Finisher:")
-                                Text(text = workout.finisher)
+                                Text(text = it)
                             }
                         }
                     }
@@ -512,6 +512,7 @@ fun VariationSet(
                 }
             }
             Text(
+
                 variation.maxText(),
                 style = MaterialTheme.typography.bodyMedium
             )

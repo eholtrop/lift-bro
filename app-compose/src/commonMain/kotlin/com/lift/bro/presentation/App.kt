@@ -40,7 +40,10 @@ import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
+import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.CelebrationType
+import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.UOM
@@ -48,7 +51,6 @@ import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
 import com.lift.bro.presentation.home.iconRes
-import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.LiftCardYValue
@@ -133,7 +135,8 @@ val ApplicationScope = GlobalScope
 
 @Composable
 fun CheckAppConsent() {
-    val hasConsent by HasDeviceConsentedUseCase().invoke().collectAsState(null)
+    val hasConsent by HasDeviceConsentedUseCase(dependencies.settingsRepository).invoke()
+        .collectAsState(null)
 
     if (hasConsent == false) {
         var accepted by remember { mutableStateOf(false) }
@@ -149,7 +152,7 @@ fun CheckAppConsent() {
             confirmButton = {
                 Button(
                     onClick = {
-                        ConsentDeviceUseCase().invoke()
+                        ConsentDeviceUseCase(dependencies.settingsRepository).invoke()
                     },
                     enabled = accepted
                 ) {
@@ -163,7 +166,7 @@ fun CheckAppConsent() {
 @Composable
 fun App(
     modifier: Modifier = Modifier,
-    navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding)
+    navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding),
 ) {
 
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
@@ -275,7 +278,10 @@ fun App(
                 var celebration by remember { mutableStateOf<CelebrationType>(CelebrationType.None) }
 
                 LaunchedEffect(Unit) {
-                    GetCelebrationTypeUseCase()
+                    GetCelebrationTypeUseCase(
+                        setRepository = dependencies.setRepository,
+                        variationRepository = dependencies.variationRepository
+                    )
                         .collectLatest {
                             celebration = it
                         }

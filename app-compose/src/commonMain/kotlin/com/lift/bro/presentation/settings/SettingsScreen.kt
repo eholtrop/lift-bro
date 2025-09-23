@@ -39,11 +39,11 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
-import com.lift.bro.presentation.onboarding.LiftBro
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.Space

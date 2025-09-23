@@ -45,6 +45,7 @@ import com.example.compose.AppTheme
 import com.example.compose.amber
 import com.lift.bro.BackupService
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.ConsentCheckBoxField
@@ -81,9 +82,6 @@ internal fun Modifier.onboardingBackground(): Modifier = this
         )
     )
 
-enum class LiftBro {
-    Leo, Lisa
-}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -110,7 +108,7 @@ fun OnboardingScreen(
                 }
 
                 1 -> OnboardingConsentScreen {
-                    ConsentDeviceUseCase().invoke()
+                    ConsentDeviceUseCase(dependencies.settingsRepository).invoke()
                     onboardingState += 1
                 }
                 2 -> OnboardingSkipScreen(

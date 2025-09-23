@@ -1,15 +1,15 @@
 package com.lift.bro.data.repository
 
 import com.benasher44.uuid.uuid4
-import com.example.compose.ThemeMode
 import com.lift.bro.data.datasource.UserPreferencesDataSource
+import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
+import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
-import com.lift.bro.presentation.onboarding.LiftBro
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlinx.coroutines.GlobalScope

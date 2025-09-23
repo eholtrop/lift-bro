@@ -40,3 +40,17 @@ data class Tempo(
     val hold: Long = 1,
     val up: Long = 1,
 )
+
+
+val LBSet.formattedMax: String get() = "${this.reps} x ${this.formattedTempo}"
+
+val LBSet.formattedTempo: String get() = "${this.tempo.down}/${this.tempo.hold}/${this.tempo.up}"
+
+val LBSet.formattedReps: String get() = "${this.formattedTempo} x ${this.reps}"
+
+val LBSet.oneRepMax: Double? get() = if (this.reps == 1L) weight else null
+
+val LBSet.estimateMax: Double? get() = estimatedMax(
+    this.reps.toInt(),
+    this.weight
+)

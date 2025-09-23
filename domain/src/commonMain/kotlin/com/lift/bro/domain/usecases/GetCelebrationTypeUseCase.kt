@@ -1,20 +1,20 @@
 package com.lift.bro.domain.usecases
 
-import com.lift.bro.data.SetDataSource
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.estimateMax
+import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.utils.estimateMax
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.scan
 
 object GetCelebrationTypeUseCase {
+
     operator fun invoke(
-        setDataSource: SetDataSource = dependencies.database.setDataSource,
-        variationDataSource: IVariationRepository = dependencies.database.variantDataSource,
-    ): Flow<CelebrationType> = variationDataSource.listenAll()
+        setRepository: ISetRepository,
+        variationRepository: IVariationRepository,
+    ): Flow<CelebrationType> = variationRepository.listenAll()
         .scan(
             Pair(
                 emptyList<Variation>(),

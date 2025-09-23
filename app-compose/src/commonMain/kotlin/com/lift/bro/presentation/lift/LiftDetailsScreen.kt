@@ -55,8 +55,9 @@ import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.models.fullName
-import com.lift.bro.domain.models.maxText
+import com.lift.bro.domain.models.estimateMax
+import com.lift.bro.utils.fullName
+import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
@@ -72,8 +73,7 @@ import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
-import com.lift.bro.utils.estimateMax
-import com.lift.bro.utils.oneRepMax
+import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
