@@ -26,6 +26,10 @@ sqldelight {
     }
 }
 
+compose.resources {
+    packageOfResClass = "lift_bro.core.generated.resources"
+}
+
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
 

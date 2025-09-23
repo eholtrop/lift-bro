@@ -16,5 +16,8 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Lift_Bro"
-include(":androidApp")
-include(":core")
+include(":app-android")
+include(":app-compose")
+include(":domain")
+include(":data")
+include(":presentation")
