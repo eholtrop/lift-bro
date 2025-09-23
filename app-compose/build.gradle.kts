@@ -63,7 +63,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":presentation"))
             implementation(project(":domain"))
-            implementation(project(":data"))
+            implementation(project(":data:sqldelight"))
 
 
             // Compose Multiplatform

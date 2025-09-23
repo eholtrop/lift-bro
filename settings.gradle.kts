@@ -19,5 +19,5 @@ rootProject.name = "Lift_Bro"
 include(":app-android")
 include(":app-compose")
 include(":domain")
-include(":data")
+include(":data:sqldelight")
 include(":presentation")
