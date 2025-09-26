@@ -16,6 +16,16 @@ import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import com.lift.bro.domain.backup.FileDataSource
+import com.lift.bro.domain.backup.BackupUseCase
+import com.lift.bro.domain.backup.RestoreUseCase
+import com.lift.bro.domain.backup.BackupTarget
+import com.lift.bro.domain.backup.RestoreSource
+import com.lift.bro.data.file.JsonFileDataSource
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.div
+import okio.Path.Companion.toPath
+import kotlinx.datetime.Clock
 
 expect class DependencyContainer {
     val database: LBDatabase
@@ -61,6 +71,28 @@ val DependencyContainer.exerciseRepository: IExerciseRepository get() =
             setQueries = database.setQueries,
             variationQueries = database.variationQueries,
         )
+    )
+
+// Backup/Restore DI
+val DependencyContainer.fileDataSource: FileDataSource get() =
+    JsonFileDataSource(rootDir = (FileKit.filesDir / "backups").toString().toPath())
+
+val DependencyContainer.backupUseCase: BackupUseCase get() =
+    BackupUseCase(
+        clockEpochMs = { Clock.System.now().toEpochMilliseconds() },
+        liftRepository = liftRepository,
+        variationRepository = variationRepository,
+        workoutRepository = workoutRepository,
+        fileDataSource = fileDataSource,
+    )
+
+val DependencyContainer.restoreUseCase: RestoreUseCase get() =
+    RestoreUseCase(
+        exerciseRepository = exerciseRepository,
+        liftRepository = liftRepository,
+        variationRepository = variationRepository,
+        workoutRepository = workoutRepository,
+        fileDataSource = fileDataSource,
     )
 
 expect val dependencies: DependencyContainer

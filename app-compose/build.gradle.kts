@@ -55,6 +55,7 @@ kotlin {
             implementation(project(":domain"))
             implementation(project(":data:sqldelight"))
             implementation(project(":data:core"))
+            implementation(project(":data:file"))
 
 
             // Compose Multiplatform
