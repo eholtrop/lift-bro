@@ -12,7 +12,7 @@ revenuecat = "2.0.0+15.0.0"
 # compose
 compose = "1.8.0"
 compose-multiplatform = "1.8.1"
-compose-compiiler = "2.1.0"
+compose-compiler = "2.1.0"
 
 google-services = "4.4.3"
 detekt = "1.23.8"
@@ -57,7 +57,7 @@ uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "compose-compiiler" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "compose-compiler" }
 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -68,7 +68,7 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-gradle" }
-detekt = { id = "io.gitlab.artubosch.dektekt", version.ref = "detekt" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.17.1" }
 

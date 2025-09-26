@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.buildkonfig)
+
+    id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
 
 buildkonfig {
@@ -43,6 +45,6 @@ kotlin {
 
 android {
     namespace = "com.lift.bro.domain"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig { minSdk = 24 }
 }

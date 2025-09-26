@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
+
+    id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
 
 kotlin {
@@ -37,8 +39,8 @@ kotlin {
 
 android {
     namespace = "com.lift.bro.presentation"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig { minSdk = 24 }
     buildFeatures { compose = true }
-    composeOptions { kotlinCompilerExtensionVersion = libs.versions.compose.compiiler.get() }
+    composeOptions { kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get() }
 }

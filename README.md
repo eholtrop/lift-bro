@@ -78,8 +78,22 @@ To run the ui tests you can then run it will target whatever currently running/c
 maestro test .maestro
 ```
 
-you can also target a specific test instead of you would like
+you can also target a specific flow:
 ```bash
-maestro test .maestry/your_test.yaml
+maestro test .maestro/onboarding_tests.yaml
 ```
+```
+
+# Local configuration
+
+Environment variables used at build/runtime (via BuildKonfig or Gradle properties):
+- LIFT_BRO_ADMOB_APP_ID
+- LIFT_BRO_AD_UNIT_ID
+- LIFT_BRO_SENTRY_DSN
+- REVENUE_CAT_API_KEY
+
+Android release signing (for release builds):
+- STORE_PASSWORD
+- KEY_ALIAS
+- KEY_PASSWORD
 
