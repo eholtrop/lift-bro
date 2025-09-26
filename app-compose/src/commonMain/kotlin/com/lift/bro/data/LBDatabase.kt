@@ -7,8 +7,10 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
+import com.lift.bro.data.core.datasource.VariationDataSource
 import com.lift.bro.data.datasource.LBExerciseDataSource
 import com.lift.bro.data.datasource.flowToList
+import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.db.LiftBroDB
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
@@ -17,7 +19,6 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.GetAllByVariation
@@ -62,11 +63,8 @@ class LBDatabase(
         database.variationQueries
     )
 
-    val variantDataSource: IVariationRepository = VariationRepository(
-        liftQueries = database.liftQueries,
-        variationQueries = database.variationQueries,
-        setQueries = database.setQueries
-    )
+    // Deprecated: repositories are constructed in DI using data:core + data:sqldelight implementations
+    // Keeping LBDatabase focused on providing access to queries/datasources and helpers.
 
     val setDataSource: SetDataSource = SetDataSource(
         setQueries = database.setQueries,
@@ -77,8 +75,19 @@ class LBDatabase(
 
     val workoutDataSource = database.workoutQueries
 
+    // Expose queries for DI wiring of SQLDelight-backed datasources
+    val liftQueries get() = database.liftQueries
+    val setQueries get() = database.setQueries
+    val variationQueries get() = database.variationQueries
+
     val exerciseDataSource = LBExerciseDataSource(
         exerciseQueries = database.exerciseQueries,
+        setQueries = database.setQueries,
+        variationQueries = database.variationQueries
+    )
+
+    val variantDataSource: VariationDataSource = SqlDelightVariationDataSource(
+        liftQueries = database.liftQueries,
         setQueries = database.setQueries,
         variationQueries = database.variationQueries
     )

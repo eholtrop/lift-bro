@@ -54,6 +54,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":domain"))
             implementation(project(":data:sqldelight"))
+            implementation(project(":data:core"))
 
 
             // Compose Multiplatform

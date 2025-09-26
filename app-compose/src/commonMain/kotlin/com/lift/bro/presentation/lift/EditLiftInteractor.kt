@@ -8,6 +8,7 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.IVariationRepository
@@ -83,7 +84,7 @@ val EditLiftReducer = Reducer<EditLiftState, EditLiftEvent> { state, event ->
 
 fun editLiftSideEffects(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
-    variationRepository: IVariationRepository = dependencies.database.variantDataSource,
+    variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: SetDataSource = dependencies.database.setDataSource,
 ): SideEffect<EditLiftState, EditLiftEvent> = { state: EditLiftState, event: EditLiftEvent ->
     when (event) {
@@ -127,7 +128,7 @@ fun rememberCreateLiftInteractor(): Interactor<EditLiftState, EditLiftEvent> {
         initialState = EditLiftState(id = id),
         source = {combine(
             dependencies.database.liftDataSource.get(id),
-            dependencies.database.variantDataSource.listenAll(id),
+            dependencies.variationRepository.listenAll(id),
         ) { lift, variations ->
             EditLiftState(
                 id = id,
@@ -151,7 +152,7 @@ fun rememberEditLiftInteractor(
         initialState = EditLiftState(id = thisId),
         source = {combine(
             dependencies.database.liftDataSource.get(thisId),
-            dependencies.database.variantDataSource.listenAll(thisId),
+            dependencies.variationRepository.listenAll(thisId),
         ) { lift, variations ->
             EditLiftState(
                 id = lift?.id,

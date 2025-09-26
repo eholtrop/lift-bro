@@ -65,7 +65,7 @@ sealed interface EditSetEvent {
 fun rememberEditSetInteractor(
     setId: String,
     setRepository: ISetRepository = dependencies.setRepository,
-    variationRepository: IVariationRepository = dependencies.database.variantDataSource,
+    variationRepository: IVariationRepository = dependencies.variationRepository,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> = rememberInteractor(
     initialState = null,
