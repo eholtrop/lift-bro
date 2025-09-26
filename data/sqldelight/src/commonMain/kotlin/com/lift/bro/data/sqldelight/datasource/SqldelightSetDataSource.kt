@@ -2,7 +2,7 @@ package com.lift.bro.data.sqldelight.datasource
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.lift.bro.data.core.datasource.SetLocalDataSource
+import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import comliftbrodb.SetQueries
@@ -12,10 +12,10 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class SetLocalDataSourceImpl(
+class SqldelightSetDataSource(
     private val setQueries: SetQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : SetLocalDataSource {
+) : SetDataSource {
 
     override fun listen(id: String): Flow<LBSet?> =
         setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }

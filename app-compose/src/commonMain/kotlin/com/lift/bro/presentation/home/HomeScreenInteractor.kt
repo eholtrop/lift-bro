@@ -2,6 +2,7 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.liftRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.rememberInteractor
@@ -48,7 +49,7 @@ fun rememberHomeInteractor(
 //    initialTab,
     initialState = HomeState.Loading,
     source = { state ->
-        dependencies.database.liftDataSource.listenAll().map {
+        dependencies.liftRepository.listenAll().map {
             if (it.isEmpty()) HomeState.Empty else HomeState.Content(
                 (state as? HomeState.Content)?.selectedTab ?: initialTab
             )

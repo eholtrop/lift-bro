@@ -1,6 +1,7 @@
 package com.lift.bro
 
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.liftRepository
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
@@ -67,7 +68,7 @@ object BackupService {
     }
 
     suspend fun restore(backup: Backup): Boolean {
-        dependencies.database.liftDataSource.deleteAll()
+        dependencies.liftRepository.deleteAll()
         dependencies.database.variantDataSource.deleteAll()
         dependencies.database.setDataSource.deleteAll()
         dependencies.database.logDataSource.deleteAll()
@@ -82,7 +83,7 @@ object BackupService {
         }
 
         backup.lifts?.forEach {
-            dependencies.database.liftDataSource.save(it)
+            dependencies.liftRepository.save(it)
         }
 
         backup.liftingLogs?.forEach {
@@ -101,7 +102,7 @@ object BackupService {
 
 fun createBackup(): Backup {
     return Backup(
-        lifts = dependencies.database.liftDataSource.getAll(),
+        lifts = dependencies.liftRepository.getAll(),
         variations = dependencies.database.variantDataSource.getAll(),
         sets = dependencies.database.setDataSource.getAll(),
         liftingLogs = dependencies.database.logDataSource.getAll().executeAsList().map {
