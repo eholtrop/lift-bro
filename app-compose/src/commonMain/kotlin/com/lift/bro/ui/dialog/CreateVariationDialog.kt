@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.liftRepository
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.DropDownButton
 import com.lift.bro.ui.Space
@@ -73,7 +74,7 @@ fun VariationDialog(
                         onValueChange = { currentVariation = currentVariation.copy(name = it) },
                         trailingIcon = {
 
-                            val lifts by dependencies.database.liftDataSource.listenAll()
+                            val lifts by dependencies.liftRepository.listenAll()
                                 .collectAsState(emptyList())
 
                             DropDownButton(

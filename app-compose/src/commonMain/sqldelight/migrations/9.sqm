@@ -1,1 +1,0 @@
-ALTER TABLE Variation ADD COLUMN body_weight INTEGER DEFAULT NULL;

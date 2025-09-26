@@ -3,6 +3,9 @@ package com.lift.bro.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,7 +16,8 @@ import kotlinx.coroutines.launch
 fun rememberNavCoordinator(initialDestination: Destination): NavCoordinator = remember { JetpackComposeCoordinator(initialState = initialDestination) }
 
 class JetpackComposeCoordinator(
-    initialState: Destination
+    initialState: Destination,
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 ) : NavCoordinator {
 
     private val mutableStateList = MutableStateFlow(mutableStateListOf(initialState))
@@ -37,7 +41,7 @@ class JetpackComposeCoordinator(
         } else {
             currentState.value = pages.get(pages.indexOf(currentPage) - 1)
             if (!keepStack) {
-                GlobalScope.launch {
+scope.launch {
                     mutableStateList.value.removeAt(mutableStateList.value.lastIndex)
                 }
             }

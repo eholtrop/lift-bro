@@ -1,1 +1,0 @@
-ALTER TABLE LiftingSet ADD COLUMN notes TEXT DEFAULT "";

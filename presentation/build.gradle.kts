@@ -14,6 +14,13 @@ kotlin {
     iosArm64()
     iosSimulatorArm64()
 
+    // Re-export app-compose so consumers can depend on :presentation only
+    sourceSets {
+        commonMain.dependencies {
+            api(project(":app-compose"))
+        }
+    }
+
     sourceSets {
         commonMain.dependencies {
             implementation(project(":domain"))
