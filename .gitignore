@@ -27,7 +27,7 @@ app-android/google-services.json
 
 iosApp/iosApp/GoogleService-Info.plist
 
-app-compose/src/androidMain/google-services.json
+presentation/src/androidMain/google-services.json
 
 iosApp/Configuration.storekit
 

@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.sqldelight)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sentry)
@@ -16,14 +15,6 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
 
-sqldelight {
-    databases {
-        create("LiftBroDB") {
-            packageName.set("com.lift.bro.db")
-            generateAsync.set(true)
-        }
-    }
-}
 
 compose.resources {
     packageOfResClass = "lift_bro.core.generated.resources"
@@ -61,7 +52,6 @@ kotlin {
 
 
         commonMain.dependencies {
-            implementation(project(":presentation"))
             implementation(project(":domain"))
             implementation(project(":data:sqldelight"))
 
