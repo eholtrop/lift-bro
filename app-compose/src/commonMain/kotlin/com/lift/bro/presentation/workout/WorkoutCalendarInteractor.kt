@@ -88,7 +88,7 @@ private fun dataSideEffects(
             is WorkoutCalendarEvent.AddToWorkout -> {
                 val workout = state.selectedWorkout
                 if (workout != null) {
-                    dependencies.database.exerciseDataSource.save(
+                    dependencies.exerciseRepository.save(
                         Exercise(
                             id = uuid4().toString(),
                             workoutId = workout.id,
@@ -109,7 +109,7 @@ private fun dataSideEffects(
                             exercises = emptyList()
                         )
                     )
-                    dependencies.database.exerciseDataSource.save(
+                    dependencies.exerciseRepository.save(
                         Exercise(
                             id = uuid4().toString(),
                             workoutId = uuid4().toString(),
