@@ -25,6 +25,7 @@ uuid = "0.8.1"
 firebase-crashlytics-gradle = "3.0.2"
 
 lexilabs-basic = "2.6.0"
+okio = "3.9.0"
 
 [libraries]
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing-ktx" }
@@ -54,6 +55,7 @@ app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.re
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
