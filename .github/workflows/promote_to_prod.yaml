@@ -11,26 +11,28 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
 
-      - name: Set up Ruby 2.6
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
+          ruby-version: 3.3
           bundler-cache: true
 
-      - name: create-json
+      - name: Create service account JSON
         id: create-json
-        uses: jsdaniell/create-json@1.1.2
+        uses: jsdaniell/create-json@v1.2.3
         with:
           name: "key.json"
           json: ${{ secrets.FASTLANE_JSON }}
 
-      - name: Run fastlane android promote_internal_to_prod
-        run: fastlane android promote_internal_to_prod
+      - name: Promote internal to prod via Fastlane
+        run: |
+          bundle install
+          bundle exec fastlane android promote_internal_to_prod

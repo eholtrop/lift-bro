@@ -1,14 +1,9 @@
-name: iOS UI Tests
+name: iOS CI
 
 on:
   push:
-    branches: [ maestro-ci ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
-#    paths:
-#      - 'androidApp/**'
-#      - 'core/**'
-#  schedule:
-#    - cron: '5 0 * * *' # run after midnight every day (run after midnight to avoid clashing with promotion
-#  workflow_dispatch:
+    branches: [ maestro-ci ]
+  workflow_dispatch:
 
 env:
   LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
@@ -22,28 +17,23 @@ env:
   FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
 
 jobs:
-  build_and_deploy_ios:
+  ios_tests:
     runs-on: macos-latest
-
     steps:
+      - uses: actions/checkout@v4
 
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: temurin
           java-version: 17
 
-      - name: Download and Install Maestro CLI
+      - name: Install Maestro
         run: |
           curl -Ls "https://get.maestro.mobile.dev" | bash
           echo "PATH=$PATH:$HOME/.maestro/bin" >> $GITHUB_ENV
         shell: bash
 
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
           bundler-cache: true
@@ -52,15 +42,32 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
-#
+
       - name: Run tests
-        run: bundle exec fastlane ios test
+        run: |
+          bundle install
+          bundle exec fastlane ios test
+
+  ios_deploy:
+    needs: ios_tests
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
 
       - name: Build and Submit to App Store (Release Lane)
         run: |
           bundle install
           bundle exec fastlane ios deploy
-        working-directory: ./fastlane
 
       - name: Upload Build Artifact (IPA)
         uses: actions/upload-artifact@v4

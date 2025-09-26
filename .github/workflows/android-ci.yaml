@@ -4,9 +4,12 @@ on:
   push:
     branches: [ main ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
     paths:
-      - 'androidApp/**'
-      - 'core/**'
+      - 'app-android/**'
+      - 'app-compose/**'
       - '.github/workflows/android-ci.yaml'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 env:
   LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
   LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
@@ -19,24 +22,23 @@ jobs:
 
     steps:
 
-      - name: Checkout Repo
-        uses: actions/checkout@v2
+- name: Checkout Repo
+        uses: actions/checkout@v4
 
-      - name: Install Maestro CLI (Add Maestro to PATH)
-        run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Set up Java
-        uses: actions/setup-java@v2
+- name: Set up Java
+        uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: 17
 
+      - name: Setup Gradle cache
+        uses: gradle/actions/setup-gradle@v3
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7.2
+          ruby-version: 3.3
           bundler-cache: true
 
 #      - name: Run linter
@@ -47,7 +49,7 @@ jobs:
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: 'release.jks'
-          fileDir: 'androidApp'
+          fileDir: 'app-android'
           encodedString: ${{ secrets.RELEASE_KEYSTORE }}
 
       - name: Create Fastlane Json
@@ -63,19 +65,19 @@ jobs:
         with:
           name: "google-services.json"
           json: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
-          dir: 'core/src/androidMain'
+          dir: 'app-compose/src/androidMain'
 
-      - name: Run fastlane deploy
+- name: Deploy with Fastlane
         env:
           STORE_PASSWORD: ${{ secrets.KEYSTORE_PW }}
           KEY_ALIAS: ${{ secrets.KEYSTORE_USR }}
           KEY_PASSWORD: ${{ secrets.KEY_PW }}
         run: |
           bundle install
-          bundle exec fastlane deploy build_number:$GITHUB_RUN_NUMBER
+          bundle exec fastlane android deploy build_number:$GITHUB_RUN_NUMBER
 
       - name: Upload Apk
         uses: actions/upload-artifact@v4
         with:
-          name: assets
-          path: app/build/outputs/bundle/release/app-release.aab
+          name: android-aab
+          path: app-android/build/outputs/bundle/release/*.aab

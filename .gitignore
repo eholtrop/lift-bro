@@ -23,11 +23,11 @@ node_modules/
 
 fastlane/report.xml
 
-androidApp/google-services.json
+app-android/google-services.json
 
 iosApp/iosApp/GoogleService-Info.plist
 
-core/src/androidMain/google-services.json
+app-compose/src/androidMain/google-services.json
 
 iosApp/Configuration.storekit
 
