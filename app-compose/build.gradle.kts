@@ -55,6 +55,7 @@ kotlin {
             implementation(project(":domain"))
             implementation(project(":data:sqldelight"))
             implementation(project(":data:core"))
+            implementation(project(":libs:mvi"))
 
 
             // Compose Multiplatform
@@ -97,6 +98,7 @@ kotlin {
             implementation(libs.app.update.ktx)
             implementation(libs.play.services.ads)
             implementation(compose.uiTooling)
+            implementation(project(":presentation:server-jvm"))
         }
 
         iosMain.dependencies {
