@@ -34,3 +34,6 @@ iosApp/Configuration.storekit
 iosApp/StoreKitTestCertificate.cer
 
 iosApp/SubscriptionKey_0AE80D1D.p8
+
+# Generated MVI docs
+libs/mvi/docs/
