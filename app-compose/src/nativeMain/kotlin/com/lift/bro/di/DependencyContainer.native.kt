@@ -34,6 +34,9 @@ actual class DependencyContainer {
 
     actual fun launchManageSubscriptions() {
     }
+
+    actual fun startPresentationServerService(port: Int) { /* no-op on iOS */ }
+    actual fun stopPresentationServerService() { /* no-op on iOS */ }
 }
 
 actual val dependencies: DependencyContainer by lazy {

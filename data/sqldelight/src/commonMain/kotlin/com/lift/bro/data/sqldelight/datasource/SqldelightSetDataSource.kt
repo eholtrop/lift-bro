@@ -5,6 +5,7 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
+import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,7 @@ class SqldelightSetDataSource(
     }
 }
 
-private fun comliftbrodb.LiftingSet.toDomain() = LBSet(
+fun LiftingSet.toDomain() = LBSet(
     id = this.id,
     variationId = this.variationId,
     weight = this.weight ?: 0.0,
@@ -51,6 +52,6 @@ private fun comliftbrodb.LiftingSet.toDomain() = LBSet(
         up = this.tempoUp ?: 1,
     ),
     date = this.date,
-    notes = this.notes ?: "",
+    notes = this.notes,
     rpe = this.rpe?.toInt(),
 )

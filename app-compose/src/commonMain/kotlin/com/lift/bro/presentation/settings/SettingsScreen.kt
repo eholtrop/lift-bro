@@ -147,6 +147,10 @@ fun SettingsScreen() {
                 }
 
                 item {
+                    ServerSettingsRow()
+                }
+
+                item {
                     Text(
                         modifier = Modifier.semantics {
                             heading()

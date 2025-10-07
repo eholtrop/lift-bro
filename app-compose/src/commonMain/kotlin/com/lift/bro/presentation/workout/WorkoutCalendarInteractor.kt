@@ -6,6 +6,7 @@ import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
+import com.lift.bro.di.exerciseRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog

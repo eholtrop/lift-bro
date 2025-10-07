@@ -29,7 +29,9 @@ kotlin {
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization)
             implementation(libs.sqldelight.coroutines)
+            implementation(libs.uuid)
         }
+
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)
         }

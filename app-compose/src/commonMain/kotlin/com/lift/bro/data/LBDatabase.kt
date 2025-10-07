@@ -79,6 +79,8 @@ class LBDatabase(
     val liftQueries get() = database.liftQueries
     val setQueries get() = database.setQueries
     val variationQueries get() = database.variationQueries
+    val exerciseQueries get() = database.exerciseQueries
+    val workoutQueries get() = database.workoutQueries
 
     val exerciseDataSource = LBExerciseDataSource(
         exerciseQueries = database.exerciseQueries,
@@ -309,7 +311,6 @@ fun LiftingSet.toDomain() = LBSet(
     date = this.date,
     notes = this.notes,
     rpe = this.rpe?.toInt(),
-
     )
 
 fun GetAllByVariation.toDomain() = LBSet(

@@ -1,15 +1,20 @@
 package com.lift.bro.data.sqldelight.datasource
 
+import app.cash.sqldelight.Query
+import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
+import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.core.datasource.ExerciseDataSource
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
-import com.lift.bro.utils.toLocalDate
 import comliftbrodb.ExerciseQueries
+import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,9 +24,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class SqldelightExerciseDataSource(
     private val exerciseQueries: ExerciseQueries,
@@ -169,16 +176,6 @@ class SqldelightExerciseDataSource(
     }
 }
 
-// Helpers to bridge Query flows
-import app.cash.sqldelight.Query
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 
-private fun <T: Any> Query<T>.asFlowList(dispatcher: CoroutineDispatcher): Flow<List<T>> =
-    this.asFlow().mapToList(dispatcher).flowOn(dispatcher)
 
-private fun <T: Any> Query<T>.asFlowOneOrNull(dispatcher: CoroutineDispatcher): Flow<T?> =
-    this.asFlow().mapToOneOrNull(dispatcher).flowOn(dispatcher)
+fun Instant.toLocalDate() = this.toLocalDateTime(TimeZone.currentSystemDefault()).date

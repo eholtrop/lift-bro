@@ -11,8 +11,8 @@ class ExerciseRepository(
 ) : IExerciseRepository {
     override fun get(workoutId: String): Flow<List<Exercise>> = local.get(workoutId)
     override suspend fun save(exercise: Exercise) = local.save(exercise)
-    override suspend fun saveVariation(exerciseId: String, variationId: String) = local.saveVariation(exerciseId, VariationId(variationId))
+    override suspend fun saveVariation(exerciseId: String, variationId: String) = local.saveVariation(exerciseId, variationId)
     override suspend fun delete(id: String) = local.delete(id)
-    override suspend fun deleteVariation(exerciseId: String, variationId: String) = local.deleteVariation(exerciseId, VariationId(variationId))
+    override suspend fun deleteVariation(exerciseId: String, variationId: String) = local.deleteVariation(exerciseId, variationId)
     override suspend fun deleteVariationSets(variationSetId: String) = local.deleteVariationSets(variationSetId)
 }

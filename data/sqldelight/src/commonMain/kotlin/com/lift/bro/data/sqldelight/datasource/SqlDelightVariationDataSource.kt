@@ -182,21 +182,6 @@ private fun comliftbrodb.Variation.toDomain(
 bodyWeight = this.body_weight?.let { it == 1L },
 )
 
-private fun comliftbrodb.LiftingSet.toDomain(): LBSet = LBSet(
-    id = this.id,
-    variationId = this.variationId,
-    weight = this.weight ?: 0.0,
-    reps = this.reps ?: 1,
-    tempo = com.lift.bro.domain.models.Tempo(
-        down = this.tempoDown ?: 3,
-        hold = this.tempoHold ?: 1,
-        up = this.tempoUp ?: 1,
-    ),
-    date = this.date,
-    notes = this.notes ?: "",
-    rpe = this.rpe?.toInt(),
-)
-
 private fun comliftbrodb.GetAllByVariation.toDomain(): LBSet = LBSet(
     id = this.id,
     variationId = this.variationId,
