@@ -28,12 +28,6 @@ actual class DependencyContainer {
         LBDatabase(DriverFactory(context!!))
     }
 
-    actual fun launchCalculator() {
-        val intent = Intent(Intent.ACTION_MAIN)
-        intent.addCategory(Intent.CATEGORY_APP_CALCULATOR)
-        context?.startActivity(intent)
-    }
-
     actual val settingsRepository: ISettingsRepository by lazy {
         SettingsRepository(UserPreferencesDataSource(context!!))
     }
@@ -52,24 +46,6 @@ actual class DependencyContainer {
         )
 
     }
-
-    actual fun startPresentationServerService(port: Int) {
-        val ctx = context ?: return
-        val intent = Intent(ctx, com.lift.bro.server.LiftBroServerForegroundService::class.java).apply {
-            putExtra(com.lift.bro.server.LiftBroServerForegroundService.EXTRA_PORT, port)
-            action = com.lift.bro.server.LiftBroServerForegroundService.ACTION_START
-        }
-        ctx.startForegroundService(intent)
-    }
-
-    actual fun stopPresentationServerService() {
-        val ctx = context ?: return
-        val intent = Intent(ctx, com.lift.bro.server.LiftBroServerForegroundService::class.java).apply {
-            action = com.lift.bro.server.LiftBroServerForegroundService.ACTION_STOP
-        }
-        ctx.startService(intent)
-    }
-
 }
 
 actual val dependencies: DependencyContainer by lazy { DependencyContainer() }

@@ -136,18 +136,11 @@ fun SettingsScreen() {
                 }
 
                 item {
-                }
-
-                item {
                     BackupSettingsRow()
                 }
 
                 item {
                     ThemeSettingsRow()
-                }
-
-                item {
-                    ServerSettingsRow()
                 }
 
                 item {

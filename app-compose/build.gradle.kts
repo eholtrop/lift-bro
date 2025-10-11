@@ -98,7 +98,6 @@ kotlin {
             implementation(libs.app.update.ktx)
             implementation(libs.play.services.ads)
             implementation(compose.uiTooling)
-            implementation(project(":presentation:server-jvm"))
         }
 
         iosMain.dependencies {

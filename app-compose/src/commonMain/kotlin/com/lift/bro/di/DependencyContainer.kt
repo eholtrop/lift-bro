@@ -22,15 +22,9 @@ expect class DependencyContainer {
 
     val settingsRepository: ISettingsRepository
 
-    fun launchCalculator()
-
     fun launchUrl(url: String)
 
     fun launchManageSubscriptions()
-
-    // Starts/stops an Android foreground service hosting the presentation server (no-op on non-Android)
-    fun startPresentationServerService(port: Int = 8080)
-    fun stopPresentationServerService()
 }
 
 val DependencyContainer.setRepository: ISetRepository get() =
