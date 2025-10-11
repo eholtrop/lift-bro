@@ -17,6 +17,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Lift_Bro"
 include(":app-android")
+include(":app-ios")
 include(":app-compose")
 include(":domain")
 include(":data:sqldelight")

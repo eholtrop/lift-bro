@@ -25,15 +25,15 @@ fastlane/report.xml
 
 app-android/google-services.json
 
-iosApp/iosApp/GoogleService-Info.plist
+app-ios/app-ios/GoogleService-Info.plist
 
 presentation/src/androidMain/google-services.json
 
-iosApp/Configuration.storekit
+app-ios/Configuration.storekit
 
-iosApp/StoreKitTestCertificate.cer
+app-ios/StoreKitTestCertificate.cer
 
-iosApp/SubscriptionKey_0AE80D1D.p8
+app-ios/SubscriptionKey_0AE80D1D.p8
 
 # Generated MVI docs
 libs/mvi/docs/

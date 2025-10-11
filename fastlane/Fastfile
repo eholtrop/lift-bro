@@ -149,8 +149,8 @@ platform :ios do
   lane :build_release do |options|
     match_appstore
     gym(
-      scheme: "iosApp",
-      project: "iosApp/iosApp.xcodeproj",
+      scheme: "app-ios",
+      project: "app-ios/app-ios.xcodeproj",
       configuration: "Release",
       export_method: "app-store",
       output_directory: "build/artifacts/ios",
@@ -164,8 +164,8 @@ platform :ios do
   lane :build_debug do |options|
     match_development
     gym(
-      scheme: "iosApp",
-      project: "iosApp/iosApp.xcodeproj",
+      scheme: "app-ios",
+      project: "app-ios/app-ios.xcodeproj",
       configuration: "Debug",
       sdk: "iphonesimulator",
       export_method: "development",
