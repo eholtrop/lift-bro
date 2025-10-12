@@ -5,7 +5,7 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 Project overview
 - Kotlin Multiplatform + Jetpack Compose Multiplatform app with Android and iOS targets
 - Clean architecture with three layers: presentation, domain, data
-- Modules: app-android (Android app), app-compose (KMP UI/core), presentation (UI layer), domain (models/use-cases), data:sqldelight (DB + repositories)
+- Modules: app-android (Android app), presentation:compose (KMP UI/core), presentation (UI layer), domain (models/use-cases), data:sqldelight (DB + repositories)
 - Build system: Gradle (Kotlin DSL) with version catalog, Gradle Wrapper committed
 
 Commands
@@ -28,25 +28,25 @@ Android
 
 iOS (KMP frameworks)
 - Build iOS simulator framework (example target)
-  - ./gradlew :app-compose:linkDebugFrameworkIosSimulatorArm64
+  - ./gradlew :presentation:compose:linkDebugFrameworkIosSimulatorArm64
 - Build iOS device framework (example target)
-  - ./gradlew :app-compose:linkReleaseFrameworkIosArm64
-Note: Use ./gradlew :app-compose:tasks | grep -i framework to discover exact variants.
+  - ./gradlew :presentation:compose:linkReleaseFrameworkIosArm64
+Note: Use ./gradlew :presentation:compose:tasks | grep -i framework to discover exact variants.
 
 Lint
-- Detekt (applied in app-android and app-compose)
-  - ./gradlew :app-android:detekt :app-compose:detekt
+- Detekt (applied in app-android and presentation:compose)
+  - ./gradlew :app-android:detekt :presentation:compose:detekt
 
 Tests
 - Unit tests per module (Android/JVM unit tests)
   - ./gradlew :domain:testDebugUnitTest
   - ./gradlew :presentation:testDebugUnitTest
-  - ./gradlew :app-compose:testDebugUnitTest
+  - ./gradlew :presentation:compose:testDebugUnitTest
   - ./gradlew :data:sqldelight:testDebugUnitTest
 - Multiplatform aggregated tests (if available per module)
   - ./gradlew :domain:allTests
   - ./gradlew :presentation:allTests
-  - ./gradlew :app-compose:allTests
+  - ./gradlew :presentation:compose:allTests
   - ./gradlew :data:sqldelight:allTests
 - Run a single unit test (example)
   - ./gradlew :presentation:testDebugUnitTest --tests "com.lift.bro.SomeTestClass.someTest"
@@ -95,8 +95,8 @@ Clean layers and modules
   - Cross-platform drivers: Android and Native drivers are used per target
   - Coordinates mapping from database entities to domain models
 - presentation (surface module)
-  - This is the primary module consumed by apps (e.g., :app-android). It re-exports the internal app-compose module and owns UI, navigation, and interactors.
-- app-compose (internal to presentation)
+  - This is the primary module consumed by apps (e.g., :app-android). It re-exports the internal presentation:compose module and owns UI, navigation, and interactors.
+- presentation:compose (internal to presentation)
   - KMP UI implementation details, shared resources (compose.resources), framework packaging for iOS, and platform-specific source sets (androidMain, iosMain).
 - app-android (module: app-android)
   - Android application packaging and entry point (AndroidManifest, MainActivity)
@@ -136,7 +136,7 @@ Release and CI notes (from README.md)
 Additional references
 - Primary entry points
   - Android: app-android/src/main/java/com/lift/bro/android/MainActivity.kt
-  - Shared app root Composable: app-compose/src/commonMain/kotlin/com/lift/bro/presentation/App.kt
+  - Shared app root Composable: presentation/compose/src/commonMain/kotlin/com/lift/bro/presentation/App.kt
 - Version catalog: gradle/libs.versions.toml (Compose, Kotlin, AGP, SQLDelight, etc.)
 - Maestro test flows: .maestro/
 

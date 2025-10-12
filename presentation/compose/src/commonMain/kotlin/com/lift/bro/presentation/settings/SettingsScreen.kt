@@ -29,13 +29,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
@@ -52,6 +56,7 @@ import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import io.sentry.kotlin.multiplatform.Sentry
+import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.privacy_policy
@@ -260,8 +265,16 @@ fun SettingsScreen() {
 
                 item {
                     val clipboard = LocalClipboard.current
+                    val coroutineScope = rememberCoroutineScope()
                     Text(
-                        stringResource(Res.string.settings_user_id_label, Purchases.sharedInstance.appUserID)
+                        modifier = Modifier.clickable {
+                            coroutineScope.launch {
+                                clipboard.setClipEntry(
+                                    Purchases.sharedInstance.appUserID.toClipEntry()
+                                )
+                            }
+                        },
+                        text = stringResource(Res.string.settings_user_id_label, Purchases.sharedInstance.appUserID)
                     )
                 }
             }
@@ -273,7 +286,6 @@ fun SettingsScreen() {
             shouldDisplayDismissButton = true
         }
     }
-
 
     AnimatedVisibility(
         visible = showPaywall,
@@ -310,4 +322,6 @@ fun SettingsRowItem(
         content()
     }
 }
+
+expect fun String.toClipEntry(): ClipEntry
 

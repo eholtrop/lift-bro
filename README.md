@@ -5,25 +5,42 @@ Lift Bro is a Lift tracking app created as a side project to help me replace my 
 
 It is built using Kotlin Multiplatform and Jetpack Compose Multiplatform to allow for shared logic between Android and iOS
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B71MI0CT)
+
 # Architecture
 
 ### CLEAN
 
-1. presentation
-2. domain
-3. data
+- app-*
+- presentation
+- domain
+- data
+
+#### App-*
+These are the application modules. These house the application specific logic (mostly configuration) They then "glue" the other modules together.
 
 #### Presentation
-Holds the UI as well as any UI logic required to render the view, the MV* of the feature as well as the UI models required
-Responsible for fetching the domain models and mapping them to something the UI can understand, as well as handle any UI specific logic (ex: input validation)
+This holds and is responsible for anything directly user facing. This could include things like:
+
+- The UI Composables alongside their UI logic. (the compose module), more details located below.
+- An API service that exposes JSON models for other instances of liftbro to consume (the server module)
+
+Responsible for fetching the domain models and mapping them to what is required by that module can understand.
 
 #### Domain
-Holds the dependency-free Domain models that are mapped to and from both the UI and Data Models
+Holds the dependency-free Domain models that are mapped to and from both the Presentation and Data Models
 Holds interfaces that define the repositories and methods that the presentation layer can use to fetch the required domain models
 
 #### Data
-Holds the implementation of the repositories defined in the domain layer and the implementation details of the SQLDelight database
-Responsible for fetching the data from the DB as well as map from the Data models (ie. database entities) to the Domain Models
+Holds the implementation of the repositories defined in the domain layer and the implementation details of a datasource ex:
+- a local database, SQLDelight 
+- a Ktor Client that can connect to a server
+
+Responsible for fetching the data from the source as well as map from the Data models (ie. database entities) to the Domain Models
+
+## Presentation MVI Structure
+
+![img.png](img.png)
 
 ## Dependencies!
 Lift Bro started out as a side project where I also wanted to tinker with replacing some of the "standard" libraries for android development
@@ -82,9 +99,8 @@ you can also target a specific flow:
 ```bash
 maestro test .maestro/onboarding_tests.yaml
 ```
-```
 
-# Local configuration
+## Local configuration
 
 Environment variables used at build/runtime (via BuildKonfig or Gradle properties):
 - LIFT_BRO_ADMOB_APP_ID

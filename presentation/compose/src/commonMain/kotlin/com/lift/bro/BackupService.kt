@@ -2,10 +2,14 @@ package com.lift.bro
 
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
+import com.lift.bro.di.workoutRepository
+import com.lift.bro.di.exerciseRepository
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
+import com.lift.bro.domain.models.Workout
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.today
@@ -23,6 +27,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -33,17 +39,20 @@ data class Backup(
     val variations: List<Variation>? = null,
     val sets: List<LBSet>? = null,
     val liftingLogs: List<LiftingLog>? = null,
+    val workouts: List<Workout>? = null,
+    val exercises: List<Exercise>? = null,
 )
 
 object BackupService {
 
-    suspend fun backup(backup: Backup = createBackup()) {
+    suspend fun backup(backup: Backup? = null) {
+        val backupData = backup ?: createBackup()
         val backupDir = FileKit.filesDir / "backups"
         if (!backupDir.exists()) {
             backupDir.createDirectories()
         }
         val backupFile = backupDir / "${Clock.System.now().toString("yyyy-MM-dd_HH:mm:ss")}.json"
-        backupFile.writeString(Json.encodeToString(backup))
+        backupFile.writeString(Json.encodeToString(backupData))
         FileKit.shareFile(backupFile)
         dependencies.settingsRepository.saveBackupSettings(BackupSettings(lastBackupDate = Clock.System.today))
     }
@@ -68,10 +77,14 @@ object BackupService {
     }
 
     suspend fun restore(backup: Backup): Boolean {
+        // Delete existing data first
         dependencies.liftRepository.deleteAll()
         dependencies.database.variantDataSource.deleteAll()
         dependencies.database.setDataSource.deleteAll()
         dependencies.database.logDataSource.deleteAll()
+        dependencies.database.workoutQueries.deleteAll()
+        dependencies.database.exerciseQueries.deleteAll()
+        dependencies.database.exerciseQueries.deleteAllVariations()
 
 
         backup.sets?.forEach {
@@ -95,12 +108,36 @@ object BackupService {
             )
         }
 
+        // Restore workouts
+        backup.workouts?.forEach { workout ->
+            dependencies.workoutRepository.save(workout)
+        }
+
+        // Restore exercises
+        backup.exercises?.forEach { exercise ->
+            dependencies.exerciseRepository.save(exercise)
+        }
+
         return true
     }
 
 }
 
-fun createBackup(): Backup {
+// Helper functions to get all data for backup
+suspend fun getAllWorkouts(): List<Workout> {
+    // Get all workouts by using a very wide date range
+    val startDate = LocalDate.fromEpochDays(0) // Very early date
+    val endDate = LocalDate.fromEpochDays(999999) // Very far future date
+    return dependencies.workoutRepository.getAll(startDate, endDate).first()
+}
+
+suspend fun getAllExercises(): List<Exercise> {
+    // Get all exercises by querying all workouts and extracting their exercises
+    val workouts = getAllWorkouts()
+    return workouts.flatMap { it.exercises }
+}
+
+suspend fun createBackup(): Backup {
     return Backup(
         lifts = dependencies.liftRepository.getAll(),
         variations = dependencies.database.variantDataSource.getAll(),
@@ -113,5 +150,7 @@ fun createBackup(): Backup {
                 vibe = it.vibe_check?.toInt(),
             )
         },
+        workouts = getAllWorkouts(),
+        exercises = getAllExercises(),
     )
 }

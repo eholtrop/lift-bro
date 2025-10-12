@@ -68,7 +68,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":app-compose"))
+    implementation(project(":presentation:compose"))
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.play.services.ads)
