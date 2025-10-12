@@ -1,6 +1,7 @@
 package com.lift.bro.data.core.datasource
 
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.VariationId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
@@ -10,5 +11,7 @@ interface SetDataSource {
     fun listen(id: String): Flow<LBSet?>
     suspend fun save(lbSet: LBSet)
     suspend fun delete(lbSet: LBSet)
+    suspend fun deleteAll()
+    suspend fun deleteAll(variationId: VariationId)
 
 }

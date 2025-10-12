@@ -1,6 +1,7 @@
 package com.lift.bro.domain.repositories
 
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.VariationId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
@@ -25,4 +26,8 @@ interface ISetRepository {
     suspend fun save(lbSet: LBSet)
 
     suspend fun delete(lbSet: LBSet)
+
+    suspend fun deleteAll()
+
+    suspend fun deleteAll(variationId: VariationId)
 }

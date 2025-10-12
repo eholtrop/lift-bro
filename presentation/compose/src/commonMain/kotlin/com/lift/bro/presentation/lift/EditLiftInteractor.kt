@@ -8,9 +8,11 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
@@ -85,7 +87,7 @@ val EditLiftReducer = Reducer<EditLiftState, EditLiftEvent> { state, event ->
 fun editLiftSideEffects(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.variationRepository,
-    setRepository: SetDataSource = dependencies.database.setDataSource,
+    setRepository: ISetRepository = dependencies.setRepository,
 ): SideEffect<EditLiftState, EditLiftEvent> = { state: EditLiftState, event: EditLiftEvent ->
     when (event) {
         EditLiftEvent.DeleteLift -> {
@@ -99,22 +101,22 @@ fun editLiftSideEffects(
         }
 
         EditLiftEvent.AddVariation -> {
-            dependencies.database.variantDataSource.save(
+            variationRepository.save(
                 Variation(lift = state.lift)
             )
         }
 
         is EditLiftEvent.NameChanged -> {
-            dependencies.database.liftDataSource.save(state.lift.copy(name = event.name))
+            liftRepository.save(state.lift.copy(name = event.name))
         }
 
         is EditLiftEvent.VariationRemoved -> {
-            dependencies.database.variantDataSource.delete(event.variation.id)
-            dependencies.database.setDataSource.deleteAll(event.variation.id)
+            variationRepository.delete(event.variation.id)
+            setRepository.deleteAll(event.variation.id)
         }
 
         is EditLiftEvent.VariationNameChanged -> {
-            dependencies.database.variantDataSource.save(
+            variationRepository.save(
                 event.variation.copy(name = event.name)
             )
         }

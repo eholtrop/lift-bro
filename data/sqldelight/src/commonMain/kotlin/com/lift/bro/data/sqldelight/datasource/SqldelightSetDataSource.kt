@@ -6,6 +6,7 @@ import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.domain.models.VariationId
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import kotlinx.coroutines.CoroutineDispatcher
@@ -64,7 +65,6 @@ class SqldelightSetDataSource(
             .asFlow().mapToList(dispatcher)
             .map {
                 it.map {
-
                     LBSet(
                         id = it.id,
                         variationId = it.variationId,
@@ -104,6 +104,14 @@ class SqldelightSetDataSource(
 
     override suspend fun delete(lbSet: LBSet) {
         setQueries.delete(lbSet.id)
+    }
+
+    override suspend fun deleteAll() {
+        setQueries.deleteAll()
+    }
+
+    override suspend fun deleteAll(variationId: VariationId) {
+        setQueries.deleteAllFromVariations(variationId)
     }
 }
 
