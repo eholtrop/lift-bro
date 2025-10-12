@@ -5,7 +5,7 @@ on:
     branches: [ main ] # still running this on commit as I test all the time on android. Will update to nightly if this becomes too much
     paths:
       - 'app-android/**'
-'presentation/**'
+      - 'presentation/**'
       - '.github/workflows/android-ci.yaml'
   pull_request:
     branches: [ main ]
