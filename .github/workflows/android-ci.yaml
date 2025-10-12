@@ -15,7 +15,6 @@ env:
   LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
   LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
   REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY }}
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
