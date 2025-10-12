@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.lift.bro.BackupService
+import com.lift.bro.BackupUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.utils.toLocalDate
@@ -68,7 +69,7 @@ fun BackupAlertDialog(
                 Button(
                     onClick = {
                         coroutineScope.launch {
-                            BackupService.backup()
+                            BackupUseCase().invoke()
                             showBackupModal = false
                         }
                     }

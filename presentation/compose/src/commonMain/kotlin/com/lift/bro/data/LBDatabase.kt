@@ -86,6 +86,15 @@ class LBDatabase(
 
     val workoutQueries get() = database.workoutQueries
 
+
+    suspend fun clear() {
+        database.liftQueries.deleteAll()
+        database.variationQueries.deleteAll()
+        database.setQueries.deleteAll()
+        database.exerciseQueries.deleteAll()
+        database.workoutQueries.deleteAll()
+    }
+
     val exerciseDataSource = LBExerciseDataSource(
         exerciseQueries = database.exerciseQueries,
         setQueries = database.setQueries,

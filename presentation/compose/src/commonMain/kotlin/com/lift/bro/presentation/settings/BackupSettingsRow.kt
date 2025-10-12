@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.lift.bro.BackupService
+import com.lift.bro.BackupUseCase
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ fun BackupSettingsRow() {
                 modifier = Modifier.weight(1f),
                 onClick = {
                     scope.launch {
-                        BackupService.backup()
+                        BackupUseCase().invoke()
                     }
                 }
             ) {

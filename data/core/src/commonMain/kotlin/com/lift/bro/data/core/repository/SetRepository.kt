@@ -29,5 +29,5 @@ class SetRepository(
     override suspend fun save(lbSet: LBSet) = local.save(lbSet)
     override suspend fun delete(lbSet: LBSet) = local.delete(lbSet)
     override suspend fun deleteAll() = local.deleteAll()
-    override suspend fun deleteAll(variationId: VariationId) = local.deleteAll()
+    override suspend fun deleteAll(variationId: VariationId) = local.deleteAll(variationId)
 }
