@@ -4,6 +4,7 @@ import com.lift.bro.domain.models.LBSet
 import kotlinx.coroutines.flow.Flow
 
 interface SetDataSource {
+    fun listenAll(): Flow<List<LBSet>>
     fun listen(id: String): Flow<LBSet?>
     suspend fun save(lbSet: LBSet)
     suspend fun delete(lbSet: LBSet)

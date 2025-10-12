@@ -16,7 +16,15 @@ import kotlinx.coroutines.flow.map
 class SqldelightSetDataSource(
     private val setQueries: SetQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : SetDataSource {
+): SetDataSource {
+
+    override fun listenAll(): Flow<List<LBSet>> = setQueries.getAll(
+        null,
+        null,
+        null,
+        limit = Long.MAX_VALUE,
+    ).asFlowList(dispatcher)
+        .map { it.map { it.toDomain() } }
 
     override fun listen(id: String): Flow<LBSet?> =
         setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }

@@ -1,6 +1,11 @@
 package com.lift.bro.presentation.api.routes
 
 import com.lift.bro.data.core.datasource.*
+import com.lift.bro.domain.repositories.IExerciseRepository
+import com.lift.bro.domain.repositories.ILiftRepository
+import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.api.websocket.WebSocketManager
 import io.ktor.server.routing.*
 import io.ktor.server.websocket.*
@@ -13,28 +18,24 @@ import kotlinx.serialization.json.Json
 
 fun Route.webSocketRoutes(
     webSocketManager: WebSocketManager,
-    workoutDataSource: WorkoutDataSource,
-    liftDataSource: LiftDataSource,
-    setDataSource: SetDataSource,
-    exerciseDataSource: ExerciseDataSource
+    setRepository: ISetRepository,
+    liftRepository: ILiftRepository,
+    variationRepository: IVariationRepository,
+    exerciseRepository: IExerciseRepository,
+    workoutRepository: IWorkoutRepository
 ) {
     val json = Json {
         ignoreUnknownKeys = true
         encodeDefaults = true
     }
-    
+
     // Stream all workouts
     webSocket("/ws/workouts") {
         val streamKey = "workouts"
         webSocketManager.subscribe(streamKey, this)
-        
+
         try {
-            // Send initial state
-            val workouts = workoutDataSource.getAll()
-            send(Frame.Text(json.encodeToString(workouts)))
-            
-            // Listen for changes and stream them
-            workoutDataSource.getAllFlow()
+            workoutRepository.getAll()
                 .onEach { updatedWorkouts ->
                     send(Frame.Text(json.encodeToString(updatedWorkouts)))
                 }
@@ -52,20 +53,16 @@ fun Route.webSocketRoutes(
             webSocketManager.unsubscribe(streamKey, this)
         }
     }
-    
+
     // Stream specific workout by ID
     webSocket("/ws/workouts/{id}") {
-        val workoutId = call.parameters["id"] ?: return@webSocket close(CloseReason(CloseReason.Codes.UNSUPPORTED_DATA, "Missing workout ID"))
+        val workoutId = call.parameters["id"] ?: return@webSocket close(CloseReason(CloseReason.Codes.CANNOT_ACCEPT, "Missing workout ID"))
         val streamKey = "workouts/$workoutId"
         webSocketManager.subscribe(streamKey, this)
-        
+
         try {
-            // Send initial state
-            val workout = workoutDataSource.getById(workoutId)
-            send(Frame.Text(json.encodeToString(workout)))
-            
             // Listen for changes
-            workoutDataSource.getByIdFlow(workoutId)
+            workoutRepository.get(workoutId)
                 .onEach { updatedWorkout ->
                     send(Frame.Text(json.encodeToString(updatedWorkout)))
                 }
@@ -83,30 +80,16 @@ fun Route.webSocketRoutes(
             webSocketManager.unsubscribe(streamKey, this)
         }
     }
-    
+
     // Stream lifts with optional workout filter
     webSocket("/ws/lifts") {
         val workoutId = call.request.queryParameters["workoutId"]
         val streamKey = if (workoutId != null) "lifts?workoutId=$workoutId" else "lifts"
         webSocketManager.subscribe(streamKey, this)
-        
+
         try {
-            // Send initial state
-            val lifts = if (workoutId != null) {
-                liftDataSource.getByWorkoutId(workoutId)
-            } else {
-                liftDataSource.getAll()
-            }
-            send(Frame.Text(json.encodeToString(lifts)))
-            
-            // Listen for changes
-            val flow = if (workoutId != null) {
-                liftDataSource.getByWorkoutIdFlow(workoutId)
-            } else {
-                liftDataSource.getAllFlow()
-            }
-            
-            flow.onEach { updatedLifts ->
+            liftRepository.listenAll()
+                .onEach { updatedLifts ->
                     send(Frame.Text(json.encodeToString(updatedLifts)))
                 }
                 .catch { e ->
@@ -123,31 +106,16 @@ fun Route.webSocketRoutes(
             webSocketManager.unsubscribe(streamKey, this)
         }
     }
-    
-    // Stream sets with optional lift filter
-    webSocket("/ws/sets") {
-        val liftId = call.request.queryParameters["liftId"]
-        val streamKey = if (liftId != null) "sets?liftId=$liftId" else "sets"
+
+    // Stream lifts with optional workout filter
+    webSocket("/ws/variations") {
+        val streamKey = "variations"
         webSocketManager.subscribe(streamKey, this)
-        
+
         try {
-            // Send initial state
-            val sets = if (liftId != null) {
-                setDataSource.getByLiftId(liftId)
-            } else {
-                setDataSource.getAll()
-            }
-            send(Frame.Text(json.encodeToString(sets)))
-            
-            // Listen for changes
-            val flow = if (liftId != null) {
-                setDataSource.getByLiftIdFlow(liftId)
-            } else {
-                setDataSource.getAllFlow()
-            }
-            
-            flow.onEach { updatedSets ->
-                    send(Frame.Text(json.encodeToString(updatedSets)))
+            variationRepository.listenAll()
+                .onEach { updatedLifts ->
+                    send(Frame.Text(json.encodeToString(updatedLifts)))
                 }
                 .catch { e ->
                     send(Frame.Text(json.encodeToString(mapOf("error" to e.message))))
@@ -163,21 +131,17 @@ fun Route.webSocketRoutes(
             webSocketManager.unsubscribe(streamKey, this)
         }
     }
-    
-    // Stream all exercises
-    webSocket("/ws/exercises") {
-        val streamKey = "exercises"
+
+    // Stream sets with optional lift filter
+    webSocket("/ws/sets") {
+        val liftId = call.request.queryParameters["liftId"]
+        val streamKey = if (liftId != null) "sets?liftId=$liftId" else "sets"
         webSocketManager.subscribe(streamKey, this)
-        
+
         try {
-            // Send initial state
-            val exercises = exerciseDataSource.getAll()
-            send(Frame.Text(json.encodeToString(exercises)))
-            
-            // Listen for changes
-            exerciseDataSource.getAllFlow()
-                .onEach { updatedExercises ->
-                    send(Frame.Text(json.encodeToString(updatedExercises)))
+            setRepository.listenAll()
+                .onEach { updatedSets ->
+                    send(Frame.Text(json.encodeToString(updatedSets)))
                 }
                 .catch { e ->
                     send(Frame.Text(json.encodeToString(mapOf("error" to e.message))))

@@ -7,6 +7,8 @@ interface ISetRepository {
 
     fun listen(id: String): Flow<LBSet?>
 
+    fun listenAll(): Flow<List<LBSet>>
+
     suspend fun save(lbSet: LBSet)
 
     suspend fun delete(lbSet: LBSet)
