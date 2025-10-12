@@ -82,9 +82,6 @@ object BackupService {
         dependencies.database.variantDataSource.deleteAll()
         dependencies.database.setDataSource.deleteAll()
         dependencies.database.logDataSource.deleteAll()
-        dependencies.database.workoutQueries.deleteAll()
-        dependencies.database.exerciseQueries.deleteAll()
-        dependencies.database.exerciseQueries.deleteAllVariations()
 
 
         backup.sets?.forEach {
