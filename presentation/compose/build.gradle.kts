@@ -9,8 +9,6 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sentry)
-//    alias(libs.plugins.google.services)
-//    alias(libs.plugins.firebase.crashlytics)
 
     id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
