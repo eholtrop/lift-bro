@@ -62,6 +62,7 @@ uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-cio = { module = "io.ktor:ktor-server-cio-jvm", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
 
 [plugins]

@@ -77,3 +77,9 @@ saveVariation:
 INSERT OR REPLACE
 INTO ExerciseVariation(id, exerciseId, varationId)
 VALUES(?, ?, ?);
+
+deleteAll:
+DELETE FROM Exercise;
+
+deleteAllVariations:
+DELETE FROM ExerciseVariation;
