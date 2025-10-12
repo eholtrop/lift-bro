@@ -25,7 +25,7 @@ import kotlin.math.min
 class SqldelightSetDataSource(
     private val setQueries: SetQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : SetDataSource {
+): SetDataSource {
 
     override fun listenAll(startDate: LocalDate?, endDate: LocalDate?, variationId: String?, limit: Long): Flow<List<LBSet>> {
         return setQueries.getAll(
@@ -53,6 +53,36 @@ class SqldelightSetDataSource(
                     }
             }
     }
+
+    override fun listenAllForLift(liftId: String, limit: Long): Flow<List<LBSet>> =
+        setQueries.getAllForLift(
+            liftId = liftId,
+            startDate = Instant.DISTANT_PAST,
+            endDate = Instant.DISTANT_FUTURE,
+            limit = limit
+        )
+            .asFlow().mapToList(dispatcher)
+            .map {
+                it.map {
+
+                    LBSet(
+                        id = it.id,
+                        variationId = it.variationId,
+                        weight = it.weight ?: 0.0,
+                        reps = it.reps ?: 1,
+                        tempo = Tempo(
+                            down = it.tempoDown ?: 3,
+                            hold = it.tempoHold ?: 1,
+                            up = it.tempoUp ?: 1,
+                        ),
+                        date = it.date,
+                        notes = it.notes,
+                        rpe = it.rpe?.toInt(),
+                        mer = 0,
+                        bodyWeightRep = it.body_weight?.let { it == 1L },
+                    )
+                }
+            }
 
     override fun listen(id: String): Flow<LBSet?> =
         setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }

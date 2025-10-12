@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
+import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
@@ -61,7 +63,7 @@ sealed interface DashboardEvent {
 fun rememberDashboardInteractor(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.variationRepository,
-    setRepository: SetDataSource = dependencies.database.setDataSource,
+    setRepository: ISetRepository = dependencies.setRepository,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<DashboardState, DashboardEvent> = rememberInteractor<DashboardState, DashboardEvent>(
 //    null,
@@ -81,7 +83,7 @@ fun rememberDashboardInteractor(
                 val variationsByLift = variations.groupBy { it.lift?.id }
                 val cards: List<Flow<DashboardListItem?>> = lifts.map { lift ->
                     val liftVariations = variationsByLift[lift.id] ?: emptyList()
-                    setRepository.listenAllForLift(lift.id, 50)
+                    setRepository.listenAllForLift(lift.id, limit = 50)
                         .map { sets ->
                             DashboardListItem.LiftCard.Loaded(
                                 LiftCardState(

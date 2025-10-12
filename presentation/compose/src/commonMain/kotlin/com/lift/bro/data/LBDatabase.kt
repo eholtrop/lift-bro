@@ -171,34 +171,6 @@ class SetDataSource(
         }
             .fold(emptyList()) { list, subList -> list + subList }
 
-    fun listenAllForLift(liftId: String, limit: Long = Long.MAX_VALUE): Flow<List<LBSet>> =
-        setQueries.getAllForLift(
-            liftId = liftId,
-            startDate = Instant.DISTANT_PAST,
-            endDate = Instant.DISTANT_FUTURE,
-            limit = limit
-        )
-            .flowToList()
-            .mapEach {
-                LBSet(
-                    id = it.id,
-                    variationId = it.variationId,
-                    weight = it.weight ?: 0.0,
-                    reps = it.reps ?: 1,
-                    tempo = Tempo(
-                        down = it.tempoDown ?: 3,
-                        hold = it.tempoHold ?: 1,
-                        up = it.tempoUp ?: 1,
-                    ),
-                    date = it.date,
-                    notes = it.notes,
-                    rpe = it.rpe?.toInt(),
-                    mer = 0,
-                    bodyWeightRep = it.body_weight?.let { it == 1L },
-                )
-            }
-
-
     fun listenAllForVariation(
         variationId: String,
     ): Flow<List<LBSet>> =
@@ -232,36 +204,6 @@ class SetDataSource(
 
     fun LocalDate.atEndOfDayIn(): Instant =
         this.atTime(23, 59, 59, 999).toInstant(TimeZone.currentSystemDefault())
-
-    fun listenAll(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
-        variationId: String? = null,
-        limit: Long = Long.MAX_VALUE,
-    ): Flow<List<LBSet>> =
-        setQueries.getAll(
-            limit = limit,
-            startDate = startDate?.atStartOfDayIn(),
-            endDate = endDate?.atEndOfDayIn(),
-            variationId = variationId,
-        ).flowToList()
-            .map { sets ->
-                sets
-                    .map { set ->
-                        val orm = setQueries.getOneRepMaxForVariation(
-                            variationId = set.variationId,
-                            before = set.date
-                        ).executeAsOneOrNull()?.weight
-                        val emax = setQueries.getEMaxForVariation(
-                            variationId = set.variationId,
-                            before = set.date
-                        ).executeAsOneOrNull()?.weight
-
-                        set.toDomain().copy(
-                            mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0
-                        )
-                    }
-            }
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 

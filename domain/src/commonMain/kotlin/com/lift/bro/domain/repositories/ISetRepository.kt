@@ -7,9 +7,16 @@ import kotlinx.datetime.LocalDate
 interface ISetRepository {
 
     fun listenAll(
-        startDate: LocalDate?,
-        endDate: LocalDate?,
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
         variationId: String? = null,
+        limit: Long = Long.MAX_VALUE
+    ): Flow<List<LBSet>>
+
+    fun listenAllForLift(
+        liftId: String,
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
         limit: Long = Long.MAX_VALUE
     ): Flow<List<LBSet>>
 

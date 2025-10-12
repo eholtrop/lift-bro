@@ -3,6 +3,7 @@ package com.lift.bro.presentation.lift
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
+import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
@@ -33,40 +34,42 @@ data class VariationCardState(
 )
 
 sealed interface LiftDetailsEvent {
-    data class LiftColorChanged(val color: ULong) : LiftDetailsEvent
-    data class VariationClicked(val variation: Variation) : LiftDetailsEvent
-    data class SetClicked(val lbSet: LBSet) : LiftDetailsEvent
+    data class LiftColorChanged(val color: ULong): LiftDetailsEvent
+    data class VariationClicked(val variation: Variation): LiftDetailsEvent
+    data class SetClicked(val lbSet: LBSet): LiftDetailsEvent
 
-    data class ToggleFavourite(val variation: Variation) : LiftDetailsEvent
+    data class ToggleFavourite(val variation: Variation): LiftDetailsEvent
 
-    data object AddSetClicked : LiftDetailsEvent
+    data object AddSetClicked: LiftDetailsEvent
 
-    data object EditLiftClicked : LiftDetailsEvent
+    data object EditLiftClicked: LiftDetailsEvent
 }
 
 @Composable
 fun rememberLiftDetailsInteractor(
     liftId: String,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<LiftDetailsState, LiftDetailsEvent> = rememberInteractor(
     initialState = LiftDetailsState(),
-    source = {combine(
-        dependencies.liftRepository.get(liftId),
-        dependencies.variationRepository.listenAll(liftId),
-        dependencies.database.setDataSource.listenAllForLift(liftId)
-            .map { it.groupBy { it.variationId } }
-    ) { lift, variations, sets ->
-        LiftDetailsState(
-            liftName = lift?.name ?: "",
-            liftColor = lift?.color,
-            variations = variations.map {
-                VariationCardState(
-                    variation = it,
-                    sets = sets[it.id] ?: emptyList()
-                )
-            },
-        )
-    }},
+    source = {
+        combine(
+            dependencies.liftRepository.get(liftId),
+            dependencies.variationRepository.listenAll(liftId),
+            dependencies.setRepository.listenAllForLift(liftId)
+                .map { it.groupBy { it.variationId } }
+        ) { lift, variations, sets ->
+            LiftDetailsState(
+                liftName = lift?.name ?: "",
+                liftColor = lift?.color,
+                variations = variations.map {
+                    VariationCardState(
+                        variation = it,
+                        sets = sets[it.id] ?: emptyList()
+                    )
+                },
+            )
+        }
+    },
     sideEffects = listOf { state, event ->
         when (event) {
             LiftDetailsEvent.AddSetClicked -> navCoordinator.present(
