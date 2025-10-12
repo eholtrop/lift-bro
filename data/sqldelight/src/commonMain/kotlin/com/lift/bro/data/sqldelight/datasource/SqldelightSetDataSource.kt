@@ -1,6 +1,7 @@
 package com.lift.bro.data.sqldelight.datasource
 
 import app.cash.sqldelight.coroutines.asFlow
+import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
@@ -12,11 +13,46 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toInstant
+import kotlin.collections.map
+import kotlin.math.min
 
 class SqldelightSetDataSource(
     private val setQueries: SetQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : SetDataSource {
+
+    override fun listenAll(startDate: LocalDate?, endDate: LocalDate?, variationId: String?, limit: Long): Flow<List<LBSet>> {
+        return setQueries.getAll(
+            startDate = startDate?.atStartOfDayIn(),
+            endDate = endDate?.atEndOfDayIn(),
+            variationId = variationId,
+            limit = limit,
+        )
+            .asFlow().mapToList(dispatcher)
+            .map { sets ->
+                sets
+                    .map { set ->
+                        val orm = setQueries.getOneRepMaxForVariation(
+                            variationId = set.variationId,
+                            before = set.date
+                        ).executeAsOneOrNull()?.weight
+                        val emax = setQueries.getEMaxForVariation(
+                            variationId = set.variationId,
+                            before = set.date
+                        ).executeAsOneOrNull()?.weight
+
+                        set.toDomain().copy(
+                            mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0
+                        )
+                    }
+            }
+    }
 
     override fun listen(id: String): Flow<LBSet?> =
         setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
@@ -55,3 +91,22 @@ fun LiftingSet.toDomain() = LBSet(
     notes = this.notes,
     rpe = this.rpe?.toInt(),
 )
+
+private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {
+    if (maxWeight <= 0.0) return 0
+    val repFatigueCost = 4
+
+    val weight = setWeight ?: 0.0
+    val reps = setReps ?: 0
+
+    val merFatigueThreshold = 80.0
+
+    val setFatigue = ((weight / maxWeight) * 100.0) + (reps * repFatigueCost)
+
+    return min(reps.toInt(), ((setFatigue - merFatigueThreshold) / 4.0).toInt())
+}
+
+private fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())
+
+private fun LocalDate.atEndOfDayIn(): Instant =
+    this.atTime(23, 59, 59, 999).toInstant(TimeZone.currentSystemDefault())

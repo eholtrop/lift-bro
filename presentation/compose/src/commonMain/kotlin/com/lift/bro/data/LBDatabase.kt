@@ -80,6 +80,7 @@ class LBDatabase(
     val setQueries get() = database.setQueries
     val variationQueries get() = database.variationQueries
     val exerciseQueries get() = database.exerciseQueries
+
     val workoutQueries get() = database.workoutQueries
 
     val exerciseDataSource = LBExerciseDataSource(
@@ -121,7 +122,7 @@ class SetDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-): ISetRepository {
+) {
 
     private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {
         if (maxWeight <= 0.0) return 0
@@ -261,7 +262,7 @@ class SetDataSource(
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 
-    override suspend fun save(set: LBSet) {
+    suspend fun save(set: LBSet) {
         withContext(dispatcher) {
             setQueries.save(
                 id = set.id,
@@ -278,7 +279,7 @@ class SetDataSource(
         }
     }
 
-    override suspend fun delete(lbSet: LBSet) {
+    suspend fun delete(lbSet: LBSet) {
         setQueries.delete(lbSet.id)
     }
 
@@ -294,7 +295,7 @@ class SetDataSource(
         setQueries.delete(setId)
     }
 
-    override fun listen(id: String): Flow<LBSet?> =
+    fun listen(id: String): Flow<LBSet?> =
         setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 }
 

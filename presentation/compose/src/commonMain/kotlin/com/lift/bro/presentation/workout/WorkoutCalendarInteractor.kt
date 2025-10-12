@@ -7,6 +7,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.di.exerciseRepository
+import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
@@ -164,7 +165,7 @@ fun FetchVariationSetsForMonth(
     year: Int,
     month: Month,
 ): Flow<List<Pair<Variation, List<LBSet>>>> = combine(
-    dependencies.database.setDataSource.listenAll(
+    dependencies.setRepository.listenAll(
         LocalDate(year = year, month = month, 1),
         LocalDate(year = year, month = month, 1)
             .plus(1, DateTimeUnit.MONTH),
@@ -179,7 +180,7 @@ fun FetchVariationSetsForRange(
     startDate: LocalDate,
     endDate: LocalDate
 ): Flow<List<Pair<Variation, List<LBSet>>>> = combine(
-    dependencies.database.setDataSource.listenAll(
+    dependencies.setRepository.listenAll(
         startDate = startDate,
         endDate = endDate
     ),
