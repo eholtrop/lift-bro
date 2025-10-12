@@ -21,12 +21,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
-- name: Checkout Repo
+      - name: Checkout Repo
         uses: actions/checkout@v4
 
 
-- name: Set up Java
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
@@ -65,9 +64,9 @@ jobs:
         with:
           name: "google-services.json"
           json: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
-dir: 'presentation/src/androidMain'
+          dir: 'presentation/src/androidMain'
 
-- name: Deploy with Fastlane
+      - name: Deploy with Fastlane
         env:
           STORE_PASSWORD: ${{ secrets.KEYSTORE_PW }}
           KEY_ALIAS: ${{ secrets.KEYSTORE_USR }}
