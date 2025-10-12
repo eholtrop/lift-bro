@@ -73,5 +73,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: build/artifacts/ios/ios_app_release.ipa
+          path: build/artifacts/ios/iosApp.ipa
           if-no-files-found: ignore
