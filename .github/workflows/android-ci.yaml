@@ -64,7 +64,7 @@ jobs:
         with:
           name: "google-services.json"
           json: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
-          dir: 'presentation/src/androidMain'
+          dir: 'presentation/compose/src/androidMain'
 
       - name: Deploy with Fastlane
         env:
