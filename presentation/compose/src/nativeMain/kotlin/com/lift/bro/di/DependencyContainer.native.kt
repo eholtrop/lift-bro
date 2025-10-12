@@ -17,10 +17,6 @@ actual class DependencyContainer {
         SettingsRepository(UserPreferencesDataSource())
     }
 
-    actual fun launchCalculator() {
-
-    }
-
     actual fun launchUrl(url: String) {
         val nsUrl = NSURL.URLWithString(url)
         if (nsUrl != null) {
@@ -34,9 +30,6 @@ actual class DependencyContainer {
 
     actual fun launchManageSubscriptions() {
     }
-
-    actual fun startPresentationServerService(port: Int) { /* no-op on iOS */ }
-    actual fun stopPresentationServerService() { /* no-op on iOS */ }
 }
 
 actual val dependencies: DependencyContainer by lazy {

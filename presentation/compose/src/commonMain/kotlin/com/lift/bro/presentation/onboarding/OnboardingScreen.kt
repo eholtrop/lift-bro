@@ -43,7 +43,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
 import com.example.compose.amber
-import com.lift.bro.BackupService
+import com.lift.bro.RestoreUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
@@ -86,7 +86,7 @@ internal fun Modifier.onboardingBackground(): Modifier = this
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun OnboardingScreen(
-    defaultState: Int = 0
+    defaultState: Int = 0,
 ) {
     var onboardingState by remember { mutableStateOf(defaultState) }
 
@@ -111,6 +111,7 @@ fun OnboardingScreen(
                     ConsentDeviceUseCase(dependencies.settingsRepository).invoke()
                     onboardingState += 1
                 }
+
                 2 -> OnboardingSkipScreen(
                     setupClicked = { onboardingState += 1 },
                     continueClicked = { dependencies.settingsRepository.setDeviceFtux(true) }
@@ -368,7 +369,7 @@ fun OnboardingSkipScreen(
                 .height(Dp.AccessibilityMinimumSize),
             onClick = {
                 coroutineScope.launch {
-                    if (BackupService.restore()) {
+                    if (RestoreUseCase().invoke()) {
                         continueClicked()
                     }
                 }

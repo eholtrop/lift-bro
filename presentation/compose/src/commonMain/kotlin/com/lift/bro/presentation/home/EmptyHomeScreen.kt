@@ -14,7 +14,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lift.bro.BackupService
+import com.lift.bro.RestoreUseCase
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.ui.theme.spacing
@@ -104,7 +104,7 @@ fun EmptyHomeScreen(
         Button(
             onClick = {
                 coroutineScope.launch {
-                    BackupService.restore()
+                    RestoreUseCase().invoke()
                 }
             }
         ) {

@@ -24,7 +24,6 @@ node_modules/
 fastlane/report.xml
 
 app-android/google-services.json
-
 iosApp/iosApp/GoogleService-Info.plist
 
 presentation/src/androidMain/google-services.json
