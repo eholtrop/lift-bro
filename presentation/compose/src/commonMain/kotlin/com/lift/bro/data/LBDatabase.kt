@@ -57,6 +57,7 @@ class LBDatabase(
         )
     }
 
+    @Deprecated("use the liftRepository instead")
     val liftDataSource: LiftDataSource = LiftDataSource(
         database.liftQueries,
         database.setQueries,
@@ -66,6 +67,7 @@ class LBDatabase(
     // Deprecated: repositories are constructed in DI using data:core + data:sqldelight implementations
     // Keeping LBDatabase focused on providing access to queries/datasources and helpers.
 
+    @Deprecated("use the setRepository instead")
     val setDataSource: SetDataSource = SetDataSource(
         setQueries = database.setQueries,
         variationQueries = database.variationQueries
@@ -73,6 +75,7 @@ class LBDatabase(
 
     val logDataSource = database.liftingLogQueries
 
+    @Deprecated("use the workoutRepository instead")
     val workoutDataSource = database.workoutQueries
 
     // Expose queries for DI wiring of SQLDelight-backed datasources
