@@ -8,7 +8,11 @@ CREATE TABLE Variation (
 );
 
 getAllForLift:
-SELECT * FROM Variation WHERE liftId = ?;
+SELECT * FROM Variation
+JOIN Lift ON Lift.id = Variation.liftId
+WHERE (liftId = :liftId OR :liftId = NULL)
+;
+
 
 getAll:
 SELECT

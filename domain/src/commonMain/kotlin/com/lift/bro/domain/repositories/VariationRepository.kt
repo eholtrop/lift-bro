@@ -9,7 +9,7 @@ interface IVariationRepository {
 
     fun save(variation: Variation)
 
-    fun listenAll(liftId: String): Flow<List<Variation>>
+    fun listenAll(liftId: String?): Flow<List<Variation>>
 
     fun getAll(): List<Variation>
 

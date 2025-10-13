@@ -18,13 +18,14 @@ import io.ktor.websocket.Frame
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 fun Route.configureLiftRoutes(
     liftRepository: ILiftRepository = dependencies.liftRepository,
 ) {
-    webSocket("ws/lifts") {
+    webSocket("/ws/lifts") {
         liftRepository.listenAll()
             .onEach { lifts -> send(Frame.Text(Json.encodeToString(lifts))) }
             .collect()
@@ -35,7 +36,9 @@ fun Route.configureVariationRoutes(
     variationRepository: IVariationRepository = dependencies.variationRepository,
 ) {
     webSocket("ws/variations") {
-        variationRepository.listenAll()
+        variationRepository.listenAll(
+            liftId = call.request.queryParameters["liftId"]
+        )
             .onEach { lifts -> send(Frame.Text(Json.encodeToString(lifts))) }
             .collect()
     }
@@ -45,7 +48,12 @@ fun Route.configureSetRoutes(
     setRepository: ISetRepository = dependencies.setRepository,
 ) {
     webSocket("ws/sets") {
-        setRepository.listenAll()
+        setRepository.listenAll(
+            startDate = call.request.queryParameters["startDate"]?.let { LocalDate.parse(it) },
+            endDate = call.request.queryParameters["endDate"]?.let { LocalDate.parse(it) },
+            variationId = call.request.queryParameters["variationId"],
+            limit = call.request.queryParameters["limit"]?.toLong() ?: Long.MAX_VALUE,
+        )
             .onEach { lifts -> send(Frame.Text(Json.encodeToString(lifts))) }
             .collect()
     }

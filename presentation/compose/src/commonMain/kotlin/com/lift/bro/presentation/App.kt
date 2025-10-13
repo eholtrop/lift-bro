@@ -39,6 +39,8 @@ import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
+import com.lift.bro.data.client.createLiftBroClient
+import com.lift.bro.data.client.datasources.KtorLiftDataSource
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
@@ -63,6 +65,8 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.configure
@@ -183,10 +187,6 @@ fun App(
             Purchases.logLevel = LogLevel.DEBUG
         }
 
-        if (BuildConfig.isDebug) {
-//            server?.start()
-        }
-
         Purchases.configure(if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS)
         Purchases.sharedInstance.getCustomerInfo(
             onError = { error ->
@@ -198,6 +198,20 @@ fun App(
                 }
             }
         )
+    }
+
+    LaunchedEffect("test_server") {
+        if (BuildConfig.isDebug) {
+            server?.start()
+        }
+
+        if (BuildConfig.isDebug) {
+            createLiftBroClient().getLifts()
+                .collectLatest {
+                    Log.d("DEBUGEH", it.size.toString())
+                    Log.d("DEBUGEH", "WE HAVE LIFTS OFF")
+                }
+        }
     }
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)

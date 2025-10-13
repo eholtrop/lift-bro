@@ -6,41 +6,43 @@ plugins {
 
 kotlin {
     androidTarget()
-//    jvm()
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
         commonMain.dependencies {
-            // NOT GOOD, ONLY DOING THIS TO ACCESS DEPENDENCY INJECTION FOR NOW
-            // NEED TO REFACTOR LOCATION OF DEPENDENCY CONTAINER TO FIX THIS
-            implementation(project(":presentation:compose"))
             implementation(project(":domain"))
+            implementation(project(":data:core"))
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization)
 
-            // Common Ktor dependencies
-            implementation(libs.ktor.server.core)
-            implementation(libs.ktor.server.websockets)
-            implementation(libs.ktor.server.content.negotiation)
+            // Ktor client dependencies
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.client.content.negotiation)
+            implementation(libs.ktor.client.websockets)
+            implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.kotlinx.json)
         }
 
-//        jvmMain.dependencies {
-//            implementation(libs.ktor.server.cio.jvm)
-//        }
-
         androidMain.dependencies {
-            implementation(libs.ktor.server.cio)
+            implementation(libs.ktor.client.okhttp)
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.ktor.client.cio)
         }
 
         commonTest.dependencies {
             implementation(kotlin("test"))
+            implementation(libs.ktor.client.mock)
         }
     }
 }
 
 android {
-    namespace = "com.lift.bro.presentation.server"
+    namespace = "com.lift.bro.data.client"
     compileSdk = 36
 
     defaultConfig {

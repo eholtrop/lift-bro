@@ -8,8 +8,10 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import comliftbrodb.LiftQueries
+import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
+import comliftbrodb.variation.GetAllForLift
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -17,7 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 
 class SqlDelightVariationDataSource(
@@ -25,7 +26,7 @@ class SqlDelightVariationDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : VariationDataSource {
+): VariationDataSource {
 
     override suspend fun save(variation: Variation) {
         variationQueries.save(
@@ -89,20 +90,23 @@ class SqlDelightVariationDataSource(
             ) { it.toList() }
         }.flowOn(dispatcher)
 
-    override fun listenAllForLift(liftId: String): Flow<List<Variation>> =
+    override fun listenAllForLift(liftId: String?): Flow<List<Variation>> =
         combine(
-            liftQueries.get(liftId).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() },
-            variationQueries.getAllForLift(liftId).asFlow().mapToList(dispatcher),
+            variationQueries.getAllForLift(liftId).asFlowList(),
             setQueries.getAll(
                 limit = Long.MAX_VALUE,
                 startDate = Instant.DISTANT_PAST,
                 endDate = Instant.DISTANT_FUTURE,
                 variationId = null
-            ).asFlow().mapToList(dispatcher)
-        ) { lift, variations, sets ->
+            ).asFlowList(),
+        ) { variations: List<GetAllForLift>, sets: List<LiftingSet> ->
             variations.map { variation ->
                 variation.toDomain(
-                    parentLift = lift,
+                    parentLift = Lift(
+                        id = variation.id_,
+                        color = variation.color?.toULong(),
+                        name = variation.name_,
+                    ),
                     sets = sets.filter { it.variationId == variation.id }.map { it.toDomain() }
                 )
             }
@@ -179,7 +183,23 @@ private fun comliftbrodb.Variation.toDomain(
     oneRepMax = sets.filter { (it.reps ?: 1) == 1L }.maxByOrNull { it.weight },
     favourite = this.favourite == 1L,
     notes = this.notes,
-bodyWeight = this.body_weight?.let { it == 1L },
+    bodyWeight = this.body_weight?.let { it == 1L },
+)
+
+
+private fun GetAllForLift.toDomain(
+    parentLift: Lift?,
+    sets: List<LBSet>,
+): Variation = Variation(
+    id = this.id,
+    lift = parentLift,
+    name = this.name,
+    eMax = sets.filter { (it.reps ?: 1) > 1 }.maxByOrNull { (it.reps ?: 1) * it.weight },
+    maxReps = sets.maxByOrNull { it.reps ?: 1 },
+    oneRepMax = sets.filter { (it.reps ?: 1) == 1L }.maxByOrNull { it.weight },
+    favourite = this.favourite == 1L,
+    notes = this.notes,
+    bodyWeight = this.body_weight?.let { it == 1L },
 )
 
 private fun comliftbrodb.GetAllByVariation.toDomain(): LBSet = LBSet(
