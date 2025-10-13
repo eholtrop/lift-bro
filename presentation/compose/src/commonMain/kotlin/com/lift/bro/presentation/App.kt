@@ -200,19 +200,19 @@ fun App(
         )
     }
 
-    LaunchedEffect("test_server") {
-        if (BuildConfig.isDebug) {
-            server?.start()
-        }
-
-        if (BuildConfig.isDebug) {
-            createLiftBroClient().getLifts()
-                .collectLatest {
-                    Log.d("DEBUGEH", it.size.toString())
-                    Log.d("DEBUGEH", "WE HAVE LIFTS OFF")
-                }
-        }
-    }
+//    LaunchedEffect("test_server") {
+//        if (BuildConfig.isDebug) {
+//            server?.start()
+//        }
+//
+//        if (BuildConfig.isDebug) {
+//            createLiftBroClient().getLifts()
+//                .collectLatest {
+//                    Log.d("DEBUGEH", it.size.toString())
+//                    Log.d("DEBUGEH", "WE HAVE LIFTS OFF")
+//                }
+//        }
+//    }
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
