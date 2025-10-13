@@ -4,3 +4,8 @@
 build/
 DerivedData/
 *.iml
+
+# iOS configuration files (local development only)
+iosApp/iosApp/GoogleService-Info.plist
+iosApp/Configuration.storekit
+iosApp/StoreKitTestCertificate.cer
