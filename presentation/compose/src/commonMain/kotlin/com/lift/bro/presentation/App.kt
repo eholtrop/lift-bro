@@ -47,6 +47,7 @@ import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
@@ -130,6 +131,10 @@ val LocalCalculatorVisibility = compositionLocalOf<MutableState<Boolean>> {
     error("No Calculator Visibility Provided")
 }
 
+val LocalServer = compositionLocalOf<LiftBroServer?> {
+    null
+}
+
 @OptIn(DelicateCoroutinesApi::class)
 val ApplicationScope = GlobalScope
 
@@ -171,10 +176,15 @@ fun App(
 
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null
+    val server = LocalServer.current
 
     LaunchedEffect("setup_revenuecat") {
         if (BuildConfig.isDebug) {
             Purchases.logLevel = LogLevel.DEBUG
+        }
+
+        if (BuildConfig.isDebug) {
+//            server?.start()
         }
 
         Purchases.configure(if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS)

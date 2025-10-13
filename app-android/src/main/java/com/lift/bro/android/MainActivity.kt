@@ -15,7 +15,9 @@ import com.lift.bro.BuildConfig
 import com.lift.bro.di.DependencyContainer
 import com.lift.bro.presentation.App
 import com.lift.bro.presentation.LocalPlatformContext
+import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.StoreManager
+import com.lift.bro.presentation.server.createLiftBroServer
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 
@@ -39,7 +41,8 @@ class MainActivity : ComponentActivity() {
 
             val coordinator = rememberNavCoordinator(Destination.Unknown)
             CompositionLocalProvider(
-                LocalPlatformContext provides LocalContext.current
+                LocalPlatformContext provides LocalContext.current,
+                LocalServer provides createLiftBroServer()
             ) {
                 App(
                     modifier = Modifier.semantics {

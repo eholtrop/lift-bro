@@ -46,6 +46,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalLiftBro
+import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.LiftingScaffold
@@ -88,7 +89,7 @@ fun SettingsScreen() {
 
             var subscriptionType by LocalSubscriptionStatusProvider.current
             var showExperimental by remember { mutableStateOf(subscriptionType == SubscriptionType.Pro) }
-
+            val localServer = LocalServer.current
             LazyColumn(
                 modifier = Modifier.padding(padding),
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
@@ -185,6 +186,12 @@ fun SettingsScreen() {
                                 }
                             }
                         )
+                    }
+                }
+
+                if (localServer != null) {
+                    item {
+                        ServerSettingsRow(localServer)
                     }
                 }
 
