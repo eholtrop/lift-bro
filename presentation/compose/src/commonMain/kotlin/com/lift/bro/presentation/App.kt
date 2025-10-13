@@ -39,8 +39,6 @@ import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
-import com.lift.bro.data.client.createLiftBroClient
-import com.lift.bro.data.client.datasources.KtorLiftDataSource
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository

@@ -1,33 +1,6 @@
 package com.lift.bro.data.client
 
-import com.lift.bro.domain.models.Exercise
-import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
-import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.models.Workout
-import kotlinx.coroutines.flow.Flow
-
-/**
- * Main client interface for communicating with the Lift Bro server
- * Supports both REST API calls and WebSocket connections
- */
-interface LiftBroClient {
-    // REST API methods
-    suspend fun getHealthCheck(): Result<Map<String, Any>>
-
-    val lifts: Flow<List<Lift>>
-
-    fun getLifts(): Flow<List<Lift>>
-    fun getLift(liftId: String): Flow<Lift?>
-
-    fun getWorkouts(): Flow<List<Workout>>
-    fun getExercises(): Flow<List<Exercise>>
-    fun getSets(): Flow<List<LBSet>>
-    fun getVariations(): Flow<List<Variation>>
-
-    // Configuration
-    fun configure(block: LiftBroClientConfig.() -> Unit)
-}
+import io.ktor.client.HttpClient
 
 /**
  * Configuration class for the Lift Bro client
@@ -44,4 +17,4 @@ data class LiftBroClientConfig(
 /**
  * Platform-specific client factory function
  */
-expect fun createLiftBroClient(): LiftBroClient
+expect fun createLiftBroClient(): HttpClient
