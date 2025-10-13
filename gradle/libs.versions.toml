@@ -58,11 +58,27 @@ app-update = { module = "com.google.android.play:app-update", version.ref = "app
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 
-# Ktor server (JVM)
-ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
-ktor-server-cio = { module = "io.ktor:ktor-server-cio-jvm", version.ref = "ktor" }
-ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
-ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
+# Ktor server (Multiplatform)
+ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
+ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# Ktor client (Multiplatform)
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
+ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
+
+# Ktor server platform-specific engines
+ktor-server-cio-jvm = { module = "io.ktor:ktor-server-cio-jvm", version.ref = "ktor" }
+ktor-server-jetty = { module = "io.ktor:ktor-server-jetty-jvm", version.ref = "ktor" }
+ktor-server-js = { module = "io.ktor:ktor-server-js", version.ref = "ktor" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

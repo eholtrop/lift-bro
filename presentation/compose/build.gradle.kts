@@ -52,6 +52,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":domain"))
             implementation(project(":data:sqldelight"))
+            implementation(project(":data:client"))
             implementation(project(":data:core"))
             implementation(project(":libs:mvi"))
 

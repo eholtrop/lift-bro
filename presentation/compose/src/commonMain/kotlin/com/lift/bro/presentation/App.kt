@@ -47,6 +47,7 @@ import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
@@ -62,6 +63,8 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.navigation.SwipeableNavHost
 import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.configure
@@ -130,6 +133,10 @@ val LocalCalculatorVisibility = compositionLocalOf<MutableState<Boolean>> {
     error("No Calculator Visibility Provided")
 }
 
+val LocalServer = compositionLocalOf<LiftBroServer?> {
+    null
+}
+
 @OptIn(DelicateCoroutinesApi::class)
 val ApplicationScope = GlobalScope
 
@@ -171,6 +178,7 @@ fun App(
 
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null
+    val server = LocalServer.current
 
     LaunchedEffect("setup_revenuecat") {
         if (BuildConfig.isDebug) {
@@ -189,6 +197,20 @@ fun App(
             }
         )
     }
+
+//    LaunchedEffect("test_server") {
+//        if (BuildConfig.isDebug) {
+//            server?.start()
+//        }
+//
+//        if (BuildConfig.isDebug) {
+//            createLiftBroClient().getLifts()
+//                .collectLatest {
+//                    Log.d("DEBUGEH", it.size.toString())
+//                    Log.d("DEBUGEH", "WE HAVE LIFTS OFF")
+//                }
+//        }
+//    }
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
