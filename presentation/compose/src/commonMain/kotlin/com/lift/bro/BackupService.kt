@@ -84,10 +84,7 @@ class BackupUseCase(
     }
 
     private suspend fun getAllWorkouts(): List<Workout> {
-        // Get all workouts by using a very wide date range
-        val startDate = LocalDate.fromEpochDays(0) // Very early date
-        val endDate = LocalDate.fromEpochDays(999999) // Very far future date
-        return dependencies.workoutRepository.getAll(startDate, endDate).first()
+        return dependencies.workoutRepository.getAll().first()
     }
 
     private suspend fun getAllExercises(): List<Exercise> {
