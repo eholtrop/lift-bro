@@ -99,21 +99,13 @@ fun rememberCreateSetInteractor(
         source = {
             dependencies.setRepository.listen(id)
                 .flatMapLatest { set ->
-                    if (set == null) {
-                        flow {
-                            emit(
-                                EditSetState(
+                        dependencies.variationRepository.listen(set?.variationId ?: variationId ?: "").map { variation ->
+                            set?.toUiState(variation) ?: EditSetState(
                                     id = id,
                                     date = date ?: Clock.System.now(),
-                                    variation = dependencies.variationRepository.get(variationId)
+                                    variation = variation
                                 )
-                            )
                         }
-                    } else {
-                        dependencies.variationRepository.listen(set.variationId).map { variation ->
-                            set.toUiState(variation)
-                        }
-                    }
                 }
         },
         sideEffects = sideEffects + { _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() },
