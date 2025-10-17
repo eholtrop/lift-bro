@@ -140,7 +140,8 @@ internal fun EditLiftScreen(
         ) {
             stickyHeader {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background,),
                 ) {
                     TextField(
                         modifier = Modifier.fillMaxWidth()
