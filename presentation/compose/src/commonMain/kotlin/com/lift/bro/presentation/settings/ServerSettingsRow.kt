@@ -1,5 +1,7 @@
 package com.lift.bro.presentation.settings
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,22 +18,35 @@ fun ServerSettingsRow(
 ) {
     SettingsRowItem(
         modifier = Modifier,
-        title = { Text("Server Settings") },
+        title = { Text("Datasource Settings") },
     ) {
-        // Use server.isRunning() directly instead of local state to avoid sync issues
-        val enabled = server.isRunning()
+        val enabled = true
 
-        RadioField(
-            text = "Enable Server",
-            selected = enabled,
-            fieldSelected = {
-                if (server.isRunning()) {
-                    server.stop()
-                } else {
-                    server.start()
-                }
-                // Force recomposition by not storing state locally
-            },
-        )
+        Column {
+            RadioField(
+                text = "Local",
+                selected = enabled,
+                fieldSelected = {
+                    if (server.isRunning()) {
+                        server.stop()
+                    } else {
+                        server.start()
+                    }
+                    // Force recomposition by not storing state locally
+                },
+            )
+            RadioField(
+                text = "Remote",
+                selected = enabled,
+                fieldSelected = {
+                    if (server.isRunning()) {
+                        server.stop()
+                    } else {
+                        server.start()
+                    }
+                    // Force recomposition by not storing state locally
+                },
+            )
+        }
     }
 }
