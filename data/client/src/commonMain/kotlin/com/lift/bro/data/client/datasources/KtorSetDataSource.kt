@@ -4,6 +4,7 @@ import com.lift.bro.data.client.createConnectionFlow
 import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.repositories.Sorting
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
@@ -12,16 +13,19 @@ import kotlinx.datetime.LocalDate
 class KtorSetDataSource(
     private val httpClient: HttpClient,
 ): SetDataSource {
+
     override fun listenAll(
         startDate: LocalDate?,
         endDate: LocalDate?,
         variationId: String?,
         limit: Long,
+        sorting: Sorting
     ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit&startDate=$startDate&endDate=$endDate&variationId=$variationId")
 
     override fun listenAllForLift(
         liftId: String,
         limit: Long,
+        sorting: Sorting
     ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit&liftId=$liftId")
 
     override fun listen(id: String): Flow<LBSet?> = createConnectionFlow(httpClient, "api/ws/sets?setId=$id")
