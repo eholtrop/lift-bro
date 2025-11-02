@@ -271,7 +271,7 @@ fun EditSetScreen(
                         stringResource(Res.string.edit_set_screen_extra_notes_label),
                         style = MaterialTheme.typography.titleMedium
                     )
-                    var notes by remember(set.notes) { mutableStateOf(set.notes) }
+                    var notes by remember { mutableStateOf(set.notes) }
 
                     TextField(
                         modifier = Modifier.fillMaxWidth(),
