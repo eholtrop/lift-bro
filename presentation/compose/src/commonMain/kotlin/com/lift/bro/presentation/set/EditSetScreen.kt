@@ -2,9 +2,7 @@
 
 package com.lift.bro.presentation.set
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,14 +15,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ComposableTarget
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,36 +28,29 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import com.lift.bro.di.dependencies
-import com.lift.bro.utils.fullName
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.DateSelector
 import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.Space
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.formattedWeight
+import com.lift.bro.utils.fullName
 import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.create_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
-import lift_bro.core.generated.resources.edit_set_screen_encouragement
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
 import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
-import lift_bro.core.generated.resources.edit_set_screen_variation_selector_lift_max
-import lift_bro.core.generated.resources.edit_set_screen_variation_selector_no_lift_max
-import lift_bro.core.generated.resources.edit_set_screen_variation_selector_no_variation_max
-import lift_bro.core.generated.resources.edit_set_screen_variation_selector_variation_max
-import lift_bro.core.generated.resources.weight_selector_chin_subtitle
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
 
@@ -148,8 +137,6 @@ fun EditSetScreen(
 ) {
     var showVariationDialog by remember { mutableStateOf(false) }
 
-    val variation = set.variation
-
     LiftingScaffold(
         title = { Text(stringResource(if (set.id != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title)) },
         trailingContent = {
@@ -179,65 +166,75 @@ fun EditSetScreen(
                         rpeChanged = rpeChanged,
                     )
 
-                    val sets = dependencies.database.setDataSource.getAllForLift(
-                        variation?.lift?.id ?: "",
-                        Long.MAX_VALUE,
-                    )
-
-                    val liftMax = sets.maxByOrNull { it.weight }
-                    val variationMax = sets.filter { it.variationId == variation?.id }
-                        .maxByOrNull { it.weight }
-
-                    if (set.variation != null) {
-                        Box(
-                            modifier = Modifier.padding(
-                                vertical = MaterialTheme.spacing.one,
-                                horizontal = MaterialTheme.spacing.one
-                            ).animateContentSize()
-                        ) {
-                            val weight = set.weight ?: 0.0
-                            Column(
-                                modifier = Modifier.clickable(
-                                    onClick = {
-                                        showVariationDialog = true
-                                    }
-                                ),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                    when {
+                        set.variation == null -> {
+                            Button(
+                                colors = ButtonDefaults.outlinedButtonColors(),
+                                onClick = {
+                                    showVariationDialog = true
+                                }
                             ) {
-                                Text(
-                                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                                    text = buildAnnotatedString {
-                                        if (liftMax == null && variationMax == null) {
-                                            append(set.variation.fullName)
-                                        } else {
-                                            liftMax?.let {
-                                                append(buildSetLiftSubtitle(
-                                                    value = ((weight / liftMax.weight) * 100).toFloat(),
-                                                    name = set.variation.fullName
-                                                ))
-                                            }
-                                            variationMax?.let {
-                                                append("\n")
-                                                append(
-                                                    buildSetLiftSubtitle(
-                                                        value = ((weight / variationMax.weight) * 100).toFloat(),
-                                                        name = set.variation.fullName
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-                                )
+                                Text("Select Variation")
                             }
                         }
-                    } else {
-                        Button(
-                            colors = ButtonDefaults.outlinedButtonColors(),
-                            onClick = {
-                                showVariationDialog = true
+
+                        else -> {
+                            Box(
+                                modifier = Modifier.padding(
+                                    vertical = MaterialTheme.spacing.one,
+                                    horizontal = MaterialTheme.spacing.one
+                                ).animateContentSize()
+                            ) {
+                                val weight = set.weight ?: 0.0
+                                Column(
+                                    modifier = Modifier
+                                        .clip(MaterialTheme.shapes.medium)
+                                        .clickable(
+                                            onClick = {
+                                                showVariationDialog = true
+                                            },
+                                            role = Role.Button
+                                        )
+                                        .padding(
+                                            vertical = MaterialTheme.spacing.quarter,
+                                            horizontal = MaterialTheme.spacing.one
+                                        ),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        textAlign = TextAlign.Center,
+                                        text = buildAnnotatedString {
+
+                                            if (set.liftMaxPercentage == null && set.variationMaxPercentage == null) {
+
+                                                append(set.variation.fullName)
+                                            } else {
+
+                                                set.variationMaxPercentage?.let {
+                                                    append(
+                                                        buildSetLiftTitle(
+                                                            value = it.percentage,
+                                                            name = it.variationName
+                                                        )
+                                                    )
+                                                }
+
+                                                set.liftMaxPercentage?.let {
+                                                    if (set.variationMaxPercentage != null) {
+                                                        appendLine()
+                                                    }
+                                                    append(
+                                                        buildSetLiftTitle(
+                                                            value = it.percentage,
+                                                            name = it.variationName
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
                             }
-                        ) {
-                            Text("Select Variation")
                         }
                     }
                 }
@@ -302,8 +299,8 @@ fun EditSetScreen(
 }
 
 @Composable
-private fun buildSetLiftSubtitle(
-    value: Float,
+private fun buildSetLiftTitle(
+    value: Int,
     name: String,
 ): AnnotatedString {
     return buildAnnotatedString {

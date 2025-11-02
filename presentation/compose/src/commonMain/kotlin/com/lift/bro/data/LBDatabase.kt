@@ -19,6 +19,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.GetAllByVariation
@@ -206,7 +207,8 @@ class SetDataSource(
             limit = limit,
             startDate = startDate,
             endDate = endDate,
-            variationId = variationId
+            variationId = variationId,
+            sortBy = Sorting.date.toString()
         ).executeAsList().map { it.toDomain() }
 
     fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())

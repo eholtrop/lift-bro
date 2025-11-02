@@ -7,6 +7,7 @@ import com.lift.bro.data.core.datasource.VariationDataSource
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.repositories.Sorting
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
@@ -93,11 +94,13 @@ class SqlDelightVariationDataSource(
     override fun listenAllForLift(liftId: String?): Flow<List<Variation>> =
         combine(
             variationQueries.getAllForLift(liftId).asFlowList(),
+
             setQueries.getAll(
                 limit = Long.MAX_VALUE,
                 startDate = Instant.DISTANT_PAST,
                 endDate = Instant.DISTANT_FUTURE,
-                variationId = null
+                variationId = null,
+                sortBy = Sorting.date.toString()
             ).asFlowList(),
         ) { variations: List<GetAllForLift>, sets: List<LiftingSet> ->
             variations.map { variation ->
@@ -127,7 +130,8 @@ class SqlDelightVariationDataSource(
             limit = Long.MAX_VALUE,
             startDate = Instant.DISTANT_PAST,
             endDate = Instant.DISTANT_FUTURE,
-            variationId = null
+            variationId = null,
+            sortBy = Sorting.date.toString(),
         ).executeAsList().map { it.toDomain() }
         return variationQueries.getAll().executeAsList().map { variation ->
             Variation(

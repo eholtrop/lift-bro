@@ -7,6 +7,7 @@ import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.repositories.Sorting
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import kotlinx.coroutines.CoroutineDispatcher
@@ -28,12 +29,19 @@ class SqldelightSetDataSource(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): SetDataSource {
 
-    override fun listenAll(startDate: LocalDate?, endDate: LocalDate?, variationId: String?, limit: Long): Flow<List<LBSet>> {
+    override fun listenAll(
+        startDate: LocalDate?,
+        endDate: LocalDate?,
+        variationId: String?,
+        limit: Long,
+        sorting: Sorting,
+    ): Flow<List<LBSet>> {
         return setQueries.getAll(
             startDate = startDate?.atStartOfDayIn(),
             endDate = endDate?.atEndOfDayIn(),
             variationId = variationId,
             limit = limit,
+            sortBy = sorting.toString(),
         )
             .asFlow().mapToList(dispatcher)
             .map { sets ->
@@ -55,12 +63,13 @@ class SqldelightSetDataSource(
             }
     }
 
-    override fun listenAllForLift(liftId: String, limit: Long): Flow<List<LBSet>> =
+    override fun listenAllForLift(liftId: String, limit: Long, sorting: Sorting): Flow<List<LBSet>> =
         setQueries.getAllForLift(
             liftId = liftId,
             startDate = Instant.DISTANT_PAST,
             endDate = Instant.DISTANT_FUTURE,
-            limit = limit
+            limit = limit,
+            sortBy = sorting.toString()
         )
             .asFlow().mapToList(dispatcher)
             .map {
