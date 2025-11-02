@@ -7,8 +7,6 @@ on:
       - 'app-android/**'
       - 'presentation/**'
       - '.github/workflows/android-ci.yaml'
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
 env:
   LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
