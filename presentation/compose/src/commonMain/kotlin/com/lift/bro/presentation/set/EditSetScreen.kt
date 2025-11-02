@@ -35,10 +35,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.utils.fullName
 import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.ui.DateSelector
 import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
@@ -179,65 +182,66 @@ fun EditSetScreen(
                         rpeChanged = rpeChanged,
                     )
 
-                    val sets = dependencies.database.setDataSource.getAllForLift(
-                        variation?.lift?.id ?: "",
-                        Long.MAX_VALUE,
-                    )
-
-                    val liftMax = sets.maxByOrNull { it.weight }
-                    val variationMax = sets.filter { it.variationId == variation?.id }
-                        .maxByOrNull { it.weight }
-
-                    if (set.variation != null) {
-                        Box(
-                            modifier = Modifier.padding(
-                                vertical = MaterialTheme.spacing.one,
-                                horizontal = MaterialTheme.spacing.one
-                            ).animateContentSize()
-                        ) {
-                            val weight = set.weight ?: 0.0
-                            Column(
-                                modifier = Modifier.clickable(
-                                    onClick = {
-                                        showVariationDialog = true
-                                    }
-                                ),
-                                horizontalAlignment = Alignment.CenterHorizontally
+                    when {
+                        set.variation == null -> {
+                            Button(
+                                colors = ButtonDefaults.outlinedButtonColors(),
+                                onClick = {
+                                    showVariationDialog = true
+                                }
                             ) {
-                                Text(
-                                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                                    text = buildAnnotatedString {
-                                        if (liftMax == null && variationMax == null) {
-                                            append(set.variation.fullName)
-                                        } else {
-                                            liftMax?.let {
-                                                append(buildSetLiftSubtitle(
-                                                    value = ((weight / liftMax.weight) * 100).toFloat(),
-                                                    name = set.variation.fullName
-                                                ))
-                                            }
-                                            variationMax?.let {
-                                                append("\n")
-                                                append(
-                                                    buildSetLiftSubtitle(
-                                                        value = ((weight / variationMax.weight) * 100).toFloat(),
-                                                        name = set.variation.fullName
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-                                )
+                                Text("Select Variation")
                             }
                         }
-                    } else {
-                        Button(
-                            colors = ButtonDefaults.outlinedButtonColors(),
-                            onClick = {
-                                showVariationDialog = true
+                        else -> {
+                            val sets = dependencies.database.setDataSource.getAllForLift(
+                                variation.lift?.id ?: "",
+                                Long.MAX_VALUE,
+                            )
+
+                            val variationMax = sets.filter { it.variationId == variation.id }.maxByOrNull { it.weight }
+                            val liftMax = sets.maxByOrNull { it.estimateMax ?: 1.0 }
+
+
+                            Box(
+                                modifier = Modifier.padding(
+                                    vertical = MaterialTheme.spacing.one,
+                                    horizontal = MaterialTheme.spacing.one
+                                ).animateContentSize()
+                            ) {
+                                val weight = set.weight ?: 0.0
+                                Column(
+                                    modifier = Modifier.clickable(
+                                        onClick = {
+                                            showVariationDialog = true
+                                        }
+                                    ),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text(
+                                        textAlign = TextAlign.Center,
+                                        text = buildAnnotatedString {
+
+                                            if (variationMax == null) {
+
+                                                append(set.variation.fullName)
+                                            } else {
+                                                appendLine(buildSetLiftTitle(
+                                                    value = ((weight / variationMax.weight) * 100).toInt(),
+                                                    name = set.variation.fullName
+                                                ))
+
+                                                if (liftMax != null && variationMax.variationId != liftMax.variationId) {
+                                                    appendLine(buildSetLiftTitle(
+                                                        value = ((weight / liftMax.weight) * 100).toInt(),
+                                                        name = variation.lift?.name ?: ""
+                                                    ))
+                                                }
+                                            }
+                                        }
+                                    )
+                                }
                             }
-                        ) {
-                            Text("Select Variation")
                         }
                     }
                 }
@@ -302,8 +306,8 @@ fun EditSetScreen(
 }
 
 @Composable
-private fun buildSetLiftSubtitle(
-    value: Float,
+private fun buildSetLiftTitle(
+    value: Int,
     name: String,
 ): AnnotatedString {
     return buildAnnotatedString {
