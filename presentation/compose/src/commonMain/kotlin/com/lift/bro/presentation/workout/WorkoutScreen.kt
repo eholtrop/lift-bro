@@ -3,10 +3,12 @@
 package com.lift.bro.presentation.workout
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -72,6 +75,7 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -83,6 +87,8 @@ import lift_bro.core.generated.resources.workout_notes_placeholder
 import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_set_options_copy_cta
 import lift_bro.core.generated.resources.workout_set_options_delete_cta
+import org.jetbrains.compose.resources.imageResource
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
 
@@ -164,7 +170,70 @@ fun WorkoutScreenInternal(
                 }
             }
 
-            itemsIndexed(state.exercises) { index, exercise ->
+            if (state.exercises.isEmpty() && state.recentWorkouts.isNotEmpty()) {
+                item {
+                    Text(
+                        modifier = Modifier
+                            .animateItem()
+                            .padding(horizontal = MaterialTheme.spacing.one),
+                        text = "Or... Copy a recent workout!",
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+
+                items(
+                    items = state.recentWorkouts,
+                    key = { it.id }
+                ) { workout ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .animateItem()
+                            .padding(horizontal = MaterialTheme.spacing.one)
+                            .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
+                            .clickable(
+                                role = Role.Button,
+                                onClick = {
+                                    eventHandler(CreateWorkoutEvent.CopyWorkout(workout))
+                                }
+                            )
+                            .padding(MaterialTheme.spacing.one),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                                .padding(
+                                    MaterialTheme.spacing.threeQuarters
+                                ),
+                        ) {
+                            Text(
+                                text = workout.date.toString("EEE, MMM d - yyyy"),
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            workout.exercises.forEach { exercise ->
+                                exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
+                                    VariationSet(
+                                        index = if (exercise.variationSets.size > 1) index else null,
+                                        variation = variation,
+                                        sets = sets
+                                    )
+                                }
+                            }
+                        }
+
+                        Space(MaterialTheme.spacing.one)
+
+                        Icon(
+                            imageVector = Icons.Default.ContentCopy,
+                            contentDescription = "Copy"
+                        )
+                    }
+                }
+            }
+
+            itemsIndexed(
+                items = state.exercises,
+                key = { _, it -> it.id },
+            ) { index, exercise ->
                 val pagerState = rememberPagerState(pageCount = { exercise.variations.size })
                 val coroutineScope = rememberCoroutineScope()
                 HorizontalPager(
@@ -377,9 +446,9 @@ private fun Modifier.variationCardAnimation(pagerState: PagerState, page: Int) =
     .zIndex(if (page == pagerState.currentPage) 1f else 0f)
     .graphicsLayer {
         val pageOffset = (
-                (pagerState.currentPage - page) + pagerState
-                    .currentPageOffsetFraction
-                ).absoluteValue
+            (pagerState.currentPage - page) + pagerState
+                .currentPageOffsetFraction
+            ).absoluteValue
 
         alpha = lerp(
             start = 0.5f,

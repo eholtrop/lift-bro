@@ -9,6 +9,7 @@ interface IWorkoutRepository {
     fun getAll(
         startDate: LocalDate = LocalDate.fromEpochDays(0),
         endDate: LocalDate = LocalDate.fromEpochDays(Int.MAX_VALUE),
+        limit: Long = Long.MAX_VALUE,
     ): Flow<List<Workout>>
 
     fun get(id: String): Flow<Workout?>

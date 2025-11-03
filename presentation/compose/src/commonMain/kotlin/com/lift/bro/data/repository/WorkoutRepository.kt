@@ -29,8 +29,9 @@ class WorkoutRepository(
     override fun getAll(
         startDate: LocalDate,
         endDate: LocalDate,
+        limit: Long,
     ): Flow<List<Workout>> =
-        database.workoutDataSource.getAll(startDate = startDate, endDate = endDate)
+        database.workoutDataSource.getAll(startDate = startDate, endDate = endDate, limit = limit)
             .flowToList(dispatcher)
             .flatMapLatest { workouts ->
                 if (workouts.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }

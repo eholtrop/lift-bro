@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.exerciseRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
@@ -27,7 +28,9 @@ import com.lift.bro.presentation.workout.CreateWorkoutEvent.DuplicateSet
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateFinisher
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateNotes
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateWarmup
+import com.lift.bro.ui.today
 import comliftbrodb.LiftingLogQueries
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -35,6 +38,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
 
 @Serializable
 data class CreateWorkoutState(
@@ -44,6 +48,7 @@ data class CreateWorkoutState(
     val exercises: List<ExerciseItem> = emptyList(),
     val finisher: String? = null,
     val notes: String = "",
+    val recentWorkouts: List<Workout> = emptyList(),
 )
 
 @Serializable
@@ -86,6 +91,8 @@ sealed class CreateWorkoutEvent {
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteExercise(val exercise: ExerciseItem): CreateWorkoutEvent()
 
+    data class CopyWorkout(val workout: Workout): CreateWorkoutEvent()
+
     data class DeleteVariation(val exerciseVariation: VariationItem):
         CreateWorkoutEvent()
 }
@@ -106,11 +113,13 @@ fun rememberWorkoutInteractor(
                             exercises = emptyList(),
                         )
                     },
+                dependencies.workoutRepository.getAll(limit = 10),
                 dependencies.database.logDataSource.getByDate(date).flowToOneOrNull(),
-            ) { workout, log ->
+            ) { workout, workouts, log ->
                 CreateWorkoutState(
                     id = workout.id,
                     date = workout.date,
+                    recentWorkouts = workouts.filter { it.exercises.isNotEmpty() },
                     exercises = workout.exercises.map { exercise ->
                         ExerciseItem(
                             id = exercise.id,
@@ -167,6 +176,8 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
         is DeleteVariation -> state.copy(exercises = state.exercises.map {
             it.copy(variations = it.variations - event.exerciseVariation)
         })
+
+        is CreateWorkoutEvent.CopyWorkout -> state
     }
 }
 
@@ -201,6 +212,27 @@ fun workoutSideEffects(
             )
         }
 
+        is CreateWorkoutEvent.CopyWorkout -> {
+            ApplicationScope.launch {
+                with(dependencies.workoutRepository) {
+                    save(state.toWorkout())
+                    event.workout.exercises.forEach { exercise ->
+                        val newEid = uuid4().toString()
+
+                        exercise.variationSets.forEach {
+                            addVariation(
+                                exerciseId = newEid,
+                                variationId = it.variation.id
+                            )
+                        }
+                        addExercise(
+                            workoutId = state.id, exerciseId = newEid
+                        )
+                    }
+                }
+            }
+        }
+
         is DuplicateSet -> {
             setRepository.save(
                 lbSet = event.set.copy(
@@ -219,7 +251,7 @@ fun workoutSideEffects(
         is AddExercise -> {
             ApplicationScope.launch {
                 val newId = uuid4().toString()
-                with (dependencies.workoutRepository) {
+                with(dependencies.workoutRepository) {
                     addVariation(newId, event.variation.id)
                     addExercise(state.id, newId)
                     save(state.toWorkout())

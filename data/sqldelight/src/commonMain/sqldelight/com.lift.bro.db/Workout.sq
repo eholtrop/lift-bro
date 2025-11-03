@@ -14,7 +14,11 @@ getByDate:
 SELECT * FROM Workout WHERE date = ? LIMIT 1;
 
 getAll:
-SELECT * FROM Workout WHERE date < :endDate AND date > :startDate;
+SELECT * FROM Workout
+WHERE (date < :endDate OR :startDate != NULL)
+AND (date > :startDate OR :startDate != NULL)
+ORDER BY date DESC
+LIMIT :limit;
 
 save:
 INSERT OR REPLACE
