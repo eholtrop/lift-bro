@@ -49,6 +49,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.set.rememberEditSetInteractor
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
@@ -141,8 +142,10 @@ internal fun EditLiftScreen(
             stickyHeader {
                 Column(
                     modifier = Modifier.fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background,),
+                        .background(MaterialTheme.colorScheme.background),
                 ) {
+                    var name by remember { mutableStateOf(state.name) }
+
                     TextField(
                         modifier = Modifier.fillMaxWidth()
                             .padding(horizontal = MaterialTheme.spacing.one),
@@ -152,8 +155,11 @@ internal fun EditLiftScreen(
                             errorContainerColor = Color.Transparent,
                             disabledContainerColor = Color.Transparent,
                         ),
-                        value = state.name,
-                        onValueChange = { interactor(EditLiftEvent.NameChanged(it)) },
+                        value = name,
+                        onValueChange = {
+                            name = it
+                            interactor(EditLiftEvent.NameChanged(it))
+                        },
                         placeholder = {
                             Text(
                                 text = stringResource(Res.string.edit_lift_screen_lift_name_placeholder),
@@ -288,9 +294,11 @@ private fun VariationItem(
             ),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        var name by remember { mutableStateOf(variation.name ?: "") }
+
         TextField(
             modifier = Modifier.weight(1f).focusRequester(focusRequester),
-            value = variation.name ?: "",
+            value = name,
             leadingIcon = if (variation.favourite) {
                 {
                     Icon(
@@ -300,7 +308,10 @@ private fun VariationItem(
                 }
             } else null,
             singleLine = true,
-            onValueChange = onNameChange,
+            onValueChange = {
+                name = it
+                onNameChange(it)
+            },
             maxLines = 1,
             placeholder = { Text(stringResource(Res.string.edit_lift_screen_variation_name_placeholder)) },
             suffix = {
