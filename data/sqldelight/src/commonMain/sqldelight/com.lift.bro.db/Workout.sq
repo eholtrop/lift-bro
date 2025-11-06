@@ -15,8 +15,8 @@ SELECT * FROM Workout WHERE date = ? LIMIT 1;
 
 getAll:
 SELECT * FROM Workout
-WHERE (date < :endDate OR :startDate != NULL)
-AND (date > :startDate OR :startDate != NULL)
+WHERE (date <= :endDate OR :endDate != NULL)
+AND (date >= :startDate OR :startDate != NULL)
 ORDER BY date DESC
 LIMIT :limit;
 

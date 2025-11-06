@@ -27,8 +27,8 @@ class WorkoutRepository(
 ): IWorkoutRepository {
 
     override fun getAll(
-        startDate: LocalDate,
-        endDate: LocalDate,
+        startDate: LocalDate?,
+        endDate: LocalDate?,
         limit: Long,
     ): Flow<List<Workout>> =
         database.workoutDataSource.getAll(startDate = startDate, endDate = endDate, limit = limit)
