@@ -34,6 +34,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.UOM
@@ -76,7 +77,7 @@ data class LiftCardData(
 @Serializable
 data class LBOffset(
     val x: Float = 0f,
-    val y: Float = 0f
+    val y: Float = 0f,
 )
 
 enum class LiftCardYValue {
@@ -88,7 +89,7 @@ fun LiftCard(
     modifier: Modifier = Modifier,
     state: LiftCardState,
     onClick: (Lift) -> Unit,
-    value: LiftCardYValue = LiftCardYValue.Weight
+    value: LiftCardYValue = LiftCardYValue.Weight,
 ) {
     val lift = state.lift
     val max = if (value == LiftCardYValue.Reps) state.maxReps ?: 0.0 else state.maxWeight ?: 0.0
@@ -114,20 +115,21 @@ fun LiftCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = lift.name,
                     style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
                 )
-                Space()
-                max?.let {
-                    Text(
-                        modifier = Modifier.wrapContentWidth(),
-                        text = when (value) {
-                            LiftCardYValue.Weight -> weightFormat(max)
-                            LiftCardYValue.Reps -> "${max.toInt()}${nbsp}reps"
-                        },
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                }
+                Space(width = MaterialTheme.spacing.half)
+                Text(
+                    modifier = Modifier.wrapContentWidth(),
+                    text = when (value) {
+                        LiftCardYValue.Weight -> weightFormat(max)
+                        LiftCardYValue.Reps -> "${max.toInt()}${nbsp}reps"
+                    },
+                    style = MaterialTheme.typography.labelMedium,
+                    overflow = TextOverflow.MiddleEllipsis,
+                )
             }
 
             Space(MaterialTheme.spacing.half)

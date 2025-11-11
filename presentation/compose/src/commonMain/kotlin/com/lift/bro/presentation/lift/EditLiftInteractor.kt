@@ -24,7 +24,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class EditLiftState(
     val id: String?,
-    val name: String = "",
+    val name: String,
     val liftColor: LiftColor? = null,
     val variations: List<Variation> = emptyList(),
 ) {
@@ -59,10 +59,10 @@ sealed class EditLiftEvent {
     data object DeleteLift: EditLiftEvent()
 }
 
-val EditLiftReducer = Reducer<EditLiftState, EditLiftEvent> { state, event ->
+val EditLiftReducer = Reducer<EditLiftState?, EditLiftEvent> { state, event ->
     when (event) {
-        is EditLiftEvent.NameChanged -> state.copy(name = event.name)
-        is EditLiftEvent.VariationNameChanged -> state.copy(
+        is EditLiftEvent.NameChanged -> state?.copy(name = event.name)
+        is EditLiftEvent.VariationNameChanged -> state?.copy(
             variations = state.variations.map {
                 if (it.id == event.variation.id) {
                     it.copy(name = event.name)
@@ -72,11 +72,11 @@ val EditLiftReducer = Reducer<EditLiftState, EditLiftEvent> { state, event ->
             },
         )
 
-        EditLiftEvent.AddVariation -> state.copy(
+        EditLiftEvent.AddVariation -> state?.copy(
             variations = listOf(Variation()) + state.variations
         )
 
-        is EditLiftEvent.VariationRemoved -> state.copy(
+        is EditLiftEvent.VariationRemoved -> state?.copy(
             variations = state.variations.filter { it.id != event.variation.id },
         )
 
@@ -88,10 +88,10 @@ fun editLiftSideEffects(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: ISetRepository = dependencies.setRepository,
-): SideEffect<EditLiftState, EditLiftEvent> = { state: EditLiftState, event: EditLiftEvent ->
+): SideEffect<EditLiftState?, EditLiftEvent> = { state: EditLiftState?, event: EditLiftEvent ->
     when (event) {
         EditLiftEvent.DeleteLift -> {
-            if (state.id != null) {
+            if (state?.id != null) {
                 liftRepository.delete(state.id)
                 state.variations.forEach {
                     variationRepository.delete(it.id)
@@ -102,12 +102,14 @@ fun editLiftSideEffects(
 
         EditLiftEvent.AddVariation -> {
             variationRepository.save(
-                Variation(lift = state.lift)
+                Variation(lift = state?.lift)
             )
         }
 
         is EditLiftEvent.NameChanged -> {
-            liftRepository.save(state.lift.copy(name = event.name))
+            state?.lift?.copy(name = event.name)?.let {
+                liftRepository.save(it)
+            }
         }
 
         is EditLiftEvent.VariationRemoved -> {
@@ -124,22 +126,24 @@ fun editLiftSideEffects(
 }
 
 @Composable
-fun rememberCreateLiftInteractor(): Interactor<EditLiftState, EditLiftEvent> {
+fun rememberCreateLiftInteractor(): Interactor<EditLiftState?, EditLiftEvent> {
     val id = uuid4().toString()
     return rememberInteractor(
-        initialState = EditLiftState(id = id),
-        source = {combine(
-            dependencies.database.liftDataSource.get(id),
-            dependencies.variationRepository.listenAll(id),
-        ) { lift, variations ->
-            EditLiftState(
-                id = id,
-                name = lift?.name ?: "",
-                variations = variations.sortedBy { it.name?.toLowerCase(Locale.current) }
-                    .sortedBy { !it.favourite }
-                    .sortedBy { !it.name.isNullOrBlank() },
-            )
-        }},
+        initialState = null,
+        source = {
+            combine(
+                dependencies.database.liftDataSource.get(id),
+                dependencies.variationRepository.listenAll(id),
+            ) { lift, variations ->
+                EditLiftState(
+                    id = id,
+                    name = lift?.name ?: "",
+                    variations = variations.sortedBy { it.name?.toLowerCase(Locale.current) }
+                        .sortedBy { !it.favourite }
+                        .sortedBy { !it.name.isNullOrBlank() },
+                )
+            }
+        },
         reducers = listOf(EditLiftReducer),
         sideEffects = listOf(editLiftSideEffects())
     )
@@ -148,22 +152,24 @@ fun rememberCreateLiftInteractor(): Interactor<EditLiftState, EditLiftEvent> {
 @Composable
 fun rememberEditLiftInteractor(
     liftId: String,
-): Interactor<EditLiftState, EditLiftEvent> {
+): Interactor<EditLiftState?, EditLiftEvent> {
     val thisId = liftId
     return rememberInteractor(
-        initialState = EditLiftState(id = thisId),
-        source = {combine(
-            dependencies.database.liftDataSource.get(thisId),
-            dependencies.variationRepository.listenAll(thisId),
-        ) { lift, variations ->
-            EditLiftState(
-                id = lift?.id,
-                name = lift?.name ?: "",
-                variations = variations.sortedBy { it.name?.toLowerCase(Locale.current) }
-                    .sortedBy { !it.favourite }
-                    .sortedBy { !it.name.isNullOrBlank() },
-            )
-        }},
+        initialState = null,
+        source = {
+            combine(
+                dependencies.database.liftDataSource.get(thisId),
+                dependencies.variationRepository.listenAll(thisId),
+            ) { lift, variations ->
+                EditLiftState(
+                    id = lift?.id,
+                    name = lift?.name ?: "",
+                    variations = variations.sortedBy { it.name?.toLowerCase(Locale.current) }
+                        .sortedBy { !it.favourite }
+                        .sortedBy { !it.name.isNullOrBlank() },
+                )
+            }
+        },
         reducers = listOf(EditLiftReducer),
         sideEffects = listOf(editLiftSideEffects())
     )
