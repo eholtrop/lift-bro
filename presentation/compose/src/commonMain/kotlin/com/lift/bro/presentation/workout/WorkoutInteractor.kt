@@ -32,6 +32,7 @@ import com.lift.bro.ui.today
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -75,7 +76,7 @@ sealed interface VariationItem {
     data class WithoutSets(
         override val id: String,
         override val variation: Variation,
-        val lastSet: LBSet,
+        val lastSet: LBSet?,
     ): VariationItem
 }
 
@@ -124,21 +125,25 @@ fun rememberWorkoutInteractor(
                         ExerciseItem(
                             id = exercise.id,
                             variations = exercise.variationSets.map { variationSets ->
-                                if (variationSets.sets.isEmpty()) {
-                                    VariationItem.WithoutSets(
-                                        id = variationSets.id,
-                                        variation = variationSets.variation,
-                                        lastSet = dependencies.database.setDataSource.getAll(
-                                            variationSets.variation.id,
-                                            1
-                                        ).first()
-                                    )
-                                } else {
-                                    VariationItem.WithSets(
-                                        id = variationSets.id,
-                                        variation = variationSets.variation,
-                                        sets = variationSets.sets
-                                    )
+                                when {
+                                    variationSets.sets.isEmpty() -> {
+                                        VariationItem.WithoutSets(
+                                            id = variationSets.id,
+                                            variation = variationSets.variation,
+                                            lastSet = dependencies.database.setDataSource.getAll(
+                                                variationId = variationSets.variation.id,
+                                                limit = 1
+                                            ).firstOrNull()
+                                        )
+                                    }
+
+                                    else -> {
+                                        VariationItem.WithSets(
+                                            id = variationSets.id,
+                                            variation = variationSets.variation,
+                                            sets = variationSets.sets
+                                        )
+                                    }
                                 }
                             }
                         )

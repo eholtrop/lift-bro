@@ -668,42 +668,44 @@ fun VariationItemCard(
 
                 is VariationItem.WithoutSets -> {
 
-                    CompositionLocalProvider(
-                        LocalContentColor provides MaterialTheme.colorScheme.onSurface,
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .padding(horizontal = MaterialTheme.spacing.half)
-                                .clickable(
-                                    onClick = {
-                                        eventHandler(
-                                            CreateWorkoutEvent.DuplicateSet(variationSet.lastSet)
-                                        )
-                                    },
-                                    role = Role.Button
-                                )
-                                .border(
-                                    width = 2.dp,
-                                    color = MaterialTheme.colorScheme.tertiary,
-                                    shape = MaterialTheme.shapes.small,
-                                )
-                                .clip(MaterialTheme.shapes.small)
-                                .padding(horizontal = MaterialTheme.spacing.half, vertical = MaterialTheme.spacing.half),
+                    if (variationSet.lastSet != null) {
+                        CompositionLocalProvider(
+                            LocalContentColor provides MaterialTheme.colorScheme.onSurface,
                         ) {
-                            Text(
-                                text = "Most Recent Set - ${variationSet.lastSet.date.toString("EEEE, MMM d, yyyy")}",
-                                style = MaterialTheme.typography.labelSmall,
-                            )
-                            SetInfoRow(
-                                set = variationSet.lastSet,
-                                trailing = {
-                                    Icon(
-                                        imageVector = Icons.Default.ContentCopy,
-                                        contentDescription = "Copy Set",
-                                        tint = MaterialTheme.colorScheme.tertiary,
+                            Column(
+                                modifier = Modifier
+                                    .padding(horizontal = MaterialTheme.spacing.half)
+                                    .clickable(
+                                        onClick = {
+                                            eventHandler(
+                                                CreateWorkoutEvent.DuplicateSet(variationSet.lastSet)
+                                            )
+                                        },
+                                        role = Role.Button
                                     )
-                                }
-                            )
+                                    .border(
+                                        width = 2.dp,
+                                        color = MaterialTheme.colorScheme.tertiary,
+                                        shape = MaterialTheme.shapes.small,
+                                    )
+                                    .clip(MaterialTheme.shapes.small)
+                                    .padding(horizontal = MaterialTheme.spacing.half, vertical = MaterialTheme.spacing.half),
+                            ) {
+                                Text(
+                                    text = "Most Recent Set - ${variationSet.lastSet.date.toString("EEEE, MMM d, yyyy")}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                )
+                                SetInfoRow(
+                                    set = variationSet.lastSet,
+                                    trailing = {
+                                        Icon(
+                                            imageVector = Icons.Default.ContentCopy,
+                                            contentDescription = "Copy Set",
+                                            tint = MaterialTheme.colorScheme.tertiary,
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
