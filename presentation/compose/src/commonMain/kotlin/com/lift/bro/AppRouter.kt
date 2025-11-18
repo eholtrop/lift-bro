@@ -11,6 +11,7 @@ import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
 import com.lift.bro.presentation.workout.WorkoutScreen
 import com.lift.bro.presentation.workout.rememberWorkoutInteractor
+import com.lift.bro.presentation.wrapped.WrappedLandingScreen
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.utils.logger.Log
@@ -25,6 +26,8 @@ fun AppRouter(route: Destination) {
 
     when (route) {
         is Destination.Unknown -> {}
+
+        is Destination.Wrapped -> WrappedLandingScreen()
 
         is Destination.Onboarding -> OnboardingScreen()
 

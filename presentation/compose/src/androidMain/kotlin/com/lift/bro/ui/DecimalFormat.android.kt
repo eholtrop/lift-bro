@@ -1,6 +1,6 @@
 package com.lift.bro.utils
 
-actual fun Double?.decimalFormat(showDecimal: Boolean): String {
+actual fun Double?.decimalFormat(showDecimal: Boolean, grouping: Boolean): String {
     if (this == null) return ""
 
     val df = java.text.DecimalFormat()

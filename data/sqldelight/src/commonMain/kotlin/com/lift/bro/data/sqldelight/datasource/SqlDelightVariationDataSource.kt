@@ -76,6 +76,7 @@ class SqlDelightVariationDataSource(
                             id = variation.id,
                             name = variation.name,
                             notes = variation.notes,
+                            bodyWeight = variation.body_weight == 1L,
                             favourite = variation.favourite == 1L,
                             lift = Lift(
                                 id = variation.lift_id,
@@ -150,6 +151,7 @@ class SqlDelightVariationDataSource(
                     .maxByOrNull { it.weight * it.reps.toDouble() },
                 maxReps = sets.filter { it.variationId == variation.id }
                     .maxByOrNull { it.reps },
+                bodyWeight = variation.body_weight == 1L,
             )
         }
     }

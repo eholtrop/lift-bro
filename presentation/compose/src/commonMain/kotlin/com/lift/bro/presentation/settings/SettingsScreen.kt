@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.buildAnnotatedString
@@ -52,7 +53,10 @@ import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.today
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
@@ -138,6 +142,21 @@ fun SettingsScreen() {
                         } else {
 
                         }
+                    }
+                }
+
+                item {
+                    val coordinator = LocalNavCoordinator.current
+                    SettingsRowItem(
+                        modifier = Modifier.clickable(
+                            role = Role.Button,
+                            onClick = {
+                                coordinator.present(Destination.Wrapped)
+                            }
+                        ),
+                        title = { Text("Lift Bro Wrapped") },
+                    ) {
+                        Text("Tap to see the highlights of ${today.year} and previous years!")
                     }
                 }
 

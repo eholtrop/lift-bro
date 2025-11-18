@@ -77,6 +77,7 @@ class SqldelightExerciseDataSource(
                                         ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
                                     maxReps = reps?.toDomain()
                                         ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                    bodyWeight = exercise.variation_is_body_weight == 1L,
                                 )
                             )
                         }

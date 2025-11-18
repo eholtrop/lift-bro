@@ -22,7 +22,7 @@ data class Variation(
     val eMax: LBSet? = null,
     val oneRepMax: LBSet? = null,
     val maxReps: LBSet? = null,
-    val bodyWeight: Boolean? = null,
+    val bodyWeight: Boolean? = false,
 )
 
 val Variation.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
