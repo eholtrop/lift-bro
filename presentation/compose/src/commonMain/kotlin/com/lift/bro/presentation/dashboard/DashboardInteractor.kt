@@ -2,7 +2,6 @@ package com.lift.bro.presentation.dashboard
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.data.LiftDataSource
-import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
@@ -42,9 +41,6 @@ sealed class DashboardListItem {
         @Serializable
         data object Loading: LiftCard()
     }
-
-    @Serializable
-    data object Ad: DashboardListItem()
 
     @Serializable
     data object ReleaseNotes: DashboardListItem()
@@ -118,11 +114,6 @@ fun rememberDashboardInteractor(
                     .map { items ->
                         DashboardState(
                             items = items.toMutableList().apply {
-                                if (this.size > 2) {
-                                    add(2, DashboardListItem.Ad)
-                                } else {
-                                    add(DashboardListItem.Ad)
-                                }
                                 add(0, DashboardListItem.ReleaseNotes)
                                 add(DashboardListItem.AddLiftButton)
                             }

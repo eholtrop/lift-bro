@@ -95,7 +95,6 @@ kotlin {
             implementation(libs.sqldelight.android.driver)
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
-            implementation(libs.play.services.ads)
             implementation(compose.uiTooling)
         }
 

@@ -5,13 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import com.google.android.gms.ads.MobileAds
-import com.lift.bro.BuildConfig
 import com.lift.bro.di.DependencyContainer
 import com.lift.bro.presentation.App
 import com.lift.bro.presentation.LocalPlatformContext
@@ -32,12 +29,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
-            LaunchedEffect("admob_initialization") {
-                if (BuildConfig.DEBUG) {
-                    MobileAds.initialize(this@MainActivity)
-                }
-            }
 
             val coordinator = rememberNavCoordinator(Destination.Unknown)
             CompositionLocalProvider(
