@@ -36,7 +36,11 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -46,6 +50,8 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.percentageFormat
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
@@ -54,32 +60,103 @@ fun WrappedLandingScreenPreview() {
     WrappedLandingScreen()
 }
 
+@Serializable
+data class WrappedState(
+    val pages: List<WrappedPageState> = emptyList(),
+)
+
+@Serializable
+sealed class WrappedPageState() {
+    @Serializable
+    data class Tenure(
+        val year: Int,
+    ): WrappedPageState()
+
+    @Serializable
+    data class Weight(
+        val totalWeightMoved: Double,
+        val heavyThing: HeavyThing,
+        val heaviestVariation: Pair<String, Double>,
+    ): WrappedPageState()
+
+    @Serializable
+    data class Reps(
+        val totalReps: Long,
+        val dailyAverage: Long,
+        val workoutAverage: Long,
+        val mostRepsLift: Pair<String, Long>
+    ): WrappedPageState()
+
+    @Serializable
+    data class Summary(
+        val sets: List<LBSet>,
+    ): WrappedPageState()
+}
+
+sealed class WrappedEvents()
+
 @Composable
-fun WrappedLandingScreen() {
-    val sets by dependencies.setRepository.listenAll().collectAsState(emptyList())
-    val variations by dependencies.variationRepository.listenAll().collectAsState(emptyList())
+fun rememberWrappedInteractor(
+    setRepository: ISetRepository = dependencies.setRepository,
+    variationRepository: IVariationRepository = dependencies.variationRepository,
+): Interactor<WrappedState, WrappedEvents> {
+    return rememberInteractor(
+        initialState = WrappedState(),
+        source = {
+            combine(
+                setRepository.listenAll(),
+                variationRepository.listenAll(),
+            ) { sets, variations ->
+                val variationSets = sets.groupBy { it.variationId }
 
-    if (sets.isNotEmpty()) {
-        HorizontalPager(
-            state = rememberPagerState { 5 },
-        ) { page ->
-            CompositionLocalProvider(
-                LocalContentColor provides MaterialTheme.colorScheme.onBackground
-            ) {
 
-                when (page) {
-                    0 -> {
-                        WrappedTenureScreen(earliestSet = sets.minBy { it.date })
-                    }
-
-                    1 -> WrappedWeightScreen(sets, variations)
-                    2 -> WrappedRepScreen(sets, variations)
-                    3 -> WrappedProgressScreen(sets, variations)
-                    4 -> WrappedSummaryScreen()
-                }
+                WrappedState(
+                    pages = listOf(
+                        WrappedPageState.Tenure(year = sets.minOf { it.date.toLocalDate().year }),
+                        WrappedPageState.Weight(
+                            totalWeightMoved = sets.sumOf { it.weight * it.reps },
+                            heavyThing = heavyThings.toList().random(),
+                            heaviestVariation = variationSets.map { entry -> variations.first { it.id == entry.key }.fullName to entry.value.sumOf { it.weight } }
+                                .maxBy { it.second }
+                        ),
+                        WrappedPageState.Reps(
+                            totalReps = sets.sumOf { it.reps },
+                            dailyAverage = sets.sumOf { it.reps / if (today.year % 4 == 0) 366 else 365 },
+                            workoutAverage = sets.sumOf { it.reps / sets.groupBy { it.date.toLocalDate().dayOfYear }.size },
+                            mostRepsLift = variations.first { it.id == sets.maxBy { it.reps }.variationId }.fullName to sets.maxOf { it.reps }
+                        ),
+                        WrappedPageState.Summary(
+                            sets = sets
+                        ),
+                    )
+                )
             }
-
         }
+    )
+}
+
+@Composable
+fun WrappedLandingScreen(
+    interactor: Interactor<WrappedState, WrappedEvents> = rememberWrappedInteractor(),
+) {
+    val state by interactor.state.collectAsState()
+
+    HorizontalPager(
+        state = rememberPagerState { state.pages.size },
+    ) { page ->
+        CompositionLocalProvider(
+            LocalContentColor provides MaterialTheme.colorScheme.onBackground
+        ) {
+
+            when (val page = state.pages.get(page)) {
+                is WrappedPageState.Reps -> WrappedRepScreen(page)
+                is WrappedPageState.Tenure -> WrappedTenureScreen(page)
+                is WrappedPageState.Weight -> WrappedWeightScreen(page)
+                is WrappedPageState.Summary -> WrappedSummaryScreen()
+
+            }
+        }
+
     }
 }
 
@@ -87,7 +164,7 @@ private const val FadeInDelayPerIndex = 100L
 
 @Composable
 fun WrappedTenureScreen(
-    earliestSet: LBSet,
+    state: WrappedPageState.Tenure,
 ) {
     val currentYear = today.year
 
@@ -105,7 +182,7 @@ fun WrappedTenureScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
 
-                        if (currentYear == earliestSet.date.toLocalDate().year) {
+                        if (currentYear == state.year) {
                             FadeInText(
                                 delay = 100L,
                                 text = "This was your first Lift Bro year! \uD83C\uDF89",
@@ -132,7 +209,7 @@ fun WrappedTenureScreen(
                         } else {
                             FadeInText(
                                 delay = 500L,
-                                text = "You've been a lift bro for ${currentYear - earliestSet.date.toLocalDate().year} years!",
+                                text = "You've been a lift bro for ${currentYear - state.year} years!",
                                 style = MaterialTheme.typography.bodyLarge,
                             )
                             Space(MaterialTheme.spacing.one)
@@ -170,11 +247,8 @@ fun WrappedTenureScreen(
 
 @Composable
 fun WrappedWeightScreen(
-    sets: List<LBSet>,
-    variations: List<Variation>,
+    state: WrappedPageState.Weight,
 ) {
-    val currentYearSets = sets.filter { it.date.toLocalDate().year == today.year }
-    val totalWeight = currentYearSets.sumOf { it.weight * it.reps }
     LiftingScaffold(
         title = {
             Text("Total Weight Moved")
@@ -188,7 +262,7 @@ fun WrappedWeightScreen(
             item {
                 FadeInText(
                     delay = FadeInDelayPerIndex * 1,
-                    text = "You moved ${weightFormat(totalWeight)} this year!",
+                    text = "You moved ${weightFormat(state.totalWeightMoved)} this year!",
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -198,10 +272,9 @@ fun WrappedWeightScreen(
             }
 
             item {
-                val comparisonObject = heavyThings.toList().random()
                 FadeInText(
                     delay = FadeInDelayPerIndex * 2,
-                    text = "Thats ${(totalWeight / comparisonObject.weight).decimalFormat()} ${comparisonObject.name}s ${comparisonObject.icon}",
+                    text = "Thats ${(state.totalWeightMoved / state.heavyThing.weight).decimalFormat()} ${state.heavyThing.name}s ${state.heavyThing.icon}",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -211,15 +284,10 @@ fun WrappedWeightScreen(
             }
 
             item {
-                val variationSets = currentYearSets.groupBy { it.variationId }
-
-                val variationWeights = variationSets.map { entry -> variations.first { it.id == entry.key } to entry.value.sumOf { it.weight } }
-
-                val heaviestVariation = variationWeights.maxBy { it.second }
 
                 FadeInText(
                     delay = FadeInDelayPerIndex * 3,
-                    text = "You moved ${weightFormat(heaviestVariation.second)} in ${heaviestVariation.first.fullName}s Alone!! \uD83D\uDE35",
+                    text = "You moved ${weightFormat(state.heaviestVariation.second)} in ${state.heaviestVariation.first}s Alone!! \uD83D\uDE35",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -259,6 +327,7 @@ fun FadeInText(
     )
 }
 
+@Serializable
 data class HeavyThing(
     val name: String,
     val weight: Double,
@@ -274,18 +343,14 @@ private val heavyThings = listOf(
     HeavyThing(
         name = "Elephant",
         weight = 15432.0,
-        icon = "\uD83D\uDC0B"
+        icon = "\uD83D\uDC18"
     ),
 )
 
 @Composable
 fun WrappedRepScreen(
-    sets: List<LBSet>,
-    variations: List<Variation>,
+    state: WrappedPageState.Reps,
 ) {
-    val currentYearSets = sets.filter { it.date.toLocalDate().year == today.year }
-    val totalReps = currentYearSets.sumOf { it.reps }
-
     LiftingScaffold(
         title = {
             Text("Total Reps")
@@ -299,7 +364,7 @@ fun WrappedRepScreen(
             item {
                 FadeInText(
                     delay = FadeInDelayPerIndex * 1,
-                    text = "You picked up $totalReps things this year \uD83D\uDE35",
+                    text = "You picked up ${state.totalReps} things this year \uD83D\uDE35",
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -321,19 +386,16 @@ fun WrappedRepScreen(
             }
 
             item {
-                val dailyAverage = totalReps / if (today.year % 4 == 0) 366 else 365
-                val workoutAverage = totalReps / currentYearSets.groupBy { it.date.toLocalDate().dayOfYear }.size
-
                 FadeInText(
                     delay = FadeInDelayPerIndex * 3,
-                    text = "Thats an average of ${dailyAverage} reps per day",
+                    text = "Thats an average of ${state.dailyAverage} reps per day",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
 
                 FadeInText(
                     delay = FadeInDelayPerIndex * 4,
-                    text = "or ${workoutAverage} per workout!!",
+                    text = "or ${state.workoutAverage} per workout!!",
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
@@ -343,13 +405,9 @@ fun WrappedRepScreen(
             }
 
             item {
-                val mostRepsLift = currentYearSets.groupBy { set -> variations.first { it.id == set.variationId } }
-                    .map { it.key to it.value.sumOf { it.reps } }
-                    .maxBy { it.second }
-
                 FadeInText(
                     delay = FadeInDelayPerIndex * 5,
-                    text = "You even did ${mostRepsLift.second} reps of ${mostRepsLift.first.fullName} \uD83D\uDE35",
+                    text = "You even did ${state.mostRepsLift.second} reps of ${state.mostRepsLift.first} \uD83D\uDE35",
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
