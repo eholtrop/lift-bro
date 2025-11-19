@@ -55,15 +55,11 @@ import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
-import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.utils.fullName
-import com.lift.bro.utils.maxText
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
-import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Calendar
@@ -75,6 +71,8 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.rememberCalendarState
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
+import com.lift.bro.utils.fullName
+import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
@@ -132,12 +130,6 @@ fun WorkoutCalendarContent(
                         )
                     }
                 )
-            }
-        }
-
-        if (subscriptionType == SubscriptionType.None) {
-            item {
-                AdBanner(modifier = Modifier.defaultMinSize(minHeight = 52.dp).fillMaxWidth())
             }
         }
 

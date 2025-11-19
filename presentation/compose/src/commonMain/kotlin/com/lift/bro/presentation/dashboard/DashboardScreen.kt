@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -32,7 +31,6 @@ import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.presentation.ads.AdBanner
 import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardYValue
@@ -98,13 +96,6 @@ fun DashboardContent(
                     span = { item -> GridItemSpan(item.gridSize(state.items.size)) }
                 ) { item ->
                     when (val dli = item) {
-                        DashboardListItem.Ad -> {
-                            AdBanner(
-                                modifier = Modifier.defaultMinSize(
-                                    minHeight = 52.dp
-                                )
-                            )
-                        }
 
                         is DashboardListItem.LiftCard.Loaded -> {
                             LiftCard(
@@ -166,7 +157,6 @@ fun DashboardContent(
 }
 
 private fun DashboardListItem.gridSize(listSize: Int = 0): Int = when (this) {
-    DashboardListItem.Ad -> 2
     is DashboardListItem.LiftCard -> 1
     DashboardListItem.ReleaseNotes -> 2
     DashboardListItem.AddLiftButton -> if (listSize % 2 == 0) 1 else 2

@@ -46,11 +46,6 @@ android {
     }
 
     buildTypes {
-        defaultConfig {
-            resValue("string", "admob_app_id", project.findProperty("LIFT_BRO_ADMOB_APP_ID") as? String ?: System.getenv("LIFT_BRO_ADMOB_APP_ID"))
-        }
-
-
         release {
             isMinifyEnabled = false
             isDebuggable = false
@@ -73,6 +68,5 @@ dependencies {
     implementation(project(":domain"))
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
-    implementation(libs.play.services.ads)
     implementation(libs.billing.ktx)
 }
