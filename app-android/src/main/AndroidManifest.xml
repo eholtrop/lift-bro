@@ -12,11 +12,6 @@
         android:theme="@style/AppTheme"
         android:networkSecurityConfig="@xml/network_security_config">
 
-        <service
-            android:name="com.lift.bro.server.LiftBroServerForegroundService"
-            android:exported="false"
-            android:foregroundServiceType="dataSync" />
-
         <activity
             android:name=".android.MainActivity"
             android:exported="true"
@@ -39,8 +34,5 @@
                 android:resource="@xml/file_provider_paths" />
         </provider>
 
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/admob_app_id" />
     </application>
 </manifest>
