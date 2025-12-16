@@ -366,64 +366,50 @@ fun DailyWorkoutDetails(
     }
 
     if (state.potentialExercises.isNotEmpty()) {
+
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+        Text(
+            text = "Other Gains!",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Text(
+            text = "Tap to add to Workout",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.half))
+
         Column(
-            modifier = Modifier.fillMaxWidth()
-                .background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .padding(
-                    start = MaterialTheme.spacing.one,
-                    end = MaterialTheme.spacing.one,
-                    top = MaterialTheme.spacing.half,
-                    bottom = MaterialTheme.spacing.one,
-                ),
+            modifier = Modifier.fillMaxWidth().background(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = MaterialTheme.shapes.medium
+            )
+                .clip(MaterialTheme.shapes.medium)
         ) {
-            Text(
-                text = "Other Gains!",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            Text(
-                text = "Tap to add to Workout",
-                style = MaterialTheme.typography.bodyMedium
-            )
-
-            Space(MaterialTheme.spacing.half)
-
-            Column(
-                modifier = Modifier.fillMaxWidth().background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = MaterialTheme.shapes.medium
-                )
-                    .clip(MaterialTheme.shapes.medium)
-            ) {
-                state.potentialExercises
-                    .forEach {
-                        VariationSet(
-                            modifier = Modifier.clickable(
-                                onClick = {
-                                    interactor(
-                                        DailyWorkoutDetailsEvent.AddToWorkout(
-                                            variationId = it.first.id,
-                                        )
+            state.potentialExercises
+                .forEach {
+                    VariationSet(
+                        modifier = Modifier.clickable(
+                            onClick = {
+                                interactor(
+                                    DailyWorkoutDetailsEvent.AddToWorkout(
+                                        variationId = it.first.id,
                                     )
-                                },
-                                role = Role.Button
-                            ).padding(
-                                start = MaterialTheme.spacing.half,
-                                end = MaterialTheme.spacing.one,
-                                vertical = MaterialTheme.spacing.quarter,
-                            ),
-                            variation = it.first,
-                            sets = it.second,
-                        )
+                                )
+                            },
+                            role = Role.Button
+                        ).padding(
+                            horizontal = MaterialTheme.spacing.one,
+                            vertical = MaterialTheme.spacing.half,
+                        ),
+                        variation = it.first,
+                        sets = it.second,
+                    )
 
-                    }
-            }
+                }
         }
     }
-
 
     Spacer(modifier = Modifier.height(72.dp))
 }
