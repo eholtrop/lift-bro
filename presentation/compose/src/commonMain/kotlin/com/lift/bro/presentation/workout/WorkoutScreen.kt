@@ -2,6 +2,7 @@
 
 package com.lift.bro.presentation.workout
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -43,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -79,6 +81,7 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toString
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -239,6 +242,7 @@ fun WorkoutScreenInternal(
                 val pagerState = rememberPagerState(pageCount = { exercise.variations.size })
                 val coroutineScope = rememberCoroutineScope()
                 HorizontalPager(
+                    modifier = Modifier.animateItem(),
                     state = pagerState,
                     contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.one),
                     pageSpacing = MaterialTheme.spacing.two.times(-2),
@@ -247,6 +251,7 @@ fun WorkoutScreenInternal(
 
                     VariationItemCard(
                         modifier = Modifier.animateContentSize()
+                            .animateItem()
                             .variationCardAnimation(pagerState, page),
                         variationSet = vSets,
                         eventHandler = eventHandler,
@@ -482,9 +487,7 @@ fun VariationItemCard(
     val variation = variationSet.variation
     val sets = (variationSet as? VariationItem.WithSets)?.sets ?: emptyList()
 
-    Card(
-        modifier = modifier.animateContentSize(),
-    ) {
+    Card {
         Column {
             Column(
                 modifier = Modifier.wrapContentHeight().fillMaxWidth()
@@ -580,7 +583,7 @@ fun VariationItemCard(
                     Column(
                         modifier = Modifier.fillMaxWidth()
                             .padding(
-                                horizontal = MaterialTheme.spacing.one
+                                horizontal = MaterialTheme.spacing.half
                             )
                             .background(
                                 color = MaterialTheme.colorScheme.surfaceContainer,
@@ -591,11 +594,12 @@ fun VariationItemCard(
                         variationSet.sets.forEachIndexed { index, set ->
 
                             var showOptionsDialog by remember { mutableStateOf(false) }
+                            var visibility by remember { mutableStateOf<Boolean?>(null) }
 
                             if (showOptionsDialog) {
                                 SetOptionsBottomSheet(
                                     onDeleteRequest = {
-                                        eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                                        visibility = false
                                         showOptionsDialog = false
                                     },
                                     onDuplicateRequest = {
@@ -609,36 +613,50 @@ fun VariationItemCard(
                             }
 
                             val coordinator = LocalNavCoordinator.current
-                            SetInfoRow(
-                                modifier = Modifier
-                                    .defaultMinSize(minHeight = 52.dp)
-                                    .combinedClickable(
-                                        onClick = {
-                                            coordinator.present(
-                                                Destination.EditSet(
-                                                    setId = set.id
+
+
+                            AnimatedVisibility(
+                                visible = visibility ?: false
+                            ) {
+                                SetInfoRow(
+                                    modifier = Modifier
+                                        .defaultMinSize(minHeight = 52.dp)
+                                        .combinedClickable(
+                                            onClick = {
+                                                coordinator.present(
+                                                    Destination.EditSet(
+                                                        setId = set.id
+                                                    )
                                                 )
-                                            )
-                                        },
-                                        onLongClick = {
-                                            showOptionsDialog = true
-                                        },
-                                        role = Role.Button
-                                    )
-                                    .border(
-                                        color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer,
-                                        width = 1.dp,
-                                        shape = MaterialTheme.shapes.small.copy(
-                                            topStart = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp),
-                                            topEnd = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp)
+                                            },
+                                            onLongClick = {
+                                                showOptionsDialog = true
+                                            },
+                                            role = Role.Button
                                         )
-                                    )
-                                    .padding(
-                                        horizontal = MaterialTheme.spacing.one,
-                                        vertical = MaterialTheme.spacing.half
-                                    ),
-                                set = set
-                            )
+                                        .border(
+                                            color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer,
+                                            width = 1.dp,
+                                            shape = MaterialTheme.shapes.small.copy(
+                                                topStart = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp),
+                                                topEnd = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp)
+                                            )
+                                        )
+                                        .padding(
+                                            horizontal = MaterialTheme.spacing.one,
+                                            vertical = MaterialTheme.spacing.half
+                                        ),
+                                    set = set
+                                )
+                            }
+
+                            LaunchedEffect(visibility) {
+                                if (visibility == false) {
+                                    eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                                } else if (visibility == null) {
+                                    visibility = true
+                                }
+                            }
                         }
                     }
                 }
