@@ -250,7 +250,7 @@ fun WorkoutScreenInternal(
                     val vSets = exercise.variations[page]
 
                     VariationItemCard(
-                        modifier = Modifier.animateContentSize()
+                        modifier = Modifier
                             .animateItem()
                             .variationCardAnimation(pagerState, page),
                         variationSet = vSets,
@@ -487,7 +487,9 @@ fun VariationItemCard(
     val variation = variationSet.variation
     val sets = (variationSet as? VariationItem.WithSets)?.sets ?: emptyList()
 
-    Card {
+    Card(
+        modifier = modifier,
+    ) {
         Column {
             Column(
                 modifier = Modifier.wrapContentHeight().fillMaxWidth()
