@@ -177,13 +177,20 @@ fun WorkoutScreenInternal(
 
             if (state.exercises.isEmpty() && state.recentWorkouts.isNotEmpty()) {
                 item {
-                    Text(
+                    Column(
                         modifier = Modifier
                             .animateItem()
                             .padding(horizontal = MaterialTheme.spacing.one),
-                        text = "Or... Copy a recent workout!",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                    ) {
+                        Text(
+                            text = "Or... Copy a recent workout!",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            text = "Tap one to start the gains!",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
 
                 items(
@@ -200,8 +207,7 @@ fun WorkoutScreenInternal(
                                 onClick = {
                                     eventHandler(CreateWorkoutEvent.CopyWorkout(workout))
                                 }
-                            )
-                            .padding(MaterialTheme.spacing.one),
+                            ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(
@@ -210,27 +216,37 @@ fun WorkoutScreenInternal(
                                     MaterialTheme.spacing.threeQuarters
                                 ),
                         ) {
+
+                            Space(MaterialTheme.spacing.half)
+
                             Text(
                                 text = workout.date.toString("EEE, MMM d - yyyy"),
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleLarge
                             )
-                            workout.exercises.forEach { exercise ->
-                                exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
-                                    VariationSet(
-                                        index = if (exercise.variationSets.size > 1) index else null,
-                                        variation = variation,
-                                        sets = sets
-                                    )
+
+                            Space(MaterialTheme.spacing.half)
+
+                            Column(
+                                modifier = Modifier.background(
+                                    color = MaterialTheme.colorScheme.surfaceContainer,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                    .padding(
+                                        MaterialTheme.spacing.threeQuarters
+                                    ),
+                                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+                            ) {
+                                workout.exercises.forEach { exercise ->
+                                    exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
+                                        VariationSet(
+                                            index = if (exercise.variationSets.size > 1) index else null,
+                                            variation = variation,
+                                            sets = sets
+                                        )
+                                    }
                                 }
                             }
                         }
-
-                        Space(MaterialTheme.spacing.one)
-
-                        Icon(
-                            imageVector = Icons.Default.ContentCopy,
-                            contentDescription = "Copy"
-                        )
                     }
                 }
             }
