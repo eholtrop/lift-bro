@@ -59,6 +59,7 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.rememberInteractor
@@ -197,13 +198,13 @@ fun rememberDailyWorkoutDetailsInteractor(
                 )
 
                 is DailyWorkoutDetailsEvent.AddToWorkout -> {
-                    val exerciseId = uuid4().toString()
-                    val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
-                    with(dependencies.workoutRepository) {
-                        addVariation(exerciseId, event.variationId)
-                        addExercise(workoutId, exerciseId)
+                    ApplicationScope.launch {
+                        val exerciseId = uuid4().toString()
+                        val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
+                        with(dependencies.workoutRepository) {
+                            addVariation(exerciseId, event.variationId)
+                            addExercise(workoutId, exerciseId)
 
-                        state.selectedWorkout?.id?.let {
                             save(
                                 Workout(
                                     workoutId,
