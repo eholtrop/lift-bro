@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Add
@@ -75,6 +76,7 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
@@ -574,95 +576,70 @@ fun VariationItemCard(
 
             when (variationSet) {
                 is VariationItem.WithSets -> {
-                    variationSet.sets.forEachIndexed { index, set ->
+                    Space(MaterialTheme.spacing.half)
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(
+                                horizontal = MaterialTheme.spacing.one
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .clip(MaterialTheme.shapes.small),
+                    ) {
+                        variationSet.sets.forEachIndexed { index, set ->
 
-                        var showOptionsDialog by remember { mutableStateOf(false) }
+                            var showOptionsDialog by remember { mutableStateOf(false) }
 
-                        if (showOptionsDialog) {
-                            ModalBottomSheet(
-                                onDismissRequest = {
-                                    showOptionsDialog = false
-                                }
-                            ) {
-                                Column {
-                                    Row(
-                                        modifier = Modifier
-                                            .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                                            .clickable(
-                                                onClick = {
-                                                    eventHandler(
-                                                        CreateWorkoutEvent.DeleteSet(
-                                                            set
-                                                        )
-                                                    )
-                                                    showOptionsDialog = false
-                                                },
-                                                role = Role.Button
-                                            ).padding(
-                                                horizontal = MaterialTheme.spacing.one,
-                                            ),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
-                                        )
-                                        Space(MaterialTheme.spacing.half)
-                                        Text(stringResource(Res.string.workout_set_options_delete_cta))
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                                            .clickable(
-                                                onClick = {
-                                                    eventHandler(
-                                                        CreateWorkoutEvent.DuplicateSet(
-                                                            set
-                                                        )
-                                                    )
-                                                    showOptionsDialog = false
-                                                },
-                                                role = Role.Button
-                                            ).padding(
-                                                horizontal = MaterialTheme.spacing.one,
-                                            ),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-
-                                        Icon(
-                                            imageVector = Icons.Default.ContentCopy,
-                                            contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
-                                        )
-                                        Space(MaterialTheme.spacing.half)
-                                        Text(stringResource(Res.string.workout_set_options_copy_cta))
-                                    }
-                                }
-                            }
-                        }
-
-                        val coordinator = LocalNavCoordinator.current
-                        SetInfoRow(
-                            modifier = Modifier
-                                .defaultMinSize(minHeight = 52.dp)
-                                .combinedClickable(
-                                    onClick = {
-                                        coordinator.present(
-                                            Destination.EditSet(
-                                                setId = set.id
-                                            )
-                                        )
+                            if (showOptionsDialog) {
+                                SetOptionsBottomSheet(
+                                    onDeleteRequest = {
+                                        eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                                        showOptionsDialog = false
                                     },
-                                    onLongClick = {
-                                        showOptionsDialog = true
+                                    onDuplicateRequest = {
+                                        eventHandler(CreateWorkoutEvent.DuplicateSet(set))
+                                        showOptionsDialog = false
                                     },
-                                    role = Role.Button
+                                    onDismissRequest = {
+                                        showOptionsDialog = false
+                                    }
                                 )
-                                .padding(
-                                    horizontal = MaterialTheme.spacing.one,
-                                    vertical = MaterialTheme.spacing.half
-                                ),
-                            set = set
-                        )
+                            }
+
+                            val coordinator = LocalNavCoordinator.current
+                            SetInfoRow(
+                                modifier = Modifier
+                                    .defaultMinSize(minHeight = 52.dp)
+                                    .combinedClickable(
+                                        onClick = {
+                                            coordinator.present(
+                                                Destination.EditSet(
+                                                    setId = set.id
+                                                )
+                                            )
+                                        },
+                                        onLongClick = {
+                                            showOptionsDialog = true
+                                        },
+                                        role = Role.Button
+                                    )
+                                    .border(
+                                        color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer,
+                                        width = 1.dp,
+                                        shape = MaterialTheme.shapes.small.copy(
+                                            topStart = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp),
+                                            topEnd = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp)
+                                        )
+                                    )
+                                    .padding(
+                                        horizontal = MaterialTheme.spacing.one,
+                                        vertical = MaterialTheme.spacing.half
+                                    ),
+                                set = set
+                            )
+                        }
                     }
                 }
 
@@ -744,6 +721,57 @@ fun VariationItemCard(
                 }
             }
             footer()
+        }
+    }
+}
+
+@Composable
+fun SetOptionsBottomSheet(
+    onDeleteRequest: () -> Unit,
+    onDuplicateRequest: () -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                    .clickable(
+                        onClick = onDeleteRequest,
+                        role = Role.Button
+                    ).padding(
+                        horizontal = MaterialTheme.spacing.one,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
+                )
+                Space(MaterialTheme.spacing.half)
+                Text(stringResource(Res.string.workout_set_options_delete_cta))
+            }
+            Row(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                    .clickable(
+                        onClick = onDuplicateRequest,
+                        role = Role.Button
+                    ).padding(
+                        horizontal = MaterialTheme.spacing.one,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                Icon(
+                    imageVector = Icons.Default.ContentCopy,
+                    contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
+                )
+                Space(MaterialTheme.spacing.half)
+                Text(stringResource(Res.string.workout_set_options_copy_cta))
+            }
         }
     }
 }
