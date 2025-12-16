@@ -655,7 +655,7 @@ fun VariationItemCard(
                                     .clickable(
                                         onClick = {
                                             eventHandler(
-                                                CreateWorkoutEvent.DuplicateSet(variationSet.lastSet)
+                                                CreateWorkoutEvent.DuplicateSet(variationSet.lastSet, forceToday = true)
                                             )
                                         },
                                         role = Role.Button

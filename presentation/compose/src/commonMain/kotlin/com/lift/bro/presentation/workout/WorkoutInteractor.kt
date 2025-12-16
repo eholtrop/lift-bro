@@ -93,7 +93,7 @@ sealed class CreateWorkoutEvent {
 
     data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
     data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
-    data class DuplicateSet(val set: LBSet): CreateWorkoutEvent()
+    data class DuplicateSet(val set: LBSet, val forceToday: Boolean = false): CreateWorkoutEvent()
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteExercise(val exercise: ExerciseItem): CreateWorkoutEvent()
 
@@ -247,7 +247,7 @@ fun workoutSideEffects(
             setRepository.save(
                 lbSet = event.set.copy(
                     id = uuid4().toString(),
-                    date = if (event.set.date.toLocalDate() != today) {
+                    date = if (event.set.date.toLocalDate() != today && !event.forceToday) {
                         event.set.date.plus(1, DateTimeUnit.SECOND)
                     } else {
                         kotlinx.datetime.Clock.System
