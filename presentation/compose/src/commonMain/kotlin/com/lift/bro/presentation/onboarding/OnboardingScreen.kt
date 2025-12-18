@@ -46,6 +46,7 @@ import com.example.compose.amber
 import com.lift.bro.RestoreUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
+import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.ConsentCheckBoxField
@@ -91,7 +92,7 @@ fun OnboardingScreen(
     var onboardingState by remember { mutableStateOf(defaultState) }
 
     AppTheme(
-        useDarkTheme = false,
+        theme = ThemeMode.Light
     ) {
 
         AnimatedContent(

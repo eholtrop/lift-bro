@@ -1,16 +1,18 @@
-package com.lift.bro.preview
+package com.lift.bro.utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.remember
 import com.example.compose.AppTheme
-import com.lift.bro.di.DependencyContainer
 import com.lift.bro.domain.models.LiftBro
+import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalCalculatorVisibility
 import com.lift.bro.presentation.LocalLiftBro
+import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.JetpackComposeCoordinator
@@ -21,12 +23,15 @@ internal fun PreviewAppTheme(
     isDarkMode: Boolean,
     content: @Composable() () -> Unit
 ) {
-    DependencyContainer.initialize(LocalContext.current)
+    val calculatorVisibility = remember { mutableStateOf(false) }
+    val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
+
     CompositionLocalProvider(
         LocalLiftBro provides LiftBro.Lisa,
         LocalNavCoordinator provides JetpackComposeCoordinator(Destination.Unknown),
         LocalUnitOfMeasure provides UOM.POUNDS,
-        LocalCalculatorVisibility provides mutableStateOf(false)
+        LocalCalculatorVisibility provides calculatorVisibility,
+        LocalSubscriptionStatusProvider provides subscriptionType
     ) {
         AppTheme(
             theme = if (isDarkMode) ThemeMode.Dark else ThemeMode.Light

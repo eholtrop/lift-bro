@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import com.example.compose.AppTheme
 import com.lift.bro.data.sqldelight.datasource.toLocalDate
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
@@ -46,6 +47,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.ui.weightFormat
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.percentageFormat
@@ -57,7 +59,15 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun WrappedLandingScreenPreview() {
-    WrappedLandingScreen()
+    PreviewAppTheme(isDarkMode = true) {
+        WrappedLandingScreen(
+            state = WrappedState(
+                listOf(
+                    WrappedPageState.Tenure(1)
+                )
+            )
+        )
+    }
 }
 
 @Serializable
@@ -141,6 +151,12 @@ fun WrappedLandingScreen(
 ) {
     val state by interactor.state.collectAsState()
 
+}
+
+@Composable
+fun WrappedLandingScreen(
+    state: WrappedState,
+) {
     HorizontalPager(
         state = rememberPagerState { state.pages.size },
     ) { page ->
