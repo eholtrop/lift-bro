@@ -17,6 +17,7 @@ import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.JetpackComposeCoordinator
 import com.lift.bro.ui.navigation.LocalNavCoordinator
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 @Composable
 internal fun PreviewAppTheme(
@@ -39,4 +40,10 @@ internal fun PreviewAppTheme(
             content()
         }
     }
+}
+
+class DarkModeProvider: PreviewParameterProvider<Boolean> {
+    override val values: Sequence<Boolean>
+        get() = sequenceOf(true, false)
+
 }

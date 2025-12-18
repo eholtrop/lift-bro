@@ -145,20 +145,20 @@ fun SettingsScreen() {
                     }
                 }
 
-//                item {
-//                    val coordinator = LocalNavCoordinator.current
-//                    SettingsRowItem(
-//                        modifier = Modifier.clickable(
-//                            role = Role.Button,
-//                            onClick = {
-//                                coordinator.present(Destination.Wrapped)
-//                            }
-//                        ),
-//                        title = { Text("Lift Bro Wrapped") },
-//                    ) {
-//                        Text("Tap to see the highlights of ${today.year} and previous years!")
-//                    }
-//                }
+                item {
+                    val coordinator = LocalNavCoordinator.current
+                    SettingsRowItem(
+                        modifier = Modifier.clickable(
+                            role = Role.Button,
+                            onClick = {
+                                coordinator.present(Destination.Wrapped)
+                            }
+                        ),
+                        title = { Text("Lift Bro Wrapped") },
+                    ) {
+                        Text("Tap to see the highlights of ${today.year} and previous years!")
+                    }
+                }
 
                 item {
                     BackupSettingsRow()

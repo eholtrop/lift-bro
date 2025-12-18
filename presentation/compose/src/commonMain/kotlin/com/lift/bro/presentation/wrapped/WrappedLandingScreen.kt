@@ -5,13 +5,11 @@ package com.lift.bro.presentation.wrapped
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -29,37 +27,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import com.example.compose.AppTheme
-import com.lift.bro.data.sqldelight.datasource.toLocalDate
-import com.lift.bro.di.dependencies
-import com.lift.bro.di.setRepository
-import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
-import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.ui.weightFormat
+import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
-import com.lift.bro.utils.fullName
-import com.lift.bro.utils.percentageFormat
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combine
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+
 
 @Composable
 @Preview
-fun WrappedLandingScreenPreview() {
-    PreviewAppTheme(isDarkMode = true) {
+fun WrappedLandingScreenPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(darkMode) {
         WrappedLandingScreen(
             state = WrappedState(
                 listOf(
@@ -98,6 +89,34 @@ sealed class WrappedPageState() {
     ): WrappedPageState()
 
     @Serializable
+    data class ProgressItemWeight(
+        val date: LocalDate,
+        val weight: Double,
+        val reps: Long,
+    )
+
+    @Serializable
+    data class ProgressItemState(
+        val title: String,
+        val minWeight: ProgressItemWeight?,
+        val maxWeight: ProgressItemWeight?,
+        val progress: Double,
+    )
+
+    @Serializable
+    data class Progress(
+        val items: List<ProgressItemState>,
+    ): WrappedPageState()
+
+    @Serializable
+    data class Consistency(
+        val dates: Set<LocalDate>
+    ): WrappedPageState()
+
+    @Serializable
+    data object Goals: WrappedPageState()
+
+    @Serializable
     data class Summary(
         val sets: List<LBSet>,
     ): WrappedPageState()
@@ -105,45 +124,6 @@ sealed class WrappedPageState() {
 
 sealed class WrappedEvents()
 
-@Composable
-fun rememberWrappedInteractor(
-    setRepository: ISetRepository = dependencies.setRepository,
-    variationRepository: IVariationRepository = dependencies.variationRepository,
-): Interactor<WrappedState, WrappedEvents> {
-    return rememberInteractor(
-        initialState = WrappedState(),
-        source = {
-            combine(
-                setRepository.listenAll(),
-                variationRepository.listenAll(),
-            ) { sets, variations ->
-                val variationSets = sets.groupBy { it.variationId }
-
-
-                WrappedState(
-                    pages = listOf(
-                        WrappedPageState.Tenure(year = sets.minOf { it.date.toLocalDate().year }),
-                        WrappedPageState.Weight(
-                            totalWeightMoved = sets.sumOf { it.weight * it.reps },
-                            heavyThing = heavyThings.toList().random(),
-                            heaviestVariation = variationSets.map { entry -> variations.first { it.id == entry.key }.fullName to entry.value.sumOf { it.weight } }
-                                .maxBy { it.second }
-                        ),
-                        WrappedPageState.Reps(
-                            totalReps = sets.sumOf { it.reps },
-                            dailyAverage = sets.sumOf { it.reps / if (today.year % 4 == 0) 366 else 365 },
-                            workoutAverage = sets.sumOf { it.reps / sets.groupBy { it.date.toLocalDate().dayOfYear }.size },
-                            mostRepsLift = variations.first { it.id == sets.maxBy { it.reps }.variationId }.fullName to sets.maxOf { it.reps }
-                        ),
-                        WrappedPageState.Summary(
-                            sets = sets
-                        ),
-                    )
-                )
-            }
-        }
-    )
-}
 
 @Composable
 fun WrappedLandingScreen(
@@ -151,6 +131,7 @@ fun WrappedLandingScreen(
 ) {
     val state by interactor.state.collectAsState()
 
+    WrappedLandingScreen(state)
 }
 
 @Composable
@@ -169,7 +150,11 @@ fun WrappedLandingScreen(
                 is WrappedPageState.Tenure -> WrappedTenureScreen(page)
                 is WrappedPageState.Weight -> WrappedWeightScreen(page)
                 is WrappedPageState.Summary -> WrappedSummaryScreen()
-
+                is WrappedPageState.Consistency -> TODO()
+                WrappedPageState.Goals -> TODO()
+                is WrappedPageState.Progress -> WrappedProgressScreen(
+                    items = page.items
+                )
             }
         }
 
@@ -350,18 +335,6 @@ data class HeavyThing(
     val icon: String,
 )
 
-private val heavyThings = listOf(
-    HeavyThing(
-        name = "Blue Whale",
-        weight = 300000.0,
-        icon = "\uD83D\uDC0B"
-    ),
-    HeavyThing(
-        name = "Elephant",
-        weight = 15432.0,
-        icon = "\uD83D\uDC18"
-    ),
-)
 
 @Composable
 fun WrappedRepScreen(
@@ -426,96 +399,6 @@ fun WrappedRepScreen(
                     text = "You even did ${state.mostRepsLift.second} reps of ${state.mostRepsLift.first} \uD83D\uDE35",
                     style = MaterialTheme.typography.titleLarge,
                 )
-            }
-        }
-    }
-}
-
-@Composable
-fun WrappedProgressScreen(
-    sets: List<LBSet>,
-    variations: List<Variation>,
-) {
-    val currentYearSets = sets.filter { it.date.toLocalDate().year == today.year }
-
-    val minMaxVariations = currentYearSets.groupBy { set -> variations.first { it.id == set.variationId } }
-        .map { it.key to (it.value.minBy { it.weight } to (it.value.maxBy { it.weight })) }
-        .toList()
-        .sortedBy { it.second.second.weight }
-
-    LiftingScaffold(
-        title = {
-            Text("You made some GREAT Progress this year!")
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.padding(padding).fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(MaterialTheme.spacing.one)
-        ) {
-
-            item {
-                Row {
-                    Text(
-                        modifier = Modifier.weight(.5f),
-                        text = "Lift Name"
-                    )
-
-                    Text(
-                        modifier = Modifier.weight(.2f),
-                        text = "${today.year - 1}"
-                    )
-
-                    Text(
-                        modifier = Modifier.weight(.2f),
-                        text = "${today.year}"
-                    )
-                    Text(
-                        modifier = Modifier.weight(.1f),
-                        text = "% GAINS"
-                    )
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-            }
-
-            items(items = minMaxVariations) {
-                Row {
-                    Text(
-                        modifier = Modifier.weight(.5f),
-                        text = it.first.fullName,
-                        style = MaterialTheme.typography.titleMedium,
-                    )
-                    Space(MaterialTheme.spacing.one)
-
-                    val bodyWeight = it.first.bodyWeight == true
-
-                    Text(
-                        modifier = Modifier.weight(.2f),
-                        text = if (bodyWeight) "${it.second.first.reps} reps" else weightFormat(it.second.first.weight),
-
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Space(MaterialTheme.spacing.half)
-                    Text(
-                        modifier = Modifier.weight(.2f),
-                        text = if (bodyWeight) "${it.second.second.reps} reps" else weightFormat(it.second.second.weight),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    Space(MaterialTheme.spacing.half)
-                    val progress = if (bodyWeight) {
-                        ((it.second.second.reps - it.second.first.reps) / it.second.first.reps).toDouble()
-                    } else {
-                        ((it.second.second.weight - it.second.first.weight) / it.second.first.weight)
-                    }
-                    Text(
-                        modifier = Modifier.weight(.1f),
-                        text = progress.percentageFormat(),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
             }
         }
     }
