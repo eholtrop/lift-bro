@@ -43,9 +43,6 @@ fun rememberWrappedInteractor(
 
                 WrappedState(
                     pages = listOf(
-                        WrappedPageState.Consistency(
-                            dates = sets.map { it.date.toLocalDate() }.toSet()
-                        ),
                         WrappedPageState.Tenure(year = sets.minOf { it.date.toLocalDate().year }),
                         WrappedPageState.Weight(
                             totalWeightMoved = sets.sumOf { it.weight * it.reps },
