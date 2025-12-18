@@ -29,17 +29,22 @@ import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateFinisher
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateNotes
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateWarmup
 import com.lift.bro.ui.today
+import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
 
 @Serializable
 data class CreateWorkoutState(
@@ -88,7 +93,7 @@ sealed class CreateWorkoutEvent {
 
     data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
     data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
-    data class DuplicateSet(val set: LBSet): CreateWorkoutEvent()
+    data class DuplicateSet(val set: LBSet, val forceToday: Boolean = false): CreateWorkoutEvent()
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteExercise(val exercise: ExerciseItem): CreateWorkoutEvent()
 
@@ -141,7 +146,7 @@ fun rememberWorkoutInteractor(
                                         VariationItem.WithSets(
                                             id = variationSets.id,
                                             variation = variationSets.variation,
-                                            sets = variationSets.sets
+                                            sets = variationSets.sets.sortedBy { it.date }
                                         )
                                     }
                                 }
@@ -242,7 +247,12 @@ fun workoutSideEffects(
             setRepository.save(
                 lbSet = event.set.copy(
                     id = uuid4().toString(),
-                    date = state.date.atStartOfDayIn(TimeZone.currentSystemDefault())
+                    date = if (event.set.date.toLocalDate() != today && !event.forceToday) {
+                        event.set.date.plus(1, DateTimeUnit.SECOND)
+                    } else {
+                        kotlinx.datetime.Clock.System
+                            .now()
+                    }
                 )
             )
         }

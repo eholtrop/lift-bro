@@ -2,6 +2,7 @@
 
 package com.lift.bro.presentation.workout
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,6 +23,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Add
@@ -42,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,8 +78,10 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toString
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -172,13 +177,20 @@ fun WorkoutScreenInternal(
 
             if (state.exercises.isEmpty() && state.recentWorkouts.isNotEmpty()) {
                 item {
-                    Text(
+                    Column(
                         modifier = Modifier
                             .animateItem()
                             .padding(horizontal = MaterialTheme.spacing.one),
-                        text = "Or... Copy a recent workout!",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                    ) {
+                        Text(
+                            text = "Or... Copy a recent workout!",
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            text = "Tap one to start the gains!",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
 
                 items(
@@ -195,8 +207,7 @@ fun WorkoutScreenInternal(
                                 onClick = {
                                     eventHandler(CreateWorkoutEvent.CopyWorkout(workout))
                                 }
-                            )
-                            .padding(MaterialTheme.spacing.one),
+                            ),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column(
@@ -205,27 +216,37 @@ fun WorkoutScreenInternal(
                                     MaterialTheme.spacing.threeQuarters
                                 ),
                         ) {
+
+                            Space(MaterialTheme.spacing.half)
+
                             Text(
                                 text = workout.date.toString("EEE, MMM d - yyyy"),
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleLarge
                             )
-                            workout.exercises.forEach { exercise ->
-                                exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
-                                    VariationSet(
-                                        index = if (exercise.variationSets.size > 1) index else null,
-                                        variation = variation,
-                                        sets = sets
-                                    )
+
+                            Space(MaterialTheme.spacing.half)
+
+                            Column(
+                                modifier = Modifier.background(
+                                    color = MaterialTheme.colorScheme.surfaceContainer,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                    .padding(
+                                        MaterialTheme.spacing.threeQuarters
+                                    ),
+                                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+                            ) {
+                                workout.exercises.forEach { exercise ->
+                                    exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
+                                        VariationSet(
+                                            index = if (exercise.variationSets.size > 1) index else null,
+                                            variation = variation,
+                                            sets = sets
+                                        )
+                                    }
                                 }
                             }
                         }
-
-                        Space(MaterialTheme.spacing.one)
-
-                        Icon(
-                            imageVector = Icons.Default.ContentCopy,
-                            contentDescription = "Copy"
-                        )
                     }
                 }
             }
@@ -237,6 +258,7 @@ fun WorkoutScreenInternal(
                 val pagerState = rememberPagerState(pageCount = { exercise.variations.size })
                 val coroutineScope = rememberCoroutineScope()
                 HorizontalPager(
+                    modifier = Modifier.animateItem(),
                     state = pagerState,
                     contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.one),
                     pageSpacing = MaterialTheme.spacing.two.times(-2),
@@ -244,7 +266,8 @@ fun WorkoutScreenInternal(
                     val vSets = exercise.variations[page]
 
                     VariationItemCard(
-                        modifier = Modifier.animateContentSize()
+                        modifier = Modifier
+                            .animateItem()
                             .variationCardAnimation(pagerState, page),
                         variationSet = vSets,
                         eventHandler = eventHandler,
@@ -481,7 +504,7 @@ fun VariationItemCard(
     val sets = (variationSet as? VariationItem.WithSets)?.sets ?: emptyList()
 
     Card(
-        modifier = modifier.animateContentSize(),
+        modifier = modifier,
     ) {
         Column {
             Column(
@@ -574,95 +597,85 @@ fun VariationItemCard(
 
             when (variationSet) {
                 is VariationItem.WithSets -> {
-                    variationSet.sets.forEachIndexed { index, set ->
+                    Space(MaterialTheme.spacing.half)
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(
+                                horizontal = MaterialTheme.spacing.half
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                shape = MaterialTheme.shapes.small
+                            )
+                            .clip(MaterialTheme.shapes.small),
+                    ) {
+                        variationSet.sets.forEachIndexed { index, set ->
 
-                        var showOptionsDialog by remember { mutableStateOf(false) }
+                            var showOptionsDialog by remember { mutableStateOf(false) }
+                            var visibility by remember { mutableStateOf<Boolean?>(null) }
 
-                        if (showOptionsDialog) {
-                            ModalBottomSheet(
-                                onDismissRequest = {
-                                    showOptionsDialog = false
-                                }
+                            if (showOptionsDialog) {
+                                SetOptionsBottomSheet(
+                                    onDeleteRequest = {
+                                        visibility = false
+                                        showOptionsDialog = false
+                                    },
+                                    onDuplicateRequest = {
+                                        eventHandler(CreateWorkoutEvent.DuplicateSet(set))
+                                        showOptionsDialog = false
+                                    },
+                                    onDismissRequest = {
+                                        showOptionsDialog = false
+                                    }
+                                )
+                            }
+
+                            val coordinator = LocalNavCoordinator.current
+
+
+                            AnimatedVisibility(
+                                visible = visibility ?: false
                             ) {
-                                Column {
-                                    Row(
-                                        modifier = Modifier
-                                            .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                                            .clickable(
-                                                onClick = {
-                                                    eventHandler(
-                                                        CreateWorkoutEvent.DeleteSet(
-                                                            set
-                                                        )
+                                SetInfoRow(
+                                    modifier = Modifier
+                                        .defaultMinSize(minHeight = 52.dp)
+                                        .combinedClickable(
+                                            onClick = {
+                                                coordinator.present(
+                                                    Destination.EditSet(
+                                                        setId = set.id
                                                     )
-                                                    showOptionsDialog = false
-                                                },
-                                                role = Role.Button
-                                            ).padding(
-                                                horizontal = MaterialTheme.spacing.one,
-                                            ),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Delete,
-                                            contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
+                                                )
+                                            },
+                                            onLongClick = {
+                                                showOptionsDialog = true
+                                            },
+                                            role = Role.Button
                                         )
-                                        Space(MaterialTheme.spacing.half)
-                                        Text(stringResource(Res.string.workout_set_options_delete_cta))
-                                    }
-                                    Row(
-                                        modifier = Modifier
-                                            .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                                            .clickable(
-                                                onClick = {
-                                                    eventHandler(
-                                                        CreateWorkoutEvent.DuplicateSet(
-                                                            set
-                                                        )
-                                                    )
-                                                    showOptionsDialog = false
-                                                },
-                                                role = Role.Button
-                                            ).padding(
-                                                horizontal = MaterialTheme.spacing.one,
-                                            ),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
+                                        .border(
+                                            color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer,
+                                            width = 1.dp,
+                                            shape = MaterialTheme.shapes.small.copy(
+                                                topStart = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp),
+                                                topEnd = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp)
+                                            )
+                                        )
+                                        .padding(
+                                            horizontal = MaterialTheme.spacing.one,
+                                            vertical = MaterialTheme.spacing.half
+                                        ),
+                                    set = set
+                                )
+                            }
 
-                                        Icon(
-                                            imageVector = Icons.Default.ContentCopy,
-                                            contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
-                                        )
-                                        Space(MaterialTheme.spacing.half)
-                                        Text(stringResource(Res.string.workout_set_options_copy_cta))
-                                    }
+                            LaunchedEffect(visibility) {
+                                if (visibility == false) {
+                                    eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                                } else if (visibility == null) {
+                                    visibility = true
                                 }
                             }
                         }
-
-                        val coordinator = LocalNavCoordinator.current
-                        SetInfoRow(
-                            modifier = Modifier
-                                .defaultMinSize(minHeight = 52.dp)
-                                .combinedClickable(
-                                    onClick = {
-                                        coordinator.present(
-                                            Destination.EditSet(
-                                                setId = set.id
-                                            )
-                                        )
-                                    },
-                                    onLongClick = {
-                                        showOptionsDialog = true
-                                    },
-                                    role = Role.Button
-                                )
-                                .padding(
-                                    horizontal = MaterialTheme.spacing.one,
-                                    vertical = MaterialTheme.spacing.half
-                                ),
-                            set = set
-                        )
                     }
                 }
 
@@ -678,7 +691,7 @@ fun VariationItemCard(
                                     .clickable(
                                         onClick = {
                                             eventHandler(
-                                                CreateWorkoutEvent.DuplicateSet(variationSet.lastSet)
+                                                CreateWorkoutEvent.DuplicateSet(variationSet.lastSet, forceToday = true)
                                             )
                                         },
                                         role = Role.Button
@@ -744,6 +757,57 @@ fun VariationItemCard(
                 }
             }
             footer()
+        }
+    }
+}
+
+@Composable
+fun SetOptionsBottomSheet(
+    onDeleteRequest: () -> Unit,
+    onDuplicateRequest: () -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest
+    ) {
+        Column {
+            Row(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                    .clickable(
+                        onClick = onDeleteRequest,
+                        role = Role.Button
+                    ).padding(
+                        horizontal = MaterialTheme.spacing.one,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(Res.string.workout_set_options_delete_cta)
+                )
+                Space(MaterialTheme.spacing.half)
+                Text(stringResource(Res.string.workout_set_options_delete_cta))
+            }
+            Row(
+                modifier = Modifier
+                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                    .clickable(
+                        onClick = onDuplicateRequest,
+                        role = Role.Button
+                    ).padding(
+                        horizontal = MaterialTheme.spacing.one,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                Icon(
+                    imageVector = Icons.Default.ContentCopy,
+                    contentDescription = stringResource(Res.string.workout_set_options_copy_cta)
+                )
+                Space(MaterialTheme.spacing.half)
+                Text(stringResource(Res.string.workout_set_options_copy_cta))
+            }
         }
     }
 }

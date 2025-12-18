@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
@@ -58,6 +59,7 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.rememberInteractor
@@ -72,6 +74,7 @@ import com.lift.bro.ui.rememberCalendarState
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.fullName
+import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
@@ -195,13 +198,13 @@ fun rememberDailyWorkoutDetailsInteractor(
                 )
 
                 is DailyWorkoutDetailsEvent.AddToWorkout -> {
-                    val exerciseId = uuid4().toString()
-                    val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
-                    with(dependencies.workoutRepository) {
-                        addVariation(exerciseId, event.variationId)
-                        addExercise(workoutId, exerciseId)
+                    ApplicationScope.launch {
+                        val exerciseId = uuid4().toString()
+                        val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
+                        with(dependencies.workoutRepository) {
+                            addVariation(exerciseId, event.variationId)
+                            addExercise(workoutId, exerciseId)
 
-                        state.selectedWorkout?.id?.let {
                             save(
                                 Workout(
                                     workoutId,
@@ -363,37 +366,50 @@ fun DailyWorkoutDetails(
     }
 
     if (state.potentialExercises.isNotEmpty()) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start,
+
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+        Text(
+            text = "Other Gains!",
+            style = MaterialTheme.typography.titleMedium
+        )
+
+        Text(
+            text = "Tap to add to Workout",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Spacer(modifier = Modifier.height(MaterialTheme.spacing.half))
+
+        Column(
+            modifier = Modifier.fillMaxWidth().background(
+                color = MaterialTheme.colorScheme.surfaceContainer,
+                shape = MaterialTheme.shapes.medium
+            )
+                .clip(MaterialTheme.shapes.medium)
         ) {
-            Text(
-                text = "Other Gains! Tap to add to Workout",
-                style = MaterialTheme.typography.titleMedium
-            )
-        }
+            state.potentialExercises
+                .forEach {
+                    VariationSet(
+                        modifier = Modifier.clickable(
+                            onClick = {
+                                interactor(
+                                    DailyWorkoutDetailsEvent.AddToWorkout(
+                                        variationId = it.first.id,
+                                    )
+                                )
+                            },
+                            role = Role.Button
+                        ).padding(
+                            horizontal = MaterialTheme.spacing.one,
+                            vertical = MaterialTheme.spacing.half,
+                        ),
+                        variation = it.first,
+                        sets = it.second,
+                    )
 
+                }
+        }
     }
-
-    state.potentialExercises
-        .forEach {
-            VariationSet(
-                modifier = Modifier.clickable(
-                    onClick = {
-                        interactor(
-                            DailyWorkoutDetailsEvent.AddToWorkout(
-                                variationId = it.first.id,
-                            )
-                        )
-                    },
-                    role = Role.Button
-                ),
-                variation = it.first,
-                sets = it.second,
-            )
-
-        }
-
 
     Spacer(modifier = Modifier.height(72.dp))
 }
