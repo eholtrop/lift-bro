@@ -160,7 +160,7 @@ fun WrappedLandingScreen(
     }
 }
 
-private const val FadeInDelayPerIndex = 100L
+internal const val FadeInDelayPerIndex = 100L
 
 
 @Composable
@@ -253,73 +253,6 @@ data class HeavyThing(
 )
 
 
-@Composable
-fun WrappedRepScreen(
-    state: WrappedPageState.Reps,
-) {
-    LiftingScaffold(
-        title = {
-            Text("Total Reps")
-        }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.padding(padding).fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(MaterialTheme.spacing.one),
-        ) {
-            item {
-                FadeInText(
-                    delay = FadeInDelayPerIndex * 1,
-                    text = "You picked up ${state.totalReps} things this year \uD83D\uDE35",
-                    style = MaterialTheme.typography.titleMedium,
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.half))
-            }
-
-            item {
-                FadeInText(
-                    delay = FadeInDelayPerIndex * 2,
-                    text = "(And then you put them down again)",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.quarter))
-            }
-
-            item {
-                FadeInText(
-                    delay = FadeInDelayPerIndex * 3,
-                    text = "Thats an average of ${state.dailyAverage} reps per day",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-
-
-                FadeInText(
-                    delay = FadeInDelayPerIndex * 4,
-                    text = "or ${state.workoutAverage} per workout!!",
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(MaterialTheme.spacing.two))
-            }
-
-            item {
-                FadeInText(
-                    delay = FadeInDelayPerIndex * 5,
-                    text = "You even did ${state.mostRepsLift.second} reps of ${state.mostRepsLift.first} \uD83D\uDE35",
-                    style = MaterialTheme.typography.titleLarge,
-                )
-            }
-        }
-    }
-}
 
 @Composable
 fun WrappedSummaryScreen() {
