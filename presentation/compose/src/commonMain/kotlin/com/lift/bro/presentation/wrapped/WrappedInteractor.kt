@@ -10,11 +10,7 @@ import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.today
-import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
-import com.lift.bro.utils.percentageFormat
 import kotlinx.coroutines.flow.combine
 
 private val heavyThings = listOf(
@@ -47,6 +43,9 @@ fun rememberWrappedInteractor(
 
                 WrappedState(
                     pages = listOf(
+                        WrappedPageState.Consistency(
+                            dates = sets.map { it.date.toLocalDate() }.toSet()
+                        ),
                         WrappedPageState.Tenure(year = sets.minOf { it.date.toLocalDate().year }),
                         WrappedPageState.Weight(
                             totalWeightMoved = sets.sumOf { it.weight * it.reps },
@@ -59,6 +58,9 @@ fun rememberWrappedInteractor(
                             dailyAverage = sets.sumOf { it.reps / if (today.year % 4 == 0) 366 else 365 },
                             workoutAverage = sets.sumOf { it.reps / sets.groupBy { it.date.toLocalDate().dayOfYear }.size },
                             mostRepsLift = variations.first { it.id == sets.maxBy { it.reps }.variationId }.fullName to sets.maxOf { it.reps }
+                        ),
+                        WrappedPageState.Consistency(
+                            dates = sets.map { it.date.toLocalDate() }.toSet()
                         ),
                         WrappedPageState.Progress(
                             items = variationSets.toList()

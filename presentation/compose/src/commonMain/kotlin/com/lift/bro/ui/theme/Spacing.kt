@@ -10,6 +10,7 @@ object Spacing {
     val threeQuarters = 12.dp
     val half = 8.dp
     val quarter = 4.dp
+    val eighth = 2.dp
 }
 
 object LiftingTheme {

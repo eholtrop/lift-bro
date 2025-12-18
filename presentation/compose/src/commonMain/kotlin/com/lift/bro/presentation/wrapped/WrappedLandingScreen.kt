@@ -29,7 +29,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.SubscriptionType
-import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.ui.LiftingScaffold
@@ -150,7 +149,7 @@ fun WrappedLandingScreen(
                 is WrappedPageState.Tenure -> WrappedTenureScreen(page)
                 is WrappedPageState.Weight -> WrappedWeightScreen(page)
                 is WrappedPageState.Summary -> WrappedSummaryScreen()
-                is WrappedPageState.Consistency -> TODO()
+                is WrappedPageState.Consistency -> WrappedConsistencyScreen(page = page)
                 WrappedPageState.Goals -> TODO()
                 is WrappedPageState.Progress -> WrappedProgressScreen(
                     items = page.items
