@@ -1,0 +1,27 @@
+import kotlinx.datetime.Instant;
+
+CREATE TABLE Goal (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    achieved INTEGER NOT NULL,
+    created_at INTEGER AS Instant NOT NULL,
+    updated_at INTEGER AS Instant NOT NULL
+);
+
+get:
+SELECT * FROM Goal
+WHERE id = :id;
+
+getAll:
+SELECT * FROM Goal
+ORDER BY created_at DESC
+LIMIT :limit;
+
+save:
+INSERT OR REPLACE
+INTO Goal(id, name, achieved, created_at, updated_at)
+VALUES(?, ?, ?, ?, ?);
+
+
+delete:
+DELETE FROM Goal WHERE id = ?;

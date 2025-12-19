@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.wrapped
+package com.lift.bro.presentation.wrapped.goals
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -27,8 +27,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,41 +39,50 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.lift.bro.domain.models.Goal
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
-private val options = listOf(
-    "Exceed my Bench Press max by 5%",
-    "Be ready for beach season",
-    "Get off the couch without grunting",
-    "Make the ex Jealous ;)",
-    "Do a full chin up",
-    "Do a push-up without using me knees",
-    "Do 100 push-ups a month",
-    "Stretch 3 days a week",
-    "Get Swole"
-)
 
+@Composable
+fun WrappedGoalsScreen(
+    interactor: Interactor<WrappedGoalsState, WrappedGoalsEvent>,
+) {
+    val state by interactor.state.collectAsState()
+
+
+
+    WrappedGoalsScreen(
+        state = state,
+        goalAdded = { interactor(WrappedGoalsEvent.GoalAdded(Goal(name = ""))) },
+        goalChanged = { goal, name -> interactor(WrappedGoalsEvent.GoalNameChanged(goal, name)) },
+        goalRemoved = { interactor(WrappedGoalsEvent.GoalRemoved(it)) },
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WrappedGoalsScreen(
-    goals: List<String> = emptyList(),
+    state: WrappedGoalsState,
+    goalAdded: () -> Unit = {},
+    goalChanged: (Goal, String) -> Unit = { _, _ -> },
+    goalRemoved: (Goal) -> Unit = {},
 ) {
     LiftingScaffold(
         title = {
             Text("Now... How about Goals for next year?")
         }
     ) { padding ->
-
-        val goals = remember { mutableStateListOf(*goals.toTypedArray()) }
 
         LazyColumn(
             modifier = Modifier.padding(padding).fillMaxWidth(),
@@ -88,9 +97,7 @@ fun WrappedGoalsScreen(
                         .clip(MaterialTheme.shapes.small)
                         .clickable(
                             role = Role.Button,
-                            onClick = {
-                                goals.add(0, "")
-                            }
+                            onClick = goalAdded
                         ),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -139,14 +146,18 @@ fun WrappedGoalsScreen(
                 }
             }
 
-            itemsIndexed(goals) { index, goal ->
+            itemsIndexed(
+                items = state.goals,
+                key = { _, goal -> goal.id }
+            ) { index, goal ->
                 GoalCard(
-                    goal = goal,
+                    modifier = Modifier.animateItem(),
+                    goal = goal.name,
                     onGoalChanged = {
-                        goals[index] = it
+                        goalChanged(goal, it)
                     },
                     onDelete = {
-                        goals.removeAt(index)
+                        goalRemoved(goal)
                     }
                 )
             }
@@ -154,6 +165,17 @@ fun WrappedGoalsScreen(
     }
 }
 
+private val options = listOf(
+    "Exceed my Bench Press max by 5%",
+    "Be ready for beach season",
+    "Get off the couch without grunting",
+    "Do a full chin up",
+    "Do a push-up without using me knees",
+    "Do 100 push-ups a month",
+    "Stretch 3 days a week",
+    "Get Swole",
+    "Go to the Gym 8 times a week",
+)
 
 @Composable
 private fun GoalCard(
@@ -181,7 +203,7 @@ private fun GoalCard(
                 onGoalChanged(it)
             },
             placeholder = { Text(options.random()) },
-                        colors = TextFieldDefaults.transparentColors()
+            colors = TextFieldDefaults.transparentColors()
         )
         IconButton(onClick = onDelete) {
             Icon(
@@ -199,11 +221,13 @@ fun WrappedGoalsScreenPreview(@PreviewParameter(DarkModeProvider::class) dark: B
         isDarkMode = dark
     ) {
         WrappedGoalsScreen(
-            goals = listOf(
-                "Get Swole",
-                "super long answer that will end up being multiple lines because I have to test this WEEEEEEEEEEEE",
-                "",
-                "Exceed my Bench Press max by 5%",
+            state = WrappedGoalsState(
+                goals = listOf(
+                    Goal(name = "Do a push-up without using me knees"),
+                    Goal(name = "Exceed my Bench Press max by 5%"),
+                    Goal(name = "Be ready for beach season"),
+                    Goal(name = "Get off the couch without grunting"),
+                )
             )
         )
     }

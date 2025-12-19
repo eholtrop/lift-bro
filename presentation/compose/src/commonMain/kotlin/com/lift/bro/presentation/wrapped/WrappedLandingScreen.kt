@@ -22,6 +22,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.wrapped.goals.WrappedGoalsScreen
+import com.lift.bro.presentation.wrapped.goals.rememberWrappedGoalsInteractor
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.delay
@@ -135,7 +137,7 @@ fun WrappedLandingScreen(
                 is WrappedPageState.Weight -> WrappedWeightScreen(page)
                 is WrappedPageState.Summary -> WrappedSummaryScreen()
                 is WrappedPageState.Consistency -> WrappedConsistencyScreen(page = page)
-                WrappedPageState.Goals -> WrappedGoalsScreen()
+                WrappedPageState.Goals -> WrappedGoalsScreen(interactor = rememberWrappedGoalsInteractor())
                 is WrappedPageState.Progress -> WrappedProgressScreen(
                     items = page.items
                 )
