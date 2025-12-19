@@ -3,9 +3,23 @@
 package com.lift.bro.presentation.wrapped
 
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
@@ -16,17 +30,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.wrapped.goals.WrappedGoalsScreen
 import com.lift.bro.presentation.wrapped.goals.rememberWrappedGoalsInteractor
+import com.lift.bro.ui.Space
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -124,26 +144,81 @@ fun WrappedLandingScreen(
 fun WrappedLandingScreen(
     state: WrappedState,
 ) {
-    HorizontalPager(
-        state = rememberPagerState { state.pages.size },
-    ) { page ->
-        CompositionLocalProvider(
-            LocalContentColor provides MaterialTheme.colorScheme.onBackground
-        ) {
+    val pagerState = rememberPagerState { state.pages.size }
 
-            when (val page = state.pages.get(page)) {
-                is WrappedPageState.Reps -> WrappedRepScreen(page)
-                is WrappedPageState.Tenure -> WrappedTenureScreen(page)
-                is WrappedPageState.Weight -> WrappedWeightScreen(page)
-                is WrappedPageState.Summary -> WrappedSummaryScreen()
-                is WrappedPageState.Consistency -> WrappedConsistencyScreen(page = page)
-                WrappedPageState.Goals -> WrappedGoalsScreen(interactor = rememberWrappedGoalsInteractor())
-                is WrappedPageState.Progress -> WrappedProgressScreen(
-                    items = page.items
+    Column {
+        Row(
+            modifier = Modifier.height(44.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val coroutineScope = rememberCoroutineScope()
+
+            IconButton(
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back"
+                )
+            }
+
+            Row(
+                modifier = Modifier.weight(1f),
+                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter, alignment = Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                repeat(pagerState.pageCount) {
+                    Box(
+                        modifier = Modifier.alpha(if (pagerState.currentPage == it) 1f else .5f)
+                            .background(
+                                color = if (pagerState.currentPage == it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                shape = MaterialTheme.shapes.extraSmall
+                            )
+                            .size(if (pagerState.currentPage == it) 12.dp else 8.dp)
+                    ) {
+
+                    }
+                }
+            }
+
+            IconButton(
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = "Next"
                 )
             }
         }
+        HorizontalPager(
+            modifier = Modifier.weight(1f),
+            state = pagerState,
+        ) { page ->
+            CompositionLocalProvider(
+                LocalContentColor provides MaterialTheme.colorScheme.onBackground
+            ) {
 
+                when (val page = state.pages.get(page)) {
+                    is WrappedPageState.Reps -> WrappedRepScreen(page)
+                    is WrappedPageState.Tenure -> WrappedTenureScreen(page)
+                    is WrappedPageState.Weight -> WrappedWeightScreen(page)
+                    is WrappedPageState.Summary -> WrappedSummaryScreen()
+                    is WrappedPageState.Consistency -> WrappedConsistencyScreen(page = page)
+                    WrappedPageState.Goals -> WrappedGoalsScreen(interactor = rememberWrappedGoalsInteractor())
+                    is WrappedPageState.Progress -> WrappedProgressScreen(
+                        items = page.items
+                    )
+                }
+            }
+        }
     }
 }
 

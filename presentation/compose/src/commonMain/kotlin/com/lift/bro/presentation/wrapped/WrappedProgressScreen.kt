@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,9 +23,11 @@ import com.lift.bro.ui.today
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.listCorners
 import com.lift.bro.utils.percentageFormat
 import com.lift.bro.utils.toString
+import com.lift.bro.utils.vertical_padding.padding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
@@ -33,30 +36,38 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 fun WrappedProgressScreen(
     items: List<WrappedPageState.ProgressItemState>,
 ) {
-    LiftingScaffold(
-        title = {
-            Text("You made some GREAT Progress this year!")
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(MaterialTheme.spacing.one),
+    ) {
+        stickyHeader {
+            Text(
+                modifier = Modifier
+                    .background(color = BottomSheetDefaults.ContainerColor)
+                    .padding(
+                        horizontal = MaterialTheme.spacing.one,
+                        top = MaterialTheme.spacing.oneAndHalf,
+                        bottom = MaterialTheme.spacing.threeQuarters
+                    ),
+                text = "You made some GREAT Progress this year!",
+                style = MaterialTheme.typography.headlineMedium
+            )
         }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier.padding(padding).fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(MaterialTheme.spacing.one),
-        ) {
-            itemsIndexed(items = items) { index, item ->
-                ProgressItemView(
-                    modifier = Modifier.fillMaxWidth()
-                        .background(
-                            color = MaterialTheme.colorScheme.surface,
-                            shape = MaterialTheme.shapes.large.listCorners(index, items),
-                        )
-                        .padding(
-                            horizontal = MaterialTheme.spacing.half,
-                            vertical = MaterialTheme.spacing.half,
-                        ),
-                    state = item,
-                )
-            }
+
+        itemsIndexed(items = items) { index, item ->
+            ProgressItemView(
+                modifier = Modifier.fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.surface,
+                        shape = MaterialTheme.shapes.large.listCorners(index, items),
+                    )
+                    .padding(
+                        horizontal = MaterialTheme.spacing.half,
+                        vertical = MaterialTheme.spacing.half,
+                    ),
+                state = item,
+            )
         }
     }
 }

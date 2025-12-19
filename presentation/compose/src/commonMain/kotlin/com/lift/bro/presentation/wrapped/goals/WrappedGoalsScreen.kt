@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -49,6 +51,7 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
+import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -78,89 +81,96 @@ fun WrappedGoalsScreen(
     goalChanged: (Goal, String) -> Unit = { _, _ -> },
     goalRemoved: (Goal) -> Unit = {},
 ) {
-    LiftingScaffold(
-        title = {
-            Text("Now... How about Goals for next year?")
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(MaterialTheme.spacing.one),
+        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+    ) {
+        stickyHeader {
+            Text(
+                modifier = Modifier
+                    .background(color = BottomSheetDefaults.ContainerColor)
+                    .padding(
+                        horizontal = MaterialTheme.spacing.one,
+                        top = MaterialTheme.spacing.oneAndHalf,
+                        bottom = MaterialTheme.spacing.threeQuarters
+                    ),
+                text = "Now... How about Goals for next year?",
+                style = MaterialTheme.typography.headlineMedium
+            )
         }
-    ) { padding ->
 
-        LazyColumn(
-            modifier = Modifier.padding(padding).fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = PaddingValues(MaterialTheme.spacing.one),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
-        ) {
+        item {
+            Row(
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(
+                        role = Role.Button,
+                        onClick = goalAdded
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = "Goals",
+                    style = MaterialTheme.typography.titleLarge
+                )
 
-            item {
-                Row(
-                    modifier = Modifier
-                        .clip(MaterialTheme.shapes.small)
-                        .clickable(
-                            role = Role.Button,
-                            onClick = goalAdded
-                        ),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Goals",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+                Space(MaterialTheme.spacing.half)
 
-                    Space(MaterialTheme.spacing.half)
-
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add Goal",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-            }
-
-            item {
-                var goal by remember { mutableStateOf(options.random()) }
-                var visibility by remember { mutableStateOf(true) }
-
-                Column(
-                    modifier = Modifier.defaultMinSize(minHeight = 52.dp),
-                    verticalArrangement = Arrangement.Center,
-                ) {
-                    AnimatedVisibility(
-                        visible = visibility,
-                        enter = fadeIn(animationSpec = tween(durationMillis = 1000)),
-                        exit = fadeOut(animationSpec = tween(durationMillis = 1000))
-                    ) {
-                        Text(
-                            text = goal,
-                        )
-                    }
-                }
-
-                LaunchedEffect(Unit) {
-                    while (true) {
-                        visibility = false
-                        delay(1100)
-                        goal = options.random()
-                        visibility = true
-                        delay(5000)
-                    }
-                }
-            }
-
-            itemsIndexed(
-                items = state.goals,
-                key = { _, goal -> goal.id }
-            ) { index, goal ->
-                GoalCard(
-                    modifier = Modifier.animateItem(),
-                    goal = goal.name,
-                    onGoalChanged = {
-                        goalChanged(goal, it)
-                    },
-                    onDelete = {
-                        goalRemoved(goal)
-                    }
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add Goal",
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
+        }
+
+        item {
+            var goal by remember { mutableStateOf(options.random()) }
+            var visibility by remember { mutableStateOf(true) }
+
+            Column(
+                modifier = Modifier.defaultMinSize(minHeight = 52.dp),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                AnimatedVisibility(
+                    visible = visibility,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 1000)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 1000))
+                ) {
+                    Text(
+                        text = goal,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                while (true) {
+                    visibility = false
+                    delay(1100)
+                    goal = options.random()
+                    visibility = true
+                    delay(5000)
+                }
+            }
+        }
+
+        itemsIndexed(
+            items = state.goals,
+            key = { _, goal -> goal.id }
+        ) { index, goal ->
+            GoalCard(
+                modifier = Modifier.animateItem(),
+                goal = goal.name,
+                onGoalChanged = {
+                    goalChanged(goal, it)
+                },
+                onDelete = {
+                    goalRemoved(goal)
+                }
+            )
         }
     }
 }
@@ -175,6 +185,7 @@ private val options = listOf(
     "Stretch 3 days a week",
     "Get Swole",
     "Go to the Gym 8 times a week",
+    "Beat \"The Rock\" in an arm wrestling match"
 )
 
 @Composable
