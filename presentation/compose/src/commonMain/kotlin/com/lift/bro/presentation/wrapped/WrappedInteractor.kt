@@ -13,7 +13,7 @@ import com.lift.bro.ui.today
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.flow.combine
 
-private val heavyThings = listOf(
+val heavyThings = listOf(
     HeavyThing(
         name = "Blue Whale",
         weight = 300000.0,
@@ -24,6 +24,11 @@ private val heavyThings = listOf(
         weight = 15432.0,
         icon = "\uD83D\uDC18"
     ),
+    HeavyThing(
+        name = "Truck",
+        weight = 5000.0,
+        icon = "\uD83D\uDEFB",
+    )
 )
 
 @Composable
@@ -52,9 +57,9 @@ fun rememberWrappedInteractor(
                         ),
                         WrappedPageState.Reps(
                             totalReps = sets.sumOf { it.reps },
-                            dailyAverage = sets.sumOf { it.reps / if (today.year % 4 == 0) 366 else 365 },
-                            workoutAverage = sets.sumOf { it.reps / sets.groupBy { it.date.toLocalDate().dayOfYear }.size },
-                            mostRepsLift = variations.first { it.id == sets.maxBy { it.reps }.variationId }.fullName to sets.maxOf { it.reps }
+                            dailyAverage = sets.sumOf { it.reps } / if (today.year % 4 == 0) 366 else 365,
+                            workoutAverage = sets.sumOf { it.reps } / sets.groupBy { it.date.toLocalDate().dayOfYear }.size ,
+                            mostRepsLift = variationSets.map { entry -> entry.key.fullName to entry.value.sumOf { it.reps } }.maxBy { it.second }
                         ),
                         WrappedPageState.Consistency(
                             dates = sets.map { it.date.toLocalDate() }.toSet()

@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.dialog.InfoDialog
@@ -85,7 +86,11 @@ fun WrappedConsistencyScreen(
                         )
                     },
                     message = {
-                        Text("Your most consistent month was ${dates.maxBy { it.value.size }.key.name} with ${dates.maxBy { it.value.size }.value.size} days!")
+                        Text(
+                            text = "Your most consistent month was ${dates.maxBy { it.value.size }.key.name} with ${dates.maxBy { it.value.size }.value.size} days!",
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.titleMedium,
+                        )
                     }
                 )
             }

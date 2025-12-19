@@ -180,7 +180,7 @@ private val options = listOf(
     "Be ready for beach season",
     "Get off the couch without grunting",
     "Do a full chin up",
-    "Do a push-up without using me knees",
+    "Do a push-up without using my knees",
     "Do 100 push-ups a month",
     "Stretch 3 days a week",
     "Get Swole",
@@ -213,7 +213,12 @@ private fun GoalCard(
                 name = it
                 onGoalChanged(it)
             },
-            placeholder = { Text(options.random()) },
+            placeholder = {
+                Text(
+                    text = options.random(),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            },
             colors = TextFieldDefaults.transparentColors()
         )
         IconButton(onClick = onDelete) {

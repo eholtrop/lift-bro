@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -59,8 +60,16 @@ fun WrappedWeightScreen(
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 2,
-                text = "Thats ${(state.totalWeightMoved / state.heavyThing.weight).decimalFormat()} ${state.heavyThing.name}s ${state.heavyThing.icon}",
-                style = MaterialTheme.typography.bodyLarge,
+                text = "Thats...",
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+
+        itemsIndexed(heavyThings.shuffled()) { index, thing ->
+            FadeInText(
+                delay = FadeInDelayPerIndex * 3 + index,
+                text = "${(state.totalWeightMoved / thing.weight).decimalFormat()} ${thing.name}s ${thing.icon}",
+                style = MaterialTheme.typography.titleMedium,
             )
         }
 
@@ -72,16 +81,16 @@ fun WrappedWeightScreen(
             InfoSpeachBubble(
                 title = {
                     FadeInText(
-                        delay = FadeInDelayPerIndex * 4,
+                        delay = FadeInDelayPerIndex * (4 + heavyThings.size),
                         text = "Thats HUGE!!!! \uD83D\uDCAA",
                         style = MaterialTheme.typography.displaySmall
                     )
                 },
                 message = {
                     FadeInText(
-                        delay = FadeInDelayPerIndex * 3,
+                        delay = FadeInDelayPerIndex * (4 + heavyThings.size),
                         text = "You moved ${weightFormat(state.heaviestVariation.second)} in ${state.heaviestVariation.first}s Alone!! \uD83D\uDE35",
-                        style = MaterialTheme.typography.bodyLarge,
+                        style = MaterialTheme.typography.titleMedium,
                     )
                 }
             )
