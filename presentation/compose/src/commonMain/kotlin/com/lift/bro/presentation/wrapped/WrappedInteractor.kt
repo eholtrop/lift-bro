@@ -99,8 +99,10 @@ fun rememberWrappedInteractor(
                                             )
                                         },
                                         progress = when (variation.bodyWeight) {
-                                            true -> ((maxSet?.reps ?: 0L) - (minSet?.reps ?: 0L)) / (minSet?.reps ?: 0L).toDouble()
-                                            else -> ((maxSet?.weight ?: 0.0) - (minSet?.weight ?: 0.0)) / (minSet?.weight ?: 0.0)
+                                            true -> ((maxSet?.reps ?: 0L) - (minSet?.reps ?: 0L)) / (minSet?.reps ?: 1L).toDouble()
+                                            else -> ((maxSet?.weight ?: 0.0) - (minSet?.weight ?: 0.0)) / (minSet?.weight ?: 1.0)
+                                        }.let {
+                                            if (it.isNaN()) 0.0 else it
                                         }
                                     )
                                 }.sortedByDescending { it.progress }

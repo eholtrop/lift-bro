@@ -5,6 +5,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,16 +23,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.lift.bro.config.BuildConfig
+import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
+import com.lift.bro.presentation.wrapped.WrappedDialog
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.today
+import kotlinx.datetime.DateTimePeriod
+import kotlinx.datetime.Month
+import kotlinx.datetime.minus
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
@@ -54,12 +70,39 @@ fun HomeScreen(
         is HomeState.Content -> {
             LiftingScaffold(
                 title = {
-                    Icon(
-                        modifier = Modifier.size(52.dp),
-                        painter = painterResource(LocalLiftBro.current.iconRes()),
-                        contentDescription = ""
-                    )
-                    Text(stringResource(Res.string.dashboard_title))
+                    Column {
+                        if (today.month == Month.JANUARY || BuildConfig.isDebug) {
+
+                            var showWrapped by remember { mutableStateOf(false) }
+
+                            if (showWrapped) {
+                                WrappedDialog(
+                                    year = 2025,
+                                    onDismissRequest = { showWrapped = false }
+                                )
+                            }
+
+                            Button(
+                                colors = ButtonDefaults.elevatedButtonColors(),
+                                onClick = {
+                                    showWrapped = true
+                                }
+                            ) {
+                                Column {
+                                    Text("Happy New Year! \uD83C\uDF89 \uD83C\uDF81")
+                                }
+                            }
+                            Space(MaterialTheme.spacing.half)
+                        }
+                        Row {
+                            Icon(
+                                modifier = Modifier.size(52.dp),
+                                painter = painterResource(LocalLiftBro.current.iconRes()),
+                                contentDescription = ""
+                            )
+                            Text(stringResource(Res.string.dashboard_title))
+                        }
+                    }
                 },
                 leadingContent = {
                 },
@@ -176,6 +219,7 @@ fun HomeScreen(
             },
             loadDefaultLifts = {}
         )
+
         HomeState.Loading -> {}
     }
 }
