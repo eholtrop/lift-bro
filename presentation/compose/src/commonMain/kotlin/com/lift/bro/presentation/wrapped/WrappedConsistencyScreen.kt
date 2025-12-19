@@ -79,7 +79,10 @@ fun WrappedConsistencyScreen(
             ) {
                 InfoSpeachBubble(
                     title = {
-                        Text("Way to go!")
+                        Text(
+                            "Way to go!",
+                            style = MaterialTheme.typography.displaySmall
+                        )
                     },
                     message = {
                         Text("Your most consistent month was ${dates.maxBy { it.value.size }.key.name} with ${dates.maxBy { it.value.size }.value.size} days!")

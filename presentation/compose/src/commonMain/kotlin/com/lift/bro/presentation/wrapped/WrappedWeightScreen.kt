@@ -74,6 +74,7 @@ fun WrappedWeightScreen(
                     FadeInText(
                         delay = FadeInDelayPerIndex * 4,
                         text = "Thats HUGE!!!! \uD83D\uDCAA",
+                        style = MaterialTheme.typography.displaySmall
                     )
                 },
                 message = {

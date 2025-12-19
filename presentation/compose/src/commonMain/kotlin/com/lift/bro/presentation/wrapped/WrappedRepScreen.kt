@@ -72,7 +72,11 @@ fun WrappedRepScreen(
         item {
             InfoSpeachBubble(
                 title = {
-                    Text("WOW")
+                    Text(
+
+                        "WOW",
+                        style = MaterialTheme.typography.displaySmall
+                    )
                 },
                 message = {
                     FadeInText(

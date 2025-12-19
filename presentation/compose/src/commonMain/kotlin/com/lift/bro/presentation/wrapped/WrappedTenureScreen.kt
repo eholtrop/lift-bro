@@ -76,7 +76,7 @@ fun WrappedTenureScreen(
                             FadeInText(
                                 delay = 300L,
                                 text = "Thank YOU!!!",
-                                style = MaterialTheme.typography.titleMedium,
+                                style = MaterialTheme.typography.headlineSmall,
                             )
                         },
                         message = {
