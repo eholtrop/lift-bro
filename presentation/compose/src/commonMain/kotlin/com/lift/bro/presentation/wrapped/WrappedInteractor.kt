@@ -105,6 +105,7 @@ fun rememberWrappedInteractor(
                                     )
                                 }.sortedByDescending { it.progress }
                         ),
+                        WrappedPageState.Goals,
                         WrappedPageState.Summary(
                             sets = sets
                         ),

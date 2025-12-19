@@ -135,7 +135,7 @@ fun WrappedLandingScreen(
                 is WrappedPageState.Weight -> WrappedWeightScreen(page)
                 is WrappedPageState.Summary -> WrappedSummaryScreen()
                 is WrappedPageState.Consistency -> WrappedConsistencyScreen(page = page)
-                WrappedPageState.Goals -> TODO()
+                WrappedPageState.Goals -> WrappedGoalsScreen()
                 is WrappedPageState.Progress -> WrappedProgressScreen(
                     items = page.items
                 )
