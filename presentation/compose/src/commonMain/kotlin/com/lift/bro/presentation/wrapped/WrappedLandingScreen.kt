@@ -209,9 +209,7 @@ fun WrappedLandingScreen(
                     is WrappedPageState.Summary -> WrappedSummaryScreen()
                     is WrappedPageState.Consistency -> WrappedConsistencyScreen()
                     WrappedPageState.Goals -> WrappedGoalsScreen(interactor = rememberWrappedGoalsInteractor())
-                    is WrappedPageState.Progress -> WrappedProgressScreen(
-                        items = page.items
-                    )
+                    is WrappedPageState.Progress -> WrappedProgressScreen()
                 }
             }
         }
