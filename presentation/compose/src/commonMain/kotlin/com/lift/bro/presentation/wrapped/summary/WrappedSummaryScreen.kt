@@ -26,23 +26,43 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.percentageFormat
 import com.lift.bro.utils.vertical_padding.padding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 
+@Composable
+fun WrappedSummaryScreen(
+    interactor: Interactor<WrappedSummaryState?, Nothing> = rememberWrappedSummaryInteractor(),
+) {
+    val state by interactor.state.collectAsState()
+
+    state?.let {
+        WrappedSummaryScreen(
+            state = it
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WrappedSummaryScreen() {
+fun WrappedSummaryScreen(
+    state: WrappedSummaryState,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -64,25 +84,110 @@ fun WrappedSummaryScreen() {
         }
 
         item {
-            WrappedSummaryCard(
-                title = "Total Weight Moved",
-                cards = listOf(
-                    { Text("234234.6 lbs") },
-                    { Text("2342.5 lbs in Dead Lifts") },
-                    { Text("Thats 17 elephants!") },
+            with(state.weight) {
+                WrappedSummaryCard(
+                    title = "Total Weight Moved",
+                    cards = listOf(
+                        {
+                            Text(
+                                text = weightFormat(totalWeightMoved),
+                                style = MaterialTheme.typography.titleMedium,
+                                textAlign = TextAlign.Center,
+                            )
+                        },
+                        {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = weightFormat(heaviestVariationWeight),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center,
+                                )
+                                Text(
+                                    text = heaviestVariationName,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        },
+                        {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = numOfHeavyThings.decimalFormat(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center,
+                                )
+                                Text(
+                                    text = "${heavyThing.name}s ${heavyThing.icon}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        },
+                    )
                 )
-            )
+            }
         }
 
         item {
-            WrappedSummaryCard(
-                title = "Reps",
-                cards = listOf(
-                    { Text("2345 Total Reps!") },
-                    { Text("336 in Leg Press Alone!!") },
-                    { Text("44 per day this year!") },
+            with(state.reps) {
+                WrappedSummaryCard(
+                    title = "Reps",
+                    cards = listOf(
+                        {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = totalReps.toString(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center,
+                                )
+                                Text(
+                                    text = "Total Reps",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        },
+                        {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = variationReps.toString(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center,
+                                )
+                                Text(
+                                    text = variationName,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        },
+                        {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = repsPerDay.toString(),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    textAlign = TextAlign.Center,
+                                )
+                                Text(
+                                    text = "per day!",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    textAlign = TextAlign.Center,
+                                )
+                            }
+                        },
+                    )
                 )
-            )
+            }
         }
 
         item {
@@ -107,21 +212,7 @@ fun WrappedSummaryScreen() {
                             text = "Consistency",
                             style = MaterialTheme.typography.headlineSmall
                         )
-
-                        listOf(
-                            WrappedSummaryConsistencyState(
-                                title = "July",
-                                occurrences = 10,
-                            ),
-                            WrappedSummaryConsistencyState(
-                                title = "Monday",
-                                occurrences = 15,
-                            ),
-                            WrappedSummaryConsistencyState(
-                                title = "Dead Lift",
-                                occurrences = 30,
-                            ),
-                        ).forEach {
+                        state.consistencies.forEach {
                             Row(
                                 modifier = Modifier.padding(
                                     horizontal = MaterialTheme.spacing.half,
@@ -152,26 +243,7 @@ fun WrappedSummaryScreen() {
                             text = "Progress",
                             style = MaterialTheme.typography.headlineSmall
                         )
-                        listOf(
-                            WrappedSummaryProgressState(
-                                title = "Dead Lift",
-                                progress = .6,
-                                minWeight = 100.0,
-                                maxWeight = 200.0,
-                            ),
-                            WrappedSummaryProgressState(
-                                title = "Back Squat",
-                                progress = .7,
-                                minWeight = 100.0,
-                                maxWeight = 200.0,
-                            ),
-                            WrappedSummaryProgressState(
-                                title = "Leg Press",
-                                progress = .7,
-                                minWeight = 100.0,
-                                maxWeight = 200.0,
-                            )
-                        ).forEach {
+                        state.progression.forEach {
                             Column(
                                 modifier = Modifier.padding(horizontal = MaterialTheme.spacing.half),
                             ) {
