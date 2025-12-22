@@ -80,11 +80,7 @@ sealed class WrappedPageState() {
     data object Tenure: WrappedPageState()
 
     @Serializable
-    data class Weight(
-        val totalWeightMoved: Double,
-        val heavyThing: HeavyThing,
-        val heaviestVariation: Pair<String, Double>,
-    ): WrappedPageState()
+    data object Weight: WrappedPageState()
 
     @Serializable
     data class Reps(
@@ -209,7 +205,7 @@ fun WrappedLandingScreen(
                 when (val page = state.pages.get(page)) {
                     is WrappedPageState.Reps -> WrappedRepScreen(page)
                     is WrappedPageState.Tenure -> WrappedTenureScreen()
-                    is WrappedPageState.Weight -> WrappedWeightScreen(page)
+                    is WrappedPageState.Weight -> WrappedWeightScreen()
                     is WrappedPageState.Summary -> WrappedSummaryScreen()
                     is WrappedPageState.Consistency -> WrappedConsistencyScreen(page = page)
                     WrappedPageState.Goals -> WrappedGoalsScreen(interactor = rememberWrappedGoalsInteractor())

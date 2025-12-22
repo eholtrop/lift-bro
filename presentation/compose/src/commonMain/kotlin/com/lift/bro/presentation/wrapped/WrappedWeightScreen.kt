@@ -13,19 +13,124 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.lift.bro.data.core.repository.SetRepository
+import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
+import com.lift.bro.di.variationRepository
+import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.dialog.InfoSpeachBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
+import com.lift.bro.utils.combine
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.fullName
 import com.lift.bro.utils.vertical_padding.padding
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class WrappedWeightState(
+    val totalWeightMoved: Double,
+    val heavyThings: List<Pair<HeavyThing, Double>>,
+    val heaviestVariation: Pair<String, Double>,
+)
+
+class GetTotalWeightMovedUseCase(
+    private val setRepository: ISetRepository = dependencies.setRepository,
+) {
+
+    /*
+     * Fetches the total weight moved for between the given dates
+     */
+    operator fun invoke(
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
+    ): Flow<Double> = setRepository.listenAll(
+        startDate = startDate,
+        endDate = endDate
+    ).map { sets -> sets.sumOf { it.weight * it.reps } }
+}
+
+/*
+ * Gets the variation with the most weight moved between the given dates
+ */
+class GetVariationWithMostWeightMovedUseCase(
+    private val setRepository: ISetRepository = dependencies.setRepository,
+    private val variationRepository: IVariationRepository = dependencies.variationRepository,
+) {
+
+    /*
+     * Fetches the total weight moved for between the given dates
+     */
+    operator fun invoke(
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
+    ): Flow<Pair<Variation, Double>> = combine(
+        setRepository.listenAll(
+            startDate = startDate,
+            endDate = endDate
+        ),
+        variationRepository.listenAll(),
+    ) { sets, variations ->
+        sets.groupBy { set -> variations.first { it.id == set.variationId } }
+            .map { entry -> entry.key to entry.value.sumOf { it.weight } }
+            .maxBy { it.second }
+    }
+}
+
+@Composable
+fun rememberWrappedWeightInteractor(
+    getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(),
+    getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase = GetVariationWithMostWeightMovedUseCase(),
+) = rememberInteractor<WrappedWeightState?, Nothing>(
+    initialState = null,
+    source = {
+        combine(
+            getTotalWeightMovedUseCase(
+                startDate = LocalDate(2025, 1, 1),
+                endDate = LocalDate(2025, 12, 31)
+            ),
+            getVariationWithMostWeightMovedUseCase(
+                startDate = LocalDate(2025, 1, 1),
+                endDate = LocalDate(2025, 12, 31)
+            )
+        ) { twm, varTwm ->
+            WrappedWeightState(
+                totalWeightMoved = twm,
+                heavyThings = heavyThings.map { it to twm / it.weight },
+                heaviestVariation = varTwm.first.fullName to varTwm.second,
+            )
+        }
+    }
+)
+
+@Composable
+fun WrappedWeightScreen(
+    interactor: Interactor<WrappedWeightState?, Nothing> = rememberWrappedWeightInteractor(),
+) {
+    val state by interactor.state.collectAsState()
+
+    state?.let {
+        WrappedWeightScreen(state = it)
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WrappedWeightScreen(
-    state: WrappedPageState.Weight,
+    state: WrappedWeightState,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -65,10 +170,10 @@ fun WrappedWeightScreen(
             )
         }
 
-        itemsIndexed(heavyThings.shuffled()) { index, thing ->
+        itemsIndexed(state.heavyThings) { index, (thing, reps) ->
             FadeInText(
                 delay = FadeInDelayPerIndex * 3 + index,
-                text = "${(state.totalWeightMoved / thing.weight).decimalFormat()} ${thing.name}s ${thing.icon}",
+                text = "${reps.decimalFormat()} ${thing.name}s ${thing.icon}",
                 style = MaterialTheme.typography.titleMedium,
             )
         }

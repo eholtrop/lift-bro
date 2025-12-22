@@ -49,12 +49,7 @@ fun rememberWrappedInteractor(
                 WrappedState(
                     pages = listOf(
                         WrappedPageState.Tenure,
-                        WrappedPageState.Weight(
-                            totalWeightMoved = sets.sumOf { it.weight * it.reps },
-                            heavyThing = heavyThings.toList().random(),
-                            heaviestVariation = variationSets.map { entry -> entry.key.fullName to entry.value.sumOf { it.weight } }
-                                .maxBy { it.second }
-                        ),
+                        WrappedPageState.Weight,
                         WrappedPageState.Reps(
                             totalReps = sets.sumOf { it.reps },
                             dailyAverage = sets.sumOf { it.reps } / if (today.year % 4 == 0) 366 else 365,
