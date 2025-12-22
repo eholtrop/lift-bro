@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
@@ -16,7 +15,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,7 +39,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.wrapped.goals.WrappedGoalsScreen
 import com.lift.bro.presentation.wrapped.goals.rememberWrappedGoalsInteractor
-import com.lift.bro.ui.Space
+import com.lift.bro.presentation.wrapped.summary.WrappedSummaryScreen
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -258,10 +256,3 @@ data class HeavyThing(
     val weight: Double,
     val icon: String,
 )
-
-
-
-@Composable
-fun WrappedSummaryScreen() {
-
-}
