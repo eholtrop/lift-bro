@@ -25,6 +25,9 @@ import com.lift.bro.ui.dialog.InfoSpeachBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.utils.vertical_padding.padding
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +50,7 @@ fun WrappedTenureScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "Welcome to Lift Bro Wrapped!",
+                text = stringResource(Res.string.wrapped_tenure_header_title),
                 style = MaterialTheme.typography.headlineMedium
             )
         }
@@ -60,13 +63,13 @@ fun WrappedTenureScreen(
                 if (currentYear == state.year) {
                     FadeInText(
                         delay = 100L,
-                        text = "This was your first Lift Bro year! \uD83C\uDF89",
+                        text = stringResource(Res.string.wrapped_tenure_first_year_title),
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Space(MaterialTheme.spacing.one)
                     FadeInText(
                         delay = 200L,
-                        text = "Whether you started using lift bro this year, or started on your lifting journey",
+                        text = stringResource(Res.string.wrapped_tenure_first_year_subtitle),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Space(MaterialTheme.spacing.two)
@@ -75,14 +78,14 @@ fun WrappedTenureScreen(
                         title = {
                             FadeInText(
                                 delay = 300L,
-                                text = "Thank YOU!!!",
+                                text = stringResource(Res.string.wrapped_tenure_first_year_speech_bubble_title),
                                 style = MaterialTheme.typography.headlineSmall,
                             )
                         },
                         message = {
                             FadeInText(
                                 delay = 400L,
-                                text = "Here's to a great next year! \uD83E\uDD73 \uD83E\uDD42",
+                                text = stringResource(Res.string.wrapped_tenure_first_year_speech_bubble_message),
                                 style = MaterialTheme.typography.bodyLarge,
                             )
                         }
@@ -90,13 +93,13 @@ fun WrappedTenureScreen(
                 } else {
                     FadeInText(
                         delay = 500L,
-                        text = "You've been a lift bro for ${currentYear - state.year} years!",
+                        text = stringResource(Res.string.wrapped_tenure_veteran_title, currentYear - state.year),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Space(MaterialTheme.spacing.one)
                     FadeInText(
                         delay = 600L,
-                        text = "Congrats!! and thank YOU for the support",
+                        text = stringResource(Res.string.wrapped_tenure_veteran_subtitle),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                 }
@@ -111,12 +114,12 @@ fun WrappedTenureScreen(
             if (LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro) {
                 FadeInText(
                     delay = 800L,
-                    text = "And a VERY EXTRA SPECIAL THANK YOU! for being a Lift PRO!!!",
+                    text = stringResource(Res.string.wrapped_tenure_pro_thanks_title),
                     style = MaterialTheme.typography.titleLarge
                 )
                 FadeInText(
                     delay = 1000L,
-                    text = "Support like yours is what keeps this app going!",
+                    text = stringResource(Res.string.wrapped_tenure_pro_thanks_subtitle),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

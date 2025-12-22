@@ -20,6 +20,9 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.dialog.InfoSpeachBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.vertical_padding.padding
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,14 +44,14 @@ fun WrappedRepScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "Total Reps",
+                text = stringResource(Res.string.wrapped_reps_header_title),
                 style = MaterialTheme.typography.headlineMedium
             )
         }
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 1,
-                text = "You picked up ${state.totalReps} things this year \uD83D\uDE35",
+                text = stringResource(Res.string.wrapped_reps_total_title, state.totalReps),
                 style = MaterialTheme.typography.titleLarge,
             )
         }
@@ -60,7 +63,7 @@ fun WrappedRepScreen(
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 2,
-                text = "(And then you put them down again)",
+                text = stringResource(Res.string.wrapped_reps_total_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
@@ -73,26 +76,25 @@ fun WrappedRepScreen(
             InfoSpeachBubble(
                 title = {
                     Text(
-
-                        "WOW",
+                        stringResource(Res.string.wrapped_reps_speech_bubble_title),
                         style = MaterialTheme.typography.displaySmall
                     )
                 },
                 message = {
                     FadeInText(
                         delay = FadeInDelayPerIndex * 3,
-                        text = "Thats an average of ${state.dailyAverage} reps per day",
+                        text = stringResource(Res.string.wrapped_reps_daily_average, state.dailyAverage),
                         style = MaterialTheme.typography.titleMedium
                     )
                     FadeInText(
                         delay = FadeInDelayPerIndex * 4,
-                        text = "or ${state.workoutAverage} per workout!!",
+                        text = stringResource(Res.string.wrapped_reps_workout_average, state.workoutAverage),
                         style = MaterialTheme.typography.titleMedium
                     )
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.half))
                     FadeInText(
                         delay = FadeInDelayPerIndex * 5,
-                        text = "You even did ${state.mostRepsLift.second} reps of ${state.mostRepsLift.first} \uD83D\uDE35",
+                        text = stringResource(Res.string.wrapped_reps_most_reps_lift, state.mostRepsLift.second, state.mostRepsLift.first),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }

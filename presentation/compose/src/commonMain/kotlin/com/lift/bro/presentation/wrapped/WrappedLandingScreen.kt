@@ -49,6 +49,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_landing_back_button_content_description
+import lift_bro.core.generated.resources.wrapped_landing_next_button_content_description
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
@@ -162,7 +166,7 @@ fun WrappedLandingScreen(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back"
+                    contentDescription = stringResource(Res.string.wrapped_landing_back_button_content_description)
                 )
             }
 
@@ -194,7 +198,7 @@ fun WrappedLandingScreen(
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = "Next"
+                    contentDescription = stringResource(Res.string.wrapped_landing_next_button_content_description)
                 )
             }
         }
