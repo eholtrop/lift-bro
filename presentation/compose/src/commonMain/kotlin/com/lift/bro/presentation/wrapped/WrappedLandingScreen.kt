@@ -202,8 +202,8 @@ fun WrappedLandingScreen(
                 LocalContentColor provides MaterialTheme.colorScheme.onBackground
             ) {
 
-                when (val page = state.pages.get(page)) {
-                    is WrappedPageState.Reps -> WrappedRepScreen(page)
+                when (val page = state.pages[page]) {
+                    is WrappedPageState.Reps -> WrappedRepScreen()
                     is WrappedPageState.Tenure -> WrappedTenureScreen()
                     is WrappedPageState.Weight -> WrappedWeightScreen()
                     is WrappedPageState.Summary -> WrappedSummaryScreen()

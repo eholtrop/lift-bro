@@ -1,35 +1,152 @@
 package com.lift.bro.presentation.wrapped
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.data.sqldelight.datasource.toLocalDate
+import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
+import com.lift.bro.di.variationRepository
+import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.dialog.InfoSpeachBubble
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.fullName
 import com.lift.bro.utils.vertical_padding.padding
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.datetime.LocalDate
+import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.*
+import lift_bro.core.generated.resources.wrapped_reps_daily_average
+import lift_bro.core.generated.resources.wrapped_reps_header_title
+import lift_bro.core.generated.resources.wrapped_reps_most_reps_lift
+import lift_bro.core.generated.resources.wrapped_reps_speech_bubble_title
+import lift_bro.core.generated.resources.wrapped_reps_total_subtitle
+import lift_bro.core.generated.resources.wrapped_reps_total_title
+import lift_bro.core.generated.resources.wrapped_reps_workout_average
 import org.jetbrains.compose.resources.stringResource
+
+@Serializable
+data class WrappedRepState(
+    val totalReps: Long,
+    val dailyAverage: Long,
+    val workoutAverage: Long,
+    val mostRepsLift: Pair<String, Long>,
+)
+
+class GetTotalRepsUseCase(
+    val setRepository: ISetRepository = dependencies.setRepository,
+) {
+    operator fun invoke(
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
+    ) = setRepository.listenAll(
+        startDate = startDate,
+        endDate = endDate
+    ).map {
+        it.sumOf { it.reps }
+    }
+}
+
+class GetWorkoutAverageUseCase(
+    val setRepository: ISetRepository = dependencies.setRepository,
+) {
+    operator fun invoke(
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
+    ) = setRepository.listenAll(
+        startDate = startDate,
+        endDate = endDate
+    ).map {
+        it.sumOf { it.reps } / it.groupBy { it.date.toLocalDate().dayOfYear }.size
+    }
+}
+
+class GetVariationWithMostRepsUseCase(
+    val setRepository: ISetRepository = dependencies.setRepository,
+    val variationRepository: IVariationRepository = dependencies.variationRepository,
+) {
+    operator fun invoke(
+        startDate: LocalDate? = null,
+        endDate: LocalDate? = null,
+    ) = combine(
+        setRepository.listenAll(
+            startDate = startDate,
+            endDate = endDate
+        ),
+        variationRepository.listenAll()
+    ) { sets, variations ->
+        sets.groupBy { set -> variations.first { it.id == set.variationId } }
+            .map { entry -> entry.key to entry.value.sumOf { it.reps } }
+            .maxBy { it.second }
+    }
+}
+
+@Composable
+fun rememberWrappedRepsInteractor(
+    getTotalRepsUseCase: GetTotalRepsUseCase = GetTotalRepsUseCase(),
+    getVariationWithMostRepsUseCase: GetVariationWithMostRepsUseCase = GetVariationWithMostRepsUseCase(),
+    getWorkoutAverageUseCase: GetWorkoutAverageUseCase = GetWorkoutAverageUseCase(),
+) = rememberInteractor<WrappedRepState?, Nothing>(
+    initialState = null,
+    source = {
+        combine(
+            getTotalRepsUseCase(
+                startDate = LocalDate(2025, 1, 1),
+                endDate = LocalDate(2025, 12, 31)
+
+            ),
+            getVariationWithMostRepsUseCase(
+                startDate = LocalDate(2025, 1, 1),
+                endDate = LocalDate(2025, 12, 31)
+
+            ),
+            getWorkoutAverageUseCase(
+                startDate = LocalDate(2025, 1, 1),
+                endDate = LocalDate(2025, 12, 31)
+            )
+        ) { totalReps, mostVariationReps, workoutAverage ->
+            WrappedRepState(
+                totalReps = totalReps,
+                dailyAverage = totalReps / if (2025 % 4 == 0) 366 else 365,
+                workoutAverage = workoutAverage,
+                mostRepsLift = mostVariationReps.first.fullName to mostVariationReps.second
+            )
+        }
+    }
+)
+
+@Composable
+fun WrappedRepScreen(
+    interactor: Interactor<WrappedRepState?, Nothing> = rememberWrappedRepsInteractor(),
+) {
+    val state by interactor.state.collectAsState()
+
+    state?.let {
+        WrappedRepScreen(it)
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WrappedRepScreen(
-    state: WrappedPageState.Reps,
+    state: WrappedRepState,
 ) {
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
