@@ -62,7 +62,7 @@ fun WrappedLandingScreenPreview(@PreviewParameter(DarkModeProvider::class) darkM
         WrappedLandingScreen(
             state = WrappedState(
                 listOf(
-                    WrappedPageState.Tenure(1)
+                    WrappedPageState.Tenure
                 )
             )
         )
@@ -77,9 +77,7 @@ data class WrappedState(
 @Serializable
 sealed class WrappedPageState() {
     @Serializable
-    data class Tenure(
-        val year: Int,
-    ): WrappedPageState()
+    data object Tenure: WrappedPageState()
 
     @Serializable
     data class Weight(
@@ -210,7 +208,7 @@ fun WrappedLandingScreen(
 
                 when (val page = state.pages.get(page)) {
                     is WrappedPageState.Reps -> WrappedRepScreen(page)
-                    is WrappedPageState.Tenure -> WrappedTenureScreen(page)
+                    is WrappedPageState.Tenure -> WrappedTenureScreen()
                     is WrappedPageState.Weight -> WrappedWeightScreen(page)
                     is WrappedPageState.Summary -> WrappedSummaryScreen()
                     is WrappedPageState.Consistency -> WrappedConsistencyScreen(page = page)

@@ -34,7 +34,6 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.percentageFormat
 import com.lift.bro.utils.vertical_padding.padding
 import org.jetbrains.compose.ui.tooling.preview.Preview
