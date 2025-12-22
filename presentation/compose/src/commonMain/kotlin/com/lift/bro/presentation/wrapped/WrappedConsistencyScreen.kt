@@ -34,6 +34,7 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.presentation.wrapped.usecase.GetVariationConsistencyUseCase
 import com.lift.bro.ui.dialog.InfoSpeachBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
@@ -58,28 +59,6 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 data class WrappedConsistencyState(
     val dates: Set<LocalDate>,
 )
-
-class GetVariationConsistencyUseCase(
-    val setRepository: ISetRepository = dependencies.setRepository,
-    val variationRepository: IVariationRepository = dependencies.variationRepository,
-) {
-
-    operator fun invoke(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
-    ): Flow<Map<LocalDate, List<Variation>>> = combine(
-        setRepository.listenAll(
-            startDate = startDate,
-            endDate = endDate
-        ),
-        variationRepository.listenAll()
-    ) { sets, variations ->
-        sets.groupBy { set -> set.date.toLocalDate() }
-            .mapValues { (_, sets) ->
-                variations.filter { variation -> sets.any { it.variationId == variation.id } }
-            }
-    }
-}
 
 @Composable
 fun rememberWrappedConsistencyInteractor(

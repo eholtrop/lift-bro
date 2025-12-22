@@ -26,6 +26,8 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.presentation.wrapped.usecase.GetTotalWeightMovedUseCase
+import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.dialog.InfoSpeachBubble
 import com.lift.bro.ui.theme.spacing
@@ -46,49 +48,6 @@ data class WrappedWeightState(
     val heavyThings: List<Pair<HeavyThing, Double>>,
     val heaviestVariation: Pair<String, Double>,
 )
-
-class GetTotalWeightMovedUseCase(
-    private val setRepository: ISetRepository = dependencies.setRepository,
-) {
-
-    /*
-     * Fetches the total weight moved for between the given dates
-     */
-    operator fun invoke(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
-    ): Flow<Double> = setRepository.listenAll(
-        startDate = startDate,
-        endDate = endDate
-    ).map { sets -> sets.sumOf { it.weight * it.reps } }
-}
-
-/*
- * Gets the variation with the most weight moved between the given dates
- */
-class GetVariationWithMostWeightMovedUseCase(
-    private val setRepository: ISetRepository = dependencies.setRepository,
-    private val variationRepository: IVariationRepository = dependencies.variationRepository,
-) {
-
-    /*
-     * Fetches the total weight moved for between the given dates
-     */
-    operator fun invoke(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
-    ): Flow<Pair<Variation, Double>> = combine(
-        setRepository.listenAll(
-            startDate = startDate,
-            endDate = endDate
-        ),
-        variationRepository.listenAll(),
-    ) { sets, variations ->
-        sets.groupBy { set -> variations.first { it.id == set.variationId } }
-            .map { entry -> entry.key to entry.value.sumOf { it.weight } }
-            .maxBy { it.second }
-    }
-}
 
 @Composable
 fun rememberWrappedWeightInteractor(

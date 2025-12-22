@@ -1,18 +1,21 @@
 package com.lift.bro.presentation.wrapped.summary
 
+import androidx.compose.runtime.Composable
 import com.lift.bro.domain.models.Goal
+import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.HeavyThing
 import kotlinx.serialization.Serializable
 
-//@Composable
-//fun rememberWrappedSummaryState() = rememberInteractor<Interactor<WrappedSummaryState, WrappedSummaryEvents>(
-//    initialState = WrappedSummaryState(),
-//    source = {
-//
-//    }
-//)
+@Composable
+fun rememberWrappedSummaryState(
 
-sealed interface WrappedSummaryEvents
+) = rememberInteractor<Interactor<WrappedSummaryState, Nothing>(
+    initialState = WrappedSummaryState(),
+    source = {
+
+    }
+)
 
 @Serializable
 data class WrappedSummaryState(

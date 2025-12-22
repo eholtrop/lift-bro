@@ -43,7 +43,6 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WrappedSummaryScreen() {
-
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,

@@ -29,6 +29,7 @@ import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
+import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -65,54 +66,6 @@ data class WrappedProgressItemState(
     val maxWeight: ProgressItemWeight?,
     val progress: Double,
 )
-
-data class VariationProgress(
-    val minSet: LBSet,
-    val maxSet: LBSet,
-)
-
-class GetVariationProgressUseCase(
-    val setRepository: ISetRepository = dependencies.setRepository,
-    val variationRepository: IVariationRepository = dependencies.variationRepository,
-) {
-    operator fun invoke(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
-    ): Flow<Map<Variation, VariationProgress>> = combine(
-        setRepository.listenAll(
-            startDate = startDate,
-            endDate = endDate
-        ),
-        variationRepository.listenAll()
-    ) { sets, variations ->
-        sets.groupBy { set -> variations.first { it.id == set.variationId } }
-            .filter { it.value.isNotEmpty() }
-            .mapValues { (variation, variationSets) ->
-                val orderedSets = variationSets
-                    .groupBy { it.date.toLocalDate() }
-                    .toList()
-                    .sortedByDescending { it.first }
-
-                val minSet = when (variation.bodyWeight) {
-                    true -> orderedSets.last().second.maxBy { it.reps }
-                    // find last one rep max, if none then get the last sets max weight lifted
-                    else -> orderedSets.lastOrNull { it.second.any { it.reps == 1L } }?.second?.lastOrNull { it.reps == 1L }
-                        ?: orderedSets.last().second.maxBy { it.weight }
-                }
-                val maxSet = when (variation.bodyWeight) {
-                    true -> orderedSets.first().second.maxBy { it.reps }
-                    // find last one rep max, if none then get the last sets max weight lifted
-                    else -> orderedSets.firstOrNull { it.second.any { it.reps == 1L } }?.second?.firstOrNull { it.reps == 1L }
-                        ?: orderedSets.first().second.maxBy { it.weight }
-                }
-
-                VariationProgress(
-                    minSet = minSet,
-                    maxSet = maxSet,
-                )
-            }
-    }
-}
 
 @Composable
 fun rememberWrappedProgressInteractor(

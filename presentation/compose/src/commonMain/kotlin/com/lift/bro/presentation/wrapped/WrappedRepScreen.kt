@@ -23,6 +23,9 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.presentation.wrapped.usecase.GetTotalRepsUseCase
+import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostRepsUseCase
+import com.lift.bro.presentation.wrapped.usecase.GetWorkoutAverageUseCase
 import com.lift.bro.ui.dialog.InfoSpeachBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.fullName
@@ -48,54 +51,6 @@ data class WrappedRepState(
     val workoutAverage: Long,
     val mostRepsLift: Pair<String, Long>,
 )
-
-class GetTotalRepsUseCase(
-    val setRepository: ISetRepository = dependencies.setRepository,
-) {
-    operator fun invoke(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
-    ) = setRepository.listenAll(
-        startDate = startDate,
-        endDate = endDate
-    ).map {
-        it.sumOf { it.reps }
-    }
-}
-
-class GetWorkoutAverageUseCase(
-    val setRepository: ISetRepository = dependencies.setRepository,
-) {
-    operator fun invoke(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
-    ) = setRepository.listenAll(
-        startDate = startDate,
-        endDate = endDate
-    ).map {
-        it.sumOf { it.reps } / it.groupBy { it.date.toLocalDate().dayOfYear }.size
-    }
-}
-
-class GetVariationWithMostRepsUseCase(
-    val setRepository: ISetRepository = dependencies.setRepository,
-    val variationRepository: IVariationRepository = dependencies.variationRepository,
-) {
-    operator fun invoke(
-        startDate: LocalDate? = null,
-        endDate: LocalDate? = null,
-    ) = combine(
-        setRepository.listenAll(
-            startDate = startDate,
-            endDate = endDate
-        ),
-        variationRepository.listenAll()
-    ) { sets, variations ->
-        sets.groupBy { set -> variations.first { it.id == set.variationId } }
-            .map { entry -> entry.key to entry.value.sumOf { it.reps } }
-            .maxBy { it.second }
-    }
-}
 
 @Composable
 fun rememberWrappedRepsInteractor(
