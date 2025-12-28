@@ -35,6 +35,7 @@ import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetVariationConsistencyUseCase
+import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeachBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
@@ -169,10 +170,13 @@ private fun ConsistencyMonthItem(
             DayOfWeek.entries.toList().forEach {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = it.name.first().toString()
+                    text = it.name.first().toString(),
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center
                 )
             }
         }
+        Space(MaterialTheme.spacing.half)
         Column(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.eighth)
         ) {
