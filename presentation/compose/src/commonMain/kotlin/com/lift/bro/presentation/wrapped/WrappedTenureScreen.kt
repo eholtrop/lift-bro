@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.SubscriptionType
@@ -96,7 +97,8 @@ fun WrappedTenureScreen(
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
                 text = stringResource(Res.string.wrapped_tenure_header_title),
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center
             )
         }
         item {
