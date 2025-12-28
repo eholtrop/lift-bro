@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.data.core.repository.SetRepository
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
@@ -106,13 +107,14 @@ fun WrappedWeightScreen(
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
                 text = "Total Weight Moved",
-                style = MaterialTheme.typography.headlineMedium
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.headlineMedium,
             )
         }
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 1,
-                text = "You moved ${weightFormat(state.totalWeightMoved)} this year!",
+                text = "You moved ${weightFormat(state.totalWeightMoved, useGrouping = true)} this year!",
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -153,7 +155,7 @@ fun WrappedWeightScreen(
                 message = {
                     FadeInText(
                         delay = FadeInDelayPerIndex * (4 + heavyThings.size),
-                        text = "You moved ${weightFormat(state.heaviestVariation.second)} in ${state.heaviestVariation.first}s Alone!! \uD83D\uDE35",
+                        text = "You moved ${weightFormat(state.heaviestVariation.second, useGrouping = true)} in ${state.heaviestVariation.first}s Alone!! \uD83D\uDE35",
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
