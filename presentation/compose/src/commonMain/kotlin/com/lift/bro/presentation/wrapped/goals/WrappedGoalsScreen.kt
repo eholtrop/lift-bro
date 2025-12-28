@@ -209,6 +209,7 @@ private fun GoalCard(
         TextField(
             modifier = Modifier.weight(1f).focusRequester(focusRequester),
             value = name,
+            textStyle = MaterialTheme.typography.bodyMedium,
             onValueChange = {
                 name = it
                 onGoalChanged(it)
@@ -219,7 +220,7 @@ private fun GoalCard(
                     style = MaterialTheme.typography.bodyMedium
                 )
             },
-            colors = TextFieldDefaults.transparentColors()
+            colors = TextFieldDefaults.transparentColors(),
         )
         IconButton(onClick = onDelete) {
             Icon(
