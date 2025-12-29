@@ -1,0 +1,8 @@
+
+CREATE TABLE Goal (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    achieved INTEGER NOT NULL,
+    created_at INTEGER AS Instant NOT NULL,
+    updated_at INTEGER AS Instant NOT NULL
+);

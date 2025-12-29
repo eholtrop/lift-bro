@@ -198,6 +198,63 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_table_rpe_10">10</string>
     <string name="rep_weight_selector_table_rpe_9">9</string>
     <string name="rep_weight_selector_table_rpe_8">8</string>
+
+    <!-- WRAPPED SCREENS -->
+    <!-- Landing Screen -->
+    <string name="wrapped_landing_back_button_content_description">Back</string>
+    <string name="wrapped_landing_next_button_content_description">Next</string>
+
+    <!-- Tenure Screen -->
+    <string name="wrapped_tenure_header_title">Welcome to Lift Bro Wrapped!</string>
+    <string name="wrapped_tenure_first_year_title">This was your first Lift Bro year! 🎉</string>
+    <string name="wrapped_tenure_first_year_subtitle">Whether you started using lift bro this year, or started on your lifting journey</string>
+    <string name="wrapped_tenure_first_year_speech_bubble_title">Thank YOU!!!</string>
+    <string name="wrapped_tenure_first_year_speech_bubble_message">Here's to a great next year! 🥳 🥂</string>
+    <string name="wrapped_tenure_veteran_title">You\'ve been a lift bro for %1$d years!</string>
+    <string name="wrapped_tenure_veteran_subtitle">Congrats!! and thank YOU for the support</string>
+    <string name="wrapped_tenure_pro_thanks_title">And a VERY EXTRA SPECIAL THANK YOU! for being a Lift PRO!!!</string>
+    <string name="wrapped_tenure_pro_thanks_subtitle">Support like yours is what keeps this app going!</string>
+
+    <!-- Reps Screen -->
+    <string name="wrapped_reps_header_title">Total Reps</string>
+    <string name="wrapped_reps_total_title">You picked up %1$d things this year 😵</string>
+    <string name="wrapped_reps_total_subtitle">(And then you put them down again)</string>
+    <string name="wrapped_reps_speech_bubble_title">WOW</string>
+    <string name="wrapped_reps_daily_average">Thats an average of %1$d reps per day</string>
+    <string name="wrapped_reps_workout_average">or %1$d per workout!!</string>
+    <string name="wrapped_reps_most_reps_lift">You even did %1$d reps of %2$s 😵</string>
+
+    <!-- Weight Screen -->
+    <string name="wrapped_weight_header_title">Total Weight Moved</string>
+    <string name="wrapped_weight_intro">You moved %1$s this year!</string>
+    <string name="wrapped_weight_content_title">Thats...</string>
+    <string name="wrapped_weight_content_item_format">%1$s %2$ss %3$s</string>
+    <string name="wrapped_weight_speech_bubble_title">Thats HUGE!!!! 💪</string>
+    <string name="wrapped_weight_speech_bubble_message">You moved %1$s in %2$ss Alone!! 😵</string>
+
+    <!-- Progress Screen -->
+    <string name="wrapped_progress_header_title">You made some GREAT Progress this year!</string>
+
+    <!-- Consistency Screen -->
+    <string name="wrapped_consistency_header_title">And look at how consistent you were!</string>
+    <string name="wrapped_consistency_speech_bubble_title">Way to go!</string>
+    <string name="wrapped_consistency_best_month">Your most consistent month was %1$s with %2$d days!</string>
+
+    <!-- Goals Screen -->
+    <string name="wrapped_goals_header_title">Now... How about Goals for next year?</string>
+    <string name="wrapped_goals_section_title">Goals</string>
+    <string name="wrapped_goals_add_button_content_description">Add Goal</string>
+    <string name="wrapped_goals_delete_button_content_description">Remove Goal</string>
+    <string name="wrapped_goals_suggestion_exceed_bench">Exceed my Bench Press max by 5%</string>
+    <string name="wrapped_goals_suggestion_beach_season">Be ready for beach season</string>
+    <string name="wrapped_goals_suggestion_no_grunting">Get off the couch without grunting</string>
+    <string name="wrapped_goals_suggestion_chin_up">Do a full chin up</string>
+    <string name="wrapped_goals_suggestion_pushup_no_knees">Do a push-up without using my knees</string>
+    <string name="wrapped_goals_suggestion_pushups_monthly">Do 100 push-ups a month</string>
+    <string name="wrapped_goals_suggestion_stretch">Stretch 3 days a week</string>
+    <string name="wrapped_goals_suggestion_get_swole">Get Swole</string>
+    <string name="wrapped_goals_suggestion_gym_frequency">Go to the Gym 8 times a week</string>
+    <string name="wrapped_goals_suggestion_arm_wrestle">Beat "The Rock" in an arm wrestling match</string>
     <string name="rep_weight_selector_table_rpe_7">7</string>
     <string name="rep_weight_selector_table_rpe_6">6</string>
     <string name="rep_weight_selector_table_rpe_5">5</string>

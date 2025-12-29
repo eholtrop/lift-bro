@@ -2,6 +2,7 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.goalsRepository
 import com.lift.bro.di.liftRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
@@ -11,6 +12,7 @@ import com.lift.bro.ui.navigation.Destination.EditLift
 import com.lift.bro.ui.navigation.Destination.Settings
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
@@ -28,7 +30,10 @@ sealed interface HomeState {
     data object Empty: HomeState
 
     @Serializable
-    data class Content(val selectedTab: Tab): HomeState
+    data class Content(
+        val selectedTab: Tab,
+        val goals: List<String> = emptyList(),
+    ): HomeState
 }
 
 sealed class HomeEvent {
@@ -46,12 +51,15 @@ fun rememberHomeInteractor(
     initialTab: Tab = Tab.Dashboard,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<HomeState, HomeEvent> = rememberInteractor(
-//    initialTab,
     initialState = HomeState.Loading,
     source = { state ->
-        dependencies.liftRepository.listenAll().map {
-            if (it.isEmpty()) HomeState.Empty else HomeState.Content(
-                (state as? HomeState.Content)?.selectedTab ?: initialTab
+        combine(
+            dependencies.liftRepository.listenAll(),
+            dependencies.goalsRepository.getAll(),
+        ) { lifts, goals ->
+            if (lifts.isEmpty()) HomeState.Empty else HomeState.Content(
+                selectedTab = (state as? HomeState.Content)?.selectedTab ?: initialTab,
+                goals = goals.map { it.name },
             )
         }
     },

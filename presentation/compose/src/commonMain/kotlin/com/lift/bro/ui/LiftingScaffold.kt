@@ -44,6 +44,7 @@ data class FabProperties(
 @Composable
 fun LiftingScaffold(
     title: @Composable () -> Unit,
+    description: @Composable (() -> Unit)? = null,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     fabProperties: FabProperties? = null,
     leadingContent: @Composable () -> Unit = {
@@ -57,7 +58,7 @@ fun LiftingScaffold(
     },
     trailingContent: @Composable () -> Unit = {},
     topAppBarScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(),
-    content: @Composable (PaddingValues) -> Unit
+    content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
@@ -65,6 +66,7 @@ fun LiftingScaffold(
         topBar = {
             TopBar(
                 title = title,
+                description = description,
                 scrollBehavior = topAppBarScrollBehavior,
                 trailingContent = trailingContent,
                 leadingContent = leadingContent,

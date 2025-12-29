@@ -12,6 +12,7 @@ import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.ui.weightFormat
 
 @Composable
 internal fun LBSet.prettyPrintSet(
@@ -23,10 +24,10 @@ internal fun LBSet.prettyPrintSet(
         if (bodyWeightRep == true) {
             append("$reps x bw")
             if (weight > 0.0) {
-                append(" + ${weight.decimalFormat()} ${uom.value}")
+                append(" + ${weightFormat(weight)}")
             }
         } else {
-            append("$reps x ${weight.decimalFormat()} ${uom.value}")
+            append("$reps x ${weightFormat(weight)}")
         }
     }
     if (LocalTwmSettings.current && totalWeightMoved > 0.0) {
@@ -53,6 +54,3 @@ internal fun LBSet.prettyPrintSet(
     }
 }
 
-@Composable
-internal fun LBSet.formattedWeight(): String =
-    "${this.weight.decimalFormat()} ${LocalUnitOfMeasure.current.value}"

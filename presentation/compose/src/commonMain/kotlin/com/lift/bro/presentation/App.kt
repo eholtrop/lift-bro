@@ -46,6 +46,7 @@ import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
+import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
@@ -257,8 +258,11 @@ fun App(
             }
         }
 
+        val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
 
-        AppTheme {
+        AppTheme(
+            theme = themeMode
+        ) {
             Box(
                 modifier = modifier,
             ) {

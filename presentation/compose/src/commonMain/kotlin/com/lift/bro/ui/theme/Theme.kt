@@ -103,16 +103,14 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun AppTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
+    theme: ThemeMode = ThemeMode.System,
     content: @Composable() () -> Unit
 ) {
-    val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
-
     CompositionLocalProvider(
         LocalSnackbarHostState provides remember { SnackbarHostState() }
     ) {
         MaterialTheme(
-            colorScheme = when (themeMode) {
+            colorScheme = when (theme) {
                 ThemeMode.Light ->
                     LightColors.copy(
                         surface = LightColors.surfaceDim,
@@ -125,7 +123,7 @@ fun AppTheme(
                     )
                 }
                 ThemeMode.System -> {
-                    if (useDarkTheme) {
+                    if (isSystemInDarkTheme()) {
                         DarkColors.copy(
                             surface = DarkColors.surfaceVariant,
                             surfaceDim = DarkColors.surfaceVariant.copy(alpha = .4f)

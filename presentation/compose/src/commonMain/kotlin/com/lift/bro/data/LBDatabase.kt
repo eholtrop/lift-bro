@@ -18,11 +18,12 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
-import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.utils.mapEach
 import com.lift.bro.utils.toLocalDate
+import comliftbrodb.GetAll
 import comliftbrodb.GetAllByVariation
+import comliftbrodb.Goal
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
@@ -55,6 +56,7 @@ class LBDatabase(
             LiftingSetAdapter = LiftingSet.Adapter(dateAdapter = instantAdapter),
             LiftingLogAdapter = LiftingLog.Adapter(dateAdapter = dateAdapter),
             WorkoutAdapter = Workout.Adapter(dateAdapter = dateAdapter),
+            GoalAdapter = Goal.Adapter(created_atAdapter = instantAdapter, updated_atAdapter = instantAdapter),
         )
     }
 
@@ -86,6 +88,8 @@ class LBDatabase(
     val exerciseQueries get() = database.exerciseQueries
 
     val workoutQueries get() = database.workoutQueries
+
+    val goalQueries get() = database.goalQueries
 
 
     suspend fun clear() {
@@ -328,7 +332,7 @@ internal fun comliftbrodb.Lift.toDomain() = Lift(
     color = this.color?.toULong(),
 )
 
-internal fun comliftbrodb.GetAll.toDomain(): Variation {
+internal fun GetAll.toDomain(): Variation {
     return Variation(
         id = this.id,
         lift = Lift(

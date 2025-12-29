@@ -29,8 +29,10 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.home.darkIconRes
+import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import org.jetbrains.compose.resources.painterResource
@@ -54,7 +56,7 @@ fun InfoDialogButton(
 
     IconButton(
         modifier = modifier,
-        onClick = { showInfoDialog = true},
+        onClick = { showInfoDialog = true },
         enabled = true,
     ) {
         Icon(
@@ -74,61 +76,75 @@ fun InfoDialog(
     Dialog(
         onDismissRequest = onDismissRequest,
     ) {
-        val speechBubbleColor = MaterialTheme.colorScheme.primary
-        Column {
-            Column(
-                modifier = Modifier
-                    .semantics(
-                        mergeDescendants = true,
-                    ) {
-                        liveRegion = LiveRegionMode.Assertive
-                    }
-                    .background(
-                        speechBubbleColor,
-                        shape = MaterialTheme.shapes.medium
-                    )
-                    .padding(MaterialTheme.spacing.one),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                CompositionLocalProvider(
-                    LocalTextStyle provides MaterialTheme.typography.headlineLarge,
-                    LocalContentColor provides MaterialTheme.colorScheme.onPrimary
-                ) {
-                    title()
-                }
+        InfoSpeechBubble(
+            title = title,
+            message = message,
+            forceDarkIcon = true
+        )
+    }
+}
 
-                Space(MaterialTheme.spacing.half)
-                CompositionLocalProvider(
-                    LocalTextStyle provides MaterialTheme.typography.bodyLarge,
-                    LocalContentColor provides MaterialTheme.colorScheme.onPrimary
+@Composable
+fun InfoSpeechBubble(
+    modifier: Modifier = Modifier,
+    title: @Composable () -> Unit,
+    message: @Composable () -> Unit,
+    forceDarkIcon: Boolean = false,
+) {
+    val speechBubbleColor = MaterialTheme.colorScheme.primary
+    Column {
+        Column(
+            modifier = modifier
+                .semantics(
+                    mergeDescendants = true,
                 ) {
-                    message()
+                    liveRegion = LiveRegionMode.Assertive
                 }
-            }
-            Row(
-
-            ) {
-                Image(
-                    modifier = Modifier
-                        .padding(top = MaterialTheme.spacing.quarter)
-                        .size(72.dp),
-                    painter = painterResource(LocalLiftBro.current.darkIconRes()),
-                    contentDescription = ""
+                .background(
+                    speechBubbleColor,
+                    shape = MaterialTheme.shapes.medium
                 )
-                Canvas(
-                    modifier = Modifier.size(72.dp.div(2))
-                ) {
-                    drawPath(
-                        Path().apply {
-                            moveTo(20f, 0f)
-                            lineTo(0f, 60f)
-                            lineTo(60f, 0f)
-                            lineTo(0f, 0f)
-                            close()
-                        },
-                        speechBubbleColor
-                    )
-                }
+                .padding(MaterialTheme.spacing.one),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            CompositionLocalProvider(
+                LocalTextStyle provides MaterialTheme.typography.headlineLarge,
+                LocalContentColor provides MaterialTheme.colorScheme.onPrimary
+            ) {
+                title()
+            }
+
+            Space(MaterialTheme.spacing.half)
+            CompositionLocalProvider(
+                LocalTextStyle provides MaterialTheme.typography.bodyLarge,
+                LocalContentColor provides MaterialTheme.colorScheme.onPrimary
+            ) {
+                message()
+            }
+        }
+        Row(
+
+        ) {
+            Image(
+                modifier = Modifier
+                    .padding(top = MaterialTheme.spacing.quarter)
+                    .size(72.dp),
+                painter = painterResource(if (forceDarkIcon) LocalLiftBro.current.darkIconRes() else LocalLiftBro.current.iconRes()),
+                contentDescription = ""
+            )
+            Canvas(
+                modifier = Modifier.size(72.dp.div(2))
+            ) {
+                drawPath(
+                    Path().apply {
+                        moveTo(20f, 0f)
+                        lineTo(0f, 60f)
+                        lineTo(60f, 0f)
+                        lineTo(0f, 0f)
+                        close()
+                    },
+                    speechBubbleColor
+                )
             }
         }
     }
