@@ -94,7 +94,7 @@ fun rememberWrappedProgressInteractor(
                                 reps = progress.maxSet.reps,
                             ),
                             minWeight = ProgressItemWeight(
-                                date = progress.maxSet.date.toLocalDate(),
+                                date = progress.minSet.date.toLocalDate(),
                                 weight = progress.minSet.weight,
                                 reps = progress.minSet.reps,
                             ),
