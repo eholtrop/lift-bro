@@ -24,6 +24,6 @@ class GetMostConsistentDayUseCase(
         startDate = startDate,
         endDate = endDate
     ).map {
-        it.groupBy { set -> set.date.toLocalDate().dayOfWeek }.map { it.key to it.value.size }.maxBy { it.second }
+        it.groupBy { set -> set.date.toLocalDate().dayOfWeek }.map { it.key to it.value.map { it.date.toLocalDate() }.toSet().size }.maxBy { it.second }
     }
 }
