@@ -2,9 +2,18 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateBounds
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,12 +30,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
@@ -44,6 +55,7 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
+import kotlinx.coroutines.delay
 import kotlinx.datetime.DateTimePeriod
 import kotlinx.datetime.Month
 import kotlinx.datetime.minus
@@ -71,7 +83,6 @@ fun HomeScreen(
             LiftingScaffold(
                 title = {
                     Column {
-//                        if (today.month == Month.JANUARY || BuildConfig.isDebug) {
 
                         var showWrapped by remember { mutableStateOf(false) }
 
@@ -81,28 +92,57 @@ fun HomeScreen(
                                 onDismissRequest = { showWrapped = false }
                             )
                         }
-
-                        Button(
-                            colors = ButtonDefaults.elevatedButtonColors(),
-                            onClick = {
-                                showWrapped = true
-                            }
-                        ) {
-                            Column {
-                                Text("Happy New Year! \uD83C\uDF89 \uD83C\uDF81")
-                            }
-                        }
                         Space(MaterialTheme.spacing.half)
+                        Row(
+                            modifier = Modifier.animateContentSize(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(
+                                modifier = Modifier.size(52.dp),
+                                painter = painterResource(LocalLiftBro.current.iconRes()),
+                                contentDescription = ""
+                            )
+                            Text(stringResource(Res.string.dashboard_title))
+
+//                          if (today.month == Month.JANUARY || BuildConfig.isDebug) {
+
+                            var visible by rememberSaveable { mutableStateOf(false) }
+
+                            Space(MaterialTheme.spacing.half)
+
+                            AnimatedVisibility(
+                                visible = visible,
+                                enter = fadeIn(
+                                    animationSpec = tween(
+                                        delayMillis = 500,
+                                        durationMillis = 500,
+                                        easing = LinearOutSlowInEasing
+                                    )
+                                ),
+                                exit = fadeOut()
+                            ) {
+                                Button(
+                                    colors = ButtonDefaults.textButtonColors(),
+                                    contentPadding = PaddingValues(
+                                        horizontal = MaterialTheme.spacing.one,
+                                        vertical = MaterialTheme.spacing.quarter
+                                    ),
+                                    onClick = {
+                                        showWrapped = true
+                                    },
+                                ) {
+                                    Column {
+                                        Text("\uD83C\uDF89 \uD83C\uDF81")
+                                    }
+                                }
+                            }
+                            LaunchedEffect(Unit) {
+                                delay(1000L)
+                                visible = true
+                            }
+//                          }
+                        }
                     }
-                    Row {
-                        Icon(
-                            modifier = Modifier.size(52.dp),
-                            painter = painterResource(LocalLiftBro.current.iconRes()),
-                            contentDescription = ""
-                        )
-                        Text(stringResource(Res.string.dashboard_title))
-                    }
-//                    }
                 },
                 leadingContent = {
                 },
