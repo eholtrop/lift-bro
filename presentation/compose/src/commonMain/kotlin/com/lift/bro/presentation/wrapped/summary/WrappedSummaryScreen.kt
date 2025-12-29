@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import com.lift.bro.domain.models.Goal
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.wrapped.heavyThings
 import com.lift.bro.ui.Space
@@ -286,6 +287,7 @@ fun WrappedSummaryScreen(
         stickyHeader {
             Text(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .background(color = BottomSheetDefaults.ContainerColor)
                     .padding(
                         horizontal = MaterialTheme.spacing.one,
@@ -303,15 +305,15 @@ fun WrappedSummaryScreen(
             }
 
             items(items = state.goals) {
-                Box(
-                    Modifier
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
                 ) {
-
+                    Text(
+                        it.name,
+                        style = MaterialTheme.typography.titleLarge
+                    )
                 }
-                Text(
-                    it.name,
-                    textAlign = TextAlign.Center
-                )
             }
         }
     }
@@ -418,7 +420,17 @@ fun WrappedSummaryScreenPreview(@PreviewParameter(DarkModeProvider::class) dark:
                         maxWeight = 14.2,
                     )
                 ),
-                goals = listOf()
+                goals = listOf(
+                    Goal(
+                        name = "Leg Press"
+                    ),
+                    Goal(
+                        name = "Dead Lift"
+                    ),
+                    Goal(
+                        name = "Bench Press"
+                    )
+                )
             )
         )
     }
