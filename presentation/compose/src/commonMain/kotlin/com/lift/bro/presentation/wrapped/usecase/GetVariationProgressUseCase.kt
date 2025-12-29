@@ -16,7 +16,12 @@ import kotlinx.datetime.LocalDate
 data class VariationProgress(
     val minSet: LBSet,
     val maxSet: LBSet,
-)
+) {
+    fun progress(bodyWeight: Boolean): Double = when (bodyWeight) {
+        true -> ((maxSet.reps - minSet.reps) / minSet.reps).toDouble()
+        else -> ((maxSet.weight - minSet.weight) / minSet.weight).toDouble()
+    }
+}
 
 class GetVariationProgressUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,

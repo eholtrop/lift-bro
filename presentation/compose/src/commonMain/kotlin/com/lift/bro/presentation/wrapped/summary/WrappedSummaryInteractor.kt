@@ -7,6 +7,7 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.HeavyThing
 import com.lift.bro.presentation.wrapped.heavyThings
+import com.lift.bro.presentation.wrapped.usecase.GetGoalsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetTotalRepsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetTotalWeightMovedUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationConsistencyUseCase
@@ -35,6 +36,7 @@ fun rememberWrappedSummaryInteractor(
     getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(),
 
     // Goal use cases
+    getGoalsUseCase: GetGoalsUseCase = GetGoalsUseCase(),
 ): Interactor<WrappedSummaryState?, Nothing> = rememberInteractor(
     initialState = null,
     source = {
@@ -45,7 +47,8 @@ fun rememberWrappedSummaryInteractor(
             getVariationWithMostRepsUseCase(),
             getVariationConsistencyUseCase(),
             getVariationProgressUseCase(),
-        ) { twm, variationTwm, totalReps, variationReps, consistency, progress ->
+            getGoalsUseCase(),
+        ) { twm, variationTwm, totalReps, variationReps, consistency, progress, goals ->
             WrappedSummaryState(
                 weight = heavyThings.random().let { heavyThing ->
                     WrappedSummaryWeightState(
@@ -91,18 +94,22 @@ fun rememberWrappedSummaryInteractor(
                             )
                         }
                 ),
-                progression = progress.toList().map { (variation, progress) ->
-                    WrappedSummaryProgressState(
-                        title = variation.fullName,
-                        progress = when (variation.bodyWeight) {
-                            true -> (progress.maxSet.reps - progress.minSet.reps) / progress.minSet.reps
-                            else -> (progress.maxSet.weight - progress.minSet.weight) / progress.minSet.weight
-                        }.toDouble(),
-                        minWeight = progress.minSet.weight,
-                        maxWeight = progress.maxSet.weight,
-                    )
-                },
-                goals = listOf(),
+                progression = progress.toList()
+                    .filter { it.second.progress(it.first.bodyWeight ?: false).isNaN().not() }
+                    .sortedByDescending { it.second.progress(it.first.bodyWeight ?: false) }
+                    .take(3)
+                    .map { (variation, progress) ->
+                        WrappedSummaryProgressState(
+                            title = variation.fullName,
+                            progress = when (variation.bodyWeight) {
+                                true -> (progress.maxSet.reps - progress.minSet.reps) / progress.minSet.reps
+                                else -> (progress.maxSet.weight - progress.minSet.weight) / progress.minSet.weight
+                            }.toDouble(),
+                            minWeight = progress.minSet.weight,
+                            maxWeight = progress.maxSet.weight,
+                        )
+                    },
+                goals = goals,
             )
         }
     }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -33,12 +34,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.wrapped.HeavyThing
+import com.lift.bro.presentation.wrapped.heavyThings
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.percentageFormat
 import com.lift.bro.utils.vertical_padding.padding
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -72,6 +76,7 @@ fun WrappedSummaryScreen(
         stickyHeader {
             Text(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .background(color = BottomSheetDefaults.ContainerColor)
                     .padding(
                         horizontal = MaterialTheme.spacing.one,
@@ -79,7 +84,8 @@ fun WrappedSummaryScreen(
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
                 text = "What a great year!",
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                textAlign = TextAlign.Center
             )
         }
 
@@ -195,17 +201,67 @@ fun WrappedSummaryScreen(
                 LocalContentColor provides MaterialTheme.colorScheme.onSurface,
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().height(160.dp),
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
+
                     Column(
                         modifier = Modifier.weight(1f)
-                            .fillMaxHeight()
-                            .height(IntrinsicSize.Max)
                             .background(
                                 color = MaterialTheme.colorScheme.surface,
                                 shape = MaterialTheme.shapes.medium,
-                            ),
+                            )
+                            .padding(all = MaterialTheme.spacing.half),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = "Progress",
+                            style = MaterialTheme.typography.headlineSmall
+                        )
+                        state.progression.forEach {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                ) {
+                                    Text(
+                                        text = it.title,
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                                    ) {
+                                        Text(
+                                            text = weightFormat(it.minWeight),
+                                            style = MaterialTheme.typography.bodySmall,
+                                        )
+                                        Icon(
+                                            modifier = Modifier.size(MaterialTheme.spacing.threeQuarters),
+                                            imageVector = Icons.AutoMirrored.Default.ArrowForward,
+                                            contentDescription = "To"
+                                        )
+                                        Text(
+                                            text = weightFormat(it.maxWeight),
+                                            style = MaterialTheme.typography.bodySmall,
+                                        )
+                                    }
+                                }
+                                Space(MaterialTheme.spacing.half)
+                                Text(text = it.progress.percentageFormat())
+                            }
+                        }
+                    }
+
+                    Column(
+                        modifier = Modifier.weight(1f)
+                            .background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = MaterialTheme.shapes.medium,
+                            )
+                            .padding(all = MaterialTheme.spacing.half),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
@@ -214,65 +270,17 @@ fun WrappedSummaryScreen(
                         )
                         state.consistencies.forEach {
                             Row(
-                                modifier = Modifier.padding(
-                                    horizontal = MaterialTheme.spacing.half,
-                                )
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
                                     modifier = Modifier.weight(1f),
                                     text = it.title,
                                     style = MaterialTheme.typography.titleMedium
                                 )
+                                Space(MaterialTheme.spacing.half)
                                 Text(
-                                    text = it.occurrences.toString()
+                                    text = "${it.occurrences}x"
                                 )
-                            }
-                        }
-                    }
-
-                    Column(
-                        modifier = Modifier.weight(1f)
-                            .fillMaxHeight()
-                            .background(
-                                color = MaterialTheme.colorScheme.surface,
-                                shape = MaterialTheme.shapes.medium,
-                            ),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            text = "Progress",
-                            style = MaterialTheme.typography.headlineSmall
-                        )
-                        state.progression.forEach {
-                            Column(
-                                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.half),
-                            ) {
-                                Row {
-                                    Text(
-                                        modifier = Modifier.weight(1f),
-                                        text = it.title,
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Text(text = it.progress.percentageFormat())
-                                }
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-                                ) {
-                                    Text(
-                                        text = weightFormat(it.minWeight),
-                                        style = MaterialTheme.typography.bodySmall,
-                                    )
-                                    Icon(
-                                        modifier = Modifier.size(MaterialTheme.spacing.threeQuarters),
-                                        imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                                        contentDescription = "To"
-                                    )
-                                    Text(
-                                        text = weightFormat(it.maxWeight),
-                                        style = MaterialTheme.typography.bodySmall,
-                                    )
-                                }
                             }
                         }
                     }
@@ -290,22 +298,27 @@ fun WrappedSummaryScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "Onto the next year!!",
+                text = "Onto the next one!!",
                 style = MaterialTheme.typography.headlineMedium
             )
         }
 
-        item {
-            Text("Goals")
-        }
-
-        items(items = listOf("awef", "awef", "tghertihj")) {
-            Box(
-                Modifier
-            ) {
-
+        if (state.goals.isNotEmpty()) {
+            item {
+                Text("Goals")
             }
-            Text(it)
+
+            items(items = state.goals) {
+                Box(
+                    Modifier
+                ) {
+
+                }
+                Text(
+                    it.name,
+                    textAlign = TextAlign.Center
+                )
+            }
         }
     }
 }
@@ -321,18 +334,19 @@ private fun WrappedSummaryCard(
             shape = MaterialTheme.shapes.large,
         )
             .padding(
-                horizontal = MaterialTheme.spacing.one,
                 top = MaterialTheme.spacing.one,
                 bottom = MaterialTheme.spacing.half
             )
     ) {
         Text(
+            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one),
             text = title,
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
         Space(MaterialTheme.spacing.half)
         Row(
+            modifier = Modifier.padding(horizontal = MaterialTheme.spacing.half),
             horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
         ) {
             cards.forEach {
@@ -360,6 +374,58 @@ private fun WrappedSummaryCard(
 @Composable
 fun WrappedSummaryScreenPreview(@PreviewParameter(DarkModeProvider::class) dark: Boolean) {
     PreviewAppTheme(isDarkMode = dark) {
-        WrappedSummaryScreen()
+        WrappedSummaryScreen(
+            state = WrappedSummaryState(
+                weight = WrappedSummaryWeightState(
+                    totalWeightMoved = 269336.5,
+                    heaviestVariationWeight = 9935.0,
+                    heaviestVariationName = "Regular Deadlift",
+                    numOfHeavyThings = 17.453,
+                    heavyThing = heavyThings.random()
+
+                ),
+                reps = WrappedSummaryRepsState(
+                    totalReps = 3302,
+                    variationReps = 382,
+                    variationName = "Leg Press",
+                    repsPerDay = 9
+                ),
+                consistencies = listOf(
+                    WrappedSummaryConsistencyState(
+                        title = "May",
+                        occurrences = 10
+                    ),
+                    WrappedSummaryConsistencyState(
+                        title = "Monday",
+                        occurrences = 18
+                    ),
+                    WrappedSummaryConsistencyState(
+                        title = "Dead Lift",
+                        occurrences = 20
+                    )
+                ),
+                progression = listOf(
+                    WrappedSummaryProgressState(
+                        title = "Leg Press",
+                        progress = .8,
+                        minWeight = 12.5,
+                        maxWeight = 14.2,
+                    ),
+                    WrappedSummaryProgressState(
+                        title = "Dead Lift",
+                        progress = .8,
+                        minWeight = 12.5,
+                        maxWeight = 14.2,
+                    ),
+                    WrappedSummaryProgressState(
+                        title = "Bench Press",
+                        progress = .8,
+                        minWeight = 12.5,
+                        maxWeight = 14.2,
+                    )
+                ),
+                goals = listOf()
+            )
+        )
     }
 }
