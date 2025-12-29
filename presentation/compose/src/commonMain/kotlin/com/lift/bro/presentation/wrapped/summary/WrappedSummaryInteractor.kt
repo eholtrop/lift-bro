@@ -126,15 +126,6 @@ data class WrappedSummaryState(
 )
 
 @Serializable
-data class WrappedRepState(
-    val totalReps: Int,
-    val variationReps: Int,
-    val variationName: String,
-    val repsPerDay: Int,
-    val repsPerWorkout: Int,
-)
-
-@Serializable
 data class WrappedSummaryWeightState(
     val totalWeightMoved: Double,
     val heaviestVariationWeight: Double,

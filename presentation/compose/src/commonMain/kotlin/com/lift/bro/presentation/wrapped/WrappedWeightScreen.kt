@@ -60,7 +60,7 @@ fun rememberWrappedWeightInteractor(
             )
         ) { twm, varTwm ->
             WrappedWeightState(
-            totalWeightMoved = twm,
+                totalWeightMoved = twm,
                 heavyThings = heavyThings.map { it to twm / it.weight },
                 heaviestVariation = varTwm.first.fullName to varTwm.second,
             )
@@ -106,7 +106,7 @@ fun WrappedWeightScreen(
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 1,
-                text = stringResource(Res.string.wrapped_weight_intro, weightFormat(state.totalWeightMoved)),
+                text = stringResource(Res.string.wrapped_weight_intro, weightFormat(state.totalWeightMoved, useGrouping = true)),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -126,7 +126,7 @@ fun WrappedWeightScreen(
         itemsIndexed(state.heavyThings) { index, (thing, reps) ->
             FadeInText(
                 delay = FadeInDelayPerIndex * 3 + index,
-                text = stringResource(Res.string.wrapped_weight_content_item_format, (state.totalWeightMoved / thing.weight).decimalFormat(), thing.name, thing.icon),
+                text = stringResource(Res.string.wrapped_weight_content_item_format, (state.totalWeightMoved / thing.weight).decimalFormat(showDecimal = true), thing.name, thing.icon),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -143,11 +143,11 @@ fun WrappedWeightScreen(
                         text = stringResource(Res.string.wrapped_weight_speech_bubble_title),
                         style = MaterialTheme.typography.displaySmall
                     )
-        },
-            message = {
+                },
+                message = {
                     FadeInText(
                         delay = FadeInDelayPerIndex * (4 + heavyThings.size),
-                        text = stringResource(Res.string.wrapped_weight_speech_bubble_message, weightFormat(state.heaviestVariation.second), state.heaviestVariation.first),
+                        text = stringResource(Res.string.wrapped_weight_speech_bubble_message, weightFormat(state.heaviestVariation.second, useGrouping = true), state.heaviestVariation.first),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }

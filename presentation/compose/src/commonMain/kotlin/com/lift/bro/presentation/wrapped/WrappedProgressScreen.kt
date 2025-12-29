@@ -55,6 +55,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_progress_header_title
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
@@ -111,8 +114,10 @@ fun rememberWrappedProgressInteractor(
                             isBodyWeight = variation.bodyWeight ?: false
                         )
                     }
-                        .sortedByDescending { it.progress }
-                        .sortedByDescending { it.favourite }
+                        .sortedWith(
+                            compareByDescending<WrappedProgressItemState> { it.favourite }
+                                .thenBy { it.progress }
+                        )
                 )
             }
 
@@ -149,7 +154,7 @@ fun WrappedProgressScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "You made some GREAT Progress this year!",
+                text = stringResource(Res.string.wrapped_progress_header_title),
                 style = MaterialTheme.typography.headlineMedium
             )
         }
