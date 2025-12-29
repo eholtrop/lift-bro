@@ -34,6 +34,7 @@ import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.setFormat
 import com.lift.bro.ui.theme.Icons
 import com.lift.bro.ui.theme.icons
 import com.lift.bro.ui.theme.spacing
@@ -72,6 +73,7 @@ data class WrappedProgressItemState(
     val progress: Double,
     val favourite: Boolean,
     val variationColor: ULong? = null,
+    val isBodyWeight: Boolean = false,
 )
 
 @Composable
@@ -106,6 +108,7 @@ fun rememberWrappedProgressInteractor(
                             },
                             favourite = variation.favourite,
                             variationColor = variation.lift?.color,
+                            isBodyWeight = variation.bodyWeight ?: false
                         )
                     }
                         .sortedByDescending { it.progress }
@@ -214,7 +217,7 @@ fun ProgressItemView(
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Text(
-                        text = "${weightFormat(weight)} x $reps",
+                        text = setFormat(weight, reps.toInt(), bodyWeight = state.isBodyWeight),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
@@ -229,7 +232,7 @@ fun ProgressItemView(
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Text(
-                        text = "${weightFormat(weight)} x $reps",
+                        text = setFormat(weight, reps.toInt(), bodyWeight = state.isBodyWeight),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }

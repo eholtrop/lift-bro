@@ -33,8 +33,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.UOM
@@ -284,4 +288,25 @@ fun LiftCard(
 @Composable
 fun weightFormat(weight: Double, uom: UOM = LocalUnitOfMeasure.current, useGrouping: Boolean = false): String {
     return "${weight.decimalFormat(grouping = useGrouping)} ${uom.value}"
+}
+
+@Composable
+fun setFormat(
+    weight: Double,
+    reps: Int,
+    bodyWeight: Boolean = false,
+    useGrouping: Boolean = false,
+): AnnotatedString = buildAnnotatedString {
+    withStyle(
+        style = SpanStyle(),
+    ) {
+        if (bodyWeight) {
+            append("$reps x bw")
+            if (weight > 0.0) {
+                append(" + ${weightFormat(weight, useGrouping = useGrouping)}")
+            }
+        } else {
+            append("$reps x ${weightFormat(weight, useGrouping = useGrouping)}")
+        }
+    }
 }
