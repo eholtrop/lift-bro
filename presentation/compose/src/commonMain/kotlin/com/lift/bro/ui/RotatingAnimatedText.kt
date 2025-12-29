@@ -22,7 +22,7 @@ import kotlinx.coroutines.delay
 fun AnimatedRotatingText(
     modifier: Modifier = Modifier,
     text: List<String>,
-    startIndex: Int = text.indexOf(text.random()),
+    startIndex: Int = if (text.isNotEmpty()) text.indexOf(text.random()) else 0,
     style: TextStyle = LocalTextStyle.current,
     color: Color = LocalContentColor.current,
 ) {
