@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
@@ -32,6 +34,8 @@ import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.theme.Icons
+import com.lift.bro.ui.theme.icons
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.ui.weightFormat
@@ -41,6 +45,7 @@ import com.lift.bro.utils.fullName
 import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.listCorners
 import com.lift.bro.utils.percentageFormat
+import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.vertical_padding.padding
@@ -65,6 +70,8 @@ data class WrappedProgressItemState(
     val minWeight: ProgressItemWeight?,
     val maxWeight: ProgressItemWeight?,
     val progress: Double,
+    val favourite: Boolean,
+    val variationColor: ULong? = null,
 )
 
 @Composable
@@ -96,10 +103,13 @@ fun rememberWrappedProgressInteractor(
                                 else -> (progress.maxSet.weight - progress.minSet.weight) / progress.minSet.weight
                             }.toDouble().let {
                                 if (it.isNaN()) 0.0 else it
-                            }
+                            },
+                            favourite = variation.favourite,
+                            variationColor = variation.lift?.color,
                         )
                     }
                         .sortedByDescending { it.progress }
+                        .sortedByDescending { it.favourite }
                 )
             }
 
@@ -166,10 +176,22 @@ fun ProgressItemView(
     Column(
         modifier = modifier,
     ) {
-        Text(
-            text = state.title,
-            style = MaterialTheme.typography.headlineMedium
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = state.title,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            if (state.favourite) {
+                Space(MaterialTheme.spacing.one)
+                Icon(
+                    imageVector = MaterialTheme.icons.favourite,
+                    contentDescription = "Favourite",
+                    tint = state.variationColor?.toColor() ?: MaterialTheme.colorScheme.primary
+                )
+            }
+        }
 
         Space(MaterialTheme.spacing.half)
 
@@ -245,6 +267,7 @@ fun WrappedProgressScreenPreview(@PreviewParameter(DarkModeProvider::class) dark
                             reps = 1,
                         ),
                         progress = .05,
+                        favourite = true,
                     ),
                     WrappedProgressItemState(
                         title = "Back Squat",
@@ -259,6 +282,7 @@ fun WrappedProgressScreenPreview(@PreviewParameter(DarkModeProvider::class) dark
                             reps = 1,
                         ),
                         progress = .1,
+                        favourite = false,
                     ),
                     WrappedProgressItemState(
                         title = "Bench Press",
@@ -273,6 +297,7 @@ fun WrappedProgressScreenPreview(@PreviewParameter(DarkModeProvider::class) dark
                             reps = 1,
                         ),
                         progress = .076,
+                        favourite = true,
                     ),
                 )
             )
