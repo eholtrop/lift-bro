@@ -51,7 +51,7 @@ class GetUserTenureUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,
 ) {
     operator fun invoke(): Flow<Int> = setRepository.listenAll().map {
-        today.year - (it.lastOrNull()?.date?.toLocalDate()?.year ?: 0)
+        today.year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: today.year)
     }
 }
 
