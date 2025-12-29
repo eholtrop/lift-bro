@@ -50,6 +50,7 @@ import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.vertical_padding.padding
@@ -151,6 +152,11 @@ fun WrappedGoalsScreen(
                     .clickable(
                         role = Role.Button,
                         onClick = goalAdded
+                    )
+                    .padding(
+                        start = MaterialTheme.spacing.one,
+                        end = MaterialTheme.spacing.half,
+                        vertical = MaterialTheme.spacing.half,
                     ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
