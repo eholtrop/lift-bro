@@ -46,6 +46,7 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -102,6 +103,48 @@ fun WrappedGoalsScreen(
         }
 
         item {
+            InfoSpeechBubble(
+                modifier = Modifier.fillMaxWidth(),
+                title = {
+                    Text(
+                        "Some inspiration!",
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                },
+                message = {
+                    var goal by remember { mutableStateOf(options.random()) }
+                    var visibility by remember { mutableStateOf(true) }
+
+                    Column(
+                        modifier = Modifier.defaultMinSize(minHeight = 52.dp),
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        AnimatedVisibility(
+                            visible = visibility,
+                            enter = fadeIn(animationSpec = tween(durationMillis = 1000)),
+                            exit = fadeOut(animationSpec = tween(durationMillis = 1000))
+                        ) {
+                            Text(
+                                text = goal,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        }
+                    }
+
+                    LaunchedEffect(Unit) {
+                        while (true) {
+                            visibility = false
+                            delay(1100)
+                            goal = options.random()
+                            visibility = true
+                            delay(5000)
+                        }
+                    }
+                }
+            )
+        }
+
+        item {
             Row(
                 modifier = Modifier
                     .clip(MaterialTheme.shapes.small)
@@ -123,37 +166,6 @@ fun WrappedGoalsScreen(
                     contentDescription = "Add Goal",
                     tint = MaterialTheme.colorScheme.primary
                 )
-            }
-        }
-
-        item {
-            var goal by remember { mutableStateOf(options.random()) }
-            var visibility by remember { mutableStateOf(true) }
-
-            Column(
-                modifier = Modifier.defaultMinSize(minHeight = 52.dp),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                AnimatedVisibility(
-                    visible = visibility,
-                    enter = fadeIn(animationSpec = tween(durationMillis = 1000)),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 1000))
-                ) {
-                    Text(
-                        text = goal,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
-            }
-
-            LaunchedEffect(Unit) {
-                while (true) {
-                    visibility = false
-                    delay(1100)
-                    goal = options.random()
-                    visibility = true
-                    delay(5000)
-                }
             }
         }
 
