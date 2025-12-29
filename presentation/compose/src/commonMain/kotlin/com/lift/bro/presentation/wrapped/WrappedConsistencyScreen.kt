@@ -22,19 +22,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
-import com.lift.bro.di.setRepository
-import com.lift.bro.di.variationRepository
-import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentDayUseCase
+import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentMonthUseCase
+import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentVariationUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationConsistencyUseCase
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeachBubble
@@ -42,9 +39,9 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.toLocalDate
+import com.lift.bro.utils.fullName
+import com.lift.bro.utils.toString
 import com.lift.bro.utils.vertical_padding.padding
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DatePeriod
@@ -60,38 +57,54 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 @Immutable
 data class WrappedConsistencyState(
     val dates: Set<LocalDate>,
+    val mostConsistentMonth: Pair<Month, Int>,
+    val mostConsistentDay: Pair<DayOfWeek, Int>,
+    val mostConsistentLift: Pair<String, Int>,
 )
 
 @Composable
 fun rememberWrappedConsistencyInteractor(
     getVariationConsistencyUseCase: GetVariationConsistencyUseCase = GetVariationConsistencyUseCase(),
-) = rememberInteractor<WrappedConsistencyState, Nothing>(
-    initialState = WrappedConsistencyState(dates = emptySet()),
+    getMostConsistentMonthUseCase: GetMostConsistentMonthUseCase = GetMostConsistentMonthUseCase(),
+    getMostConsistentDayUseCase: GetMostConsistentDayUseCase = GetMostConsistentDayUseCase(),
+    getMostConsistentVariationUseCase: GetMostConsistentVariationUseCase = GetMostConsistentVariationUseCase(),
+) = rememberInteractor<WrappedConsistencyState?, Nothing>(
+    initialState = null,
     source = {
-        getVariationConsistencyUseCase()
-            .map {
-                WrappedConsistencyState(
-                    dates = it.keys
-                )
-            }
+        combine(
+            getVariationConsistencyUseCase(),
+            getMostConsistentMonthUseCase(),
+            getMostConsistentDayUseCase(),
+            getMostConsistentVariationUseCase(),
+        ) { dates, month, day, variation ->
+
+            WrappedConsistencyState(
+                dates = dates.keys,
+                mostConsistentMonth = month,
+                mostConsistentDay = day,
+                mostConsistentLift = variation.first.fullName to variation.second,
+            )
+        }
 
     }
 )
 
 @Composable
 fun WrappedConsistencyScreen(
-    interactor: Interactor<WrappedConsistencyState, Nothing> = rememberWrappedConsistencyInteractor(),
+    interactor: Interactor<WrappedConsistencyState?, Nothing> = rememberWrappedConsistencyInteractor(),
 ) {
     val state by interactor.state.collectAsState()
 
-    WrappedConsistencyScreen(state)
+    state?.let {
+        WrappedConsistencyScreen(it)
+    }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WrappedConsistencyScreen(
-    page: WrappedConsistencyState,
+    state: WrappedConsistencyState,
 ) {
     LazyVerticalGrid(
         modifier = Modifier.fillMaxSize(),
@@ -115,7 +128,7 @@ fun WrappedConsistencyScreen(
             )
         }
 
-        val dates = page.dates.groupBy { it.month }
+        val dates = state.dates.groupBy { it.month }
 
         item(
             span = { GridItemSpan(2) }
@@ -132,12 +145,85 @@ fun WrappedConsistencyScreen(
                                 style = MaterialTheme.typography.displaySmall
                             )
                         },
-                        message = {
+                    message = {
                             Text(
-                                text = "Your most consistent month was ${dates.maxBy { it.value.size }.key.name} with ${dates.maxBy { it.value.size }.value.size} days!",
+                                text = "Your most consistent...",
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleMedium,
                             )
+                            Space(MaterialTheme.spacing.half)
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    with(state.mostConsistentMonth) {
+                                        Text(
+                                            "Month",
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.titleSmall,
+                                        )
+                                        Text(
+                                            //year and day do not matter
+                                            LocalDate(2025, first, 1)
+                                                .toString("MMMM"),
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.titleMedium,
+                                        )
+                                        Text(
+                                            "${second}x",
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.displaySmall,
+                                        )
+                                    }
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    with(state.mostConsistentDay) {
+                                        Text(
+                                            "Day",
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.titleSmall,
+                                        )
+                                        Text(
+                                            first.name,
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.titleMedium,
+                                        )
+                                        Text(
+                                            "${second}x",
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.displaySmall,
+                                        )
+                                    }
+                                }
+                                Column(
+                                    modifier = Modifier.weight(1f),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    with(state.mostConsistentLift) {
+                                        Text(
+                                            "Lift",
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.titleSmall,
+                                        )
+                                        Text(
+                                            first,
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.titleMedium,
+                                        )
+                                        Text(
+                                            "${second}x",
+                                            textAlign = TextAlign.Center,
+                                            style = MaterialTheme.typography.displaySmall,
+                                        )
+                                    }
+                                }
+                            }
                         }
                     )
                 }
@@ -192,7 +278,7 @@ private fun ConsistencyMonthItem(
                                 modifier = Modifier.weight(1f).aspectRatio(1f)
                                     .border(
                                         width = 1.dp,
-                                    shape = MaterialTheme.shapes.small,
+                                        shape = MaterialTheme.shapes.small,
                                         color = if (days.contains(day.dayOfMonth)) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
                                     )
                                     .background(
@@ -218,11 +304,14 @@ private fun ConsistencyMonthItem(
 fun WrappedConsistencyScreenPreview(@PreviewParameter(DarkModeProvider::class) dark: Boolean) {
     PreviewAppTheme(isDarkMode = dark) {
         WrappedConsistencyScreen(
-            page = WrappedConsistencyState(
+            state = WrappedConsistencyState(
                 dates = setOf(
                     today,
-                    LocalDate(today.year, 1, 1)
-                )
+                    LocalDate(today.year, 1, 1),
+                ),
+                mostConsistentMonth = Month.DECEMBER to 10,
+                mostConsistentDay = DayOfWeek.MONDAY to 18,
+                mostConsistentLift = "Squat" to 10,
             )
         )
     }
