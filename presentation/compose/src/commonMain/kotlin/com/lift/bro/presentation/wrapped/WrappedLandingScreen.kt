@@ -227,6 +227,7 @@ fun WrappedLandingScreen(
         HorizontalPager(
             modifier = Modifier.weight(1f),
             state = pagerState,
+            beyondViewportPageCount = 1
         ) { page ->
             CompositionLocalProvider(
                 LocalContentColor provides MaterialTheme.colorScheme.onBackground
