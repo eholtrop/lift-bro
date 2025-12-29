@@ -3,6 +3,7 @@ package com.lift.bro.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -44,6 +46,7 @@ import org.jetbrains.compose.resources.stringResource
 fun TopBar(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
+    description: @Composable (() -> Unit)? = null,
     trailingContent: @Composable () -> Unit = {},
     leadingContent: @Composable () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
@@ -67,7 +70,18 @@ fun TopBar(
                 CompositionLocalProvider(
                     LocalContentColor provides MaterialTheme.colorScheme.onBackground
                 ) {
-                    title()
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        title()
+                        if ((scrollBehavior?.state?.collapsedFraction ?: 0f) < .66f) {
+                            CompositionLocalProvider(
+                                LocalTextStyle provides MaterialTheme.typography.titleMedium,
+                            ) {
+                                description?.invoke()
+                            }
+                        }
+                    }
                 }
             }
         },

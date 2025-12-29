@@ -47,6 +47,7 @@ import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.presentation.wrapped.WrappedDialog
+import com.lift.bro.ui.AnimatedRotatingText
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
@@ -81,6 +82,13 @@ fun HomeScreen(
     when (val currentState = state) {
         is HomeState.Content -> {
             LiftingScaffold(
+                description = {
+                    AnimatedRotatingText(
+                        text = currentState.goals,
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                    )
+                },
                 title = {
                     Column {
 
