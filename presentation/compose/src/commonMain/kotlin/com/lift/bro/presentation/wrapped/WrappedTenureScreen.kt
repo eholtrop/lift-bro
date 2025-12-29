@@ -97,7 +97,7 @@ fun WrappedTenureScreen(
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
                 text = stringResource(Res.string.wrapped_tenure_header_title),
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineLarge,
                 textAlign = TextAlign.Center
             )
         }
@@ -126,14 +126,14 @@ fun WrappedTenureScreen(
                             FadeInText(
                                 delay = 300L,
                                 text = stringResource(Res.string.wrapped_tenure_first_year_speech_bubble_title),
-                                style = MaterialTheme.typography.headlineSmall,
+                                style = MaterialTheme.typography.displaySmall
                             )
                         },
                         message = {
                             FadeInText(
                                 delay = 400L,
                                 text = stringResource(Res.string.wrapped_tenure_first_year_speech_bubble_message),
-                                style = MaterialTheme.typography.bodyLarge,
+                                style = MaterialTheme.typography.titleMedium,
                             )
                         }
                     )
