@@ -213,7 +213,7 @@ fun ProgressItemView(
                     horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
-                        text = date.toString("MMM - d"),
+                    text = date.toString("MMM d"),
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Text(
