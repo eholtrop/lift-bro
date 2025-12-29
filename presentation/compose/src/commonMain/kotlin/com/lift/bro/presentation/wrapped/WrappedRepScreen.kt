@@ -57,18 +57,18 @@ fun rememberWrappedRepsInteractor(
     source = {
         combine(
             getTotalRepsUseCase(
-                startDate = LocalDate(2025, 1, 1),
-                endDate = LocalDate(2025, 12, 31)
+                startDate = LocalDate(year, 1, 1),
+                endDate = LocalDate(year, 12, 31)
 
             ),
             getVariationWithMostRepsUseCase(
-                startDate = LocalDate(2025, 1, 1),
-                endDate = LocalDate(2025, 12, 31)
+                startDate = LocalDate(year, 1, 1),
+                endDate = LocalDate(year, 12, 31)
 
             ),
             getWorkoutAverageUseCase(
-                startDate = LocalDate(2025, 1, 1),
-                endDate = LocalDate(2025, 12, 31)
+                startDate = LocalDate(year, 1, 1),
+            endDate = LocalDate(year, 12, 31)
             )
         ) { totalReps, mostVariationReps, workoutAverage ->
             WrappedRepState(
