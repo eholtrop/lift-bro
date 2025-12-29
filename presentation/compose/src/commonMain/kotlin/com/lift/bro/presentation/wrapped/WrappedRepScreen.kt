@@ -47,6 +47,7 @@ data class WrappedRepState(
 
 @Composable
 fun rememberWrappedRepsInteractor(
+    year: Int = 2025,
     getTotalRepsUseCase: GetTotalRepsUseCase = GetTotalRepsUseCase(),
     getVariationWithMostRepsUseCase: GetVariationWithMostRepsUseCase = GetVariationWithMostRepsUseCase(),
     getWorkoutAverageUseCase: GetWorkoutAverageUseCase = GetWorkoutAverageUseCase(),
@@ -71,7 +72,7 @@ fun rememberWrappedRepsInteractor(
         ) { totalReps, mostVariationReps, workoutAverage ->
             WrappedRepState(
                 totalReps = totalReps,
-                dailyAverage = totalReps / if (2025 % 4 == 0) 366 else 365,
+                dailyAverage = totalReps / if (year % 4 == 0) 366 else 365,
                 workoutAverage = workoutAverage,
                 mostRepsLift = mostVariationReps.first.fullName to mostVariationReps.second
             )
