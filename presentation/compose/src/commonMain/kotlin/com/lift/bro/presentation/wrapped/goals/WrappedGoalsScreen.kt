@@ -55,6 +55,9 @@ import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.delay
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
@@ -98,7 +101,7 @@ fun WrappedGoalsScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "Now... How about Goals for next year?",
+                text = stringResource(Res.string.wrapped_goals_header_title),
                 style = MaterialTheme.typography.headlineMedium
             )
         }
@@ -161,7 +164,7 @@ fun WrappedGoalsScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Goals",
+                    text = stringResource(Res.string.wrapped_goals_section_title),
                     style = MaterialTheme.typography.titleLarge
                 )
 
@@ -169,7 +172,7 @@ fun WrappedGoalsScreen(
 
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Add Goal",
+                    contentDescription = stringResource(Res.string.wrapped_goals_add_button_content_description),
                     tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -243,7 +246,7 @@ private fun GoalCard(
         IconButton(onClick = onDelete) {
             Icon(
                 Icons.Default.Delete,
-                contentDescription = "Remove Goal"
+                contentDescription = stringResource(Res.string.wrapped_goals_delete_button_content_description)
             )
         }
     }

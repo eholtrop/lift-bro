@@ -226,11 +226,11 @@ Soreness or pain?</string>
 
     <!-- Weight Screen -->
     <string name="wrapped_weight_header_title">Total Weight Moved</string>
-    <string name="wrapped_weight_total_moved">You moved %1$s this year!</string>
-    <string name="wrapped_weight_thats_intro">Thats...</string>
-    <string name="wrapped_weight_heavy_thing_format">%1$s %2$ss %3$s</string>
+    <string name="wrapped_weight_intro">You moved %1$s this year!</string>
+    <string name="wrapped_weight_content_title">Thats...</string>
+    <string name="wrapped_weight_content_item_format">%1$s %2$ss %3$s</string>
     <string name="wrapped_weight_speech_bubble_title">Thats HUGE!!!! 💪</string>
-    <string name="wrapped_weight_heaviest_variation">You moved %1$s in %2$ss Alone!! 😵</string>
+    <string name="wrapped_weight_speech_bubble_message">You moved %1$s in %2$ss Alone!! 😵</string>
 
     <!-- Progress Screen -->
     <string name="wrapped_progress_header_title">You made some GREAT Progress this year!</string>

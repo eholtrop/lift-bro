@@ -21,12 +21,16 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetTotalWeightMovedUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
+import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.vertical_padding.padding
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
@@ -56,7 +60,7 @@ fun rememberWrappedWeightInteractor(
             )
         ) { twm, varTwm ->
             WrappedWeightState(
-                totalWeightMoved = twm,
+            totalWeightMoved = twm,
                 heavyThings = heavyThings.map { it to twm / it.weight },
                 heaviestVariation = varTwm.first.fullName to varTwm.second,
             )
@@ -94,7 +98,7 @@ fun WrappedWeightScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "Total Weight Moved",
+                text = stringResource(Res.string.wrapped_weight_header_title),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.headlineMedium,
             )
@@ -102,7 +106,7 @@ fun WrappedWeightScreen(
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 1,
-                text = "You moved ${weightFormat(state.totalWeightMoved, showDecimal = false, useGrouping = true)} this year!",
+                text = stringResource(Res.string.wrapped_weight_intro, weightFormat(state.totalWeightMoved)),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -114,7 +118,7 @@ fun WrappedWeightScreen(
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 2,
-                text = "Thats...",
+                text = stringResource(Res.string.wrapped_weight_content_title),
                 style = MaterialTheme.typography.titleLarge,
             )
         }
@@ -122,7 +126,7 @@ fun WrappedWeightScreen(
         itemsIndexed(state.heavyThings) { index, (thing, reps) ->
             FadeInText(
                 delay = FadeInDelayPerIndex * 3 + index,
-                text = "${reps.decimalFormat(showDecimal = true)} ${thing.name}s ${thing.icon}",
+                text = stringResource(Res.string.wrapped_weight_content_item_format, (state.totalWeightMoved / thing.weight).decimalFormat(), thing.name, thing.icon),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -136,14 +140,14 @@ fun WrappedWeightScreen(
                 title = {
                     FadeInText(
                         delay = FadeInDelayPerIndex * (4 + heavyThings.size),
-                        text = "Thats HUGE!!!! \uD83D\uDCAA",
+                        text = stringResource(Res.string.wrapped_weight_speech_bubble_title),
                         style = MaterialTheme.typography.displaySmall
                     )
-                },
-                message = {
+        },
+            message = {
                     FadeInText(
                         delay = FadeInDelayPerIndex * (4 + heavyThings.size),
-                        text = "You moved ${weightFormat(state.heaviestVariation.second, useGrouping = true)} in ${state.heaviestVariation.first}s Alone!! \uD83D\uDE35",
+                        text = stringResource(Res.string.wrapped_weight_speech_bubble_message, weightFormat(state.heaviestVariation.second), state.heaviestVariation.first),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }

@@ -49,6 +49,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
@@ -122,7 +125,7 @@ fun WrappedConsistencyScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "And look at how consistent you were!",
+                text = stringResource(Res.string.wrapped_consistency_header_title),
                 style = MaterialTheme.typography.headlineMedium
             )
         }
@@ -140,7 +143,7 @@ fun WrappedConsistencyScreen(
                     InfoSpeechBubble(
                         title = {
                             Text(
-                                "Way to go!",
+                                stringResource(Res.string.wrapped_consistency_speech_bubble_title),
                                 style = MaterialTheme.typography.displaySmall
                             )
                         },
