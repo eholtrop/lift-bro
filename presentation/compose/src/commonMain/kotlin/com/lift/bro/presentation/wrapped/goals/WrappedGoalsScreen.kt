@@ -199,7 +199,7 @@ private val options = listOf(
     "Get off the couch without grunting",
     "Do a full chin up",
     "Do a push-up without using my knees",
-    "Do 100 push-ups a month",
+    "Do 100 push-ups a day",
     "Stretch 3 days a week",
     "Get Swole",
     "Go to the Gym 8 times a week",
