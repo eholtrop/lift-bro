@@ -24,9 +24,10 @@ actual fun Double?.decimalFormat(
 ): String {
     if (this == null) return ""
 
-    val df = java.text.DecimalFormat.getInstance(Locale.getDefault())
+    val df = java.text.DecimalFormat()
     df.isGroupingUsed = grouping
     df.maximumFractionDigits = if (showDecimal) 3 else 0
     df.minimumFractionDigits = 0
+    df.isDecimalSeparatorAlwaysShown = showDecimal
     return df.format(this)
 }
