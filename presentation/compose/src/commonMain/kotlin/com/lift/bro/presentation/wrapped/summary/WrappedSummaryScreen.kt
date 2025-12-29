@@ -4,16 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -32,9 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.wrapped.HeavyThing
 import com.lift.bro.presentation.wrapped.heavyThings
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -42,7 +36,7 @@ import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
-import com.lift.bro.utils.horizontal_padding.padding
+import com.lift.bro.utils.format
 import com.lift.bro.utils.percentageFormat
 import com.lift.bro.utils.vertical_padding.padding
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -96,7 +90,7 @@ fun WrappedSummaryScreen(
                     cards = listOf(
                         {
                             Text(
-                                text = weightFormat(totalWeightMoved),
+                                text = weightFormat(totalWeightMoved, showDecimal = false, useGrouping = true),
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center,
                             )
@@ -106,7 +100,7 @@ fun WrappedSummaryScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Text(
-                                    text = weightFormat(heaviestVariationWeight),
+                                    text = weightFormat(heaviestVariationWeight, showDecimal = false, useGrouping = true),
                                     style = MaterialTheme.typography.titleMedium,
                                     textAlign = TextAlign.Center,
                                 )
@@ -122,7 +116,7 @@ fun WrappedSummaryScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Text(
-                                    text = numOfHeavyThings.decimalFormat(),
+                                    text = numOfHeavyThings.decimalFormat(showDecimal = true),
                                     style = MaterialTheme.typography.titleMedium,
                                     textAlign = TextAlign.Center,
                                 )
@@ -148,7 +142,7 @@ fun WrappedSummaryScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Text(
-                                    text = totalReps.toString(),
+                                    text = totalReps.format(),
                                     style = MaterialTheme.typography.titleMedium,
                                     textAlign = TextAlign.Center,
                                 )
@@ -164,7 +158,7 @@ fun WrappedSummaryScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Text(
-                                    text = variationReps.toString(),
+                                    text = variationReps.format(),
                                     style = MaterialTheme.typography.titleMedium,
                                     textAlign = TextAlign.Center,
                                 )
@@ -180,7 +174,7 @@ fun WrappedSummaryScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Text(
-                                    text = repsPerDay.toString(),
+                                    text = repsPerDay.format(),
                                     style = MaterialTheme.typography.titleMedium,
                                     textAlign = TextAlign.Center,
                                 )

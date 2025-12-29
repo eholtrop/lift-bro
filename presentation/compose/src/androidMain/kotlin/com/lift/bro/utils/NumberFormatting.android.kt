@@ -11,6 +11,13 @@ actual fun Long?.format(grouping: Boolean): String {
     }
 }
 
+actual fun Int?.format(grouping: Boolean): String {
+    return NumberFormat.getInstance(Locale.getDefault()).let {
+        it.isGroupingUsed = grouping
+        it.format(this)
+    }
+}
+
 actual fun Double?.decimalFormat(
     showDecimal: Boolean,
     grouping: Boolean,
