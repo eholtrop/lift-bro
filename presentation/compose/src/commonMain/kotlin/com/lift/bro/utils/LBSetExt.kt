@@ -54,6 +54,3 @@ internal fun LBSet.prettyPrintSet(
     }
 }
 
-@Composable
-internal fun LBSet.formattedWeight(): String =
-    "${this.weight.decimalFormat()} ${LocalUnitOfMeasure.current.value}"

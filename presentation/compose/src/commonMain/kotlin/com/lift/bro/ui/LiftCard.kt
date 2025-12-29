@@ -286,8 +286,8 @@ fun LiftCard(
 }
 
 @Composable
-fun weightFormat(weight: Double, uom: UOM = LocalUnitOfMeasure.current, useGrouping: Boolean = false): String {
-    return "${weight.decimalFormat(grouping = useGrouping)} ${uom.value}"
+fun weightFormat(weight: Double, uom: UOM = LocalUnitOfMeasure.current, showDecimal: Boolean = true, useGrouping: Boolean = false): String {
+    return "${weight.decimalFormat(showDecimal = showDecimal, grouping = useGrouping)} ${uom.value}"
 }
 
 @Composable

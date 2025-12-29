@@ -102,7 +102,7 @@ fun WrappedWeightScreen(
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 1,
-                text = "You moved ${weightFormat(state.totalWeightMoved, useGrouping = true)} this year!",
+                text = "You moved ${weightFormat(state.totalWeightMoved, showDecimal = false, useGrouping = true)} this year!",
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -122,7 +122,7 @@ fun WrappedWeightScreen(
         itemsIndexed(state.heavyThings) { index, (thing, reps) ->
             FadeInText(
                 delay = FadeInDelayPerIndex * 3 + index,
-                text = "${reps.decimalFormat()} ${thing.name}s ${thing.icon}",
+                text = "${reps.decimalFormat(showDecimal = true)} ${thing.name}s ${thing.icon}",
                 style = MaterialTheme.typography.titleMedium,
             )
         }

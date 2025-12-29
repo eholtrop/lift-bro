@@ -22,6 +22,7 @@ import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostRepsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetWorkoutAverageUseCase
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.format
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.combine
@@ -117,7 +118,7 @@ fun WrappedRepScreen(
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 1,
-                text = stringResource(Res.string.wrapped_reps_total_title, state.totalReps),
+                text = stringResource(Res.string.wrapped_reps_total_title, state.totalReps.format()),
                 style = MaterialTheme.typography.titleLarge,
             )
         }
@@ -160,7 +161,7 @@ fun WrappedRepScreen(
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.half))
                     FadeInText(
                         delay = FadeInDelayPerIndex * 5,
-                        text = stringResource(Res.string.wrapped_reps_most_reps_lift, state.mostRepsLift.second, state.mostRepsLift.first),
+                        text = stringResource(Res.string.wrapped_reps_most_reps_lift, state.mostRepsLift.second.format(), state.mostRepsLift.first),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
