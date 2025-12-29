@@ -34,7 +34,7 @@ import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentMonthUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentVariationUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationConsistencyUseCase
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.dialog.InfoSpeachBubble
+import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.utils.DarkModeProvider
@@ -43,7 +43,6 @@ import com.lift.bro.utils.fullName
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -138,7 +137,7 @@ fun WrappedConsistencyScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 if (dates.isNotEmpty()) {
-                    InfoSpeachBubble(
+                    InfoSpeechBubble(
                         title = {
                             Text(
                                 "Way to go!",

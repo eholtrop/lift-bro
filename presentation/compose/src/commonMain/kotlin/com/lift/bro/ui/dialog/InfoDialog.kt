@@ -29,8 +29,10 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.home.darkIconRes
+import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import org.jetbrains.compose.resources.painterResource
@@ -74,18 +76,20 @@ fun InfoDialog(
     Dialog(
         onDismissRequest = onDismissRequest,
     ) {
-        InfoSpeachBubble(
+        InfoSpeechBubble(
             title = title,
             message = message,
+            forceDarkIcon = true
         )
     }
 }
 
 @Composable
-fun InfoSpeachBubble(
+fun InfoSpeechBubble(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
     message: @Composable () -> Unit,
+    forceDarkIcon: Boolean = false,
 ) {
     val speechBubbleColor = MaterialTheme.colorScheme.primary
     Column {
@@ -125,7 +129,7 @@ fun InfoSpeachBubble(
                 modifier = Modifier
                     .padding(top = MaterialTheme.spacing.quarter)
                     .size(72.dp),
-                painter = painterResource(LocalLiftBro.current.darkIconRes()),
+                painter = painterResource(if (forceDarkIcon) LocalLiftBro.current.darkIconRes() else LocalLiftBro.current.iconRes()),
                 contentDescription = ""
             )
             Canvas(

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.BottomSheetDefaults
@@ -18,28 +17,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import com.lift.bro.data.core.repository.SetRepository
-import com.lift.bro.di.dependencies
-import com.lift.bro.di.setRepository
-import com.lift.bro.di.variationRepository
-import com.lift.bro.domain.models.Variation
-import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetTotalWeightMovedUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
-import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.dialog.InfoSpeachBubble
+import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
-import com.lift.bro.utils.combine
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.vertical_padding.padding
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
@@ -144,7 +132,7 @@ fun WrappedWeightScreen(
         }
 
         item {
-            InfoSpeachBubble(
+            InfoSpeechBubble(
                 title = {
                     FadeInText(
                         delay = FadeInDelayPerIndex * (4 + heavyThings.size),

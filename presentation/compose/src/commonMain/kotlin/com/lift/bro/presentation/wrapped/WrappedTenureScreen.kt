@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,9 +26,8 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.rememberInteractor
-import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.dialog.InfoSpeachBubble
+import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.utils.toLocalDate
@@ -121,7 +119,7 @@ fun WrappedTenureScreen(
                     )
                     Space(MaterialTheme.spacing.two)
 
-                    InfoSpeachBubble(
+                    InfoSpeechBubble(
                         title = {
                             FadeInText(
                                 delay = 300L,
