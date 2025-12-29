@@ -30,7 +30,7 @@ fun rememberWrappedGoalsInteractor(
 ): Interactor<WrappedGoalsState, WrappedGoalsEvent> = rememberInteractor(
     initialState = WrappedGoalsState(goals = listOf(Goal(name = ""))),
     source = {
-        goalsRepository.getAll().map { WrappedGoalsState(goals = it) }.debug("DEBUGEH - interactor")
+        goalsRepository.getAll().map { WrappedGoalsState(goals = it) }
     },
     reducers = listOf(
         Reducer { state, event ->
