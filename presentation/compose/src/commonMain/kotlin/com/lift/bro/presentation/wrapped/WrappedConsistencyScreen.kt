@@ -23,6 +23,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
@@ -160,6 +161,7 @@ private fun ConsistencyMonthItem(
     month: Month,
     dates: List<LocalDate>,
 ) {
+
     val days = dates.map { it.dayOfMonth }.toSet()
     Column(
         modifier = modifier,
@@ -190,8 +192,12 @@ private fun ConsistencyMonthItem(
                                 modifier = Modifier.weight(1f).aspectRatio(1f)
                                     .border(
                                         width = 1.dp,
+                                    shape = MaterialTheme.shapes.small,
+                                        color = if (days.contains(day.dayOfMonth)) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
+                                    )
+                                    .background(
+                                        color = if (days.contains(day.dayOfMonth)) MaterialTheme.colorScheme.tertiary else Color.Transparent,
                                         shape = MaterialTheme.shapes.small,
-                                        color = if (days.contains(day.dayOfMonth)) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
                                     ),
                             )
                             day = day.plus(DatePeriod(days = 1))
