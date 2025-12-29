@@ -71,38 +71,38 @@ fun HomeScreen(
             LiftingScaffold(
                 title = {
                     Column {
-                        if (today.month == Month.JANUARY || BuildConfig.isDebug) {
+//                        if (today.month == Month.JANUARY || BuildConfig.isDebug) {
 
-                            var showWrapped by remember { mutableStateOf(false) }
+                        var showWrapped by remember { mutableStateOf(false) }
 
-                            if (showWrapped) {
-                                WrappedDialog(
-                                    year = 2025,
-                                    onDismissRequest = { showWrapped = false }
-                                )
-                            }
-
-                            Button(
-                                colors = ButtonDefaults.elevatedButtonColors(),
-                                onClick = {
-                                    showWrapped = true
-                                }
-                            ) {
-                                Column {
-                                    Text("Happy New Year! \uD83C\uDF89 \uD83C\uDF81")
-                                }
-                            }
-                            Space(MaterialTheme.spacing.half)
-                        }
-                        Row {
-                            Icon(
-                                modifier = Modifier.size(52.dp),
-                                painter = painterResource(LocalLiftBro.current.iconRes()),
-                                contentDescription = ""
+                        if (showWrapped) {
+                            WrappedDialog(
+                                year = 2025,
+                                onDismissRequest = { showWrapped = false }
                             )
-                            Text(stringResource(Res.string.dashboard_title))
                         }
+
+                        Button(
+                            colors = ButtonDefaults.elevatedButtonColors(),
+                            onClick = {
+                                showWrapped = true
+                            }
+                        ) {
+                            Column {
+                                Text("Happy New Year! \uD83C\uDF89 \uD83C\uDF81")
+                            }
+                        }
+                        Space(MaterialTheme.spacing.half)
                     }
+                    Row {
+                        Icon(
+                            modifier = Modifier.size(52.dp),
+                            painter = painterResource(LocalLiftBro.current.iconRes()),
+                            contentDescription = ""
+                        )
+                        Text(stringResource(Res.string.dashboard_title))
+                    }
+//                    }
                 },
                 leadingContent = {
                 },
