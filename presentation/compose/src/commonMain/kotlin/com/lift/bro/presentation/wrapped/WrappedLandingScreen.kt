@@ -15,6 +15,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -64,7 +65,8 @@ fun WrappedLandingScreenPreview(@PreviewParameter(DarkModeProvider::class) darkM
                 listOf(
                     WrappedPageState.Tenure
                 )
-            )
+            ),
+            onClosePressed = {}
         )
     }
 }
@@ -87,7 +89,7 @@ sealed class WrappedPageState() {
         val totalReps: Long,
         val dailyAverage: Long,
         val workoutAverage: Long,
-        val mostRepsLift: Pair<String, Long>
+        val mostRepsLift: Pair<String, Long>,
     ): WrappedPageState()
 
     @Serializable
@@ -112,7 +114,7 @@ sealed class WrappedPageState() {
 
     @Serializable
     data class Consistency(
-        val dates: Set<LocalDate>
+        val dates: Set<LocalDate>,
     ): WrappedPageState()
 
     @Serializable
@@ -130,15 +132,20 @@ sealed class WrappedEvents()
 @Composable
 fun WrappedLandingScreen(
     interactor: Interactor<WrappedState, WrappedEvents> = rememberWrappedInteractor(),
+    onClosePressed: () -> Unit,
 ) {
     val state by interactor.state.collectAsState()
 
-    WrappedLandingScreen(state)
+    WrappedLandingScreen(
+        state,
+        onClosePressed = onClosePressed,
+    )
 }
 
 @Composable
 fun WrappedLandingScreen(
     state: WrappedState,
+    onClosePressed: () -> Unit,
 ) {
     val pagerState = rememberPagerState { state.pages.size }
 
@@ -149,17 +156,28 @@ fun WrappedLandingScreen(
         ) {
             val coroutineScope = rememberCoroutineScope()
 
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                    }
+            if (pagerState.currentPage == 0) {
+                IconButton(
+                    onClick = onClosePressed
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close"
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = stringResource(Res.string.wrapped_landing_back_button_content_description)
-                )
+            } else {
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(Res.string.wrapped_landing_back_button_content_description)
+                    )
+                }
             }
 
             Row(
@@ -181,19 +199,31 @@ fun WrappedLandingScreen(
                 }
             }
 
-            IconButton(
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                    }
+            if (pagerState.currentPage == state.pages.lastIndex) {
+                IconButton(
+                    onClick = onClosePressed
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close"
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                    contentDescription = stringResource(Res.string.wrapped_landing_next_button_content_description)
-                )
+            } else {
+                IconButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        }
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = stringResource(Res.string.wrapped_landing_next_button_content_description)
+                    )
+                }
             }
         }
+
         HorizontalPager(
             modifier = Modifier.weight(1f),
             state = pagerState,
@@ -217,7 +247,6 @@ fun WrappedLandingScreen(
 }
 
 internal const val FadeInDelayPerIndex = 100L
-
 
 
 @Composable

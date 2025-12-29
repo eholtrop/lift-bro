@@ -17,6 +17,8 @@ fun WrappedDialog(
         ),
         onDismissRequest = onDismissRequest
     ) {
-        WrappedLandingScreen()
+        WrappedLandingScreen(
+            onClosePressed = onDismissRequest
+        )
     }
 }
