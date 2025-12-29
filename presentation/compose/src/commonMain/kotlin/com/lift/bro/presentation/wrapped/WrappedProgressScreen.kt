@@ -116,7 +116,7 @@ fun rememberWrappedProgressInteractor(
                     }
                         .sortedWith(
                             compareByDescending<WrappedProgressItemState> { it.favourite }
-                                .thenBy { it.progress }
+                                .thenByDescending { it.progress }
                         )
                 )
             }
