@@ -95,14 +95,6 @@ sealed class WrappedPageState() {
     )
 
     @Serializable
-    data class ProgressItemState(
-        val title: String,
-        val minWeight: ProgressItemWeight?,
-        val maxWeight: ProgressItemWeight?,
-        val progress: Double,
-    )
-
-    @Serializable
     data object Progress: WrappedPageState()
 
     @Serializable

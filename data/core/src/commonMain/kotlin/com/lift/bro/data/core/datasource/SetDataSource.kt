@@ -2,6 +2,7 @@ package com.lift.bro.data.core.datasource
 
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
@@ -14,6 +15,7 @@ interface SetDataSource {
         variationId: String?,
         limit: Long,
         sorting: Sorting = Sorting.date,
+        order: Order = Order.Descending,
     ): Flow<List<LBSet>>
 
     fun listenAllForLift(

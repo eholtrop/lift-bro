@@ -212,7 +212,8 @@ class SetDataSource(
             startDate = startDate,
             endDate = endDate,
             variationId = variationId,
-            sortBy = Sorting.date.toString()
+            sortBy = Sorting.date.toString(),
+            order = 0,
         ).executeAsList().map { it.toDomain() }
 
     fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())

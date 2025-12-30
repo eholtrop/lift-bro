@@ -7,6 +7,7 @@ import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
@@ -35,6 +36,7 @@ class SqldelightSetDataSource(
         variationId: String?,
         limit: Long,
         sorting: Sorting,
+        order: Order,
     ): Flow<List<LBSet>> {
         return setQueries.getAll(
             startDate = startDate?.atStartOfDayIn(),
@@ -42,6 +44,7 @@ class SqldelightSetDataSource(
             variationId = variationId,
             limit = limit,
             sortBy = sorting.toString(),
+            order = if (order == Order.Descending) 0 else 1
         )
             .asFlow().mapToList(dispatcher)
             .map { sets ->

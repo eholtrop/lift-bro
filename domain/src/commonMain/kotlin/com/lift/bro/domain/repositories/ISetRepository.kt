@@ -9,6 +9,10 @@ enum class Sorting {
     weight, date
 }
 
+enum class Order {
+    Ascending, Descending
+}
+
 interface ISetRepository {
 
     fun listenAll(
@@ -16,7 +20,8 @@ interface ISetRepository {
         endDate: LocalDate? = null,
         variationId: String? = null,
         limit: Long = Long.MAX_VALUE,
-        sorting: Sorting = Sorting.date
+        sorting: Sorting = Sorting.date,
+        order: Order = Order.Descending,
     ): Flow<List<LBSet>>
 
     fun listenAllForLift(

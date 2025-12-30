@@ -23,6 +23,8 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.Order
+import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.rememberInteractor
@@ -30,6 +32,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
+import com.lift.bro.utils.debug
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.Flow
@@ -50,9 +53,14 @@ data class WrappedTenureState(
 class GetUserTenureUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,
 ) {
-    operator fun invoke(): Flow<Int> = setRepository.listenAll().map {
-        today.year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: today.year)
-    }
+    operator fun invoke(): Flow<Int> = setRepository.listenAll(
+        order = Order.Ascending,
+        sorting = Sorting.date,
+        limit = 1
+    ).map {
+            today.year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: today.year)
+        }
+
 }
 
 @Composable
