@@ -26,7 +26,7 @@ actual fun Double?.decimalFormat(
 
     val df = java.text.DecimalFormat()
     df.isGroupingUsed = grouping
-    df.maximumFractionDigits = if (showDecimal) 3 else 0
+    df.maximumFractionDigits = 3
     df.minimumFractionDigits = 0
     df.isDecimalSeparatorAlwaysShown = showDecimal
     return df.format(this)
