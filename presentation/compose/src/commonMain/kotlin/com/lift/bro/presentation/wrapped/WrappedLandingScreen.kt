@@ -85,12 +85,7 @@ sealed class WrappedPageState() {
     data object Weight: WrappedPageState()
 
     @Serializable
-    data class Reps(
-        val totalReps: Long,
-        val dailyAverage: Long,
-        val workoutAverage: Long,
-        val mostRepsLift: Pair<String, Long>,
-    ): WrappedPageState()
+    data object Reps: WrappedPageState()
 
     @Serializable
     data class ProgressItemWeight(
@@ -108,22 +103,16 @@ sealed class WrappedPageState() {
     )
 
     @Serializable
-    data class Progress(
-        val items: List<ProgressItemState>,
-    ): WrappedPageState()
+    data object Progress: WrappedPageState()
 
     @Serializable
-    data class Consistency(
-        val dates: Set<LocalDate>,
-    ): WrappedPageState()
+    data object Consistency: WrappedPageState()
 
     @Serializable
     data object Goals: WrappedPageState()
 
     @Serializable
-    data class Summary(
-        val sets: List<LBSet>,
-    ): WrappedPageState()
+    data object Summary: WrappedPageState()
 }
 
 sealed class WrappedEvents()
