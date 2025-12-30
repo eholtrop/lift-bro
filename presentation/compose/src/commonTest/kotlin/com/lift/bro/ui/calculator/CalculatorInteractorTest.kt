@@ -146,7 +146,7 @@ class CalculatorInteractorTest {
 
         val result = OperatorReducer(initialState, event)
 
-        assertEquals(1, result.expression.size)
+        assertEquals(2, result.expression.size)
         assertEquals(Operator.Subtract, result.expression.first().operation)
         assertEquals(Operator.Add, result.expression[1].operation)
     }
@@ -180,7 +180,7 @@ class CalculatorInteractorTest {
 
         val result = OperatorReducer(initialState, event)
 
-        assertEquals(1, result.expression.size)
+        assertEquals(2, result.expression.size)
         assertEquals(Operator.Add, result.expression.first().operation)
         assertEquals(Operator.Multiply, result.expression[1].operation)
     }
