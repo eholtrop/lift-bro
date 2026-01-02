@@ -1,10 +1,15 @@
 package com.lift.bro.presentation.wrapped
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -21,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
@@ -50,10 +56,14 @@ import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.vertical_padding.padding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.delayEach
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
@@ -61,6 +71,7 @@ import lift_bro.core.generated.resources.wrapped_progress_header_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import kotlin.random.Random
 
 @Serializable
 @Immutable
@@ -70,15 +81,22 @@ data class WrappedProgressState(
 
 
 @Serializable
-data class WrappedProgressItemState(
-    val title: String,
-    val minWeight: ProgressItemWeight?,
-    val maxWeight: ProgressItemWeight?,
-    val progress: Double,
-    val favourite: Boolean,
-    val variationColor: ULong? = null,
-    val isBodyWeight: Boolean = false,
-)
+sealed class WrappedProgressItemState {
+
+    @Serializable
+    data class Loaded(
+        val title: String,
+        val minWeight: ProgressItemWeight?,
+        val maxWeight: ProgressItemWeight?,
+        val progress: Double,
+        val favourite: Boolean,
+        val variationColor: ULong? = null,
+        val isBodyWeight: Boolean = false,
+    ): WrappedProgressItemState()
+
+    @Serializable
+    data object Loading: WrappedProgressItemState()
+}
 
 @Composable
 fun rememberWrappedProgressInteractor(
@@ -86,7 +104,7 @@ fun rememberWrappedProgressInteractor(
     getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(),
 ) = rememberInteractor<WrappedProgressState, Nothing>(
     initialState = WrappedProgressState(
-        items = emptyList()
+        items = listOf(WrappedProgressItemState.Loading, WrappedProgressItemState.Loading, WrappedProgressItemState.Loading)
     ),
     source = {
         getVariationProgressUseCase(
@@ -97,7 +115,7 @@ fun rememberWrappedProgressInteractor(
             .map { variations ->
                 WrappedProgressState(
                     variations.map { (variation, progress) ->
-                        WrappedProgressItemState(
+                        WrappedProgressItemState.Loaded(
                             title = variation.fullName,
                             maxWeight = ProgressItemWeight(
                                 date = progress.maxSet.date.toLocalDate(),
@@ -121,8 +139,8 @@ fun rememberWrappedProgressInteractor(
                         )
                     }
                         .sortedWith(
-                            compareByDescending<WrappedProgressItemState> { it.favourite }
-                                .thenByDescending { it.progress }
+                            compareByDescending<WrappedProgressItemState> { (it as? WrappedProgressItemState.Loaded)?.favourite }
+                                .thenByDescending { (it as? WrappedProgressItemState.Loaded)?.progress ?: 0.0 }
                         )
                 )
             }
@@ -147,7 +165,7 @@ fun WrappedProgressScreen(
     val items = state.items
 
     LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = PaddingValues(MaterialTheme.spacing.one),
     ) {
@@ -165,19 +183,72 @@ fun WrappedProgressScreen(
             )
         }
 
-        itemsIndexed(items = items) { index, item ->
-            ProgressItemView(
-                modifier = Modifier.fillMaxWidth()
-                    .background(
-                        color = MaterialTheme.colorScheme.surface,
-                        shape = MaterialTheme.shapes.large.listCorners(index, items),
-                    )
-                    .padding(
-                        horizontal = MaterialTheme.spacing.half,
-                        vertical = MaterialTheme.spacing.half,
+        item {
+            Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
+        }
+
+        itemsIndexed(
+            items = items,
+        ) { index, item ->
+            when (item) {
+                is WrappedProgressItemState.Loaded -> ProgressItemView(
+                    modifier = Modifier.fillMaxWidth()
+                        .animateItem(
+                            fadeOutSpec = null
+                        )
+                        .background(
+                            color = MaterialTheme.colorScheme.surface,
+                            shape = MaterialTheme.shapes.large.listCorners(index, items),
+                        )
+                        .padding(
+                            horizontal = MaterialTheme.spacing.half,
+                            vertical = MaterialTheme.spacing.half,
                     ),
-                state = item,
-            )
+                    state = item,
+                )
+
+                WrappedProgressItemState.Loading ->
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .animateItem()
+                            .background(
+                                color = MaterialTheme.colorScheme.surface,
+                                shape = MaterialTheme.shapes.large.listCorners(index, items),
+                            )
+                            .padding(
+                                horizontal = MaterialTheme.spacing.half,
+                                vertical = MaterialTheme.spacing.half,
+                            ),
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Box(
+                                modifier = Modifier.height(MaterialTheme.typography.headlineMedium.fontSize.value.dp)
+                                    .fillParentMaxWidth(Random.nextDouble(.33, .66).toFloat())
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceContainer,
+                                        shape = MaterialTheme.shapes.medium,
+                                    ),
+                            )
+                        }
+
+                        Space(MaterialTheme.spacing.half)
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                                .height(72.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.surfaceContainer,
+                                    shape = MaterialTheme.shapes.medium,
+                                )
+                                .padding(MaterialTheme.spacing.half),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                        }
+                    }
+            }
+
         }
     }
 }
@@ -185,7 +256,7 @@ fun WrappedProgressScreen(
 @Composable
 fun ProgressItemView(
     modifier: Modifier = Modifier,
-    state: WrappedProgressItemState,
+    state: WrappedProgressItemState.Loaded,
 ) {
     Column(
         modifier = modifier,
@@ -224,7 +295,7 @@ fun ProgressItemView(
                     horizontalAlignment = Alignment.Start,
                 ) {
                     Text(
-                    text = date.toString("MMM d"),
+                        text = date.toString("MMM d"),
                         style = MaterialTheme.typography.labelMedium,
                     )
                     Text(
@@ -268,7 +339,7 @@ fun WrappedProgressScreenPreview(@PreviewParameter(DarkModeProvider::class) dark
         WrappedProgressScreen(
             state = WrappedProgressState(
                 items = listOf(
-                    WrappedProgressItemState(
+                    WrappedProgressItemState.Loaded(
                         title = "Dead Lift",
                         minWeight = WrappedPageState.ProgressItemWeight(
                             date = today,
@@ -283,7 +354,7 @@ fun WrappedProgressScreenPreview(@PreviewParameter(DarkModeProvider::class) dark
                         progress = .05,
                         favourite = true,
                     ),
-                    WrappedProgressItemState(
+                    WrappedProgressItemState.Loaded(
                         title = "Back Squat",
                         minWeight = WrappedPageState.ProgressItemWeight(
                             date = today,
@@ -298,7 +369,7 @@ fun WrappedProgressScreenPreview(@PreviewParameter(DarkModeProvider::class) dark
                         progress = .1,
                         favourite = false,
                     ),
-                    WrappedProgressItemState(
+                    WrappedProgressItemState.Loaded(
                         title = "Bench Press",
                         minWeight = WrappedPageState.ProgressItemWeight(
                             date = today,
