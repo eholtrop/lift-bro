@@ -2,6 +2,7 @@ package com.lift.bro.presentation.wrapped
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,17 +26,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.compose.AppTheme
+import com.example.compose.amber
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.presentation.Interactor
+import com.lift.bro.presentation.onboarding.onboardingBackground
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
@@ -111,6 +119,7 @@ fun rememberWrappedProgressInteractor(
             startDate = LocalDate(year, 1, 1),
             endDate = LocalDate(year, 12, 31),
         )
+            .onEach { delay(2000L) }
             .map { it.filterValues { it != null }.mapValues { it.value!! } }
             .map { variations ->
                 WrappedProgressState(
@@ -164,91 +173,89 @@ fun WrappedProgressScreen(
 ) {
     val items = state.items
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = PaddingValues(MaterialTheme.spacing.one),
-    ) {
-        stickyHeader {
-            Text(
-                modifier = Modifier
-                    .background(color = BottomSheetDefaults.ContainerColor)
-                    .padding(
-                        horizontal = MaterialTheme.spacing.one,
-                        top = MaterialTheme.spacing.oneAndHalf,
-                        bottom = MaterialTheme.spacing.threeQuarters
-                    ),
-                text = stringResource(Res.string.wrapped_progress_header_title),
-                style = MaterialTheme.typography.headlineMedium
-            )
-        }
+    Column {
+        Text(
+            modifier = Modifier
+                .background(color = BottomSheetDefaults.ContainerColor)
+                .padding(
+                    horizontal = MaterialTheme.spacing.one,
+                    top = MaterialTheme.spacing.oneAndHalf,
+                    bottom = MaterialTheme.spacing.threeQuarters
+                ),
+            text = stringResource(Res.string.wrapped_progress_header_title),
+            style = MaterialTheme.typography.headlineMedium
+        )
 
-        item {
-            Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
-        }
-
-        itemsIndexed(
-            items = items,
-        ) { index, item ->
-            when (item) {
-                is WrappedProgressItemState.Loaded -> ProgressItemView(
-                    modifier = Modifier.fillMaxWidth()
-                        .animateItem(
-                            fadeOutSpec = null
-                        )
-                        .background(
-                            color = MaterialTheme.colorScheme.surface,
-                            shape = MaterialTheme.shapes.large.listCorners(index, items),
-                        )
-                        .padding(
-                            horizontal = MaterialTheme.spacing.half,
-                            vertical = MaterialTheme.spacing.half,
-                    ),
-                    state = item,
-                )
-
-                WrappedProgressItemState.Loading ->
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                            .animateItem()
-                            .background(
-                                color = MaterialTheme.colorScheme.surface,
-                                shape = MaterialTheme.shapes.large.listCorners(index, items),
-                            )
-                            .padding(
-                                horizontal = MaterialTheme.spacing.half,
-                                vertical = MaterialTheme.spacing.half,
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .padding(horizontal = MaterialTheme.spacing.half)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.tertiary,
+                                MaterialTheme.colorScheme.secondary.copy(alpha = 0f),
                             ),
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Box(
-                                modifier = Modifier.height(MaterialTheme.typography.headlineMedium.fontSize.value.dp)
-                                    .fillParentMaxWidth(Random.nextDouble(.33, .66).toFloat())
-                                    .background(
-                                        color = MaterialTheme.colorScheme.surfaceContainer,
-                                        shape = MaterialTheme.shapes.medium,
+                        ),
+                        shape = MaterialTheme.shapes.large
+                    )
+            )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
+                contentPadding = PaddingValues(MaterialTheme.spacing.one),
+            ) {
+                itemsIndexed(
+                    items = items,
+                ) { index, item ->
+                    when (item) {
+                        is WrappedProgressItemState.Loaded -> ProgressItemView(
+                            modifier = Modifier.fillMaxWidth(),
+                            state = item,
+                        )
+
+                        WrappedProgressItemState.Loading ->
+                            Column(
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(
+                                        horizontal = MaterialTheme.spacing.half,
+                                        vertical = MaterialTheme.spacing.half,
                                     ),
-                            )
-                        }
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Box(
+                                        modifier = Modifier.height(MaterialTheme.typography.headlineMedium.fontSize.value.dp)
+                                            .fillParentMaxWidth(Random.nextDouble(.33, .66).toFloat())
+                                            .background(
+                                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                                shape = MaterialTheme.shapes.medium,
+                                            ),
+                                    )
+                                }
 
-                        Space(MaterialTheme.spacing.half)
+                                Space(MaterialTheme.spacing.half)
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                                .height(72.dp)
-                                .background(
-                                    color = MaterialTheme.colorScheme.surfaceContainer,
-                                    shape = MaterialTheme.shapes.medium,
-                                )
-                                .padding(MaterialTheme.spacing.half),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                        }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .height(72.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceContainer,
+                                            shape = MaterialTheme.shapes.medium,
+                                        )
+                                        .padding(MaterialTheme.spacing.half),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                }
+                            }
                     }
-            }
 
+                }
+            }
         }
     }
 }
@@ -266,15 +273,23 @@ fun ProgressItemView(
         ) {
             Text(
                 text = state.title,
-                style = MaterialTheme.typography.headlineMedium
+                style = MaterialTheme.typography.headlineMedium,
+                color = MaterialTheme.colorScheme.onTertiary
             )
             if (state.favourite) {
                 Space(MaterialTheme.spacing.one)
-                Icon(
-                    imageVector = MaterialTheme.icons.favourite,
-                    contentDescription = "Favourite",
-                    tint = state.variationColor?.toColor() ?: MaterialTheme.colorScheme.primary
-                )
+                Box {
+                    Icon(
+                        imageVector = MaterialTheme.icons.favourite,
+                        contentDescription = "Favourite",
+                        tint = state.variationColor?.toColor() ?: MaterialTheme.colorScheme.primary
+                    )
+                    Icon(
+                        imageVector = MaterialTheme.icons.favouriteOutlined,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onTertiary
+                    )
+                }
             }
         }
 
