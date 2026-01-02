@@ -113,7 +113,7 @@ fun WrappedTenureScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
 
-                if (state.tenure == 0) {
+                if (state.tenure == 1) {
                     FadeInText(
                         delay = 100L,
                         text = stringResource(Res.string.wrapped_tenure_first_year_title),
