@@ -152,12 +152,12 @@ fun DashboardContent(
                     Spacer(modifier = Modifier.height(72.dp))
                 }
             }
-        }
+        }-
     }
 }
 
 private fun DashboardListItem.gridSize(listSize: Int = 0): Int = when (this) {
     is DashboardListItem.LiftCard -> 1
     DashboardListItem.ReleaseNotes -> 2
-    DashboardListItem.AddLiftButton -> if (listSize % 2 == 0) 1 else 2
+    DashboardListItem.AddLiftButton -> if (listSize % 2 == 0) 2 else 1
 }
