@@ -2,6 +2,7 @@ package com.lift.bro.presentation.wrapped.progress
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import com.lift.bro.domain.models.VariationId
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
@@ -31,6 +32,7 @@ sealed class WrappedProgressItemState {
         val favourite: Boolean,
         val variationColor: ULong? = null,
         val isBodyWeight: Boolean = false,
+        val variationId: VariationId = "",
     ): WrappedProgressItemState()
 
     @Serializable
@@ -75,7 +77,8 @@ fun rememberWrappedProgressInteractor(
                             },
                             favourite = variation.favourite,
                             variationColor = variation.lift?.color,
-                            isBodyWeight = variation.bodyWeight ?: false
+                            isBodyWeight = variation.bodyWeight ?: false,
+                            variationId = variation.id
                         )
                     }
                         .sortedWith(
