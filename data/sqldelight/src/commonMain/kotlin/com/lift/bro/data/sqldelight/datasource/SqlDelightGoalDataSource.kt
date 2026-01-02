@@ -5,6 +5,7 @@ import com.lift.bro.domain.models.Goal
 import comliftbrodb.GoalQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import comliftbrodb.Goal as GoalEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
