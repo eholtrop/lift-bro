@@ -91,7 +91,7 @@ fun WrappedSummaryScreen(
                     cards = listOf(
                         {
                             Text(
-                                text = weightFormat(totalWeightMoved, showDecimal = false, useGrouping = true),
+                                text = weightFormat(totalWeightMoved, useGrouping = true),
                                 style = MaterialTheme.typography.titleMedium,
                                 textAlign = TextAlign.Center,
                             )
@@ -101,7 +101,7 @@ fun WrappedSummaryScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Text(
-                                    text = weightFormat(heaviestVariationWeight, showDecimal = false, useGrouping = true),
+                                    text = weightFormat(heaviestVariationWeight, useGrouping = true),
                                     style = MaterialTheme.typography.titleMedium,
                                     textAlign = TextAlign.Center,
                                 )
