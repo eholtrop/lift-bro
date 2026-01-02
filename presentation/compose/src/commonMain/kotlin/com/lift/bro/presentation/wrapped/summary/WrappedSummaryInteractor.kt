@@ -16,6 +16,7 @@ import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostRepsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
 import com.lift.bro.utils.combine
 import com.lift.bro.utils.fullName
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -46,7 +47,8 @@ fun rememberWrappedSummaryInteractor(
             getTotalRepsUseCase(),
             getVariationWithMostRepsUseCase(),
             getVariationConsistencyUseCase(),
-            getVariationProgressUseCase(),
+            getVariationProgressUseCase()
+                .map { it.filterValues { it != null }.mapValues { it.value!! } },
             getGoalsUseCase(),
         ) { twm, variationTwm, totalReps, variationReps, consistency, progress, goals ->
             WrappedSummaryState(

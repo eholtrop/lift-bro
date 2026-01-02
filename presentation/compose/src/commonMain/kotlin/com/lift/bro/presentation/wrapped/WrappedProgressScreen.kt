@@ -52,6 +52,7 @@ import com.lift.bro.utils.toString
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
@@ -81,13 +82,18 @@ data class WrappedProgressItemState(
 
 @Composable
 fun rememberWrappedProgressInteractor(
+    year: Int = 2025,
     getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(),
 ) = rememberInteractor<WrappedProgressState, Nothing>(
     initialState = WrappedProgressState(
         items = emptyList()
     ),
     source = {
-        getVariationProgressUseCase()
+        getVariationProgressUseCase(
+            startDate = LocalDate(year, 1, 1),
+            endDate = LocalDate(year, 12, 31),
+        )
+            .map { it.filterValues { it != null }.mapValues { it.value!! } }
             .map { variations ->
                 WrappedProgressState(
                     variations.map { (variation, progress) ->
