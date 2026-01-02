@@ -19,6 +19,7 @@ interface ISetRepository {
         startDate: LocalDate? = null,
         endDate: LocalDate? = null,
         variationId: String? = null,
+        reps: Long? = null,
         limit: Long = Long.MAX_VALUE,
         sorting: Sorting = Sorting.date,
         order: Order = Order.Descending,

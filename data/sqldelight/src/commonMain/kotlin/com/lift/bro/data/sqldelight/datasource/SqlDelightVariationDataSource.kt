@@ -101,6 +101,7 @@ class SqlDelightVariationDataSource(
                 startDate = Instant.DISTANT_PAST,
                 endDate = Instant.DISTANT_FUTURE,
                 variationId = null,
+                reps = null,
                 sortBy = Sorting.date.toString(),
                 order = 0,
             ).asFlowList(),
@@ -135,6 +136,7 @@ class SqlDelightVariationDataSource(
             variationId = null,
             sortBy = Sorting.date.toString(),
             order = 0,
+            reps = null,
         ).executeAsList().map { it.toDomain() }
         return variationQueries.getAll().executeAsList().map { variation ->
             Variation(
