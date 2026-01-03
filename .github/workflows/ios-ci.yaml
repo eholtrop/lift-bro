@@ -1,8 +1,6 @@
 name: iOS CI
 
 on:
-  push:
-    branches: [ maestro-ci ]
   workflow_dispatch:
 
 env:
