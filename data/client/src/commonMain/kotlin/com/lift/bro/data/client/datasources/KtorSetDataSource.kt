@@ -20,6 +20,7 @@ class KtorSetDataSource(
         endDate: LocalDate?,
         variationId: String?,
         limit: Long,
+        reps: Long?,
         sorting: Sorting,
         order: Order,
     ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit&startDate=$startDate&endDate=$endDate&variationId=$variationId")

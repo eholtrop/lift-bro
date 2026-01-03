@@ -209,6 +209,7 @@ class SetDataSource(
     ): List<LBSet> =
         setQueries.getAll(
             limit = limit,
+            reps = null,
             startDate = startDate,
             endDate = endDate,
             variationId = variationId,

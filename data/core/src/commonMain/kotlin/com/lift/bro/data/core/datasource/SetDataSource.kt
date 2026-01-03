@@ -14,6 +14,7 @@ interface SetDataSource {
         endDate: LocalDate?,
         variationId: String?,
         limit: Long,
+        reps: Long? = null,
         sorting: Sorting = Sorting.date,
         order: Order = Order.Descending,
     ): Flow<List<LBSet>>

@@ -130,7 +130,7 @@ fun rememberWorkoutInteractor(
                         ExerciseItem(
                             id = exercise.id,
                             variations = exercise.variationSets.map { variationSets ->
-                                when {
+                                   when {
                                     variationSets.sets.isEmpty() -> {
                                         VariationItem.WithoutSets(
                                             id = variationSets.id,

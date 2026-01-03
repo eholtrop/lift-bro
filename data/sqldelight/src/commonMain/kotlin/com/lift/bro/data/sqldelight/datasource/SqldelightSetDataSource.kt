@@ -35,6 +35,7 @@ class SqldelightSetDataSource(
         endDate: LocalDate?,
         variationId: String?,
         limit: Long,
+        reps: Long?,
         sorting: Sorting,
         order: Order,
     ): Flow<List<LBSet>> {
@@ -44,7 +45,8 @@ class SqldelightSetDataSource(
             variationId = variationId,
             limit = limit,
             sortBy = sorting.toString(),
-            order = if (order == Order.Descending) 0 else 1
+            order = if (order == Order.Descending) 0 else 1,
+            reps = reps,
         )
             .asFlow().mapToList(dispatcher)
             .map { sets ->

@@ -94,7 +94,6 @@ fun OnboardingScreen(
     AppTheme(
         theme = ThemeMode.Light
     ) {
-
         AnimatedContent(
             onboardingState,
             transitionSpec = {

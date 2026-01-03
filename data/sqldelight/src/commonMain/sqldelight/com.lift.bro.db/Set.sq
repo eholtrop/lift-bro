@@ -46,6 +46,7 @@ SELECT * FROM LiftingSet
 WHERE (date >= :startDate OR :startDate = NULL)
 AND (date <= :endDate OR :endDate = NULL)
 AND (variationId = :variationId OR :variationId = NULL)
+AND (:reps = NULL OR reps = :reps)
 ORDER BY
     CASE WHEN :order = 1 AND :sortBy = 'weight' THEN weight END ASC,
     CASE WHEN :order = 1 AND :sortBy = 'date' THEN date END ASC,
