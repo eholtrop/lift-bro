@@ -22,8 +22,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -56,6 +60,7 @@ import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_progress_header_title
@@ -275,13 +280,21 @@ private fun VariationSetWrappedGraph(
     modifier: Modifier = Modifier,
     id: VariationId,
 ) {
-    val sets by dependencies.setRepository.listenAll(
-        startDate = LocalDate(2025, 1, 1),
-        endDate = LocalDate(2025, 12, 31),
-        variationId = id,
-    )
-        .map { it.groupBy { it.date }.map { (date, sets) -> date to sets.maxOf { it.weight } }.sortedBy { it.first } }
-        .collectAsState(emptyList())
+    var sets by remember { mutableStateOf(emptyList<Pair<Instant, Double>>()) }
+
+    LaunchedEffect(Unit) {
+        if (id != "") {
+            dependencies.setRepository.listenAll(
+                startDate = LocalDate(2025, 1, 1),
+                endDate = LocalDate(2025, 12, 31),
+                variationId = id,
+            )
+                .map { it.groupBy { it.date }.map { (date, sets) -> date to sets.maxOf { it.weight } }.sortedBy { it.first } }
+                .collect {
+                    sets = it
+                }
+        }
+    }
 
     if (sets.isEmpty()) return
 
