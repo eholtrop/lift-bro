@@ -52,7 +52,6 @@ fun rememberWrappedProgressInteractor(
             startDate = LocalDate(year, 1, 1),
             endDate = LocalDate(year, 12, 31),
         )
-            .onEach { delay(2000L) }
             .map { it.filterValues { it != null }.mapValues { it.value!! } }
             .map { variations ->
                 WrappedProgressState(
