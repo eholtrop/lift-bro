@@ -15,6 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetTotalRepsUseCase
@@ -23,7 +24,6 @@ import com.lift.bro.presentation.wrapped.usecase.GetWorkoutAverageUseCase
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.format
-import com.lift.bro.utils.fullName
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
@@ -68,14 +68,14 @@ fun rememberWrappedRepsInteractor(
             ),
             getWorkoutAverageUseCase(
                 startDate = LocalDate(year, 1, 1),
-            endDate = LocalDate(year, 12, 31)
+                endDate = LocalDate(year, 12, 31)
             )
         ) { totalReps, mostVariationReps, workoutAverage ->
             WrappedRepState(
                 totalReps = totalReps,
                 dailyAverage = totalReps / if (year % 4 == 0) 366 else 365,
                 workoutAverage = workoutAverage,
-                mostRepsLift = mostVariationReps.first.fullName to mostVariationReps.second
+                mostRepsLift = (mostVariationReps?.first?.fullName ?: "") to (mostVariationReps?.second ?: 0L)
             )
         }
     }

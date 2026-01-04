@@ -63,8 +63,8 @@ fun rememberWrappedSummaryInteractor(
                 },
                 reps = WrappedSummaryRepsState(
                     totalReps = totalReps.toInt(),
-                    variationReps = variationReps.second.toInt(),
-                    variationName = variationReps.first.fullName,
+                    variationReps = variationReps?.second?.toInt() ?: 0,
+                    variationName = variationReps?.first?.fullName ?: "",
                     repsPerDay = (totalReps / (if (year % 4 == 0) 366 else 365)).toInt()
 
                 ),
