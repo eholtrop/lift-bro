@@ -42,7 +42,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
-import com.lift.bro.ui.theme.amber
 import com.lift.bro.RestoreUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
@@ -51,6 +50,7 @@ import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.theme.amber
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
 import kotlinx.coroutines.launch
