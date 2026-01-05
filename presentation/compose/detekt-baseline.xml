@@ -76,7 +76,7 @@
     <ID>LongMethod:WrappedProgressScreen.kt$@Composable fun ProgressItemView( modifier: Modifier = Modifier, state: WrappedProgressItemState.Loaded, )</ID>
     <ID>LongMethod:WrappedProgressScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedProgressScreen( state: WrappedProgressState, )</ID>
     <ID>LongMethod:WrappedRepScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedRepScreen( state: WrappedRepState, )</ID>
-    <ID>LongMethod:WrappedSummaryInteractor.kt$@Composable fun rememberWrappedSummaryInteractor( year: Int = 2025, // Weight use cases getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(), getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase = GetVariationWithMostWeightMovedUseCase(), // Reps use cases getTotalRepsUseCase: GetTotalRepsUseCase = GetTotalRepsUseCase(), getVariationWithMostRepsUseCase: GetVariationWithMostRepsUseCase = GetVariationWithMostRepsUseCase(), // Consistency use cases getVariationConsistencyUseCase: GetVariationConsistencyUseCase = GetVariationConsistencyUseCase(), // Progress use cases getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(), // Goal use cases getGoalsUseCase: GetGoalsUseCase = GetGoalsUseCase(), ): Interactor&lt;WrappedSummaryState?, Nothing&gt;</ID>
+    <ID>LongMethod:WrappedSummaryInteractor.kt$@Composable fun rememberWrappedSummaryInteractor( year: Int = LocalWrappedYear.current, // Weight use cases getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(), getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase = GetVariationWithMostWeightMovedUseCase(), // Reps use cases getTotalRepsUseCase: GetTotalRepsUseCase = GetTotalRepsUseCase(), getVariationWithMostRepsUseCase: GetVariationWithMostRepsUseCase = GetVariationWithMostRepsUseCase(), // Consistency use cases getVariationConsistencyUseCase: GetVariationConsistencyUseCase = GetVariationConsistencyUseCase(), // Progress use cases getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(), // Goal use cases getGoalsUseCase: GetGoalsUseCase = GetGoalsUseCase(), ): Interactor&lt;WrappedSummaryState?, Nothing&gt;</ID>
     <ID>LongMethod:WrappedSummaryScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedSummaryScreen( state: WrappedSummaryState, )</ID>
     <ID>LongMethod:WrappedSummaryScreen.kt$@Preview @Composable fun WrappedSummaryScreenPreview(@PreviewParameter(DarkModeProvider::class) dark: Boolean)</ID>
     <ID>LongMethod:WrappedTenureScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedTenureScreen( state: WrappedTenureState, )</ID>
@@ -220,7 +220,9 @@
     <ID>MagicNumber:WorkoutCalendarMonthInteractor.kt$30</ID>
     <ID>MagicNumber:WorkoutCalendarMonthInteractor.kt$31</ID>
     <ID>MagicNumber:WorkoutScreen.kt$2</ID>
+    <ID>MagicNumber:WrappedConsistencyScreen.kt$12</ID>
     <ID>MagicNumber:WrappedConsistencyScreen.kt$2025</ID>
+    <ID>MagicNumber:WrappedConsistencyScreen.kt$31</ID>
     <ID>MagicNumber:WrappedConsistencyScreen.kt$6</ID>
     <ID>MagicNumber:WrappedGoalsScreen.kt$1100</ID>
     <ID>MagicNumber:WrappedGoalsScreen.kt$5000</ID>
@@ -237,7 +239,6 @@
     <ID>MagicNumber:WrappedRepScreen.kt$31</ID>
     <ID>MagicNumber:WrappedSummaryInteractor.kt$3</ID>
     <ID>MagicNumber:WrappedWeightScreen.kt$12</ID>
-    <ID>MagicNumber:WrappedWeightScreen.kt$2025</ID>
     <ID>MagicNumber:WrappedWeightScreen.kt$31</ID>
     <ID>MatchingDeclarationName:AnimatedText.kt$AnimatedTextDefaults</ID>
     <ID>MatchingDeclarationName:LBDatabase.kt$DriverFactory</ID>
@@ -319,7 +320,7 @@
     <ID>UnusedParameter:LBSetExt.kt$uom: UOM = LocalUnitOfMeasure.current</ID>
     <ID>UnusedParameter:LineGraph.kt$maxX: LocalDate = graphData.maxOf { it.first }</ID>
     <ID>UnusedParameter:WeightSelector.kt$Confetti.Companion$height: Float</ID>
-    <ID>UnusedParameter:WrappedDialog.kt$year: Int</ID>
+    <ID>UnusedParameter:WrappedGoalsInteractor.kt$year: Int = LocalWrappedYear.current</ID>
     <ID>UnusedParameter:WrappedProgressScreen.kt$contentColor: Color = MaterialTheme.colorScheme.primary</ID>
     <ID>UnusedPrivateProperty:App.kt$val cel = celebration</ID>
     <ID>UnusedPrivateProperty:App.kt$val server = LocalServer.current</ID>

@@ -104,7 +104,6 @@ fun HomeScreen(
                             Text(stringResource(Res.string.dashboard_title))
 
                             if (today.month == Month.JANUARY || BuildConfig.isDebug) {
-
                                 var visible by rememberSaveable { mutableStateOf(false) }
 
                                 Space(MaterialTheme.spacing.half)

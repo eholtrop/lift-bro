@@ -37,7 +37,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.wrapped.goals.WrappedGoalsScreen
 import com.lift.bro.presentation.wrapped.goals.rememberWrappedGoalsInteractor
@@ -57,7 +56,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
-
 internal val LocalWrappedYear = compositionLocalOf<Int> {
     error("WrappedYear was not set")
 }
@@ -68,9 +66,10 @@ fun WrappedLandingScreenPreview(@PreviewParameter(DarkModeProvider::class) darkM
     PreviewAppTheme(darkMode) {
         WrappedLandingScreen(
             state = WrappedState(
+                year = 2025,
                 listOf(
                     WrappedPageState.Tenure
-                )
+                ),
             ),
             onClosePressed = {}
         )
@@ -86,13 +85,13 @@ data class WrappedState(
 @Serializable
 sealed class WrappedPageState() {
     @Serializable
-    data object Tenure: WrappedPageState()
+    data object Tenure : WrappedPageState()
 
     @Serializable
-    data object Weight: WrappedPageState()
+    data object Weight : WrappedPageState()
 
     @Serializable
-    data object Reps: WrappedPageState()
+    data object Reps : WrappedPageState()
 
     @Serializable
     data class ProgressItemWeight(
@@ -102,16 +101,16 @@ sealed class WrappedPageState() {
     )
 
     @Serializable
-    data object Progress: WrappedPageState()
+    data object Progress : WrappedPageState()
 
     @Serializable
-    data object Consistency: WrappedPageState()
+    data object Consistency : WrappedPageState()
 
     @Serializable
-    data object Goals: WrappedPageState()
+    data object Goals : WrappedPageState()
 
     @Serializable
-    data object Summary: WrappedPageState()
+    data object Summary : WrappedPageState()
 }
 
 sealed class WrappedEvents()

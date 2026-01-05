@@ -206,11 +206,11 @@ Soreness or pain?</string>
 
     <!-- Tenure Screen -->
     <string name="wrapped_tenure_header_title">Welcome to Lift Bro Wrapped!</string>
-    <string name="wrapped_tenure_first_year_title">This was your first Lift Bro year! 🎉</string>
-    <string name="wrapped_tenure_first_year_subtitle">Whether you started using lift bro this year, or started on your lifting journey</string>
+    <string name="wrapped_tenure_first_year_title">%1$d\nYour first year using Lift Bro! 🎉</string>
+    <string name="wrapped_tenure_first_year_subtitle">Whether you started using lift bro this year, or Lift Bro help you on your lifting journey</string>
     <string name="wrapped_tenure_first_year_speech_bubble_title">Thank YOU!!!</string>
-    <string name="wrapped_tenure_first_year_speech_bubble_message">Here's to a great next year! 🥳 🥂</string>
-    <string name="wrapped_tenure_veteran_title">You\'ve been a lift bro for %1$d years!</string>
+    <string name="wrapped_tenure_first_year_speech_bubble_message">Lets take a look at all the gains! 💪</string>
+    <string name="wrapped_tenure_veteran_title">You've been a lift bro for %1$d years!</string>
     <string name="wrapped_tenure_veteran_subtitle">Congrats!! and thank YOU for the support</string>
     <string name="wrapped_tenure_pro_thanks_title">And a VERY EXTRA SPECIAL THANK YOU! for being a Lift PRO!!!</string>
     <string name="wrapped_tenure_pro_thanks_subtitle">Support like yours is what keeps this app going!</string>
