@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 
-
 internal inline fun <reified T> createConnectionFlow(
     httpClient: HttpClient,
     path: String,
@@ -56,11 +55,13 @@ internal fun createConfiguredHttpClient(
 ): HttpClient {
     return HttpClient(platformEngine) {
         install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
+            json(
+                Json {
+                    prettyPrint = true
+                    isLenient = true
+                    ignoreUnknownKeys = true
+                }
+            )
         }
 
         install(HttpTimeout) {

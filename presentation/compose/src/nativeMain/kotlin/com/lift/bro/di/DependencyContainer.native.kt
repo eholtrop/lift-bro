@@ -12,7 +12,6 @@ actual class DependencyContainer {
 
     actual val database: LBDatabase by lazy { LBDatabase(DriverFactory()) }
 
-
     actual val settingsRepository: ISettingsRepository by lazy {
         SettingsRepository(UserPreferencesDataSource())
     }

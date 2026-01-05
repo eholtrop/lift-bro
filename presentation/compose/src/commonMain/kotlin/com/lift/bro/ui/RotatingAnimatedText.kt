@@ -51,7 +51,7 @@ fun AnimatedRotatingText(
             if (currentIndex == text.lastIndex) {
                 currentIndex = 0
             } else {
-                currentIndex ++
+                currentIndex++
             }
             visibility = true
             delay(5000)

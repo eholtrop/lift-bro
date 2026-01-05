@@ -27,7 +27,7 @@ class SqlDelightVariationDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-): VariationDataSource {
+) : VariationDataSource {
 
     override suspend fun save(variation: Variation) {
         variationQueries.save(
@@ -195,7 +195,6 @@ private fun comliftbrodb.Variation.toDomain(
     notes = this.notes,
     bodyWeight = this.body_weight?.let { it == 1L },
 )
-
 
 private fun GetAllForLift.toDomain(
     parentLift: Lift?,

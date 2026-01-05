@@ -21,19 +21,18 @@ import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetTotalWeightMovedUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
-import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.vertical_padding.padding
-import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.*
-import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
+import lift_bro.core.generated.resources.*
+import lift_bro.core.generated.resources.Res
+import org.jetbrains.compose.resources.stringResource
 
 @Serializable
 data class WrappedWeightState(
@@ -45,7 +44,8 @@ data class WrappedWeightState(
 @Composable
 fun rememberWrappedWeightInteractor(
     getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(),
-    getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase = GetVariationWithMostWeightMovedUseCase(),
+    getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase =
+        GetVariationWithMostWeightMovedUseCase(),
 ) = rememberInteractor<WrappedWeightState?, Nothing>(
     initialState = null,
     source = {
@@ -106,7 +106,10 @@ fun WrappedWeightScreen(
         item {
             FadeInText(
                 delay = FadeInDelayPerIndex * 1,
-                text = stringResource(Res.string.wrapped_weight_intro, weightFormat(state.totalWeightMoved, useGrouping = true)),
+                text = stringResource(
+                    Res.string.wrapped_weight_intro,
+                    weightFormat(state.totalWeightMoved, useGrouping = true)
+                ),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -126,7 +129,12 @@ fun WrappedWeightScreen(
         itemsIndexed(state.heavyThings) { index, (thing, reps) ->
             FadeInText(
                 delay = FadeInDelayPerIndex * 3 + index,
-                text = stringResource(Res.string.wrapped_weight_content_item_format, (state.totalWeightMoved / thing.weight).decimalFormat(showDecimal = true), thing.name, thing.icon),
+                text = stringResource(
+                    Res.string.wrapped_weight_content_item_format,
+                    (state.totalWeightMoved / thing.weight).decimalFormat(showDecimal = true),
+                    thing.name,
+                    thing.icon
+                ),
                 style = MaterialTheme.typography.titleMedium,
             )
         }
@@ -147,7 +155,11 @@ fun WrappedWeightScreen(
                 message = {
                     FadeInText(
                         delay = FadeInDelayPerIndex * (4 + heavyThings.size),
-                        text = stringResource(Res.string.wrapped_weight_speech_bubble_message, weightFormat(state.heaviestVariation.second, useGrouping = true), state.heaviestVariation.first),
+                        text = stringResource(
+                            Res.string.wrapped_weight_speech_bubble_message,
+                            weightFormat(state.heaviestVariation.second, useGrouping = true),
+                            state.heaviestVariation.first
+                        ),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }

@@ -1,20 +1,18 @@
 package com.lift.bro
 
 import com.lift.bro.data.LBDatabase
-import com.lift.bro.data.core.repository.SetRepository
-import com.lift.bro.data.core.repository.VariationRepository
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.liftRepository
-import com.lift.bro.di.workoutRepository
 import com.lift.bro.di.exerciseRepository
+import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.di.workoutRepository
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
+import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.ILiftRepository
@@ -35,10 +33,9 @@ import io.github.vinceglb.filekit.readString
 import io.github.vinceglb.filekit.writeString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDate
-import kotlinx.coroutines.flow.first
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -53,7 +50,6 @@ data class Backup(
     val exercises: List<Exercise>? = null,
 )
 
-
 /**
  * Does too many things but is WAY better than what was there before
  * (a static object that handled everything and fetched all dependencies)
@@ -66,7 +62,6 @@ class BackupUseCase(
     suspend operator fun invoke(backup: Backup? = null): Backup {
         // either use the provided backup or create one from the current DB
         return (backup ?: createBackup()).apply {
-
             // create required files in the file system
             val backupDir = FileKit.filesDir / "backups"
             if (!backupDir.exists()) {
@@ -143,7 +138,6 @@ class RestoreUseCase(
         // Delete existing data first
         database.clear()
 
-
         backup.sets?.forEach {
             setRepository.save(it)
         }
@@ -176,4 +170,3 @@ class RestoreUseCase(
         }
     }
 }
-

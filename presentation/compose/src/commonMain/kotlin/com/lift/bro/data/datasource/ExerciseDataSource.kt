@@ -28,7 +28,6 @@ interface ExerciseDataSource {
         workoutId: String,
     ): Flow<List<Exercise>>
 
-
     suspend fun save(exercise: Exercise)
 
     suspend fun delete(id: String)
@@ -46,7 +45,7 @@ class LBExerciseDataSource(
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-): ExerciseDataSource {
+) : ExerciseDataSource {
 
     override fun listen(
         workoutId: String,
@@ -181,7 +180,6 @@ class LBExerciseDataSource(
                 exerciseId = exerciseId,
                 varationId = variationId,
             )
-
         }
     }
 
@@ -199,5 +197,4 @@ class LBExerciseDataSource(
             exerciseQueries.deleteVariationsById(exerciseVariationId)
         }
     }
-
 }

@@ -19,7 +19,9 @@ import com.lift.bro.ui.navigation.LocalNavCoordinator
 @Composable
 internal fun PreviewAppTheme(
     isDarkMode: Boolean,
-    content: @Composable() () -> Unit
+    content:
+    @Composable()
+    () -> Unit
 ) {
     DependencyContainer.initialize(LocalContext.current)
     CompositionLocalProvider(

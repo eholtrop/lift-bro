@@ -17,7 +17,6 @@ import com.lift.bro.ui.theme.icons
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.prettyPrintSet
 
-
 @Composable
 fun SetInfoRow(
     modifier: Modifier = Modifier,

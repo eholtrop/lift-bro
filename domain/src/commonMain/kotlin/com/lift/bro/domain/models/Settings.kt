@@ -5,5 +5,5 @@ import kotlin.jvm.JvmInline
 sealed interface Settings {
 
     @JvmInline
-    value class UnitOfWeight(val uom: UOM): Settings
+    value class UnitOfWeight(val uom: UOM) : Settings
 }

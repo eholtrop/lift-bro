@@ -19,10 +19,7 @@ import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.utils.fullName
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -56,25 +53,25 @@ data class EditSetState(
 }
 
 sealed interface EditSetEvent {
-    data class VariationSelected(val variationId: String): EditSetEvent
+    data class VariationSelected(val variationId: String) : EditSetEvent
 
-    data class DateSelected(val date: Instant): EditSetEvent
+    data class DateSelected(val date: Instant) : EditSetEvent
 
-    data object DeleteSetClicked: EditSetEvent
+    data object DeleteSetClicked : EditSetEvent
 
-    data class RepChanged(val reps: Long?): EditSetEvent
+    data class RepChanged(val reps: Long?) : EditSetEvent
 
-    data class WeightChanged(val weight: Double?): EditSetEvent
+    data class WeightChanged(val weight: Double?) : EditSetEvent
 
-    data class RpeChanged(val rpe: Int?): EditSetEvent
+    data class RpeChanged(val rpe: Int?) : EditSetEvent
 
-    data class EccChanged(val ecc: Int?): EditSetEvent
+    data class EccChanged(val ecc: Int?) : EditSetEvent
 
-    data class IsoChanged(val iso: Int?): EditSetEvent
+    data class IsoChanged(val iso: Int?) : EditSetEvent
 
-    data class ConChanged(val con: Int?): EditSetEvent
+    data class ConChanged(val con: Int?) : EditSetEvent
 
-    data class NotesChanged(val notes: String): EditSetEvent
+    data class NotesChanged(val notes: String) : EditSetEvent
 }
 
 @Composable
@@ -195,10 +192,8 @@ private val sideEffects: List<SideEffect<EditSetState?, EditSetEvent>> = listOf 
             is EditSetEvent.RepChanged ->
                 state.copy(reps = event.reps).toDomain()
 
-
             is EditSetEvent.RpeChanged ->
                 state.copy(rpe = event.rpe).toDomain()
-
 
             is EditSetEvent.VariationSelected ->
                 state.copy(
@@ -206,7 +201,6 @@ private val sideEffects: List<SideEffect<EditSetState?, EditSetEvent>> = listOf 
                         event.variationId
                     )
                 ).toDomain()
-
 
             is EditSetEvent.WeightChanged -> state.copy(weight = event.weight).toDomain()
 
@@ -218,7 +212,6 @@ private val sideEffects: List<SideEffect<EditSetState?, EditSetEvent>> = listOf 
         }
     }
 }
-
 
 private suspend fun LBSet.toUiState(
     variation: Variation?,
@@ -256,8 +249,7 @@ private fun EditSetState.toDomain(): LBSet? =
             variationId = this.variation.id,
             weight = this.weight,
             reps = this.reps,
-            tempo = Tempo
-                (
+            tempo = Tempo(
                 down = this.eccentric,
                 hold = this.isometric,
                 up = this.concentric

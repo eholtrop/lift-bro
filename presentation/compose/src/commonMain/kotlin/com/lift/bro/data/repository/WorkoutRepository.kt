@@ -1,7 +1,5 @@
 package com.lift.bro.data.repository
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.data.datasource.flowToOneOrNull
@@ -24,7 +22,7 @@ import kotlinx.datetime.LocalDate
 class WorkoutRepository(
     private val database: LBDatabase = dependencies.database,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-): IWorkoutRepository {
+) : IWorkoutRepository {
 
     override fun getAll(
         startDate: LocalDate?,
@@ -115,6 +113,5 @@ class WorkoutRepository(
                 database.exerciseDataSource.delete(it.id)
             }
         }
-
     }
 }

@@ -3,13 +3,11 @@
 package com.lift.bro.presentation.workout
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -61,8 +59,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
-import com.lift.bro.utils.fullName
-import com.lift.bro.utils.maxText
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
@@ -78,10 +74,10 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.fullName
 import com.lift.bro.utils.horizontal_padding.padding
-import com.lift.bro.utils.prettyPrintSet
+import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toString
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -92,11 +88,8 @@ import lift_bro.core.generated.resources.workout_notes_placeholder
 import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_set_options_copy_cta
 import lift_bro.core.generated.resources.workout_set_options_delete_cta
-import org.jetbrains.compose.resources.imageResource
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
-
 
 @Composable
 fun WorkoutScreen(
@@ -111,8 +104,8 @@ fun WorkoutScreen(
 }
 
 sealed class VariationDialogReason {
-    object AddExercise: VariationDialogReason()
-    data class Superset(val exercise: ExerciseItem): VariationDialogReason()
+    object AddExercise : VariationDialogReason()
+    data class Superset(val exercise: ExerciseItem) : VariationDialogReason()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -216,7 +209,6 @@ fun WorkoutScreenInternal(
                                     MaterialTheme.spacing.threeQuarters
                                 ),
                         ) {
-
                             Space(MaterialTheme.spacing.half)
 
                             Text(
@@ -289,13 +281,11 @@ fun WorkoutScreenInternal(
                                             imageVector = Icons.Default.ChevronLeft,
                                             contentDescription = "Previous Lift"
                                         )
-
                                     }
                                 ) {
                                     Column(
                                         horizontalAlignment = Alignment.Start,
                                     ) {
-
                                         (previous as? VariationItem.WithSets)?.sets?.firstOrNull()
                                             ?.let {
                                                 Text(
@@ -311,7 +301,6 @@ fun WorkoutScreenInternal(
                                 }
                             }
                             Space()
-
 
                             when {
                                 pagerState.currentPage == pagerState.pageCount - 1 && pagerState.pageCount > 1 -> {
@@ -440,7 +429,6 @@ private fun FooterButton(
     trailingIcon: @Composable (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
-
     Button(
         onClick = onClick,
         colors = ButtonDefaults.textButtonColors(),
@@ -489,7 +477,6 @@ private fun Modifier.variationCardAnimation(pagerState: PagerState, page: Int) =
             fraction = 1f - pageOffset.coerceIn(0f, 1f)
         )
     }
-
 
 @Composable
 fun VariationItemCard(
@@ -553,7 +540,6 @@ fun VariationItemCard(
                                 }
                             )
                         }
-
 
                         IconButton(
                             onClick = {
@@ -632,7 +618,6 @@ fun VariationItemCard(
 
                             val coordinator = LocalNavCoordinator.current
 
-
                             AnimatedVisibility(
                                 visible = visibility ?: false
                             ) {
@@ -656,8 +641,20 @@ fun VariationItemCard(
                                             color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer,
                                             width = 1.dp,
                                             shape = MaterialTheme.shapes.small.copy(
-                                                topStart = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp),
-                                                topEnd = if (sets.size == 1) MaterialTheme.shapes.small.topStart else CornerSize(0.dp)
+                                                topStart = if (sets.size == 1) {
+                                                    MaterialTheme.shapes.small.topStart
+                                                } else {
+                                                    CornerSize(
+                                                        0.dp
+                                                    )
+                                                },
+                                                topEnd = if (sets.size == 1) {
+                                                    MaterialTheme.shapes.small.topStart
+                                                } else {
+                                                    CornerSize(
+                                                        0.dp
+                                                    )
+                                                }
                                             )
                                         )
                                         .padding(
@@ -680,7 +677,6 @@ fun VariationItemCard(
                 }
 
                 is VariationItem.WithoutSets -> {
-
                     if (variationSet.lastSet != null) {
                         CompositionLocalProvider(
                             LocalContentColor provides MaterialTheme.colorScheme.onSurface,
@@ -702,10 +698,15 @@ fun VariationItemCard(
                                         shape = MaterialTheme.shapes.small,
                                     )
                                     .clip(MaterialTheme.shapes.small)
-                                    .padding(horizontal = MaterialTheme.spacing.half, vertical = MaterialTheme.spacing.half),
+                                    .padding(
+                                        horizontal = MaterialTheme.spacing.half,
+                                        vertical = MaterialTheme.spacing.half
+                                    ),
                             ) {
                                 Text(
-                                    text = "Most Recent Set - ${variationSet.lastSet.date.toString("EEEE, MMM d, yyyy")}",
+                                    text = "Most Recent Set - ${variationSet.lastSet.date.toString(
+                                        "EEEE, MMM d, yyyy"
+                                    )}",
                                     style = MaterialTheme.typography.labelSmall,
                                 )
                                 SetInfoRow(
@@ -723,7 +724,6 @@ fun VariationItemCard(
                     }
                 }
             }
-
 
             if (sets.isEmpty()) {
                 val coordinator = LocalNavCoordinator.current
@@ -800,7 +800,6 @@ fun SetOptionsBottomSheet(
                     ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-
                 Icon(
                     imageVector = Icons.Default.ContentCopy,
                     contentDescription = stringResource(Res.string.workout_set_options_copy_cta)

@@ -61,7 +61,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import kotlin.random.Random
 
-
 @Composable
 fun WrappedProgressScreen(
     interactor: Interactor<WrappedProgressState, Nothing> = rememberWrappedProgressInteractor(),
@@ -137,7 +136,9 @@ fun WrappedProgressScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     Box(
-                                        modifier = Modifier.height(MaterialTheme.typography.headlineMedium.fontSize.value.dp)
+                                        modifier = Modifier.height(
+                                            MaterialTheme.typography.headlineMedium.fontSize.value.dp
+                                        )
                                             .fillParentMaxWidth(Random.nextDouble(.33, .66).toFloat())
                                             .background(
                                                 color = MaterialTheme.colorScheme.surfaceContainer,
@@ -161,7 +162,6 @@ fun WrappedProgressScreen(
                                 }
                             }
                     }
-
                 }
             }
         }
@@ -206,7 +206,7 @@ fun ProgressItemView(
         CompositionLocalProvider(
             LocalContentColor provides MaterialTheme.colorScheme.onSurface,
         ) {
-            Box (
+            Box(
                 modifier = Modifier.fillMaxWidth()
                     .background(
                         color = MaterialTheme.colorScheme.surfaceContainer,
@@ -285,7 +285,9 @@ private fun VariationSetWrappedGraph(
                 endDate = LocalDate(2025, 12, 31),
                 variationId = id,
             )
-                .map { it.groupBy { it.date.toLocalDate() }.map { (date, sets) -> date to sets.maxOf { it.weight } }.sortedBy { it.first } }
+                .map {
+                    it.groupBy { it.date.toLocalDate() }.map { (date, sets) -> date to sets.maxOf { it.weight } }.sortedBy { it.first }
+                }
                 .collect {
                     sets = it
                 }

@@ -16,5 +16,4 @@ actual class DriverFactory(
     ): SqlDriver {
         return AndroidSqliteDriver(schema.synchronous(), context, "test.db")
     }
-
 }

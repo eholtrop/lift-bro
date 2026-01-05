@@ -36,11 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
@@ -53,10 +50,7 @@ import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.today
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
@@ -99,7 +93,6 @@ fun SettingsScreen() {
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
             ) {
-
                 item {
                     Column(
                         modifier = Modifier.fillMaxWidth(),
@@ -139,8 +132,6 @@ fun SettingsScreen() {
                             ) {
                                 Text(stringResource(Res.string.settings_manage_subscription_cta))
                             }
-                        } else {
-
                         }
                     }
                 }
@@ -313,7 +304,6 @@ fun SettingsRowItem(
     title: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
-
     Column(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
@@ -335,4 +325,3 @@ fun SettingsRowItem(
 }
 
 expect fun String.toClipEntry(): ClipEntry
-

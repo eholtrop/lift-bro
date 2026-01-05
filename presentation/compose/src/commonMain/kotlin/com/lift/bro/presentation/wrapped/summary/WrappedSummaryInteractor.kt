@@ -24,7 +24,8 @@ fun rememberWrappedSummaryInteractor(
     year: Int = 2025,
     // Weight use cases
     getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(),
-    getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase = GetVariationWithMostWeightMovedUseCase(),
+    getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase =
+        GetVariationWithMostWeightMovedUseCase(),
 
     // Reps use cases
     getTotalRepsUseCase: GetTotalRepsUseCase = GetTotalRepsUseCase(),

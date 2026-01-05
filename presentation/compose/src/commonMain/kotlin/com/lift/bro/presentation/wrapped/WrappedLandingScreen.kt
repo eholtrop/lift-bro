@@ -55,7 +55,6 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
-
 @Composable
 @Preview
 fun WrappedLandingScreenPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
@@ -79,13 +78,13 @@ data class WrappedState(
 @Serializable
 sealed class WrappedPageState() {
     @Serializable
-    data object Tenure: WrappedPageState()
+    data object Tenure : WrappedPageState()
 
     @Serializable
-    data object Weight: WrappedPageState()
+    data object Weight : WrappedPageState()
 
     @Serializable
-    data object Reps: WrappedPageState()
+    data object Reps : WrappedPageState()
 
     @Serializable
     data class ProgressItemWeight(
@@ -95,20 +94,19 @@ sealed class WrappedPageState() {
     )
 
     @Serializable
-    data object Progress: WrappedPageState()
+    data object Progress : WrappedPageState()
 
     @Serializable
-    data object Consistency: WrappedPageState()
+    data object Consistency : WrappedPageState()
 
     @Serializable
-    data object Goals: WrappedPageState()
+    data object Goals : WrappedPageState()
 
     @Serializable
-    data object Summary: WrappedPageState()
+    data object Summary : WrappedPageState()
 }
 
 sealed class WrappedEvents()
-
 
 @Composable
 fun WrappedLandingScreen(
@@ -163,7 +161,10 @@ fun WrappedLandingScreen(
 
             Row(
                 modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter, alignment = Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.spacedBy(
+                    MaterialTheme.spacing.quarter,
+                    alignment = Alignment.CenterHorizontally
+                ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 repeat(pagerState.pageCount) {
@@ -175,7 +176,6 @@ fun WrappedLandingScreen(
                             )
                             .size(if (pagerState.currentPage == it) 12.dp else 8.dp)
                     ) {
-
                     }
                 }
             }
@@ -213,7 +213,6 @@ fun WrappedLandingScreen(
             CompositionLocalProvider(
                 LocalContentColor provides MaterialTheme.colorScheme.onBackground
             ) {
-
                 when (val page = state.pages[page]) {
                     is WrappedPageState.Reps -> WrappedRepScreen()
                     is WrappedPageState.Tenure -> WrappedTenureScreen()
@@ -229,7 +228,6 @@ fun WrappedLandingScreen(
 }
 
 internal const val FadeInDelayPerIndex = 100L
-
 
 @Composable
 fun FadeInText(

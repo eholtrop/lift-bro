@@ -359,12 +359,10 @@ private fun WeightCalculatorInternal(
     dispatcher: (CalculatorEvent) -> Unit,
     weightChanged: (Double) -> Unit = {}
 ) {
-
     LaunchedEffect(state.total) {
         state.total.toDoubleOrNull()?.let {
             weightChanged(it)
         } ?: run {
-
         }
     }
 
@@ -382,7 +380,6 @@ private fun WeightCalculatorInternal(
                 end = MaterialTheme.spacing.half,
             )
             .clickable {
-
             }
     ) {
         Column(
@@ -432,11 +429,17 @@ private fun WeightCalculatorInternal(
                             link = LinkAnnotation.Clickable(
                                 tag = segment.toString(),
                                 styles = TextLinkStyles(
-                                    style = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.secondary)
+                                    style = MaterialTheme.typography.titleLarge.copy(
+                                        color = MaterialTheme.colorScheme.secondary
+                                    )
                                         .toSpanStyle(),
-                                    pressedStyle = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.tertiary)
+                                    pressedStyle = MaterialTheme.typography.titleLarge.copy(
+                                        color = MaterialTheme.colorScheme.tertiary
+                                    )
                                         .toSpanStyle(),
-                                    hoveredStyle = MaterialTheme.typography.titleLarge.copy(color = MaterialTheme.colorScheme.primary)
+                                    hoveredStyle = MaterialTheme.typography.titleLarge.copy(
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
                                         .toSpanStyle(),
                                 )
                             ) {

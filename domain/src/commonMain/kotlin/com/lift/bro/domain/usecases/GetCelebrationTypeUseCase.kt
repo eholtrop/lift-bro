@@ -55,5 +55,4 @@ object GetCelebrationTypeUseCase {
                     }
                 }.firstOrNull() ?: CelebrationType.None
         }
-
 }

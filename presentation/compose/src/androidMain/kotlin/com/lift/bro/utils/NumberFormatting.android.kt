@@ -3,7 +3,6 @@ package com.lift.bro.utils
 import java.text.NumberFormat
 import java.util.Locale
 
-
 actual fun Long?.format(grouping: Boolean): String {
     return NumberFormat.getInstance(Locale.getDefault()).let {
         it.isGroupingUsed = grouping

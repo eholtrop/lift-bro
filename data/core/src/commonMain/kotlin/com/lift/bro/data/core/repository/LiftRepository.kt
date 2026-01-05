@@ -6,7 +6,7 @@ import com.lift.bro.domain.repositories.ILiftRepository
 import kotlinx.coroutines.flow.Flow
 
 class LiftRepository(
-private val local: LiftDataSource
+    private val local: LiftDataSource
 ) : ILiftRepository {
     override fun listenAll(): Flow<List<Lift>> = local.listenAll()
     override fun getAll(): List<Lift> = local.getAll()

@@ -11,7 +11,7 @@ import kotlinx.datetime.LocalDate
 
 class SetRepository(
     private val local: SetDataSource,
-): ISetRepository {
+) : ISetRepository {
 
     override fun listenAll(
         startDate: LocalDate?,

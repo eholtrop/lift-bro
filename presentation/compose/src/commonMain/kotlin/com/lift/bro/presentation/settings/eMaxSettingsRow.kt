@@ -48,12 +48,10 @@ fun eMaxSettingsRow() {
                     dialogTitle = { Text(stringResource(Res.string.settings_emax_info_dialog_title)) },
                     dialogMessage = {
                         Column {
-
                             Text(
                                 stringResource(Res.string.settings_emax_formula),
                                 style = MaterialTheme.typography.titleLarge,
                             )
-
 
                             Text(
                                 stringResource(Res.string.settings_emax_info_dialog_h1),

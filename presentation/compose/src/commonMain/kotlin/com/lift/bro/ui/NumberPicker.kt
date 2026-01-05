@@ -29,7 +29,6 @@ fun NumberPicker(
     suffix: @Composable (() -> Unit)? = null,
     prefix: @Composable (() -> Unit)? = null,
 ) {
-
     var value by remember { mutableStateOf(TextFieldValue(selectedNum?.toString() ?: "")) }
 
     var focus by remember { mutableStateOf(false) }

@@ -10,7 +10,6 @@ import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.Month
 
 class GetMostConsistentVariationUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,

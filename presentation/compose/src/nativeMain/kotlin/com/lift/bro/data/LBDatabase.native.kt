@@ -10,5 +10,4 @@ actual class DriverFactory {
     actual fun provideDbDriver(schema: SqlSchema<QueryResult.AsyncValue<Unit>>): SqlDriver {
         return NativeSqliteDriver(schema.synchronous(), "test.db")
     }
-
 }

@@ -91,7 +91,6 @@ class LBDatabase(
 
     val goalQueries get() = database.goalQueries
 
-
     suspend fun clear() {
         database.liftQueries.deleteAll()
         database.variationQueries.deleteAll()
@@ -113,7 +112,7 @@ class LBDatabase(
     )
 }
 
-private val instantAdapter = object: ColumnAdapter<Instant, Long> {
+private val instantAdapter = object : ColumnAdapter<Instant, Long> {
 
     override fun decode(databaseValue: Long): Instant {
         return Instant.fromEpochMilliseconds(databaseValue)
@@ -124,7 +123,7 @@ private val instantAdapter = object: ColumnAdapter<Instant, Long> {
     }
 }
 
-private val dateAdapter = object: ColumnAdapter<LocalDate, Long> {
+private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
 
     override fun decode(databaseValue: Long): LocalDate {
         return LocalDate.fromEpochDays(databaseValue.toInt())
@@ -274,7 +273,7 @@ fun LiftingSet.toDomain() = LBSet(
     date = this.date,
     notes = this.notes,
     rpe = this.rpe?.toInt(),
-    )
+)
 
 fun GetAllByVariation.toDomain() = LBSet(
     id = this.id,

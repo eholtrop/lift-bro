@@ -29,7 +29,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.home.darkIconRes
 import com.lift.bro.presentation.home.iconRes
@@ -122,14 +121,14 @@ fun InfoSpeechBubble(
                 message()
             }
         }
-        Row(
-
-        ) {
+        Row {
             Image(
                 modifier = Modifier
                     .padding(top = MaterialTheme.spacing.quarter)
                     .size(72.dp),
-                painter = painterResource(if (forceDarkIcon) LocalLiftBro.current.darkIconRes() else LocalLiftBro.current.iconRes()),
+                painter = painterResource(
+                    if (forceDarkIcon) LocalLiftBro.current.darkIconRes() else LocalLiftBro.current.iconRes()
+                ),
                 contentDescription = ""
             )
             Canvas(

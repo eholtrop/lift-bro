@@ -6,7 +6,6 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.LiftDataSource
-import com.lift.bro.data.SetDataSource
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
@@ -39,7 +38,6 @@ data class EditLiftState(
     val showDelete = name.isNotBlank() || variations.isNotEmpty() || liftColor != null
 }
 
-
 @Serializable
 data class LiftColor(
     val a: Int,
@@ -51,12 +49,12 @@ data class LiftColor(
 val LiftColor.color: Color get() = Color(a, r, g, b)
 
 sealed class EditLiftEvent {
-    data class NameChanged(val name: String): EditLiftEvent()
-    data class VariationNameChanged(val variation: Variation, val name: String): EditLiftEvent()
-    data object AddVariation: EditLiftEvent()
-    data class VariationRemoved(val variation: Variation): EditLiftEvent()
+    data class NameChanged(val name: String) : EditLiftEvent()
+    data class VariationNameChanged(val variation: Variation, val name: String) : EditLiftEvent()
+    data object AddVariation : EditLiftEvent()
+    data class VariationRemoved(val variation: Variation) : EditLiftEvent()
 
-    data object DeleteLift: EditLiftEvent()
+    data object DeleteLift : EditLiftEvent()
 }
 
 val EditLiftReducer = Reducer<EditLiftState?, EditLiftEvent> { state, event ->

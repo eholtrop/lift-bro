@@ -45,11 +45,11 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.utils.fullName
 import com.lift.bro.ui.RadioButtonCard
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.utils.fullName
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -82,7 +82,6 @@ fun OnboardingSetupScreen(
         LazyColumn(
             modifier = Modifier.weight(1f),
         ) {
-
             item {
                 Text(
                     modifier = Modifier.semantics { heading() },
@@ -228,8 +227,12 @@ private fun OnboardingLiftSelector(
                                         }
                                     }
                                     Text(
-                                        if (index == variations.size - 1) variation.name
-                                            ?: "" else "${variation.name}, ",
+                                        if (index == variations.size - 1) {
+                                            variation.name
+                                                ?: ""
+                                        } else {
+                                            "${variation.name}, "
+                                        },
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
                                     )
@@ -284,7 +287,6 @@ private fun OnboardingLiftSelector(
                         }
                     }
                 }
-
             }
         }
     }

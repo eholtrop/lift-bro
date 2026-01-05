@@ -39,7 +39,6 @@ data class DotGraphColors(
     val dotColorSelected: Color,
 )
 
-
 data class DotGraphData(
     val x: LocalDate,
     val y: Float
@@ -49,7 +48,6 @@ data class LineGraphData(
     val x: LocalDate,
     val y: Float
 )
-
 
 data class GraphData(
     val date: LocalDate,
@@ -91,7 +89,6 @@ fun DotGraph(
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-
                     val dotColor =
                         if (selectedData == point) colors.dotColorSelected else colors.dotColor
 
@@ -137,7 +134,6 @@ fun DotGraph(
                             topLeft = Offset(0f, size.height - animatedHeight)
                         )
                     }
-
 
                     xAxis?.invoke(point.first.toEpochDays().toLong())
                 }

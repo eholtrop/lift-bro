@@ -29,7 +29,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             val coordinator = rememberNavCoordinator(Destination.Unknown)
             CompositionLocalProvider(
                 LocalPlatformContext provides LocalContext.current,

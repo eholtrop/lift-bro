@@ -14,7 +14,9 @@ actual fun Instant.toString(pattern: String): String {
 }
 
 actual fun LocalDate.toString(pattern: String): String {
-    return SimpleDateFormat(pattern).format(Date(this.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()))
+    return SimpleDateFormat(
+        pattern
+    ).format(Date(this.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()))
 }
 
 actual fun LocalDateTime.toString(pattern: String): String {

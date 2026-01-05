@@ -37,7 +37,8 @@ fun ConsentCheckBoxField(
             modifier = Modifier.semantics {
                 contentDescription = cd
             },
-            checked = accepted, onCheckedChange = acceptanceChanged
+            checked = accepted,
+            onCheckedChange = acceptanceChanged
         )
         Space(MaterialTheme.spacing.one)
         Text(

@@ -37,7 +37,6 @@ fun ReleaseNotesRow(
     val latestReleaseNote by remember { derivedStateOf { releaseNotes.maxByOrNull { it.versionId } } }
     val latestReadReleaseNotes by dependencies.settingsRepository.getLatestReadReleaseNotes().collectAsState(null)
 
-
     LaunchedEffect(Unit) {
         launch {
             releaseNotes = Json.decodeFromString(

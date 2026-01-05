@@ -30,13 +30,11 @@ import lift_bro.core.generated.resources.backup_dialog_secondary_cta
 import lift_bro.core.generated.resources.backup_dialog_title
 import org.jetbrains.compose.resources.stringResource
 
-
 @Composable
 fun BackupAlertDialog(
     modifier: Modifier = Modifier,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
-
     var showBackupModal by remember { mutableStateOf(false) }
     LaunchedEffect("force_backup_prompt") {
         val lastBackupDate = dependencies.settingsRepository.getBackupSettings().first().lastBackupDate

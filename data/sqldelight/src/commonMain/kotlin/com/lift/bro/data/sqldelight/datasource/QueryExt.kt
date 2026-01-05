@@ -10,9 +10,8 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 
-
-fun <T: Any> Query<T>.asFlowList(dispatcher: CoroutineDispatcher = Dispatchers.IO): Flow<List<T>> =
+fun <T : Any> Query<T>.asFlowList(dispatcher: CoroutineDispatcher = Dispatchers.IO): Flow<List<T>> =
     this.asFlow().mapToList(dispatcher).flowOn(dispatcher)
 
-fun <T: Any> Query<T>.asFlowOneOrNull(dispatcher: CoroutineDispatcher = Dispatchers.IO): Flow<T?> =
+fun <T : Any> Query<T>.asFlowOneOrNull(dispatcher: CoroutineDispatcher = Dispatchers.IO): Flow<T?> =
     this.asFlow().mapToOneOrNull(dispatcher).flowOn(dispatcher)

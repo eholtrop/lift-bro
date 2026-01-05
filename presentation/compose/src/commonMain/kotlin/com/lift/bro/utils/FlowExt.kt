@@ -18,7 +18,7 @@ fun <T> Flow<T>.debug(tag: String = "FlowDebug"): Flow<T> = this
     .onEach { Log.d(tag, it.toString()) }
     .onStart { Log.d(tag, "onStart") }
     .onCompletion { Log.d(tag, "onComplete") }
-    .catch { Log.d(tag, it.message ?: "" ) }
+    .catch { Log.d(tag, it.message ?: "") }
     .onEmpty { Log.d(tag, "empty") }
 
 /**

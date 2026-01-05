@@ -138,7 +138,13 @@ fun EditSetScreen(
     var showVariationDialog by remember { mutableStateOf(false) }
 
     LiftingScaffold(
-        title = { Text(stringResource(if (set.id != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title)) },
+        title = {
+            Text(
+                stringResource(
+                    if (set.id != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title
+                )
+            )
+        },
         trailingContent = {
             Fade(visible = set.saveEnabled) {
                 TopBarIconButton(
@@ -154,7 +160,6 @@ fun EditSetScreen(
             modifier = Modifier.padding(padding).fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
             item {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -204,12 +209,9 @@ fun EditSetScreen(
                                     Text(
                                         textAlign = TextAlign.Center,
                                         text = buildAnnotatedString {
-
                                             if (set.liftMaxPercentage == null && set.variationMaxPercentage == null) {
-
                                                 append(set.variation.fullName)
                                             } else {
-
                                                 set.variationMaxPercentage?.let {
                                                     append(
                                                         buildSetLiftTitle(
@@ -320,7 +322,6 @@ private fun buildSetLiftTitle(
                     color = MaterialTheme.colorScheme.primary,
                 ).toSpanStyle(),
         ) {
-
             append(
                 name,
             )

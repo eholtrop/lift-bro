@@ -35,11 +35,11 @@ actual object StoreManager {
 
     actual fun startUpdateFlow() {
         appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
-             appUpdateManager.startUpdateFlow(
-                 info,
-                 context as Activity,
-                 AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
-             )
+            appUpdateManager.startUpdateFlow(
+                info,
+                context as Activity,
+                AppUpdateOptions.defaultOptions(AppUpdateType.IMMEDIATE)
+            )
         }
     }
 }

@@ -93,7 +93,6 @@ fun RepWeightSelector(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
-
         RepWeightTextField(
             modifier = Modifier.testTag("reps"),
             value = set.reps?.toString(),

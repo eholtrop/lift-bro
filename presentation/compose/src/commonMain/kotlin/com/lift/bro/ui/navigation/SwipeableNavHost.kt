@@ -24,7 +24,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.absoluteValue
 
-
 @Composable
 fun SwipeableNavHost(
     modifier: Modifier = Modifier,

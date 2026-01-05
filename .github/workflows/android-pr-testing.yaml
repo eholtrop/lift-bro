@@ -1,0 +1,54 @@
+name: Android Tests
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+        branches: [ main ]
+    workflow_dispatch:
+env:
+    LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
+    LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
+    REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY }}
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout Repo
+                uses: actions/checkout@v4
+
+
+            -   name: Set up Java
+                uses: actions/setup-java@v4
+                with:
+                    distribution: "temurin"
+                    java-version: 17
+
+            -   name: Setup Gradle cache
+                uses: gradle/actions/setup-gradle@v3
+
+            -   name: Set up Ruby
+                uses: ruby/setup-ruby@v1
+                with:
+                    ruby-version: 3.3
+                    bundler-cache: true
+
+            -   name: Create Fastlane Json
+                id: create-json-fastlane
+                uses: jsdaniell/create-json@v1.2.3
+                with:
+                    name: "key.json"
+                    json: ${{ secrets.FASTLANE_JSON }}
+
+            -   name: Run linter
+                run: fastlane lint
+
+            -   name: Run linter
+                run: fastlane test
+
+            -   name: Upload Apk
+                uses: actions/upload-artifact@v4
+                with:
+                    name: android-aab
+                    path: app-android/build/outputs/bundle/release/*.aab

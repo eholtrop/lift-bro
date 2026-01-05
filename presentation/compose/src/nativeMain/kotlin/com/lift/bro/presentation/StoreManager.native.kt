@@ -10,5 +10,4 @@ actual object StoreManager {
 
     actual fun startUpdateFlow() {
     }
-
 }

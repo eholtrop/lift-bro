@@ -4,7 +4,6 @@ import com.lift.bro.domain.models.UOM
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class CalculatorInteractorTest {
 

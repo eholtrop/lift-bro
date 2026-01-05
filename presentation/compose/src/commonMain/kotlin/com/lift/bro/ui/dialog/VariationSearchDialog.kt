@@ -51,8 +51,6 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.utils.fullName
-import com.lift.bro.utils.maxText
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.rememberInteractor
@@ -60,6 +58,8 @@ import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
+import com.lift.bro.utils.fullName
+import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
@@ -78,11 +78,11 @@ data class VariationSearchState(
 }
 
 sealed interface VariationSearchEvent {
-    data class QueryChanged(val query: String): VariationSearchEvent
+    data class QueryChanged(val query: String) : VariationSearchEvent
 
-    data class VariationSelected(val variation: Variation): VariationSearchEvent
+    data class VariationSelected(val variation: Variation) : VariationSearchEvent
 
-    data object Dismiss: VariationSearchEvent
+    data object Dismiss : VariationSearchEvent
 }
 
 @Composable
@@ -161,7 +161,6 @@ fun VariationSearchDialog(
                     .background(MaterialTheme.colorScheme.scrim.copy(alpha = .6f))
             )
         }
-
 
         Column {
             AnimatedVisibility(
@@ -287,7 +286,9 @@ private fun VariationSearchContent(
 
                     if (latestSet != null) {
                         Text(
-                            text = "${latestSet.date.toString("MMM d")}: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
+                            text = "${latestSet.date.toString(
+                                "MMM d"
+                            )}: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         latestSet.tempo.render()

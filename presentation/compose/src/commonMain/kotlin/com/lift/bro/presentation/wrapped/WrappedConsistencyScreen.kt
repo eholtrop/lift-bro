@@ -49,8 +49,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
-import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.*
+import lift_bro.core.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -87,7 +87,6 @@ fun rememberWrappedConsistencyInteractor(
                 mostConsistentLift = variation.first.fullName to variation.second,
             )
         }
-
     }
 )
 
@@ -102,7 +101,6 @@ fun WrappedConsistencyScreen(
     }
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WrappedConsistencyScreen(
@@ -115,7 +113,6 @@ fun WrappedConsistencyScreen(
         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
     ) {
-
         stickyHeader {
             Text(
                 modifier = Modifier
@@ -147,7 +144,7 @@ fun WrappedConsistencyScreen(
                                 style = MaterialTheme.typography.displaySmall
                             )
                         },
-                    message = {
+                        message = {
                             Text(
                                 text = "Your most consistent...",
                                 textAlign = TextAlign.Center,
@@ -168,7 +165,7 @@ fun WrappedConsistencyScreen(
                                             style = MaterialTheme.typography.titleSmall,
                                         )
                                         Text(
-                                            //year and day do not matter
+                                            // year and day do not matter
                                             LocalDate(2025, first, 1)
                                                 .toString("MMMM"),
                                             textAlign = TextAlign.Center,
@@ -249,7 +246,6 @@ private fun ConsistencyMonthItem(
     month: Month,
     dates: List<LocalDate>,
 ) {
-
     val days = dates.map { it.dayOfMonth }.toSet()
     Column(
         modifier = modifier,
@@ -281,10 +277,24 @@ private fun ConsistencyMonthItem(
                                     .border(
                                         width = 1.dp,
                                         shape = MaterialTheme.shapes.small,
-                                        color = if (days.contains(day.dayOfMonth)) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onBackground
+                                        color = if (days.contains(
+                                                day.dayOfMonth
+                                            )
+                                        ) {
+                                            MaterialTheme.colorScheme.secondary
+                                        } else {
+                                            MaterialTheme.colorScheme.onBackground
+                                        }
                                     )
                                     .background(
-                                        color = if (days.contains(day.dayOfMonth)) MaterialTheme.colorScheme.tertiary else Color.Transparent,
+                                        color = if (days.contains(
+                                                day.dayOfMonth
+                                            )
+                                        ) {
+                                            MaterialTheme.colorScheme.tertiary
+                                        } else {
+                                            Color.Transparent
+                                        },
                                         shape = MaterialTheme.shapes.small,
                                     ),
                             )

@@ -26,14 +26,16 @@ object AnimatedTextDefaults {
     }
 }
 
-
 @Composable
 fun AnimatedText(
     modifier: Modifier = Modifier,
     text: String,
     style: TextStyle = LocalTextStyle.current,
     color: Color = Color.Unspecified,
-    transitionForChar: AnimatedContentTransitionScope<Char>.(Char, Int) -> ContentTransform = AnimatedTextDefaults.transitionForChar,
+    transitionForChar: AnimatedContentTransitionScope<Char>.(
+        Char,
+        Int
+    ) -> ContentTransform = AnimatedTextDefaults.transitionForChar,
 ) {
     Row(
         modifier = modifier,

@@ -20,7 +20,6 @@ fun Card(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     content: @Composable () -> Unit,
 ) {
-
     val localModifier = if (onClick != null) {
         modifier
             .clip(MaterialTheme.shapes.medium)

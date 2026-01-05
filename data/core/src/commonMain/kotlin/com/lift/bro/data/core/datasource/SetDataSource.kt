@@ -30,5 +30,4 @@ interface SetDataSource {
     suspend fun delete(lbSet: LBSet)
     suspend fun deleteAll()
     suspend fun deleteAll(variationId: VariationId)
-
 }

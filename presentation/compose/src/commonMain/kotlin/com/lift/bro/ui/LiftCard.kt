@@ -59,7 +59,6 @@ import org.jetbrains.compose.resources.stringResource
 import kotlin.math.max
 import kotlin.text.Typography.nbsp
 
-
 @Serializable
 data class LiftCardState(
     val lift: Lift,
@@ -68,7 +67,6 @@ data class LiftCardState(
     val maxReps: Double? = null,
 )
 
-
 @Serializable
 data class LiftCardData(
     val weight: Double,
@@ -76,7 +74,6 @@ data class LiftCardData(
     val rpe: Int?,
     private val offset: LBOffset = LBOffset(),
 )
-
 
 @Serializable
 data class LBOffset(
@@ -113,8 +110,6 @@ fun LiftCard(
             modifier = Modifier.fillMaxSize()
                 .padding(all = MaterialTheme.spacing.half),
         ) {
-
-
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -165,7 +160,9 @@ fun LiftCard(
 
                 var canvasSize by remember { mutableStateOf(Size.Zero) }
                 val animatedGraphNodes =
-                    remember { mutableStateMapOf<LocalDate, Pair<Animatable<Offset, AnimationVector2D>, Animatable<Float, AnimationVector1D>?>>() }
+                    remember {
+                        mutableStateMapOf<LocalDate, Pair<Animatable<Offset, AnimationVector2D>, Animatable<Float, AnimationVector1D>?>>()
+                    }
 
                 LaunchedEffect(value, canvasSize, state.values) {
                     val height = canvasSize.height
@@ -208,8 +205,10 @@ fun LiftCard(
 
                         launch {
                             animatablePair.second?.animateTo(
-                                targetValue = canvasSize.height * (pair.second.second?.div(10f)
-                                    ?: 0f),
+                                targetValue = canvasSize.height * (
+                                    pair.second.second?.div(10f)
+                                        ?: 0f
+                                    ),
                                 animationSpec = spring(
                                     dampingRatio = Spring.DampingRatioNoBouncy,
                                     stiffness = Spring.StiffnessLow
@@ -263,7 +262,6 @@ fun LiftCard(
                         }
                 }
 
-
                 Space(MaterialTheme.spacing.half)
 
                 Row {
@@ -286,7 +284,12 @@ fun LiftCard(
 }
 
 @Composable
-fun weightFormat(weight: Double, uom: UOM = LocalUnitOfMeasure.current, forceShowDecimal: Boolean = false, useGrouping: Boolean = false): String {
+fun weightFormat(
+    weight: Double,
+    uom: UOM = LocalUnitOfMeasure.current,
+    forceShowDecimal: Boolean = false,
+    useGrouping: Boolean = false
+): String {
     return "${weight.decimalFormat(showDecimal = forceShowDecimal, grouping = useGrouping)} ${uom.value}"
 }
 
