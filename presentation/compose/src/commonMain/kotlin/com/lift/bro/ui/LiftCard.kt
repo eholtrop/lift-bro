@@ -33,7 +33,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -87,6 +86,8 @@ enum class LiftCardYValue {
     Reps, Weight
 }
 
+private const val GRADIENT_SIZE = 50f
+
 @Composable
 fun LiftCard(
     modifier: Modifier = Modifier,
@@ -112,7 +113,8 @@ fun LiftCard(
                 MaterialTheme.colorScheme.surface,
             ),
             end = Offset(
-                50f, 50f
+                GRADIENT_SIZE,
+                GRADIENT_SIZE
             )
         ),
         onClick = { onClick(lift) }
@@ -299,7 +301,7 @@ fun weightFormat(
     weight: Double,
     uom: UOM = LocalUnitOfMeasure.current,
     forceShowDecimal: Boolean = false,
-    useGrouping: Boolean = false
+    useGrouping: Boolean = false,
 ): String {
     return "${weight.decimalFormat(showDecimal = forceShowDecimal, grouping = useGrouping)} ${uom.value}"
 }

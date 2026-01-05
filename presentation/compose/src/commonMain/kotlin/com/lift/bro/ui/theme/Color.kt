@@ -1,4 +1,7 @@
-package com.example.compose
+@file:Suppress("MagicNumber")
+
+package com.lift.bro.ui.theme
+
 import androidx.compose.ui.graphics.Color
 
 val pumpkin = Color(0xFFFF7401)

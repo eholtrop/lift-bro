@@ -496,6 +496,8 @@ fun CalendarWorkoutCard(
     }
 }
 
+private const val GRADIENT_SIZE = 50f
+
 @Composable
 fun VariationSet(
     modifier: Modifier = Modifier,
@@ -517,8 +519,8 @@ fun VariationSet(
                         else -> Offset(Float.POSITIVE_INFINITY, 0f)
                     },
                     end = when (index) {
-                        0 -> Offset(50f, 50f)
-                        else -> Offset(width - 50f, 50f)
+                        0 -> Offset(GRADIENT_SIZE, GRADIENT_SIZE)
+                        else -> Offset(width - GRADIENT_SIZE, GRADIENT_SIZE)
                     }
                 )
             )
@@ -607,7 +609,7 @@ fun WorkoutCalendarMonth(
                     Icon(
                         modifier = Modifier
                             .padding(
-                                top = MaterialTheme.spacing.quarter,
+                                top = 52.dp,
                                 start = MaterialTheme.spacing.quarter,
                             )
                             .size(8.dp).align(Alignment.TopStart),

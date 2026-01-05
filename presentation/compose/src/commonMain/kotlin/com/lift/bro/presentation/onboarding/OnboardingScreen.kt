@@ -42,7 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
-import com.example.compose.amber
+import com.lift.bro.ui.theme.amber
 import com.lift.bro.RestoreUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
