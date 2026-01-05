@@ -28,7 +28,7 @@ import kotlin.math.min
 class SqldelightSetDataSource(
     private val setQueries: SetQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-): SetDataSource {
+) : SetDataSource {
 
     override fun listenAll(
         startDate: LocalDate?,

@@ -1,13 +1,13 @@
-//package com.lift.bro.preview
+// package com.lift.bro.preview
 //
-//import androidx.compose.runtime.Composable
-//import com.lift.bro.domain.models.Lift
-//import com.lift.bro.domain.models.Variation
-//import com.lift.bro.presentation.lift.EditLiftScreen
-//import org.jetbrains.compose.ui.tooling.preview.Preview
+// import androidx.compose.runtime.Composable
+// import com.lift.bro.domain.models.Lift
+// import com.lift.bro.domain.models.Variation
+// import com.lift.bro.presentation.lift.EditLiftScreen
+// import org.jetbrains.compose.ui.tooling.preview.Preview
 //
-//@Composable
-//fun EditLiftScreenEmptyPreview(isDarkMode: Boolean) {
+// @Composable
+// fun EditLiftScreenEmptyPreview(isDarkMode: Boolean) {
 //    PreviewAppTheme(isDarkMode = isDarkMode) {
 //        EditLiftScreen(
 //            lift = Lift(
@@ -19,10 +19,10 @@
 //            liftDeleted = {},
 //        )
 //    }
-//}
+// }
 //
-//@Composable
-//fun EditLiftScreenPopulatedPreview(isDarkMode: Boolean) {
+// @Composable
+// fun EditLiftScreenPopulatedPreview(isDarkMode: Boolean) {
 //    PreviewAppTheme(isDarkMode = isDarkMode) {
 //        val lift = Lift(
 //            name = "Deadlift",
@@ -41,28 +41,28 @@
 //            liftDeleted = {},
 //        )
 //    }
-//}
+// }
 //
-//@Preview
-//@Composable
-//fun LiftDetailsEmptyPreview_Light() {
+// @Preview
+// @Composable
+// fun LiftDetailsEmptyPreview_Light() {
 //    EditLiftScreenEmptyPreview(false)
-//}
+// }
 //
-//@Preview
-//@Composable
-//fun LiftDetailsEmptyPreview_Dark() {
+// @Preview
+// @Composable
+// fun LiftDetailsEmptyPreview_Dark() {
 //    EditLiftScreenEmptyPreview(true)
-//}
+// }
 //
-//@Preview
-//@Composable
-//fun LiftDetailsPopulatedPreview_Light() {
+// @Preview
+// @Composable
+// fun LiftDetailsPopulatedPreview_Light() {
 //    EditLiftScreenPopulatedPreview(false)
-//}
+// }
 //
-//@Preview
-//@Composable
-//fun LiftDetailsPopulatedPreview_Dark() {
+// @Preview
+// @Composable
+// fun LiftDetailsPopulatedPreview_Dark() {
 //    EditLiftScreenPopulatedPreview(true)
-//}
+// }

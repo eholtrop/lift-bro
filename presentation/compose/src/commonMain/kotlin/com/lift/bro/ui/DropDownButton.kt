@@ -23,7 +23,6 @@ fun DropDownButton(
     buttonText: String,
     content: @Composable ColumnScope.() -> Unit
 ) {
-
     var showDropdown by remember { mutableStateOf(false) }
     Button(
         modifier = modifier,
@@ -34,7 +33,7 @@ fun DropDownButton(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
-        ){
+        ) {
             Text(
                 text = buttonText
             )

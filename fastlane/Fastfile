@@ -69,15 +69,13 @@ platform :android do
 
     desc "Run the project tests"
     lane :test do |options|
-        automated_test_emulator_run(
-          AVD_setup_path: "fastlane/AVD_config.json",
-          shell_task: "./gradlew clean assembleDebug && ./gradlew installDebug && maestro test ../.maestro"
-        )
-    end
+        gradle(task: "clean assembleDebug")
+        gradle(task: "test")
+end
 
     desc "Run the project Linter"
     lane :lint do
-       gradle(task: "detekt")
+       gradle(task: "detekt --continue")
     end
 
     desc "Deploy a new version to the Google Play"

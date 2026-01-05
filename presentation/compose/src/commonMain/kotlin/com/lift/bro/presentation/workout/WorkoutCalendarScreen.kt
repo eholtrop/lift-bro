@@ -108,7 +108,6 @@ fun WorkoutCalendarContent(
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         item {
             Calendar(
                 modifier = Modifier.fillMaxWidth()
@@ -150,7 +149,6 @@ fun WorkoutCalendarContent(
             )
         }
 
-
         item {
             Spacer(modifier = Modifier.height(72.dp))
         }
@@ -166,11 +164,11 @@ data class DailyWorkoutDetailsState(
 )
 
 sealed interface DailyWorkoutDetailsEvent {
-    data object CreateWorkoutClicked: DailyWorkoutDetailsEvent
-    data class OpenWorkoutClicked(val exerciseId: ExerciseId?, val variationId: VariationId?):
+    data object CreateWorkoutClicked : DailyWorkoutDetailsEvent
+    data class OpenWorkoutClicked(val exerciseId: ExerciseId?, val variationId: VariationId?) :
         DailyWorkoutDetailsEvent
 
-    data class AddToWorkout(val variationId: VariationId): DailyWorkoutDetailsEvent
+    data class AddToWorkout(val variationId: VariationId) : DailyWorkoutDetailsEvent
 }
 
 @Composable
@@ -214,7 +212,6 @@ fun rememberDailyWorkoutDetailsInteractor(
                         }
                     }
                 }
-
             }
         }
     ) { state ->
@@ -366,7 +363,6 @@ fun DailyWorkoutDetails(
     }
 
     if (state.potentialExercises.isNotEmpty()) {
-
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
         Text(
             text = "Other Gains!",
@@ -406,7 +402,6 @@ fun DailyWorkoutDetails(
                         variation = it.first,
                         sets = it.second,
                     )
-
                 }
         }
     }
@@ -420,7 +415,6 @@ fun CalendarWorkoutCard(
     workout: Workout,
     workoutClicked: (Workout, LocalDate) -> Unit,
 ) {
-
     Card(
         modifier = modifier,
         colors = CardDefaults.cardColors(
@@ -449,7 +443,6 @@ fun CalendarWorkoutCard(
                                 Text(text = "Warmup:")
                                 Text(text = it)
                             }
-
                         }
                         workout.finisher?.let {
                             Column(
@@ -602,12 +595,15 @@ fun WorkoutCalendarMonth(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
                     ) {
-
                         monthState.colors[date]?.forEachIndexed { index, color ->
                             Box(
                                 modifier = Modifier.background(
-                                    color = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else color?.toColor()
-                                        ?: MaterialTheme.colorScheme.primary,
+                                    color = if (date == selectedDate) {
+                                        MaterialTheme.colorScheme.onPrimary
+                                    } else {
+                                        color?.toColor()
+                                            ?: MaterialTheme.colorScheme.primary
+                                    },
                                     shape = CircleShape,
                                 ).size(4.dp)
                             )

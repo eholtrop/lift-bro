@@ -15,7 +15,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
 
-
 @Composable
 fun LineItem(
     modifier: Modifier = Modifier,

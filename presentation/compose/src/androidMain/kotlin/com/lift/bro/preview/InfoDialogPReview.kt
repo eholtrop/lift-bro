@@ -11,7 +11,8 @@ fun InfoDialogPreview(isDark: Boolean) {
         InfoDialog(
             title = { Text("Congrats!!") },
             message = {
-                Text("A grouping of Variations (or Movements)\n" +
+                Text(
+                    "A grouping of Variations (or Movements)\n" +
                         "\n" +
                         "ex: A Squat can have two variations, Front and Back Squat\n" +
                         "Once you name your lift you can start creating Variations of that lift!\n" +

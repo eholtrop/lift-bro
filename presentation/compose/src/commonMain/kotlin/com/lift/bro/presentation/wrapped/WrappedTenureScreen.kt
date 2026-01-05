@@ -1,6 +1,5 @@
 package com.lift.bro.presentation.wrapped
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,14 +31,13 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
-import com.lift.bro.utils.debug
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
-import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.*
+import lift_bro.core.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
 
 @Serializable
@@ -58,9 +56,8 @@ class GetUserTenureUseCase(
         sorting = Sorting.date,
         limit = 1
     ).map {
-            today.year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: today.year)
-        }
-
+        today.year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: today.year)
+    }
 }
 
 @Composable
@@ -112,7 +109,6 @@ fun WrappedTenureScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-
                 if (state.tenure == 1) {
                     FadeInText(
                         delay = 100L,
@@ -179,4 +175,3 @@ fun WrappedTenureScreen(
         }
     }
 }
-

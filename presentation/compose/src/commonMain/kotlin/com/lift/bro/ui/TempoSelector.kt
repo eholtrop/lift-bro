@@ -56,7 +56,6 @@ fun TempoSelector(
         modifier = modifier,
 //        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
     ) {
-
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -140,6 +139,5 @@ private fun InfoDialogText() {
             text = "• picking up a deadlift\n• coming up from a squat\n• pushing the bar up in a bench press",
             style = MaterialTheme.typography.bodyMedium,
         )
-
     }
 }

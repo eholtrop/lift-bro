@@ -27,9 +27,11 @@ fun main() {
     server.start()
 
     // Keep the application running
-    Runtime.getRuntime().addShutdownHook(Thread {
-        server.stop()
-    })
+    Runtime.getRuntime().addShutdownHook(
+        Thread {
+            server.stop()
+        }
+    )
 
     // Wait for termination
     Thread.currentThread().join()

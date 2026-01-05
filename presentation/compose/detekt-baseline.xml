@@ -1,0 +1,338 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
+    <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; eccentric != null &amp;&amp; isometric != null &amp;&amp; concentric != null &amp;&amp; weight != null</ID>
+    <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding), )</ID>
+    <ID>CyclomaticComplexMethod:HomeScreenInteractor.kt$@Composable fun rememberHomeInteractor( initialTab: Tab = Tab.Dashboard, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;HomeState, HomeEvent&gt;</ID>
+    <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
+    <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt; )</ID>
+    <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit )</ID>
+    <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
+    <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
+    <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
+    <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedEvents$()</ID>
+    <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedPageState$()</ID>
+    <ID>EmptyFunctionBlock:DependencyContainer.native.kt$DependencyContainer${ }</ID>
+    <ID>EmptyFunctionBlock:StoreManager.native.kt$StoreManager${ }</ID>
+    <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
+    <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
+    <ID>Filename:LBDatabase.native.kt$com.lift.bro.data.LBDatabase.native.kt</ID>
+    <ID>Filename:LiftBroPreviewParameters.kt$com.lift.bro.preview.LiftBroPreviewParameters.kt</ID>
+    <ID>Filename:eMaxSettingsRow.kt$com.lift.bro.presentation.settings.eMaxSettingsRow.kt</ID>
+    <ID>ForbiddenComment:EmptyHomeScreen.kt$// TODO: need to setup back handling in onboarding</ID>
+    <ID>ForbiddenComment:RepWeightSelector.kt$// TODO: figure out the accessibility here</ID>
+    <ID>FunctionNaming:MainViewController.kt$fun MainViewController( bannerProvider: () -&gt; UIView )</ID>
+    <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForMonth( year: Int, month: Month, ): Flow&lt;List&lt;Pair&lt;Variation, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
+    <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForRange( startDate: LocalDate, endDate: LocalDate ): Flow&lt;List&lt;Pair&lt;Variation, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
+    <ID>InvalidPackageDeclaration:Color.kt$package com.example.compose</ID>
+    <ID>InvalidPackageDeclaration:DateFormatting.android.kt$package com.lift.bro.utils</ID>
+    <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
+    <ID>LongMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding), )</ID>
+    <ID>LongMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
+    <ID>LongMethod:Calculator.kt$@Composable fun KeyPad( modifier: Modifier = Modifier, digitClicked: (Int) -&gt; Unit, operatorClicked: (Operator) -&gt; Unit, actionClicked: (Action) -&gt; Unit, decimalClicked: () -&gt; Unit, verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(MaterialTheme.spacing.half), horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(MaterialTheme.spacing.half) )</ID>
+    <ID>LongMethod:Calculator.kt$@Composable fun WeightCalculatorBottomSheet( modifier: Modifier = Modifier, )</ID>
+    <ID>LongMethod:Calculator.kt$@Composable private fun WeightCalculatorInternal( modifier: Modifier = Modifier, state: CalculatorState, dispatcher: (CalculatorEvent) -&gt; Unit, weightChanged: (Double) -&gt; Unit = {} )</ID>
+    <ID>LongMethod:Calendar.kt$@Composable private fun CalendarContent( modifier: Modifier = Modifier, pagerState: PagerState, selection: LocalDate?, contentPadding: PaddingValues, dateSelected: (LocalDate) -&gt; Unit, contentForMonth: @Composable (year: Int, month: Month) -&gt; Unit )</ID>
+    <ID>LongMethod:CreateVariationDialog.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun VariationDialog( modifier: Modifier = Modifier, variation: Variation, title: String, onDismissRequest: () -&gt; Unit, onVariationSaved: (String) -&gt; Unit, properties: DialogProperties, )</ID>
+    <ID>LongMethod:DashboardInteractor.kt$@Composable fun rememberDashboardInteractor( liftRepository: LiftDataSource = dependencies.database.liftDataSource, variationRepository: IVariationRepository = dependencies.variationRepository, setRepository: ISetRepository = dependencies.setRepository, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;DashboardState, DashboardEvent&gt;</ID>
+    <ID>LongMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: Interactor&lt;DashboardState, DashboardEvent&gt; = rememberDashboardInteractor(), )</ID>
+    <ID>LongMethod:EditLiftScreen.kt$@Composable internal fun EditLiftScreen( interactor: Interactor&lt;EditLiftState?, EditLiftEvent&gt;, liftSaved: () -&gt; Unit, liftDeleted: () -&gt; Unit, coroutineScope: CoroutineScope = rememberCoroutineScope(), )</ID>
+    <ID>LongMethod:EditSetScreen.kt$@Composable fun EditSetScreen( set: EditSetState, deleteSetClicked: () -&gt; Unit, repChanged: (Long?) -&gt; Unit = {}, weightChanged: (Double?) -&gt; Unit = {}, rpeChanged: (Int?) -&gt; Unit = {}, dateChanged: (Instant) -&gt; Unit = {}, eccChanged: (Int?) -&gt; Unit = {}, isoChanged: (Int?) -&gt; Unit = {}, conChanged: (Int?) -&gt; Unit = {}, notesChanged: (String) -&gt; Unit = {}, variationChanged: (variationId: String) -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:ExerciseDataSource.kt$LBExerciseDataSource$override fun listen( workoutId: String, ): Flow&lt;List&lt;Exercise&gt;&gt;</ID>
+    <ID>LongMethod:HomeScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun HomeScreen( interactor: Interactor&lt;HomeState, HomeEvent&gt; = rememberHomeInteractor(), )</ID>
+    <ID>LongMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
+    <ID>LongMethod:LiftDetailsInteractor.kt$@Composable fun rememberLiftDetailsInteractor( liftId: String, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;</ID>
+    <ID>LongMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt; )</ID>
+    <ID>LongMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit )</ID>
+    <ID>LongMethod:LineGraph.kt$@Composable fun DotGraph( modifier: Modifier = Modifier, graphData: List&lt;Pair&lt;LocalDate, GraphData&gt;&gt;, state: LazyListState = rememberLazyListState(), selectedData: LocalDate? = null, maxX: LocalDate = graphData.maxOf { it.first }, maxY: Float = graphData.maxOf { it.second.dotGraphData }, xAxis: @Composable ((Long) -&gt; Unit)? = null, yAxis: @Composable ((Float, Float) -&gt; Unit)? = null, dataPointClicked: ((LocalDate) -&gt; Unit)? = null, colors: DotGraphColors )</ID>
+    <ID>LongMethod:OnboardingScreen.kt$@Composable fun OnboardingBroScreen( broSelected: (LiftBro) -&gt; Unit, )</ID>
+    <ID>LongMethod:OnboardingScreen.kt$@Composable fun OnboardingConsentScreen( consentAccepted: () -&gt; Unit, )</ID>
+    <ID>LongMethod:OnboardingScreen.kt$@Composable fun OnboardingSkipScreen( setupClicked: () -&gt; Unit, continueClicked: () -&gt; Unit, )</ID>
+    <ID>LongMethod:OnboardingSetupScreen.kt$@Composable fun OnboardingSetupScreen( formSubmitted: () -&gt; Unit )</ID>
+    <ID>LongMethod:OnboardingSetupScreen.kt$@Composable private fun OnboardingLiftSelector( selectedVariations: SnapshotStateList&lt;Variation&gt;, )</ID>
+    <ID>LongMethod:RepWeightSelector.kt$@Composable fun RepWeightSelector( modifier: Modifier = Modifier, set: EditSetState, repChanged: (Long?) -&gt; Unit, weightChanged: (Double?) -&gt; Unit, rpeChanged: (Int?) -&gt; Unit, )</ID>
+    <ID>LongMethod:RepWeightSelector.kt$@Composable private fun RepWeightTextField( modifier: Modifier = Modifier, value: String?, error: Boolean = false, onValueChanged: (String) -&gt; Unit, keyboardType: KeyboardType, placeholder: @Composable () -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:SettingsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun SettingsScreen()</ID>
+    <ID>LongMethod:SwipeableNavHost.kt$@Composable fun SwipeableNavHost( modifier: Modifier = Modifier, navCoordinator: NavCoordinator, key: (Destination) -&gt; Any = { Json.encodeToString(it) }, content: @Composable (Destination) -&gt; Unit, )</ID>
+    <ID>LongMethod:TempoSelector.kt$@Composable fun TempoSelector( modifier: Modifier = Modifier, down: Int?, hold: Int?, up: Int?, downChanged: (Int?) -&gt; Unit, holdChanged: (Int?) -&gt; Unit, upChanged: (Int?) -&gt; Unit, )</ID>
+    <ID>LongMethod:Toolbar.kt$@Composable @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class) fun TopBar( modifier: Modifier = Modifier, title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, trailingContent: @Composable () -&gt; Unit = {}, leadingContent: @Composable () -&gt; Unit = {}, scrollBehavior: TopAppBarScrollBehavior? = null, )</ID>
+    <ID>LongMethod:VariationDetailsInteractor.kt$@Composable fun rememberVariationDetailInteractor( variationId: String, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;VariationDetailsState, VariationDetailsEvent&gt;</ID>
+    <ID>LongMethod:VariationDetailsScreen.kt$@Composable private fun VariationDetailsScreen( interactor: Interactor&lt;VariationDetailsState, VariationDetailsEvent&gt;, addSetClicked: () -&gt; Unit, setClicked: (LBSet) -&gt; Unit, )</ID>
+    <ID>LongMethod:VariationSearchDialog.kt$@Composable private fun VariationSearchContent( modifier: Modifier = Modifier, variations: List&lt;Variation&gt; = emptyList(), variationSelected: (Variation) -&gt; Unit, )</ID>
+    <ID>LongMethod:VariationSearchDialog.kt$@OptIn(ExperimentalComposeUiApi::class) @Composable fun VariationSearchDialog( onDismissRequest: () -&gt; Unit, variationSelected: (Variation) -&gt; Unit, interactor: Interactor&lt;VariationSearchState, VariationSearchEvent&gt;, )</ID>
+    <ID>LongMethod:WorkoutCalendarScreen.kt$@Composable fun CalendarWorkoutCard( modifier: Modifier = Modifier, workout: Workout, workoutClicked: (Workout, LocalDate) -&gt; Unit, )</ID>
+    <ID>LongMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( date: LocalDate, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = rememberDailyWorkoutDetailsInteractor( date ), )</ID>
+    <ID>LongMethod:WorkoutCalendarScreen.kt$@Composable fun VariationSet( modifier: Modifier = Modifier, variation: Variation, index: Int? = null, sets: List&lt;LBSet&gt;, )</ID>
+    <ID>LongMethod:WorkoutCalendarScreen.kt$@Composable fun rememberDailyWorkoutDetailsInteractor( date: LocalDate, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt;</ID>
+    <ID>LongMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
+    <ID>LongMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:WrappedConsistencyScreen.kt$@Composable private fun ConsistencyMonthItem( modifier: Modifier = Modifier, year: Int, month: Month, dates: List&lt;LocalDate&gt;, )</ID>
+    <ID>LongMethod:WrappedConsistencyScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedConsistencyScreen( state: WrappedConsistencyState, )</ID>
+    <ID>LongMethod:WrappedGoalsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedGoalsScreen( state: WrappedGoalsState, goalAdded: () -&gt; Unit = {}, goalChanged: (Goal, String) -&gt; Unit = { _, _ -&gt; }, goalRemoved: (Goal) -&gt; Unit = {}, )</ID>
+    <ID>LongMethod:WrappedLandingScreen.kt$@Composable fun WrappedLandingScreen( state: WrappedState, onClosePressed: () -&gt; Unit, )</ID>
+    <ID>LongMethod:WrappedProgressScreen.kt$@Composable fun ProgressItemView( modifier: Modifier = Modifier, state: WrappedProgressItemState.Loaded, )</ID>
+    <ID>LongMethod:WrappedProgressScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedProgressScreen( state: WrappedProgressState, )</ID>
+    <ID>LongMethod:WrappedRepScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedRepScreen( state: WrappedRepState, )</ID>
+    <ID>LongMethod:WrappedSummaryInteractor.kt$@Composable fun rememberWrappedSummaryInteractor( year: Int = 2025, // Weight use cases getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(), getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase = GetVariationWithMostWeightMovedUseCase(), // Reps use cases getTotalRepsUseCase: GetTotalRepsUseCase = GetTotalRepsUseCase(), getVariationWithMostRepsUseCase: GetVariationWithMostRepsUseCase = GetVariationWithMostRepsUseCase(), // Consistency use cases getVariationConsistencyUseCase: GetVariationConsistencyUseCase = GetVariationConsistencyUseCase(), // Progress use cases getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(), // Goal use cases getGoalsUseCase: GetGoalsUseCase = GetGoalsUseCase(), ): Interactor&lt;WrappedSummaryState?, Nothing&gt;</ID>
+    <ID>LongMethod:WrappedSummaryScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedSummaryScreen( state: WrappedSummaryState, )</ID>
+    <ID>LongMethod:WrappedSummaryScreen.kt$@Preview @Composable fun WrappedSummaryScreenPreview(@PreviewParameter(DarkModeProvider::class) dark: Boolean)</ID>
+    <ID>LongMethod:WrappedTenureScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedTenureScreen( state: WrappedTenureState, )</ID>
+    <ID>LongMethod:WrappedWeightScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedWeightScreen( state: WrappedWeightState, )</ID>
+    <ID>LongMethod:eMaxSettingsRow.kt$@Composable fun eMaxSettingsRow()</ID>
+    <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, flow7: Flow&lt;T7&gt;, transform: suspend (T1, T2, T3, T4, T5, T6, T7) -&gt; R )</ID>
+    <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, transform: suspend (T1, T2, T3, T4, T5, T6) -&gt; R )</ID>
+    <ID>LongParameterList:TempoSelector.kt$( modifier: Modifier = Modifier, down: Int?, hold: Int?, up: Int?, downChanged: (Int?) -&gt; Unit, holdChanged: (Int?) -&gt; Unit, upChanged: (Int?) -&gt; Unit, )</ID>
+    <ID>MagicNumber:App.kt$1000</ID>
+    <ID>MagicNumber:App.kt$2000</ID>
+    <ID>MagicNumber:App.kt$20f</ID>
+    <ID>MagicNumber:App.kt$4000</ID>
+    <ID>MagicNumber:App.kt$60f</ID>
+    <ID>MagicNumber:BackupAlertDialog.kt$7</ID>
+    <ID>MagicNumber:Calculator.kt$10.0</ID>
+    <ID>MagicNumber:Calculator.kt$2.5</ID>
+    <ID>MagicNumber:Calculator.kt$25.0</ID>
+    <ID>MagicNumber:Calculator.kt$3</ID>
+    <ID>MagicNumber:Calculator.kt$35.0</ID>
+    <ID>MagicNumber:Calculator.kt$4</ID>
+    <ID>MagicNumber:Calculator.kt$45</ID>
+    <ID>MagicNumber:Calculator.kt$45.0</ID>
+    <ID>MagicNumber:Calculator.kt$5</ID>
+    <ID>MagicNumber:Calculator.kt$5.0</ID>
+    <ID>MagicNumber:Calculator.kt$50L</ID>
+    <ID>MagicNumber:Calculator.kt$6</ID>
+    <ID>MagicNumber:Calculator.kt$7</ID>
+    <ID>MagicNumber:Calculator.kt$8</ID>
+    <ID>MagicNumber:Calculator.kt$9</ID>
+    <ID>MagicNumber:Calculator.kt$Digit.Eight$8</ID>
+    <ID>MagicNumber:Calculator.kt$Digit.Five$5</ID>
+    <ID>MagicNumber:Calculator.kt$Digit.Four$4</ID>
+    <ID>MagicNumber:Calculator.kt$Digit.Nine$9</ID>
+    <ID>MagicNumber:Calculator.kt$Digit.Seven$7</ID>
+    <ID>MagicNumber:Calculator.kt$Digit.Six$6</ID>
+    <ID>MagicNumber:Calculator.kt$Digit.Three$3</ID>
+    <ID>MagicNumber:CalculatorBarBell.kt$.75f</ID>
+    <ID>MagicNumber:CalculatorInteractor.kt$10</ID>
+    <ID>MagicNumber:Calendar.kt$3</ID>
+    <ID>MagicNumber:Calendar.kt$5</ID>
+    <ID>MagicNumber:Calendar.kt$6</ID>
+    <ID>MagicNumber:Color.kt$0xFF000000</ID>
+    <ID>MagicNumber:Color.kt$0xFF151515</ID>
+    <ID>MagicNumber:Color.kt$0xFF201A1B</ID>
+    <ID>MagicNumber:Color.kt$0xFF261900</ID>
+    <ID>MagicNumber:Color.kt$0xFF2B151C</ID>
+    <ID>MagicNumber:Color.kt$0xFF2E1500</ID>
+    <ID>MagicNumber:Color.kt$0xFF352F30</ID>
+    <ID>MagicNumber:Color.kt$0xFF3E001D</ID>
+    <ID>MagicNumber:Color.kt$0xFF410002</ID>
+    <ID>MagicNumber:Color.kt$0xFF412D00</ID>
+    <ID>MagicNumber:Color.kt$0xFF514347</ID>
+    <ID>MagicNumber:Color.kt$0xFF5A3F47</ID>
+    <ID>MagicNumber:Color.kt$0xFF5D4200</ID>
+    <ID>MagicNumber:Color.kt$0xFF623F20</ID>
+    <ID>MagicNumber:Color.kt$0xFF690005</ID>
+    <ID>MagicNumber:Color.kt$0xFF7A5900</ID>
+    <ID>MagicNumber:Color.kt$0xFF7B2949</ID>
+    <ID>MagicNumber:Color.kt$0xFF837377</ID>
+    <ID>MagicNumber:Color.kt$0xFF93000A</ID>
+    <ID>MagicNumber:Color.kt$0xFF984061</ID>
+    <ID>MagicNumber:Color.kt$0xFF9E8C90</ID>
+    <ID>MagicNumber:Color.kt$0xFF9F750B</ID>
+    <ID>MagicNumber:Color.kt$0xFFBA1A1A</ID>
+    <ID>MagicNumber:Color.kt$0xFFD5C2C6</ID>
+    <ID>MagicNumber:Color.kt$0xFFEBE0E1</ID>
+    <ID>MagicNumber:Color.kt$0xFFF2DDE2</ID>
+    <ID>MagicNumber:Color.kt$0xFFF5BE48</ID>
+    <ID>MagicNumber:Color.kt$0xFFFAEEEF</ID>
+    <ID>MagicNumber:Color.kt$0xFFFF0101</ID>
+    <ID>MagicNumber:Color.kt$0xFFFF4D01</ID>
+    <ID>MagicNumber:Color.kt$0xFFFF7401</ID>
+    <ID>MagicNumber:Color.kt$0xFFFF9A01</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFB0C8</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFB4AB</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFC101</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFD9E2</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFDAD6</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFDCC2</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFDEA3</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFFBFF</ID>
+    <ID>MagicNumber:Color.kt$0xFFFFFFFF</ID>
+    <ID>MagicNumber:DashboardInteractor.kt$100L</ID>
+    <ID>MagicNumber:DashboardInteractor.kt$5</ID>
+    <ID>MagicNumber:DebugBackup.kt$102</ID>
+    <ID>MagicNumber:DebugBackup.kt$132</ID>
+    <ID>MagicNumber:DebugBackup.kt$162</ID>
+    <ID>MagicNumber:DebugBackup.kt$192</ID>
+    <ID>MagicNumber:DebugBackup.kt$200</ID>
+    <ID>MagicNumber:DebugBackup.kt$222</ID>
+    <ID>MagicNumber:DebugBackup.kt$24</ID>
+    <ID>MagicNumber:DebugBackup.kt$252</ID>
+    <ID>MagicNumber:DebugBackup.kt$72</ID>
+    <ID>MagicNumber:EditLiftScreen.kt$11</ID>
+    <ID>MagicNumber:FlowExt.kt$3</ID>
+    <ID>MagicNumber:FlowExt.kt$4</ID>
+    <ID>MagicNumber:FlowExt.kt$5</ID>
+    <ID>MagicNumber:FlowExt.kt$6</ID>
+    <ID>MagicNumber:HomeScreen.kt$1000L</ID>
+    <ID>MagicNumber:InfoDialog.kt$20f</ID>
+    <ID>MagicNumber:InfoDialog.kt$60f</ID>
+    <ID>MagicNumber:LBDatabase.kt$SetDataSource$100.0</ID>
+    <ID>MagicNumber:LBDatabase.kt$SetDataSource$23</ID>
+    <ID>MagicNumber:LBDatabase.kt$SetDataSource$4</ID>
+    <ID>MagicNumber:LBDatabase.kt$SetDataSource$4.0</ID>
+    <ID>MagicNumber:LBDatabase.kt$SetDataSource$59</ID>
+    <ID>MagicNumber:LBDatabase.kt$SetDataSource$80.0</ID>
+    <ID>MagicNumber:LBDatabase.kt$SetDataSource$999</ID>
+    <ID>MagicNumber:LiftCard.kt$0.95</ID>
+    <ID>MagicNumber:LiftCard.kt$10f</ID>
+    <ID>MagicNumber:LiftCard.kt$5</ID>
+    <ID>MagicNumber:LiftCard.kt$5f</ID>
+    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$100.0</ID>
+    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$120.0</ID>
+    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$125.0</ID>
+    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$130.0</ID>
+    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$135.0</ID>
+    <ID>MagicNumber:LiftDetailsScreen.kt$10f</ID>
+    <ID>MagicNumber:NumberFormatting.android.kt$3</ID>
+    <ID>MagicNumber:NumberFormatting.kt$100</ID>
+    <ID>MagicNumber:OnboardingScreen.kt$.5f</ID>
+    <ID>MagicNumber:OnboardingScreen.kt$220</ID>
+    <ID>MagicNumber:OnboardingScreen.kt$3</ID>
+    <ID>MagicNumber:OnboardingScreen.kt$90</ID>
+    <ID>MagicNumber:OnboardingSetupScreen.kt$100</ID>
+    <ID>MagicNumber:RotatingAnimatedText.kt$1100</ID>
+    <ID>MagicNumber:RotatingAnimatedText.kt$5000</ID>
+    <ID>MagicNumber:TempoSelector.kt$.33f</ID>
+    <ID>MagicNumber:Toolbar.kt$.66f</ID>
+    <ID>MagicNumber:WeightSelector.kt$1000</ID>
+    <ID>MagicNumber:WeightSelector.kt$1000f</ID>
+    <ID>MagicNumber:WeightSelector.kt$400f</ID>
+    <ID>MagicNumber:WeightSelector.kt$50</ID>
+    <ID>MagicNumber:WeightSelector.kt$500f</ID>
+    <ID>MagicNumber:WeightSelector.kt$Confetti.Companion$0.5f</ID>
+    <ID>MagicNumber:WeightSelector.kt$Confetti.Companion$15</ID>
+    <ID>MagicNumber:WeightSelector.kt$Confetti.Companion$5</ID>
+    <ID>MagicNumber:WeightSelector.kt$Confetti.Companion$50</ID>
+    <ID>MagicNumber:WeightSelector.kt$Confetti.Companion$50f</ID>
+    <ID>MagicNumber:WorkoutCalendarMonthInteractor.kt$28</ID>
+    <ID>MagicNumber:WorkoutCalendarMonthInteractor.kt$30</ID>
+    <ID>MagicNumber:WorkoutCalendarMonthInteractor.kt$31</ID>
+    <ID>MagicNumber:WorkoutScreen.kt$2</ID>
+    <ID>MagicNumber:WrappedConsistencyScreen.kt$2025</ID>
+    <ID>MagicNumber:WrappedConsistencyScreen.kt$6</ID>
+    <ID>MagicNumber:WrappedGoalsScreen.kt$1100</ID>
+    <ID>MagicNumber:WrappedGoalsScreen.kt$5000</ID>
+    <ID>MagicNumber:WrappedLandingScreen.kt$.5f</ID>
+    <ID>MagicNumber:WrappedLandingScreen.kt$300</ID>
+    <ID>MagicNumber:WrappedProgressInteractor.kt$12</ID>
+    <ID>MagicNumber:WrappedProgressInteractor.kt$31</ID>
+    <ID>MagicNumber:WrappedProgressScreen.kt$.33</ID>
+    <ID>MagicNumber:WrappedProgressScreen.kt$.66</ID>
+    <ID>MagicNumber:WrappedProgressScreen.kt$12</ID>
+    <ID>MagicNumber:WrappedProgressScreen.kt$2025</ID>
+    <ID>MagicNumber:WrappedProgressScreen.kt$31</ID>
+    <ID>MagicNumber:WrappedRepScreen.kt$12</ID>
+    <ID>MagicNumber:WrappedRepScreen.kt$31</ID>
+    <ID>MagicNumber:WrappedSummaryInteractor.kt$3</ID>
+    <ID>MagicNumber:WrappedWeightScreen.kt$12</ID>
+    <ID>MagicNumber:WrappedWeightScreen.kt$2025</ID>
+    <ID>MagicNumber:WrappedWeightScreen.kt$31</ID>
+    <ID>MatchingDeclarationName:AnimatedText.kt$AnimatedTextDefaults</ID>
+    <ID>MatchingDeclarationName:LBDatabase.kt$DriverFactory</ID>
+    <ID>MatchingDeclarationName:LBDatabase.native.kt$DriverFactory</ID>
+    <ID>MatchingDeclarationName:LiftBroPreviewParameters.kt$DarkModeProvider : PreviewParameterProvider</ID>
+    <ID>MatchingDeclarationName:LiftingScaffold.kt$FabProperties</ID>
+    <ID>MatchingDeclarationName:WrappedConsistencyScreen.kt$WrappedConsistencyState</ID>
+    <ID>MatchingDeclarationName:WrappedRepScreen.kt$WrappedRepState</ID>
+    <ID>MatchingDeclarationName:WrappedWeightScreen.kt$WrappedWeightState</ID>
+    <ID>MaxLineLength:App.kt$// This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix</ID>
+    <ID>MaxLineLength:App.kt$LocalEMaxSettings provides (emaxSettings &amp;&amp; (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug))</ID>
+    <ID>MaxLineLength:App.kt$LocalTMaxSettings provides (tMaxSettings &amp;&amp; (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug))</ID>
+    <ID>MaxLineLength:App.kt$LocalTwmSettings provides (twmSettings &amp;&amp; (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug))</ID>
+    <ID>MaxLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$fun</ID>
+    <ID>MaxLineLength:DashboardInteractor.kt$(item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id &amp;&amp; it.favourite</ID>
+    <ID>MaxLineLength:EditSetInteractor.kt$EditSetState$val saveEnabled: Boolean get() = variation != null &amp;&amp; reps != null &amp;&amp; eccentric != null &amp;&amp; isometric != null &amp;&amp; concentric != null &amp;&amp; weight != null</ID>
+    <ID>MaxLineLength:EditSetInteractor.kt$if</ID>
+    <ID>MaxLineLength:EditSetInteractor.kt$maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null</ID>
+    <ID>MaxLineLength:EditSetInteractor.kt$sideEffects = sideEffects + { _, event -&gt; if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }</ID>
+    <ID>MaxLineLength:LiftCard.kt$mutableStateMapOf&lt;LocalDate, Pair&lt;Animatable&lt;Offset, AnimationVector2D&gt;, Animatable&lt;Float, AnimationVector1D&gt;?&gt;&gt;()</ID>
+    <ID>MaxLineLength:LiftDetailsScreen.kt$if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight</ID>
+    <ID>MaxLineLength:LiftDetailsScreen.kt$imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder</ID>
+    <ID>MaxLineLength:MERSettingsRow.kt$enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug</ID>
+    <ID>MaxLineLength:NavCoordinator.kt$NavCoordinator$* Navigates the user back one page, returns true if the navigation was handled, false if nothing happens (ie. you need to handle it yourself)</ID>
+    <ID>MaxLineLength:OnboardingSetupScreen.kt$imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown</ID>
+    <ID>MaxLineLength:TWMSettingsRow.kt$enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug</ID>
+    <ID>MaxLineLength:TempoSelector.kt$text = "• putting a deadlift down\n• going into a squat\n• lowering the bar towards your chest in a bench press"</ID>
+    <ID>MaxLineLength:Toolbar.kt$horizontalArrangement = if ((scrollBehavior?.state?.collapsedFraction ?: 0f) &lt; .66f) Arrangement.Center else Arrangement.Start</ID>
+    <ID>MaxLineLength:WorkoutCalendarInteractor.kt$potentialExercises = if (initial.selectedDate != source.selectedDate) initial.potentialExercises else source.potentialExercises</ID>
+    <ID>MaxLineLength:WorkoutCalendarInteractor.kt$selectedDate = if (initial.selectedDate != source.selectedDate) initial.selectedDate else source.selectedDate</ID>
+    <ID>MaxLineLength:WorkoutCalendarInteractor.kt$selectedWorkout = if (initial.selectedDate != source.selectedDate) initial.selectedWorkout else source.selectedWorkout</ID>
+    <ID>MaxLineLength:WorkoutCalendarScreen.kt$.</ID>
+    <ID>MaxLineLength:WorkoutCalendarScreen.kt$tint = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface</ID>
+    <ID>MaxLineLength:WorkoutCalendarScreen.kt$workout == null || (workout.exercises.isEmpty() &amp;&amp; workout.warmup.isNullOrBlank() &amp;&amp; workout.finisher.isNullOrBlank())</ID>
+    <ID>MaxLineLength:WorkoutScreen.kt$color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer</ID>
+    <ID>MaxLineLength:WrappedLandingScreen.kt$color = if (pagerState.currentPage == it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground</ID>
+    <ID>MaxLineLength:WrappedProgressInteractor.kt$compareByDescending&lt;WrappedProgressItemState&gt; { (it as? WrappedProgressItemState.Loaded)?.favourite }</ID>
+    <ID>MaxLineLength:WrappedProgressScreen.kt$it.groupBy { it.date.toLocalDate() }.map { (date, sets) -&gt; date to sets.maxOf { it.weight } }.sortedBy { it.first }</ID>
+    <ID>MaxLineLength:eMaxSettingsRow.kt$enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug</ID>
+    <ID>MaximumLineLength:App.kt$ </ID>
+    <ID>MaximumLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$ </ID>
+    <ID>MaximumLineLength:DashboardInteractor.kt$ </ID>
+    <ID>MaximumLineLength:EditSetInteractor.kt$ </ID>
+    <ID>MaximumLineLength:EditSetInteractor.kt$EditSetState$ </ID>
+    <ID>MaximumLineLength:LiftCard.kt$ </ID>
+    <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>
+    <ID>MaximumLineLength:MERSettingsRow.kt$ </ID>
+    <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
+    <ID>MaximumLineLength:TWMSettingsRow.kt$ </ID>
+    <ID>MaximumLineLength:TempoSelector.kt$ </ID>
+    <ID>MaximumLineLength:Toolbar.kt$ </ID>
+    <ID>MaximumLineLength:WorkoutCalendarInteractor.kt$ </ID>
+    <ID>MaximumLineLength:WorkoutCalendarScreen.kt$ </ID>
+    <ID>MaximumLineLength:WorkoutScreen.kt$ </ID>
+    <ID>MaximumLineLength:WrappedLandingScreen.kt$ </ID>
+    <ID>MaximumLineLength:WrappedProgressInteractor.kt$ </ID>
+    <ID>MaximumLineLength:WrappedProgressScreen.kt$ </ID>
+    <ID>MaximumLineLength:eMaxSettingsRow.kt$ </ID>
+    <ID>NoWildcardImports:WrappedConsistencyScreen.kt$import lift_bro.core.generated.resources.*</ID>
+    <ID>NoWildcardImports:WrappedGoalsScreen.kt$import lift_bro.core.generated.resources.*</ID>
+    <ID>NoWildcardImports:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
+    <ID>NoWildcardImports:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
+    <ID>PackageName:HorizontalPaddingExt.kt$package com.lift.bro.utils.horizontal_padding</ID>
+    <ID>PackageName:VerticalPaddingExt.kt$package com.lift.bro.utils.vertical_padding</ID>
+    <ID>PackageNaming:HorizontalPaddingExt.kt$package com.lift.bro.utils.horizontal_padding</ID>
+    <ID>PackageNaming:VerticalPaddingExt.kt$package com.lift.bro.utils.vertical_padding</ID>
+    <ID>SpreadOperator:DashboardInteractor.kt$( *cards.map { it.onStart { emit(DashboardListItem.LiftCard.Loading) } } .toTypedArray() )</ID>
+    <ID>SpreadOperator:ExerciseDataSource.kt$LBExerciseDataSource$( *variationSets.map { exercise -&gt; combine( setQueries.getOneRepMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getEMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getMaxRepsForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), ) { orm, volume, reps -&gt; Triple( exercise.exercise_variation_id, exercise.exercise_id, Variation( id = exercise.variation_id, name = exercise.variation_name, notes = exercise.variation_notes, favourite = exercise.variation_is_favourite == 1L, lift = Lift( id = exercise.lift_id, color = exercise.lift_color?.toULong(), name = exercise.lift_name, ), oneRepMax = orm?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), eMax = volume?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), maxReps = reps?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), ) ) } }.toTypedArray() )</ID>
+    <ID>SpreadOperator:WorkoutRepository.kt$WorkoutRepository$( *workouts.map { workout -&gt; database.exerciseDataSource.listen(workout.id).map { Workout( id = workout.id, date = workout.date, warmup = workout.warmup, exercises = it.toList(), finisher = workout.finisher ) } }.toTypedArray() )</ID>
+    <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
+    <ID>SwallowedException:LiftDetailsScreen.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LiftDetailsScreen.kt$e: Exception</ID>
+    <ID>TooManyFunctions:LBDatabase.kt$SetDataSource</ID>
+    <ID>TooManyFunctions:SettingsRepository.kt$SettingsRepository : ISettingsRepository</ID>
+    <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
+    <ID>UnusedParameter:EditLiftScreen.kt$liftSaved: () -&gt; Unit</ID>
+    <ID>UnusedParameter:EmptyHomeScreen.kt$loadDefaultLifts: () -&gt; Unit</ID>
+    <ID>UnusedParameter:InfoDialogPReview.kt$isDark: Boolean</ID>
+    <ID>UnusedParameter:LBSetExt.kt$uom: UOM = LocalUnitOfMeasure.current</ID>
+    <ID>UnusedParameter:LineGraph.kt$maxX: LocalDate = graphData.maxOf { it.first }</ID>
+    <ID>UnusedParameter:WeightSelector.kt$Confetti.Companion$height: Float</ID>
+    <ID>UnusedParameter:WrappedDialog.kt$year: Int</ID>
+    <ID>UnusedParameter:WrappedProgressScreen.kt$contentColor: Color = MaterialTheme.colorScheme.primary</ID>
+    <ID>UnusedPrivateProperty:App.kt$val cel = celebration</ID>
+    <ID>UnusedPrivateProperty:App.kt$val server = LocalServer.current</ID>
+    <ID>UnusedPrivateProperty:Calculator.kt$Digit$digit: Int</ID>
+    <ID>UnusedPrivateProperty:ExerciseDataSource.kt$LBExerciseDataSource$private val variationQueries: VariationQueries</ID>
+    <ID>UnusedPrivateProperty:LiftDetailsScreen.kt$SortingOptions$reversed: Boolean</ID>
+    <ID>UnusedPrivateProperty:SettingsScreen.kt$val localServer = LocalServer.current</ID>
+    <ID>UnusedPrivateProperty:SettingsScreen.kt$var showExperimental by remember { mutableStateOf(subscriptionType == SubscriptionType.Pro) }</ID>
+    <ID>UnusedPrivateProperty:WorkoutCalendarScreen.kt$val subscriptionType by LocalSubscriptionStatusProvider.current</ID>
+    <ID>UnusedPrivateProperty:WrappedProgressScreen.kt$val minSet = sets.minOf { it.second }</ID>
+    <ID>WildcardImport:WrappedConsistencyScreen.kt$import lift_bro.core.generated.resources.*</ID>
+    <ID>WildcardImport:WrappedGoalsScreen.kt$import lift_bro.core.generated.resources.*</ID>
+    <ID>WildcardImport:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
+    <ID>WildcardImport:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

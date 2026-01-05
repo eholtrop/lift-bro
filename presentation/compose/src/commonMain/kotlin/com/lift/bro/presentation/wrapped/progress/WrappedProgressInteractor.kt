@@ -8,9 +8,7 @@ import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.toLocalDate
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
@@ -33,10 +31,10 @@ sealed class WrappedProgressItemState {
         val variationColor: ULong? = null,
         val isBodyWeight: Boolean = false,
         val variationId: VariationId = "",
-    ): WrappedProgressItemState()
+    ) : WrappedProgressItemState()
 
     @Serializable
-    data object Loading: WrappedProgressItemState()
+    data object Loading : WrappedProgressItemState()
 }
 
 @Composable
@@ -45,7 +43,11 @@ fun rememberWrappedProgressInteractor(
     getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(),
 ) = rememberInteractor<WrappedProgressState, Nothing>(
     initialState = WrappedProgressState(
-        items = listOf(WrappedProgressItemState.Loading, WrappedProgressItemState.Loading, WrappedProgressItemState.Loading)
+        items = listOf(
+            WrappedProgressItemState.Loading,
+            WrappedProgressItemState.Loading,
+            WrappedProgressItemState.Loading
+        )
     ),
     source = {
         getVariationProgressUseCase(
@@ -86,6 +88,5 @@ fun rememberWrappedProgressInteractor(
                         )
                 )
             }
-
     }
 )

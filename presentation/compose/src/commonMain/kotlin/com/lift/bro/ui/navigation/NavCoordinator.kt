@@ -38,5 +38,4 @@ interface NavCoordinator {
      * Clears the current set of pages and shows the user the given state
      */
     fun setRoot(state: Destination)
-
 }

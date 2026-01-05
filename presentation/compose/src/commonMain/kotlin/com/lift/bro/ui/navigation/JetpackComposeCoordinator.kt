@@ -6,14 +6,15 @@ import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-fun rememberNavCoordinator(initialDestination: Destination): NavCoordinator = remember { JetpackComposeCoordinator(initialState = initialDestination) }
+fun rememberNavCoordinator(
+    initialDestination: Destination
+): NavCoordinator = remember { JetpackComposeCoordinator(initialState = initialDestination) }
 
 class JetpackComposeCoordinator(
     initialState: Destination,
@@ -41,7 +42,7 @@ class JetpackComposeCoordinator(
         } else {
             currentState.value = pages.get(pages.indexOf(currentPage) - 1)
             if (!keepStack) {
-scope.launch {
+                scope.launch {
                     mutableStateList.value.removeAt(mutableStateList.value.lastIndex)
                 }
             }

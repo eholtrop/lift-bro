@@ -30,13 +30,13 @@ data class VariationDetailCard(
 )
 
 sealed interface VariationDetailsEvent {
-    data class NotesUpdated(val notes: String): VariationDetailsEvent
-    data class SetClicked(val setId: String): VariationDetailsEvent
-    data object AddSetClicked: VariationDetailsEvent
+    data class NotesUpdated(val notes: String) : VariationDetailsEvent
+    data class SetClicked(val setId: String) : VariationDetailsEvent
+    data object AddSetClicked : VariationDetailsEvent
 
-    data class NameUpdated(val name: String): VariationDetailsEvent
+    data class NameUpdated(val name: String) : VariationDetailsEvent
 
-    data object ToggleBodyWeight: VariationDetailsEvent
+    data object ToggleBodyWeight : VariationDetailsEvent
 }
 
 @Composable
@@ -46,20 +46,22 @@ fun rememberVariationDetailInteractor(
 ): Interactor<VariationDetailsState, VariationDetailsEvent> =
     rememberInteractor(
         initialState = VariationDetailsState(Variation()),
-        source = {combine(
-            dependencies.database.variantDataSource.listen(variationId),
-            dependencies.database.setDataSource.listenAllForVariation(variationId)
-        ) { variation, sets ->
-            VariationDetailsState(
-                variation = variation!!,
-                cards = sets.groupBy { it.date }.map {
-                    VariationDetailCard(
-                        title = it.key.toString("EEEE, MM d"),
-                        sets = it.value
-                    )
-                }
-            )
-        }},
+        source = {
+            combine(
+                dependencies.database.variantDataSource.listen(variationId),
+                dependencies.database.setDataSource.listenAllForVariation(variationId)
+            ) { variation, sets ->
+                VariationDetailsState(
+                    variation = variation!!,
+                    cards = sets.groupBy { it.date }.map {
+                        VariationDetailCard(
+                            title = it.key.toString("EEEE, MM d"),
+                            sets = it.value
+                        )
+                    }
+                )
+            }
+        },
         sideEffects = listOf { state, event ->
             when (event) {
                 VariationDetailsEvent.AddSetClicked -> {

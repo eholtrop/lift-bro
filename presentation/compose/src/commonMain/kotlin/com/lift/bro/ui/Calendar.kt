@@ -55,7 +55,6 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 
-
 object ComposeCalendarDefaults {
 
     fun singleDateSelectionShapes() = ComposeCalendarShapes(
@@ -134,7 +133,6 @@ fun Calendar(
     Column(
         modifier = modifier,
     ) {
-
         CalendarContent(
             pagerState = pagerState,
             selection = selectedDate,
@@ -156,7 +154,6 @@ private fun CalendarContent(
     dateSelected: (LocalDate) -> Unit,
     contentForMonth: @Composable (year: Int, month: Month) -> Unit
 ) {
-
     val coroutineScope = rememberCoroutineScope()
 
     Column(
@@ -324,7 +321,7 @@ fun CalendarMonth(
 }
 
 enum class CalendarDateStyle {
-    Enabled, Disabled, Selected;
+    Enabled, Disabled, Selected
 }
 
 @Composable
@@ -335,7 +332,6 @@ fun CalendarDate(
     onClick: (LocalDate) -> Unit,
     decorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
 ) {
-
     val backgroundColor = when (style) {
         CalendarDateStyle.Selected -> MaterialTheme.colorScheme.secondary
         CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.surface

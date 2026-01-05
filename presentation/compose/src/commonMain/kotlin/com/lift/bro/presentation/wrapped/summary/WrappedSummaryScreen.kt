@@ -43,7 +43,6 @@ import com.lift.bro.utils.vertical_padding.padding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
-
 @Composable
 fun WrappedSummaryScreen(
     interactor: Interactor<WrappedSummaryState?, Nothing> = rememberWrappedSummaryInteractor(),
@@ -200,7 +199,6 @@ fun WrappedSummaryScreen(
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-
                     Column(
                         modifier = Modifier.weight(1f)
                             .background(
@@ -282,7 +280,6 @@ fun WrappedSummaryScreen(
                 }
             }
         }
-
 
         stickyHeader {
             Text(

@@ -54,7 +54,6 @@ fun VariationDialog(
                     shape = MaterialTheme.shapes.large,
                 ).padding(MaterialTheme.spacing.one),
             ) {
-
                 var currentVariation by remember { mutableStateOf(variation) }
 
                 val coroutineScope = rememberCoroutineScope()
@@ -73,7 +72,6 @@ fun VariationDialog(
                         value = currentVariation.name ?: "",
                         onValueChange = { currentVariation = currentVariation.copy(name = it) },
                         trailingIcon = {
-
                             val lifts by dependencies.liftRepository.listenAll()
                                 .collectAsState(emptyList())
 
@@ -120,7 +118,6 @@ fun VariationDialog(
                         Text("Save")
                     }
                 }
-
             }
         }
     )

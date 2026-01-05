@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
-
 class SettingsRepository(
     private val dataSource: UserPreferencesDataSource,
 ) : ISettingsRepository {

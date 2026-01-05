@@ -119,8 +119,8 @@ internal object LiftCardPreviewStates {
             LocalDate.parse("2023-01-01") to LiftCardData(135.0, 2, 2),
             LocalDate.parse("2023-01-02") to LiftCardData(125.0, 2, 2),
             LocalDate.parse("2023-01-01") to LiftCardData(120.0, 2, 2),
-            LocalDate.parse("2023-01-02") to LiftCardData(130.0,2, 2),
-            LocalDate.parse("2023-01-01") to LiftCardData(125.0,2, 2),
+            LocalDate.parse("2023-01-02") to LiftCardData(130.0, 2, 2),
+            LocalDate.parse("2023-01-01") to LiftCardData(125.0, 2, 2),
         )
     )
 

@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MatchingDeclarationName:LiftBroClient.kt$LiftBroClientConfig</ID>
+    <ID>NoWildcardImports:AndroidLiftBroClient.kt$import io.ktor.client.engine.okhttp.*</ID>
+    <ID>NoWildcardImports:JvmLiftBroClient.kt$import io.ktor.client.engine.cio.*</ID>
+    <ID>WildcardImport:AndroidLiftBroClient.kt$import io.ktor.client.engine.okhttp.*</ID>
+    <ID>WildcardImport:JvmLiftBroClient.kt$import io.ktor.client.engine.cio.*</ID>
+  </CurrentIssues>
+</SmellBaseline>

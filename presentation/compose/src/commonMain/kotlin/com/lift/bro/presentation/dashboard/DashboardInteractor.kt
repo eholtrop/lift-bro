@@ -23,7 +23,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class DashboardState(
     val items: List<DashboardListItem> = emptyList(),
@@ -33,27 +32,26 @@ data class DashboardState(
 sealed class DashboardListItem {
 
     @Serializable
-    sealed class LiftCard: DashboardListItem() {
+    sealed class LiftCard : DashboardListItem() {
 
         @Serializable
-        data class Loaded(val state: LiftCardState): LiftCard()
+        data class Loaded(val state: LiftCardState) : LiftCard()
 
         @Serializable
-        data object Loading: LiftCard()
+        data object Loading : LiftCard()
     }
 
     @Serializable
-    data object ReleaseNotes: DashboardListItem()
+    data object ReleaseNotes : DashboardListItem()
 
     @Serializable
-    data object AddLiftButton: DashboardListItem()
+    data object AddLiftButton : DashboardListItem()
 }
 
 sealed interface DashboardEvent {
-    data object AddLiftClicked: DashboardEvent
-    data class LiftClicked(val liftId: String): DashboardEvent
+    data object AddLiftClicked : DashboardEvent
+    data class LiftClicked(val liftId: String) : DashboardEvent
 }
-
 
 @Composable
 fun rememberDashboardInteractor(
@@ -109,7 +107,11 @@ fun rememberDashboardInteractor(
                     .debounce { 100L }
                     .map { cards ->
                         cards.sortedBy { (it as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.name }
-                            .sortedByDescending { item -> variations.any { (item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id && it.favourite } }
+                            .sortedByDescending { item ->
+                                variations.any {
+                                    (item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id && it.favourite
+                                }
+                            }
                     }
                     .map { items ->
                         DashboardState(

@@ -6,7 +6,6 @@ import com.lift.bro.presentation.Reducer
 import com.lift.bro.utils.decimalFormat
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class CalculatorState(
     val total: String,
@@ -82,23 +81,32 @@ val OperatorReducer: Reducer<CalculatorState, CalculatorEvent> = Reducer { state
 val ToggleUOMReducer: Reducer<CalculatorState, CalculatorEvent> = Reducer { state, event ->
     if (event !is CalculatorEvent.ToggleUOMForIndex) return@Reducer state
     val segment = state.expression[event.index]
-    val prefix = if (event.index == 0) emptyList() else state.expression.subList(
-        0,
-        event.index
-    )
-    val suffix =
-        if (state.expression.lastIndex == event.index) emptyList() else state.expression.subList(
-            event.index + 1,
-            state.expression.lastIndex + 1
+    val prefix = if (event.index == 0) {
+        emptyList()
+    } else {
+        state.expression.subList(
+            0,
+            event.index
         )
-
+    }
+    val suffix =
+        if (state.expression.lastIndex == event.index) {
+            emptyList()
+        } else {
+            state.expression.subList(
+                event.index + 1,
+                state.expression.lastIndex + 1
+            )
+        }
 
     state.copy(
-        expression = prefix + segment.copy(weight = segment.weight.let {
-            it.copy(
-                uom = it.uom.toggle()
-            )
-        }) + suffix
+        expression = prefix + segment.copy(
+            weight = segment.weight.let {
+                it.copy(
+                    uom = it.uom.toggle()
+                )
+            }
+        ) + suffix
     )
 }
 
@@ -131,9 +139,13 @@ val ActionReducer: Reducer<CalculatorState, CalculatorEvent> = Reducer { state, 
                 }
             }
             state.copy(
-                expression = state.expression.dropLast(1) + if (newSegment != null) listOf(
-                    newSegment
-                ) else emptyList()
+                expression = state.expression.dropLast(1) + if (newSegment != null) {
+                    listOf(
+                        newSegment
+                    )
+                } else {
+                    emptyList()
+                }
             )
         }
 
@@ -165,7 +177,8 @@ val ActionReducer: Reducer<CalculatorState, CalculatorEvent> = Reducer { state, 
                         weight = Weight(
                             0.0,
                             UOM.POUNDS
-                        ), decimalApplied = true
+                        ),
+                        decimalApplied = true
                     )
                 )
             }
@@ -206,9 +219,11 @@ private fun calculateTotal(expression: List<Segment>, defaultUOM: UOM): Double {
     val segment = expression.first()
     val nextSegment = expression.getOrNull(1)
 
-    if (segment.operation == Operator.Divide && nextSegment?.weight?.value == 0.0) throw ArithmeticException(
-        "Cannot divide by zero"
-    )
+    if (segment.operation == Operator.Divide && nextSegment?.weight?.value == 0.0) {
+        throw ArithmeticException(
+            "Cannot divide by zero"
+        )
+    }
 
     val thisWeight = segment.weight.uom.convert(
         segment.weight.value,

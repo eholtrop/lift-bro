@@ -49,7 +49,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.set.rememberEditSetInteractor
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
@@ -81,7 +80,6 @@ fun EditLiftScreen(
     liftSaved: () -> Unit,
     liftDeleted: () -> Unit,
 ) {
-
     EditLiftScreen(
         interactor = if (liftId != null) rememberEditLiftInteractor(liftId) else rememberCreateLiftInteractor(),
         liftSaved = liftSaved,
@@ -117,9 +115,13 @@ internal fun EditLiftScreen(
         LiftingScaffold(
             title = {
                 Text(
-                    if (state.id != null) stringResource(Res.string.edit_lift_screen_title) else stringResource(
-                        Res.string.create_lift_screen_title
-                    )
+                    if (state.id != null) {
+                        stringResource(Res.string.edit_lift_screen_title)
+                    } else {
+                        stringResource(
+                            Res.string.create_lift_screen_title
+                        )
+                    }
                 )
             },
             trailingContent = {
@@ -205,7 +207,9 @@ internal fun EditLiftScreen(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Add,
-                                        contentDescription = stringResource(Res.string.edit_lift_screen_add_variation_cta_content_description),
+                                        contentDescription = stringResource(
+                                            Res.string.edit_lift_screen_add_variation_cta_content_description
+                                        ),
                                         tint = MaterialTheme.colorScheme.primary
                                     )
                                 }
@@ -308,7 +312,9 @@ private fun VariationItem(
                         contentDescription = "Favourite",
                     )
                 }
-            } else null,
+            } else {
+                null
+            },
             singleLine = true,
             onValueChange = {
                 name = it
@@ -319,14 +325,17 @@ private fun VariationItem(
             suffix = {
                 if (liftName.isNotBlank()) {
                     Text(
-                        text = if (liftName.length > 12) liftName.substring(
-                            0,
-                            11
-                        ) + "..." else liftName,
+                        text = if (liftName.length > 12) {
+                            liftName.substring(
+                                0,
+                                11
+                            ) + "..."
+                        } else {
+                            liftName
+                        },
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-
                 }
             },
             colors = TextFieldDefaults.transparentColors()
@@ -334,7 +343,9 @@ private fun VariationItem(
         IconButton(onClick = onDelete) {
             Icon(
                 Icons.Default.Delete,
-                contentDescription = stringResource(Res.string.edit_lift_screen_variation_delete_cta_content_description)
+                contentDescription = stringResource(
+                    Res.string.edit_lift_screen_variation_delete_cta_content_description
+                )
             )
         }
     }

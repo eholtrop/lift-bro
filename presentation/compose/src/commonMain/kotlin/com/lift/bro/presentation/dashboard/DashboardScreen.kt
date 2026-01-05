@@ -79,13 +79,21 @@ fun DashboardContent(
                         Button(
                             onClick = {
                                 showWeight.value =
-                                    if (showWeight.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
+                                    if (showWeight.value == LiftCardYValue.Weight) {
+                                        LiftCardYValue.Reps
+                                    } else {
+                                        LiftCardYValue.Weight
+                                    }
                             }
                         ) {
                             Text(
-                                text = if (showWeight.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(
-                                    Res.string.reps
-                                )
+                                text = if (showWeight.value == LiftCardYValue.Weight) {
+                                    LocalUnitOfMeasure.current.value
+                                } else {
+                                    stringResource(
+                                        Res.string.reps
+                                    )
+                                }
                             )
                         }
                     }
@@ -96,7 +104,6 @@ fun DashboardContent(
                     span = { item -> GridItemSpan(item.gridSize(state.items.size)) }
                 ) { item ->
                     when (val dli = item) {
-
                         is DashboardListItem.LiftCard.Loaded -> {
                             LiftCard(
                                 state = dli.state,
@@ -118,9 +125,13 @@ fun DashboardContent(
                             Box(
                                 modifier = Modifier.fillMaxSize()
                                     .then(
-                                        if (dli.gridSize(state.items.size) == 1) Modifier.aspectRatio(
-                                            1f
-                                        ) else Modifier
+                                        if (dli.gridSize(state.items.size) == 1) {
+                                            Modifier.aspectRatio(
+                                                1f
+                                            )
+                                        } else {
+                                            Modifier
+                                        }
                                     )
                             ) {
                                 Button(

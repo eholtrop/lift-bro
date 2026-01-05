@@ -9,22 +9,14 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
-import com.lift.bro.utils.debug
-import com.lift.bro.utils.fullName
 import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onStart
 import kotlinx.datetime.LocalDate
-import kotlin.reflect.KClass
-
 
 data class VariationProgress(
     val minSet: LBSet,
@@ -152,7 +144,6 @@ private fun ISetRepository.getLatestMaxSet(
 ).map { it.firstOrNull() }
     .getMaxInDay(this, variation.bodyWeight ?: false)
 
-
 @OptIn(ExperimentalCoroutinesApi::class)
 private fun Flow<LBSet?>.getMaxInDay(
     setRepository: ISetRepository,
@@ -172,4 +163,3 @@ private fun Flow<LBSet?>.getMaxInDay(
         }
     } ?: flow { emit(null) }
 }
-

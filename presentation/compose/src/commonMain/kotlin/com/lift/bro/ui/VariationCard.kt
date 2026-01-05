@@ -18,7 +18,7 @@ fun VariationCard(
     Card(
         modifier = modifier
             .padding(MaterialTheme.spacing.half),
-        onClick = {  onClick(variation) }
+        onClick = { onClick(variation) }
     ) {
         if (variation.name.isNullOrBlank().not()) {
             Text(

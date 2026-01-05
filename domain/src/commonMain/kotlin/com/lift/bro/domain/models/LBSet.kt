@@ -17,7 +17,7 @@ data class LBSet(
     val mer: Int = 0,
     val bodyWeightRep: Boolean? = null,
 ) {
-    val totalWeightMoved =  weight * reps
+    val totalWeightMoved = weight * reps
 }
 
 fun calculateMax(reps: Long?, weight: Double?) = calculateMax(reps?.toInt() ?: 0, weight ?: 0.0)
@@ -29,10 +29,11 @@ fun calculateMax(reps: Int, weight: Double): Double {
     }
 }
 
-fun estimatedMax(reps: Int, weight: Double): Double {
-    return weight * (1 + (reps / 30.0))
-}
+private const val MER_DENOMINATOR = 30.0
 
+fun estimatedMax(reps: Int, weight: Double): Double {
+    return weight * (1 + (reps / MER_DENOMINATOR))
+}
 
 @Serializable
 data class Tempo(
@@ -40,7 +41,6 @@ data class Tempo(
     val hold: Long = 1,
     val up: Long = 1,
 )
-
 
 val LBSet.formattedMax: String get() = "${this.reps} x ${this.formattedTempo}"
 

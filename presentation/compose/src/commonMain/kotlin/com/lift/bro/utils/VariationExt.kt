@@ -11,7 +11,6 @@ import com.lift.bro.presentation.LocalTMaxSettings
 import com.lift.bro.presentation.lift.uom
 import kotlin.math.roundToInt
 
-
 val Variation.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
 
 @Composable
@@ -28,9 +27,13 @@ fun Variation.maxText(): AnnotatedString {
                     "${
                         oneRepMax?.weight.decimalFormat().uom()
                     } max${
-                        if (eMax?.estimateMax!! > oneRepMax?.oneRepMax!!) " - (${
-                            eMax?.estimateMax?.roundToInt()
-                        } tmax)" else ""
+                        if (eMax?.estimateMax!! > oneRepMax?.oneRepMax!!) {
+                            " - (${
+                                eMax?.estimateMax?.roundToInt()
+                            } tmax)"
+                        } else {
+                            ""
+                        }
                     }"
                 )
 
@@ -46,7 +49,6 @@ fun Variation.maxText(): AnnotatedString {
                     append(" (${eMax?.estimateMax?.roundToInt()} emax)")
                 }
             }
-
         }
     }
 }

@@ -83,7 +83,6 @@ internal fun Modifier.onboardingBackground(): Modifier = this
         )
     )
 
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun OnboardingScreen(
@@ -97,8 +96,10 @@ fun OnboardingScreen(
         AnimatedContent(
             onboardingState,
             transitionSpec = {
-                (fadeIn(animationSpec = tween(220, delayMillis = 90))
-                    .togetherWith(fadeOut(animationSpec = tween(90))))
+                (
+                    fadeIn(animationSpec = tween(220, delayMillis = 90))
+                        .togetherWith(fadeOut(animationSpec = tween(90)))
+                    )
             }
         ) { state ->
             when (state) {
@@ -125,7 +126,6 @@ fun OnboardingScreen(
             onboardingState -= 1
         }
     }
-
 }
 
 @Composable

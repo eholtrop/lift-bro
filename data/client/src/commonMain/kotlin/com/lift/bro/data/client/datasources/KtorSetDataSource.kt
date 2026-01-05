@@ -10,10 +10,9 @@ import io.ktor.client.HttpClient
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
-
 class KtorSetDataSource(
     private val httpClient: HttpClient,
-): SetDataSource {
+) : SetDataSource {
 
     override fun listenAll(
         startDate: LocalDate?,
@@ -23,7 +22,10 @@ class KtorSetDataSource(
         reps: Long?,
         sorting: Sorting,
         order: Order,
-    ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit&startDate=$startDate&endDate=$endDate&variationId=$variationId")
+    ): Flow<List<LBSet>> = createConnectionFlow(
+        httpClient,
+        "api/ws/sets?limit=$limit&startDate=$startDate&endDate=$endDate&variationId=$variationId"
+    )
 
     override fun listenAllForLift(
         liftId: String,

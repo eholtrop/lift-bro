@@ -47,5 +47,4 @@ actual class UserPreferencesDataSource(
             Json.decodeFromString(it)
         } ?: default
     }
-
 }

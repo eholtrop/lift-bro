@@ -8,8 +8,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.google.services) apply false
-
-    id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
 
 android {

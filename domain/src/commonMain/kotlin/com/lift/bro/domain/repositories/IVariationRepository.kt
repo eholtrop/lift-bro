@@ -20,5 +20,4 @@ interface IVariationRepository {
     fun listen(id: String): Flow<Variation?>
 
     fun get(variationId: String?): Variation?
-
 }

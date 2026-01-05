@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.variationRepository
-import com.lift.bro.di.workoutRepository
 import com.lift.bro.di.exerciseRepository
 import com.lift.bro.di.setRepository
+import com.lift.bro.di.variationRepository
+import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
@@ -33,7 +33,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
-
 
 @Serializable
 data class WorkoutCalendarState(
@@ -82,8 +81,7 @@ private fun navigationSideEffects(
     }
 }
 
-private fun dataSideEffects(
-): List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> {
+private fun dataSideEffects(): List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> {
     return listOf { state, event ->
         when (event) {
             is WorkoutCalendarEvent.AddWorkoutClicked -> {}
@@ -191,11 +189,11 @@ fun FetchVariationSetsForRange(
 }
 
 sealed interface WorkoutCalendarEvent {
-    data class AddWorkoutClicked(val onDate: LocalDate): WorkoutCalendarEvent
-    data class WorkoutClicked(val workout: Workout): WorkoutCalendarEvent
+    data class AddWorkoutClicked(val onDate: LocalDate) : WorkoutCalendarEvent
+    data class WorkoutClicked(val workout: Workout) : WorkoutCalendarEvent
 
-    data class DateSelected(val date: LocalDate): WorkoutCalendarEvent
-    data class AddToWorkout(val date: LocalDate, val variation: Variation): WorkoutCalendarEvent
+    data class DateSelected(val date: LocalDate) : WorkoutCalendarEvent
+    data class AddToWorkout(val date: LocalDate, val variation: Variation) : WorkoutCalendarEvent
 }
 
 val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> =
@@ -204,7 +202,6 @@ val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> 
             is WorkoutCalendarEvent.AddWorkoutClicked -> state
 
             is WorkoutCalendarEvent.WorkoutClicked -> state
-
 
             is WorkoutCalendarEvent.AddToWorkout -> state
             is WorkoutCalendarEvent.DateSelected -> {

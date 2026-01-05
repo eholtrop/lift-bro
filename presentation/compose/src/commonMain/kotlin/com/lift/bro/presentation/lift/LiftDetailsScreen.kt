@@ -56,7 +56,6 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.estimateMax
-import com.lift.bro.utils.fullName
 import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
@@ -73,6 +72,7 @@ import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.decimalFormat
+import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
@@ -126,7 +126,6 @@ fun LiftDetailsScreen(
                 ).padding(MaterialTheme.spacing.one),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Text(
                     text = stringResource(Res.string.color_picker_dialog_title),
                     style = MaterialTheme.typography.titleLarge
@@ -217,7 +216,6 @@ fun LiftDetailsScreen(
                 }
 
                 Space(MaterialTheme.spacing.one)
-
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -336,9 +334,13 @@ fun LiftDetailsScreen(
                         }
                     ) {
                         Text(
-                            text = if (yValue.value == LiftCardYValue.Weight) LocalUnitOfMeasure.current.value else stringResource(
-                                Res.string.reps
-                            )
+                            text = if (yValue.value == LiftCardYValue.Weight) {
+                                LocalUnitOfMeasure.current.value
+                            } else {
+                                stringResource(
+                                    Res.string.reps
+                                )
+                            }
                         )
                     }
                 }
@@ -379,7 +381,6 @@ fun LiftDetailsScreen(
         }
     }
 }
-
 
 @Composable
 private fun VariationCard(
@@ -454,7 +455,6 @@ private fun VariationCard(
                     }
 
                     Space(MaterialTheme.spacing.one)
-
                 }
 
                 Space(MaterialTheme.spacing.one)
@@ -464,7 +464,6 @@ private fun VariationCard(
 
             val setPoints = sets.groupBy { it.date.toLocalDate() }.toList()
                 .sortedByDescending { it.first }
-
 
             if (setPoints.isNotEmpty()) {
                 var selectedData: LocalDate? by remember {
@@ -499,8 +498,12 @@ private fun VariationCard(
                             style = MaterialTheme.typography.titleSmall,
                             color = if (selectedData?.toEpochDays()
                                     ?.toLong() == epochDays
-                            ) variation.lift?.color?.toColor()
-                                ?: MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                            ) {
+                                variation.lift?.color?.toColor()
+                                    ?: MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            }
                         )
                     },
                     yAxis = { fl: Float, fl1: Float -> },
@@ -523,7 +526,6 @@ private fun VariationCard(
                     Column(
                         modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one)
                     ) {
-
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(MaterialTheme.typography.titleMedium.toSpanStyle()) {
@@ -577,7 +579,6 @@ private fun VariationCard(
                         }
                 }
             }
-
         }
     }
 }

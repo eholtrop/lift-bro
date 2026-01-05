@@ -1,7 +1,6 @@
 package com.lift.bro.presentation.server
 
 import android.util.Log
-import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.server.LiftBroServer
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*

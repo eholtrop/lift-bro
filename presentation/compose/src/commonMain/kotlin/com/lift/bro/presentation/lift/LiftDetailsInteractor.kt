@@ -34,15 +34,15 @@ data class VariationCardState(
 )
 
 sealed interface LiftDetailsEvent {
-    data class LiftColorChanged(val color: ULong): LiftDetailsEvent
-    data class VariationClicked(val variation: Variation): LiftDetailsEvent
-    data class SetClicked(val lbSet: LBSet): LiftDetailsEvent
+    data class LiftColorChanged(val color: ULong) : LiftDetailsEvent
+    data class VariationClicked(val variation: Variation) : LiftDetailsEvent
+    data class SetClicked(val lbSet: LBSet) : LiftDetailsEvent
 
-    data class ToggleFavourite(val variation: Variation): LiftDetailsEvent
+    data class ToggleFavourite(val variation: Variation) : LiftDetailsEvent
 
-    data object AddSetClicked: LiftDetailsEvent
+    data object AddSetClicked : LiftDetailsEvent
 
-    data object EditLiftClicked: LiftDetailsEvent
+    data object EditLiftClicked : LiftDetailsEvent
 }
 
 @Composable

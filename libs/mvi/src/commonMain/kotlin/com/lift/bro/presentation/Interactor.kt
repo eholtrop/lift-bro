@@ -147,7 +147,7 @@ inline fun <reified State, Event> rememberInteractor(
 ): Interactor<State, Event> {
     return rememberSaveable(
         initialState,
-        saver = object: Saver<Interactor<State, Event>, String> {
+        saver = object : Saver<Interactor<State, Event>, String> {
 
             override fun SaverScope.save(value: Interactor<State, Event>): String? {
                 return Json.encodeToString(value.state.value)

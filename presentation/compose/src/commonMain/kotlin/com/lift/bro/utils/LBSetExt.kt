@@ -8,7 +8,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.UOM
-import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
@@ -53,4 +52,3 @@ internal fun LBSet.prettyPrintSet(
         }
     }
 }
-

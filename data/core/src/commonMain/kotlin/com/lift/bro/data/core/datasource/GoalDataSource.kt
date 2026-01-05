@@ -14,5 +14,4 @@ interface GoalDataSource {
     suspend fun save(goal: Goal)
 
     suspend fun delete(goal: Goal)
-
 }

@@ -14,15 +14,13 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class WorkoutMonthState(
     val year: Int,
     val month: Month,
     val colors: Map<LocalDate, List<ULong?>> = emptyMap(),
     val logs: Map<LocalDate, LiftingLog> = emptyMap(),
-) {
-}
+)
 
 @Serializable
 sealed class WorkoutMonthEvent
@@ -62,13 +60,19 @@ fun rememberWorkoutMonthInteractor(
                 colors = (1..month.daysIn).map {
                     LocalDate(year, month, it)
                 }.associateWith { date ->
-                    (workoutMap[date]?.exercises
-                        ?: emptyList()).map { it.variationSets.map { it.variation.lift?.color } }
+                    (
+                        workoutMap[date]?.exercises
+                            ?: emptyList()
+                        ).map { it.variationSets.map { it.variation.lift?.color } }
                         .flatten() +
-                            unallocatedSets
-                                .filter { it.second.any { it.date.toLocalDate() == date } }
-                                .filter { vs -> (workoutMap[date]?.exercises ?: emptyList()).none { it.variationSets.any { it.variation.id == vs.first.id } } }
-                                .map { it.first.lift?.color }
+                        unallocatedSets
+                            .filter { it.second.any { it.date.toLocalDate() == date } }
+                            .filter { vs ->
+                                (workoutMap[date]?.exercises ?: emptyList()).none {
+                                    it.variationSets.any { it.variation.id == vs.first.id }
+                                }
+                            }
+                            .map { it.first.lift?.color }
                 },
                 logs = logs.map {
                     LiftingLog(

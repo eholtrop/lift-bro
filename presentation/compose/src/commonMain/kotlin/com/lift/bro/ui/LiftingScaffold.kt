@@ -54,7 +54,6 @@ fun LiftingScaffold(
             contentDescription = stringResource(Res.string.toolbar_back_button_content_description),
             onClick = { navCoordinator.onBackPressed() },
         )
-
     },
     trailingContent: @Composable () -> Unit = {},
     topAppBarScrollBehavior: TopAppBarScrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(),

@@ -12,7 +12,6 @@ import com.lift.bro.domain.repositories.ISettingsRepository
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 
-
 actual class DependencyContainer {
 
     companion object {
@@ -44,7 +43,6 @@ actual class DependencyContainer {
                 Uri.parse("https://play.google.com/store/account/subscriptions?sku=pro&package=com.lift.bro")
             )
         )
-
     }
 }
 

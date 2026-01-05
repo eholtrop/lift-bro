@@ -2,10 +2,7 @@ package com.lift.bro.presentation.home
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Easing
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -40,8 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.lift.bro.config.BuildConfig
-import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
@@ -52,13 +47,8 @@ import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
-import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.today
 import kotlinx.coroutines.delay
-import kotlinx.datetime.DateTimePeriod
-import kotlinx.datetime.Month
 import kotlinx.datetime.minus
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
@@ -70,7 +60,6 @@ import lift_bro.core.generated.resources.ic_calendar
 import lift_bro.core.generated.resources.view_dashboard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +80,6 @@ fun HomeScreen(
                 },
                 title = {
                     Column {
-
                         var showWrapped by remember { mutableStateOf(false) }
 
                         if (showWrapped) {
@@ -157,7 +145,9 @@ fun HomeScreen(
                 trailingContent = {
                     TopBarIconButton(
                         imageVector = Icons.Default.Settings,
-                        contentDescription = stringResource(Res.string.dashboard_toolbar_leading_button_content_description)
+                        contentDescription = stringResource(
+                            Res.string.dashboard_toolbar_leading_button_content_description
+                        )
                     ) {
                         interactor(HomeEvent.SettingsClicked)
                     }
@@ -182,7 +172,9 @@ fun HomeScreen(
                             Column {
                                 Icon(
                                     painter = painterResource(Res.drawable.view_dashboard),
-                                    contentDescription = stringResource(Res.string.dashboard_footer_leading_button_content_description),
+                                    contentDescription = stringResource(
+                                        Res.string.dashboard_footer_leading_button_content_description
+                                    ),
                                 )
 
                                 AnimatedVisibility(currentState.selectedTab == Tab.Dashboard) {
@@ -215,11 +207,12 @@ fun HomeScreen(
                                 bottomEndPercent = 50,
                             )
                         ) {
-                            Column(
-                            ) {
+                            Column {
                                 Icon(
                                     painter = painterResource(Res.drawable.ic_calendar),
-                                    contentDescription = stringResource(Res.string.dashboard_footer_trailing_button_content_description),
+                                    contentDescription = stringResource(
+                                        Res.string.dashboard_footer_trailing_button_content_description
+                                    ),
                                 )
 
                                 AnimatedVisibility(currentState.selectedTab == Tab.WorkoutCalendar) {

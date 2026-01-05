@@ -51,8 +51,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.utils.fullName
-import com.lift.bro.utils.maxText
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
@@ -60,6 +58,8 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.fullName
+import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
@@ -269,7 +269,6 @@ private fun VariationDetailsScreen(
                 Grouping.Weight -> sets.groupBy { it.weight }.toList()
                     .sortedByDescending { it.first }.map { Pair("${it.first}", it.second) }
             }
-
 
             items(items) { entry ->
                 Card {

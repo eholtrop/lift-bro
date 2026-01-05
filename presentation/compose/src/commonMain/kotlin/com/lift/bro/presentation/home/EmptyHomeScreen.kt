@@ -71,8 +71,6 @@ fun EmptyHomeScreen(
     addLiftClicked: () -> Unit,
     loadDefaultLifts: () -> Unit
 ) {
-
-
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,

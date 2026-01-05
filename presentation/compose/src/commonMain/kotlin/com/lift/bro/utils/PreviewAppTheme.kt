@@ -22,7 +22,9 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 @Composable
 internal fun PreviewAppTheme(
     isDarkMode: Boolean,
-    content: @Composable() () -> Unit
+    content:
+    @Composable()
+    () -> Unit
 ) {
     val calculatorVisibility = remember { mutableStateOf(false) }
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
@@ -42,8 +44,7 @@ internal fun PreviewAppTheme(
     }
 }
 
-class DarkModeProvider: PreviewParameterProvider<Boolean> {
+class DarkModeProvider : PreviewParameterProvider<Boolean> {
     override val values: Sequence<Boolean>
         get() = sequenceOf(true, false)
-
 }

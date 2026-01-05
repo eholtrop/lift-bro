@@ -9,10 +9,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sentry)
-
-    id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
-
 
 compose.resources {
     packageOfResClass = "lift_bro.core.generated.resources"

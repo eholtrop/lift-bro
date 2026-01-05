@@ -9,9 +9,12 @@ import kotlinx.coroutines.flow.Flow
 
 class KtorExerciseDataSource(
     private val httpClient: HttpClient,
-): ExerciseDataSource {
+) : ExerciseDataSource {
 
-    override fun get(workoutId: String): Flow<List<Exercise>> = createConnectionFlow(httpClient, "api/ws/exercises?workoutId=$workoutId")
+    override fun get(workoutId: String): Flow<List<Exercise>> = createConnectionFlow(
+        httpClient,
+        "api/ws/exercises?workoutId=$workoutId"
+    )
 
     override suspend fun save(exercise: Exercise) {
         TODO("Not yet implemented")
@@ -36,5 +39,4 @@ class KtorExerciseDataSource(
     override suspend fun addExercise(workoutId: String, exerciseId: String) {
         TODO("Not yet implemented")
     }
-
 }

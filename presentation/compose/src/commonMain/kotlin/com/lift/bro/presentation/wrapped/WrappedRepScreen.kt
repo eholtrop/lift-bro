@@ -161,7 +161,11 @@ fun WrappedRepScreen(
                     Spacer(modifier = Modifier.height(MaterialTheme.spacing.half))
                     FadeInText(
                         delay = FadeInDelayPerIndex * 5,
-                        text = stringResource(Res.string.wrapped_reps_most_reps_lift, state.mostRepsLift.second.format(), state.mostRepsLift.first),
+                        text = stringResource(
+                            Res.string.wrapped_reps_most_reps_lift,
+                            state.mostRepsLift.second.format(),
+                            state.mostRepsLift.first
+                        ),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }

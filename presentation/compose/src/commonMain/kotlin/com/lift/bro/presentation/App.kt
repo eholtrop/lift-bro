@@ -84,7 +84,6 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
 
-
 val LocalLiftBro = compositionLocalOf<LiftBro> {
     error("LiftBro was not set")
 }
@@ -174,7 +173,6 @@ fun App(
     modifier: Modifier = Modifier,
     navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding),
 ) {
-
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null
     val server = LocalServer.current
@@ -243,7 +241,6 @@ fun App(
             }
         }
 
-
         val context = LocalPlatformContext.current
         LaunchedEffect("initialize_sentry") {
             // keep sentry until we know firebase is working
@@ -266,7 +263,6 @@ fun App(
             Box(
                 modifier = modifier,
             ) {
-
                 if (navCoordinator.currentPage != Destination.Onboarding) {
                     CheckAppConsent()
                 }
@@ -280,7 +276,6 @@ fun App(
                         AppRouter(route)
                     }
                 }
-
 
                 val options = remember {
                     PaywallOptions(dismissRequest = { showPaywall.value = false }) {

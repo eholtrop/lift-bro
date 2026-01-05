@@ -6,20 +6,21 @@ import comliftbrodb.GoalQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import comliftbrodb.Goal as GoalEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
+import comliftbrodb.Goal as GoalEntity
 
 class SqlDelightGoalDataSource(
     val goalQueries: GoalQueries,
     val dispatcher: CoroutineDispatcher = Dispatchers.IO
-): GoalDataSource {
+) : GoalDataSource {
 
     override fun get(id: String): Flow<Goal?> = goalQueries.get(id).asFlowOneOrNull().map { it?.toDomain() }
 
-
-    override fun getAll(limit: Long): Flow<List<Goal>> = goalQueries.getAll(limit).asFlowList(dispatcher).map { it.map { it.toDomain() } }
+    override fun getAll(limit: Long): Flow<List<Goal>> = goalQueries.getAll(limit).asFlowList(dispatcher).map {
+        it.map { it.toDomain() }
+    }
 
     override suspend fun save(goal: Goal) {
         goalQueries.save(

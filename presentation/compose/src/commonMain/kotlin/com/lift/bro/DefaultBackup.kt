@@ -68,7 +68,6 @@ private val debugVariations = listOf(
     ),
 )
 
-
 val defaultSbdLifts = Backup(
     lifts = defaultSBDLifts,
     variations = debugVariations,

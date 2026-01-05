@@ -42,7 +42,6 @@ fun WarmupFinisherRow(
     finisher: String?,
     eventHandler: (CreateWorkoutEvent) -> Unit,
 ) {
-
     Row(
         modifier = Modifier.fillMaxWidth()
             .padding(horizontal = MaterialTheme.spacing.one)

@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.sqldelight)
-
-    id("io.gitlab.arturbosch.detekt") version ("1.23.8")
 }
 
 sqldelight {

@@ -44,31 +44,25 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.lift.transparentColors
-import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.horizontal_padding.padding
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.delay
-import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.*
+import lift_bro.core.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
-
 
 @Composable
 fun WrappedGoalsScreen(
     interactor: Interactor<WrappedGoalsState, WrappedGoalsEvent>,
 ) {
     val state by interactor.state.collectAsState()
-
-
 
     WrappedGoalsScreen(
         state = state,
