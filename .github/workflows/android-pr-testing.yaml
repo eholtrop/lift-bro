@@ -41,8 +41,8 @@ jobs:
                     name: "key.json"
                     json: ${{ secrets.FASTLANE_JSON }}
 
-            - name: Lint & Test
-              run: |
-                  bundle install
-                  bundle exec fastlane lint
-                  bundle exec fastlane test
+            - name: Lint
+              run: bundle exec fastlane lint
+              
+            - name: Test
+              run: bundle exec fastlane test
