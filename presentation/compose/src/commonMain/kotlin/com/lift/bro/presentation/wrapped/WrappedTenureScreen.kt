@@ -51,22 +51,23 @@ data class WrappedTenureState(
 class GetUserTenureUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,
 ) {
-    operator fun invoke(): Flow<Int> = setRepository.listenAll(
+    operator fun invoke(year: Int): Flow<Int> = setRepository.listenAll(
         order = Order.Ascending,
         sorting = Sorting.date,
         limit = 1
     ).map {
-        today.year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: today.year)
+        year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: year)
     }
 }
 
 @Composable
 fun rememberWrappedTenureInteractor(
+    year: Int = LocalWrappedYear.current,
     getUserTenureUseCase: GetUserTenureUseCase = GetUserTenureUseCase(),
 ) = rememberInteractor<WrappedTenureState?, Nothing>(
     initialState = null,
     source = {
-        getUserTenureUseCase()
+        getUserTenureUseCase(year)
             .map { WrappedTenureState(it) }
     }
 )

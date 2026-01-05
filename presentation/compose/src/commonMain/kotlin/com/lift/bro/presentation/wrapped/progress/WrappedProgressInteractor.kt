@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
 import com.lift.bro.utils.fullName
@@ -39,7 +40,7 @@ sealed class WrappedProgressItemState {
 
 @Composable
 fun rememberWrappedProgressInteractor(
-    year: Int = 2025,
+    year: Int = LocalWrappedYear.current,
     getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(),
 ) = rememberInteractor<WrappedProgressState, Nothing>(
     initialState = WrappedProgressState(

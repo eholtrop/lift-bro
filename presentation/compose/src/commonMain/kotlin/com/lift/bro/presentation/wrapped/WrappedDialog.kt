@@ -18,6 +18,7 @@ fun WrappedDialog(
         onDismissRequest = onDismissRequest
     ) {
         WrappedLandingScreen(
+            year = year,
             onClosePressed = onDismissRequest
         )
     }

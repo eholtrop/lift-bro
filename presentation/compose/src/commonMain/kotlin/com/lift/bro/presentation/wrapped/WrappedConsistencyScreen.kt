@@ -66,6 +66,7 @@ data class WrappedConsistencyState(
 
 @Composable
 fun rememberWrappedConsistencyInteractor(
+    year: Int = LocalWrappedYear.current,
     getVariationConsistencyUseCase: GetVariationConsistencyUseCase = GetVariationConsistencyUseCase(),
     getMostConsistentMonthUseCase: GetMostConsistentMonthUseCase = GetMostConsistentMonthUseCase(),
     getMostConsistentDayUseCase: GetMostConsistentDayUseCase = GetMostConsistentDayUseCase(),
@@ -73,13 +74,14 @@ fun rememberWrappedConsistencyInteractor(
 ) = rememberInteractor<WrappedConsistencyState?, Nothing>(
     initialState = null,
     source = {
+        val startDate = LocalDate(year, 1, 1)
+        val endDate = LocalDate(year, 12, 31)
         combine(
-            getVariationConsistencyUseCase(),
-            getMostConsistentMonthUseCase(),
-            getMostConsistentDayUseCase(),
-            getMostConsistentVariationUseCase(),
+            getVariationConsistencyUseCase(startDate = startDate, endDate = endDate),
+            getMostConsistentMonthUseCase(startDate = startDate, endDate = endDate),
+            getMostConsistentDayUseCase(startDate = startDate, endDate = endDate),
+            getMostConsistentVariationUseCase(startDate = startDate, endDate = endDate),
         ) { dates, month, day, variation ->
-
             WrappedConsistencyState(
                 dates = dates.keys,
                 mostConsistentMonth = month,

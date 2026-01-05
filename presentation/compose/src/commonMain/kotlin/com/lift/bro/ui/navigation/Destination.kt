@@ -51,5 +51,5 @@ sealed interface Destination {
     data object Settings : Destination
 
     @Serializable
-    data object Wrapped : Destination
+    data class Wrapped(val year: Int) : Destination
 }

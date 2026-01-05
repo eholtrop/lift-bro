@@ -8,6 +8,7 @@ import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
@@ -25,6 +26,7 @@ sealed interface WrappedGoalsEvent {
 
 @Composable
 fun rememberWrappedGoalsInteractor(
+    year: Int = LocalWrappedYear.current,
     goalsRepository: IGoalRepository = dependencies.goalsRepository,
 ): Interactor<WrappedGoalsState, WrappedGoalsEvent> = rememberInteractor(
     initialState = WrappedGoalsState(goals = listOf(Goal(name = ""))),

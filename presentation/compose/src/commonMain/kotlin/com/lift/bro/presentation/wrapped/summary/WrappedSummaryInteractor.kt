@@ -6,6 +6,7 @@ import com.lift.bro.domain.models.Goal
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.wrapped.HeavyThing
+import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import com.lift.bro.presentation.wrapped.heavyThings
 import com.lift.bro.presentation.wrapped.usecase.GetGoalsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetTotalRepsUseCase
@@ -21,7 +22,7 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun rememberWrappedSummaryInteractor(
-    year: Int = 2025,
+    year: Int = LocalWrappedYear.current,
     // Weight use cases
     getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(),
     getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase =
@@ -64,8 +65,8 @@ fun rememberWrappedSummaryInteractor(
                 },
                 reps = WrappedSummaryRepsState(
                     totalReps = totalReps.toInt(),
-                    variationReps = variationReps?.second?.toInt() ?: 0,
-                    variationName = variationReps?.first?.fullName ?: "",
+                    variationReps = variationReps.second.toInt(),
+                    variationName = variationReps.first.fullName,
                     repsPerDay = (totalReps / (if (year % 4 == 0) 366 else 365)).toInt()
 
                 ),

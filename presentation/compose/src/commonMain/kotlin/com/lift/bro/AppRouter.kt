@@ -28,9 +28,10 @@ fun AppRouter(route: Destination) {
         is Destination.Unknown -> {}
 
         is Destination.Wrapped -> WrappedLandingScreen(
+            year = route.year,
             onClosePressed = {
                 navCoordinator.onBackPressed(keepStack = false)
-            }
+            },
         )
 
         is Destination.Onboarding -> OnboardingScreen()

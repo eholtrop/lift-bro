@@ -24,13 +24,14 @@ val heavyThings = listOf(
 )
 
 @Composable
-fun rememberWrappedInteractor(): Interactor<WrappedState, WrappedEvents> {
+fun rememberWrappedInteractor(year: Int): Interactor<WrappedState, WrappedEvents> {
     return rememberInteractor(
-        initialState = WrappedState(),
+        initialState = WrappedState(year),
         source = {
             flow {
                 emit(
                     WrappedState(
+                        year = year,
                         pages = listOf(
                             WrappedPageState.Tenure,
                             WrappedPageState.Weight,
