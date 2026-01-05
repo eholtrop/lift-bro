@@ -25,9 +25,11 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +37,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -308,6 +311,7 @@ fun CalendarMonth(
                         date = currentDay,
                         style = when {
                             selection == currentDay -> CalendarDateStyle.Selected
+                            today == currentDay -> CalendarDateStyle.Today
                             currentDay.month == month -> CalendarDateStyle.Enabled
                             else -> CalendarDateStyle.Disabled
                         },
@@ -321,7 +325,7 @@ fun CalendarMonth(
 }
 
 enum class CalendarDateStyle {
-    Enabled, Disabled, Selected
+    Enabled, Disabled, Selected, Today,
 }
 
 @Composable
@@ -333,22 +337,29 @@ fun CalendarDate(
     decorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
 ) {
     val backgroundColor = when (style) {
-        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.secondary
+        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.tertiary
         CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.surface
         CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.surfaceDim
+        CalendarDateStyle.Today -> MaterialTheme.colorScheme.secondary
     }
 
     val contentColor = when (style) {
-        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.onSecondary
+        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.onTertiary
         CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.onSurface
         CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.onSurface
+        CalendarDateStyle.Today -> MaterialTheme.colorScheme.onSecondary
     }
 
     Column(
         modifier = modifier
             .clip(MaterialTheme.shapes.small)
             .background(
-                color = backgroundColor,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        backgroundColor,
+                        Color.Transparent,
+                    )
+                ),
                 shape = MaterialTheme.shapes.small,
             )
             .clickable {
@@ -357,12 +368,15 @@ fun CalendarDate(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        decorations(date) {
-            Text(
-                text = date.dayOfMonth.toString(),
-                color = contentColor,
-                style = MaterialTheme.typography.bodyMedium
-            )
+        CompositionLocalProvider(
+            LocalContentColor provides contentColor
+        ) {
+            decorations(date) {
+                Text(
+                    text = date.dayOfMonth.toString(),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }

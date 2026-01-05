@@ -30,6 +30,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -72,9 +73,9 @@ import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.rememberCalendarState
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.today
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.fullName
-import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
@@ -98,8 +99,20 @@ fun WorkoutCalendarContent(
     interactor: Interactor<WorkoutCalendarState, WorkoutCalendarEvent> = rememberWorkoutCalendarInteractor(),
 ) {
     val state by interactor.state.collectAsState()
-    val subscriptionType by LocalSubscriptionStatusProvider.current
 
+    WorkoutCalendarContent(
+        modifier = modifier,
+        state = state,
+        onEvent = { interactor(it) }
+    )
+}
+
+@Composable
+fun WorkoutCalendarContent(
+    modifier: Modifier = Modifier,
+    state: WorkoutCalendarState,
+    onEvent: (WorkoutCalendarEvent) -> Unit = {},
+) {
     val calendarState = rememberCalendarState()
 
     LazyColumn(
@@ -115,7 +128,7 @@ fun WorkoutCalendarContent(
                 selectedDate = state.selectedDate,
                 contentPadding = PaddingValues(0.dp),
                 dateSelected = {
-                    interactor(
+                    onEvent(
                         WorkoutCalendarEvent.DateSelected(it)
                     )
                 },
@@ -127,7 +140,7 @@ fun WorkoutCalendarContent(
                     month,
                     selectedDate = state.selectedDate,
                     dateSelected = {
-                        interactor(
+                        onEvent(
                             WorkoutCalendarEvent.DateSelected(it)
                         )
                     }
@@ -582,7 +595,6 @@ fun WorkoutCalendarMonth(
                             )
                             .size(8.dp).align(Alignment.TopStart),
                         imageVector = Icons.Default.Edit,
-                        tint = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
                         contentDescription = null
                     )
                 }
@@ -598,11 +610,11 @@ fun WorkoutCalendarMonth(
                         monthState.colors[date]?.forEachIndexed { index, color ->
                             Box(
                                 modifier = Modifier.background(
-                                    color = if (date == selectedDate) {
-                                        MaterialTheme.colorScheme.onPrimary
+                                    color = if (date == selectedDate || date == today) {
+                                        LocalContentColor.current
                                     } else {
                                         color?.toColor()
-                                            ?: MaterialTheme.colorScheme.primary
+                                            ?: LocalContentColor.current
                                     },
                                     shape = CircleShape,
                                 ).size(4.dp)
