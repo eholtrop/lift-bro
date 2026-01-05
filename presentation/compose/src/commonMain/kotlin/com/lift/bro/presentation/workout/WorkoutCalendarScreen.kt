@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,6 +47,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
@@ -62,7 +65,6 @@ import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Calendar
@@ -177,11 +179,11 @@ data class DailyWorkoutDetailsState(
 )
 
 sealed interface DailyWorkoutDetailsEvent {
-    data object CreateWorkoutClicked : DailyWorkoutDetailsEvent
-    data class OpenWorkoutClicked(val exerciseId: ExerciseId?, val variationId: VariationId?) :
+    data object CreateWorkoutClicked: DailyWorkoutDetailsEvent
+    data class OpenWorkoutClicked(val exerciseId: ExerciseId?, val variationId: VariationId?):
         DailyWorkoutDetailsEvent
 
-    data class AddToWorkout(val variationId: VariationId) : DailyWorkoutDetailsEvent
+    data class AddToWorkout(val variationId: VariationId): DailyWorkoutDetailsEvent
 }
 
 @Composable
@@ -476,14 +478,17 @@ fun CalendarWorkoutCard(
                         color = MaterialTheme.colorScheme.outline,
                         shape = MaterialTheme.shapes.small,
                     )
-                        .padding(MaterialTheme.spacing.half)
+                        .clip(MaterialTheme.shapes.small)
                 ) {
-                    exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
-                        VariationSet(
-                            index = if (exercise.variationSets.size > 1) index else null,
-                            variation = variation,
-                            sets = sets
-                        )
+                    Row {
+                        exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
+                            VariationSet(
+                                modifier = Modifier.weight(1f),
+                                index = if (exercise.variationSets.size > 1) index else null,
+                                variation = variation,
+                                sets = sets
+                            )
+                        }
                     }
                 }
             }
@@ -498,8 +503,29 @@ fun VariationSet(
     index: Int? = null,
     sets: List<LBSet>,
 ) {
+    var width by remember { mutableStateOf(0f) }
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        variation.lift?.color?.toColor() ?: Color.Transparent,
+                        Color.Transparent,
+                    ),
+                    start = when (index) {
+                        0 -> Offset.Zero
+                        else -> Offset(Float.POSITIVE_INFINITY, 0f)
+                    },
+                    end = when (index) {
+                        0 -> Offset(50f, 50f)
+                        else -> Offset(width - 50f, 50f)
+                    }
+                )
+            )
+            .graphicsLayer {
+                width = this.size.width
+            }
+            .padding(MaterialTheme.spacing.half),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(
@@ -553,15 +579,6 @@ fun VariationSet(
                 }
             }
         }
-
-        Box(
-            modifier = Modifier.background(
-                color = variation.lift?.color?.toColor()
-                    ?: MaterialTheme.colorScheme.primary,
-                shape = CircleShape,
-            ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
-            content = {}
-        )
     }
 }
 
