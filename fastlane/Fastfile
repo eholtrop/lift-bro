@@ -75,7 +75,7 @@ end
 
     desc "Run the project Linter"
     lane :lint do
-       gradle(task: "detekt --continue")
+       gradle(task: "detekt", flags: "--continue")
     end
 
     desc "Deploy a new version to the Google Play"

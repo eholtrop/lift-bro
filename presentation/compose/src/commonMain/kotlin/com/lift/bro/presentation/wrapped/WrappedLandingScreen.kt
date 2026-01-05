@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -55,15 +56,20 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
+internal val LocalWrappedYear = compositionLocalOf<Int> {
+    error("WrappedYear was not set")
+}
+
 @Composable
 @Preview
 fun WrappedLandingScreenPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
     PreviewAppTheme(darkMode) {
         WrappedLandingScreen(
             state = WrappedState(
+                year = 2025,
                 listOf(
                     WrappedPageState.Tenure
-                )
+                ),
             ),
             onClosePressed = {}
         )
@@ -72,6 +78,7 @@ fun WrappedLandingScreenPreview(@PreviewParameter(DarkModeProvider::class) darkM
 
 @Serializable
 data class WrappedState(
+    val year: Int,
     val pages: List<WrappedPageState> = emptyList(),
 )
 
@@ -110,7 +117,8 @@ sealed class WrappedEvents()
 
 @Composable
 fun WrappedLandingScreen(
-    interactor: Interactor<WrappedState, WrappedEvents> = rememberWrappedInteractor(),
+    year: Int,
+    interactor: Interactor<WrappedState, WrappedEvents> = rememberWrappedInteractor(year),
     onClosePressed: () -> Unit,
 ) {
     val state by interactor.state.collectAsState()
@@ -211,7 +219,8 @@ fun WrappedLandingScreen(
             beyondViewportPageCount = 1
         ) { page ->
             CompositionLocalProvider(
-                LocalContentColor provides MaterialTheme.colorScheme.onBackground
+                LocalContentColor provides MaterialTheme.colorScheme.onBackground,
+                LocalWrappedYear provides state.year
             ) {
                 when (val page = state.pages[page]) {
                     is WrappedPageState.Reps -> WrappedRepScreen()

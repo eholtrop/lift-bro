@@ -30,7 +30,6 @@ import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.today
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.Flow
@@ -42,6 +41,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Serializable
 data class WrappedTenureState(
+    val year: Int,
     val tenure: Int,
 )
 
@@ -51,23 +51,24 @@ data class WrappedTenureState(
 class GetUserTenureUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,
 ) {
-    operator fun invoke(): Flow<Int> = setRepository.listenAll(
+    operator fun invoke(year: Int): Flow<Int> = setRepository.listenAll(
         order = Order.Ascending,
         sorting = Sorting.date,
         limit = 1
     ).map {
-        today.year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: today.year)
+        year - (it.minOfOrNull { it.date.toLocalDate() }?.year ?: year)
     }
 }
 
 @Composable
 fun rememberWrappedTenureInteractor(
+    year: Int = LocalWrappedYear.current,
     getUserTenureUseCase: GetUserTenureUseCase = GetUserTenureUseCase(),
 ) = rememberInteractor<WrappedTenureState?, Nothing>(
     initialState = null,
     source = {
-        getUserTenureUseCase()
-            .map { WrappedTenureState(it) }
+        getUserTenureUseCase(year)
+            .map { WrappedTenureState(year, it) }
     }
 )
 
@@ -109,10 +110,10 @@ fun WrappedTenureScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                if (state.tenure == 1) {
+                if (state.tenure == 0) {
                     FadeInText(
                         delay = 100L,
-                        text = stringResource(Res.string.wrapped_tenure_first_year_title),
+                        text = stringResource(Res.string.wrapped_tenure_first_year_title, state.year),
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Space(MaterialTheme.spacing.one)

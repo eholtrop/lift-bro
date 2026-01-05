@@ -43,6 +43,7 @@ data class WrappedWeightState(
 
 @Composable
 fun rememberWrappedWeightInteractor(
+    year: Int = LocalWrappedYear.current,
     getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(),
     getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase =
         GetVariationWithMostWeightMovedUseCase(),
@@ -51,12 +52,12 @@ fun rememberWrappedWeightInteractor(
     source = {
         combine(
             getTotalWeightMovedUseCase(
-                startDate = LocalDate(2025, 1, 1),
-                endDate = LocalDate(2025, 12, 31)
+                startDate = LocalDate(year, 1, 1),
+                endDate = LocalDate(year, 12, 31)
             ),
             getVariationWithMostWeightMovedUseCase(
-                startDate = LocalDate(2025, 1, 1),
-                endDate = LocalDate(2025, 12, 31)
+                startDate = LocalDate(year, 1, 1),
+                endDate = LocalDate(year, 12, 31)
             )
         ) { twm, varTwm ->
             WrappedWeightState(

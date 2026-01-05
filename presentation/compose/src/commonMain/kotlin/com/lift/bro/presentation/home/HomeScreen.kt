@@ -37,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.lift.bro.config.BuildConfig
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
@@ -48,7 +49,9 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.today
 import kotlinx.coroutines.delay
+import kotlinx.datetime.Month
 import kotlinx.datetime.minus
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
@@ -84,7 +87,7 @@ fun HomeScreen(
 
                         if (showWrapped) {
                             WrappedDialog(
-                                year = 2025,
+                                year = today.year - 1,
                                 onDismissRequest = { showWrapped = false }
                             )
                         }
@@ -100,43 +103,42 @@ fun HomeScreen(
                             )
                             Text(stringResource(Res.string.dashboard_title))
 
-//                          if (today.month == Month.JANUARY || BuildConfig.isDebug) {
+                            if (today.month == Month.JANUARY || BuildConfig.isDebug) {
+                                var visible by rememberSaveable { mutableStateOf(false) }
 
-                            var visible by rememberSaveable { mutableStateOf(false) }
+                                Space(MaterialTheme.spacing.half)
 
-                            Space(MaterialTheme.spacing.half)
-
-                            AnimatedVisibility(
-                                visible = visible,
-                                enter = fadeIn(
-                                    animationSpec = tween(
-                                        delayMillis = 500,
-                                        durationMillis = 500,
-                                        easing = LinearOutSlowInEasing
-                                    )
-                                ),
-                                exit = fadeOut()
-                            ) {
-                                Button(
-                                    colors = ButtonDefaults.textButtonColors(),
-                                    contentPadding = PaddingValues(
-                                        horizontal = MaterialTheme.spacing.one,
-                                        vertical = MaterialTheme.spacing.quarter
+                                AnimatedVisibility(
+                                    visible = visible,
+                                    enter = fadeIn(
+                                        animationSpec = tween(
+                                            delayMillis = 500,
+                                            durationMillis = 500,
+                                            easing = LinearOutSlowInEasing
+                                        )
                                     ),
-                                    onClick = {
-                                        showWrapped = true
-                                    },
+                                    exit = fadeOut()
                                 ) {
-                                    Column {
-                                        Text("\uD83C\uDF89 \uD83C\uDF81")
+                                    Button(
+                                        colors = ButtonDefaults.textButtonColors(),
+                                        contentPadding = PaddingValues(
+                                            horizontal = MaterialTheme.spacing.one,
+                                            vertical = MaterialTheme.spacing.quarter
+                                        ),
+                                        onClick = {
+                                            showWrapped = true
+                                        },
+                                    ) {
+                                        Column {
+                                            Text("\uD83C\uDF89 \uD83C\uDF81")
+                                        }
                                     }
                                 }
+                                LaunchedEffect(Unit) {
+                                    delay(1000L)
+                                    visible = true
+                                }
                             }
-                            LaunchedEffect(Unit) {
-                                delay(1000L)
-                                visible = true
-                            }
-//                          }
                         }
                     }
                 },

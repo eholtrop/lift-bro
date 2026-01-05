@@ -48,7 +48,7 @@ data class WrappedRepState(
 
 @Composable
 fun rememberWrappedRepsInteractor(
-    year: Int = 2025,
+    year: Int = LocalWrappedYear.current,
     getTotalRepsUseCase: GetTotalRepsUseCase = GetTotalRepsUseCase(),
     getVariationWithMostRepsUseCase: GetVariationWithMostRepsUseCase = GetVariationWithMostRepsUseCase(),
     getWorkoutAverageUseCase: GetWorkoutAverageUseCase = GetWorkoutAverageUseCase(),
