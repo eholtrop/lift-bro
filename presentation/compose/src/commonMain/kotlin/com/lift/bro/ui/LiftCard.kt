@@ -32,6 +32,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -104,6 +106,15 @@ fun LiftCard(
     Card(
         modifier = modifier
             .aspectRatio(1f),
+        backgroundBrush = Brush.linearGradient(
+            colors = listOf(
+                lift.color?.toColor() ?: MaterialTheme.colorScheme.surface,
+                MaterialTheme.colorScheme.surface,
+            ),
+            end = Offset(
+                50f, 50f
+            )
+        ),
         onClick = { onClick(lift) }
     ) {
         Column(
