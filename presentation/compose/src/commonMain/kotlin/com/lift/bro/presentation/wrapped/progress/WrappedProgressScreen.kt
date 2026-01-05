@@ -33,17 +33,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathFillType
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.VariationId
-import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.domain.repositories.Order
-import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.ui.Space
@@ -53,14 +47,12 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import com.lift.bro.utils.percentageFormat
 import com.lift.bro.utils.toColor
+import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_progress_header_title
@@ -224,7 +216,9 @@ fun ProgressItemView(
                 if (state.variationId.isNotBlank()) {
                     VariationSetWrappedGraph(
                         modifier = Modifier.height(52.dp).fillMaxWidth().align(Alignment.BottomCenter),
-                        id = state.variationId
+                        id = state.variationId,
+                        contentColor = state.variationColor?.toColor() ?: MaterialTheme.colorScheme.primary,
+                        highlightDates = listOfNotNull(state.minWeight?.date, state.maxWeight?.date),
                     )
                 }
 
@@ -279,8 +273,10 @@ fun ProgressItemView(
 private fun VariationSetWrappedGraph(
     modifier: Modifier = Modifier,
     id: VariationId,
+    contentColor: Color = MaterialTheme.colorScheme.primary,
+    highlightDates: List<LocalDate>
 ) {
-    var sets by remember { mutableStateOf(emptyList<Pair<Instant, Double>>()) }
+    var sets by remember { mutableStateOf(emptyList<Pair<LocalDate, Double>>()) }
 
     LaunchedEffect(Unit) {
         if (id != "") {
@@ -289,7 +285,7 @@ private fun VariationSetWrappedGraph(
                 endDate = LocalDate(2025, 12, 31),
                 variationId = id,
             )
-                .map { it.groupBy { it.date }.map { (date, sets) -> date to sets.maxOf { it.weight } }.sortedBy { it.first } }
+                .map { it.groupBy { it.date.toLocalDate() }.map { (date, sets) -> date to sets.maxOf { it.weight } }.sortedBy { it.first } }
                 .collect {
                     sets = it
                 }
@@ -312,22 +308,22 @@ private fun VariationSetWrappedGraph(
         sets.forEachIndexed { index, set ->
             val y = height - ((set.second / maxSet).toFloat() * height)
             val previousSet = sets.getOrNull(index - 1)
+            x = if (index == 0) x else x + width
 
+            if (highlightDates.contains(set.first)) {
+                drawCircle(
+                    color = bubbleColor,
+                    radius = 5f,
+                    center = Offset(x, y)
+                )
+            }
             previousSet?.let {
                 val prevY = height - ((it.second / maxSet).toFloat() * height)
                 drawLine(
                     color = bubbleColor,
-                    start = Offset(x, prevY),
-                    end = Offset(x + width, y)
+                    start = Offset(x - width, prevY),
+                    end = Offset(x, y)
                 )
-                if (set.second == maxSet) {
-                    drawCircle(
-                        color = bubbleColor,
-                        radius = 5f,
-                        center = Offset(x + width, y)
-                    )
-                }
-                x += width
             }
         }
     }
