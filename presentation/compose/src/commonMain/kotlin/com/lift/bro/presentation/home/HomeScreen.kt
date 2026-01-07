@@ -8,10 +8,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -22,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,8 +51,12 @@ import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
+import com.lift.bro.utils.debug
+import com.lift.bro.utils.horizontal_padding.padding
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Month
 import kotlinx.datetime.minus
@@ -69,7 +76,7 @@ import org.jetbrains.compose.resources.stringResource
 fun HomeScreen(
     interactor: Interactor<HomeState, HomeEvent> = rememberHomeInteractor(),
 ) {
-    val state by interactor.state.collectAsState()
+    val state by interactor.state.debug().collectAsState(HomeState.Loading)
 
     when (val currentState = state) {
         is HomeState.Content -> {
@@ -263,6 +270,33 @@ fun HomeScreen(
             loadDefaultLifts = {}
         )
 
-        HomeState.Loading -> {}
+        HomeState.Loading -> {
+            val navCoordinator = LocalNavCoordinator.current
+            LiftingScaffold(
+                title = {
+                    Text("Loading...")
+                },
+                trailingContent = {
+                    TopBarIconButton(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = stringResource(
+                            Res.string.dashboard_toolbar_leading_button_content_description
+                        )
+                    ) {
+                        navCoordinator.present(Destination.Settings)
+                    }
+                },
+                leadingContent = {
+                },
+            ) { padding ->
+                Column(
+                    modifier = Modifier.padding(padding).fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+        }
     }
 }

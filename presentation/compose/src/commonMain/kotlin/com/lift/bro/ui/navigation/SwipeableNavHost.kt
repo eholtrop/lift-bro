@@ -18,8 +18,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.util.lerp
 import com.lift.bro.config.BuildConfig
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import io.sentry.kotlin.multiplatform.Sentry
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlinx.serialization.encodeToString

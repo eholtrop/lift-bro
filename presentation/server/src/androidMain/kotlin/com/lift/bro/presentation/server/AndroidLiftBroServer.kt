@@ -2,14 +2,19 @@ package com.lift.bro.presentation.server
 
 import android.util.Log
 import com.lift.bro.domain.server.LiftBroServer
-import io.ktor.server.cio.*
-import io.ktor.server.engine.*
-import kotlinx.coroutines.*
+import io.ktor.server.cio.CIO
+import io.ktor.server.engine.ApplicationEngine
+import io.ktor.server.engine.embeddedServer
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
 class AndroidLiftBroServer : LiftBroServer {
     private var engine: ApplicationEngine? = null
-
-    private var isRunning = false
     private val serverScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     var serverJob: Job? = null
@@ -17,7 +22,7 @@ class AndroidLiftBroServer : LiftBroServer {
     override fun isRunning(): Boolean = serverJob?.isActive == true
 
     override fun start(port: Int, host: String) {
-        if (isRunning || serverJob?.isActive == true) {
+        if (serverJob?.isActive == true) {
             Log.d("AndroidLiftBroServer", "Server already running")
             return
         }
@@ -31,16 +36,15 @@ class AndroidLiftBroServer : LiftBroServer {
                 }
                 engine = server.engine
                 server.start(wait = false)
-                isRunning = true
                 Log.d("AndroidLiftBroServer", "Server started on http://$host:$port")
             } catch (e: Exception) {
-                this.cancel(cause = CancellationException("Failed to start server", e))
+                serverJob?.cancel(cause = CancellationException("Failed to start server", e))
             }
         }
     }
 
     override fun stop() {
-        if (!isRunning || serverJob?.isActive == false) {
+        if (serverJob?.isActive == false) {
             Log.d("AndroidLiftBroServer", "Server already stopped")
             return
         }
@@ -49,12 +53,12 @@ class AndroidLiftBroServer : LiftBroServer {
             engine?.stop(1000, 5000)
             engine = null
             serverJob?.cancel()
-            serverJob == null
-            isRunning = false
+            serverJob = null
             Log.d("AndroidLiftBroServer", "Server stopped successfully")
         } catch (e: Exception) {
             Log.e("AndroidLiftBroServer", "Error stopping server", e)
-            isRunning = false
+            serverJob?.cancel()
+            serverJob= null
         }
     }
 }

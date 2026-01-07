@@ -1,11 +1,14 @@
 package com.lift.bro.presentation.server
 
 import com.lift.bro.domain.server.LiftBroServer
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.server.application.*
-import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.serialization.kotlinx.json.json
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.route
+import io.ktor.server.routing.routing
 import io.ktor.server.websocket.WebSockets
 import kotlinx.serialization.json.Json
 
@@ -42,7 +45,11 @@ fun Application.configureRouting() {
 
         get("/health") {
             println("LiftBroServer: Received request to /health")
-            call.respond(mapOf("status" to "healthy", "timestamp" to System.currentTimeMillis()))
+            try {
+                call.respond(mapOf("status" to "healthy", "timestamp" to System.currentTimeMillis().toString()))
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         route("/api") {

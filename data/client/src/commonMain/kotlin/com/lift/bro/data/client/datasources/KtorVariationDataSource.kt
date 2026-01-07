@@ -27,7 +27,6 @@ class KtorVariationDataSource(
         "api/ws/variations?liftId=$liftId"
     )
 
-
     override suspend fun save(variation: Variation) {
         httpClient.post("api/rest/variation") {
             contentType(ContentType.Application.Json)

@@ -104,7 +104,6 @@ class Interactor<State, Event>(
         }
     }
 
-
     /**
      * Dispatch an event into the MVI loop.
      *

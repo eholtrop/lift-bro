@@ -13,7 +13,7 @@ import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
 
-expect fun getLocalIPAdderess() : String?
+expect fun getLocalIPAdderess(): String?
 
 enum class ServerStatus {
     On, Unknown, Off
@@ -30,9 +30,10 @@ fun ServerSettingsRow(
         modifier = Modifier,
         title = { Text("Lift Bro Local Server") },
     ) {
-
         Column {
-            Text("Enabling this will run a Lift Bro server on this device. It will expose all lift bro data to anyone on your current network")
+            Text(
+                "Enabling this will run a Lift Bro server on this device. It will expose all lift bro data to anyone on your current network"
+            )
             RadioField(
                 text = "Server ${if (state.status == ServerStatus.On) "Enabled" else "Disabled"}",
                 selected = state.status == ServerStatus.On,

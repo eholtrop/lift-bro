@@ -1,6 +1,7 @@
 package com.lift.bro.data.client.datasources
 
 import com.lift.bro.data.client.createConnectionFlow
+import com.lift.bro.data.client.createLiftBroClient
 import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.VariationId
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
 class KtorSetDataSource(
-    private val httpClient: HttpClient,
+    private val httpClient: HttpClient = createLiftBroClient(),
 ) : SetDataSource {
 
     override fun listenAll(
@@ -57,6 +58,6 @@ class KtorSetDataSource(
     }
 
     override suspend fun deleteAll(variationId: VariationId) {
-        httpClient.delete("api/rest/sets?variationId=${variationId}")
+        httpClient.delete("api/rest/sets?variationId=$variationId")
     }
 }

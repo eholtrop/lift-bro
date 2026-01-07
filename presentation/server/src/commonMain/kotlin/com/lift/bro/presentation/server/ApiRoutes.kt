@@ -1,9 +1,9 @@
 package com.lift.bro.presentation.server
 
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.liftRepository
-import com.lift.bro.di.setRepository
-import com.lift.bro.di.variationRepository
+import com.lift.bro.di.localLiftRepository
+import com.lift.bro.di.localSetRepository
+import com.lift.bro.di.localVariationRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
@@ -29,9 +29,10 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 fun Route.configureLiftRoutes(
-    liftRepository: ILiftRepository = dependencies.liftRepository,
+    liftRepository: ILiftRepository = dependencies.localLiftRepository,
 ) {
     webSocket("/ws/lifts") {
+        println("LiftBroClient: Received request to /ws/lifts")
         liftRepository.listenAll()
             .onEach { lifts -> send(Frame.Text(Json.encodeToString(lifts))) }
             .collect()
@@ -53,7 +54,7 @@ fun Route.configureLiftRoutes(
 }
 
 fun Route.configureVariationRoutes(
-    variationRepository: IVariationRepository = dependencies.variationRepository,
+    variationRepository: IVariationRepository = dependencies.localVariationRepository,
 ) {
     webSocket("ws/variations") {
         variationRepository.listenAll(
@@ -79,7 +80,7 @@ fun Route.configureVariationRoutes(
 }
 
 fun Route.configureSetRoutes(
-    setRepository: ISetRepository = dependencies.setRepository,
+    setRepository: ISetRepository = dependencies.localSetRepository,
 ) {
     webSocket("ws/sets") {
         setRepository.listenAll(

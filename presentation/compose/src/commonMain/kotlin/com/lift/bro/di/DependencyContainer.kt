@@ -1,10 +1,11 @@
 package com.lift.bro.di
 
 import com.lift.bro.data.LBDatabase
+import com.lift.bro.data.client.LiftBroClientConfig
 import com.lift.bro.data.client.createLiftBroClient
-import com.lift.bro.data.repository.WorkoutRepository
-import com.lift.bro.data.core.repository.SetRepository
-import com.lift.bro.data.core.repository.LiftRepository
+import com.lift.bro.data.client.datasources.KtorLiftDataSource
+import com.lift.bro.data.client.datasources.KtorSetDataSource
+import com.lift.bro.data.client.datasources.KtorVariationDataSource
 import com.lift.bro.data.core.repository.ExerciseRepository
 import com.lift.bro.data.core.repository.GoalRepository
 import com.lift.bro.data.core.repository.LiftRepository
@@ -16,12 +17,6 @@ import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightLiftDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
-import com.lift.bro.data.sqldelight.datasource.SqldelightExerciseDataSource
-import com.lift.bro.data.core.repository.VariationRepository
-import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
-import com.lift.bro.domain.models.LiftBro
-import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
@@ -29,7 +24,8 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
-import com.lift.bro.domain.server.LiftBroServer
+import com.lift.bro.presentation.Log
+import com.lift.bro.presentation.d
 
 expect class DependencyContainer {
     val database: LBDatabase
@@ -41,44 +37,97 @@ expect class DependencyContainer {
     fun launchManageSubscriptions()
 }
 
-val DependencyContainer.setRepository: ISetRepository get() =
+private val remoteUrl: String?
+    get() {
+        return dependencies.settingsRepository.getClientUrl().also {
+            Log.d("DEBUGEH", it.toString())
+        }
+    }
+
+val DependencyContainer.setRepository: ISetRepository
+    get() =
+        SetRepository(
+            local = if (remoteUrl == null) {
+                SqldelightSetDataSource(
+                    setQueries = database.setQueries,
+                )
+            } else {
+                KtorSetDataSource(
+                    createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!))
+                )
+            }
+        )
+
+val DependencyContainer.localSetRepository: ISetRepository get() =
     SetRepository(
         local = SqldelightSetDataSource(
-            setQueries = database.setQueries,
+            setQueries = database.setQueries
         )
     )
 
-val DependencyContainer.variationRepository: IVariationRepository get() =
-    VariationRepository(
-        local = SqlDelightVariationDataSource(
-            liftQueries = database.liftQueries,
-            setQueries = database.setQueries,
-            variationQueries = database.variationQueries,
+val DependencyContainer.variationRepository: IVariationRepository
+    get() =
+        VariationRepository(
+            local = if (remoteUrl == null) {
+                SqlDelightVariationDataSource(
+                    liftQueries = database.liftQueries,
+                    setQueries = database.setQueries,
+                    variationQueries = database.variationQueries,
+                )
+            } else {
+                KtorVariationDataSource(
+                    createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!))
+                )
+            }
         )
-    )
+val DependencyContainer.localVariationRepository: IVariationRepository
+    get() =
+        VariationRepository(
+            local = SqlDelightVariationDataSource(
+                liftQueries = database.liftQueries,
+                setQueries = database.setQueries,
+                variationQueries = database.variationQueries,
+            )
+        )
 
 val DependencyContainer.workoutRepository: IWorkoutRepository get() = WorkoutRepository(database)
 
-val DependencyContainer.liftRepository: ILiftRepository get() =
-    LiftRepository(
-        local = SqldelightLiftDataSource(
+val DependencyContainer.liftRepository: ILiftRepository
+    get() =
+        LiftRepository(
+            local = if (remoteUrl == null) {
+                SqldelightLiftDataSource(
+                    liftQueries = database.liftQueries,
+                )
+            } else {
+                KtorLiftDataSource(
+                    createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!))
+                )
+            }
+        )
+
+val DependencyContainer.localLiftRepository: ILiftRepository
+    get() = LiftRepository(
+        SqldelightLiftDataSource(
             liftQueries = database.liftQueries,
         )
     )
 
-val DependencyContainer.exerciseRepository: IExerciseRepository get() =
-    ExerciseRepository(
-        local = SqldelightExerciseDataSource(
-            exerciseQueries = database.exerciseQueries,
-            setQueries = database.setQueries,
-            variationQueries = database.variationQueries,
+val DependencyContainer.exerciseRepository: IExerciseRepository
+    get() =
+        ExerciseRepository(
+            local = SqldelightExerciseDataSource(
+                exerciseQueries = database.exerciseQueries,
+                setQueries = database.setQueries,
+                variationQueries = database.variationQueries,
+            )
+        )
+
+val DependencyContainer.goalsRepository: IGoalRepository
+    get() = GoalRepository(
+        goalDataSource = SqlDelightGoalDataSource(
+            goalQueries = database.goalQueries
         )
     )
-
-val DependencyContainer.goalsRepository: IGoalRepository get() = GoalRepository(
-    goalDataSource = SqlDelightGoalDataSource(
-        goalQueries = database.goalQueries
-    )
-)
 
 expect val dependencies: DependencyContainer

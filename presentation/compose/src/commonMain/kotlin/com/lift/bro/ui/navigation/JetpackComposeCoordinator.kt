@@ -1,13 +1,9 @@
 package com.lift.bro.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -40,7 +36,7 @@ fun rememberNavCoordinator(
         }
 
         override fun restore(value: String): NavCoordinator {
-            return with (Json.decodeFromString<NavCoordinatorSaveable>(value)) {
+            return with(Json.decodeFromString<NavCoordinatorSaveable>(value)) {
                 JetpackComposeCoordinator(
                     initialState = pages.toTypedArray(),
                     currentPage = currentPage

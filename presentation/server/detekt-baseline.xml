@@ -7,26 +7,12 @@
     <ID>MagicNumber:JvmLiftBroServer.kt$JvmLiftBroServer$1000</ID>
     <ID>MagicNumber:JvmLiftBroServer.kt$JvmLiftBroServer$5000</ID>
     <ID>MagicNumber:LiftBroServerApp.kt$15_000</ID>
-    <ID>NoWildcardImports:AndroidLiftBroServer.kt$import io.ktor.server.cio.*</ID>
-    <ID>NoWildcardImports:AndroidLiftBroServer.kt$import io.ktor.server.engine.*</ID>
-    <ID>NoWildcardImports:AndroidLiftBroServer.kt$import kotlinx.coroutines.*</ID>
     <ID>NoWildcardImports:JvmLiftBroServer.kt$import io.ktor.server.cio.*</ID>
     <ID>NoWildcardImports:JvmLiftBroServer.kt$import io.ktor.server.engine.*</ID>
-    <ID>NoWildcardImports:LiftBroServerApp.kt$import io.ktor.serialization.kotlinx.json.*</ID>
-    <ID>NoWildcardImports:LiftBroServerApp.kt$import io.ktor.server.application.*</ID>
-    <ID>NoWildcardImports:LiftBroServerApp.kt$import io.ktor.server.plugins.contentnegotiation.*</ID>
-    <ID>NoWildcardImports:LiftBroServerApp.kt$import io.ktor.server.response.*</ID>
-    <ID>NoWildcardImports:LiftBroServerApp.kt$import io.ktor.server.routing.*</ID>
+    <ID>SpacingAroundOperators:AndroidLiftBroServer.kt$AndroidLiftBroServer$=</ID>
     <ID>TooGenericExceptionCaught:AndroidLiftBroServer.kt$AndroidLiftBroServer$e: Exception</ID>
-    <ID>WildcardImport:AndroidLiftBroServer.kt$import io.ktor.server.cio.*</ID>
-    <ID>WildcardImport:AndroidLiftBroServer.kt$import io.ktor.server.engine.*</ID>
-    <ID>WildcardImport:AndroidLiftBroServer.kt$import kotlinx.coroutines.*</ID>
+    <ID>TooGenericExceptionCaught:LiftBroServerApp.kt$e: Exception</ID>
     <ID>WildcardImport:JvmLiftBroServer.kt$import io.ktor.server.cio.*</ID>
     <ID>WildcardImport:JvmLiftBroServer.kt$import io.ktor.server.engine.*</ID>
-    <ID>WildcardImport:LiftBroServerApp.kt$import io.ktor.serialization.kotlinx.json.*</ID>
-    <ID>WildcardImport:LiftBroServerApp.kt$import io.ktor.server.application.*</ID>
-    <ID>WildcardImport:LiftBroServerApp.kt$import io.ktor.server.plugins.contentnegotiation.*</ID>
-    <ID>WildcardImport:LiftBroServerApp.kt$import io.ktor.server.response.*</ID>
-    <ID>WildcardImport:LiftBroServerApp.kt$import io.ktor.server.routing.*</ID>
   </CurrentIssues>
 </SmellBaseline>

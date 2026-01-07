@@ -65,6 +65,10 @@ interface ISettingsRepository {
     fun tMaxEnabled(): Flow<Boolean>
 
     fun setTMaxEnabled(enabled: Boolean)
+
+    fun getClientUrl(): String?
+
+    fun setClientUrl(url: String?)
 }
 
 data class BackupSettings(

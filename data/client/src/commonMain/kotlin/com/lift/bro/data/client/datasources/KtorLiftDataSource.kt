@@ -1,7 +1,6 @@
 package com.lift.bro.data.client.datasources
 
 import com.lift.bro.data.client.createConnectionFlow
-import com.lift.bro.data.client.createLiftBroClient
 import com.lift.bro.data.core.datasource.LiftDataSource
 import com.lift.bro.domain.models.Lift
 import io.ktor.client.HttpClient
@@ -15,7 +14,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class KtorLiftDataSource(
-    private val httpClient: HttpClient = createLiftBroClient(),
+    private val httpClient: HttpClient,
 ) : LiftDataSource {
 
     override fun listenAll(): Flow<List<Lift>> = createConnectionFlow(httpClient, "api/ws/lifts")

@@ -69,13 +69,12 @@ platform :android do
 
     desc "Run the project tests"
     lane :test do |options|
-        gradle(task: "clean assembleDebug")
         gradle(task: "test")
 end
 
     desc "Run the project Linter"
     lane :lint do
-       gradle(task: "detekt", flags: "--continue")
+       gradle(task: "detekt --continue")
     end
 
     desc "Deploy a new version to the Google Play"

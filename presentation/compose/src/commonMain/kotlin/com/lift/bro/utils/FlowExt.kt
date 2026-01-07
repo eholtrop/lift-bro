@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.combine as flowCombine
 /*
  * A debug utility function for flows, outputting events as they trigger
  */
-fun <T> Flow<T>.debug(tag: String = "FlowDebug"): Flow<T> = this
+inline fun <reified T> Flow<T>.debug(tag: String = "FlowDebug"): Flow<T> = this
     .onEach { Log.d(tag, it.toString()) }
     .onStart { Log.d(tag, "onStart") }
     .onCompletion { Log.d(tag, "onComplete") }
