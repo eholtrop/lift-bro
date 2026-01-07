@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.util.lerp
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.utils.logger.Log
+import com.lift.bro.utils.logger.d
 import io.sentry.kotlin.multiplatform.Sentry
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlinx.serialization.encodeToString
@@ -40,9 +42,13 @@ fun SwipeableNavHost(
     )
 
     LaunchedEffect(currentPage) {
-        savedPagerState.animateScrollToPage(
-            page = pages.indexOf(currentPage)
-        )
+        Log.d("DEBUGEH", "currentPage: $currentPage")
+        Log.d("DEBUGEH", "pageCount: ${pages.size}")
+        if (currentPage != Destination.Unknown) {
+            savedPagerState.animateScrollToPage(
+                page = pages.indexOf(currentPage)
+            )
+        }
     }
     val keyboard = LocalSoftwareKeyboardController.current
     LaunchedEffect(savedPagerState.currentPage) {
