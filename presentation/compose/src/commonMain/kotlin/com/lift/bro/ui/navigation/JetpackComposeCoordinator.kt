@@ -31,8 +31,6 @@ fun rememberNavCoordinator(
 ): NavCoordinator = rememberSaveable(
     saver = object: androidx.compose.runtime.saveable.Saver<NavCoordinator, String> {
         override fun SaverScope.save(value: NavCoordinator): String {
-            Log.d("DEBUGEH", "save pages: ${value.pages.size}")
-            Log.d("DEBUGEH", "save current page: ${value.currentPage}")
             return Json.encodeToString(
                 NavCoordinatorSaveable(
                     pages = value.pages,
@@ -43,7 +41,6 @@ fun rememberNavCoordinator(
 
         override fun restore(value: String): NavCoordinator {
             return with (Json.decodeFromString<NavCoordinatorSaveable>(value)) {
-                Log.d("DEBUGEH", "restore: $this")
                 JetpackComposeCoordinator(
                     initialState = pages.toTypedArray(),
                     currentPage = currentPage

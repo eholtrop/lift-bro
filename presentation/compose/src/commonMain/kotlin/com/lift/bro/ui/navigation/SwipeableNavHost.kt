@@ -42,8 +42,6 @@ fun SwipeableNavHost(
     )
 
     LaunchedEffect(currentPage) {
-        Log.d("DEBUGEH", "currentPage: $currentPage")
-        Log.d("DEBUGEH", "pageCount: ${pages.size}")
         if (currentPage != Destination.Unknown) {
             savedPagerState.animateScrollToPage(
                 page = pages.indexOf(currentPage)

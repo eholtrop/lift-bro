@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -61,7 +63,12 @@ fun interface Reducer<State, Event> {
  * - Side effects should not mutate the state directly; communicate via new events.
  * - They run on a background dispatcher (Default) to stay off the main thread.
  */
-typealias SideEffect<State, Event> = suspend (State, Event) -> Unit
+typealias SideEffect<State, Event> = suspend Dispatcher<Event>.(State, Event) -> Unit
+
+/**
+ * A function that when invoked, will dispatched an event into the MVI loop.
+ */
+typealias Dispatcher<Event> = (Event) -> Unit
 
 /**
  * Coordinates an MVI loop by combining a source [Flow] of State with user-provided events.
@@ -84,19 +91,26 @@ typealias SideEffect<State, Event> = suspend (State, Event) -> Unit
 class Interactor<State, Event>(
     initialState: State,
     source: Flow<State>,
-    coroutineScope: CoroutineScope,
+    val coroutineScope: CoroutineScope,
     private val reducers: List<Reducer<State, Event>>,
     private val sideEffects: List<SideEffect<State, Event>>,
     stateResolver: (initial: State, source: State) -> State = { _, s -> s },
 ) {
     private val events: Channel<Event> = Channel()
 
+    private val dispatcher: Dispatcher<Event> = { event ->
+        GlobalScope.launch {
+            events.send(event)
+        }
+    }
+
+
     /**
      * Dispatch an event into the MVI loop.
      *
      * This is non-blocking; the event is buffered and then processed by reducers.
      */
-    operator fun invoke(event: Event) = events.trySend(event)
+    operator fun invoke(event: Event) = dispatcher(event)
 
     /**
      * Hot StateFlow that emits the current state. Collected values are suitable for driving UI.
@@ -109,7 +123,7 @@ class Interactor<State, Event>(
                         reducer(s, event)
                     }
                     withContext(Dispatchers.Default) {
-                        sideEffects.forEach { sideEffect -> sideEffect(newState, event) }
+                        sideEffects.forEach { sideEffect -> sideEffect(dispatcher, newState, event) }
                     }
                     newState
                 }
@@ -147,7 +161,7 @@ inline fun <reified State, Event> rememberInteractor(
 ): Interactor<State, Event> {
     return rememberSaveable(
         initialState,
-        saver = object : Saver<Interactor<State, Event>, String> {
+        saver = object: Saver<Interactor<State, Event>, String> {
 
             override fun SaverScope.save(value: Interactor<State, Event>): String? {
                 return Json.encodeToString(value.state.value)

@@ -5,7 +5,14 @@ import com.lift.bro.data.client.createLiftBroClient
 import com.lift.bro.data.core.datasource.LiftDataSource
 import com.lift.bro.domain.models.Lift
 import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class KtorLiftDataSource(
     private val httpClient: HttpClient = createLiftBroClient(),
@@ -20,14 +27,20 @@ class KtorLiftDataSource(
     }
 
     override fun save(lift: Lift): Boolean {
-        TODO("Not yet implemented")
+        GlobalScope.launch {
+            httpClient.post("rest/lift") {
+                contentType(ContentType.Application.Json)
+                setBody(lift)
+            }
+        }
+        return true
     }
 
     override suspend fun deleteAll() {
-        TODO("Not yet implemented")
+        httpClient.delete("rest/lifts")
     }
 
     override suspend fun delete(id: String) {
-        TODO("Not yet implemented")
+        httpClient.delete("rest/lift?id=$id")
     }
 }

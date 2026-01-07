@@ -184,11 +184,11 @@ fun SettingsScreen() {
                     }
                 }
 
-//                if (localServer != null) {
-//                    item {
-//                        ServerSettingsRow(localServer)
-//                    }
-//                }
+                if (localServer != null) {
+                    item {
+                        ServerSettingsRow(localServer)
+                    }
+                }
 
                 item {
                     MERSettingsRow()

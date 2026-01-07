@@ -175,7 +175,6 @@ fun App(
 ) {
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null
-    val server = LocalServer.current
 
     LaunchedEffect("setup_revenuecat") {
         if (BuildConfig.isDebug) {
@@ -194,20 +193,6 @@ fun App(
             }
         )
     }
-
-//    LaunchedEffect("test_server") {
-//        if (BuildConfig.isDebug) {
-//            server?.start()
-//        }
-//
-//        if (BuildConfig.isDebug) {
-//            createLiftBroClient().getLifts()
-//                .collectLatest {
-//                    Log.d("DEBUGEH", it.size.toString())
-//                    Log.d("DEBUGEH", "WE HAVE LIFTS OFF")
-//                }
-//        }
-//    }
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }

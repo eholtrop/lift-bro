@@ -12,15 +12,17 @@ class AndroidLiftBroServer : LiftBroServer {
     private var isRunning = false
     private val serverScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
-    override fun isRunning(): Boolean = isRunning
+    var serverJob: Job? = null
+
+    override fun isRunning(): Boolean = serverJob?.isActive == true
 
     override fun start(port: Int, host: String) {
-        if (isRunning) {
+        if (isRunning || serverJob?.isActive == true) {
             Log.d("AndroidLiftBroServer", "Server already running")
             return
         }
 
-        serverScope.launch {
+        serverJob = serverScope.launch {
             try {
                 Log.d("AndroidLiftBroServer", "Creating embedded server...")
                 val server = embeddedServer(CIO, port = port, host = host) {
@@ -32,14 +34,13 @@ class AndroidLiftBroServer : LiftBroServer {
                 isRunning = true
                 Log.d("AndroidLiftBroServer", "Server started on http://$host:$port")
             } catch (e: Exception) {
-                Log.e("AndroidLiftBroServer", "Failed to start server", e)
-                isRunning = false
+                this.cancel(cause = CancellationException("Failed to start server", e))
             }
         }
     }
 
     override fun stop() {
-        if (!isRunning) {
+        if (!isRunning || serverJob?.isActive == false) {
             Log.d("AndroidLiftBroServer", "Server already stopped")
             return
         }
@@ -47,7 +48,8 @@ class AndroidLiftBroServer : LiftBroServer {
         try {
             engine?.stop(1000, 5000)
             engine = null
-            serverScope.cancel()
+            serverJob?.cancel()
+            serverJob == null
             isRunning = false
             Log.d("AndroidLiftBroServer", "Server stopped successfully")
         } catch (e: Exception) {
