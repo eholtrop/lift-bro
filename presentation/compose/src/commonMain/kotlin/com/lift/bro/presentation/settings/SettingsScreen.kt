@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
@@ -47,6 +48,8 @@ import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
+import com.lift.bro.presentation.settings.client.ClientSettingsRow
+import com.lift.bro.presentation.settings.server.ServerSettingsRow
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.Space
@@ -86,7 +89,11 @@ fun SettingsScreen() {
         content = { padding ->
 
             var subscriptionType by LocalSubscriptionStatusProvider.current
-            var showExperimental by remember { mutableStateOf(subscriptionType == SubscriptionType.Pro) }
+            var showExperimental by remember {
+                mutableStateOf(
+                    subscriptionType == SubscriptionType.Pro || BuildConfig.isDebug
+                )
+            }
             val localServer = LocalServer.current
             LazyColumn(
                 modifier = Modifier.padding(padding),
@@ -184,11 +191,17 @@ fun SettingsScreen() {
                     }
                 }
 
-//                if (localServer != null) {
-//                    item {
-//                        ServerSettingsRow(localServer)
-//                    }
-//                }
+                if (showExperimental) {
+                    if (localServer != null) {
+                        item {
+                            ServerSettingsRow(localServer)
+                        }
+                    }
+
+                    item {
+                        ClientSettingsRow()
+                    }
+                }
 
                 item {
                     MERSettingsRow()

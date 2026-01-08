@@ -171,11 +171,10 @@ fun CheckAppConsent() {
 @Composable
 fun App(
     modifier: Modifier = Modifier,
-    navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding),
+    navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Unknown),
 ) {
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null
-    val server = LocalServer.current
 
     LaunchedEffect("setup_revenuecat") {
         if (BuildConfig.isDebug) {
@@ -194,20 +193,6 @@ fun App(
             }
         )
     }
-
-//    LaunchedEffect("test_server") {
-//        if (BuildConfig.isDebug) {
-//            server?.start()
-//        }
-//
-//        if (BuildConfig.isDebug) {
-//            createLiftBroClient().getLifts()
-//                .collectLatest {
-//                    Log.d("DEBUGEH", it.size.toString())
-//                    Log.d("DEBUGEH", "WE HAVE LIFTS OFF")
-//                }
-//        }
-//    }
 
     val bro by dependencies.settingsRepository.getBro().collectAsState(null)
     val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
@@ -232,11 +217,13 @@ fun App(
         LocalPaywallVisibility provides showPaywall,
         LocalCalculatorVisibility provides showCalculator
     ) {
-        LaunchedEffect("landing_selection") {
-            dependencies.settingsRepository.getDeviceFtux().collectLatest {
-                when (it) {
-                    true -> navCoordinator.setRoot(Destination.Home)
-                    false -> navCoordinator.setRoot(Destination.Onboarding)
+        if (navCoordinator.currentPage == Destination.Unknown) {
+            LaunchedEffect("landing_selection") {
+                dependencies.settingsRepository.getDeviceFtux().collectLatest {
+                    when (it) {
+                        true -> navCoordinator.setRoot(Destination.Home)
+                        false -> navCoordinator.setRoot(Destination.Onboarding)
+                    }
                 }
             }
         }

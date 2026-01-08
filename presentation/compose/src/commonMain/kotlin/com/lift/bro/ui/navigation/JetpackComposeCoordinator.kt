@@ -2,7 +2,8 @@ package com.lift.bro.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.SaverScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -10,19 +11,53 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
+@Serializable
+private data class NavCoordinatorSaveable(
+    val pages: List<Destination>,
+    val currentPage: Destination,
+)
 
 @Composable
 fun rememberNavCoordinator(
-    initialDestination: Destination
-): NavCoordinator = remember { JetpackComposeCoordinator(initialState = initialDestination) }
+    initialDestination: Destination,
+): NavCoordinator = rememberSaveable(
+    saver = object: androidx.compose.runtime.saveable.Saver<NavCoordinator, String> {
+        override fun SaverScope.save(value: NavCoordinator): String {
+            return Json.encodeToString(
+                NavCoordinatorSaveable(
+                    pages = value.pages,
+                    currentPage = value.currentPage,
+                )
+            )
+        }
+
+        override fun restore(value: String): NavCoordinator {
+            return with(Json.decodeFromString<NavCoordinatorSaveable>(value)) {
+                JetpackComposeCoordinator(
+                    initialState = pages.toTypedArray(),
+                    currentPage = currentPage
+                )
+            }
+        }
+    },
+    init = {
+        JetpackComposeCoordinator(initialDestination)
+    }
+)
 
 class JetpackComposeCoordinator(
-    initialState: Destination,
-    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-) : NavCoordinator {
+    vararg initialState: Destination,
+    currentPage: Destination = initialState.last()
+): NavCoordinator {
 
-    private val mutableStateList = MutableStateFlow(mutableStateListOf(initialState))
-    private val currentState = MutableStateFlow(initialState)
+    private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    private val mutableStateList = MutableStateFlow(mutableStateListOf(elements = initialState))
+    private val currentState = MutableStateFlow(currentPage)
 
     override val pages: List<Destination>
         get() = mutableStateList.value

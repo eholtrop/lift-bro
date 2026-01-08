@@ -153,5 +153,13 @@ class ConsentDeviceUseCaseTest {
         override fun setTMaxEnabled(enabled: Boolean) {
             throw NotImplementedError("Not needed for these tests")
         }
+
+        override fun getClientUrl(): String? {
+            TODO("Not yet implemented")
+        }
+
+        override fun setClientUrl(url: String?) {
+            TODO("Not yet implemented")
+        }
     }
 }

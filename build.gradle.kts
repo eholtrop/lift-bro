@@ -28,6 +28,7 @@ subprojects {
     configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
         config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
+        baseline = file("$projectDir/detekt-baseline.xml")
 
         // Auto-detect source sets based on project type
         source.setFrom(
@@ -45,16 +46,16 @@ subprojects {
             }
         )
     }
-    
+
     // Create detektFormat task for each subproject with autoCorrect enabled
     tasks.register("detektFormat", io.gitlab.arturbosch.detekt.Detekt::class.java) {
         description = "Run detekt with auto-correction enabled"
         group = "formatting"
-        
+
         autoCorrect = true
         config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
-        
+
         setSource(files(projectDir))
         include("**/*.kt", "**/*.java")
         exclude("**/build/**", "**/resources/**", "**/generated/**")
@@ -65,7 +66,6 @@ subprojects {
 tasks.register("detekt") {
     group = "verification"
     description = "Run detekt on all modules (use --continue to see all module results)"
-
     dependsOn(subprojects.mapNotNull { it.tasks.findByName("detekt") })
 }
 
@@ -73,7 +73,6 @@ tasks.register("detekt") {
 tasks.register("detektFormat") {
     group = "formatting"
     description = "Run detekt with auto-correction on all modules"
-
     dependsOn(subprojects.mapNotNull { it.tasks.findByName("detektFormat") })
 }
 

@@ -19,9 +19,9 @@ data class WrappedGoalsState(
 
 sealed interface WrappedGoalsEvent {
 
-    data class GoalAdded(val goal: Goal) : WrappedGoalsEvent
-    data class GoalRemoved(val goal: Goal) : WrappedGoalsEvent
-    data class GoalNameChanged(val goal: Goal, val newName: String) : WrappedGoalsEvent
+    data class GoalAdded(val goal: Goal): WrappedGoalsEvent
+    data class GoalRemoved(val goal: Goal): WrappedGoalsEvent
+    data class GoalNameChanged(val goal: Goal, val newName: String): WrappedGoalsEvent
 }
 
 @Composable
@@ -42,6 +42,7 @@ fun rememberWrappedGoalsInteractor(
                         if (it.id == event.goal.id) event.goal.copy(name = event.newName) else it
                     }
                 )
+
                 is WrappedGoalsEvent.GoalRemoved -> state.copy(goals = state.goals.filter { it.id != event.goal.id })
             }
         }
@@ -53,6 +54,7 @@ fun rememberWrappedGoalsInteractor(
                 is WrappedGoalsEvent.GoalNameChanged -> goalsRepository.save(
                     state.goals.first { it.id == event.goal.id }
                 )
+
                 is WrappedGoalsEvent.GoalRemoved -> goalsRepository.delete(event.goal)
             }
         }

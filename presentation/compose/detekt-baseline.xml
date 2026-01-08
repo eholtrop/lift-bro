@@ -4,7 +4,7 @@
   <CurrentIssues>
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
     <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; eccentric != null &amp;&amp; isometric != null &amp;&amp; concentric != null &amp;&amp; weight != null</ID>
-    <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding), )</ID>
+    <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:HomeScreenInteractor.kt$@Composable fun rememberHomeInteractor( initialTab: Tab = Tab.Dashboard, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;HomeState, HomeEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt; )</ID>
@@ -26,15 +26,16 @@
     <ID>FunctionNaming:MainViewController.kt$fun MainViewController( bannerProvider: () -&gt; UIView )</ID>
     <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForMonth( year: Int, month: Month, ): Flow&lt;List&lt;Pair&lt;Variation, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
     <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForRange( startDate: LocalDate, endDate: LocalDate ): Flow&lt;List&lt;Pair&lt;Variation, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
-    <ID>InvalidPackageDeclaration:Color.kt$package com.example.compose</ID>
     <ID>InvalidPackageDeclaration:DateFormatting.android.kt$package com.lift.bro.utils</ID>
+    <ID>InvalidPackageDeclaration:ServerSettingsRow.android.kt$package com.lift.bro.presentation.settings.server</ID>
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
-    <ID>LongMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Onboarding), )</ID>
+    <ID>LongMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Unknown), )</ID>
     <ID>LongMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
     <ID>LongMethod:Calculator.kt$@Composable fun KeyPad( modifier: Modifier = Modifier, digitClicked: (Int) -&gt; Unit, operatorClicked: (Operator) -&gt; Unit, actionClicked: (Action) -&gt; Unit, decimalClicked: () -&gt; Unit, verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(MaterialTheme.spacing.half), horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(MaterialTheme.spacing.half) )</ID>
     <ID>LongMethod:Calculator.kt$@Composable fun WeightCalculatorBottomSheet( modifier: Modifier = Modifier, )</ID>
     <ID>LongMethod:Calculator.kt$@Composable private fun WeightCalculatorInternal( modifier: Modifier = Modifier, state: CalculatorState, dispatcher: (CalculatorEvent) -&gt; Unit, weightChanged: (Double) -&gt; Unit = {} )</ID>
     <ID>LongMethod:Calendar.kt$@Composable private fun CalendarContent( modifier: Modifier = Modifier, pagerState: PagerState, selection: LocalDate?, contentPadding: PaddingValues, dateSelected: (LocalDate) -&gt; Unit, contentForMonth: @Composable (year: Int, month: Month) -&gt; Unit )</ID>
+    <ID>LongMethod:ClientSettingsRow.kt$@Composable fun ClientSettingsRow( interactor: ClientSettingsInteractor = rememberClientSettingsInteractor(), )</ID>
     <ID>LongMethod:CreateVariationDialog.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun VariationDialog( modifier: Modifier = Modifier, variation: Variation, title: String, onDismissRequest: () -&gt; Unit, onVariationSaved: (String) -&gt; Unit, properties: DialogProperties, )</ID>
     <ID>LongMethod:DashboardInteractor.kt$@Composable fun rememberDashboardInteractor( liftRepository: LiftDataSource = dependencies.database.liftDataSource, variationRepository: IVariationRepository = dependencies.variationRepository, setRepository: ISetRepository = dependencies.setRepository, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;DashboardState, DashboardEvent&gt;</ID>
     <ID>LongMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: Interactor&lt;DashboardState, DashboardEvent&gt; = rememberDashboardInteractor(), )</ID>
@@ -118,47 +119,6 @@
     <ID>MagicNumber:Calendar.kt$3</ID>
     <ID>MagicNumber:Calendar.kt$5</ID>
     <ID>MagicNumber:Calendar.kt$6</ID>
-    <ID>MagicNumber:Color.kt$0xFF000000</ID>
-    <ID>MagicNumber:Color.kt$0xFF151515</ID>
-    <ID>MagicNumber:Color.kt$0xFF201A1B</ID>
-    <ID>MagicNumber:Color.kt$0xFF261900</ID>
-    <ID>MagicNumber:Color.kt$0xFF2B151C</ID>
-    <ID>MagicNumber:Color.kt$0xFF2E1500</ID>
-    <ID>MagicNumber:Color.kt$0xFF352F30</ID>
-    <ID>MagicNumber:Color.kt$0xFF3E001D</ID>
-    <ID>MagicNumber:Color.kt$0xFF410002</ID>
-    <ID>MagicNumber:Color.kt$0xFF412D00</ID>
-    <ID>MagicNumber:Color.kt$0xFF514347</ID>
-    <ID>MagicNumber:Color.kt$0xFF5A3F47</ID>
-    <ID>MagicNumber:Color.kt$0xFF5D4200</ID>
-    <ID>MagicNumber:Color.kt$0xFF623F20</ID>
-    <ID>MagicNumber:Color.kt$0xFF690005</ID>
-    <ID>MagicNumber:Color.kt$0xFF7A5900</ID>
-    <ID>MagicNumber:Color.kt$0xFF7B2949</ID>
-    <ID>MagicNumber:Color.kt$0xFF837377</ID>
-    <ID>MagicNumber:Color.kt$0xFF93000A</ID>
-    <ID>MagicNumber:Color.kt$0xFF984061</ID>
-    <ID>MagicNumber:Color.kt$0xFF9E8C90</ID>
-    <ID>MagicNumber:Color.kt$0xFF9F750B</ID>
-    <ID>MagicNumber:Color.kt$0xFFBA1A1A</ID>
-    <ID>MagicNumber:Color.kt$0xFFD5C2C6</ID>
-    <ID>MagicNumber:Color.kt$0xFFEBE0E1</ID>
-    <ID>MagicNumber:Color.kt$0xFFF2DDE2</ID>
-    <ID>MagicNumber:Color.kt$0xFFF5BE48</ID>
-    <ID>MagicNumber:Color.kt$0xFFFAEEEF</ID>
-    <ID>MagicNumber:Color.kt$0xFFFF0101</ID>
-    <ID>MagicNumber:Color.kt$0xFFFF4D01</ID>
-    <ID>MagicNumber:Color.kt$0xFFFF7401</ID>
-    <ID>MagicNumber:Color.kt$0xFFFF9A01</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFB0C8</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFB4AB</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFC101</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFD9E2</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFDAD6</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFDCC2</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFDEA3</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFFBFF</ID>
-    <ID>MagicNumber:Color.kt$0xFFFFFFFF</ID>
     <ID>MagicNumber:DashboardInteractor.kt$100L</ID>
     <ID>MagicNumber:DashboardInteractor.kt$5</ID>
     <ID>MagicNumber:DebugBackup.kt$102</ID>
@@ -204,6 +164,8 @@
     <ID>MagicNumber:OnboardingSetupScreen.kt$100</ID>
     <ID>MagicNumber:RotatingAnimatedText.kt$1100</ID>
     <ID>MagicNumber:RotatingAnimatedText.kt$5000</ID>
+    <ID>MagicNumber:ServerSettingsInteractor.kt$2000L</ID>
+    <ID>MagicNumber:ServerSettingsInteractor.kt$500</ID>
     <ID>MagicNumber:TempoSelector.kt$.33f</ID>
     <ID>MagicNumber:Toolbar.kt$.66f</ID>
     <ID>MagicNumber:WeightSelector.kt$1000</ID>
@@ -264,6 +226,7 @@
     <ID>MaxLineLength:MERSettingsRow.kt$enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug</ID>
     <ID>MaxLineLength:NavCoordinator.kt$NavCoordinator$* Navigates the user back one page, returns true if the navigation was handled, false if nothing happens (ie. you need to handle it yourself)</ID>
     <ID>MaxLineLength:OnboardingSetupScreen.kt$imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown</ID>
+    <ID>MaxLineLength:ServerSettingsRow.kt$"Enabling this will run a Lift Bro server on this device. It will expose all lift bro data to anyone on your current network"</ID>
     <ID>MaxLineLength:TWMSettingsRow.kt$enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug</ID>
     <ID>MaxLineLength:TempoSelector.kt$text = "• putting a deadlift down\n• going into a squat\n• lowering the bar towards your chest in a bench press"</ID>
     <ID>MaxLineLength:Toolbar.kt$horizontalArrangement = if ((scrollBehavior?.state?.collapsedFraction ?: 0f) &lt; .66f) Arrangement.Center else Arrangement.Start</ID>
@@ -271,7 +234,6 @@
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$selectedDate = if (initial.selectedDate != source.selectedDate) initial.selectedDate else source.selectedDate</ID>
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$selectedWorkout = if (initial.selectedDate != source.selectedDate) initial.selectedWorkout else source.selectedWorkout</ID>
     <ID>MaxLineLength:WorkoutCalendarScreen.kt$.</ID>
-    <ID>MaxLineLength:WorkoutCalendarScreen.kt$tint = if (date == selectedDate) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface</ID>
     <ID>MaxLineLength:WorkoutCalendarScreen.kt$workout == null || (workout.exercises.isEmpty() &amp;&amp; workout.warmup.isNullOrBlank() &amp;&amp; workout.finisher.isNullOrBlank())</ID>
     <ID>MaxLineLength:WorkoutScreen.kt$color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer</ID>
     <ID>MaxLineLength:WrappedLandingScreen.kt$color = if (pagerState.currentPage == it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground</ID>
@@ -287,6 +249,7 @@
     <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>
     <ID>MaximumLineLength:MERSettingsRow.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
+    <ID>MaximumLineLength:ServerSettingsRow.kt$ </ID>
     <ID>MaximumLineLength:TWMSettingsRow.kt$ </ID>
     <ID>MaximumLineLength:TempoSelector.kt$ </ID>
     <ID>MaximumLineLength:Toolbar.kt$ </ID>
@@ -297,6 +260,7 @@
     <ID>MaximumLineLength:WrappedProgressInteractor.kt$ </ID>
     <ID>MaximumLineLength:WrappedProgressScreen.kt$ </ID>
     <ID>MaximumLineLength:eMaxSettingsRow.kt$ </ID>
+    <ID>NestedBlockDepth:ServerSettingsRow.android.kt$actual fun getLocalIPAdderess(): String?</ID>
     <ID>NoWildcardImports:WrappedConsistencyScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>NoWildcardImports:WrappedGoalsScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>NoWildcardImports:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
@@ -323,13 +287,9 @@
     <ID>UnusedParameter:WrappedGoalsInteractor.kt$year: Int = LocalWrappedYear.current</ID>
     <ID>UnusedParameter:WrappedProgressScreen.kt$contentColor: Color = MaterialTheme.colorScheme.primary</ID>
     <ID>UnusedPrivateProperty:App.kt$val cel = celebration</ID>
-    <ID>UnusedPrivateProperty:App.kt$val server = LocalServer.current</ID>
     <ID>UnusedPrivateProperty:Calculator.kt$Digit$digit: Int</ID>
     <ID>UnusedPrivateProperty:ExerciseDataSource.kt$LBExerciseDataSource$private val variationQueries: VariationQueries</ID>
     <ID>UnusedPrivateProperty:LiftDetailsScreen.kt$SortingOptions$reversed: Boolean</ID>
-    <ID>UnusedPrivateProperty:SettingsScreen.kt$val localServer = LocalServer.current</ID>
-    <ID>UnusedPrivateProperty:SettingsScreen.kt$var showExperimental by remember { mutableStateOf(subscriptionType == SubscriptionType.Pro) }</ID>
-    <ID>UnusedPrivateProperty:WorkoutCalendarScreen.kt$val subscriptionType by LocalSubscriptionStatusProvider.current</ID>
     <ID>UnusedPrivateProperty:WrappedProgressScreen.kt$val minSet = sets.minOf { it.second }</ID>
     <ID>WildcardImport:WrappedConsistencyScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>WildcardImport:WrappedGoalsScreen.kt$import lift_bro.core.generated.resources.*</ID>

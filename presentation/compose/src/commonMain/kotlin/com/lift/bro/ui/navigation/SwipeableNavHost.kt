@@ -40,9 +40,11 @@ fun SwipeableNavHost(
     )
 
     LaunchedEffect(currentPage) {
-        savedPagerState.animateScrollToPage(
-            page = pages.indexOf(currentPage)
-        )
+        if (currentPage != Destination.Unknown) {
+            savedPagerState.animateScrollToPage(
+                page = pages.indexOf(currentPage)
+            )
+        }
     }
     val keyboard = LocalSoftwareKeyboardController.current
     LaunchedEffect(savedPagerState.currentPage) {

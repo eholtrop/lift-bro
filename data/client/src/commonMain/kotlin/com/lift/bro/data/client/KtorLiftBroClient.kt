@@ -5,6 +5,7 @@ import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.DEFAULT
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
@@ -13,6 +14,7 @@ import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.plugins.websocket.pingInterval
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.http.HttpMethod
+import io.ktor.http.URLProtocol
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.websocket.Frame
 import io.ktor.websocket.readText
@@ -25,23 +27,30 @@ internal inline fun <reified T> createConnectionFlow(
     path: String,
 ): Flow<T> {
     return flow {
-        httpClient.webSocket(
-            method = HttpMethod.Get,
-            host = "localhost",
-            port = 8080,
-            path = path
-        ) {
-            // Listen for incoming messages
-            for (frame in incoming) {
-                when (frame) {
-                    is Frame.Text -> emit(Json.decodeFromString<T>(frame.readText()))
-                    is Frame.Close -> {
-                        break
-                    }
+        Log.d("LiftBroClient", "creating connection flow $path")
+        try {
+            httpClient.webSocket(
+                method = HttpMethod.Get,
+                path = path
+            ) {
+                // Listen for incoming messages
+                for (frame in incoming) {
+                    when (frame) {
+                        is Frame.Text -> {
+                            Log.d("LiftBroClient", frame.readText())
+                            emit(Json.decodeFromString<T>(frame.readText()))
+                        }
+                        is Frame.Close -> {
+                            break
+                        }
 
-                    else -> {}
+                        else -> {}
+                    }
                 }
             }
+        } catch (e: Exception) {
+            Log.d("LiftBroClient", "creating connection failed $path")
+            e.printStackTrace()
         }
     }
 }
@@ -54,6 +63,12 @@ internal fun createConfiguredHttpClient(
     config: LiftBroClientConfig,
 ): HttpClient {
     return HttpClient(platformEngine) {
+        defaultRequest {
+            url {
+                protocol = if (config.baseUrl.contains("https")) URLProtocol.HTTPS else URLProtocol.HTTP
+                host = config.baseUrl.removePrefix("http://").removePrefix("https://")
+            }
+        }
         install(ContentNegotiation) {
             json(
                 Json {

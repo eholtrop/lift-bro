@@ -185,6 +185,15 @@ class SettingsRepository(
         keyChanged("tmax_enabled")
     }
 
+    override fun getClientUrl(): String? {
+        return dataSource.getString("remote_client_url", null)
+    }
+
+    override fun setClientUrl(url: String?) {
+        dataSource.putString("remote_client_url", url)
+        keyChanged("remote_client_url")
+    }
+
     override fun showTotalWeightMoved(show: Boolean) {
         dataSource.putBool("show_twm", show)
         keyChanged("show_twm")
