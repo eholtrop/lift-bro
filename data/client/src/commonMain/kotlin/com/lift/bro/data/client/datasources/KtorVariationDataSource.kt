@@ -17,7 +17,7 @@ class KtorVariationDataSource(
 
     override fun listen(id: String): Flow<Variation?> = createConnectionFlow(
         httpClient,
-        "api/ws/variations?variationId=$id"
+        "api/ws/variation?variationId=$id"
     )
 
     override fun listenAll(): Flow<List<Variation>> = createConnectionFlow(httpClient, "api/ws/variations")

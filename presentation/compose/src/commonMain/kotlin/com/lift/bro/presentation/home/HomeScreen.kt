@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,9 +40,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
-import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
@@ -55,7 +57,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
-import com.lift.bro.utils.debug
 import com.lift.bro.utils.horizontal_padding.padding
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Month
@@ -72,17 +73,35 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
+fun HomeScreen(
+    interactor: HomeInteractor = rememberHomeInteractor(),
+) {
+    val state by interactor.state.collectAsState()
+
+    HomeScreen(state) {
+        interactor(it)
+    }
+}
+
+@Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
-    interactor: Interactor<HomeState, HomeEvent> = rememberHomeInteractor(),
+    state: HomeState,
+    onEvent: (HomeEvent) -> Unit,
 ) {
-    val state by interactor.state.debug().collectAsState(HomeState.Loading)
-
     when (val currentState = state) {
         is HomeState.Content -> {
             LiftingScaffold(
                 description = {
                     AnimatedRotatingText(
+                        modifier = Modifier
+                            .clip(
+                                MaterialTheme.shapes.small,
+                            ).clickable(
+                                onClick = { onEvent(HomeEvent.GoalsClicked) },
+                                role = Role.Button
+                            )
+                            .padding(horizontal = MaterialTheme.spacing.half),
                         text = currentState.goals,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
@@ -158,18 +177,18 @@ fun HomeScreen(
                             Res.string.dashboard_toolbar_leading_button_content_description
                         )
                     ) {
-                        interactor(HomeEvent.SettingsClicked)
+                        onEvent(HomeEvent.SettingsClicked)
                     }
                 },
                 fabProperties = FabProperties(
                     fabIcon = Icons.Default.Add,
                     contentDescription = stringResource(Res.string.dashboard_fab_content_description),
-                    fabClicked = { interactor(HomeEvent.AddSetClicked) },
+                    fabClicked = { onEvent(HomeEvent.AddSetClicked) },
                     preFab = {
                         Button(
                             modifier = Modifier.size(72.dp, 52.dp),
                             onClick = {
-                                interactor(HomeEvent.DashboardClicked)
+                                onEvent(HomeEvent.DashboardClicked)
                             },
                             shape = RoundedCornerShape(
                                 topStartPercent = 50,
@@ -207,7 +226,7 @@ fun HomeScreen(
                         Button(
                             modifier = Modifier.size(72.dp, 52.dp),
                             onClick = {
-                                interactor(HomeEvent.CalendarClicked)
+                                onEvent(HomeEvent.CalendarClicked)
                             },
                             shape = RoundedCornerShape(
                                 topStartPercent = 25,
@@ -265,7 +284,7 @@ fun HomeScreen(
 
         HomeState.Empty -> EmptyHomeScreen(
             addLiftClicked = {
-                interactor(HomeEvent.AddLiftClicked)
+                onEvent(HomeEvent.AddLiftClicked)
             },
             loadDefaultLifts = {}
         )

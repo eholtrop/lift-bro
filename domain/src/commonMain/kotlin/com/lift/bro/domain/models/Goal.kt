@@ -5,9 +5,11 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
+typealias GoalId = String
+
 @Serializable
 data class Goal(
-    val id: String = uuid4().toString(),
+    val id: GoalId = uuid4().toString(),
     val name: String,
     val achieved: Boolean = false,
     val createdAt: Instant = Clock.System.now(),

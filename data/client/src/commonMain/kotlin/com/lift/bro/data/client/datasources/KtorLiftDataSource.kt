@@ -19,7 +19,7 @@ class KtorLiftDataSource(
 
     override fun listenAll(): Flow<List<Lift>> = createConnectionFlow(httpClient, "api/ws/lifts")
 
-    override fun get(id: String?): Flow<Lift?> = createConnectionFlow(httpClient, "api/ws/lifts?liftId=$id")
+    override fun get(id: String?): Flow<Lift?> = createConnectionFlow(httpClient, "api/ws/lift?liftId=$id")
 
     override fun getAll(): List<Lift> {
         TODO("NOPE")

@@ -49,8 +49,8 @@ internal inline fun <reified T> createConnectionFlow(
                 }
             }
         } catch (e: Exception) {
-            Log.d("LiftBroClient", "creating connection failed $path")
             e.printStackTrace()
+            Log.d("LiftBroClient", "creating connection failed $path $e")
         }
     }
 }

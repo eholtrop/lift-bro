@@ -6,7 +6,9 @@ import com.lift.bro.di.goalsRepository
 import com.lift.bro.di.liftRepository
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
+import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditLift
 import com.lift.bro.ui.navigation.Destination.Settings
@@ -16,6 +18,8 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
+typealias HomeInteractor = Interactor<HomeState, HomeEvent>
+
 enum class Tab {
     Dashboard,
     WorkoutCalendar,
@@ -24,33 +28,35 @@ enum class Tab {
 @Serializable
 sealed interface HomeState {
     @Serializable
-    data object Loading : HomeState
+    data object Loading: HomeState
 
     @Serializable
-    data object Empty : HomeState
+    data object Empty: HomeState
 
     @Serializable
     data class Content(
         val selectedTab: Tab,
         val goals: List<String> = emptyList(),
-    ) : HomeState
+    ): HomeState
 }
 
 sealed class HomeEvent {
-    data object DashboardClicked : HomeEvent()
-    data object CalendarClicked : HomeEvent()
-    data object AddSetClicked : HomeEvent()
+    data object DashboardClicked: HomeEvent()
+    data object CalendarClicked: HomeEvent()
+    data object AddSetClicked: HomeEvent()
 
-    data object SettingsClicked : HomeEvent()
+    data object SettingsClicked: HomeEvent()
 
-    data object AddLiftClicked : HomeEvent()
+    data object AddLiftClicked: HomeEvent()
+
+    data object GoalsClicked: HomeEvent()
 }
 
 @Composable
 fun rememberHomeInteractor(
     initialTab: Tab = Tab.Dashboard,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
-): Interactor<HomeState, HomeEvent> = rememberInteractor(
+): HomeInteractor = rememberInteractor(
     initialState = HomeState.Loading,
     source = { state ->
         combine(
@@ -67,30 +73,36 @@ fun rememberHomeInteractor(
             }
         }
     },
-    reducers = listOf(
-        Reducer { state, event ->
-            when (state) {
-                is HomeState.Content -> {
-                    when (event) {
-                        HomeEvent.DashboardClicked -> state.copy(selectedTab = Tab.Dashboard)
-                        HomeEvent.CalendarClicked -> state.copy(selectedTab = Tab.WorkoutCalendar)
-                        HomeEvent.AddSetClicked -> state
-                        HomeEvent.AddLiftClicked -> state
-                        HomeEvent.SettingsClicked -> state
-                    }
-                }
+    reducers = listOf(homeReducer),
+    sideEffects = homeSideEffects(navCoordinator)
+)
 
-                else -> state
+internal fun homeSideEffects(
+    navCoordinator: NavCoordinator,
+) = listOf<SideEffect<HomeState, HomeEvent>> { state, event ->
+    when (event) {
+        HomeEvent.DashboardClicked -> {}
+        HomeEvent.CalendarClicked -> {}
+        HomeEvent.AddSetClicked -> navCoordinator.present(CreateSet())
+        is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
+        HomeEvent.SettingsClicked -> navCoordinator.present(Settings)
+        HomeEvent.GoalsClicked -> navCoordinator.present(Destination.Goals)
+    }
+}
+
+internal val homeReducer = Reducer<HomeState, HomeEvent> { state, event ->
+    when (state) {
+        is HomeState.Content -> {
+            when (event) {
+                HomeEvent.DashboardClicked -> state.copy(selectedTab = Tab.Dashboard)
+                HomeEvent.CalendarClicked -> state.copy(selectedTab = Tab.WorkoutCalendar)
+                HomeEvent.AddSetClicked -> state
+                HomeEvent.AddLiftClicked -> state
+                HomeEvent.SettingsClicked -> state
+                HomeEvent.GoalsClicked -> state
             }
         }
-    ),
-    sideEffects = listOf { state, event ->
-        when (event) {
-            HomeEvent.DashboardClicked -> {}
-            HomeEvent.CalendarClicked -> {}
-            HomeEvent.AddSetClicked -> navCoordinator.present(CreateSet())
-            is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
-            HomeEvent.SettingsClicked -> navCoordinator.present(Settings)
-        }
+
+        else -> state
     }
-)
+}

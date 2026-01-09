@@ -2,6 +2,7 @@ package com.lift.bro
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.presentation.goals.GoalsScreen
 import com.lift.bro.presentation.home.HomeScreen
 import com.lift.bro.presentation.lift.EditLiftScreen
 import com.lift.bro.presentation.lift.LiftDetailsScreen
@@ -13,6 +14,8 @@ import com.lift.bro.presentation.workout.WorkoutScreen
 import com.lift.bro.presentation.workout.rememberWorkoutInteractor
 import com.lift.bro.presentation.wrapped.WrappedLandingScreen
 import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.Destination.CreateSet
+import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d
@@ -74,18 +77,22 @@ fun AppRouter(route: Destination) {
                 variationId = route.variationId,
                 addSetClicked = {
                     navCoordinator.present(
-                        Destination.CreateSet(
+                        CreateSet(
                             variationId = route.variationId
                         )
                     )
                 },
                 setClicked = {
                     navCoordinator.present(
-                        Destination.EditSet(
+                        EditSet(
                             setId = it.id
                         )
                     )
                 }
             )
+
+        Destination.Goals -> {
+            GoalsScreen()
+        }
     }
 }

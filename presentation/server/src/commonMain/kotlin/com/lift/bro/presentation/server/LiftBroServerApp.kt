@@ -5,6 +5,7 @@ import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.server.plugins.doublereceive.DoubleReceive
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.route
@@ -20,6 +21,7 @@ fun Application.configureLiftBroApp() {
         pingPeriodMillis = 15_000
         timeoutMillis = 15_000
     }
+    install(DoubleReceive)
     configureSerialization()
     configureRouting()
 }

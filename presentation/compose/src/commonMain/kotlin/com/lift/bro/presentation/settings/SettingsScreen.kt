@@ -45,6 +45,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalLiftBro
+import com.lift.bro.presentation.LocalPlatformContext
 import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
@@ -95,6 +96,8 @@ fun SettingsScreen() {
                 )
             }
             val localServer = LocalServer.current
+            val showPro = LocalPlatformContext.current == null // (this means its iOS)
+
             LazyColumn(
                 modifier = Modifier.padding(padding),
                 contentPadding = PaddingValues(MaterialTheme.spacing.one),
@@ -151,43 +154,45 @@ fun SettingsScreen() {
                     ThemeSettingsRow()
                 }
 
-                item {
-                    Text(
-                        modifier = Modifier.semantics {
-                            heading()
-                        },
-                        text = stringResource(Res.string.settings_pro_features_header),
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
-                }
-
-                item {
-                    when (subscriptionType) {
-                        SubscriptionType.None -> {
-                            SettingsRowItem(
-                                modifier = Modifier.clickable { showPaywall = true },
-                                title = { Text(stringResource(Res.string.settings_become_pro_title)) },
-                            ) {
-                                Row {
-                                    Text(stringResource(Res.string.settings_become_pro_description))
-                                }
-                            }
-                        }
-
-                        else -> {}
+                if (showPro) {
+                    item {
+                        Text(
+                            modifier = Modifier.semantics {
+                                heading()
+                            },
+                            text = stringResource(Res.string.settings_pro_features_header),
+                            style = MaterialTheme.typography.headlineMedium,
+                        )
                     }
 
-                    LaunchedEffect(showPaywall) {
-                        Purchases.sharedInstance.getCustomerInfo(
-                            onError = { error ->
-                                Sentry.captureException(Throwable(message = error.message))
-                            },
-                            onSuccess = { success ->
-                                if (success.entitlements.active.containsKey("pro")) {
-                                    subscriptionType = SubscriptionType.Pro
+                    item {
+                        when (subscriptionType) {
+                            SubscriptionType.None -> {
+                                SettingsRowItem(
+                                    modifier = Modifier.clickable { showPaywall = true },
+                                    title = { Text(stringResource(Res.string.settings_become_pro_title)) },
+                                ) {
+                                    Row {
+                                        Text(stringResource(Res.string.settings_become_pro_description))
+                                    }
                                 }
                             }
-                        )
+
+                            else -> {}
+                        }
+
+                        LaunchedEffect(showPaywall) {
+                            Purchases.sharedInstance.getCustomerInfo(
+                                onError = { error ->
+                                    Sentry.captureException(Throwable(message = error.message))
+                                },
+                                onSuccess = { success ->
+                                    if (success.entitlements.active.containsKey("pro")) {
+                                        subscriptionType = SubscriptionType.Pro
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
 
@@ -203,16 +208,18 @@ fun SettingsScreen() {
                     }
                 }
 
-                item {
-                    MERSettingsRow()
-                }
+                if (showPro || subscriptionType == SubscriptionType.Pro) {
+                    item {
+                        MERSettingsRow()
+                    }
 
-                item {
-                    TWMSettingsRow()
-                }
+                    item {
+                        TWMSettingsRow()
+                    }
 
-                item {
-                    eMaxSettingsRow()
+                    item {
+                        eMaxSettingsRow()
+                    }
                 }
 
                 item {

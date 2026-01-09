@@ -10,8 +10,6 @@ import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.RadioField
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 
 expect fun getLocalIPAdderess(): String?
 
@@ -38,7 +36,6 @@ fun ServerSettingsRow(
                 text = "Server ${if (state.status == ServerStatus.On) "Enabled" else "Disabled"}",
                 selected = state.status == ServerStatus.On,
                 fieldSelected = {
-                    Log.d("DEBUGEH", "toggling server")
                     when (state.status) {
                         ServerStatus.On -> interactor(ServerSettingsEvent.TurnOffServer)
                         ServerStatus.Unknown -> {}
