@@ -12,7 +12,9 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class KtorGoalRepository(
     val baseUrl: String,
@@ -26,7 +28,7 @@ class KtorGoalRepository(
 
     override suspend fun save(goal: Goal) {
         Log.d("LiftBroClient", "saving goal $goal")
-        httpClient.post("rest/goal") {
+        httpClient.post("api/rest/goal") {
             contentType(ContentType.Application.Json)
             setBody(goal)
         }
@@ -34,6 +36,6 @@ class KtorGoalRepository(
 
     override suspend fun delete(goal: Goal) {
         Log.d("LiftBroClient", "deleting goal $goal")
-        httpClient.delete("rest/goal?id=${goal.id}")
+        httpClient.delete("api/rest/goal?id=${goal.id}")
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.presentation.Interactor
@@ -95,6 +98,14 @@ fun HomeScreen(
             LiftingScaffold(
                 description = {
                     AnimatedRotatingText(
+                        modifier = Modifier
+                            .clip(
+                                MaterialTheme.shapes.small,
+                            ).clickable(
+                                onClick = { onEvent(HomeEvent.GoalsClicked) },
+                                role = Role.Button
+                            )
+                            .padding(horizontal = MaterialTheme.spacing.half),
                         text = currentState.goals,
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
