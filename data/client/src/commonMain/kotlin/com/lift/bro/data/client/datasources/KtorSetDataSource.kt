@@ -31,7 +31,14 @@ class KtorSetDataSource(
         order: Order,
     ): Flow<List<LBSet>> = createConnectionFlow(
         httpClient,
-        "api/ws/sets?limit=$limit&startDate=$startDate&endDate=$endDate&variationId=$variationId"
+        "api/ws/sets?" +
+            "limit=$limit" +
+            (startDate?.let { "&startDate=$startDate" } ?: "") +
+            (endDate?.let { "&endDate=$endDate" } ?: "") +
+            (variationId?.let { "&variationId=$variationId" } ?: "") +
+            "&sort=$sorting" +
+            "&order=$order" +
+            ""
     )
 
     override fun listenAllForLift(
@@ -40,7 +47,7 @@ class KtorSetDataSource(
         sorting: Sorting
     ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit&liftId=$liftId")
 
-    override fun listen(id: String): Flow<LBSet?> = createConnectionFlow(httpClient, "api/ws/sets?setId=$id")
+    override fun listen(id: String): Flow<LBSet?> = createConnectionFlow(httpClient, "api/ws/set?setId=$id")
 
     override suspend fun save(lbSet: LBSet) {
         httpClient.post("api/rest/sets") {

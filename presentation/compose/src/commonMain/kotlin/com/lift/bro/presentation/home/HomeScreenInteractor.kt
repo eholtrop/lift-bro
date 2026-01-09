@@ -16,6 +16,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
+typealias HomeInteractor = Interactor<HomeState, HomeEvent>
+
+
 enum class Tab {
     Dashboard,
     WorkoutCalendar,
@@ -50,7 +53,7 @@ sealed class HomeEvent {
 fun rememberHomeInteractor(
     initialTab: Tab = Tab.Dashboard,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
-): Interactor<HomeState, HomeEvent> = rememberInteractor(
+): HomeInteractor = rememberInteractor(
     initialState = HomeState.Loading,
     source = { state ->
         combine(

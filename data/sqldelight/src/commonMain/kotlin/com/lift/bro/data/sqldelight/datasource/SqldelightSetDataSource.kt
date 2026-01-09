@@ -102,6 +102,7 @@ class SqldelightSetDataSource(
         setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 
     override suspend fun save(lbSet: LBSet) {
+        Log.d("LiftBroDb", "saving $lbSet")
         setQueries.save(
             id = lbSet.id,
             variationId = lbSet.variationId,

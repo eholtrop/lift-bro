@@ -38,7 +38,6 @@ fun ServerSettingsRow(
                 text = "Server ${if (state.status == ServerStatus.On) "Enabled" else "Disabled"}",
                 selected = state.status == ServerStatus.On,
                 fieldSelected = {
-                    Log.d("DEBUGEH", "toggling server")
                     when (state.status) {
                         ServerStatus.On -> interactor(ServerSettingsEvent.TurnOffServer)
                         ServerStatus.Unknown -> {}

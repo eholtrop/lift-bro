@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -52,8 +51,11 @@ import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.coroutines.delay
-import lift_bro.core.generated.resources.*
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_goals_add_button_content_description
+import lift_bro.core.generated.resources.wrapped_goals_delete_button_content_description
+import lift_bro.core.generated.resources.wrapped_goals_header_title
+import lift_bro.core.generated.resources.wrapped_goals_section_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
