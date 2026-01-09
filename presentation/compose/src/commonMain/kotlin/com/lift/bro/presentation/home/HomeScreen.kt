@@ -44,10 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
-import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftBro
-import com.lift.bro.presentation.Log
-import com.lift.bro.presentation.d
 import com.lift.bro.presentation.dashboard.DashboardContent
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.presentation.wrapped.WrappedDialog
@@ -60,7 +57,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.today
-import com.lift.bro.utils.debug
 import com.lift.bro.utils.horizontal_padding.padding
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Month

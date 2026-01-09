@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import java.nio.file.Files.delete
 
 internal fun <T> Flow<T>.serverLogging(path: String, tag: String = "LiftBroServer") = this
     .onEach { Log.d(tag, "emitting $it $path ") }
@@ -41,7 +40,7 @@ fun Route.configureGoalRoutes(
     }
 
     post<Goal>("rest/goal") {
-        Log.d("LiftBroServer", "Received delete request to /rest/goal")
+        Log.d("LiftBroServer", "Received post request to /rest/goal")
         goalRepository.save(this.call.receive())
     }
 

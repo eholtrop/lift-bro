@@ -17,7 +17,6 @@ import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
-import io.ktor.server.request.receiveText
 import io.ktor.server.response.respond
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete
@@ -25,7 +24,6 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.websocket.webSocket
 import io.ktor.websocket.Frame
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
@@ -33,7 +31,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
 
 fun Route.configureLiftRoutes(
     liftRepository: ILiftRepository = dependencies.localLiftRepository,
@@ -104,21 +101,17 @@ fun Route.configureSetRoutes(
 ) {
     webSocket("ws/sets") {
         Log.d("LiftBroServer", "Received ws connection to ws/sets")
-        try {
-            setRepository.listenAll(
-                startDate = call.request.queryParameters["startDate"]?.let { LocalDate.parse(it) },
-                endDate = call.request.queryParameters["endDate"]?.let { LocalDate.parse(it) },
-                variationId = call.request.queryParameters["variationId"],
-                limit = call.request.queryParameters["limit"]?.toLong() ?: Long.MAX_VALUE,
-                sorting = Sorting.valueOf(call.request.queryParameters["sort"] ?: Sorting.date.toString()),
-                order = Order.valueOf(call.request.queryParameters["order"] ?: Order.Descending.toString()),
-            )
-                .onEach { sets -> send(Frame.Text(Json.encodeToString(sets))) }
-                .catch { it.printStackTrace() }
-                .collect()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        setRepository.listenAll(
+            startDate = call.request.queryParameters["startDate"]?.let { LocalDate.parse(it) },
+            endDate = call.request.queryParameters["endDate"]?.let { LocalDate.parse(it) },
+            variationId = call.request.queryParameters["variationId"],
+            limit = call.request.queryParameters["limit"]?.toLong() ?: Long.MAX_VALUE,
+            sorting = Sorting.valueOf(call.request.queryParameters["sort"] ?: Sorting.date.toString()),
+            order = Order.valueOf(call.request.queryParameters["order"] ?: Order.Descending.toString()),
+        )
+            .onEach { sets -> send(Frame.Text(Json.encodeToString(sets))) }
+            .catch { it.printStackTrace() }
+            .collect()
     }
 
     webSocket("ws/set") {
@@ -131,14 +124,9 @@ fun Route.configureSetRoutes(
 
     post<LBSet>("rest/sets") {
         Log.d("LiftBroServer", "Received post request to /rest/sets")
-        try {
-            setRepository.save(
-                lbSet = this.call.receive()
-            )
-        } catch (e: Exception) {
-            1
-            Log.d("LiftBroServer", "Error saving set: $e")
-        }
+        setRepository.save(
+            lbSet = this.call.receive()
+        )
     }
 
     delete("rest/sets") {

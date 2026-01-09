@@ -70,7 +70,7 @@ fun TopBar(
                 CompositionLocalProvider(
                     LocalContentColor provides MaterialTheme.colorScheme.onBackground
                 ) {
-                Column(
+                    Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         title()

@@ -14,7 +14,6 @@ import kotlinx.serialization.Serializable
 
 typealias GoalsInteractor = Interactor<GoalsState, GoalsEvents>
 
-
 @Serializable
 data class GoalsState(
     val goals: List<Goal> = emptyList(),

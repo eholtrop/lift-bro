@@ -14,7 +14,8 @@ import com.lift.bro.presentation.workout.WorkoutScreen
 import com.lift.bro.presentation.workout.rememberWorkoutInteractor
 import com.lift.bro.presentation.wrapped.WrappedLandingScreen
 import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.Destination.*
+import com.lift.bro.ui.navigation.Destination.CreateSet
+import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.utils.logger.Log
 import com.lift.bro.utils.logger.d

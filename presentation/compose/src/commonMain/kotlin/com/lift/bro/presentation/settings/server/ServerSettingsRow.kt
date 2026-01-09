@@ -10,8 +10,6 @@ import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.RadioField
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 
 expect fun getLocalIPAdderess(): String?
 

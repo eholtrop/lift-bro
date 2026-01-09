@@ -58,7 +58,7 @@ class AndroidLiftBroServer : LiftBroServer {
         } catch (e: Exception) {
             Log.e("AndroidLiftBroServer", "Error stopping server", e)
             serverJob?.cancel()
-            serverJob= null
+            serverJob = null
         }
     }
 }

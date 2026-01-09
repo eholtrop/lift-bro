@@ -12,9 +12,7 @@ import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 class KtorGoalRepository(
     val baseUrl: String,
