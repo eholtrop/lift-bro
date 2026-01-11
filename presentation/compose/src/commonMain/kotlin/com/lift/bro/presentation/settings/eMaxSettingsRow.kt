@@ -18,6 +18,8 @@ import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.settings_emax_enable_text
 import lift_bro.core.generated.resources.settings_emax_formula
@@ -31,9 +33,33 @@ import lift_bro.core.generated.resources.settings_emax_info_dialog_title
 import lift_bro.core.generated.resources.settings_emax_title
 import lift_bro.core.generated.resources.settings_tmax_enable_text
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun eMaxSettingsRow() {
+    val emaxEnabled by dependencies.settingsRepository.eMaxEnabled()
+        .collectAsState(false)
+    val tmaxEnabled by dependencies.settingsRepository.tMaxEnabled()
+        .collectAsState(false)
+
+    eMaxSettingsRowContent(
+        eMaxEnabled = emaxEnabled,
+        tMaxEnabled = tmaxEnabled,
+        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
+        onEMaxToggle = { dependencies.settingsRepository.setEMaxEnabled(it) },
+        onTMaxToggle = { dependencies.settingsRepository.setTMaxEnabled(it) }
+    )
+}
+
+@Composable
+fun eMaxSettingsRowContent(
+    eMaxEnabled: Boolean,
+    tMaxEnabled: Boolean,
+    isPro: Boolean,
+    onEMaxToggle: (Boolean) -> Unit,
+    onTMaxToggle: (Boolean) -> Unit
+) {
     SettingsRowItem(
         title = {
             Row(
@@ -89,33 +115,25 @@ fun eMaxSettingsRow() {
             Column(
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
             ) {
-                val emaxEnabled by dependencies.settingsRepository.eMaxEnabled()
-                    .collectAsState(false)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Checkbox(
-                        checked = emaxEnabled,
-                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
-                        onCheckedChange = {
-                            dependencies.settingsRepository.setEMaxEnabled(it)
-                        }
+                        checked = eMaxEnabled,
+                        enabled = isPro,
+                        onCheckedChange = onEMaxToggle
                     )
 
                     Text(stringResource(Res.string.settings_emax_enable_text))
                 }
 
-                val tmaxEnabled by dependencies.settingsRepository.tMaxEnabled()
-                    .collectAsState(false)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Checkbox(
-                        checked = tmaxEnabled,
-                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
-                        onCheckedChange = {
-                            dependencies.settingsRepository.setTMaxEnabled(it)
-                        }
+                        checked = tMaxEnabled,
+                        enabled = isPro,
+                        onCheckedChange = onTMaxToggle
                     )
 
                     Text(stringResource(Res.string.settings_tmax_enable_text))
@@ -123,4 +141,20 @@ fun eMaxSettingsRow() {
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun eMaxSettingsRowPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        eMaxSettingsRowContent(
+            eMaxEnabled = true,
+            tMaxEnabled = false,
+            isPro = true,
+            onEMaxToggle = {},
+            onTMaxToggle = {}
+        )
+    }
 }

@@ -17,15 +17,37 @@ import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.settings_twm_enable_text
 import lift_bro.core.generated.resources.settings_twm_fatigue_info_dialog_paragraph_one
 import lift_bro.core.generated.resources.settings_twm_fatigue_info_dialog_title
 import lift_bro.core.generated.resources.settings_twm_title
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun TWMSettingsRow() {
+    val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
+        .collectAsState(false)
+
+    TWMSettingsRowContent(
+        enabled = showTwm,
+        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
+        onToggle = { enabled ->
+            dependencies.settingsRepository.showTotalWeightMoved(enabled)
+        }
+    )
+}
+
+@Composable
+fun TWMSettingsRowContent(
+    enabled: Boolean,
+    isPro: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
     SettingsRowItem(
         title = {
             Row(
@@ -47,9 +69,6 @@ fun TWMSettingsRow() {
             }
         },
         content = {
-            val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
-                .collectAsState(false)
-
             Column(
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
             ) {
@@ -57,11 +76,9 @@ fun TWMSettingsRow() {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Checkbox(
-                        checked = showTwm,
-                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
-                        onCheckedChange = {
-                            dependencies.settingsRepository.showTotalWeightMoved(it)
-                        }
+                        checked = enabled,
+                        enabled = isPro,
+                        onCheckedChange = onToggle
                     )
 
                     Text(stringResource(Res.string.settings_twm_enable_text))
@@ -69,4 +86,18 @@ fun TWMSettingsRow() {
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun TWMSettingsRowPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        TWMSettingsRowContent(
+            enabled = true,
+            isPro = true,
+            onToggle = {}
+        )
+    }
 }

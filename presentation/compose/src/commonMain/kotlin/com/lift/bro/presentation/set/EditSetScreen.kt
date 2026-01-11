@@ -42,7 +42,9 @@ import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.create_set_screen_title
@@ -53,6 +55,9 @@ import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 @Composable
 fun EditSetScreen(
@@ -331,6 +336,102 @@ private fun buildSetLiftTitle(
             str.substring(
                 str.indexOf(name) + name.length,
             )
+        )
+    }
+}
+
+class EditSetStateProvider : PreviewParameterProvider<EditSetState> {
+    override val values: Sequence<EditSetState>
+        get() = sequenceOf(
+            // New set - no variation selected yet
+            EditSetState(
+                id = null,
+                variation = null,
+                weight = null,
+                reps = null,
+                date = Clock.System.now()
+            ),
+            // New set with variation but no data
+            EditSetState(
+                id = null,
+                variation = com.lift.bro.domain.models.Variation(
+                    lift = com.lift.bro.domain.models.Lift(
+                        name = "Squat",
+                        color = 0xFF2196F3uL
+                    ),
+                    name = "Back Squat"
+                ),
+                weight = null,
+                reps = null,
+                eccentric = 3,
+                isometric = 1,
+                concentric = 1
+            ),
+            // Partially filled set
+            EditSetState(
+                id = "set1",
+                variation = com.lift.bro.domain.models.Variation(
+                    lift = com.lift.bro.domain.models.Lift(
+                        name = "Bench Press",
+                        color = 0xFF4CAF50uL
+                    ),
+                    name = "Flat Bench"
+                ),
+                weight = 225.0,
+                reps = 5,
+                eccentric = 3,
+                isometric = 1,
+                concentric = 1,
+                rpe = null,
+                notes = ""
+            ),
+            // Complete set with all data
+            EditSetState(
+                id = "set2",
+                variation = com.lift.bro.domain.models.Variation(
+                    lift = com.lift.bro.domain.models.Lift(
+                        name = "Deadlift",
+                        color = 0xFFFF5722uL
+                    ),
+                    name = "Conventional"
+                ),
+                weight = 405.0,
+                reps = 3,
+                eccentric = 2,
+                isometric = 1,
+                concentric = 1,
+                rpe = 9,
+                notes = "PR attempt! Felt heavy but moved well.",
+                variationMaxPercentage = EditSetMaxPercentageState(
+                    percentage = 95,
+                    variationName = "Conventional Deadlift"
+                ),
+                liftMaxPercentage = EditSetMaxPercentageState(
+                    percentage = 90,
+                    variationName = "Deadlift"
+                )
+            )
+        )
+}
+
+@Preview
+@Composable
+fun EditSetScreenPreview(
+    @PreviewParameter(EditSetStateProvider::class) state: EditSetState
+) {
+    PreviewAppTheme(isDarkMode = false) {
+        EditSetScreen(
+            set = state,
+            deleteSetClicked = {},
+            repChanged = {},
+            weightChanged = {},
+            rpeChanged = {},
+            dateChanged = {},
+            eccChanged = {},
+            isoChanged = {},
+            conChanged = {},
+            notesChanged = {},
+            variationChanged = {}
         )
     }
 }

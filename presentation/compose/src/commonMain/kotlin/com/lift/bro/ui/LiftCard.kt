@@ -47,6 +47,8 @@ import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
@@ -57,6 +59,8 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import kotlin.math.max
 import kotlin.text.Typography.nbsp
 
@@ -293,6 +297,83 @@ fun LiftCard(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun LiftCardEmptyPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        LiftCard(
+            state = LiftCardState(
+                lift = Lift(
+                    name = "Bench Press",
+                    color = 0xFF4CAF50uL
+                ),
+                values = emptyList(),
+                maxWeight = null,
+                maxReps = null
+            ),
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LiftCardWeightPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        LiftCard(
+            state = LiftCardState(
+                lift = Lift(
+                    name = "Squat",
+                    color = 0xFF2196F3uL
+                ),
+                values = listOf(
+                    LocalDate(2024, 1, 1) to LiftCardData(weight = 135.0, reps = 5, rpe = 7),
+                    LocalDate(2024, 1, 8) to LiftCardData(weight = 145.0, reps = 5, rpe = 8),
+                    LocalDate(2024, 1, 15) to LiftCardData(weight = 155.0, reps = 5, rpe = 9),
+                    LocalDate(2024, 1, 22) to LiftCardData(weight = 165.0, reps = 5, rpe = 8),
+                    LocalDate(2024, 1, 29) to LiftCardData(weight = 175.0, reps = 5, rpe = 9)
+                ),
+                maxWeight = 175.0,
+                maxReps = 5.0
+            ),
+            onClick = {},
+            value = LiftCardYValue.Weight
+        )
+    }
+}
+
+@Preview
+@Composable
+fun LiftCardRepsPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        LiftCard(
+            state = LiftCardState(
+                lift = Lift(
+                    name = "Pull Ups",
+                    color = 0xFFFF9800uL
+                ),
+                values = listOf(
+                    LocalDate(2024, 1, 1) to LiftCardData(weight = 0.0, reps = 8, rpe = 6),
+                    LocalDate(2024, 1, 8) to LiftCardData(weight = 0.0, reps = 10, rpe = 7),
+                    LocalDate(2024, 1, 15) to LiftCardData(weight = 0.0, reps = 12, rpe = 8),
+                    LocalDate(2024, 1, 22) to LiftCardData(weight = 0.0, reps = 11, rpe = 7),
+                    LocalDate(2024, 1, 29) to LiftCardData(weight = 0.0, reps = 15, rpe = 9)
+                ),
+                maxWeight = 0.0,
+                maxReps = 15.0
+            ),
+            onClick = {},
+            value = LiftCardYValue.Reps
+        )
     }
 }
 

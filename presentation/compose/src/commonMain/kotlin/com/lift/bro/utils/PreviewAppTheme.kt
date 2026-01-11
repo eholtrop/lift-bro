@@ -1,10 +1,15 @@
 package com.lift.bro.utils
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import com.example.compose.AppTheme
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.SubscriptionType
@@ -17,6 +22,7 @@ import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.JetpackComposeCoordinator
 import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.theme.spacing
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 @Composable
@@ -24,7 +30,7 @@ internal fun PreviewAppTheme(
     isDarkMode: Boolean,
     content:
     @Composable()
-    () -> Unit
+    () -> Unit,
 ) {
     val calculatorVisibility = remember { mutableStateOf(false) }
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
@@ -39,7 +45,12 @@ internal fun PreviewAppTheme(
         AppTheme(
             theme = if (isDarkMode) ThemeMode.Dark else ThemeMode.Light
         ) {
-            content()
+            Column(
+                modifier = Modifier.padding(MaterialTheme.spacing.one),
+                Arrangement.spacedBy(MaterialTheme.spacing.one)
+            ) {
+                content()
+            }
         }
     }
 }

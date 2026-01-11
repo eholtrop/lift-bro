@@ -14,6 +14,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -34,7 +35,11 @@ import com.lift.bro.presentation.home.darkIconRes
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun InfoDialogButton(
@@ -145,6 +150,65 @@ fun InfoSpeechBubble(
                     speechBubbleColor
                 )
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun InfoDialogButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        Row(
+            modifier = Modifier.padding(MaterialTheme.spacing.one),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(MaterialTheme.spacing.one)
+        ) {
+            InfoDialogButton(
+                dialogTitle = { Text("Tempo Information") },
+                dialogMessage = {
+                    Column {
+                        Text("Tempo controls how fast you perform each phase of the lift.")
+                        Space(MaterialTheme.spacing.half)
+                        Text("Ecc: Eccentric (lowering)")
+                        Text("Iso: Isometric (pause)")
+                        Text("Con: Concentric (lifting)")
+                    }
+                }
+            )
+
+            InfoDialogButton(
+                dialogTitle = { Text("Custom Tint") },
+                dialogMessage = { Text("This button has a custom tint color.") },
+                buttonTint = MaterialTheme.colorScheme.error
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun InfoSpeechBubblePreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        Column(
+            modifier = Modifier.padding(MaterialTheme.spacing.one),
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(MaterialTheme.spacing.one)
+        ) {
+            InfoSpeechBubble(
+                title = { Text("Welcome!") },
+                message = {
+                    Column {
+                        Text("This is an informational speech bubble.")
+                        Space(MaterialTheme.spacing.half)
+                        Text("It can contain multiple lines of text and complex layouts.")
+                    }
+                },
+                forceDarkIcon = false
+            )
+
+            InfoSpeechBubble(
+                title = { Text("Pro Tip") },
+                message = { Text("Always warm up before lifting heavy weights!") },
+                forceDarkIcon = true
+            )
         }
     }
 }

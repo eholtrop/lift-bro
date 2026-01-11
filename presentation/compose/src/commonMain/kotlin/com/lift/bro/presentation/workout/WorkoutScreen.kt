@@ -73,6 +73,7 @@ import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.horizontal_padding.padding
@@ -89,6 +90,9 @@ import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_set_options_copy_cta
 import lift_bro.core.generated.resources.workout_set_options_delete_cta
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 import kotlin.math.absoluteValue
 
 @Composable
@@ -808,5 +812,114 @@ fun SetOptionsBottomSheet(
                 Text(stringResource(Res.string.workout_set_options_copy_cta))
             }
         }
+    }
+}
+
+class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
+    override val values: Sequence<CreateWorkoutState>
+        get() = sequenceOf(
+            // Empty workout with no exercises
+            CreateWorkoutState(
+                date = LocalDate(2024, 1, 15),
+                notes = "",
+                warmup = null,
+                finisher = null,
+                exercises = emptyList(),
+                recentWorkouts = emptyList()
+            ),
+            // Workout with notes and warmup/finisher
+            CreateWorkoutState(
+                date = LocalDate(2024, 1, 15),
+                notes = "Feeling strong today! PRs coming!",
+                warmup = "5 min cardio, dynamic stretches",
+                finisher = "Core: 3x20 ab wheel, 3x60s plank",
+                exercises = emptyList(),
+                recentWorkouts = emptyList()
+            ),
+            // Empty workout with recent workouts to copy
+            CreateWorkoutState(
+                date = LocalDate(2024, 1, 15),
+                notes = "",
+                exercises = emptyList(),
+                recentWorkouts = listOf(
+                    com.lift.bro.domain.models.Workout(
+                        id = "w1",
+                        date = LocalDate(2024, 1, 12),
+                        exercises = listOf(
+                            com.lift.bro.domain.models.Exercise(
+                                id = "ex1",
+                                workoutId = "w1",
+                                variationSets = emptyList()
+                            )
+                        )
+                    ),
+                    com.lift.bro.domain.models.Workout(
+                        id = "w2",
+                        date = LocalDate(2024, 1, 10),
+                        exercises = listOf(
+                            com.lift.bro.domain.models.Exercise(
+                                id = "ex2",
+                                workoutId = "w2",
+                                variationSets = emptyList()
+                            )
+                        )
+                    )
+                )
+            ),
+            // Workout with exercises and sets
+            CreateWorkoutState(
+                date = LocalDate(2024, 1, 15),
+                notes = "Heavy squat day",
+                warmup = "10 min warmup",
+                exercises = listOf(
+                    ExerciseItem(
+                        id = "ex1",
+                        variations = listOf(
+                            VariationItem.WithSets(
+                                id = "var1",
+                                variation = com.lift.bro.domain.models.Variation(
+                                    lift = com.lift.bro.domain.models.Lift(
+                                        name = "Squat",
+                                        color = 0xFF2196F3uL
+                                    ),
+                                    name = "Back Squat"
+                                ),
+                                sets = listOf(
+                                    com.lift.bro.domain.models.LBSet(
+                                        id = "set1",
+                                        variationId = "var1",
+                                        weight = 225.0,
+                                        reps = 5,
+                                        rpe = 7,
+                                        date = kotlinx.datetime.Clock.System.now()
+                                    ),
+                                    com.lift.bro.domain.models.LBSet(
+                                        id = "set2",
+                                        variationId = "var1",
+                                        weight = 245.0,
+                                        reps = 3,
+                                        rpe = 8,
+                                        date = kotlinx.datetime.Clock.System.now()
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+                recentWorkouts = emptyList()
+            )
+        )
+}
+
+@Preview
+@Composable
+fun WorkoutScreenInternalPreview(
+    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState
+) {
+    PreviewAppTheme(isDarkMode = false) {
+        WorkoutScreenInternal(
+            state = state,
+            eventHandler = {}
+        )
     }
 }

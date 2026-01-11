@@ -25,7 +25,11 @@ import androidx.compose.ui.Modifier
 import com.lift.bro.data.client.datasources.KtorServerHealthDataSource
 import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.Space
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun ClientSettingsRow(
@@ -33,6 +37,17 @@ fun ClientSettingsRow(
 ) {
     val state by interactor.state.collectAsState()
 
+    ClientSettingsRowContent(
+        state = state,
+        onEvent = { interactor(it) }
+    )
+}
+
+@Composable
+fun ClientSettingsRowContent(
+    state: ClientSettingsState,
+    onEvent: (ClientSettingsEvent) -> Unit
+) {
     SettingsRowItem(
         modifier = Modifier,
         title = {
@@ -69,7 +84,7 @@ fun ClientSettingsRow(
                                     Text(location.toString())
                                 },
                                 onClick = {
-                                    interactor(ClientSettingsEvent.ClientModeSelected(location))
+                                    onEvent(ClientSettingsEvent.ClientModeSelected(location))
                                     expanded = false
                                 }
                             )
@@ -100,7 +115,7 @@ fun ClientSettingsRow(
                                 value = value ?: "",
                                 onValueChange = {
                                     value = it
-                                    interactor(ClientSettingsEvent.UrlUpdated(it))
+                                    onEvent(ClientSettingsEvent.UrlUpdated(it))
                                 },
                                 placeholder = {
                                     Text("http://192.168.0.42:8080")
@@ -132,12 +147,38 @@ fun ClientSettingsRow(
             Button(
                 modifier = Modifier.align(Alignment.End),
                 onClick = {
-                    interactor(ClientSettingsEvent.ApplyMode(state.mode))
+                    onEvent(ClientSettingsEvent.ApplyMode(state.mode))
                 },
                 enabled = connected
             ) {
                 Text("Apply")
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun ClientSettingsRowLocalPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        ClientSettingsRowContent(
+            state = ClientSettingsState(mode = ClientMode.Local),
+            onEvent = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ClientSettingsRowRemotePreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        ClientSettingsRowContent(
+            state = ClientSettingsState(mode = ClientMode.Remote("http://192.168.1.100:8080")),
+            onEvent = {}
+        )
     }
 }

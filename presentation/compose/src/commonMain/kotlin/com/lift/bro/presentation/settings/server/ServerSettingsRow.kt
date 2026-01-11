@@ -7,9 +7,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.lift.bro.domain.server.LiftBroServer
-import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.RadioField
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 expect fun getLocalIPAdderess(): String?
 
@@ -24,6 +27,19 @@ fun ServerSettingsRow(
 ) {
     val state by interactor.state.collectAsState()
 
+    ServerSettingsRowContent(
+        state = state,
+        localIPAddress = getLocalIPAdderess(),
+        onEvent = { interactor(it) }
+    )
+}
+
+@Composable
+fun ServerSettingsRowContent(
+    state: ServerSettingsState,
+    localIPAddress: String?,
+    onEvent: (ServerSettingsEvent) -> Unit
+) {
     SettingsRowItem(
         modifier = Modifier,
         title = { Text("Lift Bro Local Server") },
@@ -37,17 +53,41 @@ fun ServerSettingsRow(
                 selected = state.status == ServerStatus.On,
                 fieldSelected = {
                     when (state.status) {
-                        ServerStatus.On -> interactor(ServerSettingsEvent.TurnOffServer)
+                        ServerStatus.On -> onEvent(ServerSettingsEvent.TurnOffServer)
                         ServerStatus.Unknown -> {}
-                        ServerStatus.Off -> interactor(ServerSettingsEvent.TurnOnServer)
+                        ServerStatus.Off -> onEvent(ServerSettingsEvent.TurnOnServer)
                     }
                 },
             )
-            getLocalIPAdderess()?.let {
-                if (LocalServer.current?.isRunning() == true) {
+            localIPAddress?.let {
+                if (state.status == ServerStatus.On) {
                     Text("Current IP is $it")
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun ServerSettingsRowPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        ServerSettingsRowContent(
+            state = ServerSettingsState(status = ServerStatus.On),
+            localIPAddress = "192.168.1.100",
+            onEvent = {}
+        )
+        ServerSettingsRowContent(
+            state = ServerSettingsState(status = ServerStatus.Off),
+            localIPAddress = null,
+            onEvent = {}
+        )
+        ServerSettingsRowContent(
+            state = ServerSettingsState(status = ServerStatus.Off),
+            localIPAddress = "192.168.1.100",
+            onEvent = {}
+        )
     }
 }

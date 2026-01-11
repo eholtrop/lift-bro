@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,12 +35,16 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.lift.bro.presentation.LocalCalculatorVisibility
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.ic_calculator
 import lift_bro.core.generated.resources.toolbar_calculator_button_content_description
 import lift_bro.core.generated.resources.toolbar_update_button_content_description
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -142,9 +147,6 @@ fun TopBarIconButton(
     onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = Modifier.padding(
-            start = MaterialTheme.spacing.one,
-        ),
         onClick = onClick,
     ) {
         Icon(
@@ -161,10 +163,39 @@ fun TopBarButton(
     content: @Composable () -> Unit,
 ) {
     IconButton(
-        modifier = Modifier.padding(
-            start = MaterialTheme.spacing.one,
-        ),
         onClick = onClick,
         content = content,
     )
+}
+
+@Preview
+@Composable
+fun TopBarIconButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        TopBarIconButton(
+            imageVector = Icons.Default.Settings,
+            contentDescription = "Settings",
+            onClick = {}
+        )
+        TopBarIconButton(
+            painter = painterResource(Res.drawable.ic_calculator),
+            contentDescription = "Calculator",
+            onClick = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun TopBarButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        TopBarButton(
+            onClick = {}
+        ) {
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = "Play"
+            )
+        }
+    }
 }

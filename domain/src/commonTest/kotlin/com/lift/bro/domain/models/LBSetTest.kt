@@ -1,6 +1,5 @@
 package com.lift.bro.domain.models
 
-import kotlinx.datetime.Clock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

@@ -16,6 +16,8 @@ import com.lift.bro.ui.weightFormat
 @Composable
 internal fun LBSet.prettyPrintSet(
     uom: UOM = LocalUnitOfMeasure.current,
+    enableTwm: Boolean = LocalTwmSettings.current,
+    enableMers: Boolean = LocalShowMERCalcs.current?.enabled == true
 ): AnnotatedString = buildAnnotatedString {
     withStyle(
         style = SpanStyle(),
@@ -23,13 +25,13 @@ internal fun LBSet.prettyPrintSet(
         if (bodyWeightRep == true) {
             append("$reps x bw")
             if (weight > 0.0) {
-                append(" + ${weightFormat(weight)}")
+                append(" + ${weightFormat(weight, uom = uom)}")
             }
         } else {
-            append("$reps x ${weightFormat(weight)}")
+            append("$reps x ${weightFormat(weight, uom = uom)}")
         }
     }
-    if (LocalTwmSettings.current && totalWeightMoved > 0.0) {
+    if (enableTwm && totalWeightMoved > 0.0) {
         withStyle(
             style = MaterialTheme.typography.labelMedium.toSpanStyle(),
         ) {
@@ -44,7 +46,7 @@ internal fun LBSet.prettyPrintSet(
         }
     }
 
-    if (mer > 0 && LocalShowMERCalcs.current?.enabled == true) {
+    if (mer > 0 && enableMers) {
         withStyle(
             style = MaterialTheme.typography.labelMedium.toSpanStyle(),
         ) {

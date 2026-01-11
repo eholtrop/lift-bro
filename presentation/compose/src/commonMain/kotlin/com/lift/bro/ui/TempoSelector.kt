@@ -20,6 +20,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun TempoSelector(
@@ -139,5 +143,36 @@ private fun InfoDialogText() {
             text = "• picking up a deadlift\n• coming up from a squat\n• pushing the bar up in a bench press",
             style = MaterialTheme.typography.bodyMedium,
         )
+    }
+}
+
+@Preview
+@Composable
+fun TempoSelectorPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        Column(
+            modifier = Modifier.padding(MaterialTheme.spacing.one),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+        ) {
+            // With all values
+            TempoSelector(
+                down = 3,
+                hold = 1,
+                up = 1,
+                downChanged = {},
+                holdChanged = {},
+                upChanged = {}
+            )
+
+            // With some null values
+            TempoSelector(
+                down = 2,
+                hold = null,
+                up = 1,
+                downChanged = {},
+                holdChanged = {},
+                upChanged = {}
+            )
+        }
     }
 }

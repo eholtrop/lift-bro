@@ -19,9 +19,9 @@ class GetTotalWeightMovedUseCaseTest {
         // Given
         val sets = listOf(
             LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 10), // 1000
-            LBSet(id = "2", variationId = "v1", weight = 50.0, reps = 8),   // 400
-            LBSet(id = "3", variationId = "v2", weight = 200.0, reps = 5),  // 1000
-            LBSet(id = "4", variationId = "v2", weight = 75.0, reps = 12)   // 900
+            LBSet(id = "2", variationId = "v1", weight = 50.0, reps = 8), // 400
+            LBSet(id = "3", variationId = "v2", weight = 200.0, reps = 5), // 1000
+            LBSet(id = "4", variationId = "v2", weight = 75.0, reps = 12) // 900
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalWeightMovedUseCase(repository)
@@ -71,9 +71,9 @@ class GetTotalWeightMovedUseCaseTest {
     fun `Given mixed weights When invoked Then calculates correctly`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 45.5, reps = 5),  // 227.5
+            LBSet(id = "1", variationId = "v1", weight = 45.5, reps = 5), // 227.5
             LBSet(id = "2", variationId = "v1", weight = 102.3, reps = 3), // 306.9
-            LBSet(id = "3", variationId = "v2", weight = 67.8, reps = 10)  // 678.0
+            LBSet(id = "3", variationId = "v2", weight = 67.8, reps = 10) // 678.0
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalWeightMovedUseCase(repository)

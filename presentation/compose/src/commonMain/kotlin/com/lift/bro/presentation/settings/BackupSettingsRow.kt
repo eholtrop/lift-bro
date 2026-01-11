@@ -12,12 +12,16 @@ import com.lift.bro.BackupUseCase
 import com.lift.bro.RestoreUseCase
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.settings_backup_cta
 import lift_bro.core.generated.resources.settings_backup_restore_title
 import lift_bro.core.generated.resources.settings_restore_cta
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun BackupSettingsRow() {
@@ -53,5 +57,15 @@ fun BackupSettingsRow() {
                 Text(stringResource(Res.string.settings_restore_cta))
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun BackupSettingsRowPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        BackupSettingsRow()
     }
 }

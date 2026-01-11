@@ -53,14 +53,13 @@ import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.today
-import com.lift.bro.utils.horizontal_padding.padding
+import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Month
-import kotlinx.datetime.minus
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
@@ -71,6 +70,9 @@ import lift_bro.core.generated.resources.ic_calendar
 import lift_bro.core.generated.resources.view_dashboard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 @Composable
 fun HomeScreen(
@@ -78,14 +80,14 @@ fun HomeScreen(
 ) {
     val state by interactor.state.collectAsState()
 
-    HomeScreen(state) {
+    HomeScreenContent(state) {
         interactor(it)
     }
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun HomeScreen(
+fun HomeScreenContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
 ) {
@@ -317,5 +319,50 @@ fun HomeScreen(
                 }
             }
         }
+    }
+}
+
+class HomeStateProvider : PreviewParameterProvider<HomeState> {
+    override val values: Sequence<HomeState>
+        get() = sequenceOf(
+            // Loading state
+            HomeState.Loading,
+            // Empty state (no lifts)
+            HomeState.Empty,
+            // Content with Dashboard selected, no goals
+            HomeState.Content(
+                selectedTab = Tab.Dashboard,
+                goals = emptyList()
+            ),
+            // Content with Dashboard selected, with goals
+            HomeState.Content(
+                selectedTab = Tab.Dashboard,
+                goals = listOf(
+                    "Squat 405 lbs",
+                    "Bench 315 lbs",
+                    "Deadlift 500 lbs"
+                )
+            ),
+            // Content with Calendar selected
+            HomeState.Content(
+                selectedTab = Tab.WorkoutCalendar,
+                goals = listOf(
+                    "Consistency: 4x per week",
+                    "Linear progression on main lifts"
+                )
+            )
+        )
+}
+
+@Preview
+@Composable
+fun HomeScreenContentPreview(
+    @PreviewParameter(HomeStateProvider::class) state: HomeState
+) {
+    PreviewAppTheme(isDarkMode = false) {
+        HomeScreenContent(
+            state = state,
+            onEvent = {}
+        )
     }
 }

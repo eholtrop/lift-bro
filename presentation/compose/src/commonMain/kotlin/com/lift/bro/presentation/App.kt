@@ -97,7 +97,7 @@ val LocalShowMERCalcs = compositionLocalOf<MERSettings?> {
 }
 
 val LocalTwmSettings = compositionLocalOf<Boolean> {
-    error("Show MER Calcs was not set")
+    error("Show TWM was not set")
 }
 
 val LocalEMaxSettings = compositionLocalOf<Boolean> {

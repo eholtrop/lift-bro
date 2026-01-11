@@ -1,6 +1,5 @@
 package com.lift.bro.presentation.lift
 
-import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test

@@ -58,16 +58,21 @@ import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
+import kotlinx.datetime.Clock
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.variation_details_notes_label
 import lift_bro.core.generated.resources.variation_details_notes_placeholder
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 private enum class Grouping {
     Date,
@@ -349,5 +354,117 @@ fun Tempo.render() {
             text = up.toString(),
             style = MaterialTheme.typography.labelSmall,
         )
+    }
+}
+
+class VariationDetailsStateProvider : PreviewParameterProvider<VariationDetailsState> {
+    override val values: Sequence<VariationDetailsState>
+        get() = sequenceOf(
+            // Variation with no sets
+            VariationDetailsState(
+                variation = com.lift.bro.domain.models.Variation(
+                    lift = com.lift.bro.domain.models.Lift(
+                        name = "Squat",
+                        color = 0xFF2196F3uL
+                    ),
+                    name = "Back Squat",
+                    favourite = true
+                ),
+                cards = emptyList()
+            ),
+            // Variation with sets
+            VariationDetailsState(
+                variation = com.lift.bro.domain.models.Variation(
+                    lift = com.lift.bro.domain.models.Lift(
+                        name = "Bench Press",
+                        color = 0xFF4CAF50uL
+                    ),
+                    name = "Flat Bench",
+                    favourite = true,
+                    bodyWeight = false
+                ),
+                cards = listOf(
+                    VariationDetailCard(
+                        title = "Monday, Jan 15",
+                        sets = listOf(
+                            LBSet(
+                                id = "set1",
+                                variationId = "var1",
+                                weight = 225.0,
+                                reps = 5,
+                                rpe = 8,
+                                date = Clock.System.now()
+                            ),
+                            LBSet(
+                                id = "set2",
+                                variationId = "var1",
+                                weight = 245.0,
+                                reps = 3,
+                                rpe = 9,
+                                date = Clock.System.now()
+                            )
+                        )
+                    )
+                )
+            )
+        )
+}
+
+@Preview
+@Composable
+fun VariationDetailsScreenPreview(
+    @PreviewParameter(VariationDetailsStateProvider::class) state: VariationDetailsState
+) {
+    PreviewAppTheme(isDarkMode = false) {
+        LiftingScaffold(
+            title = { Text(state.variation.fullName) },
+            fabProperties = FabProperties(
+                fabIcon = Icons.Default.Add,
+                contentDescription = "Add Set",
+                fabClicked = {}
+            )
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier.padding(padding),
+                contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                item {
+                    Text(
+                        text = state.variation.maxText(),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                if (state.cards.isEmpty()) {
+                    item {
+                        Text(
+                            modifier = Modifier.padding(MaterialTheme.spacing.two),
+                            text = "No sets yet. Tap + to add one.",
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                    }
+                } else {
+                    items(state.cards) { card ->
+                        Card {
+                            Column(
+                                modifier = Modifier.padding(MaterialTheme.spacing.one)
+                            ) {
+                                Text(
+                                    text = card.title,
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                                card.sets.forEach { set ->
+                                    SetInfoRow(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        set = set
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

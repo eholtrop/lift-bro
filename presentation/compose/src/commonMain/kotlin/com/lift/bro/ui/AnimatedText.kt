@@ -10,11 +10,20 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 object AnimatedTextDefaults {
     val transitionForChar: AnimatedContentTransitionScope<Char>.(Char, Int) -> ContentTransform = { char, index ->
@@ -34,7 +43,7 @@ fun AnimatedText(
     color: Color = Color.Unspecified,
     transitionForChar: AnimatedContentTransitionScope<Char>.(
         Char,
-        Int
+        Int,
     ) -> ContentTransform = AnimatedTextDefaults.transitionForChar,
 ) {
     Row(
@@ -53,5 +62,27 @@ fun AnimatedText(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun AnimatedTextPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        var counter by remember { mutableStateOf(0) }
+
+        // Demonstrates animated text with changing numbers
+        AnimatedText(
+            text = "Count: $counter",
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        // Static example
+        AnimatedText(
+            text = "225 lbs",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.primary
+        )
     }
 }

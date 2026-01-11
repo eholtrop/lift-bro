@@ -46,6 +46,7 @@ import com.lift.bro.RestoreUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.ThemeMode
+import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.ConsentCheckBoxField
@@ -53,6 +54,8 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.amber
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.ic_lift_bro_leo_light
@@ -71,6 +74,8 @@ import lift_bro.core.generated.resources.url_privacy_policy
 import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 internal fun Modifier.onboardingBackground(): Modifier = this
@@ -87,6 +92,7 @@ internal fun Modifier.onboardingBackground(): Modifier = this
 @Composable
 fun OnboardingScreen(
     defaultState: Int = 0,
+    settingsRepository: ISettingsRepository? = dependencies.settingsRepository,
 ) {
     var onboardingState by remember { mutableStateOf(defaultState) }
 
@@ -104,21 +110,23 @@ fun OnboardingScreen(
         ) { state ->
             when (state) {
                 0 -> OnboardingBroScreen {
-                    dependencies.settingsRepository.setBro(it)
+                    settingsRepository?.setBro(it)
                     onboardingState += 1
                 }
 
                 1 -> OnboardingConsentScreen {
-                    ConsentDeviceUseCase(dependencies.settingsRepository).invoke()
+                    settingsRepository?.let {
+                        ConsentDeviceUseCase(settingsRepository).invoke()
+                    }
                     onboardingState += 1
                 }
 
                 2 -> OnboardingSkipScreen(
                     setupClicked = { onboardingState += 1 },
-                    continueClicked = { dependencies.settingsRepository.setDeviceFtux(true) }
+                    continueClicked = { settingsRepository?.setDeviceFtux(true) }
                 )
 
-                3 -> OnboardingSetupScreen { dependencies.settingsRepository.setDeviceFtux(true) }
+                3 -> OnboardingSetupScreen { settingsRepository?.setDeviceFtux(true) }
             }
         }
 
@@ -398,5 +406,36 @@ fun OnboardingSkipScreen(
         }
 
         Space()
+    }
+}
+
+@Preview
+@Composable
+fun OnboardingBroScreenPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        OnboardingBroScreen(
+            broSelected = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun OnboardingConsentScreenPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        OnboardingConsentScreen(
+            consentAccepted = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun OnboardingSkipScreenPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        OnboardingSkipScreen(
+            setupClicked = {},
+            continueClicked = {}
+        )
     }
 }
