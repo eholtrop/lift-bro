@@ -114,8 +114,8 @@ fun rememberEditSetInteractor(
                 }
             }
     },
-    reducers = reducers,
-    sideEffects = sideEffects + { _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
+    reducers = listOf(EditSetReducer),
+    sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
 )
 
 @Composable
@@ -139,81 +139,41 @@ fun rememberCreateSetInteractor(
                     }
                 }
         },
-        sideEffects = sideEffects + { _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() },
-        reducers = reducers,
+        sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() },
+        reducers = listOf(EditSetReducer),
     )
 }
 
-private val reducers: List<Reducer<EditSetState?, EditSetEvent>> = listOf(
-    Reducer { state, event ->
-        when (event) {
-            is EditSetEvent.WeightChanged -> state?.copy(weight = event.weight)
-            is EditSetEvent.RepChanged -> state?.copy(reps = event.reps)
-            is EditSetEvent.RpeChanged -> state?.copy(rpe = event.rpe)
-            is EditSetEvent.EccChanged -> state?.copy(eccentric = event.ecc?.toLong())
-            is EditSetEvent.IsoChanged -> state?.copy(isometric = event.iso?.toLong())
-            is EditSetEvent.ConChanged -> state?.copy(concentric = event.con?.toLong())
-            is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
-            is EditSetEvent.VariationSelected -> state?.copy(variation = Variation(event.variationId))
-            is EditSetEvent.DateSelected -> state?.copy(date = event.date)
-            EditSetEvent.DeleteSetClicked -> state
-        }
+val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, event ->
+    when (event) {
+        is EditSetEvent.WeightChanged -> state?.copy(weight = event.weight)
+        is EditSetEvent.RepChanged -> state?.copy(reps = event.reps)
+        is EditSetEvent.RpeChanged -> state?.copy(rpe = event.rpe)
+        is EditSetEvent.EccChanged -> state?.copy(eccentric = event.ecc?.toLong())
+        is EditSetEvent.IsoChanged -> state?.copy(isometric = event.iso?.toLong())
+        is EditSetEvent.ConChanged -> state?.copy(concentric = event.con?.toLong())
+        is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
+        is EditSetEvent.VariationSelected -> state?.copy(variation = Variation(event.variationId))
+        is EditSetEvent.DateSelected -> state?.copy(date = event.date)
+        EditSetEvent.DeleteSetClicked -> state
     }
-)
+}
 
-private val sideEffects: List<SideEffect<EditSetState?, EditSetEvent>> = listOf { state, event ->
+fun editSetSideEffects(
+    setRepository: ISetRepository = dependencies.setRepository
+): SideEffect<EditSetState?, EditSetEvent> = { state, event ->
     if (event is EditSetEvent.DeleteSetClicked) {
         state?.toDomain()?.let {
-            dependencies.setRepository.delete(it)
+            setRepository.delete(it)
         }
-    }
-
-    state?.let {
-        when (event) {
-            is EditSetEvent.ConChanged ->
-                state.copy(concentric = event.con?.toLong()).toDomain()
-
-            is EditSetEvent.EccChanged -> {
-                state.copy(eccentric = event.ecc?.toLong()).toDomain()
-            }
-
-            is EditSetEvent.IsoChanged -> {
-                state.copy(isometric = event.iso?.toLong()).toDomain()
-            }
-
-            is EditSetEvent.DateSelected -> {
-                state.copy(date = event.date).toDomain()
-            }
-
-            is EditSetEvent.NotesChanged -> {
-                state.copy(notes = event.notes).toDomain()
-            }
-
-            is EditSetEvent.RepChanged ->
-                state.copy(reps = event.reps).toDomain()
-
-            is EditSetEvent.RpeChanged ->
-                state.copy(rpe = event.rpe).toDomain()
-
-            is EditSetEvent.VariationSelected ->
-                state.copy(
-                    variation = Variation(
-                        event.variationId
-                    )
-                ).toDomain()
-
-            is EditSetEvent.WeightChanged -> state.copy(weight = event.weight).toDomain()
-
-            else -> null
-        }?.also {
-            if (state.saveEnabled) {
-                dependencies.setRepository.save(it)
-            }
+    } else if (state?.saveEnabled == true) {
+        state.toDomain()?.let {
+            setRepository.save(it)
         }
     }
 }
 
-private suspend fun LBSet.toUiState(
+internal suspend fun LBSet.toUiState(
     variation: Variation?,
     maxVariationSet: LBSet?,
     maxLiftSet: LBSet?,
@@ -242,7 +202,7 @@ private suspend fun LBSet.toUiState(
     }
 )
 
-private fun EditSetState.toDomain(): LBSet? =
+internal fun EditSetState.toDomain(): LBSet? =
     if (this.id != null && variation != null && reps != null && eccentric != null && isometric != null && concentric != null && weight != null) {
         LBSet(
             id = this.id,
