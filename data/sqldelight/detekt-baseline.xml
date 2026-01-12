@@ -2,7 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>LongMethod:SqldelightExerciseDataSource.kt$SqldelightExerciseDataSource$override fun get(workoutId: String): Flow&lt;List&lt;Exercise&gt;&gt;</ID>
     <ID>MagicNumber:SqldelightSetDataSource.kt$100.0</ID>
     <ID>MagicNumber:SqldelightSetDataSource.kt$23</ID>
     <ID>MagicNumber:SqldelightSetDataSource.kt$4</ID>
