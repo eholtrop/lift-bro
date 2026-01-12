@@ -9,6 +9,8 @@
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt; )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit )</ID>
+    <ID>CyclomaticComplexMethod:LiftingScaffold.kt$@Composable fun LiftingScaffold( title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current, fabProperties: FabProperties? = null, leadingContent: @Composable () -&gt; Unit = { val tabletMode = currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint( WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND ) if (!tabletMode) { val navCoordinator = LocalNavCoordinator.current TopBarIconButton( imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(Res.string.toolbar_back_button_content_description), onClick = { navCoordinator.onBackPressed() }, ) } }, trailingContent: @Composable () -&gt; Unit = {}, tallMode: Boolean = currentWindowAdaptiveInfo() .windowSizeClass .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND), topAppBarScrollBehavior: TopAppBarScrollBehavior = when (tallMode) { true -&gt; TopAppBarDefaults.exitUntilCollapsedScrollBehavior() false -&gt; TopAppBarDefaults.enterAlwaysScrollBehavior() }, content: @Composable (PaddingValues) -&gt; Unit, )</ID>
+    <ID>CyclomaticComplexMethod:SwipeableNavHost.kt$@Composable fun SwipeableNavHost( modifier: Modifier = Modifier, navCoordinator: NavCoordinator, key: (Destination) -&gt; Any = { Json.encodeToString(it) }, content: @Composable (Destination) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
@@ -21,7 +23,6 @@
     <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
     <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
     <ID>Filename:LBDatabase.native.kt$com.lift.bro.data.LBDatabase.native.kt</ID>
-    <ID>Filename:LiftBroPreviewParameters.kt$com.lift.bro.preview.LiftBroPreviewParameters.kt</ID>
     <ID>Filename:eMaxSettingsRow.kt$com.lift.bro.presentation.settings.eMaxSettingsRow.kt</ID>
     <ID>ForbiddenComment:EmptyHomeScreen.kt$// TODO: need to setup back handling in onboarding</ID>
     <ID>ForbiddenComment:RepWeightSelector.kt$// TODO: figure out the accessibility here</ID>
@@ -31,62 +32,6 @@
     <ID>InvalidPackageDeclaration:DateFormatting.android.kt$package com.lift.bro.utils</ID>
     <ID>InvalidPackageDeclaration:ServerSettingsRow.android.kt$package com.lift.bro.presentation.settings.server</ID>
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
-    <ID>LongMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Unknown), )</ID>
-    <ID>LongMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
-    <ID>LongMethod:Calculator.kt$@Composable fun KeyPad( modifier: Modifier = Modifier, digitClicked: (Int) -&gt; Unit, operatorClicked: (Operator) -&gt; Unit, actionClicked: (Action) -&gt; Unit, decimalClicked: () -&gt; Unit, verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(MaterialTheme.spacing.half), horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(MaterialTheme.spacing.half) )</ID>
-    <ID>LongMethod:Calculator.kt$@Composable fun WeightCalculatorBottomSheet( modifier: Modifier = Modifier, )</ID>
-    <ID>LongMethod:Calculator.kt$@Composable private fun WeightCalculatorInternal( modifier: Modifier = Modifier, state: CalculatorState, dispatcher: (CalculatorEvent) -&gt; Unit, weightChanged: (Double) -&gt; Unit = {} )</ID>
-    <ID>LongMethod:Calendar.kt$@Composable private fun CalendarContent( modifier: Modifier = Modifier, pagerState: PagerState, selection: LocalDate?, contentPadding: PaddingValues, dateSelected: (LocalDate) -&gt; Unit, contentForMonth: @Composable (year: Int, month: Month) -&gt; Unit )</ID>
-    <ID>LongMethod:ClientSettingsRow.kt$@Composable fun ClientSettingsRowContent( state: ClientSettingsState, onEvent: (ClientSettingsEvent) -&gt; Unit )</ID>
-    <ID>LongMethod:CreateVariationDialog.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun VariationDialog( modifier: Modifier = Modifier, variation: Variation, title: String, onDismissRequest: () -&gt; Unit, onVariationSaved: (String) -&gt; Unit, properties: DialogProperties, )</ID>
-    <ID>LongMethod:DashboardInteractor.kt$@Composable fun rememberDashboardInteractor( liftRepository: LiftDataSource = dependencies.database.liftDataSource, variationRepository: IVariationRepository = dependencies.variationRepository, setRepository: ISetRepository = dependencies.setRepository, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;DashboardState, DashboardEvent&gt;</ID>
-    <ID>LongMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: Interactor&lt;DashboardState, DashboardEvent&gt; = rememberDashboardInteractor(), )</ID>
-    <ID>LongMethod:EditLiftScreen.kt$@Composable internal fun EditLiftScreen( interactor: Interactor&lt;EditLiftState?, EditLiftEvent&gt;, liftSaved: () -&gt; Unit, liftDeleted: () -&gt; Unit, coroutineScope: CoroutineScope = rememberCoroutineScope(), )</ID>
-    <ID>LongMethod:EditSetScreen.kt$@Composable fun EditSetScreen( set: EditSetState, deleteSetClicked: () -&gt; Unit, repChanged: (Long?) -&gt; Unit = {}, weightChanged: (Double?) -&gt; Unit = {}, rpeChanged: (Int?) -&gt; Unit = {}, dateChanged: (Instant) -&gt; Unit = {}, eccChanged: (Int?) -&gt; Unit = {}, isoChanged: (Int?) -&gt; Unit = {}, conChanged: (Int?) -&gt; Unit = {}, notesChanged: (String) -&gt; Unit = {}, variationChanged: (variationId: String) -&gt; Unit = {}, )</ID>
-    <ID>LongMethod:ExerciseDataSource.kt$LBExerciseDataSource$override fun listen( workoutId: String, ): Flow&lt;List&lt;Exercise&gt;&gt;</ID>
-    <ID>LongMethod:GoalsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun GoalsScreen( state: GoalsState, onEvent: (GoalsEvents) -&gt; Unit = {}, )</ID>
-    <ID>LongMethod:HomeScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun HomeScreenContent( state: HomeState, onEvent: (HomeEvent) -&gt; Unit, )</ID>
-    <ID>LongMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
-    <ID>LongMethod:LiftDetailsInteractor.kt$@Composable fun rememberLiftDetailsInteractor( liftId: String, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;</ID>
-    <ID>LongMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt; )</ID>
-    <ID>LongMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit )</ID>
-    <ID>LongMethod:LiftDetailsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Preview @Composable fun LiftDetailsScreenPreview( @PreviewParameter(LiftDetailsStateProvider::class) state: LiftDetailsState )</ID>
-    <ID>LongMethod:LineGraph.kt$@Composable fun DotGraph( modifier: Modifier = Modifier, graphData: List&lt;Pair&lt;LocalDate, GraphData&gt;&gt;, state: LazyListState = rememberLazyListState(), selectedData: LocalDate? = null, maxX: LocalDate = graphData.maxOf { it.first }, maxY: Float = graphData.maxOf { it.second.dotGraphData }, xAxis: @Composable ((Long) -&gt; Unit)? = null, yAxis: @Composable ((Float, Float) -&gt; Unit)? = null, dataPointClicked: ((LocalDate) -&gt; Unit)? = null, colors: DotGraphColors )</ID>
-    <ID>LongMethod:OnboardingScreen.kt$@Composable fun OnboardingBroScreen( broSelected: (LiftBro) -&gt; Unit, )</ID>
-    <ID>LongMethod:OnboardingScreen.kt$@Composable fun OnboardingConsentScreen( consentAccepted: () -&gt; Unit, )</ID>
-    <ID>LongMethod:OnboardingScreen.kt$@Composable fun OnboardingSkipScreen( setupClicked: () -&gt; Unit, continueClicked: () -&gt; Unit, )</ID>
-    <ID>LongMethod:OnboardingSetupScreen.kt$@Composable fun OnboardingSetupScreen( formSubmitted: () -&gt; Unit )</ID>
-    <ID>LongMethod:OnboardingSetupScreen.kt$@Composable private fun OnboardingLiftSelector( selectedVariations: SnapshotStateList&lt;Variation&gt;, )</ID>
-    <ID>LongMethod:RepWeightSelector.kt$@Composable fun RepWeightSelector( modifier: Modifier = Modifier, set: EditSetState, repChanged: (Long?) -&gt; Unit, weightChanged: (Double?) -&gt; Unit, rpeChanged: (Int?) -&gt; Unit, )</ID>
-    <ID>LongMethod:RepWeightSelector.kt$@Composable private fun RepWeightTextField( modifier: Modifier = Modifier, value: String?, error: Boolean = false, onValueChanged: (String) -&gt; Unit, keyboardType: KeyboardType, placeholder: @Composable () -&gt; Unit = {}, )</ID>
-    <ID>LongMethod:SettingsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun SettingsScreen()</ID>
-    <ID>LongMethod:SwipeableNavHost.kt$@Composable fun SwipeableNavHost( modifier: Modifier = Modifier, navCoordinator: NavCoordinator, key: (Destination) -&gt; Any = { Json.encodeToString(it) }, content: @Composable (Destination) -&gt; Unit, )</ID>
-    <ID>LongMethod:TempoSelector.kt$@Composable fun TempoSelector( modifier: Modifier = Modifier, down: Int?, hold: Int?, up: Int?, downChanged: (Int?) -&gt; Unit, holdChanged: (Int?) -&gt; Unit, upChanged: (Int?) -&gt; Unit, )</ID>
-    <ID>LongMethod:Toolbar.kt$@Composable @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class) fun TopBar( modifier: Modifier = Modifier, title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, trailingContent: @Composable () -&gt; Unit = {}, leadingContent: @Composable () -&gt; Unit = {}, scrollBehavior: TopAppBarScrollBehavior? = null, )</ID>
-    <ID>LongMethod:VariationDetailsInteractor.kt$@Composable fun rememberVariationDetailInteractor( variationId: String, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;VariationDetailsState, VariationDetailsEvent&gt;</ID>
-    <ID>LongMethod:VariationDetailsScreen.kt$@Composable private fun VariationDetailsScreen( interactor: Interactor&lt;VariationDetailsState, VariationDetailsEvent&gt;, addSetClicked: () -&gt; Unit, setClicked: (LBSet) -&gt; Unit, )</ID>
-    <ID>LongMethod:VariationSearchDialog.kt$@Composable private fun VariationSearchContent( modifier: Modifier = Modifier, variations: List&lt;Variation&gt; = emptyList(), variationSelected: (Variation) -&gt; Unit, )</ID>
-    <ID>LongMethod:VariationSearchDialog.kt$@OptIn(ExperimentalComposeUiApi::class) @Composable fun VariationSearchDialog( onDismissRequest: () -&gt; Unit, variationSelected: (Variation) -&gt; Unit, interactor: Interactor&lt;VariationSearchState, VariationSearchEvent&gt;, )</ID>
-    <ID>LongMethod:WorkoutCalendarScreen.kt$@Composable fun CalendarWorkoutCard( modifier: Modifier = Modifier, workout: Workout, workoutClicked: (Workout, LocalDate) -&gt; Unit, )</ID>
-    <ID>LongMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( date: LocalDate, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = rememberDailyWorkoutDetailsInteractor( date ), )</ID>
-    <ID>LongMethod:WorkoutCalendarScreen.kt$@Composable fun VariationSet( modifier: Modifier = Modifier, variation: Variation, index: Int? = null, sets: List&lt;LBSet&gt;, )</ID>
-    <ID>LongMethod:WorkoutCalendarScreen.kt$@Composable fun rememberDailyWorkoutDetailsInteractor( date: LocalDate, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt;</ID>
-    <ID>LongMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
-    <ID>LongMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
-    <ID>LongMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
-    <ID>LongMethod:WrappedConsistencyScreen.kt$@Composable private fun ConsistencyMonthItem( modifier: Modifier = Modifier, year: Int, month: Month, dates: List&lt;LocalDate&gt;, )</ID>
-    <ID>LongMethod:WrappedConsistencyScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedConsistencyScreen( state: WrappedConsistencyState, )</ID>
-    <ID>LongMethod:WrappedGoalsScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedGoalsScreen( state: WrappedGoalsState, goalAdded: () -&gt; Unit = {}, goalChanged: (Goal, String) -&gt; Unit = { _, _ -&gt; }, goalRemoved: (Goal) -&gt; Unit = {}, )</ID>
-    <ID>LongMethod:WrappedLandingScreen.kt$@Composable fun WrappedLandingScreen( state: WrappedState, onClosePressed: () -&gt; Unit, )</ID>
-    <ID>LongMethod:WrappedProgressScreen.kt$@Composable fun ProgressItemView( modifier: Modifier = Modifier, state: WrappedProgressItemState.Loaded, )</ID>
-    <ID>LongMethod:WrappedProgressScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedProgressScreen( state: WrappedProgressState, )</ID>
-    <ID>LongMethod:WrappedRepScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedRepScreen( state: WrappedRepState, )</ID>
-    <ID>LongMethod:WrappedSummaryInteractor.kt$@Composable fun rememberWrappedSummaryInteractor( year: Int = LocalWrappedYear.current, // Weight use cases getTotalWeightMovedUseCase: GetTotalWeightMovedUseCase = GetTotalWeightMovedUseCase(), getVariationWithMostWeightMovedUseCase: GetVariationWithMostWeightMovedUseCase = GetVariationWithMostWeightMovedUseCase(), // Reps use cases getTotalRepsUseCase: GetTotalRepsUseCase = GetTotalRepsUseCase(), getVariationWithMostRepsUseCase: GetVariationWithMostRepsUseCase = GetVariationWithMostRepsUseCase(), // Consistency use cases getVariationConsistencyUseCase: GetVariationConsistencyUseCase = GetVariationConsistencyUseCase(), // Progress use cases getVariationProgressUseCase: GetVariationProgressUseCase = GetVariationProgressUseCase(), // Goal use cases getGoalsUseCase: GetGoalsUseCase = GetGoalsUseCase(), ): Interactor&lt;WrappedSummaryState?, Nothing&gt;</ID>
-    <ID>LongMethod:WrappedSummaryScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedSummaryScreen( state: WrappedSummaryState, )</ID>
-    <ID>LongMethod:WrappedSummaryScreen.kt$@Preview @Composable fun WrappedSummaryScreenPreview(@PreviewParameter(DarkModeProvider::class) dark: Boolean)</ID>
-    <ID>LongMethod:WrappedTenureScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedTenureScreen( state: WrappedTenureState, )</ID>
-    <ID>LongMethod:WrappedWeightScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WrappedWeightScreen( state: WrappedWeightState, )</ID>
-    <ID>LongMethod:eMaxSettingsRow.kt$@Composable fun eMaxSettingsRowContent( eMaxEnabled: Boolean, tMaxEnabled: Boolean, isPro: Boolean, onEMaxToggle: (Boolean) -&gt; Unit, onTMaxToggle: (Boolean) -&gt; Unit )</ID>
     <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, flow7: Flow&lt;T7&gt;, transform: suspend (T1, T2, T3, T4, T5, T6, T7) -&gt; R )</ID>
     <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, transform: suspend (T1, T2, T3, T4, T5, T6) -&gt; R )</ID>
     <ID>LongParameterList:TempoSelector.kt$( modifier: Modifier = Modifier, down: Int?, hold: Int?, up: Int?, downChanged: (Int?) -&gt; Unit, holdChanged: (Int?) -&gt; Unit, upChanged: (Int?) -&gt; Unit, )</ID>
@@ -172,11 +117,6 @@
     <ID>MagicNumber:LiftCard.kt$5</ID>
     <ID>MagicNumber:LiftCard.kt$5f</ID>
     <ID>MagicNumber:LiftCard.kt$8</ID>
-    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$100.0</ID>
-    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$120.0</ID>
-    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$125.0</ID>
-    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$130.0</ID>
-    <ID>MagicNumber:LiftCardPreview.kt$LiftCardPreviewStates$135.0</ID>
     <ID>MagicNumber:LiftDetailsScreen.kt$10f</ID>
     <ID>MagicNumber:NumberFormatting.android.kt$3</ID>
     <ID>MagicNumber:NumberFormatting.kt$100</ID>
@@ -189,6 +129,8 @@
     <ID>MagicNumber:RotatingAnimatedText.kt$5000</ID>
     <ID>MagicNumber:ServerSettingsInteractor.kt$2000L</ID>
     <ID>MagicNumber:ServerSettingsInteractor.kt$500</ID>
+    <ID>MagicNumber:SwipeableNavHost.kt$.5f</ID>
+    <ID>MagicNumber:SwipeableNavHost.kt$.666f</ID>
     <ID>MagicNumber:TempoSelector.kt$.33f</ID>
     <ID>MagicNumber:Toolbar.kt$.66f</ID>
     <ID>MagicNumber:WeightSelector.kt$1000</ID>
@@ -232,7 +174,6 @@
     <ID>MatchingDeclarationName:AnimatedText.kt$AnimatedTextDefaults</ID>
     <ID>MatchingDeclarationName:LBDatabase.kt$DriverFactory</ID>
     <ID>MatchingDeclarationName:LBDatabase.native.kt$DriverFactory</ID>
-    <ID>MatchingDeclarationName:LiftBroPreviewParameters.kt$DarkModeProvider : PreviewParameterProvider</ID>
     <ID>MatchingDeclarationName:LiftingScaffold.kt$FabProperties</ID>
     <ID>MatchingDeclarationName:WrappedConsistencyScreen.kt$WrappedConsistencyState</ID>
     <ID>MatchingDeclarationName:WrappedRepScreen.kt$WrappedRepState</ID>
@@ -250,9 +191,11 @@
     <ID>MaxLineLength:LiftCard.kt$mutableStateMapOf&lt;LocalDate, Pair&lt;Animatable&lt;Offset, AnimationVector2D&gt;, Animatable&lt;Float, AnimationVector1D&gt;?&gt;&gt;()</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder</ID>
+    <ID>MaxLineLength:LiftingScaffold.kt$if</ID>
     <ID>MaxLineLength:NavCoordinator.kt$NavCoordinator$* Navigates the user back one page, returns true if the navigation was handled, false if nothing happens (ie. you need to handle it yourself)</ID>
     <ID>MaxLineLength:OnboardingSetupScreen.kt$imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown</ID>
     <ID>MaxLineLength:ServerSettingsRow.kt$"Enabling this will run a Lift Bro server on this device. It will expose all lift bro data to anyone on your current network"</ID>
+    <ID>MaxLineLength:SwipeableNavHost.kt$((savedPagerState.currentPage - currentPage) + savedPagerState.currentPageOffsetFraction)</ID>
     <ID>MaxLineLength:TempoSelector.kt$text = "• putting a deadlift down\n• going into a squat\n• lowering the bar towards your chest in a bench press"</ID>
     <ID>MaxLineLength:Toolbar.kt$horizontalArrangement = if ((scrollBehavior?.state?.collapsedFraction ?: 0f) &lt; .66f) Arrangement.Center else Arrangement.Start</ID>
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$potentialExercises = if (initial.selectedDate != source.selectedDate) initial.potentialExercises else source.potentialExercises</ID>
@@ -271,8 +214,10 @@
     <ID>MaximumLineLength:EditSetInteractor.kt$EditSetState$ </ID>
     <ID>MaximumLineLength:LiftCard.kt$ </ID>
     <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>
+    <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
     <ID>MaximumLineLength:ServerSettingsRow.kt$ </ID>
+    <ID>MaximumLineLength:SwipeableNavHost.kt$ </ID>
     <ID>MaximumLineLength:TempoSelector.kt$ </ID>
     <ID>MaximumLineLength:Toolbar.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarInteractor.kt$ </ID>
@@ -300,8 +245,6 @@
     <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
     <ID>UnusedParameter:EditLiftScreen.kt$liftSaved: () -&gt; Unit</ID>
     <ID>UnusedParameter:EmptyHomeScreen.kt$loadDefaultLifts: () -&gt; Unit</ID>
-    <ID>UnusedParameter:InfoDialogPReview.kt$isDark: Boolean</ID>
-    <ID>UnusedParameter:LBSetExt.kt$uom: UOM = LocalUnitOfMeasure.current</ID>
     <ID>UnusedParameter:LineGraph.kt$maxX: LocalDate = graphData.maxOf { it.first }</ID>
     <ID>UnusedParameter:WeightSelector.kt$Confetti.Companion$height: Float</ID>
     <ID>UnusedParameter:WrappedGoalsInteractor.kt$year: Int = LocalWrappedYear.current</ID>
