@@ -5,7 +5,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,13 +17,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,7 +29,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.semantics.heading
@@ -53,7 +48,6 @@ import com.lift.bro.presentation.settings.client.ClientSettingsRow
 import com.lift.bro.presentation.settings.server.ServerSettingsRow
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
-import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
@@ -315,32 +309,6 @@ fun SettingsScreen() {
         exit = slideOutVertically { it } + fadeOut()
     ) {
         Paywall(options)
-    }
-}
-
-@Composable
-fun SettingsRowItem(
-    modifier: Modifier = Modifier,
-    title: @Composable () -> Unit,
-    content: @Composable () -> Unit,
-) {
-    Column(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.medium)
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-            )
-            .padding(MaterialTheme.spacing.one)
-    ) {
-        CompositionLocalProvider(
-            LocalTextStyle provides MaterialTheme.typography.headlineSmall
-        ) {
-            title()
-        }
-        Space(MaterialTheme.spacing.quarter)
-        HorizontalDivider()
-        Space(MaterialTheme.spacing.quarter)
-        content()
     }
 }
 

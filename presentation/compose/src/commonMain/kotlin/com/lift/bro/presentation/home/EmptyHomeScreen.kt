@@ -18,6 +18,8 @@ import com.lift.bro.RestoreUseCase
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_empty_primary_cta_title
@@ -34,6 +36,8 @@ import lift_bro.core.generated.resources.ic_lift_bro_lisa_light
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 fun LiftBro.iconRes(): DrawableResource {
     return when (this) {
@@ -114,5 +118,16 @@ fun EmptyHomeScreen(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun EmptyHomeScreenPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        EmptyHomeScreen(
+            addLiftClicked = {},
+            loadDefaultLifts = {}
+        )
     }
 }

@@ -27,18 +27,16 @@ import com.lift.bro.presentation.workout.CreateWorkoutEvent.DuplicateSet
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateFinisher
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateNotes
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateWarmup
-import com.lift.bro.ui.today
+import com.lift.bro.ui.calendar.today
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
-import kotlin.time.Clock
 
 @Serializable
 data class CreateWorkoutState(

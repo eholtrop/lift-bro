@@ -12,15 +12,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Tempo
+import com.lift.bro.domain.models.UOM
+import com.lift.bro.presentation.LocalShowMERCalcs
+import com.lift.bro.presentation.LocalTwmSettings
+import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.theme.icons
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.prettyPrintSet
+import kotlinx.datetime.Clock
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun SetInfoRow(
     modifier: Modifier = Modifier,
     set: LBSet,
+    uom: UOM = LocalUnitOfMeasure.current,
+    enableTwm: Boolean = LocalTwmSettings.current,
+    enableMers: Boolean = LocalShowMERCalcs.current?.enabled == true,
     trailing: @Composable () -> Unit = {},
 ) {
     Column(
@@ -31,7 +44,11 @@ fun SetInfoRow(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = set.prettyPrintSet(),
+                text = set.prettyPrintSet(
+                    uom = uom,
+                    enableTwm = enableTwm,
+                    enableMers = enableMers,
+                ),
                 style = MaterialTheme.typography.titleMedium,
             )
 
@@ -55,5 +72,81 @@ fun SetInfoRow(
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun SetInfoRowPreview(
+    @PreviewParameter(
+        DarkModeProvider::class
+    ) darkMode: Boolean,
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        // Set with notes
+        SetInfoRow(
+            set = LBSet(
+                id = "1",
+                reps = 5,
+                weight = 135.0,
+                rpe = 8,
+                date = Clock.System.now(),
+                tempo = Tempo(),
+                notes = "Felt strong today!",
+                variationId = "var-1"
+            ),
+            enableTwm = false,
+            enableMers = false,
+        )
+
+        // Set without notes and twm
+        SetInfoRow(
+            set = LBSet(
+                id = "2",
+                reps = 6,
+                weight = 100.0,
+                rpe = 9,
+                mer = 4,
+                date = Clock.System.now(),
+                tempo = Tempo(),
+                notes = "multiline\nnotes",
+                variationId = "var-1"
+            ),
+            enableTwm = true,
+            enableMers = false,
+        )
+
+        // Set without notes and twm and mer
+        SetInfoRow(
+            set = LBSet(
+                id = "2",
+                reps = 8,
+                weight = 225.0,
+                rpe = 9,
+                date = Clock.System.now(),
+                tempo = Tempo(),
+                notes = "",
+                mer = 4,
+                variationId = "var-1"
+            ),
+            enableTwm = true,
+            enableMers = true,
+        )
+
+        // Bodyweight set
+        SetInfoRow(
+            set = LBSet(
+                id = "3",
+                reps = 10,
+                weight = 25.0,
+                rpe = 7,
+                date = Clock.System.now(),
+                tempo = Tempo(),
+                variationId = "var-2",
+                bodyWeightRep = true
+            ),
+            enableTwm = false,
+            enableMers = true,
+        )
     }
 }

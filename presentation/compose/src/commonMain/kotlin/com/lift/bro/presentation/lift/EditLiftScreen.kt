@@ -54,6 +54,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
@@ -73,6 +74,9 @@ import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_title
 import lift_bro.core.generated.resources.edit_lift_variation_heading
 import lift_bro.core.generated.resources.edit_lift_variation_warning_dialog_text
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 @Composable
 fun EditLiftScreen(
@@ -362,3 +366,113 @@ fun TextFieldDefaults.transparentColors(): TextFieldColors = TextFieldDefaults.c
     errorIndicatorColor = Color.Transparent,
     unfocusedIndicatorColor = Color.Transparent,
 )
+
+class EditLiftStateProvider : PreviewParameterProvider<EditLiftState> {
+    override val values: Sequence<EditLiftState>
+        get() = sequenceOf(
+            // New lift - empty
+            EditLiftState(
+                id = null,
+                name = "",
+                variations = emptyList()
+            ),
+            // New lift with name only
+            EditLiftState(
+                id = null,
+                name = "Squat",
+                variations = emptyList()
+            ),
+            // Lift with one variation
+            EditLiftState(
+                id = "lift1",
+                name = "Bench Press",
+                variations = listOf(
+                    Variation(
+                        lift = com.lift.bro.domain.models.Lift(
+                            name = "Bench Press",
+                            color = 0xFF4CAF50uL
+                        ),
+                        name = "Flat Bench",
+                        favourite = true
+                    )
+                )
+            ),
+            // Lift with multiple variations
+            EditLiftState(
+                id = "lift2",
+                name = "Deadlift",
+                variations = listOf(
+                    Variation(
+                        lift = com.lift.bro.domain.models.Lift(
+                            name = "Deadlift",
+                            color = 0xFFFF5722uL
+                        ),
+                        name = "Conventional",
+                        favourite = true
+                    ),
+                    Variation(
+                        lift = com.lift.bro.domain.models.Lift(
+                            name = "Deadlift",
+                            color = 0xFFFF5722uL
+                        ),
+                        name = "Sumo",
+                        favourite = false
+                    ),
+                    Variation(
+                        lift = com.lift.bro.domain.models.Lift(
+                            name = "Deadlift",
+                            color = 0xFFFF5722uL
+                        ),
+                        name = "Romanian",
+                        favourite = false
+                    )
+                )
+            )
+        )
+}
+
+@Preview
+@Composable
+fun EditLiftScreenPreview(
+    @PreviewParameter(EditLiftStateProvider::class) state: EditLiftState
+) {
+    PreviewAppTheme(isDarkMode = false) {
+        LiftingScaffold(
+            title = { Text("Edit Lift") },
+            trailingContent = {
+                if (state.showDelete) {
+                    TopBarIconButton(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Delete",
+                        onClick = {}
+                    )
+                }
+            }
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier.padding(padding).fillMaxWidth(),
+                contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+            ) {
+                item {
+                    Text(
+                        text = state.name.ifBlank { "Enter lift name" },
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+                itemsIndexed(state.variations) { _, variation ->
+                    Text(
+                        modifier = Modifier.fillMaxWidth()
+                            .background(
+                                MaterialTheme.colorScheme.surface,
+                                MaterialTheme.shapes.medium
+                            )
+                            .padding(MaterialTheme.spacing.one),
+                        text = "${variation.name ?: "Unnamed"} ${state.name}"
+                    )
+                }
+            }
+        }
+    }
+}

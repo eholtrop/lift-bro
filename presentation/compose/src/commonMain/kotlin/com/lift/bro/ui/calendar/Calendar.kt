@@ -1,19 +1,18 @@
-package com.lift.bro.ui
+package com.lift.bro.ui.calendar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -25,19 +24,12 @@ import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -45,7 +37,10 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -54,9 +49,10 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 object ComposeCalendarDefaults {
 
@@ -273,111 +269,37 @@ private fun CalendarContent(
     }
 }
 
+@Preview
 @Composable
-fun CalendarMonth(
-    modifier: Modifier = Modifier,
-    year: Int,
-    month: Month,
-    selection: LocalDate?,
-    dateSelected: (LocalDate) -> Unit,
-    dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
-    horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
+fun CalendarPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
 ) {
-    val startDate by remember(year, month) { mutableStateOf(LocalDate(year, month, 1)) }
+    PreviewAppTheme(isDarkMode = darkMode) {
+        val pagerState = rememberCalendarState()
 
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = verticalArrangement
-    ) {
-        for (weekOffset in 0..5) {
-            val currentWeek =
-                startDate.minus(DatePeriod(days = startDate.dayOfWeek.ordinal))
-                    .plus(DatePeriod(days = 7 * weekOffset))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = horizontalArrangement
-            ) {
-                for (dayOffset in 0..6) {
-                    val currentDay = currentWeek.plus(DatePeriod(days = dayOffset))
-
-                    CalendarDate(
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f),
-                        date = currentDay,
-                        style = when {
-                            selection == currentDay -> CalendarDateStyle.Selected
-                            today == currentDay -> CalendarDateStyle.Today
-                            currentDay.month == month -> CalendarDateStyle.Enabled
-                            else -> CalendarDateStyle.Disabled
-                        },
-                        decorations = dateDecorations,
-                        onClick = dateSelected,
-                    )
+        Calendar(
+            selectedDate = LocalDate(2024, 1, 15),
+            contentPadding = PaddingValues(MaterialTheme.spacing.one),
+            pagerState = pagerState,
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
+            dateDecorations = { date, content ->
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    content()
+                    // Show workout indicator dots on certain days
+                    if (date.dayOfMonth % 3 == 0 && date.month == pagerState.currentMonth.month) {
+                        Canvas(
+                            modifier = Modifier.size(4.dp)
+                        ) {
+                            drawCircle(color = Color(0xFF2196F3))
+                        }
+                    }
                 }
-            }
-        }
-    }
-}
-
-enum class CalendarDateStyle {
-    Enabled, Disabled, Selected, Today,
-}
-
-@Composable
-fun CalendarDate(
-    modifier: Modifier = Modifier,
-    date: LocalDate,
-    style: CalendarDateStyle,
-    onClick: (LocalDate) -> Unit,
-    decorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
-) {
-    val backgroundColor = when (style) {
-        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.tertiary
-        CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.surface
-        CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.surfaceDim
-        CalendarDateStyle.Today -> MaterialTheme.colorScheme.secondary
-    }
-
-    val contentColor = when (style) {
-        CalendarDateStyle.Selected -> MaterialTheme.colorScheme.onTertiary
-        CalendarDateStyle.Enabled -> MaterialTheme.colorScheme.onSurface
-        CalendarDateStyle.Disabled -> MaterialTheme.colorScheme.onSurface
-        CalendarDateStyle.Today -> MaterialTheme.colorScheme.onSecondary
-    }
-
-    Column(
-        modifier = modifier
-            .clip(MaterialTheme.shapes.small)
-            .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        backgroundColor,
-                        Color.Transparent,
-                    )
-                ),
-                shape = MaterialTheme.shapes.small,
-            )
-            .clickable {
-                onClick(date)
             },
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        CompositionLocalProvider(
-            LocalContentColor provides contentColor
-        ) {
-            decorations(date) {
-                Text(
-                    text = date.dayOfMonth.toString(),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
+            dateSelected = {}
+        )
     }
 }
 

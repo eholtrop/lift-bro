@@ -2,7 +2,6 @@ package com.lift.bro.presentation.goals
 
 import com.lift.bro.domain.models.Goal
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.Clock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -166,8 +165,8 @@ class GoalsReducerTest {
         // Then
         assertEquals(3, result.goals.size)
         assertFalse(result.goals[0].achieved) // Goal 1 unchanged
-        assertTrue(result.goals[1].achieved)  // Goal 2 toggled
-        assertTrue(result.goals[2].achieved)  // Goal 3 unchanged
+        assertTrue(result.goals[1].achieved) // Goal 2 toggled
+        assertTrue(result.goals[2].achieved) // Goal 3 unchanged
     }
 
     @Test

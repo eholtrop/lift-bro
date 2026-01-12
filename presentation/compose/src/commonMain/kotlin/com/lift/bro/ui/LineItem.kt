@@ -14,6 +14,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun LineItem(
@@ -53,5 +57,26 @@ fun LineItem(
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
+    }
+}
+
+@Preview
+@Composable
+fun LineItemPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        Column(
+            modifier = Modifier.padding(MaterialTheme.spacing.one),
+            Arrangement.spacedBy(MaterialTheme.spacing.one)
+        ) {
+            LineItem(
+                title = "Title",
+                description = "Description text goes here",
+                onClick = {}
+            )
+            LineItem(
+                description = "Description only (no title)",
+                onClick = {}
+            )
+        }
     }
 }

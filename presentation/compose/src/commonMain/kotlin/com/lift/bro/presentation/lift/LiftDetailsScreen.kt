@@ -71,12 +71,14 @@ import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.color_picker_dialog_blue
@@ -88,6 +90,9 @@ import lift_bro.core.generated.resources.color_picker_positive_cta
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 @Composable
 fun LiftDetailsScreen(
@@ -591,4 +596,165 @@ private enum class SortingOptions(reversed: Boolean) {
     NameReversed(true),
     MaxSet(false),
     MaxSetReversed(true),
+}
+
+class LiftDetailsStateProvider : PreviewParameterProvider<LiftDetailsState> {
+    override val values: Sequence<LiftDetailsState>
+        get() = sequenceOf(
+            // Empty lift - no variations
+            LiftDetailsState(
+                liftName = "Squat",
+                liftColor = 0xFF2196F3uL,
+                variations = emptyList()
+            ),
+            // Lift with one variation, no sets
+            LiftDetailsState(
+                liftName = "Bench Press",
+                liftColor = 0xFF4CAF50uL,
+                variations = listOf(
+                    VariationCardState(
+                        variation = Variation(
+                            lift = com.lift.bro.domain.models.Lift(
+                                name = "Bench Press",
+                                color = 0xFF4CAF50uL
+                            ),
+                            name = "Flat Bench",
+                            favourite = true
+                        ),
+                        sets = emptyList()
+                    )
+                )
+            ),
+            // Lift with multiple variations and sets
+            LiftDetailsState(
+                liftName = "Deadlift",
+                liftColor = 0xFFFF5722uL,
+                variations = listOf(
+                    VariationCardState(
+                        variation = Variation(
+                            lift = com.lift.bro.domain.models.Lift(
+                                name = "Deadlift",
+                                color = 0xFFFF5722uL
+                            ),
+                            name = "Conventional",
+                            favourite = true
+                        ),
+                        sets = listOf(
+                            LBSet(
+                                id = "set1",
+                                variationId = "var1",
+                                weight = 405.0,
+                                reps = 5,
+                                rpe = 8,
+                                date = Clock.System.now()
+                            ),
+                            LBSet(
+                                id = "set2",
+                                variationId = "var1",
+                                weight = 425.0,
+                                reps = 3,
+                                rpe = 9,
+                                date = Clock.System.now()
+                            )
+                        )
+                    ),
+                    VariationCardState(
+                        variation = Variation(
+                            lift = com.lift.bro.domain.models.Lift(
+                                name = "Deadlift",
+                                color = 0xFFFF5722uL
+                            ),
+                            name = "Sumo",
+                            favourite = false
+                        ),
+                        sets = listOf(
+                            LBSet(
+                                id = "set3",
+                                variationId = "var2",
+                                weight = 365.0,
+                                reps = 5,
+                                rpe = 7,
+                                date = Clock.System.now()
+                            )
+                        )
+                    )
+                )
+            )
+        )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Preview
+@Composable
+fun LiftDetailsScreenPreview(
+    @PreviewParameter(LiftDetailsStateProvider::class) state: LiftDetailsState
+) {
+    PreviewAppTheme(isDarkMode = false) {
+        LiftingScaffold(
+            title = { Text(state.liftName ?: "Lift Details") },
+            trailingContent = {
+                TopBarIconButton(
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit",
+                    onClick = {}
+                )
+            },
+            fabProperties = FabProperties(
+                fabIcon = Icons.Default.Add,
+                contentDescription = "Add Set",
+                fabClicked = {}
+            )
+        ) { padding ->
+            LazyColumn(
+                modifier = Modifier.padding(padding),
+                contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+            ) {
+                if (state.variations.isEmpty()) {
+                    item {
+                        Text(
+                            modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.two),
+                            text = "No variations yet. Tap + to add a set.",
+                            style = MaterialTheme.typography.bodyLarge,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    }
+                } else {
+                    items(state.variations) { variationCard ->
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                                .background(
+                                    MaterialTheme.colorScheme.surface,
+                                    MaterialTheme.shapes.medium
+                                )
+                                .padding(MaterialTheme.spacing.one)
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    modifier = Modifier.weight(1f),
+                                    text = variationCard.variation.fullName,
+                                    style = MaterialTheme.typography.headlineSmall
+                                )
+                                if (variationCard.variation.favourite) {
+                                    Icon(
+                                        imageVector = Icons.Default.Favorite,
+                                        contentDescription = "Favourite"
+                                    )
+                                }
+                            }
+                            if (variationCard.sets.isNotEmpty()) {
+                                Space(MaterialTheme.spacing.half)
+                                Text(
+                                    text = "${variationCard.sets.size} sets",
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

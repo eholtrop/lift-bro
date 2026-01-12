@@ -1,6 +1,10 @@
 package com.lift.bro.ui
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -15,6 +19,11 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun DecimalPicker(
@@ -60,4 +69,29 @@ fun DecimalPicker(
         prefix = prefix,
         suffix = suffix,
     )
+}
+
+@Preview
+@Composable
+fun DecimalPickerPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        Column(
+            modifier = Modifier.padding(MaterialTheme.spacing.one),
+            Arrangement.spacedBy(MaterialTheme.spacing.one)
+        ) {
+            DecimalPicker(
+                title = "Weight",
+                selectedNum = 135.5,
+                numberChanged = {},
+                imeAction = ImeAction.Done,
+                suffix = { Text("kg") }
+            )
+            DecimalPicker(
+                title = "Empty",
+                selectedNum = null,
+                numberChanged = {},
+                imeAction = ImeAction.Done
+            )
+        }
+    }
 }

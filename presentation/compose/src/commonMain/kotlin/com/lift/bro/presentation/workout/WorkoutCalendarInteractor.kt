@@ -18,10 +18,10 @@ import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
-import com.lift.bro.ui.today
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.Flow

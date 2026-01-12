@@ -19,6 +19,8 @@ import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.settings_mer_enable_text
 import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_paragraph_one
@@ -26,9 +28,31 @@ import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_paragr
 import lift_bro.core.generated.resources.settings_mer_fatigue_info_dialog_title
 import lift_bro.core.generated.resources.settings_mer_title
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun MERSettingsRow() {
+    val showMerCalcs by dependencies.settingsRepository.getMerSettings()
+        .collectAsState(MERSettings())
+
+    MERSettingsRowContent(
+        enabled = showMerCalcs.enabled,
+        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
+        onToggle = { enabled ->
+            dependencies.settingsRepository.setMerSettings(
+                showMerCalcs.copy(enabled = enabled)
+            )
+        }
+    )
+}
+
+@Composable
+fun MERSettingsRowContent(
+    enabled: Boolean,
+    isPro: Boolean,
+    onToggle: (Boolean) -> Unit
+) {
     SettingsRowItem(
         title = {
             Row(
@@ -52,9 +76,6 @@ fun MERSettingsRow() {
             }
         },
         content = {
-            val showMerCalcs by dependencies.settingsRepository.getMerSettings()
-                .collectAsState(MERSettings())
-
             Column(
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
             ) {
@@ -62,13 +83,9 @@ fun MERSettingsRow() {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Checkbox(
-                        checked = showMerCalcs.enabled,
-                        enabled = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
-                        onCheckedChange = {
-                            dependencies.settingsRepository.setMerSettings(
-                                showMerCalcs.copy(enabled = it)
-                            )
-                        }
+                        checked = enabled,
+                        enabled = isPro,
+                        onCheckedChange = onToggle
                     )
 
                     Text(stringResource(Res.string.settings_mer_enable_text))
@@ -76,4 +93,18 @@ fun MERSettingsRow() {
             }
         }
     )
+}
+
+@Preview
+@Composable
+fun MERSettingsRowPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        MERSettingsRowContent(
+            enabled = true,
+            isPro = true,
+            onToggle = {}
+        )
+    }
 }
