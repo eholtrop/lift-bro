@@ -8,7 +8,7 @@ import io.ktor.client.plugins.logging.Logging
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-actual fun createLiftBroClient(): io.ktor.client.HttpClient {
+actual fun createLiftBroClient(config: LiftBroClientConfig): io.ktor.client.HttpClient {
     return HttpClient(Darwin) {
         // Engine-specific configuration
         engine {
@@ -19,7 +19,7 @@ actual fun createLiftBroClient(): io.ktor.client.HttpClient {
 
         // Common configuration (plugins)
         install(Logging) {
-            level = LogLevel.ALL
+            level = if (config.enableLogging) LogLevel.ALL else LogLevel.NONE
         }
 
         install(ContentNegotiation) {

@@ -9,5 +9,20 @@ actual fun Double?.decimalFormat(showDecimal: Boolean, grouping: Boolean): Strin
         minimumFractionDigits = 0u
         maximumFractionDigits = 3u
         numberStyle = NSNumberFormatterDecimalStyle
+        usesGroupingSeparator = grouping
     }.stringFromNumber(NSNumber(this ?: 0.0)) ?: ""
+}
+
+actual fun Long?.format(grouping: Boolean): String {
+    return NSNumberFormatter().apply {
+        usesGroupingSeparator = grouping
+        numberStyle = NSNumberFormatterDecimalStyle
+    }.stringFromNumber(NSNumber(longLong = this ?: 0L)) ?: ""
+}
+
+actual fun Int?.format(grouping: Boolean): String {
+    return NSNumberFormatter().apply {
+        usesGroupingSeparator = grouping
+        numberStyle = NSNumberFormatterDecimalStyle
+    }.stringFromNumber(NSNumber(this?.toInt() ?: 0)) ?: ""
 }
