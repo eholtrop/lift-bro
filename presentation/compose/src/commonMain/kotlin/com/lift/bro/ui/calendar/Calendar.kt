@@ -1,8 +1,11 @@
 package com.lift.bro.ui.calendar
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,8 +40,12 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.lift.bro.ui.AnimatedText
+import com.lift.bro.ui.AnimatedTextDefaults
+import com.lift.bro.ui.AnimatedTextDefaults.slideInOut
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.toString
@@ -151,7 +158,7 @@ private fun CalendarContent(
     selection: LocalDate?,
     contentPadding: PaddingValues,
     dateSelected: (LocalDate) -> Unit,
-    contentForMonth: @Composable (year: Int, month: Month) -> Unit
+    contentForMonth: @Composable (year: Int, month: Month) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -165,13 +172,26 @@ private fun CalendarContent(
             ),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.semantics { heading() }.padding(
-                    start = MaterialTheme.spacing.one
-                ),
-                text = pagerState.currentMonth.toString("MMMM - yyyy"),
-                style = MaterialTheme.typography.titleMedium
-            )
+            Column(
+                modifier = Modifier.semantics { heading() }
+            ) {
+                AnimatedText(
+                    text = pagerState.currentMonth.toString("MMMM"),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+
+                AnimatedText(
+                    text = pagerState.currentMonth.toString("yyyy"),
+                    style = MaterialTheme.typography.bodyMedium,
+                    transitionForChar = { char, index ->
+                        if (char.isDigit()) {
+                            AnimatedTextDefaults.slideInOut(this, char, index)
+                        } else {
+                            EnterTransition.None togetherWith ExitTransition.None
+                        }
+                    }
+                )
+            }
 
             Space()
 
@@ -272,7 +292,7 @@ private fun CalendarContent(
 @Preview
 @Composable
 fun CalendarPreview(
-    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
 ) {
     PreviewAppTheme(isDarkMode = darkMode) {
         val pagerState = rememberCalendarState()

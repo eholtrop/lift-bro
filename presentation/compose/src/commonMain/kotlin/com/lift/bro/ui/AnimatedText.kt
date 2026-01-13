@@ -26,7 +26,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 object AnimatedTextDefaults {
-    val transitionForChar: AnimatedContentTransitionScope<Char>.(Char, Int) -> ContentTransform = { char, index ->
+    val slideInOut: AnimatedContentTransitionScope<Char>.(Char, Int) -> ContentTransform = { char, index ->
         if (initialState < targetState) {
             slideInVertically { it } + fadeIn() togetherWith slideOutVertically { -it } + fadeOut()
         } else {
@@ -44,7 +44,7 @@ fun AnimatedText(
     transitionForChar: AnimatedContentTransitionScope<Char>.(
         Char,
         Int,
-    ) -> ContentTransform = AnimatedTextDefaults.transitionForChar,
+    ) -> ContentTransform = AnimatedTextDefaults.slideInOut,
 ) {
     Row(
         modifier = modifier,

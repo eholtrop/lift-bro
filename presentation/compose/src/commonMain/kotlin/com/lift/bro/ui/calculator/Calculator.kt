@@ -174,11 +174,6 @@ fun WeightCalculatorBottomSheet(
                                 .padding(start = MaterialTheme.spacing.half),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-//                            Checkbox(
-//                                modifier = Modifier.size(24.dp),
-//                                checked = includeBarBell,
-//                                onCheckedChange = { includeBarBell = it }
-//                            )
                             TriStateCheckbox(
                                 state = ToggleableState(includeBarBell),
                                 onClick = null
@@ -394,7 +389,7 @@ private fun WeightCalculatorInternal(
                     color = MaterialTheme.colorScheme.onSurface,
                     transitionForChar = { char, index ->
                         if (char.isDigit()) {
-                            AnimatedTextDefaults.transitionForChar(this, char, index)
+                            AnimatedTextDefaults.slideInOut(this, char, index)
                         } else {
                             EnterTransition.None togetherWith ExitTransition.None
                         }
