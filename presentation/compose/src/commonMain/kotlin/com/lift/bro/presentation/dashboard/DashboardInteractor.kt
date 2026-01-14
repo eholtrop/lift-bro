@@ -14,6 +14,7 @@ import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
+import com.lift.bro.utils.debug
 import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -22,35 +23,41 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
+
+typealias DashboardInteractor = Interactor<DashboardState, DashboardEvent>
+
 
 @Serializable
-data class DashboardState(
-    val items: List<DashboardListItem> = emptyList(),
-)
+sealed interface DashboardState
+@Serializable
+data class Loaded(val items: List<DashboardListItem>): DashboardState
+@Serializable
+data object Loading: DashboardState
 
 @Serializable
 sealed class DashboardListItem {
 
     @Serializable
-    sealed class LiftCard : DashboardListItem() {
+    sealed class LiftCard: DashboardListItem() {
 
         @Serializable
-        data class Loaded(val state: LiftCardState) : LiftCard()
+        data class Loaded(val state: LiftCardState): LiftCard()
 
         @Serializable
-        data object Loading : LiftCard()
+        data object Loading: LiftCard()
     }
 
     @Serializable
-    data object ReleaseNotes : DashboardListItem()
+    data object ReleaseNotes: DashboardListItem()
 
     @Serializable
-    data object AddLiftButton : DashboardListItem()
+    data object AddLiftButton: DashboardListItem()
 }
 
 sealed interface DashboardEvent {
-    data object AddLiftClicked : DashboardEvent
-    data class LiftClicked(val liftId: String) : DashboardEvent
+    data object AddLiftClicked: DashboardEvent
+    data class LiftClicked(val liftId: String): DashboardEvent
 }
 
 @Composable
@@ -59,9 +66,8 @@ fun rememberDashboardInteractor(
     variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: ISetRepository = dependencies.setRepository,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
-): Interactor<DashboardState, DashboardEvent> = rememberInteractor<DashboardState, DashboardEvent>(
-//    null,
-    initialState = DashboardState(),
+): DashboardInteractor = rememberInteractor<DashboardState, DashboardEvent>(
+    initialState = Loading,
     sideEffects = listOf { state, event ->
         when (event) {
             DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
@@ -114,7 +120,7 @@ fun rememberDashboardInteractor(
                             }
                     }
                     .map { items ->
-                        DashboardState(
+                        Loaded(
                             items = items.toMutableList().apply {
                                 add(0, DashboardListItem.ReleaseNotes)
                                 add(DashboardListItem.AddLiftButton)

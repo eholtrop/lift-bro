@@ -28,10 +28,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
-import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
+import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftCard
 import com.lift.bro.ui.LiftCardYValue
 import com.lift.bro.ui.ReleaseNotesRow
@@ -44,7 +44,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun DashboardContent(
     modifier: Modifier = Modifier,
-    interactor: Interactor<DashboardState, DashboardEvent> = rememberDashboardInteractor(),
+    interactor: DashboardInteractor = rememberDashboardInteractor(),
 ) {
     val state by interactor.state.collectAsState()
 
@@ -52,115 +52,129 @@ fun DashboardContent(
 
     Crossfade(
         modifier = modifier,
-        targetState = state.items,
+        targetState = state,
         label = "DashboardContent"
-    ) { items ->
-        if (items.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+    ) { state ->
+        when (state) {
+            is Loading -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                contentPadding = PaddingValues(MaterialTheme.spacing.one),
-                horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
-            ) {
-                item(
-                    span = { GridItemSpan(2) }
+
+            is Loaded -> {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
+                    verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalArrangement = Arrangement.Center,
+                    item(
+                        span = { GridItemSpan(2) }
                     ) {
-                        Button(
-                            onClick = {
-                                showWeight.value =
-                                    if (showWeight.value == LiftCardYValue.Weight) {
-                                        LiftCardYValue.Reps
-                                    } else {
-                                        LiftCardYValue.Weight
-                                    }
-                            }
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
                         ) {
-                            Text(
-                                text = if (showWeight.value == LiftCardYValue.Weight) {
-                                    LocalUnitOfMeasure.current.value
-                                } else {
-                                    stringResource(
-                                        Res.string.reps
-                                    )
+                            Button(
+                                onClick = {
+                                    showWeight.value =
+                                        if (showWeight.value == LiftCardYValue.Weight) {
+                                            LiftCardYValue.Reps
+                                        } else {
+                                            LiftCardYValue.Weight
+                                        }
                                 }
-                            )
+                            ) {
+                                Text(
+                                    text = if (showWeight.value == LiftCardYValue.Weight) {
+                                        LocalUnitOfMeasure.current.value
+                                    } else {
+                                        stringResource(
+                                            Res.string.reps
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
-                }
 
-                items(
-                    state.items,
-                    span = { item -> GridItemSpan(item.gridSize(state.items.size)) }
-                ) { item ->
-                    when (val dli = item) {
-                        is DashboardListItem.LiftCard.Loaded -> {
-                            LiftCard(
-                                state = dli.state,
-                                onClick = { interactor(LiftClicked(dli.state.lift.id)) },
-                                value = showWeight.value
-                            )
-                        }
+                    items(
+                        state.items,
+                        span = { item -> GridItemSpan(item.gridSize(state.items.size)) }
+                    ) { item ->
+                        when (item) {
+                            is DashboardListItem.LiftCard, DashboardListItem.LiftCard -> {
+                                when (val card = item as DashboardListItem.LiftCard) {
+                                    is DashboardListItem.LiftCard.Loaded -> {
+                                        LiftCard(
+                                            state = card.state,
+                                            onClick = { interactor(LiftClicked(card.state.lift.id)) },
+                                            value = showWeight.value
+                                        )
+                                    }
 
-                        is DashboardListItem.LiftCard.Loading -> {
-                        }
-
-                        DashboardListItem.ReleaseNotes -> {
-                            ReleaseNotesRow(
-                                modifier = Modifier.height(72.dp)
-                            )
-                        }
-
-                        DashboardListItem.AddLiftButton -> {
-                            Box(
-                                modifier = Modifier.fillMaxSize()
-                                    .then(
-                                        if (dli.gridSize(state.items.size) == 1) {
-                                            Modifier.aspectRatio(
-                                                1f
-                                            )
-                                        } else {
-                                            Modifier
+                                    DashboardListItem.LiftCard.Loading -> {
+                                        Card(
+                                            modifier = Modifier
+                                                .aspectRatio(1f),
+                                            backgroundColor = MaterialTheme.colorScheme.surface,
+                                        ) {
                                         }
-                                    )
-                            ) {
-                                Button(
-                                    modifier = Modifier.align(Alignment.Center),
-                                    onClick = {
-                                        interactor(DashboardEvent.AddLiftClicked)
-                                    },
-                                    colors = ButtonDefaults.elevatedButtonColors()
+                                    }
+                                }
+                            }
+
+                            DashboardListItem.ReleaseNotes -> {
+                                ReleaseNotesRow(
+                                    modifier = Modifier.height(72.dp)
+                                )
+                            }
+
+                            DashboardListItem.AddLiftButton -> {
+                                Box(
+                                    modifier = Modifier.fillMaxSize()
+                                        .then(
+                                            if (item.gridSize(state.items.size) == 1) {
+                                                Modifier.aspectRatio(
+                                                    1f
+                                                )
+                                            } else {
+                                                Modifier
+                                            }
+                                        )
                                 ) {
-                                    Text("Add Lift")
+                                    Button(
+                                        modifier = Modifier.align(Alignment.Center),
+                                        onClick = {
+                                            interactor(DashboardEvent.AddLiftClicked)
+                                        },
+                                        colors = ButtonDefaults.elevatedButtonColors()
+                                    ) {
+                                        Text("Add Lift")
+                                    }
                                 }
                             }
                         }
                     }
-                }
 
-                item(
-                    span = { GridItemSpan(2) }
-                ) {
-                    Text(
-                        stringResource(
-                            Res.string.dashboard_footer_version,
-                            BuildKonfig.VERSION_NAME
+                    item(
+                        span = { GridItemSpan(2) }
+                    ) {
+                        Text(
+                            stringResource(
+                                Res.string.dashboard_footer_version,
+                                BuildKonfig.VERSION_NAME
+                            )
                         )
-                    )
-                }
+                    }
 
-                item {
-                    Spacer(modifier = Modifier.height(72.dp))
+                    item {
+                        Spacer(modifier = Modifier.height(72.dp))
+                    }
                 }
             }
         }
