@@ -9,6 +9,7 @@ import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalTMaxSettings
 import com.lift.bro.presentation.lift.uom
+import kotlinx.datetime.LocalDate
 import kotlin.math.roundToInt
 
 val Variation.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
@@ -51,4 +52,10 @@ fun Variation.maxText(): AnnotatedString {
             }
         }
     }
+}
+
+val Variation.maxDate: LocalDate? get() = if (bodyWeight == true) {
+    maxReps?.date?.toLocalDate()
+} else {
+    eMax?.date?.toLocalDate()
 }

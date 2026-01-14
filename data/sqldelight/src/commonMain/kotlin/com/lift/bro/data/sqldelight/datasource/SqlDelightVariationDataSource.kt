@@ -8,6 +8,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.Sorting
+import comliftbrodb.GetAllSets
 import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
@@ -95,8 +96,7 @@ class SqlDelightVariationDataSource(
     override fun listenAllForLift(liftId: String?): Flow<List<Variation>> =
         combine(
             variationQueries.getAllForLift(liftId).asFlowList(),
-
-            setQueries.getAll(
+            setQueries.getAllSets(
                 limit = Long.MAX_VALUE,
                 startDate = Instant.DISTANT_PAST,
                 endDate = Instant.DISTANT_FUTURE,
@@ -105,7 +105,7 @@ class SqlDelightVariationDataSource(
                 sortBy = Sorting.date.toString(),
                 order = 0,
             ).asFlowList(),
-        ) { variations: List<GetAllForLift>, sets: List<LiftingSet> ->
+        ) { variations: List<GetAllForLift>, sets: List<GetAllSets> ->
             variations.map { variation ->
                 variation.toDomain(
                     parentLift = Lift(
@@ -129,7 +129,7 @@ class SqlDelightVariationDataSource(
     }
 
     override fun getAll(): List<Variation> {
-        val sets = setQueries.getAll(
+        val sets = setQueries.getAllSets(
             limit = Long.MAX_VALUE,
             startDate = Instant.DISTANT_PAST,
             endDate = Instant.DISTANT_FUTURE,

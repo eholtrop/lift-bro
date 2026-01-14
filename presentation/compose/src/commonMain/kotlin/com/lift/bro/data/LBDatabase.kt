@@ -11,6 +11,7 @@ import com.lift.bro.data.core.datasource.VariationDataSource
 import com.lift.bro.data.datasource.LBExerciseDataSource
 import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
+import com.lift.bro.data.sqldelight.datasource.toDomain
 import com.lift.bro.db.LiftBroDB
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
@@ -206,7 +207,7 @@ class SetDataSource(
         endDate: Instant? = null,
         variationId: String? = null,
     ): List<LBSet> =
-        setQueries.getAll(
+        setQueries.getAllSets(
             limit = limit,
             reps = null,
             startDate = startDate,
