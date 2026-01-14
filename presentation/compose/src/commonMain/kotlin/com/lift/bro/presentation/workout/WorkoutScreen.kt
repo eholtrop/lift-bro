@@ -52,6 +52,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -59,6 +60,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
+import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
@@ -73,6 +78,7 @@ import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
@@ -108,8 +114,8 @@ fun WorkoutScreen(
 }
 
 sealed class VariationDialogReason {
-    object AddExercise : VariationDialogReason()
-    data class Superset(val exercise: ExerciseItem) : VariationDialogReason()
+    object AddExercise: VariationDialogReason()
+    data class Superset(val exercise: ExerciseItem): VariationDialogReason()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -194,56 +200,15 @@ fun WorkoutScreenInternal(
                     items = state.recentWorkouts,
                     key = { it.id }
                 ) { workout ->
-                    Row(
+                    RecentWorkoutCard(
                         modifier = Modifier.fillMaxWidth()
                             .animateItem()
-                            .padding(horizontal = MaterialTheme.spacing.one)
-                            .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
-                            .clickable(
-                                role = Role.Button,
-                                onClick = {
-                                    eventHandler(CreateWorkoutEvent.CopyWorkout(workout))
-                                }
-                            ),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(
-                            modifier = Modifier.weight(1f)
-                                .padding(
-                                    MaterialTheme.spacing.threeQuarters
-                                ),
-                        ) {
-                            Space(MaterialTheme.spacing.half)
-
-                            Text(
-                                text = workout.date.toString("EEE, MMM d - yyyy"),
-                                style = MaterialTheme.typography.titleLarge
-                            )
-
-                            Space(MaterialTheme.spacing.half)
-
-                            Column(
-                                modifier = Modifier.background(
-                                    color = MaterialTheme.colorScheme.surfaceContainer,
-                                    shape = MaterialTheme.shapes.small
-                                )
-                                    .padding(
-                                        MaterialTheme.spacing.threeQuarters
-                                    ),
-                                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
-                            ) {
-                                workout.exercises.forEach { exercise ->
-                                    exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
-                                        VariationSet(
-                                            index = if (exercise.variationSets.size > 1) index else null,
-                                            variation = variation,
-                                            sets = sets
-                                        )
-                                    }
-                                }
-                            }
+                            .padding(horizontal = MaterialTheme.spacing.one),
+                        workout = workout,
+                        recentWorkoutClicked = {
+                            eventHandler(CreateWorkoutEvent.CopyWorkout(it))
                         }
-                    }
+                    )
                 }
             }
 
@@ -400,30 +365,32 @@ fun WorkoutScreenInternal(
         }
     }
 
-    VariationSearchDialog(
-        visible = showVariationDialog != null,
-        textFieldPlaceholder = stringResource(Res.string.workout_add_exercise_cta),
-        onDismissRequest = {
-            showVariationDialog = null
-        },
-        onVariationSelected = {
-            when (val reason = showVariationDialog) {
-                VariationDialogReason.AddExercise ->
-                    eventHandler(CreateWorkoutEvent.AddExercise(it))
+    if (showVariationDialog != null) {
+        VariationSearchDialog(
+            visible = showVariationDialog != null,
+            textFieldPlaceholder = stringResource(Res.string.workout_add_exercise_cta),
+            onDismissRequest = {
+                showVariationDialog = null
+            },
+            onVariationSelected = {
+                when (val reason = showVariationDialog) {
+                    VariationDialogReason.AddExercise ->
+                        eventHandler(CreateWorkoutEvent.AddExercise(it))
 
-                is VariationDialogReason.Superset ->
-                    eventHandler(
-                        CreateWorkoutEvent.AddSuperSet(
-                            exercise = reason.exercise,
-                            it
+                    is VariationDialogReason.Superset ->
+                        eventHandler(
+                            CreateWorkoutEvent.AddSuperSet(
+                                exercise = reason.exercise,
+                                it
+                            )
                         )
-                    )
 
-                null -> {}
+                    null -> {}
+                }
+                showVariationDialog = null
             }
-            showVariationDialog = null
-        }
-    )
+        )
+    }
 }
 
 @Composable
@@ -642,7 +609,9 @@ fun VariationItemCard(
                                             role = Role.Button
                                         )
                                         .border(
-                                            color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer,
+                                            color = if (set == sets.last()) {
+                                                MaterialTheme.colorScheme.onSurface
+                                            } else MaterialTheme.colorScheme.surfaceContainer,
                                             width = 1.dp,
                                             shape = MaterialTheme.shapes.small.copy(
                                                 topStart = if (sets.size == 1) {
@@ -708,9 +677,11 @@ fun VariationItemCard(
                                     ),
                             ) {
                                 Text(
-                                    text = "Most Recent Set - ${variationSet.lastSet.date.toString(
-                                        "EEEE, MMM d, yyyy"
-                                    )}",
+                                    text = "Most Recent Set - ${
+                                        variationSet.lastSet.date.toString(
+                                            "EEEE, MMM d, yyyy"
+                                        )
+                                    }",
                                     style = MaterialTheme.typography.labelSmall,
                                 )
                                 SetInfoRow(
@@ -815,7 +786,21 @@ fun SetOptionsBottomSheet(
     }
 }
 
-class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
+@Preview
+@Composable
+fun WorkoutScreenInternalPreview(
+    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState,
+    @PreviewParameter(DarkModeProvider::class) isDark: Boolean,
+) {
+    PreviewAppTheme(isDarkMode = isDark) {
+        WorkoutScreenInternal(
+            state = state,
+            eventHandler = {}
+        )
+    }
+}
+
+class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
     override val values: Sequence<CreateWorkoutState>
         get() = sequenceOf(
             // Empty workout with no exercises
@@ -842,18 +827,57 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                 notes = "",
                 exercises = emptyList(),
                 recentWorkouts = listOf(
-                    com.lift.bro.domain.models.Workout(
+                    Workout(
                         id = "w1",
                         date = LocalDate(2024, 1, 12),
                         exercises = listOf(
                             com.lift.bro.domain.models.Exercise(
                                 id = "ex1",
                                 workoutId = "w1",
-                                variationSets = emptyList()
+                                variationSets = listOf(
+                                    VariationSets(
+                                        id = "vs1",
+                                        variation = com.lift.bro.domain.models.Variation(
+                                            lift = Lift(
+                                                id = "lift1",
+                                                name = "Squat",
+                                                color = Color.Red.value
+                                            ),
+                                            name = "Deadlift",
+                                            notes = null,
+                                            favourite = true,
+                                        ),
+                                        sets = listOf(
+                                            LBSet(
+                                                id = "set1",
+                                                variationId = "vs1",
+                                            )
+                                        )
+                                    ),
+                                    VariationSets(
+                                        id = "vs1",
+                                        variation = com.lift.bro.domain.models.Variation(
+                                            lift = Lift(
+                                                id = "lift1",
+                                                name = "Squat",
+                                                color = Color.Blue.value
+                                            ),
+                                            name = "Deadlift",
+                                            notes = null,
+                                            favourite = true,
+                                        ),
+                                        sets = listOf(
+                                            LBSet(
+                                                id = "set1",
+                                                variationId = "vs1",
+                                            )
+                                        )
+                                    )
+                                )
                             )
                         )
                     ),
-                    com.lift.bro.domain.models.Workout(
+                    Workout(
                         id = "w2",
                         date = LocalDate(2024, 1, 10),
                         exercises = listOf(
@@ -909,17 +933,4 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                 recentWorkouts = emptyList()
             )
         )
-}
-
-@Preview
-@Composable
-fun WorkoutScreenInternalPreview(
-    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState
-) {
-    PreviewAppTheme(isDarkMode = false) {
-        WorkoutScreenInternal(
-            state = state,
-            eventHandler = {}
-        )
-    }
 }
