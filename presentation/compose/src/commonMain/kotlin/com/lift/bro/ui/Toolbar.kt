@@ -120,12 +120,13 @@ fun TopBar(
 
 @Composable
 fun TopBarIconButton(
+    modifier: Modifier = Modifier,
     imageVector: ImageVector,
     contentDescription: String,
     onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = Modifier.padding(
+        modifier = modifier.padding(
             start = MaterialTheme.spacing.one,
         ),
         onClick = onClick,
@@ -140,11 +141,13 @@ fun TopBarIconButton(
 
 @Composable
 fun TopBarIconButton(
+    modifier: Modifier = Modifier,
     painter: Painter,
     contentDescription: String,
     onClick: () -> Unit,
 ) {
     IconButton(
+        modifier = modifier,
         onClick = onClick,
     ) {
         Icon(

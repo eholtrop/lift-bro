@@ -69,8 +69,6 @@ fun SwipeableNavHost(
             else -> ps
         }
     }
-    Log.d(message = pagerPages.size.toString())
-    Log.d(message = tabletMode.toString())
 
     val homePage = if (tabletMode) pages.firstOrNull() else null
 
@@ -81,14 +79,20 @@ fun SwipeableNavHost(
 
     LaunchedEffect(currentPage) {
         if (currentPage != Destination.Unknown) {
-            savedPagerState.animateScrollToPage(
-                page = pages.indexOf(currentPage)
-            )
+            if (tabletMode && savedPagerState.currentPage > 0) {
+                savedPagerState.animateScrollToPage(pages.indexOf(currentPage) - 1)
+            } else {
+                savedPagerState.animateScrollToPage(pages.indexOf(currentPage))
+            }
         }
     }
     val keyboard = LocalSoftwareKeyboardController.current
     LaunchedEffect(savedPagerState.currentPage) {
-        navCoordinator.updateCurrentIndex(savedPagerState.currentPage)
+        if (tabletMode && savedPagerState.currentPage > 0) {
+            navCoordinator.updateCurrentIndex(savedPagerState.currentPage + 1)
+        } else {
+            navCoordinator.updateCurrentIndex(savedPagerState.currentPage)
+        }
         keyboard?.hide()
     }
     LaunchedEffect(savedPagerState.currentPage) {

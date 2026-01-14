@@ -273,7 +273,7 @@ fun LiftDetailsScreen(
                 ) { }
             }
             TopBarIconButton(
-                Icons.Default.Edit,
+                imageVector = Icons.Default.Edit,
                 contentDescription = "Edit",
                 onClick = {
                     interactor(LiftDetailsEvent.EditLiftClicked)
