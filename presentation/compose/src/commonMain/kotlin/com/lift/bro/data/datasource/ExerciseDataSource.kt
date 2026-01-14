@@ -79,6 +79,7 @@ class LBExerciseDataSource(
                                     name = exercise.variation_name,
                                     notes = exercise.variation_notes,
                                     favourite = exercise.variation_is_favourite == 1L,
+                                    bodyWeight = exercise.variation_is_body_weight?.let { it == 1L },
                                     lift = Lift(
                                         id = exercise.lift_id,
                                         color = exercise.lift_color?.toULong(),

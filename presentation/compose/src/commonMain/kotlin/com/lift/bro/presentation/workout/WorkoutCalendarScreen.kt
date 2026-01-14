@@ -78,7 +78,9 @@ import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.fullName
+import com.lift.bro.utils.maxDate
 import com.lift.bro.utils.maxText
+import com.lift.bro.utils.prettyPrintSet
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.GlobalScope
@@ -553,15 +555,13 @@ fun VariationSet(
                     )
                 }
             }
+
             Text(
-
-                variation.maxText(),
-                style = MaterialTheme.typography.bodyMedium
+                "${variation.maxText()} - ${variation.maxDate?.toString("MMM - d")}",
+                style = MaterialTheme.typography.labelMedium
             )
-            val differingWeights =
-                sets.any { set -> sets.firstOrNull()?.weight != set.weight }
 
-            val keySet = if (differingWeights) {
+            val keySet = if (variation.bodyWeight == true) {
                 sets.maxByOrNull { it.weight }
             } else {
                 sets.maxByOrNull { it.reps }
@@ -569,7 +569,7 @@ fun VariationSet(
 
             if (keySet != null) {
                 Text(
-                    text = "${weightFormat(keySet.weight)} x ${keySet.reps}",
+                    text = keySet.prettyPrintSet(),
                     style = MaterialTheme.typography.bodyMedium
                 )
                 keySet.tempo.render()

@@ -9,6 +9,7 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
+import comliftbrodb.GetAllSets
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import kotlinx.coroutines.CoroutineDispatcher
@@ -39,7 +40,7 @@ class SqldelightSetDataSource(
         sorting: Sorting,
         order: Order,
     ): Flow<List<LBSet>> {
-        return setQueries.getAll(
+        return setQueries.getAllSets(
             startDate = startDate?.atStartOfDayIn(),
             endDate = endDate?.atEndOfDayIn(),
             variationId = variationId,
@@ -62,7 +63,7 @@ class SqldelightSetDataSource(
                         ).executeAsOneOrNull()?.weight
 
                         set.toDomain().copy(
-                            mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0
+                            mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0,
                         )
                     }
             }
@@ -129,6 +130,22 @@ class SqldelightSetDataSource(
         setQueries.deleteAllFromVariations(variationId)
     }
 }
+
+fun GetAllSets.toDomain() = LBSet(
+    id = this.id,
+    variationId = this.variationId,
+    weight = this.weight ?: 0.0,
+    reps = this.reps ?: 1,
+    tempo = Tempo(
+        down = this.tempoDown ?: 3,
+        hold = this.tempoHold ?: 1,
+        up = this.tempoUp ?: 1,
+    ),
+    date = this.date,
+    notes = this.notes,
+    rpe = this.rpe?.toInt(),
+    bodyWeightRep = this.body_weight?.let { it == 1L },
+)
 
 fun LiftingSet.toDomain() = LBSet(
     id = this.id,
