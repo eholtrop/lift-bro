@@ -51,6 +51,9 @@ import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.navigation.Destination
+import com.lift.bro.ui.navigation.LocalNavCoordinator
+import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.amber
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
@@ -93,6 +96,7 @@ internal fun Modifier.onboardingBackground(): Modifier = this
 fun OnboardingScreen(
     defaultState: Int = 0,
     settingsRepository: ISettingsRepository? = dependencies.settingsRepository,
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current
 ) {
     var onboardingState by remember { mutableStateOf(defaultState) }
 
@@ -123,10 +127,16 @@ fun OnboardingScreen(
 
                 2 -> OnboardingSkipScreen(
                     setupClicked = { onboardingState += 1 },
-                    continueClicked = { settingsRepository?.setDeviceFtux(true) }
+                    continueClicked = {
+                        settingsRepository?.setDeviceFtux(true)
+                        navCoordinator.setRoot(Destination.Home)
+                    }
                 )
 
-                3 -> OnboardingSetupScreen { settingsRepository?.setDeviceFtux(true) }
+                3 -> OnboardingSetupScreen {
+                    settingsRepository?.setDeviceFtux(true)
+                    navCoordinator.setRoot(Destination.Home)
+                }
             }
         }
 
