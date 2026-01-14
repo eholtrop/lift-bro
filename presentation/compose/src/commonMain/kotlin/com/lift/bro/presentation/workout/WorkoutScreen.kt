@@ -611,7 +611,9 @@ fun VariationItemCard(
                                         .border(
                                             color = if (set == sets.last()) {
                                                 MaterialTheme.colorScheme.onSurface
-                                            } else MaterialTheme.colorScheme.surfaceContainer,
+                                            } else {
+                                                MaterialTheme.colorScheme.surfaceContainer
+                                            },
                                             width = 1.dp,
                                             shape = MaterialTheme.shapes.small.copy(
                                                 topStart = if (sets.size == 1) {

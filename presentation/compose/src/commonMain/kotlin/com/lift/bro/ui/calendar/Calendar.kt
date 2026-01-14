@@ -42,10 +42,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
-import com.lift.bro.ui.AnimatedTextDefaults.slideInOut
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.toString

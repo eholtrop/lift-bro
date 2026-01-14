@@ -11,6 +11,8 @@ import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.presentation.Log
+import com.lift.bro.presentation.d
 import com.lift.bro.ui.weightFormat
 
 @Composable
@@ -22,6 +24,7 @@ internal fun LBSet.prettyPrintSet(
     withStyle(
         style = SpanStyle(),
     ) {
+        Log.d(message = bodyWeightRep.toString())
         if (bodyWeightRep == true) {
             append("$reps x bw")
             if (weight > 0.0) {

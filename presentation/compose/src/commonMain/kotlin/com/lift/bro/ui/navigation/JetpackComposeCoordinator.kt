@@ -69,6 +69,9 @@ class JetpackComposeCoordinator(
     override val currentPageAsFlow: StateFlow<Destination>
         get() = currentState.asStateFlow()
 
+    override val currentPageIndex: Int
+        get() = currentIndex
+
     private val currentIndex get() = pages.indexOf(currentPage)
 
     override fun onBackPressed(keepStack: Boolean): Boolean {

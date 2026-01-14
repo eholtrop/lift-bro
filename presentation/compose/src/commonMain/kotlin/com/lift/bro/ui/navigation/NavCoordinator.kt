@@ -10,6 +10,8 @@ interface NavCoordinator {
 
     val currentPage: Destination
 
+    val currentPageIndex: Int
+
     val currentPageAsFlow: StateFlow<Destination>
 
     /**

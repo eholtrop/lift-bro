@@ -107,7 +107,7 @@ fun DashboardContent(
                         span = { item -> GridItemSpan(item.gridSize(state.items.size)) }
                     ) { item ->
                         when (item) {
-                            is DashboardListItem.LiftCard, DashboardListItem.LiftCard -> {
+                            is DashboardListItem.LiftCard -> {
                                 when (val card = item as DashboardListItem.LiftCard) {
                                     is DashboardListItem.LiftCard.Loaded -> {
                                         LiftCard(

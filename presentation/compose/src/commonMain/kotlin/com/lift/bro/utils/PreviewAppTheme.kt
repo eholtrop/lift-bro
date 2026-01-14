@@ -12,12 +12,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.example.compose.AppTheme
 import com.lift.bro.domain.models.LiftBro
+import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalCalculatorVisibility
 import com.lift.bro.presentation.LocalLiftBro
+import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
+import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.JetpackComposeCoordinator
@@ -39,6 +42,8 @@ internal fun PreviewAppTheme(
         LocalLiftBro provides LiftBro.Lisa,
         LocalNavCoordinator provides JetpackComposeCoordinator(Destination.Unknown),
         LocalUnitOfMeasure provides UOM.POUNDS,
+        LocalTwmSettings provides true,
+        LocalShowMERCalcs provides MERSettings(enabled = true),
         LocalCalculatorVisibility provides calculatorVisibility,
         LocalSubscriptionStatusProvider provides subscriptionType
     ) {

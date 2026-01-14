@@ -26,7 +26,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
-
 @Composable
 fun RecentWorkoutCard(
     modifier: Modifier = Modifier,
@@ -36,13 +35,14 @@ fun RecentWorkoutCard(
     Column(
         modifier = modifier
             .background(color = MaterialTheme.colorScheme.surface, shape = MaterialTheme.shapes.medium)
-            .padding(MaterialTheme.spacing.threeQuarters)
+            .clip(MaterialTheme.shapes.medium)
             .clickable(
                 role = Role.Button,
                 onClick = {
                     recentWorkoutClicked(workout)
                 }
-            ),
+            )
+            .padding(MaterialTheme.spacing.threeQuarters),
     ) {
         Space(MaterialTheme.spacing.half)
 
@@ -77,17 +77,17 @@ fun RecentWorkoutCard(
 @Preview
 @Composable
 fun RecentWorkoutCardPreview(
-    @PreviewParameter(WorkoutProvider::class) workout: Workout,
     @PreviewParameter(DarkModeProvider::class) isDark: Boolean,
 ) {
     PreviewAppTheme(isDark) {
-        RecentWorkoutCard(
-            workout = workout,
-            recentWorkoutClicked = {}
-        )
+        WorkoutProvider().values.forEach {
+            RecentWorkoutCard(
+                workout = it,
+                recentWorkoutClicked = {}
+            )
+        }
     }
 }
-
 
 class WorkoutProvider: PreviewParameterProvider<Workout> {
     override val values: Sequence<Workout>
