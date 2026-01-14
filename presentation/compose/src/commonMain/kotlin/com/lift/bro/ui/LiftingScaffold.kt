@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.LocalSnackbarHostState
+import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.toolbar_back_button_content_description
@@ -61,19 +63,7 @@ fun LiftingScaffold(
     description: @Composable (() -> Unit)? = null,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
     fabProperties: FabProperties? = null,
-    leadingContent: @Composable () -> Unit = {
-        val tabletMode = currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(
-            WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
-        )
-        if (!tabletMode) {
-            val navCoordinator = LocalNavCoordinator.current
-            TopBarIconButton(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = stringResource(Res.string.toolbar_back_button_content_description),
-                onClick = { navCoordinator.onBackPressed() },
-            )
-        }
-    },
+    leadingContent: @Composable () -> Unit = { LeadingNavigationButton() },
     trailingContent: @Composable () -> Unit = {},
     tallMode: Boolean = currentWindowAdaptiveInfo()
         .windowSizeClass
@@ -164,5 +154,33 @@ fun LiftingScaffold(
         }
     ) {
         content(it)
+    }
+}
+
+@Composable
+private fun LeadingNavigationButton(
+    modifier: Modifier = Modifier,
+    tabletMode: Boolean = currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(
+        WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
+    ),
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current
+) {
+    when {
+        !tabletMode || (tabletMode && navCoordinator.currentPageIndex > 1) -> {
+            TopBarIconButton(
+                modifier = modifier,
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = stringResource(Res.string.toolbar_back_button_content_description),
+                onClick = { navCoordinator.onBackPressed() },
+            )
+        }
+        tabletMode && navCoordinator.currentPageIndex == 1 -> {
+            TopBarIconButton(
+                modifier = modifier,
+                imageVector = Icons.Default.Close,
+                contentDescription = "Close",
+                onClick = { navCoordinator.popToRoot(keepStack = false) },
+            )
+        }
     }
 }

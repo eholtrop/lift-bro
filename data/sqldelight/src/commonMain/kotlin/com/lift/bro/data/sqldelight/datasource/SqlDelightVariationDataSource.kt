@@ -10,7 +10,6 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.Sorting
 import comliftbrodb.GetAllSets
 import comliftbrodb.LiftQueries
-import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
 import comliftbrodb.variation.GetAllForLift

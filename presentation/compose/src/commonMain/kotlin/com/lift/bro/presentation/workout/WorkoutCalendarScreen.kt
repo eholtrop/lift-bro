@@ -76,7 +76,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxDate
 import com.lift.bro.utils.maxText

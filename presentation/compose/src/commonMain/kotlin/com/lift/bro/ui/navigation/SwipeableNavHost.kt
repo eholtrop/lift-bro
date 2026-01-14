@@ -39,8 +39,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.util.lerp
 import androidx.window.core.layout.WindowSizeClass
 import com.lift.bro.config.BuildConfig
-import com.lift.bro.data.client.Log
-import com.lift.bro.data.client.d
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.horizontal_padding.padding
 import io.sentry.kotlin.multiplatform.Sentry

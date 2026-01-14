@@ -9,7 +9,6 @@
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt; )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit )</ID>
-    <ID>CyclomaticComplexMethod:LiftingScaffold.kt$@Composable fun LiftingScaffold( title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current, fabProperties: FabProperties? = null, leadingContent: @Composable () -&gt; Unit = { val tabletMode = currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint( WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND ) if (!tabletMode) { val navCoordinator = LocalNavCoordinator.current TopBarIconButton( imageVector = Icons.Default.ArrowBack, contentDescription = stringResource(Res.string.toolbar_back_button_content_description), onClick = { navCoordinator.onBackPressed() }, ) } }, trailingContent: @Composable () -&gt; Unit = {}, tallMode: Boolean = currentWindowAdaptiveInfo() .windowSizeClass .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND), topAppBarScrollBehavior: TopAppBarScrollBehavior = when (tallMode) { true -&gt; TopAppBarDefaults.exitUntilCollapsedScrollBehavior() false -&gt; TopAppBarDefaults.enterAlwaysScrollBehavior() }, content: @Composable (PaddingValues) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:SwipeableNavHost.kt$@Composable fun SwipeableNavHost( modifier: Modifier = Modifier, navCoordinator: NavCoordinator, key: (Destination) -&gt; Any = { Json.encodeToString(it) }, content: @Composable (Destination) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
@@ -125,6 +124,9 @@
     <ID>MagicNumber:OnboardingScreen.kt$3</ID>
     <ID>MagicNumber:OnboardingScreen.kt$90</ID>
     <ID>MagicNumber:OnboardingSetupScreen.kt$100</ID>
+    <ID>MagicNumber:RecentWorkoutCard.kt$WorkoutProvider$10</ID>
+    <ID>MagicNumber:RecentWorkoutCard.kt$WorkoutProvider$12</ID>
+    <ID>MagicNumber:RecentWorkoutCard.kt$WorkoutProvider$2024</ID>
     <ID>MagicNumber:RotatingAnimatedText.kt$1100</ID>
     <ID>MagicNumber:RotatingAnimatedText.kt$5000</ID>
     <ID>MagicNumber:ServerSettingsInteractor.kt$2000L</ID>
@@ -203,7 +205,6 @@
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$selectedWorkout = if (initial.selectedDate != source.selectedDate) initial.selectedWorkout else source.selectedWorkout</ID>
     <ID>MaxLineLength:WorkoutCalendarScreen.kt$.</ID>
     <ID>MaxLineLength:WorkoutCalendarScreen.kt$workout == null || (workout.exercises.isEmpty() &amp;&amp; workout.warmup.isNullOrBlank() &amp;&amp; workout.finisher.isNullOrBlank())</ID>
-    <ID>MaxLineLength:WorkoutScreen.kt$color = if (set == sets.last()) { MaterialTheme.colorScheme.onSurface } else MaterialTheme.colorScheme.surfaceContainer</ID>
     <ID>MaxLineLength:WrappedLandingScreen.kt$color = if (pagerState.currentPage == it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground</ID>
     <ID>MaxLineLength:WrappedProgressInteractor.kt$compareByDescending&lt;WrappedProgressItemState&gt; { (it as? WrappedProgressItemState.Loaded)?.favourite }</ID>
     <ID>MaxLineLength:WrappedProgressScreen.kt$it.groupBy { it.date.toLocalDate() }.map { (date, sets) -&gt; date to sets.maxOf { it.weight } }.sortedBy { it.first }</ID>
@@ -222,7 +223,6 @@
     <ID>MaximumLineLength:Toolbar.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarInteractor.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarScreen.kt$ </ID>
-    <ID>MaximumLineLength:WorkoutScreen.kt$ </ID>
     <ID>MaximumLineLength:WrappedLandingScreen.kt$ </ID>
     <ID>MaximumLineLength:WrappedProgressInteractor.kt$ </ID>
     <ID>MaximumLineLength:WrappedProgressScreen.kt$ </ID>
@@ -235,7 +235,7 @@
     <ID>PackageNaming:HorizontalPaddingExt.kt$package com.lift.bro.utils.horizontal_padding</ID>
     <ID>PackageNaming:VerticalPaddingExt.kt$package com.lift.bro.utils.vertical_padding</ID>
     <ID>SpreadOperator:DashboardInteractor.kt$( *cards.map { it.onStart { emit(DashboardListItem.LiftCard.Loading) } } .toTypedArray() )</ID>
-    <ID>SpreadOperator:ExerciseDataSource.kt$LBExerciseDataSource$( *variationSets.map { exercise -&gt; combine( setQueries.getOneRepMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getEMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getMaxRepsForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), ) { orm, volume, reps -&gt; Triple( exercise.exercise_variation_id, exercise.exercise_id, Variation( id = exercise.variation_id, name = exercise.variation_name, notes = exercise.variation_notes, favourite = exercise.variation_is_favourite == 1L, lift = Lift( id = exercise.lift_id, color = exercise.lift_color?.toULong(), name = exercise.lift_name, ), oneRepMax = orm?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), eMax = volume?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), maxReps = reps?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), ) ) } }.toTypedArray() )</ID>
+    <ID>SpreadOperator:ExerciseDataSource.kt$LBExerciseDataSource$( *variationSets.map { exercise -&gt; combine( setQueries.getOneRepMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getEMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getMaxRepsForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), ) { orm, volume, reps -&gt; Triple( exercise.exercise_variation_id, exercise.exercise_id, Variation( id = exercise.variation_id, name = exercise.variation_name, notes = exercise.variation_notes, favourite = exercise.variation_is_favourite == 1L, bodyWeight = exercise.variation_is_body_weight?.let { it == 1L }, lift = Lift( id = exercise.lift_id, color = exercise.lift_color?.toULong(), name = exercise.lift_name, ), oneRepMax = orm?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), eMax = volume?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), maxReps = reps?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), ) ) } }.toTypedArray() )</ID>
     <ID>SpreadOperator:WorkoutRepository.kt$WorkoutRepository$( *workouts.map { workout -&gt; database.exerciseDataSource.listen(workout.id).map { Workout( id = workout.id, date = workout.date, warmup = workout.warmup, exercises = it.toList(), finisher = workout.finisher ) } }.toTypedArray() )</ID>
     <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
     <ID>SwallowedException:LiftDetailsScreen.kt$e: Exception</ID>

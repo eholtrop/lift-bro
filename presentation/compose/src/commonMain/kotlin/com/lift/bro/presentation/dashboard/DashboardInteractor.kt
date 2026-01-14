@@ -14,7 +14,6 @@ import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
-import com.lift.bro.utils.debug
 import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -23,15 +22,15 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.Serializable
-import kotlin.jvm.JvmInline
 
 typealias DashboardInteractor = Interactor<DashboardState, DashboardEvent>
 
-
 @Serializable
 sealed interface DashboardState
+
 @Serializable
 data class Loaded(val items: List<DashboardListItem>): DashboardState
+
 @Serializable
 data object Loading: DashboardState
 
