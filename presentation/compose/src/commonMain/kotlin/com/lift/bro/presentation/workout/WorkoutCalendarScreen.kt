@@ -94,6 +94,12 @@ import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_placeholder
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_title
 import lift_bro.core.generated.resources.workout_calendar_edit_daily_notes_cta
+import lift_bro.core.generated.resources.workout_calendar_screen_start_workout_cta
+import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_title
+import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_subtitle
+import lift_bro.core.generated.resources.workout_calendar_screen_warmup_label
+import lift_bro.core.generated.resources.workout_calendar_screen_finisher_label
+import lift_bro.core.generated.resources.workout_calendar_screen_favourite_content_description
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -364,7 +370,7 @@ fun DailyWorkoutDetails(
                 },
                 colors = ButtonDefaults.elevatedButtonColors()
             ) {
-                Text("Start a Workout!")
+                Text(stringResource(Res.string.workout_calendar_screen_start_workout_cta))
             }
         }
 
@@ -381,12 +387,12 @@ fun DailyWorkoutDetails(
     if (state.potentialExercises.isNotEmpty()) {
         Spacer(modifier = Modifier.height(MaterialTheme.spacing.one))
         Text(
-            text = "Other Gains!",
+            text = stringResource(Res.string.workout_calendar_screen_other_gains_title),
             style = MaterialTheme.typography.titleMedium
         )
 
         Text(
-            text = "Tap to add to Workout",
+            text = stringResource(Res.string.workout_calendar_screen_other_gains_subtitle),
             style = MaterialTheme.typography.bodyMedium
         )
 
@@ -456,7 +462,7 @@ fun CalendarWorkoutCard(
                             Column(
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(text = "Warmup:")
+                                Text(text = stringResource(Res.string.workout_calendar_screen_warmup_label))
                                 Text(text = it)
                             }
                         }
@@ -464,7 +470,7 @@ fun CalendarWorkoutCard(
                             Column(
                                 modifier = Modifier.weight(1f)
                             ) {
-                                Text(text = "Finisher:")
+                                Text(text = stringResource(Res.string.workout_calendar_screen_finisher_label))
                                 Text(text = it)
                             }
                         }
@@ -550,7 +556,7 @@ fun VariationSet(
                     Icon(
                         modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
                         imageVector = Icons.Default.Star,
-                        contentDescription = "Favourite"
+                        contentDescription = stringResource(Res.string.workout_calendar_screen_favourite_content_description)
                     )
                 }
             }

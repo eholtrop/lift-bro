@@ -80,6 +80,10 @@ import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.decimalFormat
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.calculator_bigger_bar_message
+import lift_bro.core.generated.resources.calculator_backspace_content_description
+import org.jetbrains.compose.resources.stringResource
 
 enum class Digit(digit: Int) {
     One(1),
@@ -252,7 +256,7 @@ fun WeightCalculatorBottomSheet(
                         )
                         Space(MaterialTheme.spacing.half)
                         Text(
-                            text = "We're gonna need a bigger bar... 🧔‍♂️"
+                            text = stringResource(Res.string.calculator_bigger_bar_message)
                         )
                     }
                 }
@@ -544,7 +548,7 @@ fun KeyPad(
             CalculatorButton(
                 modifier = calculatorButtonModifier(),
                 vector = Icons.AutoMirrored.Filled.Backspace,
-                contentDescription = "Backspace"
+                contentDescription = stringResource(Res.string.calculator_backspace_content_description)
             ) {
                 actionClicked(Action.Backspace)
             }

@@ -27,6 +27,11 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.release_notes_dialog_title
+import lift_bro.core.generated.resources.release_notes_row_ignore_content_description
+import lift_bro.core.generated.resources.release_notes_row_new_update_title
+import lift_bro.core.generated.resources.release_notes_row_tap_subtitle
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ReleaseNotesRow(
@@ -68,11 +73,11 @@ fun ReleaseNotesRow(
                 modifier = Modifier.weight(1f).padding(start = MaterialTheme.spacing.one),
             ) {
                 Text(
-                    text = "New Update Downloaded!",
+                    text = stringResource(Res.string.release_notes_row_new_update_title),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "Tap to see Release Notes",
+                    text = stringResource(Res.string.release_notes_row_tap_subtitle),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -84,7 +89,7 @@ fun ReleaseNotesRow(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Ignore Release Notes"
+                    contentDescription = stringResource(Res.string.release_notes_row_ignore_content_description)
                 )
             }
         }
@@ -96,7 +101,7 @@ fun ReleaseNotesDialog(
     onDismissRequest: () -> Unit,
 ) {
     InfoDialog(
-        title = { Text("Release Notes") },
+        title = { Text(stringResource(Res.string.release_notes_dialog_title)) },
         message = {
             var releaseNotes: List<ReleaseNote> by remember { mutableStateOf(emptyList()) }
 

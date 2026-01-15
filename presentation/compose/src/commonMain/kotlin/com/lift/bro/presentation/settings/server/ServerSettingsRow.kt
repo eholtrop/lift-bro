@@ -13,6 +13,13 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.server_settings_row_title
+import lift_bro.core.generated.resources.server_settings_row_description
+import lift_bro.core.generated.resources.server_settings_row_status_enabled
+import lift_bro.core.generated.resources.server_settings_row_status_disabled
+import lift_bro.core.generated.resources.server_settings_row_current_ip
+import org.jetbrains.compose.resources.stringResource
 
 expect fun getLocalIPAdderess(): String?
 
@@ -42,14 +49,18 @@ fun ServerSettingsRowContent(
 ) {
     SettingsRowItem(
         modifier = Modifier,
-        title = { Text("Lift Bro Local Server") },
+        title = { Text(stringResource(Res.string.server_settings_row_title)) },
     ) {
         Column {
             Text(
-                "Enabling this will run a Lift Bro server on this device. It will expose all lift bro data to anyone on your current network"
+                stringResource(Res.string.server_settings_row_description)
             )
             RadioField(
-                text = "Server ${if (state.status == ServerStatus.On) "Enabled" else "Disabled"}",
+                text = if (state.status == ServerStatus.On) {
+                    stringResource(Res.string.server_settings_row_status_enabled)
+                } else {
+                    stringResource(Res.string.server_settings_row_status_disabled)
+                },
                 selected = state.status == ServerStatus.On,
                 fieldSelected = {
                     when (state.status) {
@@ -61,7 +72,7 @@ fun ServerSettingsRowContent(
             )
             localIPAddress?.let {
                 if (state.status == ServerStatus.On) {
-                    Text("Current IP is $it")
+                    Text(stringResource(Res.string.server_settings_row_current_ip, it))
                 }
             }
         }

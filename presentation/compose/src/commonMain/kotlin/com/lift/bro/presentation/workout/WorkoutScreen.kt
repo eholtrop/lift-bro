@@ -95,6 +95,18 @@ import lift_bro.core.generated.resources.workout_notes_placeholder
 import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_set_options_copy_cta
 import lift_bro.core.generated.resources.workout_set_options_delete_cta
+import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_title
+import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_subtitle
+import lift_bro.core.generated.resources.workout_screen_previous_lift_content_description
+import lift_bro.core.generated.resources.workout_screen_again_content_description
+import lift_bro.core.generated.resources.workout_screen_next_content_description
+import lift_bro.core.generated.resources.workout_screen_superset_cta
+import lift_bro.core.generated.resources.workout_screen_delete_warning_text
+import lift_bro.core.generated.resources.workout_screen_delete_variation_content_description
+import lift_bro.core.generated.resources.workout_screen_copy_set_content_description
+import lift_bro.core.generated.resources.workout_screen_add_set_content_description
+import lift_bro.core.generated.resources.workout_screen_duplicate_last_set_content_description
+import lift_bro.core.generated.resources.workout_screen_most_recent_set_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -186,11 +198,11 @@ fun WorkoutScreenInternal(
                             .padding(horizontal = MaterialTheme.spacing.one),
                     ) {
                         Text(
-                            text = "Or... Copy a recent workout!",
+                            text = stringResource(Res.string.workout_screen_copy_recent_workout_title),
                             style = MaterialTheme.typography.titleLarge,
                         )
                         Text(
-                            text = "Tap one to start the gains!",
+                            text = stringResource(Res.string.workout_screen_copy_recent_workout_subtitle),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }
@@ -248,7 +260,7 @@ fun WorkoutScreenInternal(
                                     leadingIcon = {
                                         Icon(
                                             imageVector = Icons.Default.ChevronLeft,
-                                            contentDescription = "Previous Lift"
+                                            contentDescription = stringResource(Res.string.workout_screen_previous_lift_content_description)
                                         )
                                     }
                                 ) {
@@ -282,7 +294,7 @@ fun WorkoutScreenInternal(
                                         trailingIcon = {
                                             Icon(
                                                 imageVector = Icons.Default.Refresh,
-                                                contentDescription = "Again"
+                                                contentDescription = stringResource(Res.string.workout_screen_again_content_description)
                                             )
                                         }
                                     ) {
@@ -319,7 +331,7 @@ fun WorkoutScreenInternal(
                                         trailingIcon = {
                                             Icon(
                                                 imageVector = Icons.Default.ChevronRight,
-                                                contentDescription = "Next"
+                                                contentDescription = stringResource(Res.string.workout_screen_next_content_description)
                                             )
                                         },
                                     ) {
@@ -358,7 +370,7 @@ fun WorkoutScreenInternal(
                         },
                         colors = ButtonDefaults.textButtonColors()
                     ) {
-                        Text("Superset with...")
+                        Text(stringResource(Res.string.workout_screen_superset_cta))
                     }
                 }
             }
@@ -499,7 +511,7 @@ fun VariationItemCard(
 
                         if (showWarning) {
                             WarningDialog(
-                                text = "This will delete all in this workout, are you sure?",
+                                text = stringResource(Res.string.workout_screen_delete_warning_text),
                                 onDismiss = { showWarning = false },
                                 onConfirm = {
                                     eventHandler(
@@ -519,7 +531,7 @@ fun VariationItemCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = "Delete ${variation.fullName}"
+                                contentDescription = stringResource(Res.string.workout_screen_delete_variation_content_description, variation.fullName)
                             )
                         }
                     }
@@ -679,11 +691,11 @@ fun VariationItemCard(
                                     ),
                             ) {
                                 Text(
-                                    text = "Most Recent Set - ${
+                                    text = stringResource(Res.string.workout_screen_most_recent_set_text,
                                         variationSet.lastSet.date.toString(
                                             "EEEE, MMM d, yyyy"
                                         )
-                                    }",
+                                    ),
                                     style = MaterialTheme.typography.labelSmall,
                                 )
                                 SetInfoRow(
@@ -691,7 +703,7 @@ fun VariationItemCard(
                                     trailing = {
                                         Icon(
                                             imageVector = Icons.Default.ContentCopy,
-                                            contentDescription = "Copy Set",
+                                            contentDescription = stringResource(Res.string.workout_screen_copy_set_content_description),
                                             tint = MaterialTheme.colorScheme.tertiary,
                                         )
                                     }
@@ -717,7 +729,7 @@ fun VariationItemCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
-                        contentDescription = "Add Set"
+                        contentDescription = stringResource(Res.string.workout_screen_add_set_content_description)
                     )
                 }
             } else {
@@ -729,7 +741,7 @@ fun VariationItemCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ContentCopy,
-                        contentDescription = "Duplicate Last Set"
+                        contentDescription = stringResource(Res.string.workout_screen_duplicate_last_set_content_description)
                     )
                 }
             }

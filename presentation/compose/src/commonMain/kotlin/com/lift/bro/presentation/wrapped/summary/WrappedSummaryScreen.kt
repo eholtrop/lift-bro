@@ -42,6 +42,17 @@ import com.lift.bro.utils.percentageFormat
 import com.lift.bro.utils.vertical_padding.padding
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_summary_screen_header_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_total_weight_moved_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_reps_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_per_day_text
+import lift_bro.core.generated.resources.wrapped_summary_screen_progress_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_consistency_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_to_content_description
+import lift_bro.core.generated.resources.wrapped_summary_screen_onto_next_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_goals_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun WrappedSummaryScreen(
@@ -77,7 +88,7 @@ fun WrappedSummaryScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "What a great year!",
+                text = stringResource(Res.string.wrapped_summary_screen_header_title),
                 style = MaterialTheme.typography.headlineMedium,
                 textAlign = TextAlign.Center
             )
@@ -86,7 +97,7 @@ fun WrappedSummaryScreen(
         item {
             with(state.weight) {
                 WrappedSummaryCard(
-                    title = "Total Weight Moved",
+                    title = stringResource(Res.string.wrapped_summary_screen_total_weight_moved_title),
                     cards = listOf(
                         {
                             Text(
@@ -135,7 +146,7 @@ fun WrappedSummaryScreen(
         item {
             with(state.reps) {
                 WrappedSummaryCard(
-                    title = "Reps",
+                    title = stringResource(Res.string.wrapped_summary_screen_reps_title),
                     cards = listOf(
                         {
                             Column(
@@ -179,7 +190,7 @@ fun WrappedSummaryScreen(
                                     textAlign = TextAlign.Center,
                                 )
                                 Text(
-                                    text = "per day!",
+                                    text = stringResource(Res.string.wrapped_summary_screen_per_day_text),
                                     style = MaterialTheme.typography.bodySmall,
                                     textAlign = TextAlign.Center,
                                 )
@@ -209,7 +220,7 @@ fun WrappedSummaryScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = "Progress",
+                            text = stringResource(Res.string.wrapped_summary_screen_progress_title),
                             style = MaterialTheme.typography.headlineSmall
                         )
                         state.progression.forEach {
@@ -234,7 +245,7 @@ fun WrappedSummaryScreen(
                                         Icon(
                                             modifier = Modifier.size(MaterialTheme.spacing.threeQuarters),
                                             imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                                            contentDescription = "To"
+                                            contentDescription = stringResource(Res.string.wrapped_summary_screen_to_content_description)
                                         )
                                         Text(
                                             text = weightFormat(it.maxWeight),
@@ -258,7 +269,7 @@ fun WrappedSummaryScreen(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(
-                            text = "Consistency",
+                            text = stringResource(Res.string.wrapped_summary_screen_consistency_title),
                             style = MaterialTheme.typography.headlineSmall
                         )
                         state.consistencies.forEach {
@@ -291,14 +302,14 @@ fun WrappedSummaryScreen(
                         top = MaterialTheme.spacing.oneAndHalf,
                         bottom = MaterialTheme.spacing.threeQuarters
                     ),
-                text = "Onto the next one!!",
+                text = stringResource(Res.string.wrapped_summary_screen_onto_next_title),
                 style = MaterialTheme.typography.headlineMedium
             )
         }
 
         if (state.goals.isNotEmpty()) {
             item {
-                Text("Goals")
+                Text(stringResource(Res.string.wrapped_summary_screen_goals_title))
             }
 
             items(items = state.goals) {

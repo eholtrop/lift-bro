@@ -69,6 +69,12 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.variation_details_notes_label
 import lift_bro.core.generated.resources.variation_details_notes_placeholder
+import lift_bro.core.generated.resources.variation_details_screen_edit_title_content_description
+import lift_bro.core.generated.resources.variation_details_screen_body_weight_label
+import lift_bro.core.generated.resources.variation_details_screen_add_set_content_description
+import lift_bro.core.generated.resources.variation_details_screen_empty_state_text
+import lift_bro.core.generated.resources.variation_details_tempo_down_cd
+import lift_bro.core.generated.resources.variation_details_tempo_up_cd
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -152,7 +158,7 @@ private fun VariationDetailsScreen(
                         Text(state.variation.fullName)
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit Title"
+                            contentDescription = stringResource(Res.string.variation_details_screen_edit_title_content_description)
                         )
                     }
                 }
@@ -192,7 +198,7 @@ private fun VariationDetailsScreen(
                         )
                         Space(MaterialTheme.spacing.half)
                         Text(
-                            "Body Weight \uD83E\uDD38"
+                            stringResource(Res.string.variation_details_screen_body_weight_label)
                         )
                     }
                 }
@@ -330,7 +336,7 @@ fun Tempo.render() {
         Icon(
             modifier = Modifier.size(12.dp),
             imageVector = Icons.Default.KeyboardArrowDown,
-            contentDescription = "Down"
+            contentDescription = stringResource(Res.string.variation_details_tempo_down_cd)
         )
         Text(
             text = down.toString(),
@@ -348,7 +354,7 @@ fun Tempo.render() {
         Icon(
             modifier = Modifier.size(12.dp),
             imageVector = Icons.Default.KeyboardArrowUp,
-            contentDescription = "Up"
+            contentDescription = stringResource(Res.string.variation_details_tempo_up_cd)
         )
         Text(
             text = up.toString(),
@@ -420,7 +426,7 @@ fun VariationDetailsScreenPreview(
             title = { Text(state.variation.fullName) },
             fabProperties = FabProperties(
                 fabIcon = Icons.Default.Add,
-                contentDescription = "Add Set",
+                contentDescription = stringResource(Res.string.variation_details_screen_add_set_content_description),
                 fabClicked = {}
             )
         ) { padding ->
@@ -440,7 +446,7 @@ fun VariationDetailsScreenPreview(
                     item {
                         Text(
                             modifier = Modifier.padding(MaterialTheme.spacing.two),
-                            text = "No sets yet. Tap + to add one.",
+                            text = stringResource(Res.string.variation_details_screen_empty_state_text),
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }

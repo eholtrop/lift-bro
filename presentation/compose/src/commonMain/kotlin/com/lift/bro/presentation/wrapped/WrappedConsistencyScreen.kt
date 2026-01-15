@@ -51,6 +51,7 @@ import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.*
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_consistency_screen_most_consistent_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -148,7 +149,7 @@ fun WrappedConsistencyScreen(
                         },
                         message = {
                             Text(
-                                text = "Your most consistent...",
+                                text = stringResource(Res.string.wrapped_consistency_screen_most_consistent_text),
                                 textAlign = TextAlign.Center,
                                 style = MaterialTheme.typography.titleMedium,
                             )

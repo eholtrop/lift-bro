@@ -129,6 +129,7 @@ fun DashboardContent(
                             }
 
                             DashboardListItem.ReleaseNotes -> {
+
                                 ReleaseNotesRow(
                                     modifier = Modifier.height(72.dp)
                                 )
@@ -136,6 +137,7 @@ fun DashboardContent(
 
                             DashboardListItem.AddLiftButton -> {
                                 Box(
+
                                     modifier = Modifier.fillMaxSize()
                                         .then(
                                             if (item.gridSize(state.items.size) == 1) {

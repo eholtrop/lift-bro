@@ -24,6 +24,24 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.tempo_selector_dialog_ok_cta
+import lift_bro.core.generated.resources.tempo_selector_dialog_what_mean_title
+import lift_bro.core.generated.resources.tempo_selector_with_tempo_text
+import lift_bro.core.generated.resources.tempo_selector_dialog_title
+import lift_bro.core.generated.resources.tempo_selector_ecc_title
+import lift_bro.core.generated.resources.tempo_selector_iso_title
+import lift_bro.core.generated.resources.tempo_selector_con_title
+import lift_bro.core.generated.resources.tempo_selector_eccentric_title
+import lift_bro.core.generated.resources.tempo_selector_eccentric_subtitle
+import lift_bro.core.generated.resources.tempo_selector_eccentric_examples
+import lift_bro.core.generated.resources.tempo_selector_isometric_title
+import lift_bro.core.generated.resources.tempo_selector_isometric_subtitle
+import lift_bro.core.generated.resources.tempo_selector_isometric_examples
+import lift_bro.core.generated.resources.tempo_selector_concentric_title
+import lift_bro.core.generated.resources.tempo_selector_concentric_subtitle
+import lift_bro.core.generated.resources.tempo_selector_concentric_examples
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TempoSelector(
@@ -44,11 +62,11 @@ fun TempoSelector(
                 Button(
                     onClick = { showInfoModal = false }
                 ) {
-                    Text("Ok")
+                    Text(stringResource(Res.string.tempo_selector_dialog_ok_cta))
                 }
             },
             title = {
-                Text("What do these mean?")
+                Text(stringResource(Res.string.tempo_selector_dialog_what_mean_title))
             },
             text = {
                 InfoDialogText()
@@ -64,11 +82,11 @@ fun TempoSelector(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "With a tempo of...",
+                text = stringResource(Res.string.tempo_selector_with_tempo_text),
                 style = MaterialTheme.typography.titleMedium
             )
             InfoDialogButton(
-                dialogTitle = { Text("What is Tempo?") },
+                dialogTitle = { Text(stringResource(Res.string.tempo_selector_dialog_title)) },
                 dialogMessage = { InfoDialogText() }
             )
         }
@@ -78,19 +96,19 @@ fun TempoSelector(
         ) {
             NumberPicker(
                 modifier = Modifier.weight(.33f).height(52.dp),
-                title = "Ecc",
+                title = stringResource(Res.string.tempo_selector_ecc_title),
                 selectedNum = down,
                 numberChanged = downChanged
             )
             NumberPicker(
                 modifier = Modifier.weight(.33f).height(52.dp),
-                title = "Iso",
+                title = stringResource(Res.string.tempo_selector_iso_title),
                 selectedNum = hold,
                 numberChanged = holdChanged
             )
             NumberPicker(
                 modifier = Modifier.weight(.33f).height(52.dp),
-                title = "Con",
+                title = stringResource(Res.string.tempo_selector_con_title),
                 selectedNum = up,
                 numberChanged = upChanged,
                 imeAction = ImeAction.Done
@@ -103,44 +121,44 @@ fun TempoSelector(
 private fun InfoDialogText() {
     Column {
         Text(
-            text = "Eccentric - Ecc",
+            text = stringResource(Res.string.tempo_selector_eccentric_title),
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
-            text = "Muscle Extension",
+            text = stringResource(Res.string.tempo_selector_eccentric_subtitle),
             style = MaterialTheme.typography.labelMedium,
         )
         Text(
             modifier = Modifier.padding(start = MaterialTheme.spacing.half),
-            text = "• putting a deadlift down\n• going into a squat\n• lowering the bar towards your chest in a bench press",
+            text = stringResource(Res.string.tempo_selector_eccentric_examples),
             style = MaterialTheme.typography.bodyMedium,
         )
         Space(MaterialTheme.spacing.one)
         Text(
-            text = "Isometric - Iso",
+            text = stringResource(Res.string.tempo_selector_isometric_title),
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
-            text = "Between Eccentric and Concentric",
+            text = stringResource(Res.string.tempo_selector_isometric_subtitle),
             style = MaterialTheme.typography.labelMedium,
         )
         Text(
             modifier = Modifier.padding(start = MaterialTheme.spacing.half),
-            text = "• a deadlift/squad/bench press hold\n• time under tension",
+            text = stringResource(Res.string.tempo_selector_isometric_examples),
             style = MaterialTheme.typography.bodyMedium,
         )
         Space(MaterialTheme.spacing.one)
         Text(
-            text = "Concentric - Con",
+            text = stringResource(Res.string.tempo_selector_concentric_title),
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
-            text = "Muscle Contraction",
+            text = stringResource(Res.string.tempo_selector_concentric_subtitle),
             style = MaterialTheme.typography.labelMedium,
         )
         Text(
             modifier = Modifier.padding(start = MaterialTheme.spacing.half),
-            text = "• picking up a deadlift\n• coming up from a squat\n• pushing the bar up in a bench press",
+            text = stringResource(Res.string.tempo_selector_concentric_examples),
             style = MaterialTheme.typography.bodyMedium,
         )
     }

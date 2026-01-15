@@ -80,6 +80,7 @@ import kotlinx.coroutines.flow.map
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.consent_dialog_cta
 import lift_bro.core.generated.resources.consent_dialog_title
+import lift_bro.core.generated.resources.app_congrats_text
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import kotlin.random.Random
@@ -323,7 +324,7 @@ fun App(
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     Text(
-                                        text = "Congrats!!",
+                                        text = stringResource(Res.string.app_congrats_text),
                                         style = MaterialTheme.typography.headlineLarge,
                                         color = MaterialTheme.colorScheme.onPrimary,
                                     )

@@ -89,6 +89,12 @@ import lift_bro.core.generated.resources.color_picker_negative_cta
 import lift_bro.core.generated.resources.color_picker_positive_cta
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.reps
+import lift_bro.core.generated.resources.lift_details_screen_edit_content_description
+import lift_bro.core.generated.resources.lift_details_screen_sort_by_content_description
+import lift_bro.core.generated.resources.lift_details_screen_sort_name
+import lift_bro.core.generated.resources.lift_details_screen_sort_one_rep_max
+import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
+import lift_bro.core.generated.resources.lift_details_screen_empty_state_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -274,7 +280,7 @@ fun LiftDetailsScreen(
             }
             TopBarIconButton(
                 imageVector = Icons.Default.Edit,
-                contentDescription = "Edit",
+                contentDescription = stringResource(Res.string.lift_details_screen_edit_content_description),
                 onClick = {
                     interactor(LiftDetailsEvent.EditLiftClicked)
                 },
@@ -316,15 +322,15 @@ fun LiftDetailsScreen(
                                 }
                             },
                             imageVector = Icons.AutoMirrored.Rounded.Sort,
-                            contentDescription = "Sort By"
+                            contentDescription = stringResource(Res.string.lift_details_screen_sort_by_content_description)
                         )
                         Space(MaterialTheme.spacing.half)
                         Text(
                             text = when (sorting) {
-                                SortingOptions.Name -> "Name"
-                                SortingOptions.NameReversed -> "Name"
-                                SortingOptions.MaxSet -> "One Rep Max"
-                                SortingOptions.MaxSetReversed -> "One Rep Max"
+                                SortingOptions.Name -> stringResource(Res.string.lift_details_screen_sort_name)
+                                SortingOptions.NameReversed -> stringResource(Res.string.lift_details_screen_sort_name)
+                                SortingOptions.MaxSet -> stringResource(Res.string.lift_details_screen_sort_one_rep_max)
+                                SortingOptions.MaxSetReversed -> stringResource(Res.string.lift_details_screen_sort_one_rep_max)
                             }
                         )
                     }
@@ -437,7 +443,7 @@ private fun VariationCard(
                         ) {
                             Icon(
                                 imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = "Favourite"
+                                contentDescription = stringResource(Res.string.lift_details_screen_favourite_content_description)
                             )
                         }
                     }
@@ -714,7 +720,7 @@ fun LiftDetailsScreenPreview(
                     item {
                         Text(
                             modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.two),
-                            text = "No variations yet. Tap + to add a set.",
+                            text = stringResource(Res.string.lift_details_screen_empty_state_text),
                             style = MaterialTheme.typography.bodyLarge,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )

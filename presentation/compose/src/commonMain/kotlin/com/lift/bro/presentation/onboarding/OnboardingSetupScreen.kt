@@ -53,6 +53,12 @@ import com.lift.bro.utils.fullName
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.onboarding_setup_screen_title
+import lift_bro.core.generated.resources.onboarding_setup_screen_select_lifts_title
+import lift_bro.core.generated.resources.onboarding_setup_screen_select_uom_title
+import lift_bro.core.generated.resources.onboarding_setup_screen_continue_cta
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun OnboardingSetupScreen(
@@ -75,7 +81,7 @@ fun OnboardingSetupScreen(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = "LETS GET STARTED",
+            text = stringResource(Res.string.onboarding_setup_screen_title),
             style = MaterialTheme.typography.displayLarge
         )
 
@@ -85,7 +91,7 @@ fun OnboardingSetupScreen(
             item {
                 Text(
                     modifier = Modifier.semantics { heading() },
-                    text = "Select some Lifts! (the fun bit)",
+                    text = stringResource(Res.string.onboarding_setup_screen_select_lifts_title),
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Space(MaterialTheme.spacing.one)
@@ -98,7 +104,7 @@ fun OnboardingSetupScreen(
             item {
                 Text(
                     modifier = Modifier.semantics { heading() },
-                    text = "Select your preferred\nUnit of Measure",
+                    text = stringResource(Res.string.onboarding_setup_screen_select_uom_title),
                     style = MaterialTheme.typography.titleLarge,
                 )
                 Space(MaterialTheme.spacing.one)
@@ -167,7 +173,7 @@ fun OnboardingSetupScreen(
                         colors = ButtonDefaults.elevatedButtonColors(),
                     ) {
                         Text(
-                            "Continue",
+                            stringResource(Res.string.onboarding_setup_screen_continue_cta),
                             color = Color.Black,
                             style = MaterialTheme.typography.titleMedium,
                         )
