@@ -69,11 +69,11 @@ import lift_bro.core.generated.resources.onboarding_leo_content_description
 import lift_bro.core.generated.resources.onboarding_lisa_content_description
 import lift_bro.core.generated.resources.onboarding_page_one_cta
 import lift_bro.core.generated.resources.onboarding_page_one_title
+import lift_bro.core.generated.resources.onboarding_skip_screen_continue_cta
+import lift_bro.core.generated.resources.onboarding_skip_screen_restore_cta
+import lift_bro.core.generated.resources.onboarding_skip_screen_setup_cta
 import lift_bro.core.generated.resources.onboarding_skip_screen_subtitle
 import lift_bro.core.generated.resources.onboarding_skip_screen_title
-import lift_bro.core.generated.resources.onboarding_skip_screen_setup_cta
-import lift_bro.core.generated.resources.onboarding_skip_screen_restore_cta
-import lift_bro.core.generated.resources.onboarding_skip_screen_continue_cta
 import lift_bro.core.generated.resources.privacy_policy
 import lift_bro.core.generated.resources.terms_and_conditions
 import lift_bro.core.generated.resources.url_privacy_policy

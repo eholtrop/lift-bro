@@ -11,15 +11,15 @@ import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.server_settings_row_current_ip
+import lift_bro.core.generated.resources.server_settings_row_description
+import lift_bro.core.generated.resources.server_settings_row_status_disabled
+import lift_bro.core.generated.resources.server_settings_row_status_enabled
+import lift_bro.core.generated.resources.server_settings_row_title
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
-import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.server_settings_row_title
-import lift_bro.core.generated.resources.server_settings_row_description
-import lift_bro.core.generated.resources.server_settings_row_status_enabled
-import lift_bro.core.generated.resources.server_settings_row_status_disabled
-import lift_bro.core.generated.resources.server_settings_row_current_ip
-import org.jetbrains.compose.resources.stringResource
 
 expect fun getLocalIPAdderess(): String?
 

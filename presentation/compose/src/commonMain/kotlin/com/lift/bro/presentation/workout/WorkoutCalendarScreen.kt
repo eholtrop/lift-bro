@@ -94,12 +94,12 @@ import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_placeholder
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_title
 import lift_bro.core.generated.resources.workout_calendar_edit_daily_notes_cta
-import lift_bro.core.generated.resources.workout_calendar_screen_start_workout_cta
-import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_title
-import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_subtitle
-import lift_bro.core.generated.resources.workout_calendar_screen_warmup_label
-import lift_bro.core.generated.resources.workout_calendar_screen_finisher_label
 import lift_bro.core.generated.resources.workout_calendar_screen_favourite_content_description
+import lift_bro.core.generated.resources.workout_calendar_screen_finisher_label
+import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_subtitle
+import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_title
+import lift_bro.core.generated.resources.workout_calendar_screen_start_workout_cta
+import lift_bro.core.generated.resources.workout_calendar_screen_warmup_label
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -556,7 +556,9 @@ fun VariationSet(
                     Icon(
                         modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
                         imageVector = Icons.Default.Star,
-                        contentDescription = stringResource(Res.string.workout_calendar_screen_favourite_content_description)
+                        contentDescription = stringResource(
+                            Res.string.workout_calendar_screen_favourite_content_description
+                        )
                     )
                 }
             }

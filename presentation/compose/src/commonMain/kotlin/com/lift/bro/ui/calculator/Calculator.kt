@@ -79,10 +79,10 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.decimalFormat
 import kotlinx.coroutines.delay
-import org.jetbrains.compose.resources.painterResource
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.calculator_bigger_bar_message
 import lift_bro.core.generated.resources.calculator_backspace_content_description
+import lift_bro.core.generated.resources.calculator_bigger_bar_message
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 enum class Digit(digit: Int) {

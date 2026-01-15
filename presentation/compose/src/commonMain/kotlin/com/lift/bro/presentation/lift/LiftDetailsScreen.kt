@@ -88,13 +88,13 @@ import lift_bro.core.generated.resources.color_picker_dialog_title
 import lift_bro.core.generated.resources.color_picker_negative_cta
 import lift_bro.core.generated.resources.color_picker_positive_cta
 import lift_bro.core.generated.resources.lift_details_fab_content_description
-import lift_bro.core.generated.resources.reps
 import lift_bro.core.generated.resources.lift_details_screen_edit_content_description
+import lift_bro.core.generated.resources.lift_details_screen_empty_state_text
+import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
 import lift_bro.core.generated.resources.lift_details_screen_sort_by_content_description
 import lift_bro.core.generated.resources.lift_details_screen_sort_name
 import lift_bro.core.generated.resources.lift_details_screen_sort_one_rep_max
-import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
-import lift_bro.core.generated.resources.lift_details_screen_empty_state_text
+import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -322,7 +322,9 @@ fun LiftDetailsScreen(
                                 }
                             },
                             imageVector = Icons.AutoMirrored.Rounded.Sort,
-                            contentDescription = stringResource(Res.string.lift_details_screen_sort_by_content_description)
+                            contentDescription = stringResource(
+                                Res.string.lift_details_screen_sort_by_content_description
+                            )
                         )
                         Space(MaterialTheme.spacing.half)
                         Text(
@@ -330,7 +332,9 @@ fun LiftDetailsScreen(
                                 SortingOptions.Name -> stringResource(Res.string.lift_details_screen_sort_name)
                                 SortingOptions.NameReversed -> stringResource(Res.string.lift_details_screen_sort_name)
                                 SortingOptions.MaxSet -> stringResource(Res.string.lift_details_screen_sort_one_rep_max)
-                                SortingOptions.MaxSetReversed -> stringResource(Res.string.lift_details_screen_sort_one_rep_max)
+                                SortingOptions.MaxSetReversed -> stringResource(
+                                    Res.string.lift_details_screen_sort_one_rep_max
+                                )
                             }
                         )
                     }
@@ -443,7 +447,9 @@ private fun VariationCard(
                         ) {
                             Icon(
                                 imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = stringResource(Res.string.lift_details_screen_favourite_content_description)
+                                contentDescription = stringResource(
+                                    Res.string.lift_details_screen_favourite_content_description
+                                )
                             )
                         }
                     }

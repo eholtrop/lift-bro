@@ -129,7 +129,6 @@ fun DashboardContent(
                             }
 
                             DashboardListItem.ReleaseNotes -> {
-
                                 ReleaseNotesRow(
                                     modifier = Modifier.height(72.dp)
                                 )

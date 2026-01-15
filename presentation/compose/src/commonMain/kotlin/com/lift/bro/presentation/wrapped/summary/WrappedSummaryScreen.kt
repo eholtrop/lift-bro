@@ -40,19 +40,19 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.format
 import com.lift.bro.utils.percentageFormat
 import com.lift.bro.utils.vertical_padding.padding
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_summary_screen_consistency_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_goals_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_header_title
-import lift_bro.core.generated.resources.wrapped_summary_screen_total_weight_moved_title
-import lift_bro.core.generated.resources.wrapped_summary_screen_reps_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_onto_next_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_per_day_text
 import lift_bro.core.generated.resources.wrapped_summary_screen_progress_title
-import lift_bro.core.generated.resources.wrapped_summary_screen_consistency_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_reps_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_to_content_description
-import lift_bro.core.generated.resources.wrapped_summary_screen_onto_next_title
-import lift_bro.core.generated.resources.wrapped_summary_screen_goals_title
+import lift_bro.core.generated.resources.wrapped_summary_screen_total_weight_moved_title
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun WrappedSummaryScreen(
@@ -245,7 +245,9 @@ fun WrappedSummaryScreen(
                                         Icon(
                                             modifier = Modifier.size(MaterialTheme.spacing.threeQuarters),
                                             imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                                            contentDescription = stringResource(Res.string.wrapped_summary_screen_to_content_description)
+                                            contentDescription = stringResource(
+                                                Res.string.wrapped_summary_screen_to_content_description
+                                            )
                                         )
                                         Text(
                                             text = weightFormat(it.maxWeight),

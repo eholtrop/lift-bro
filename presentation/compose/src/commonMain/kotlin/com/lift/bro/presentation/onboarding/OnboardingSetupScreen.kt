@@ -54,10 +54,10 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.onboarding_setup_screen_title
+import lift_bro.core.generated.resources.onboarding_setup_screen_continue_cta
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_lifts_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_uom_title
-import lift_bro.core.generated.resources.onboarding_setup_screen_continue_cta
+import lift_bro.core.generated.resources.onboarding_setup_screen_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable

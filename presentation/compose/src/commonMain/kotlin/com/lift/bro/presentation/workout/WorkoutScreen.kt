@@ -92,21 +92,21 @@ import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.workout_add_exercise_cta
 import lift_bro.core.generated.resources.workout_notes_placeholder
+import lift_bro.core.generated.resources.workout_screen_add_set_content_description
+import lift_bro.core.generated.resources.workout_screen_again_content_description
+import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_subtitle
+import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_title
+import lift_bro.core.generated.resources.workout_screen_copy_set_content_description
+import lift_bro.core.generated.resources.workout_screen_delete_variation_content_description
+import lift_bro.core.generated.resources.workout_screen_delete_warning_text
+import lift_bro.core.generated.resources.workout_screen_duplicate_last_set_content_description
+import lift_bro.core.generated.resources.workout_screen_most_recent_set_text
+import lift_bro.core.generated.resources.workout_screen_next_content_description
+import lift_bro.core.generated.resources.workout_screen_previous_lift_content_description
+import lift_bro.core.generated.resources.workout_screen_superset_cta
 import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_set_options_copy_cta
 import lift_bro.core.generated.resources.workout_set_options_delete_cta
-import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_title
-import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_subtitle
-import lift_bro.core.generated.resources.workout_screen_previous_lift_content_description
-import lift_bro.core.generated.resources.workout_screen_again_content_description
-import lift_bro.core.generated.resources.workout_screen_next_content_description
-import lift_bro.core.generated.resources.workout_screen_superset_cta
-import lift_bro.core.generated.resources.workout_screen_delete_warning_text
-import lift_bro.core.generated.resources.workout_screen_delete_variation_content_description
-import lift_bro.core.generated.resources.workout_screen_copy_set_content_description
-import lift_bro.core.generated.resources.workout_screen_add_set_content_description
-import lift_bro.core.generated.resources.workout_screen_duplicate_last_set_content_description
-import lift_bro.core.generated.resources.workout_screen_most_recent_set_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -260,7 +260,9 @@ fun WorkoutScreenInternal(
                                     leadingIcon = {
                                         Icon(
                                             imageVector = Icons.Default.ChevronLeft,
-                                            contentDescription = stringResource(Res.string.workout_screen_previous_lift_content_description)
+                                            contentDescription = stringResource(
+                                                Res.string.workout_screen_previous_lift_content_description
+                                            )
                                         )
                                     }
                                 ) {
@@ -294,7 +296,9 @@ fun WorkoutScreenInternal(
                                         trailingIcon = {
                                             Icon(
                                                 imageVector = Icons.Default.Refresh,
-                                                contentDescription = stringResource(Res.string.workout_screen_again_content_description)
+                                                contentDescription = stringResource(
+                                                    Res.string.workout_screen_again_content_description
+                                                )
                                             )
                                         }
                                     ) {
@@ -331,7 +335,9 @@ fun WorkoutScreenInternal(
                                         trailingIcon = {
                                             Icon(
                                                 imageVector = Icons.Default.ChevronRight,
-                                                contentDescription = stringResource(Res.string.workout_screen_next_content_description)
+                                                contentDescription = stringResource(
+                                                    Res.string.workout_screen_next_content_description
+                                                )
                                             )
                                         },
                                     ) {
@@ -531,7 +537,10 @@ fun VariationItemCard(
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Delete,
-                                contentDescription = stringResource(Res.string.workout_screen_delete_variation_content_description, variation.fullName)
+                                contentDescription = stringResource(
+                                    Res.string.workout_screen_delete_variation_content_description,
+                                    variation.fullName
+                                )
                             )
                         }
                     }
@@ -691,7 +700,8 @@ fun VariationItemCard(
                                     ),
                             ) {
                                 Text(
-                                    text = stringResource(Res.string.workout_screen_most_recent_set_text,
+                                    text = stringResource(
+                                        Res.string.workout_screen_most_recent_set_text,
                                         variationSet.lastSet.date.toString(
                                             "EEEE, MMM d, yyyy"
                                         )
@@ -703,7 +713,9 @@ fun VariationItemCard(
                                     trailing = {
                                         Icon(
                                             imageVector = Icons.Default.ContentCopy,
-                                            contentDescription = stringResource(Res.string.workout_screen_copy_set_content_description),
+                                            contentDescription = stringResource(
+                                                Res.string.workout_screen_copy_set_content_description
+                                            ),
                                             tint = MaterialTheme.colorScheme.tertiary,
                                         )
                                     }
@@ -741,7 +753,9 @@ fun VariationItemCard(
                 ) {
                     Icon(
                         imageVector = Icons.Default.ContentCopy,
-                        contentDescription = stringResource(Res.string.workout_screen_duplicate_last_set_content_description)
+                        contentDescription = stringResource(
+                            Res.string.workout_screen_duplicate_last_set_content_description
+                        )
                     )
                 }
             }

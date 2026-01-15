@@ -69,9 +69,9 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.variation_details_notes_label
 import lift_bro.core.generated.resources.variation_details_notes_placeholder
-import lift_bro.core.generated.resources.variation_details_screen_edit_title_content_description
-import lift_bro.core.generated.resources.variation_details_screen_body_weight_label
 import lift_bro.core.generated.resources.variation_details_screen_add_set_content_description
+import lift_bro.core.generated.resources.variation_details_screen_body_weight_label
+import lift_bro.core.generated.resources.variation_details_screen_edit_title_content_description
 import lift_bro.core.generated.resources.variation_details_screen_empty_state_text
 import lift_bro.core.generated.resources.variation_details_tempo_down_cd
 import lift_bro.core.generated.resources.variation_details_tempo_up_cd
@@ -158,7 +158,9 @@ private fun VariationDetailsScreen(
                         Text(state.variation.fullName)
                         Icon(
                             imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(Res.string.variation_details_screen_edit_title_content_description)
+                            contentDescription = stringResource(
+                                Res.string.variation_details_screen_edit_title_content_description
+                            )
                         )
                     }
                 }
