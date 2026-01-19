@@ -28,7 +28,7 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 fun Card(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    backgroundColor: Color = MaterialTheme.colorScheme.surface,
+    backgroundColor: Color,
     content: @Composable () -> Unit,
 ) {
     val localModifier = if (onClick != null) {
@@ -62,7 +62,12 @@ fun Card(
 fun Card(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
-    backgroundBrush: Brush,
+    backgroundBrush: Brush = Brush.linearGradient(
+        colors = listOf(
+            MaterialTheme.colorScheme.surface,
+            Color.Transparent,
+        )
+    ),
     contentPadding: PaddingValues = PaddingValues(MaterialTheme.spacing.quarter),
     content: @Composable () -> Unit,
 ) {

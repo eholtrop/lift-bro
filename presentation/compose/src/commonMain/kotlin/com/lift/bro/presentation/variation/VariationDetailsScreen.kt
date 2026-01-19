@@ -2,8 +2,10 @@
 
 package com.lift.bro.presentation.variation
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,6 +62,8 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
+import com.lift.bro.utils.horizontal_padding.padding
+import com.lift.bro.utils.listCorners
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
@@ -285,44 +289,38 @@ private fun VariationDetailsScreen(
 
             items(items) { entry ->
                 Card {
-                    Column(
-                        modifier = Modifier.padding(all = MaterialTheme.spacing.one)
-                    ) {
+                    Column {
                         Text(
+                            modifier = Modifier.padding(start = MaterialTheme.spacing.one),
                             text = entry.first,
                             style = MaterialTheme.typography.titleLarge
                         )
 
-                        Row(
-                            modifier = Modifier.padding(
-                                vertical = MaterialTheme.spacing.half
-                            ),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column {
-                                entry.second.sortedByDescending { it.weight }
-                                    .forEach { set ->
-                                        SetInfoRow(
-                                            modifier = Modifier.clickable(
-                                                role = Role.Button,
-                                                onClick = { setClicked(set) }
-                                            ).fillMaxWidth().defaultMinSize(minHeight = 44.dp),
-                                            set = set
+                        Space(MaterialTheme.spacing.half)
+
+                        entry.second.sortedByDescending { it.weight }
+                            .forEachIndexed { index, set ->
+                                val rowShape = MaterialTheme.shapes.small.listCorners(index, entry.second)
+                                SetInfoRow(
+                                    modifier = Modifier
+                                        .padding(horizontal = MaterialTheme.spacing.half)
+                                        .clip(rowShape)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceContainer,
+                                            shape = rowShape,
                                         )
-                                    }
+                                        .border(
+                                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+                                            shape = rowShape,
+                                        ).clickable(
+                                            role = Role.Button,
+                                            onClick = { setClicked(set) }
+                                        )
+                                        .fillMaxWidth()
+                                        .padding(all = MaterialTheme.spacing.half),
+                                    set = set
+                                )
                             }
-
-                            Space(MaterialTheme.spacing.half)
-
-                            Box(
-                                modifier = Modifier.background(
-                                    color = state.variation.lift?.color?.toColor()
-                                        ?: MaterialTheme.colorScheme.primary,
-                                    shape = CircleShape,
-                                ).height(MaterialTheme.spacing.oneAndHalf).aspectRatio(1f),
-                                content = {}
-                            )
-                        }
                     }
                 }
             }
@@ -365,7 +363,7 @@ fun Tempo.render() {
     }
 }
 
-class VariationDetailsStateProvider : PreviewParameterProvider<VariationDetailsState> {
+class VariationDetailsStateProvider: PreviewParameterProvider<VariationDetailsState> {
     override val values: Sequence<VariationDetailsState>
         get() = sequenceOf(
             // Variation with no sets
@@ -421,7 +419,7 @@ class VariationDetailsStateProvider : PreviewParameterProvider<VariationDetailsS
 @Preview
 @Composable
 fun VariationDetailsScreenPreview(
-    @PreviewParameter(VariationDetailsStateProvider::class) state: VariationDetailsState
+    @PreviewParameter(VariationDetailsStateProvider::class) state: VariationDetailsState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
         LiftingScaffold(
@@ -434,7 +432,6 @@ fun VariationDetailsScreenPreview(
         ) { padding ->
             LazyColumn(
                 modifier = Modifier.padding(padding),
-                contentPadding = PaddingValues(MaterialTheme.spacing.one),
                 verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
