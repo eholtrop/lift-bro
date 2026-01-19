@@ -121,7 +121,6 @@ fun DashboardContent(
                                         Card(
                                             modifier = Modifier
                                                 .aspectRatio(1f),
-                                            backgroundColor = MaterialTheme.colorScheme.surface,
                                         ) {
                                         }
                                     }

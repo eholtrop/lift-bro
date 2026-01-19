@@ -27,9 +27,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
+import io.ktor.client.request.invoke
 import kotlinx.datetime.LocalDate
 import kotlin.math.max
 import kotlin.math.min
@@ -41,12 +43,12 @@ data class DotGraphColors(
 
 data class DotGraphData(
     val x: LocalDate,
-    val y: Float
+    val y: Float,
 )
 
 data class LineGraphData(
     val x: LocalDate,
-    val y: Float
+    val y: Float,
 )
 
 data class GraphData(
@@ -66,7 +68,7 @@ fun DotGraph(
     xAxis: @Composable ((Long) -> Unit)? = null,
     yAxis: @Composable ((Float, Float) -> Unit)? = null,
     dataPointClicked: ((LocalDate) -> Unit)? = null,
-    colors: DotGraphColors
+    colors: DotGraphColors,
 ) {
     Row(
         modifier = modifier
@@ -77,7 +79,7 @@ fun DotGraph(
             reverseLayout = true,
         ) {
             itemsIndexed(
-                items = graphData.toList()
+                items = graphData
             ) { index, point ->
                 Column(
                     modifier = Modifier
@@ -89,15 +91,19 @@ fun DotGraph(
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    val previousPoint = graphData.getOrNull(index - 1)
+                    val nextPoint = graphData.getOrNull(index + 1)
+
                     val dotColor =
-                        if (selectedData == point) colors.dotColorSelected else colors.dotColor
+                        if (selectedData == point.first) colors.dotColorSelected else colors.dotColor
+                    val lineColor = dotColor
 
                     var canvasSize by remember { mutableStateOf(Size.Zero) }
                     var targetDotOffset by remember(canvasSize) {
                         mutableStateOf(
                             Offset(
                                 canvasSize.width / 2,
-                                canvasSize.height
+                                0f,
                             )
                         )
                     }
@@ -123,9 +129,27 @@ fun DotGraph(
                             )
                         drawCircle(
                             color = dotColor,
-                            radius = MaterialTheme.spacing.half.toPx(),
+                            radius = MaterialTheme.spacing.quarter.toPx(),
                             center = animateDotOffset
                         )
+
+                        nextPoint?.let { pp ->
+                            val y = (point.second.dotGraphData + pp.second.dotGraphData) / 2
+                            drawLine(
+                                color = lineColor,
+                                start = Offset(0f, size.height - (y.div(max(maxY, 1f)) * size.height)),
+                                end = Offset(size.width / 2f, animateDotOffset.y)
+                            )
+                        }
+
+                        previousPoint?.let { pp ->
+                            val y = (point.second.dotGraphData + pp.second.dotGraphData) / 2
+                            drawLine(
+                                color = lineColor,
+                                start = Offset(size.width / 2f, animateDotOffset.y),
+                                end = Offset(size.width, size.height - (y.div(max(maxY, 1f)) * size.height))
+                            )
+                        }
 
                         barHeight = min(size.height, point.second.lineGraphData * size.height)
                         drawRect(
