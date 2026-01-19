@@ -260,41 +260,68 @@ fun LiftCard(
                         Box(modifier = Modifier.weight(5f - animatedGraphNodes.size))
                     }
 
-                    animatedGraphNodes.toList().sortedBy { it.first }
-                        .forEachIndexed { index, node ->
-                            Canvas(
-                                modifier = Modifier.fillMaxHeight().weight(1f),
-                            ) {
-                                canvasSize = size
-                                drawCircle(
+                    val nodes = animatedGraphNodes.toList().sortedBy { it.first }
+
+                    nodes.forEachIndexed { index, node ->
+                        val previousNode = nodes.getOrNull(index - 1)
+                        val nextNode = nodes.getOrNull(index + 1)
+
+                        Canvas(
+                            modifier = Modifier.fillMaxHeight().weight(1f),
+                        ) {
+                            canvasSize = size
+                            drawCircle(
+                                color = color,
+                                radius = 10.dp.value,
+                                center = node.second.first.value
+                            )
+
+                            previousNode?.let {
+                                drawLine(
                                     color = color,
-                                    radius = 10.dp.value,
-                                    center = node.second.first.value
+                                    start = previousNode.second.first.value.copy(
+                                        x = 0f,
+                                        y = (previousNode.second.first.value.y + node.second.first.value.y) / 2
+                                    ),
+                                    end = node.second.first.value
                                 )
-                                if (node.second.second?.value != null) {
-                                    with(node.second.second?.value) {
-                                        if (this != 0f && this != null) {
-                                            drawRect(
-                                                color = color,
-                                                size = Size(size.width, 4.dp.value),
-                                                topLeft = Offset(
-                                                    x = 0f,
-                                                    y = size.height - (this)
-                                                )
+                            }
+
+                            nextNode?.let {
+                                drawLine(
+                                    color = color,
+                                    start = node.second.first.value,
+                                    end = nextNode.second.first.value.copy(
+                                        x = size.width,
+                                        y = (nextNode.second.first.value.y + node.second.first.value.y) / 2
+                                    )
+                                )
+                            }
+
+                            if (node.second.second?.value != null) {
+                                with(node.second.second?.value) {
+                                    if (this != 0f && this != null) {
+                                        drawRect(
+                                            color = color,
+                                            size = Size(size.width, 4.dp.value),
+                                            topLeft = Offset(
+                                                x = 0f,
+                                                y = size.height - (this)
                                             )
-                                            drawRect(
-                                                color = color.copy(alpha = .4f),
-                                                size = Size(size.width, this),
-                                                topLeft = Offset(
-                                                    x = 0f,
-                                                    y = size.height - (this)
-                                                )
+                                        )
+                                        drawRect(
+                                            color = color.copy(alpha = .4f),
+                                            size = Size(size.width, this),
+                                            topLeft = Offset(
+                                                x = 0f,
+                                                y = size.height - (this)
                                             )
-                                        }
+                                        )
                                     }
                                 }
                             }
                         }
+                    }
                 }
 
                 Space(MaterialTheme.spacing.half)
