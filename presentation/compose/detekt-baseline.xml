@@ -7,8 +7,8 @@
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
-    <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt; )</ID>
-    <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit )</ID>
+    <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
+    <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:SwipeableNavHost.kt$@Composable fun SwipeableNavHost( modifier: Modifier = Modifier, navCoordinator: NavCoordinator, key: (Destination) -&gt; Any = { Json.encodeToString(it) }, content: @Composable (Destination) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
@@ -196,9 +196,7 @@
     <ID>MaxLineLength:LiftingScaffold.kt$if</ID>
     <ID>MaxLineLength:NavCoordinator.kt$NavCoordinator$* Navigates the user back one page, returns true if the navigation was handled, false if nothing happens (ie. you need to handle it yourself)</ID>
     <ID>MaxLineLength:OnboardingSetupScreen.kt$imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown</ID>
-    <ID>MaxLineLength:ServerSettingsRow.kt$"Enabling this will run a Lift Bro server on this device. It will expose all lift bro data to anyone on your current network"</ID>
     <ID>MaxLineLength:SwipeableNavHost.kt$((savedPagerState.currentPage - currentPage) + savedPagerState.currentPageOffsetFraction)</ID>
-    <ID>MaxLineLength:TempoSelector.kt$text = "• putting a deadlift down\n• going into a squat\n• lowering the bar towards your chest in a bench press"</ID>
     <ID>MaxLineLength:Toolbar.kt$horizontalArrangement = if ((scrollBehavior?.state?.collapsedFraction ?: 0f) &lt; .66f) Arrangement.Center else Arrangement.Start</ID>
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$potentialExercises = if (initial.selectedDate != source.selectedDate) initial.potentialExercises else source.potentialExercises</ID>
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$selectedDate = if (initial.selectedDate != source.selectedDate) initial.selectedDate else source.selectedDate</ID>
@@ -217,9 +215,7 @@
     <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
-    <ID>MaximumLineLength:ServerSettingsRow.kt$ </ID>
     <ID>MaximumLineLength:SwipeableNavHost.kt$ </ID>
-    <ID>MaximumLineLength:TempoSelector.kt$ </ID>
     <ID>MaximumLineLength:Toolbar.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarInteractor.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarScreen.kt$ </ID>
