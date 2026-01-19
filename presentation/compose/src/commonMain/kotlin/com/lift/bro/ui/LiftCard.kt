@@ -7,10 +7,12 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -33,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -113,19 +116,34 @@ fun LiftCard(
             .aspectRatio(1f),
         backgroundBrush = Brush.linearGradient(
             colors = listOf(
-                lift.color?.toColor() ?: MaterialTheme.colorScheme.surface,
                 MaterialTheme.colorScheme.surface,
+                Color.Transparent,
             ),
-            end = Offset(
-                GRADIENT_SIZE,
-                GRADIENT_SIZE
-            )
         ),
+        contentPadding = PaddingValues(0.dp),
         onClick = { onClick(lift) }
     ) {
+        state.lift.color?.toColor()?.let {
+            Box(
+                modifier = Modifier.fillMaxSize().background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            it,
+                            Color.Transparent,
+                        ),
+                        end = Offset(
+                            GRADIENT_SIZE,
+                            GRADIENT_SIZE
+                        )
+                    )
+                )
+            ) {
+
+            }
+        }
         Column(
             modifier = Modifier.fillMaxSize()
-                .padding(all = MaterialTheme.spacing.half),
+                .padding(all = MaterialTheme.spacing.one),
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -303,7 +321,7 @@ fun LiftCard(
 @Preview
 @Composable
 fun LiftCardEmptyPreview(
-    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
 ) {
     PreviewAppTheme(isDarkMode = darkMode) {
         LiftCard(
@@ -324,7 +342,7 @@ fun LiftCardEmptyPreview(
 @Preview
 @Composable
 fun LiftCardWeightPreview(
-    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
 ) {
     PreviewAppTheme(isDarkMode = darkMode) {
         LiftCard(
@@ -352,7 +370,7 @@ fun LiftCardWeightPreview(
 @Preview
 @Composable
 fun LiftCardRepsPreview(
-    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
 ) {
     PreviewAppTheme(isDarkMode = darkMode) {
         LiftCard(
