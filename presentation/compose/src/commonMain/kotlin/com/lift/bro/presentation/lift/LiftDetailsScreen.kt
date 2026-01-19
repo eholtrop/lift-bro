@@ -586,7 +586,6 @@ private fun VariationCard(
                         Space(MaterialTheme.spacing.half)
                     }
 
-
                     pair?.second
                         ?.sortedByDescending { it.weight }
                         ?.forEachIndexed { index, set ->

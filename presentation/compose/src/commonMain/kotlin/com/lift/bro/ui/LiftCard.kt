@@ -138,7 +138,6 @@ fun LiftCard(
                     )
                 )
             ) {
-
             }
         }
         Column(
