@@ -68,6 +68,7 @@ fun Route.configureVariationRoutes(
     variationRepository: IVariationRepository = dependencies.localVariationRepository,
 ) {
     webSocket("ws/variations") {
+        Log.d("LiftBroServer", "Received ws connection to ws/variations")
         variationRepository.listenAll(
             liftId = call.request.queryParameters["liftId"]
         )
@@ -76,22 +77,26 @@ fun Route.configureVariationRoutes(
     }
 
     webSocket("ws/variation") {
+        Log.d("LiftBroServer", "Received ws connection to ws/variation")
         variationRepository.listen(id = call.request.queryParameters["variationId"] ?: "")
             .onEach { lifts -> send(Frame.Text(Json.encodeToString(lifts))) }
             .collect()
     }
 
     post<Variation>("rest/variation") {
+        Log.d("LiftBroServer", "Received post request to rest/variation")
         variationRepository.save(this.call.receive())
     }
 
     delete("rest/variation") {
+        Log.d("LiftBroServer", "Received delete request to rest/variation")
         call.request.queryParameters["id"]?.let {
             variationRepository.delete(it)
         }
     }
 
     delete("rest/variations") {
+        Log.d("LiftBroServer", "Received delete request to rest/variations")
         variationRepository.deleteAll()
     }
 }
