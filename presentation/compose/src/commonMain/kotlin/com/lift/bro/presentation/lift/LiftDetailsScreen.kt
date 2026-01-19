@@ -1,5 +1,6 @@
 package com.lift.bro.presentation.lift
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -44,6 +45,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.buildAnnotatedString
@@ -74,6 +77,7 @@ import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
+import com.lift.bro.utils.listCorners
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
@@ -102,7 +106,7 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 @Composable
 fun LiftDetailsScreen(
-    liftId: String
+    liftId: String,
 ) {
     LiftDetailsScreen(
         interactor = rememberLiftDetailsInteractor(liftId = liftId)
@@ -112,7 +116,7 @@ fun LiftDetailsScreen(
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun LiftDetailsScreen(
-    interactor: Interactor<LiftDetailsState, LiftDetailsEvent>
+    interactor: Interactor<LiftDetailsState, LiftDetailsEvent>,
 ) {
     val state by interactor.state.collectAsState()
 
@@ -403,7 +407,7 @@ private fun VariationCard(
     state: VariationCardState,
     onClick: (Variation) -> Unit,
     onSetClicked: (LBSet) -> Unit,
-    favouriteToggled: (Variation) -> Unit
+    favouriteToggled: (Variation) -> Unit,
 ) {
     val variation = state.variation
     val sets = state.sets
@@ -411,7 +415,12 @@ private fun VariationCard(
         modifier = modifier.fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
             .background(
-                color = MaterialTheme.colorScheme.surface,
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.surface,
+                        Color.Transparent,
+                    )
+                )
             ),
     ) {
         Column(
@@ -577,23 +586,39 @@ private fun VariationCard(
                         Space(MaterialTheme.spacing.half)
                     }
 
+
                     pair?.second
                         ?.sortedByDescending { it.weight }
-                        ?.forEach { set ->
+                        ?.forEachIndexed { index, set ->
+                            val rowShape = MaterialTheme.shapes.small.listCorners(index, pair.second)
                             SetInfoRow(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .clip(MaterialTheme.shapes.small)
+                                    .padding(
+                                        horizontal = MaterialTheme.spacing.half
+                                    )
+                                    .clip(rowShape)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surfaceContainer,
+                                        shape = rowShape,
+                                    )
+                                    .border(
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface),
+                                        shape = rowShape,
+                                    )
                                     .clickable(
                                         role = Role.Button,
                                         onClick = { onSetClicked(set) }
                                     ).padding(
-                                        horizontal = MaterialTheme.spacing.one,
-                                        vertical = MaterialTheme.spacing.half,
+                                        all = MaterialTheme.spacing.half,
                                     ),
                                 set = set,
                             )
                         }
+
+                    if (pair?.second?.isNotEmpty() == true) {
+                        Space(MaterialTheme.spacing.half)
+                    }
                 }
             }
         }
@@ -610,7 +635,7 @@ private enum class SortingOptions(reversed: Boolean) {
     MaxSetReversed(true),
 }
 
-class LiftDetailsStateProvider : PreviewParameterProvider<LiftDetailsState> {
+class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
     override val values: Sequence<LiftDetailsState>
         get() = sequenceOf(
             // Empty lift - no variations
@@ -699,7 +724,7 @@ class LiftDetailsStateProvider : PreviewParameterProvider<LiftDetailsState> {
 @Preview
 @Composable
 fun LiftDetailsScreenPreview(
-    @PreviewParameter(LiftDetailsStateProvider::class) state: LiftDetailsState
+    @PreviewParameter(LiftDetailsStateProvider::class) state: LiftDetailsState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
         LiftingScaffold(
