@@ -12,13 +12,14 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Sorting
+import com.lift.bro.logging.Log
+import com.lift.bro.logging.d
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.Reducer
 import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
-import com.lift.bro.utils.debug
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
@@ -28,6 +29,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -71,7 +77,7 @@ data class TempoState(
 sealed interface EditSetEvent {
     data class VariationSelected(val variation: Variation): EditSetEvent
 
-    data class DateSelected(val date: Instant): EditSetEvent
+    data class DateSelected(val date: LocalDate): EditSetEvent
 
     data object DeleteSetClicked: EditSetEvent
 
@@ -87,47 +93,49 @@ sealed interface EditSetEvent {
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@Composable
-fun rememberEditSetInteractor(
+private fun editSetSource(
     setId: String,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
+) = setRepository.listen(setId)
+    .flatMapLatest { set ->
+        if (set == null) {
+            flow {
+                emit(EditSetState(id = setId))
+            }
+        } else {
+            variationRepository.listen(set.variationId)
+                .flatMapLatest { variation ->
+                    combine(
+                        setRepository.listenAll(
+                            variationId = variation?.id,
+                            limit = 1,
+                            sorting = Sorting.weight
+                        ).map { it.firstOrNull() },
+                        setRepository.listenAllForLift(
+                            liftId = variation?.lift?.id ?: "",
+                            limit = 1,
+                            sorting = Sorting.weight
+                        ).map { it.firstOrNull() }
+                    ) { maxVariation, maxLift ->
+                        set.toUiState(
+                            variation = variation,
+                            maxVariationSet = maxVariation,
+                            maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null
+                        )
+                    }
+                }
+        }
+    }
+
+@OptIn(ExperimentalCoroutinesApi::class)
+@Composable
+fun rememberEditSetInteractor(
+    setId: String,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> = rememberInteractor(
     initialState = null,
-    source = {
-        setRepository.listen(setId)
-            .flatMapLatest { set ->
-                if (set == null) {
-                    flow {
-                        emit(EditSetState(id = setId))
-                    }
-                } else {
-                    variationRepository.listen(set.variationId)
-                        .debug("DEBUGEH")
-                        .flatMapLatest { variation ->
-                            combine(
-                                setRepository.listenAll(
-                                    variationId = variation?.id,
-                                    limit = 1,
-                                    sorting = Sorting.weight
-                                ).map { it.firstOrNull() },
-                                setRepository.listenAllForLift(
-                                    liftId = variation?.lift?.id ?: "",
-                                    limit = 1,
-                                    sorting = Sorting.weight
-                                ).map { it.firstOrNull() }
-                            ) { maxVariation, maxLift ->
-                                set.toUiState(
-                                    variation = variation,
-                                    maxVariationSet = maxVariation,
-                                    maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null
-                                )
-                            }
-                        }
-                }
-            }
-    },
+    source = { editSetSource(setId) },
     reducers = listOf(EditSetReducer),
     sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
 )
@@ -143,20 +151,7 @@ fun rememberCreateSetInteractor(
     return rememberInteractor(
         initialState = null,
         source = {
-            dependencies.setRepository.listen(id)
-                .flatMapLatest { set ->
-                    dependencies.variationRepository.listen(set?.variationId ?: variationId ?: "").map { variation ->
-                        set?.toUiState(variation, null, null) ?: EditSetState(
-                            id = id,
-                            date = date ?: Clock.System.now(),
-                            variation = variation?.let {
-                                SetVariation(
-                                    variation = variation
-                                )
-                            }
-                        )
-                    }
-                }
+            editSetSource(id)
         },
         sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() },
         reducers = listOf(EditSetReducer),
@@ -164,20 +159,26 @@ fun rememberCreateSetInteractor(
 }
 
 val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, event ->
+    Log.d(message = event.toString())
     when (event) {
         is EditSetEvent.WeightChanged -> state?.copy(weight = event.weight)
         is EditSetEvent.RepChanged -> state?.copy(reps = event.reps)
         is EditSetEvent.RpeChanged -> state?.copy(rpe = event.rpe)
         is EditSetEvent.TempoChanged -> state?.copy(tempo = event.tempo)
         is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
-        is EditSetEvent.VariationSelected -> state?.copy(
+        is EditSetEvent.VariationSelected -> state!!.copy(
             variation = SetVariation(
                 variation = event.variation,
                 variationMaxPercentage = null,
                 liftMaxPercentage = null
             )
         )
-        is EditSetEvent.DateSelected -> state?.copy(date = event.date)
+
+        is EditSetEvent.DateSelected -> state?.copy(
+            date = event.date.atTime(
+                state.date.toLocalDateTime(TimeZone.currentSystemDefault()).time
+            ).toInstant(TimeZone.currentSystemDefault())
+        )
         EditSetEvent.DeleteSetClicked -> state
     }
 }
@@ -191,11 +192,12 @@ fun editSetSideEffects(
                 setRepository.delete(it)
             }
         }
+
         else -> {
-            if (state?.saveEnabled == true) {
-                state.toDomain()?.let {
-                    setRepository.save(it)
-                }
+            Log.d(message = "saving - $state")
+            state?.toDomain()?.let {
+                Log.d(message = "saving - $event")
+                setRepository.save(it)
             }
         }
     }
@@ -233,7 +235,7 @@ internal suspend fun LBSet.toUiState(
     notes = this.notes,
     rpe = this.rpe,
 
-    )
+)
 
 internal fun EditSetState.toDomain(): LBSet? =
     if (this.id != null && variation != null && reps != null && tempo.ecc != null && tempo.iso != null && tempo.con != null && weight != null) {

@@ -4,11 +4,14 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -67,6 +70,43 @@ fun InfoDialogButton(
             imageVector = Icons.Default.Info,
             contentDescription = "Info",
             tint = buttonTint,
+        )
+    }
+}
+
+@Composable
+fun InfoDialogButton(
+    modifier: Modifier = Modifier,
+    dialogTitle: @Composable () -> Unit,
+    dialogMessage: @Composable () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    var showInfoDialog by remember { mutableStateOf(false) }
+
+    if (showInfoDialog) {
+        InfoDialog(
+            title = dialogTitle,
+            message = dialogMessage,
+            onDismissRequest = { showInfoDialog = false }
+        )
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Button(
+            modifier = modifier,
+            onClick = { showInfoDialog = true },
+            enabled = true,
+            contentPadding = PaddingValues(0.dp),
+            colors = ButtonDefaults.textButtonColors(),
+        ) {
+            content()
+        }
+        Icon(
+            modifier = Modifier.size(11.dp),
+            imageVector = Icons.Default.Info,
+            contentDescription = "Info",
         )
     }
 }
@@ -163,23 +203,23 @@ fun InfoDialogButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode:
             horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(MaterialTheme.spacing.one)
         ) {
             InfoDialogButton(
-                dialogTitle = { Text("Tempo Information") },
+                dialogTitle = { },
                 dialogMessage = {
-                    Column {
-                        Text("Tempo controls how fast you perform each phase of the lift.")
-                        Space(MaterialTheme.spacing.half)
-                        Text("Ecc: Eccentric (lowering)")
-                        Text("Iso: Isometric (pause)")
-                        Text("Con: Concentric (lifting)")
-                    }
                 }
             )
 
             InfoDialogButton(
-                dialogTitle = { Text("Custom Tint") },
-                dialogMessage = { Text("This button has a custom tint color.") },
+                dialogTitle = { },
+                dialogMessage = { },
                 buttonTint = MaterialTheme.colorScheme.error
             )
+
+            InfoDialogButton(
+                dialogTitle = { },
+                dialogMessage = { },
+            ) {
+                Text("Test")
+            }
         }
     }
 }

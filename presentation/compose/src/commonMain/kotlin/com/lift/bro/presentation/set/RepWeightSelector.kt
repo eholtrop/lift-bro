@@ -151,9 +151,11 @@ fun RepWeightSelector(
         Space(MaterialTheme.spacing.half)
 
         Text(
-            text = "${LocalUnitOfMeasure.current.value} at ",
+            text = "${LocalUnitOfMeasure.current.value} at",
             style = MaterialTheme.typography.titleLarge,
         )
+
+        Space(MaterialTheme.spacing.half)
 
         RepWeightTextField(
             modifier = Modifier.testTag("rpe"),
@@ -250,6 +252,19 @@ fun RepWeightSelector(
     }
 }
 
+data class RepWeightColorDefaults(
+    val error: Color,
+    val focused: Color,
+    val default: Color,
+)
+
+@Composable
+fun TextFieldDefaults.repWeightColorDefaults() = RepWeightColorDefaults(
+    error = MaterialTheme.colorScheme.error,
+    focused = MaterialTheme.colorScheme.secondary,
+    default = MaterialTheme.colorScheme.onBackground,
+)
+
 @Composable
 private fun RepWeightTextField(
     modifier: Modifier = Modifier,
@@ -257,6 +272,7 @@ private fun RepWeightTextField(
     error: Boolean = false,
     onValueChanged: (String) -> Unit,
     keyboardType: KeyboardType,
+    colors: RepWeightColorDefaults = TextFieldDefaults.repWeightColorDefaults(),
     placeholder: @Composable () -> Unit = {},
 ) {
     var focusState by remember { mutableStateOf<FocusState?>(null) }
@@ -281,9 +297,9 @@ private fun RepWeightTextField(
                 width = 1.dp,
                 shape = MaterialTheme.shapes.small,
                 color = when {
-                    error -> MaterialTheme.colorScheme.error
-                    focusState?.isFocused == true -> MaterialTheme.colorScheme.secondary
-                    else -> MaterialTheme.colorScheme.onBackground
+                    error -> colors.error
+                    focusState?.isFocused == true -> colors.focused
+                    else -> colors.default
                 }
             )
             .background(

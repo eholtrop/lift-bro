@@ -4,6 +4,8 @@ package com.lift.bro.presentation.set
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -12,17 +14,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Save
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.filled.Start
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,34 +49,33 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
-import com.lift.bro.di.setRepository
-import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.logging.Log
+import com.lift.bro.logging.d
 import com.lift.bro.presentation.Interactor
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.TempoInfoDialogText
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.calendar.Calendar
+import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.dialog.VariationSearchDialog
+import com.lift.bro.ui.theme.aerospaceOrange
+import com.lift.bro.ui.theme.amber
+import com.lift.bro.ui.theme.orangePeel
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.horizontal_padding.padding
-import com.lift.bro.utils.listCorners
-import com.lift.bro.utils.toColor
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
-import kotlinx.coroutines.flow.map
+import com.lift.bro.utils.vertical_padding.padding
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.create_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
@@ -83,11 +83,25 @@ import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
 import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
+import lift_bro.core.generated.resources.tempo_selector_dialog_title
+import lift_bro.core.generated.resources.tempo_selector_with_tempo_text
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+
+enum class RPE(
+    val rpe: Int,
+    val emoji: String,
+) {
+    Five(5, "😇"),
+    Six(6, "😀"),
+    Seven(7, "💪"),
+    Eight(8, "😰"),
+    Nine(9, "😳"),
+    Ten(10, "💀")
+}
 
 @Composable
 fun EditSetScreen(
@@ -161,35 +175,8 @@ fun EditSetScreen(
             contentPadding = PaddingValues(
                 horizontal = MaterialTheme.spacing.half,
             ),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
         ) {
-            item {
-                RepWeightSelector(
-                    modifier = Modifier.fillMaxWidth()
-                        .background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.surface,
-                                    Color.Transparent,
-                                ),
-                            ),
-                            shape = MaterialTheme.shapes.medium.copy(
-                                bottomEnd = CornerSize(0.dp),
-                                bottomStart = CornerSize(0.dp),
-                            ),
-                        ).padding(
-                            vertical = MaterialTheme.spacing.half,
-                            horizontal = MaterialTheme.spacing.one,
-                        ),
-                    repChanged = { sendEvent(EditSetEvent.RepChanged(it)) },
-                    weightChanged = { sendEvent(EditSetEvent.WeightChanged(it)) },
-                    rpeChanged = { sendEvent(EditSetEvent.RpeChanged(it)) },
-                    weight = state.weight,
-                    reps = state.reps,
-                    rpe = state.rpe,
-                )
-            }
-
             item {
                 when {
                     state.variation == null -> {
@@ -199,10 +186,13 @@ fun EditSetScreen(
                                 showVariationDialog = true
                             }
                         ) {
-                            Text("Select Variation")
+                            Text(
+                                "Select Variation",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.error
+                            )
                         }
                     }
-
 
                     else -> {
                         Box(
@@ -211,7 +201,6 @@ fun EditSetScreen(
                                 horizontal = MaterialTheme.spacing.one
                             ).animateContentSize()
                         ) {
-                            val weight = state.weight ?: 0.0
                             Column(
                                 modifier = Modifier
                                     .clip(MaterialTheme.shapes.medium)
@@ -231,8 +220,15 @@ fun EditSetScreen(
                                     textAlign = TextAlign.Center,
                                     text = buildAnnotatedString {
                                         with(state.variation) {
-                                            if (liftMaxPercentage != null && variationMaxPercentage != null) {
-                                                append(variation.fullName)
+                                            if (liftMaxPercentage == null && variationMaxPercentage == null) {
+                                                withStyle(
+                                                    MaterialTheme.typography.titleMedium
+                                                        .copy(
+                                                            color = MaterialTheme.colorScheme.primary,
+                                                        ).toSpanStyle(),
+                                                ) {
+                                                    append(variation.fullName)
+                                                }
                                             } else {
                                                 variationMaxPercentage?.let {
                                                     append(
@@ -265,31 +261,15 @@ fun EditSetScreen(
             }
 
             item {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Box(
-                        modifier = Modifier.background(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.surface,
-                                    Color.Transparent,
-                                ),
-                                startY = Float.POSITIVE_INFINITY,
-                                endY = 0f
-                            ),
-                            shape = MaterialTheme.shapes.medium.copy(
-                                topEnd = CornerSize(0.dp),
-                                topStart = CornerSize(0.dp),
-                            ),
-                        )
-                    ) {
-                        TempoSelector(
-                            tempo = state.tempo,
-                            tempoChanged = { sendEvent(EditSetEvent.TempoChanged(it)) }
-                        )
-                    }
-                }
+                RepWeightSelector(
+                    modifier = Modifier.fillMaxWidth(),
+                    repChanged = { sendEvent(EditSetEvent.RepChanged(it)) },
+                    weightChanged = { sendEvent(EditSetEvent.WeightChanged(it)) },
+                    rpeChanged = { sendEvent(EditSetEvent.RpeChanged(it)) },
+                    weight = state.weight,
+                    reps = state.reps,
+                    rpe = state.rpe,
+                )
             }
 
             item {
@@ -304,6 +284,133 @@ fun EditSetScreen(
                             ),
                             shape = MaterialTheme.shapes.medium,
                         ).clip(MaterialTheme.shapes.medium),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(start = MaterialTheme.spacing.one, top = MaterialTheme.spacing.one),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.tempo_selector_with_tempo_text),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                        Space(MaterialTheme.spacing.half)
+                        InfoDialogButton(
+                            modifier = Modifier.size(16.dp),
+                            dialogTitle = { Text(stringResource(Res.string.tempo_selector_dialog_title)) },
+                            dialogMessage = { TempoInfoDialogText() }
+                        )
+                    }
+                    TempoSelector(
+                        modifier = Modifier
+                            .padding(
+                                horizontal = MaterialTheme.spacing.half,
+                                vertical = MaterialTheme.spacing.half,
+                            )
+                            .background(
+                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                shape = MaterialTheme.shapes.small,
+                            )
+                            .border(
+                                color = MaterialTheme.colorScheme.onSurface,
+                                width = 1.dp,
+                                shape = MaterialTheme.shapes.small
+                            ),
+                        tempo = state.tempo,
+                        tempoChanged = { sendEvent(EditSetEvent.TempoChanged(it)) }
+                    )
+                }
+            }
+
+            item {
+                Column(
+                    modifier = Modifier.animateContentSize()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.surface,
+                                    Color.Transparent
+                                ),
+                            ),
+                            shape = MaterialTheme.shapes.medium
+                        ).clip(MaterialTheme.shapes.medium)
+
+                ) {
+                    var showCalendar by remember { mutableStateOf(false) }
+
+                    Row {
+                        Column(
+                            modifier = Modifier.weight(1f)
+                                .clickable(
+                                    onClick = { showCalendar = !showCalendar }
+                                )
+                                .padding(
+                                    vertical = MaterialTheme.spacing.half,
+                                    horizontal = MaterialTheme.spacing.one
+                                ),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                text = state.date.toString("EEEE, MMM d"),
+                                color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                text = state.date.toString("yyyy"),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+                        Column(
+                            modifier = Modifier.weight(1f)
+                                .padding(
+                                    vertical = MaterialTheme.spacing.half,
+                                    horizontal = MaterialTheme.spacing.one
+                                ),
+                            horizontalAlignment = Alignment.End
+                        ) {
+                            Text(
+                                text = state.date.toString("hh:mm"),
+                                color = MaterialTheme.colorScheme.onBackground,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                text = state.date.toString("aa").lowercase(),
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                        }
+                    }
+
+                    AnimatedVisibility(showCalendar) {
+                        var date by remember(state.date) { mutableStateOf(state.date.toLocalDate()) }
+
+                        Calendar(
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(
+                                    vertical = MaterialTheme.spacing.half,
+                                    horizontal = MaterialTheme.spacing.one
+                                ),
+                            selectedDate = date,
+                            dateSelected = {
+                                date = it
+                                sendEvent(EditSetEvent.DateSelected(it))
+                                showCalendar = false
+                            },
+                        )
+                    }
+                }
+            }
+
+            item {
+                Column(
+                    modifier = Modifier.background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.surface,
+                                Color.Transparent,
+                            )
+                        ),
+                        shape = MaterialTheme.shapes.medium,
+                    ).clip(MaterialTheme.shapes.medium),
                 ) {
                     var notes by remember { mutableStateOf(state.notes) }
                     TextField(
@@ -324,180 +431,386 @@ fun EditSetScreen(
                     )
                 }
             }
+        }
+    }
 
+    if (showVariationDialog) {
+        VariationSearchDialog(
+            visible = showVariationDialog,
+            textFieldPlaceholder = stringResource(Res.string.edit_set_screen_variation_selector_empty_state_title),
+            onDismissRequest = { showVariationDialog = false },
+            onVariationSelected = {
+                showVariationDialog = false
+                sendEvent(EditSetEvent.VariationSelected(it))
+            }
+        )
+    }
+}
+
+@Composable
+fun EditSetScreenV2(
+    state: EditSetState,
+    sendEvent: (EditSetEvent) -> Unit,
+) {
+    var showVariationDialog by remember { mutableStateOf(false) }
+
+    LiftingScaffold(
+        title = {
+            Text(
+                stringResource(
+                    if (state.id != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title
+                )
+            )
+        },
+        trailingContent = {
+            Fade(visible = state.saveEnabled) {
+                TopBarIconButton(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = stringResource(Res.string.edit_set_screen_delete_acc_label),
+                    onClick = {
+                        sendEvent(EditSetEvent.DeleteSetClicked)
+                    }
+                )
+            }
+        },
+    ) { padding ->
+
+        var showRpe by remember { mutableStateOf(state.rpe != null) }
+        var showNotes by remember { mutableStateOf(state.notes.isNotBlank()) }
+        var showTempo by remember { mutableStateOf(state.tempo != TempoState()) }
+        var showDate by remember { mutableStateOf(false) }
+
+        LazyColumn(
+            modifier = Modifier.padding(padding).fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(
+                horizontal = MaterialTheme.spacing.half,
+            ),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+        ) {
             item {
-
-                Column(
-                    modifier = Modifier.animateContentSize()
-                        .background(
-                            brush = Brush.linearGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.surface,
-                                    Color.Transparent
-                                ),
-                            ),
-                            shape = MaterialTheme.shapes.medium
-                        )
-                        .padding(
-                            vertical = MaterialTheme.spacing.half,
-                            horizontal = MaterialTheme.spacing.one
-                        )
-                ) {
-                    var date by remember(state.date) { mutableStateOf(state.date.toLocalDate()) }
-
-
-
-                    Calendar(
-                        modifier = Modifier.fillMaxWidth(),
-                        selectedDate = date,
-//                    contentPadding =,
-//                    pagerState =,
-//                    horizontalArrangement =,
-//                    verticalArrangement =,
-                        dateDecorations = { date, content ->
-                            content()
-
-                            if (date == state.date.toLocalDate()) {
-                                Icon(
-                                    imageVector = Icons.Default.Star,
-                                    contentDescription = ""
-                                )
+                when {
+                    state.variation == null -> {
+                        Button(
+                            colors = ButtonDefaults.outlinedButtonColors(),
+                            onClick = {
+                                showVariationDialog = true
                             }
-                        },
-                        dateSelected = {
-                            date = it
-                        },
-//                    contentForMonth =
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column {
+                        ) {
                             Text(
-                                textAlign = TextAlign.Start,
-                                text = state.date.toString("EEE, MMM d"),
-                            )
-                            Space()
-                            Text(
-                                textAlign = TextAlign.Start,
-                                text = state.date.toString("yyyy"),
+                                "Select Variation",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.error
                             )
                         }
+                    }
 
-                        Space()
-                        AnimatedVisibility(
-                            visible = date != state.date.toLocalDate()
+                    else -> {
+                        Box(
+                            modifier = Modifier.padding(
+                                vertical = MaterialTheme.spacing.one,
+                                horizontal = MaterialTheme.spacing.one
+                            ).animateContentSize()
                         ) {
-                            Button(
-                                onClick = {
-                                    sendEvent(EditSetEvent.DateSelected(date.atStartOfDayIn(TimeZone.currentSystemDefault())))
-                                }
+                            val weight = state.weight ?: 0.0
+                            Column(
+                                modifier = Modifier
+                                    .clip(MaterialTheme.shapes.medium)
+                                    .clickable(
+                                        onClick = {
+                                            showVariationDialog = true
+                                        },
+                                        role = Role.Button
+                                    )
+                                    .padding(
+                                        vertical = MaterialTheme.spacing.quarter,
+                                        horizontal = MaterialTheme.spacing.one
+                                    ),
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Save,
-                                    contentDescription = "Save Date"
+                                Text(
+                                    textAlign = TextAlign.Center,
+                                    text = buildAnnotatedString {
+                                        Log.d(message = state.variation.toString())
+                                        with(state.variation) {
+                                            if (liftMaxPercentage == null && variationMaxPercentage == null) {
+                                                withStyle(
+                                                    MaterialTheme.typography.titleMedium
+                                                        .copy(
+                                                            color = MaterialTheme.colorScheme.primary,
+                                                        ).toSpanStyle(),
+                                                ) {
+                                                    append(variation.fullName)
+                                                }
+                                            } else {
+                                                variationMaxPercentage?.let {
+                                                    append(
+                                                        buildSetLiftTitle(
+                                                            value = it.percentage,
+                                                            name = it.variationName
+                                                        )
+                                                    )
+                                                }
+
+                                                liftMaxPercentage?.let {
+                                                    if (variationMaxPercentage != null) {
+                                                        appendLine()
+                                                    }
+                                                    append(
+                                                        buildSetLiftTitle(
+                                                            value = it.percentage,
+                                                            name = it.variationName
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
                                 )
                             }
                         }
                     }
-                    val sets by dependencies.setRepository.listenAll(
-                        startDate = date,
-                        endDate = date,
-                    ).map {
-                        if (state.toDomain() != null) {
-                            it + state.toDomain()!!
-                        } else {
-                            it
-                        }
-                    }.collectAsState(emptySet())
+                }
+            }
 
-                    val variations by dependencies.variationRepository.listenAll()
-                        .collectAsState(emptyList())
-
-                    val varSets = sets.groupBy { set -> variations.firstOrNull { it.id == set.variationId } }
-
-
+            item {
+                val bottomPadding = if (showNotes && showRpe && showTempo && showDate) MaterialTheme.spacing.half else MaterialTheme.spacing.one
+                Box {
                     Column(
+                        modifier = Modifier
+                            .padding(bottom = bottomPadding)
+                            .background(
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        MaterialTheme.colorScheme.surface,
+                                        Color.Transparent,
+                                    ),
+                                ),
+                                shape = MaterialTheme.shapes.medium,
+                            ).padding(
+                                horizontal = MaterialTheme.spacing.one,
+                                top = MaterialTheme.spacing.half,
+                                bottom = bottomPadding,
+                            ),
                         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
                     ) {
-                        varSets.toList()
-                            .sortedByDescending { it.first?.fullName }
-                            .sortedByDescending { it.first?.favourite }
-                            .sortedByDescending { it.first?.id == state.variation?.variation?.id }
-                            .forEach { (variation, sets) ->
-                                Column(
-                                    modifier = Modifier.background(
-                                        brush = Brush.linearGradient(
-                                            colors = listOf(
-                                                when {
-//                                                    variation?.id == state.variation?.variation?.id -> MaterialTheme.colorScheme.primary
-                                                    variation?.lift?.color != null -> variation.lift?.color!!.toColor()
-                                                    else -> MaterialTheme.colorScheme.surface
-                                                },
-                                                Color.Transparent
-                                            )
-                                        ),
-                                        shape = MaterialTheme.shapes.medium,
-                                    ).clip(MaterialTheme.shapes.medium)
-                                        .padding(
-                                            vertical = MaterialTheme.spacing.half
-                                        )
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(
-                                            start = MaterialTheme.spacing.one,
-                                        )
-                                    ) {
-                                        Text(
-                                            text = variation?.fullName ?: ""
-                                        )
-                                        if (variation?.favourite == true) {
-                                            Icon(
-                                                imageVector = Icons.Default.Favorite,
-                                                contentDescription = "Favourite"
-                                            )
-                                        }
-                                    }
+                        RepWeightSelector(
+                            modifier = Modifier.fillMaxWidth(),
+                            repChanged = { sendEvent(EditSetEvent.RepChanged(it)) },
+                            weightChanged = { sendEvent(EditSetEvent.WeightChanged(it)) },
+                            rpeChanged = { sendEvent(EditSetEvent.RpeChanged(it)) },
+                            weight = state.weight,
+                            reps = state.reps,
+                            rpe = state.rpe,
+                        )
 
-                                    sets.sortedByDescending { it.date }.distinctBy { it.id }.forEachIndexed { index, set ->
-                                        SetInfoRow(
-                                            modifier = Modifier.fillMaxWidth()
-                                                .padding(
-                                                    horizontal = MaterialTheme.spacing.half
-                                                )
-                                                .background(
-                                                    color = MaterialTheme.colorScheme.surfaceContainer,
-                                                    shape = MaterialTheme.shapes.small.listCorners(index, sets.distinctBy { it.id })
-                                                )
-                                                .border(
-                                                    width = 1.dp,
-                                                    color = MaterialTheme.colorScheme.onBackground,
-                                                    shape = MaterialTheme.shapes.small.listCorners(index, sets.distinctBy { it.id })
-                                                )
-                                                .padding(
-                                                    vertical = MaterialTheme.spacing.quarter,
-                                                    horizontal = MaterialTheme.spacing.half
-                                                ),
-                                            set = set,
-                                            trailing = {
-                                                if (set.id == state.id) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Star,
-                                                        contentDescription = "This Set"
-                                                    )
-                                                }
-                                                if (date != set.date.toLocalDate()) {
-                                                    Icon(
-                                                        imageVector = Icons.Default.Save,
-                                                        contentDescription = "Save Date"
-                                                    )
-                                                }
-                                            }
-                                        )
-                                    }
+                        AnimatedVisibility(showRpe) {
+                            var rpe by remember { mutableStateOf(state.rpe ?: 7) }
+                            Column {
+                                InfoDialogButton(
+                                    dialogTitle = { Text("Rpe") },
+                                    dialogMessage = { }
+                                ) {
+                                    Text(
+                                        text = "RPE",
+                                        style = MaterialTheme.typography.titleSmall,
+                                        color = MaterialTheme.colorScheme.onBackground
+                                    )
                                 }
+                                RpeBar(
+                                    rpe = rpe,
+                                    rpeChanged = {
+                                        rpe = it
+                                        sendEvent(EditSetEvent.RpeChanged(it))
+                                    }
+                                )
                             }
+                        }
+
+                        AnimatedVisibility(showTempo) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                TempoSelector(
+                                    tempo = state.tempo,
+                                    tempoChanged = { sendEvent(EditSetEvent.TempoChanged(it)) }
+                                )
+                            }
+                        }
+                    }
+                    Row(
+                        modifier = Modifier
+                            .animateContentSize()
+                            .align(Alignment.BottomStart)
+                            .padding(horizontal = MaterialTheme.spacing.half),
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                    ) {
+                        ChipButton(
+                            visible = !showRpe,
+                            onClick = { showRpe = true }
+                        ) {
+                            Text("RPE+")
+                        }
+                        ChipButton(
+                            visible = !showTempo,
+                            onClick = { showTempo = true }
+                        ) {
+                            if (state.tempo == TempoState()) {
+                                Text("Tempo")
+                            } else {
+                                Text("${state.tempo.ecc}/${state.tempo.iso}/${state.tempo.con}")
+                            }
+                        }
+                        Space()
+                        ChipButton(
+                            visible = !showNotes,
+                            onClick = { showNotes = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Default.StickyNote2,
+                                contentDescription = "Add Notes"
+                            )
+                        }
+                        ChipButton(
+                            visible = !showDate,
+                            onClick = { showDate = true }
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            ) {
+                                Text(text = state.date.toString("MMM d"))
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (showNotes) {
+                item {
+                    Column(
+                        modifier = Modifier.background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.surface,
+                                    Color.Transparent,
+                                )
+                            ),
+                            shape = MaterialTheme.shapes.medium,
+                        ).clip(MaterialTheme.shapes.medium),
+                    ) {
+                        var notes by remember { mutableStateOf(state.notes) }
+                        TextField(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TextFieldDefaults.transparentColors(),
+                            value = notes,
+                            singleLine = true,
+                            placeholder = {
+                                Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
+                            },
+                            label = {
+                                Text(stringResource(Res.string.edit_set_screen_extra_notes_label))
+                            },
+                            onValueChange = {
+                                notes = it
+                                sendEvent(EditSetEvent.NotesChanged(it))
+                            },
+                        )
+                    }
+                }
+            }
+
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    MaterialTheme.colorScheme.surface,
+                                    Color.Transparent,
+                                )
+                            ),
+                            shape = MaterialTheme.shapes.medium,
+                        ).clip(MaterialTheme.shapes.medium),
+                ) {
+                }
+            }
+
+            if (showDate) {
+                item {
+                    Column(
+                        modifier = Modifier.animateContentSize()
+                            .background(
+                                brush = Brush.linearGradient(
+                                    colors = listOf(
+                                        MaterialTheme.colorScheme.surface,
+                                        Color.Transparent
+                                    ),
+                                ),
+                                shape = MaterialTheme.shapes.medium
+                            ).clip(MaterialTheme.shapes.medium)
+
+                    ) {
+                        var showCalendar by remember { mutableStateOf(false) }
+
+                        Row {
+                            Column(
+                                modifier = Modifier.weight(1f)
+                                    .clickable(
+                                        onClick = { showCalendar = !showCalendar }
+                                    )
+                                    .padding(
+                                        vertical = MaterialTheme.spacing.half,
+                                        horizontal = MaterialTheme.spacing.one
+                                    ),
+                                horizontalAlignment = Alignment.Start
+                            ) {
+                                Text(
+                                    text = state.date.toString("EEEE, MMM d"),
+                                    color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                                Text(
+                                    text = state.date.toString("yyyy"),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+                            Column(
+                                modifier = Modifier.weight(1f)
+                                    .padding(
+                                        vertical = MaterialTheme.spacing.half,
+                                        horizontal = MaterialTheme.spacing.one
+                                    ),
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                Text(
+                                    text = state.date.toString("hh:mm"),
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                                Text(
+                                    text = state.date.toString("aa").lowercase(),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
+                        }
+
+                        AnimatedVisibility(showCalendar) {
+                            var date by remember(state.date) { mutableStateOf(state.date.toLocalDate()) }
+
+                            Calendar(
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(
+                                        vertical = MaterialTheme.spacing.half,
+                                        horizontal = MaterialTheme.spacing.one
+                                    ),
+                                selectedDate = date,
+                                dateSelected = {
+                                    date = it
+                                    sendEvent(EditSetEvent.DateSelected(it))
+                                    showCalendar = false
+                                },
+                            )
+                        }
                     }
                 }
             }
@@ -518,6 +831,66 @@ fun EditSetScreen(
 }
 
 @Composable
+fun RpeBar(
+    modifier: Modifier = Modifier,
+    rpe: Int,
+    rpeChanged: (Int) -> Unit,
+) {
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            modifier = Modifier.background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.Transparent,
+                        amber,
+                        orangePeel,
+                        aerospaceOrange
+                    )
+                ),
+            ).fillMaxWidth()
+                .height(MaterialTheme.spacing.quarter)
+        ) {
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceAround,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            RPE.values().forEach {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (it.rpe == rpe) {
+                        Text(it.emoji, style = MaterialTheme.typography.headlineMedium)
+                    } else {
+                        Button(
+                            modifier = Modifier.size(MaterialTheme.spacing.two),
+                            onClick = {
+                                rpeChanged(it.rpe)
+                            },
+                            colors = ButtonDefaults.textButtonColors(
+                                containerColor = MaterialTheme.colorScheme.background,
+                            ),
+                            border = BorderStroke(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.onBackground,
+                            ),
+                            contentPadding = PaddingValues(0.dp)
+                        ) {
+                            Text(it.rpe.toString())
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun buildSetLiftTitle(
     value: Int,
     name: String,
@@ -530,7 +903,7 @@ private fun buildSetLiftTitle(
         )
 
         append(
-            str.substring(0, str.indexOf(name))
+            str.take(str.indexOf(name))
         )
 
         withStyle(
@@ -552,6 +925,26 @@ private fun buildSetLiftTitle(
     }
 }
 
+@Composable
+private fun ChipButton(
+    onClick: () -> Unit,
+    visible: Boolean,
+    content: @Composable RowScope.() -> Unit,
+) {
+    AnimatedVisibility(
+        visible,
+        exit = fadeOut(),
+    ) {
+        Button(
+            modifier = Modifier.height(24.dp),
+            onClick = onClick,
+            content = content,
+            contentPadding = PaddingValues(0.dp),
+            shape = MaterialTheme.shapes.small,
+        )
+    }
+}
+
 class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
     override val values: Sequence<EditSetState>
         get() = sequenceOf(
@@ -561,6 +954,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                 variation = null,
                 weight = null,
                 reps = null,
+                rpe = 6,
                 date = Clock.System.now()
             ),
             // New set with variation but no data
@@ -643,6 +1037,19 @@ fun EditSetScreenPreview(
     @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
+        EditSetScreen(
+            state = state,
+            sendEvent = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun EditSetScreenDarkPreview(
+    @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
+) {
+    PreviewAppTheme(isDarkMode = true) {
         EditSetScreen(
             state = state,
             sendEvent = {}
