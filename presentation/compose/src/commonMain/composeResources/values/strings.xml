@@ -346,9 +346,9 @@ Soreness or pain?</string>
     <string name="tempo_selector_dialog_what_mean_title">What do these mean?</string>
     <string name="tempo_selector_with_tempo_text">With a tempo of...</string>
     <string name="tempo_selector_dialog_title">What is Tempo?</string>
-    <string name="tempo_selector_ecc_title">Ecc</string>
-    <string name="tempo_selector_iso_title">Iso</string>
-    <string name="tempo_selector_con_title">Con</string>
+    <string name="tempo_selector_ecc_title">Ecc (Down)</string>
+    <string name="tempo_selector_iso_title">Iso (Hold)</string>
+    <string name="tempo_selector_con_title">Con (Up)</string>
     <string name="tempo_selector_eccentric_title">Eccentric - Ecc</string>
     <string name="tempo_selector_eccentric_subtitle">Muscle Extension</string>
     <string name="tempo_selector_eccentric_examples">• putting a deadlift down\n• going into a squat\n• lowering the bar towards your chest in a bench press</string>

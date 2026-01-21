@@ -18,10 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.lift.bro.presentation.set.TempoState
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.horizontal_padding.padding
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.tempo_selector_con_title
 import lift_bro.core.generated.resources.tempo_selector_concentric_examples
@@ -46,12 +48,8 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 @Composable
 fun TempoSelector(
     modifier: Modifier = Modifier,
-    down: Int?,
-    hold: Int?,
-    up: Int?,
-    downChanged: (Int?) -> Unit,
-    holdChanged: (Int?) -> Unit,
-    upChanged: (Int?) -> Unit,
+    tempo: TempoState,
+    tempoChanged: (TempoState) -> Unit,
 ) {
     var showInfoModal by remember { mutableStateOf(false) }
 
@@ -76,12 +74,12 @@ fun TempoSelector(
 
     Column(
         modifier = modifier,
-//        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier.padding(start = MaterialTheme.spacing.one),
                 text = stringResource(Res.string.tempo_selector_with_tempo_text),
                 style = MaterialTheme.typography.titleMedium
             )
@@ -97,21 +95,20 @@ fun TempoSelector(
             NumberPicker(
                 modifier = Modifier.weight(.33f).height(52.dp),
                 title = stringResource(Res.string.tempo_selector_ecc_title),
-                selectedNum = down,
-                numberChanged = downChanged
+                selectedNum = tempo.ecc?.toInt(),
+                numberChanged = { tempoChanged(tempo.copy(ecc = it?.toLong())) }
             )
             NumberPicker(
                 modifier = Modifier.weight(.33f).height(52.dp),
                 title = stringResource(Res.string.tempo_selector_iso_title),
-                selectedNum = hold,
-                numberChanged = holdChanged
+                selectedNum = tempo.iso?.toInt(),
+                numberChanged = { tempoChanged(tempo.copy(iso = it?.toLong())) }
             )
             NumberPicker(
                 modifier = Modifier.weight(.33f).height(52.dp),
                 title = stringResource(Res.string.tempo_selector_con_title),
-                selectedNum = up,
-                numberChanged = upChanged,
-                imeAction = ImeAction.Done
+                selectedNum = tempo.con?.toInt(),
+                numberChanged = { tempoChanged(tempo.copy(con = it?.toLong())) }
             )
         }
     }
@@ -168,29 +165,22 @@ private fun InfoDialogText() {
 @Composable
 fun TempoSelectorPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
     PreviewAppTheme(isDarkMode = darkMode) {
-        Column(
-            modifier = Modifier.padding(MaterialTheme.spacing.one),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
-        ) {
-            // With all values
-            TempoSelector(
-                down = 3,
-                hold = 1,
-                up = 1,
-                downChanged = {},
-                holdChanged = {},
-                upChanged = {}
-            )
+        TempoSelector(
+            tempo = TempoState(
+                ecc = 3,
+                iso = 1,
+                con = 1,
+            ),
+            tempoChanged = {}
+        )
 
-            // With some null values
-            TempoSelector(
-                down = 2,
-                hold = null,
-                up = 1,
-                downChanged = {},
-                holdChanged = {},
-                upChanged = {}
-            )
-        }
+        TempoSelector(
+            tempo = TempoState(
+                ecc = 3,
+                iso = null,
+                con = 1,
+            ),
+            tempoChanged = {}
+        )
     }
 }
