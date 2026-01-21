@@ -22,7 +22,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -237,24 +236,6 @@ private fun CalendarTitle(
             Icon(
                 imageVector = Icons.Default.ArrowBack,
                 contentDescription = "Previous Month",
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
-
-        Button(
-            colors = ButtonDefaults.buttonColors(
-                containerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-            ),
-            onClick = {
-                coroutineScope.launch {
-                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                }
-            }
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowForward,
-                contentDescription = "Next Month",
                 tint = MaterialTheme.colorScheme.primary,
             )
         }

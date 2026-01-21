@@ -35,6 +35,7 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
+import kotlin.math.max
 
 @Serializable
 data class EditSetMaxPercentageState(
@@ -48,6 +49,7 @@ data class EditSetState(
     val weight: Double? = null,
     val reps: Long? = null,
     val rpe: Int? = null,
+    val defaultRpe: Int? = null,
     val tempo: TempoState = TempoState(),
     val mers: Int? = null,
     val eMax: Int? = null,
@@ -213,13 +215,13 @@ internal suspend fun LBSet.toUiState(
         variation = Variation(id = this.variationId),
         variationMaxPercentage = maxVariationSet?.let {
             EditSetMaxPercentageState(
-                percentage = ((this.weight / maxVariationSet.weight) * 100).toInt(),
+                percentage = ((this.weight / max(maxVariationSet.weight, 1.0)) * 100).toInt(),
                 variationName = variation?.fullName ?: ""
             )
         },
         liftMaxPercentage = maxLiftSet?.let {
             EditSetMaxPercentageState(
-                percentage = ((this.weight / maxLiftSet.weight) * 100).toInt(),
+                percentage = ((this.weight / max(maxLiftSet.weight, 1.0)) * 100).toInt(),
                 variationName = dependencies.liftRepository.get(variation?.lift?.id).firstOrNull()?.name ?: ""
             )
         }
@@ -234,6 +236,8 @@ internal suspend fun LBSet.toUiState(
     date = this.date,
     notes = this.notes,
     rpe = this.rpe,
+    mers = this.mer,
+    defaultRpe = null // maxVariationSet?.let { this.weight.div(it.weight).times(10).toInt() },
 
 )
 
