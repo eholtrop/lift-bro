@@ -2,6 +2,8 @@ package com.lift.bro
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.logging.Log
+import com.lift.bro.logging.d
 import com.lift.bro.presentation.goals.GoalsScreen
 import com.lift.bro.presentation.home.HomeScreen
 import com.lift.bro.presentation.lift.EditLiftScreen
@@ -17,8 +19,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.navigation.LocalNavCoordinator
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
 
 @Composable
 fun AppRouter(route: Destination) {

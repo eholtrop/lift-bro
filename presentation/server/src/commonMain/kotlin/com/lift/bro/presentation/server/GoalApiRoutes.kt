@@ -4,8 +4,8 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.localGoalsRepository
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.domain.repositories.IGoalRepository
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
+import com.lift.bro.logging.Log
+import com.lift.bro.logging.d
 import io.ktor.server.request.receive
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete

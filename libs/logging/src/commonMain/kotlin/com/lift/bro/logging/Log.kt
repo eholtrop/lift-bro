@@ -1,4 +1,4 @@
-package com.lift.bro.data.sqldelight.datasource
+package com.lift.bro.logging
 
 object Log
 

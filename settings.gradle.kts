@@ -27,3 +27,4 @@ include(":data:sqldelight")
 include(":data:core")
 
 include(":libs:mvi")
+include(":libs:logging")
