@@ -344,7 +344,7 @@ Soreness or pain?</string>
     <!-- Tempo Selector -->
     <string name="tempo_selector_dialog_ok_cta">Ok</string>
     <string name="tempo_selector_dialog_what_mean_title">What do these mean?</string>
-    <string name="tempo_selector_with_tempo_text">With a tempo of...</string>
+    <string name="tempo_selector_with_tempo_text">Tempo</string>
     <string name="tempo_selector_dialog_title">What is Tempo?</string>
     <string name="tempo_selector_ecc_title">Ecc (Down)</string>
     <string name="tempo_selector_iso_title">Iso (Hold)</string>

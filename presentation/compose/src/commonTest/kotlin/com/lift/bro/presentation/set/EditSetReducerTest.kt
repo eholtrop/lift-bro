@@ -38,7 +38,6 @@ class EditSetReducerTest {
         assertNull(result)
     }
 
-
     @Test
     fun `Given state When RepChanged Then updates reps`() = runTest {
         // Given

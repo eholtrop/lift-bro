@@ -47,6 +47,7 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.toString
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
@@ -122,6 +123,17 @@ fun Calendar(
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
     dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit = { _, content -> content() },
     dateSelected: (LocalDate) -> Unit,
+    title: @Composable () -> Unit = {
+        CalendarTitle(
+            modifier = Modifier.padding(
+                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
+                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
+            ),
+            pagerState = pagerState,
+            date = selectedDate,
+            dateSelected = dateSelected,
+        )
+    },
     contentForMonth: @Composable (year: Int, month: Month) -> Unit = { year, month ->
         CalendarMonth(
             year = year,
@@ -137,6 +149,8 @@ fun Calendar(
     Column(
         modifier = modifier,
     ) {
+        title()
+        Space(MaterialTheme.spacing.half)
         CalendarContent(
             pagerState = pagerState,
             selection = selectedDate,
@@ -148,6 +162,104 @@ fun Calendar(
 }
 
 val today get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+@Composable
+private fun CalendarTitle(
+    modifier: Modifier = Modifier,
+    pagerState: PagerState,
+    date: LocalDate,
+    dateSelected: (LocalDate) -> Unit,
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+) {
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            modifier = Modifier.semantics { heading() }
+        ) {
+            AnimatedText(
+                text = pagerState.currentMonth.toString("MMMM"),
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            AnimatedText(
+                text = pagerState.currentMonth.toString("yyyy"),
+                style = MaterialTheme.typography.bodyMedium,
+                transitionForChar = { char, index ->
+                    if (char.isDigit()) {
+                        AnimatedTextDefaults.slideInOut(this, char, index)
+                    } else {
+                        EnterTransition.None togetherWith ExitTransition.None
+                    }
+                }
+            )
+        }
+
+        Space()
+
+        AnimatedVisibility(
+            visible = date != today,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Button(
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                ),
+                onClick = {
+                    dateSelected(today)
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(CALENDAR_INITIAL_PAGE)
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.CalendarToday,
+                    contentDescription = "Today",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
+
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+            ),
+            onClick = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                }
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Previous Month",
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+
+        Button(
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+            ),
+            onClick = {
+                coroutineScope.launch {
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                }
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription = "Next Month",
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
+}
 
 @Composable
 private fun CalendarContent(
@@ -163,100 +275,6 @@ private fun CalendarContent(
     Column(
         modifier = modifier,
     ) {
-        Row(
-            modifier = Modifier.padding(
-                start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),
-                end = contentPadding.calculateEndPadding(LocalLayoutDirection.current)
-            ),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier.semantics { heading() }
-            ) {
-                AnimatedText(
-                    text = pagerState.currentMonth.toString("MMMM"),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-
-                AnimatedText(
-                    text = pagerState.currentMonth.toString("yyyy"),
-                    style = MaterialTheme.typography.bodyMedium,
-                    transitionForChar = { char, index ->
-                        if (char.isDigit()) {
-                            AnimatedTextDefaults.slideInOut(this, char, index)
-                        } else {
-                            EnterTransition.None togetherWith ExitTransition.None
-                        }
-                    }
-                )
-            }
-
-            Space()
-
-            AnimatedVisibility(
-                visible = selection != today,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Button(
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.Transparent,
-                        disabledContainerColor = Color.Transparent,
-                    ),
-                    onClick = {
-                        dateSelected(today)
-                        coroutineScope.launch {
-                            pagerState.animateScrollToPage(CALENDAR_INITIAL_PAGE)
-                        }
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.CalendarToday,
-                        contentDescription = "Today",
-                        tint = MaterialTheme.colorScheme.primary,
-                    )
-                }
-            }
-
-            Button(
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                ),
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                    }
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Previous Month",
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            }
-
-            Button(
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-                ),
-                onClick = {
-                    coroutineScope.launch {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                    }
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowForward,
-                    contentDescription = "Next Month",
-                    tint = MaterialTheme.colorScheme.primary,
-                )
-            }
-        }
-
-        Space(MaterialTheme.spacing.half)
-
         Row(
             modifier = Modifier.padding(
                 start = contentPadding.calculateStartPadding(LocalLayoutDirection.current),

@@ -3,9 +3,11 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
-    <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; eccentric != null &amp;&amp; isometric != null &amp;&amp; concentric != null &amp;&amp; weight != null</ID>
+    <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
+    <ID>ComplexCondition:EditSetScreen.kt$showNotes &amp;&amp; showRpe &amp;&amp; showTempo &amp;&amp; showDate</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
+    <ID>CyclomaticComplexMethod:EditSetScreen.kt$@Composable fun EditSetScreenV2( state: EditSetState, sendEvent: (EditSetEvent) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
@@ -33,7 +35,7 @@
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
     <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, flow7: Flow&lt;T7&gt;, transform: suspend (T1, T2, T3, T4, T5, T6, T7) -&gt; R )</ID>
     <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, transform: suspend (T1, T2, T3, T4, T5, T6) -&gt; R )</ID>
-    <ID>LongParameterList:TempoSelector.kt$( modifier: Modifier = Modifier, down: Int?, hold: Int?, up: Int?, downChanged: (Int?) -&gt; Unit, holdChanged: (Int?) -&gt; Unit, upChanged: (Int?) -&gt; Unit, )</ID>
+    <ID>LongParameterList:RepWeightSelector.kt$( modifier: Modifier = Modifier, weight: Double?, reps: Long?, rpe: Int?, repChanged: (Long?) -&gt; Unit, weightChanged: (Double?) -&gt; Unit, rpeChanged: (Int?) -&gt; Unit, )</ID>
     <ID>MagicNumber:App.kt$1000</ID>
     <ID>MagicNumber:App.kt$2000</ID>
     <ID>MagicNumber:App.kt$20f</ID>
@@ -93,6 +95,13 @@
     <ID>MagicNumber:DebugBackup.kt$252</ID>
     <ID>MagicNumber:DebugBackup.kt$72</ID>
     <ID>MagicNumber:EditLiftScreen.kt$11</ID>
+    <ID>MagicNumber:EditSetScreen.kt$7</ID>
+    <ID>MagicNumber:EditSetScreen.kt$RPE.Eight$8</ID>
+    <ID>MagicNumber:EditSetScreen.kt$RPE.Five$5</ID>
+    <ID>MagicNumber:EditSetScreen.kt$RPE.Nine$9</ID>
+    <ID>MagicNumber:EditSetScreen.kt$RPE.Seven$7</ID>
+    <ID>MagicNumber:EditSetScreen.kt$RPE.Six$6</ID>
+    <ID>MagicNumber:EditSetScreen.kt$RPE.Ten$10</ID>
     <ID>MagicNumber:FlowExt.kt$3</ID>
     <ID>MagicNumber:FlowExt.kt$4</ID>
     <ID>MagicNumber:FlowExt.kt$5</ID>
@@ -186,10 +195,10 @@
     <ID>MaxLineLength:App.kt$LocalTwmSettings provides (twmSettings &amp;&amp; (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug))</ID>
     <ID>MaxLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$fun</ID>
     <ID>MaxLineLength:DashboardInteractor.kt$(item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id &amp;&amp; it.favourite</ID>
-    <ID>MaxLineLength:EditSetInteractor.kt$EditSetState$val saveEnabled: Boolean get() = variation != null &amp;&amp; reps != null &amp;&amp; eccentric != null &amp;&amp; isometric != null &amp;&amp; concentric != null &amp;&amp; weight != null</ID>
     <ID>MaxLineLength:EditSetInteractor.kt$if</ID>
-    <ID>MaxLineLength:EditSetInteractor.kt$maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null</ID>
     <ID>MaxLineLength:EditSetInteractor.kt$sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -&gt; if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }</ID>
+    <ID>MaxLineLength:EditSetScreen.kt$color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground</ID>
+    <ID>MaxLineLength:EditSetScreen.kt$val bottomPadding = if (showNotes &amp;&amp; showRpe &amp;&amp; showTempo &amp;&amp; showDate) MaterialTheme.spacing.half else MaterialTheme.spacing.one</ID>
     <ID>MaxLineLength:LiftCard.kt$mutableStateMapOf&lt;LocalDate, Pair&lt;Animatable&lt;Offset, AnimationVector2D&gt;, Animatable&lt;Float, AnimationVector1D&gt;?&gt;&gt;()</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder</ID>
@@ -210,7 +219,7 @@
     <ID>MaximumLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$ </ID>
     <ID>MaximumLineLength:DashboardInteractor.kt$ </ID>
     <ID>MaximumLineLength:EditSetInteractor.kt$ </ID>
-    <ID>MaximumLineLength:EditSetInteractor.kt$EditSetState$ </ID>
+    <ID>MaximumLineLength:EditSetScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftCard.kt$ </ID>
     <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
@@ -239,7 +248,11 @@
     <ID>TooManyFunctions:LBDatabase.kt$SetDataSource</ID>
     <ID>TooManyFunctions:SettingsRepository.kt$SettingsRepository : ISettingsRepository</ID>
     <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
+    <ID>UnusedParameter:Calendar.kt$dateSelected: (LocalDate) -&gt; Unit</ID>
+    <ID>UnusedParameter:Calendar.kt$selection: LocalDate?</ID>
     <ID>UnusedParameter:EditLiftScreen.kt$liftSaved: () -&gt; Unit</ID>
+    <ID>UnusedParameter:EditSetInteractor.kt$date: Instant?</ID>
+    <ID>UnusedParameter:EditSetInteractor.kt$variationId: String?</ID>
     <ID>UnusedParameter:EmptyHomeScreen.kt$loadDefaultLifts: () -&gt; Unit</ID>
     <ID>UnusedParameter:LineGraph.kt$maxX: LocalDate = graphData.maxOf { it.first }</ID>
     <ID>UnusedParameter:WeightSelector.kt$Confetti.Companion$height: Float</ID>
