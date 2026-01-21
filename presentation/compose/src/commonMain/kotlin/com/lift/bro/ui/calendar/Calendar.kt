@@ -116,11 +116,11 @@ fun rememberCalendarState() = rememberPagerState(
 fun Calendar(
     modifier: Modifier = Modifier,
     selectedDate: LocalDate,
-    contentPadding: PaddingValues,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
     pagerState: PagerState = rememberCalendarState(),
     horizontalArrangement: Arrangement.Horizontal = Arrangement.spacedBy(0.dp),
     verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(0.dp),
-    dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit,
+    dateDecorations: @Composable (LocalDate, @Composable () -> Unit) -> Unit = { _, content -> content() },
     dateSelected: (LocalDate) -> Unit,
     contentForMonth: @Composable (year: Int, month: Month) -> Unit = { year, month ->
         CalendarMonth(

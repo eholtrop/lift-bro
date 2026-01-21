@@ -51,8 +51,7 @@ internal fun PreviewAppTheme(
             theme = if (isDarkMode) ThemeMode.Dark else ThemeMode.Light
         ) {
             Column(
-                modifier = Modifier.padding(MaterialTheme.spacing.one),
-                Arrangement.spacedBy(MaterialTheme.spacing.one)
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
             ) {
                 content()
             }

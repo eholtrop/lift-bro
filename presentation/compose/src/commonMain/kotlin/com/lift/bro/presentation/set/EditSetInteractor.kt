@@ -18,7 +18,9 @@ import com.lift.bro.presentation.SideEffect
 import com.lift.bro.presentation.rememberInteractor
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
+import com.lift.bro.utils.debug
 import com.lift.bro.utils.fullName
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -37,43 +39,54 @@ data class EditSetMaxPercentageState(
 @Serializable
 data class EditSetState(
     val id: String?,
-    val variation: Variation? = null,
     val weight: Double? = null,
     val reps: Long? = null,
-    val eccentric: Long? = 3,
-    val isometric: Long? = 1,
-    val concentric: Long? = 1,
-    val date: Instant = Clock.System.now(),
-    val notes: String = "",
     val rpe: Int? = null,
+    val tempo: TempoState = TempoState(),
+    val mers: Int? = null,
+    val eMax: Int? = null,
+    val tMax: Int? = null,
+    val notes: String = "",
+    val totalWeightMoved: Double? = null,
+    val date: Instant = Clock.System.now(),
+    val variation: SetVariation? = null,
+) {
+    val saveEnabled: Boolean get() = variation != null && reps != null && tempo != null && weight != null
+}
+
+@Serializable
+data class SetVariation(
+    val variation: Variation,
     val variationMaxPercentage: EditSetMaxPercentageState? = null,
     val liftMaxPercentage: EditSetMaxPercentageState? = null,
-) {
-    val saveEnabled: Boolean get() = variation != null && reps != null && eccentric != null && isometric != null && concentric != null && weight != null
-}
+)
+
+@Serializable
+data class TempoState(
+    val ecc: Long? = 3,
+    val iso: Long? = 1,
+    val con: Long? = 1,
+)
 
 sealed interface EditSetEvent {
-    data class VariationSelected(val variationId: String) : EditSetEvent
+    data class VariationSelected(val variation: Variation): EditSetEvent
 
-    data class DateSelected(val date: Instant) : EditSetEvent
+    data class DateSelected(val date: Instant): EditSetEvent
 
-    data object DeleteSetClicked : EditSetEvent
+    data object DeleteSetClicked: EditSetEvent
 
-    data class RepChanged(val reps: Long?) : EditSetEvent
+    data class RepChanged(val reps: Long?): EditSetEvent
 
-    data class WeightChanged(val weight: Double?) : EditSetEvent
+    data class WeightChanged(val weight: Double?): EditSetEvent
 
-    data class RpeChanged(val rpe: Int?) : EditSetEvent
+    data class RpeChanged(val rpe: Int?): EditSetEvent
 
-    data class EccChanged(val ecc: Int?) : EditSetEvent
+    data class TempoChanged(val tempo: TempoState): EditSetEvent
 
-    data class IsoChanged(val iso: Int?) : EditSetEvent
-
-    data class ConChanged(val con: Int?) : EditSetEvent
-
-    data class NotesChanged(val notes: String) : EditSetEvent
+    data class NotesChanged(val notes: String): EditSetEvent
 }
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun rememberEditSetInteractor(
     setId: String,
@@ -91,6 +104,7 @@ fun rememberEditSetInteractor(
                     }
                 } else {
                     variationRepository.listen(set.variationId)
+                        .debug("DEBUGEH")
                         .flatMapLatest { variation ->
                             combine(
                                 setRepository.listenAll(
@@ -118,6 +132,7 @@ fun rememberEditSetInteractor(
     sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun rememberCreateSetInteractor(
     variationId: String?,
@@ -134,7 +149,11 @@ fun rememberCreateSetInteractor(
                         set?.toUiState(variation, null, null) ?: EditSetState(
                             id = id,
                             date = date ?: Clock.System.now(),
-                            variation = variation
+                            variation = variation?.let {
+                                SetVariation(
+                                    variation = variation
+                                )
+                            }
                         )
                     }
                 }
@@ -149,26 +168,35 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
         is EditSetEvent.WeightChanged -> state?.copy(weight = event.weight)
         is EditSetEvent.RepChanged -> state?.copy(reps = event.reps)
         is EditSetEvent.RpeChanged -> state?.copy(rpe = event.rpe)
-        is EditSetEvent.EccChanged -> state?.copy(eccentric = event.ecc?.toLong())
-        is EditSetEvent.IsoChanged -> state?.copy(isometric = event.iso?.toLong())
-        is EditSetEvent.ConChanged -> state?.copy(concentric = event.con?.toLong())
+        is EditSetEvent.TempoChanged -> state?.copy(tempo = event.tempo)
         is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
-        is EditSetEvent.VariationSelected -> state?.copy(variation = Variation(event.variationId))
+        is EditSetEvent.VariationSelected -> state?.copy(
+            variation = SetVariation(
+                variation = event.variation,
+                variationMaxPercentage = null,
+                liftMaxPercentage = null
+            )
+        )
         is EditSetEvent.DateSelected -> state?.copy(date = event.date)
         EditSetEvent.DeleteSetClicked -> state
     }
 }
 
 fun editSetSideEffects(
-    setRepository: ISetRepository = dependencies.setRepository
+    setRepository: ISetRepository = dependencies.setRepository,
 ): SideEffect<EditSetState?, EditSetEvent> = { state, event ->
-    if (event is EditSetEvent.DeleteSetClicked) {
-        state?.toDomain()?.let {
-            setRepository.delete(it)
+    when (event) {
+        is EditSetEvent.DeleteSetClicked -> {
+            state?.toDomain()?.let {
+                setRepository.delete(it)
+            }
         }
-    } else if (state?.saveEnabled == true) {
-        state.toDomain()?.let {
-            setRepository.save(it)
+        else -> {
+            if (state?.saveEnabled == true) {
+                state.toDomain()?.let {
+                    setRepository.save(it)
+                }
+            }
         }
     }
 }
@@ -179,40 +207,45 @@ internal suspend fun LBSet.toUiState(
     maxLiftSet: LBSet?,
 ) = EditSetState(
     id = this.id,
-    variation = variation,
+    variation = SetVariation(
+        variation = Variation(id = this.variationId),
+        variationMaxPercentage = maxVariationSet?.let {
+            EditSetMaxPercentageState(
+                percentage = ((this.weight / maxVariationSet.weight) * 100).toInt(),
+                variationName = variation?.fullName ?: ""
+            )
+        },
+        liftMaxPercentage = maxLiftSet?.let {
+            EditSetMaxPercentageState(
+                percentage = ((this.weight / maxLiftSet.weight) * 100).toInt(),
+                variationName = dependencies.liftRepository.get(variation?.lift?.id).firstOrNull()?.name ?: ""
+            )
+        }
+    ),
     weight = this.weight,
     reps = this.reps,
-    eccentric = this.tempo.down,
-    isometric = this.tempo.hold,
-    concentric = this.tempo.up,
+    tempo = TempoState(
+        ecc = this.tempo.down,
+        iso = this.tempo.hold,
+        con = this.tempo.up
+    ),
     date = this.date,
     notes = this.notes,
     rpe = this.rpe,
-    variationMaxPercentage = maxVariationSet?.let {
-        EditSetMaxPercentageState(
-            percentage = ((this.weight / maxVariationSet.weight) * 100).toInt(),
-            variationName = variation?.fullName ?: ""
-        )
-    },
-    liftMaxPercentage = maxLiftSet?.let {
-        EditSetMaxPercentageState(
-            percentage = ((this.weight / maxLiftSet.weight) * 100).toInt(),
-            variationName = dependencies.liftRepository.get(variation?.lift?.id).firstOrNull()?.name ?: ""
-        )
-    }
-)
+
+    )
 
 internal fun EditSetState.toDomain(): LBSet? =
-    if (this.id != null && variation != null && reps != null && eccentric != null && isometric != null && concentric != null && weight != null) {
+    if (this.id != null && variation != null && reps != null && tempo.ecc != null && tempo.iso != null && tempo.con != null && weight != null) {
         LBSet(
             id = this.id,
-            variationId = this.variation.id,
+            variationId = this.variation.variation.id,
             weight = this.weight,
             reps = this.reps,
             tempo = Tempo(
-                down = this.eccentric,
-                hold = this.isometric,
-                up = this.concentric
+                down = this.tempo.ecc,
+                hold = this.tempo.iso,
+                up = this.tempo.con,
             ),
             date = this.date,
             notes = this.notes,

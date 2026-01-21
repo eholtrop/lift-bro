@@ -44,6 +44,8 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.rep_weight_selector_info_p1
@@ -77,11 +79,32 @@ import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_8
 import lift_bro.core.generated.resources.rep_weight_selector_table_rpe_9
 import lift_bro.core.generated.resources.rep_weight_selector_times_symbol
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+
+@Preview
+@Composable
+fun RepWeightSelectorPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boolean) {
+    PreviewAppTheme(
+        isDarkMode = darkMode
+    ) {
+        RepWeightSelector(
+            weight = 120.0,
+            reps = 12L,
+            rpe = 3,
+            repChanged = {},
+            weightChanged = {},
+            rpeChanged = {}
+        )
+    }
+}
 
 @Composable
 fun RepWeightSelector(
     modifier: Modifier = Modifier,
-    set: EditSetState,
+    weight: Double?,
+    reps: Long?,
+    rpe: Int?,
     repChanged: (Long?) -> Unit,
     weightChanged: (Double?) -> Unit,
     rpeChanged: (Int?) -> Unit,
@@ -95,8 +118,8 @@ fun RepWeightSelector(
     ) {
         RepWeightTextField(
             modifier = Modifier.testTag("reps"),
-            value = set.reps?.toString(),
-            error = set.reps == null,
+            value = reps?.toString(),
+            error = reps == null,
             onValueChanged = {
                 if (it.isBlank()) {
                     repChanged(null)
@@ -117,8 +140,8 @@ fun RepWeightSelector(
 
         RepWeightTextField(
             modifier = Modifier.testTag("weight"),
-            value = set.weight.decimalFormat(),
-            error = set.weight == null,
+            value = weight.decimalFormat(),
+            error = weight == null,
             onValueChanged = {
                 weightChanged(it.toDoubleOrNull())
             },
@@ -134,7 +157,7 @@ fun RepWeightSelector(
 
         RepWeightTextField(
             modifier = Modifier.testTag("rpe"),
-            value = set.rpe?.toString() ?: "",
+            value = rpe?.toString() ?: "",
             onValueChanged = {
                 rpeChanged(it.toIntOrNull())
             },
@@ -262,6 +285,10 @@ private fun RepWeightTextField(
                     focusState?.isFocused == true -> MaterialTheme.colorScheme.secondary
                     else -> MaterialTheme.colorScheme.onBackground
                 }
+            )
+            .background(
+                color = MaterialTheme.colorScheme.background,
+                shape = MaterialTheme.shapes.small
             )
             .padding(
                 horizontal = MaterialTheme.spacing.half,

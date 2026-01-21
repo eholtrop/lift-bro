@@ -8,6 +8,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
+import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -54,6 +56,7 @@ fun NumberPicker(
         modifier = modifier.onFocusChanged {
             focus = it.isFocused
         },
+        colors = TextFieldDefaults.transparentColors(),
         suffix = suffix,
         prefix = prefix,
         value = value,

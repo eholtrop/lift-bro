@@ -38,6 +38,7 @@ class EditSetReducerTest {
         assertNull(result)
     }
 
+
     @Test
     fun `Given state When RepChanged Then updates reps`() = runTest {
         // Given
@@ -98,7 +99,7 @@ class EditSetReducerTest {
     fun `Given state When ConChanged Then updates concentric`() = runTest {
         // Given
         val state = EditSetState(id = "1", concentric = 1)
-        val event = EditSetEvent.ConChanged(3)
+        val event = EditSetEvent.TempoChanged(3)
 
         // When
         val result = EditSetReducer(state, event)
