@@ -1,7 +1,7 @@
 package com.lift.bro.utils
 
-import com.lift.bro.utils.logger.Log
-import com.lift.bro.utils.logger.d
+import com.lift.bro.logging.Log
+import com.lift.bro.logging.d
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map

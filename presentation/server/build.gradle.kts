@@ -14,6 +14,7 @@ kotlin {
             // NEED TO REFACTOR LOCATION OF DEPENDENCY CONTAINER TO FIX THIS
             implementation(project(":presentation:compose"))
             implementation(project(":domain"))
+            implementation(project(":libs:logging"))
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization)

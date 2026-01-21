@@ -9,6 +9,8 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
+import com.lift.bro.logging.Log
+import com.lift.bro.logging.d
 import comliftbrodb.GetAllSets
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
@@ -23,7 +25,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
-import kotlin.collections.map
 import kotlin.math.min
 
 class SqldelightSetDataSource(

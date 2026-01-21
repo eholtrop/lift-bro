@@ -52,6 +52,7 @@ kotlin {
             implementation(project(":data:client"))
             implementation(project(":data:core"))
             implementation(project(":libs:mvi"))
+            implementation(project(":libs:logging"))
 
 
             // Compose Multiplatform
