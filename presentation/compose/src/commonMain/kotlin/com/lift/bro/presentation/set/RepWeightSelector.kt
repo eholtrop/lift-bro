@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.dialog.InfoDialog
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.AccessibilityMinimumSize
@@ -94,7 +95,17 @@ fun RepWeightSelectorPreview(@PreviewParameter(DarkModeProvider::class) darkMode
             rpe = 3,
             repChanged = {},
             weightChanged = {},
-            rpeChanged = {}
+            rpeChanged = {},
+            showRpe = true
+        )
+        RepWeightSelector(
+            weight = 120.0,
+            reps = 12L,
+            rpe = 3,
+            repChanged = {},
+            weightChanged = {},
+            rpeChanged = {},
+            showRpe = false
         )
     }
 }
@@ -105,6 +116,7 @@ fun RepWeightSelector(
     weight: Double?,
     reps: Long?,
     rpe: Int?,
+    showRpe: Boolean,
     repChanged: (Long?) -> Unit,
     weightChanged: (Double?) -> Unit,
     rpeChanged: (Int?) -> Unit,
@@ -148,108 +160,136 @@ fun RepWeightSelector(
             keyboardType = KeyboardType.Decimal
         )
 
+        if (showRpe) {
+            Space(MaterialTheme.spacing.half)
+
+            Text(
+                text = "${LocalUnitOfMeasure.current.value} at",
+                style = MaterialTheme.typography.titleLarge,
+            )
+
+            Space(MaterialTheme.spacing.half)
+
+            RepWeightTextField(
+                modifier = Modifier.testTag("rpe"),
+                value = rpe?.toString() ?: "",
+                onValueChanged = {
+                    rpeChanged(it.toIntOrNull())
+                },
+                keyboardType = KeyboardType.Number,
+                placeholder = {
+                    Text(stringResource(Res.string.rep_weight_selector_rpe_placeholder))
+                }
+            )
+            RpeInfoDialogButton()
+        } else {
+            Space(MaterialTheme.spacing.half)
+            Text(
+                text = LocalUnitOfMeasure.current.value,
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
+    }
+}
+
+@Composable
+fun RepInfoDialogMessage() {
+    Column {
+        Text(stringResource(Res.string.rep_weight_selector_info_p1))
+        Text(stringResource(Res.string.rep_weight_selector_info_p2))
         Space(MaterialTheme.spacing.half)
+        CompositionLocalProvider(
+            LocalContentColor provides MaterialTheme.colorScheme.onSurface
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .background(
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        shape = MaterialTheme.shapes.medium
+                    )
+                    .padding(vertical = MaterialTheme.spacing.quarter),
+            ) {
+                CompositionLocalProvider(
 
-        Text(
-            text = "${LocalUnitOfMeasure.current.value} at",
-            style = MaterialTheme.typography.titleLarge,
-        )
-
-        Space(MaterialTheme.spacing.half)
-
-        RepWeightTextField(
-            modifier = Modifier.testTag("rpe"),
-            value = rpe?.toString() ?: "",
-            onValueChanged = {
-                rpeChanged(it.toIntOrNull())
-            },
-            keyboardType = KeyboardType.Number,
-            placeholder = {
-                Text(stringResource(Res.string.rep_weight_selector_rpe_placeholder))
-            }
-        )
-
-        InfoDialogButton(
-            dialogTitle = { Text(stringResource(Res.string.rep_weight_selector_info_title)) },
-            dialogMessage = {
-                Column {
-                    Text(stringResource(Res.string.rep_weight_selector_info_p1))
-                    Text(stringResource(Res.string.rep_weight_selector_info_p2))
-                    Space(MaterialTheme.spacing.half)
-                    CompositionLocalProvider(
-                        LocalContentColor provides MaterialTheme.colorScheme.onSurface
+                    LocalContentColor provides Color.DarkGray,
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                                .background(
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    shape = MaterialTheme.shapes.medium
-                                )
-                                .padding(vertical = MaterialTheme.spacing.quarter),
-                        ) {
-                            CompositionLocalProvider(
-
-                                LocalContentColor provides Color.DarkGray,
-                            ) {
-                                Column(
-                                    modifier = Modifier.weight(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Text(stringResource(Res.string.rep_weight_selector_table_col_rpe))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_10))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_9))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_8))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_7))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_6))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_5))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rpe_1_4))
-                                }
-                                Column(
-                                    modifier = Modifier.weight(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Text(stringResource(Res.string.rep_weight_selector_table_col_rir))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_0))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_1))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_2))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_3))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_4))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_5_6))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_rir_6_plus))
-                                }
-                                Column(
-                                    modifier = Modifier.weight(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Text(stringResource(Res.string.rep_weight_selector_table_col_percent))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_100))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_95))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_90))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_85))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_75))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_60))
-                                    Text(stringResource(Res.string.rep_weight_selector_table_percent_50))
-                                }
-                                Column(
-                                    modifier = Modifier.weight(1f),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Text(stringResource(Res.string.rep_weight_selector_table_col_vibe))
-                                    Text("\uD83D\uDC80")
-                                    Text("\uD83E\uDD75")
-                                    Text("\uD83D\uDE30")
-                                    Text("\uD83D\uDE05")
-                                    Text("\uD83D\uDCAA")
-                                    Text("\uD83D\uDE42")
-                                    Text("\uD83E\uDD29")
-                                }
-                            }
-                        }
+                        Text(stringResource(Res.string.rep_weight_selector_table_col_rpe))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_10))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_9))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_8))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_7))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_6))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_5))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_1_4))
+                    }
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(stringResource(Res.string.rep_weight_selector_table_col_rir))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rir_0))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rir_1))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rir_2))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rir_3))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rir_4))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rir_5_6))
+                        Text(stringResource(Res.string.rep_weight_selector_table_rir_6_plus))
+                    }
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(stringResource(Res.string.rep_weight_selector_table_col_percent))
+                        Text(stringResource(Res.string.rep_weight_selector_table_percent_100))
+                        Text(stringResource(Res.string.rep_weight_selector_table_percent_95))
+                        Text(stringResource(Res.string.rep_weight_selector_table_percent_90))
+                        Text(stringResource(Res.string.rep_weight_selector_table_percent_85))
+                        Text(stringResource(Res.string.rep_weight_selector_table_percent_75))
+                        Text(stringResource(Res.string.rep_weight_selector_table_percent_60))
+                        Text(stringResource(Res.string.rep_weight_selector_table_percent_50))
+                    }
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(stringResource(Res.string.rep_weight_selector_table_col_vibe))
+                        Text("\uD83D\uDC80")
+                        Text("\uD83E\uDD75")
+                        Text("\uD83D\uDE30")
+                        Text("\uD83D\uDE05")
+                        Text("\uD83D\uDCAA")
+                        Text("\uD83D\uDE42")
+                        Text("\uD83E\uDD29")
                     }
                 }
             }
-        )
+        }
     }
+}
+
+@Composable
+fun RpeInfoDialogButton() {
+    InfoDialogButton(
+        dialogTitle = { Text(stringResource(Res.string.rep_weight_selector_info_title)) },
+        dialogMessage = {
+            RepInfoDialogMessage()
+        }
+    )
+}
+
+@Composable
+fun RpeInfoDialog(
+    onDismissRequest: () -> Unit,
+) {
+    InfoDialog(
+        title = { Text(stringResource(Res.string.rep_weight_selector_info_title)) },
+        message = { RepInfoDialogMessage() },
+        onDismissRequest = onDismissRequest,
+    )
 }
 
 data class RepWeightColorDefaults(

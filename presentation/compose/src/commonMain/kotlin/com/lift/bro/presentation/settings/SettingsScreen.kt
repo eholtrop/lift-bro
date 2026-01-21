@@ -90,7 +90,7 @@ fun SettingsScreen() {
                 )
             }
             val localServer = LocalServer.current
-            val showPro = LocalPlatformContext.current == null // (this means its iOS)
+            val showPro = LocalPlatformContext.current != null // (this means its iOS)
 
             LazyColumn(
                 modifier = Modifier.padding(padding),
