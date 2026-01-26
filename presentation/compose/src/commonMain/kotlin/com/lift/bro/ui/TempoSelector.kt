@@ -1,14 +1,21 @@
 package com.lift.bro.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.set.TempoState
+import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -18,6 +25,7 @@ import lift_bro.core.generated.resources.tempo_selector_con_title
 import lift_bro.core.generated.resources.tempo_selector_concentric_examples
 import lift_bro.core.generated.resources.tempo_selector_concentric_subtitle
 import lift_bro.core.generated.resources.tempo_selector_concentric_title
+import lift_bro.core.generated.resources.tempo_selector_dialog_title
 import lift_bro.core.generated.resources.tempo_selector_ecc_title
 import lift_bro.core.generated.resources.tempo_selector_eccentric_examples
 import lift_bro.core.generated.resources.tempo_selector_eccentric_subtitle
@@ -26,6 +34,7 @@ import lift_bro.core.generated.resources.tempo_selector_iso_title
 import lift_bro.core.generated.resources.tempo_selector_isometric_examples
 import lift_bro.core.generated.resources.tempo_selector_isometric_subtitle
 import lift_bro.core.generated.resources.tempo_selector_isometric_title
+import lift_bro.core.generated.resources.tempo_selector_with_tempo_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -39,25 +48,54 @@ fun TempoSelector(
     Column(
         modifier = modifier,
     ) {
-        Row {
-            NumberPicker(
-                modifier = Modifier.weight(.33f).height(52.dp),
-                title = stringResource(Res.string.tempo_selector_ecc_title),
-                selectedNum = tempo.ecc?.toInt(),
-                numberChanged = { tempoChanged(tempo.copy(ecc = it?.toLong())) }
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.padding(start = MaterialTheme.spacing.half),
+                text = stringResource(Res.string.tempo_selector_with_tempo_text),
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onBackground
             )
-            NumberPicker(
-                modifier = Modifier.weight(.33f).height(52.dp),
-                title = stringResource(Res.string.tempo_selector_iso_title),
-                selectedNum = tempo.iso?.toInt(),
-                numberChanged = { tempoChanged(tempo.copy(iso = it?.toLong())) }
+            Space(MaterialTheme.spacing.half)
+            InfoDialogButton(
+                modifier = Modifier.size(16.dp),
+                dialogTitle = { Text(stringResource(Res.string.tempo_selector_dialog_title)) },
+                dialogMessage = { TempoInfoDialogText() }
             )
-            NumberPicker(
-                modifier = Modifier.weight(.33f).height(52.dp),
-                title = stringResource(Res.string.tempo_selector_con_title),
-                selectedNum = tempo.con?.toInt(),
-                numberChanged = { tempoChanged(tempo.copy(con = it?.toLong())) }
-            )
+        }
+        Column(
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = MaterialTheme.shapes.small,
+                )
+                .border(
+                    color = MaterialTheme.colorScheme.onSurface,
+                    width = 1.dp,
+                    shape = MaterialTheme.shapes.small
+                ).clip(MaterialTheme.shapes.small),
+        ) {
+            Row {
+                NumberPicker(
+                    modifier = Modifier.weight(.33f).height(52.dp),
+                    title = stringResource(Res.string.tempo_selector_ecc_title),
+                    selectedNum = tempo.ecc?.toInt(),
+                    numberChanged = { tempoChanged(tempo.copy(ecc = it?.toLong())) }
+                )
+                NumberPicker(
+                    modifier = Modifier.weight(.33f).height(52.dp),
+                    title = stringResource(Res.string.tempo_selector_iso_title),
+                    selectedNum = tempo.iso?.toInt(),
+                    numberChanged = { tempoChanged(tempo.copy(iso = it?.toLong())) }
+                )
+                NumberPicker(
+                    modifier = Modifier.weight(.33f).height(52.dp),
+                    title = stringResource(Res.string.tempo_selector_con_title),
+                    selectedNum = tempo.con?.toInt(),
+                    numberChanged = { tempoChanged(tempo.copy(con = it?.toLong())) }
+                )
+            }
         }
     }
 }

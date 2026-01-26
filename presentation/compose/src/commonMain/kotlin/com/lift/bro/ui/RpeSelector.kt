@@ -62,6 +62,7 @@ fun RpeSelector(
                 .defaultMinSize(minHeight = 48.dp, minWidth = 48.dp)
                 .padding(
                     horizontal = MaterialTheme.spacing.half,
+                    vertical = MaterialTheme.spacing.quarter,
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,

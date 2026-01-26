@@ -56,7 +56,9 @@ fun NumberPicker(
         modifier = modifier.onFocusChanged {
             focus = it.isFocused
         },
-        colors = TextFieldDefaults.transparentColors(),
+        colors = TextFieldDefaults.transparentColors(
+
+        ),
         suffix = suffix,
         prefix = prefix,
         value = value,
