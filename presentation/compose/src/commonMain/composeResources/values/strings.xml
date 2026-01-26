@@ -257,7 +257,7 @@ Soreness or pain?</string>
     <string name="wrapped_goals_suggestion_arm_wrestle">Beat "The Rock" in an arm wrestling match</string>
     <string name="rep_weight_selector_table_rpe_7">7</string>
     <string name="rep_weight_selector_table_rpe_6">6</string>
-    <string name="rep_weight_selector_table_rpe_5">5</string>
+    <string name="rep_weight_selector_table_rpe_5">1-5</string>
     <string name="rep_weight_selector_table_rpe_1_4">1-4</string>
     <string name="rep_weight_selector_table_rir_0">0</string>
     <string name="rep_weight_selector_table_rir_1">1</string>

@@ -112,15 +112,19 @@ fun EditSetVariationSelector(
                                     }
                                 }
 
-                                if (LocalTwmSettings.current) {
-                                    appendLine()
-                                    append("TWM: ${weightFormat((state.weight ?: 0.0) * (state.reps ?: 0))}")
-                                }
+//                                if (LocalTwmSettings.current) {
+//                                    appendLine()
+//                                    withStyle(
+//                                        MaterialTheme.typography.titleSmall.toSpanStyle(),
+//                                    ) {
+//                                        append("+${state.mers ?: 0} MER(s)")
+////                                        append("TWM: ${weightFormat((state.weight ?: 0.0) * (state.reps ?: 0))}")
+//                                    }
+//                                }
 
-                                if (LocalShowMERCalcs.current?.enabled == true) {
-                                    appendLine()
-                                    append("+${state.mers ?: 0} MER(s)")
-                                }
+//                                if (LocalShowMERCalcs.current?.enabled == true) {
+//                                    appendLine()
+//                                }
                             }
                         }
                     )

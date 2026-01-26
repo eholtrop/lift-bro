@@ -1,9 +1,11 @@
 package com.lift.bro.presentation.set
 
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.utils.toLocalDate
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -69,43 +71,43 @@ class EditSetReducerTest {
     @Test
     fun `Given state When EccChanged Then updates eccentric`() = runTest {
         // Given
-        val state = EditSetState(id = "1", eccentric = 3)
-        val event = EditSetEvent.EccChanged(4)
+        val state = EditSetState(id = "1", tempo = TempoState(ecc = 3))
+        val event = EditSetEvent.TempoChanged(TempoState(ecc = 4))
 
         // When
         val result = EditSetReducer(state, event)
 
         // Then
         assertNotNull(result)
-        assertEquals(4L, result.eccentric)
+        assertEquals(4L, result.tempo.ecc)
     }
 
     @Test
     fun `Given state When IsoChanged Then updates isometric`() = runTest {
         // Given
-        val state = EditSetState(id = "1", isometric = 1)
-        val event = EditSetEvent.IsoChanged(2)
+        val state = EditSetState(id = "1", tempo = TempoState(iso = 1))
+        val event = EditSetEvent.TempoChanged(TempoState(iso = 2))
 
         // When
         val result = EditSetReducer(state, event)
 
         // Then
         assertNotNull(result)
-        assertEquals(2L, result.isometric)
+        assertEquals(2L, result.tempo.iso)
     }
 
     @Test
     fun `Given state When ConChanged Then updates concentric`() = runTest {
         // Given
-        val state = EditSetState(id = "1", concentric = 1)
-        val event = EditSetEvent.TempoChanged(3)
+        val state = EditSetState(id = "1", tempo = TempoState(con = 1))
+        val event = EditSetEvent.TempoChanged(TempoState(con = 3))
 
         // When
         val result = EditSetReducer(state, event)
 
         // Then
         assertNotNull(result)
-        assertEquals(3L, result.concentric)
+        assertEquals(3L, result.tempo.con)
     }
 
     @Test
@@ -126,7 +128,7 @@ class EditSetReducerTest {
     fun `Given state When VariationSelected Then updates variation`() = runTest {
         // Given
         val state = EditSetState(id = "1")
-        val event = EditSetEvent.VariationSelected("variation-123")
+        val event = EditSetEvent.VariationSelected(Variation("variation-123"))
 
         // When
         val result = EditSetReducer(state, event)
@@ -134,14 +136,14 @@ class EditSetReducerTest {
         // Then
         assertNotNull(result)
         assertNotNull(result.variation)
-        assertEquals("variation-123", result.variation.id)
+        assertEquals("variation-123", result.variation.variation.id)
     }
 
     @Test
     fun `Given state When DateSelected Then updates date`() = runTest {
         // Given
         val oldDate = Clock.System.now()
-        val newDate = Instant.fromEpochSeconds(1234567890)
+        val newDate = LocalDate(2023, 1, 1)
         val state = EditSetState(id = "1", date = oldDate)
         val event = EditSetEvent.DateSelected(newDate)
 
@@ -150,7 +152,7 @@ class EditSetReducerTest {
 
         // Then
         assertNotNull(result)
-        assertEquals(newDate, result.date)
+        assertEquals(newDate, result.date.toLocalDate())
     }
 
     @Test
@@ -172,12 +174,10 @@ class EditSetReducerTest {
         val variation = Variation(id = "v1", name = "Squat")
         val state = EditSetState(
             id = "1",
-            variation = variation,
+            variation = SetVariation(variation),
             weight = 100.0,
             reps = 5,
-            eccentric = 3,
-            isometric = 1,
-            concentric = 1,
+            tempo = TempoState(3, 1, 1),
             notes = "Test notes",
             rpe = 8
         )
@@ -189,11 +189,11 @@ class EditSetReducerTest {
         // Then
         assertNotNull(result)
         assertEquals(225.0, result.weight)
-        assertEquals(variation, result.variation)
+        assertEquals(variation, result.variation?.variation)
         assertEquals(5L, result.reps)
-        assertEquals(3L, result.eccentric)
-        assertEquals(1L, result.isometric)
-        assertEquals(1L, result.concentric)
+        assertEquals(3L, result.tempo.ecc)
+        assertEquals(1L, result.tempo.iso)
+        assertEquals(1L, result.tempo.con)
         assertEquals("Test notes", result.notes)
         assertEquals(8, result.rpe)
     }

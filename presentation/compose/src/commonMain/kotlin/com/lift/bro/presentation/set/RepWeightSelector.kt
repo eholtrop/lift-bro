@@ -1,5 +1,11 @@
 package com.lift.bro.presentation.set
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -39,11 +45,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialog
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.AccessibilityMinimumSize
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -107,6 +115,15 @@ fun RepWeightSelectorPreview(@PreviewParameter(DarkModeProvider::class) darkMode
             rpeChanged = {},
             showRpe = false
         )
+        RepWeightSelector(
+            weight = null,
+            reps = null,
+            rpe = null,
+            repChanged = {},
+            weightChanged = {},
+            rpeChanged = {},
+            showRpe = true
+        )
     }
 }
 
@@ -124,7 +141,7 @@ fun RepWeightSelector(
     Row(
         modifier = modifier.semantics(mergeDescendants = true) {
             // TODO: figure out the accessibility here
-        },
+        }.animateContentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -139,6 +156,7 @@ fun RepWeightSelector(
                     it.toLongOrNull()?.let(repChanged)
                 }
             },
+            placeholder = { Text("0") },
             keyboardType = KeyboardType.Number
         )
 
@@ -157,6 +175,7 @@ fun RepWeightSelector(
             onValueChanged = {
                 weightChanged(it.toDoubleOrNull())
             },
+            placeholder = { Text("0.0") },
             keyboardType = KeyboardType.Decimal
         )
 
@@ -188,12 +207,28 @@ fun RepWeightSelector(
                 text = LocalUnitOfMeasure.current.value,
                 style = MaterialTheme.typography.titleLarge,
             )
+            if (LocalTwmSettings.current) {
+                val twm = weight?.times(reps ?: 0L)
+
+                AnimatedVisibility(
+                    twm != null && twm > 0,
+                    enter = slideInHorizontally { it },
+                    exit = fadeOut(),
+//                    exit = slideOutHorizontally { it }
+                ) {
+                    Text(
+                        text = " = ${twm.decimalFormat()}",
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+            }
         }
     }
 }
 
 @Composable
 fun RepInfoDialogMessage() {
+    val sortedRpe = remember { RPE.entries.sortedByDescending { it.rpe } }
     Column {
         Text(stringResource(Res.string.rep_weight_selector_info_p1))
         Text(stringResource(Res.string.rep_weight_selector_info_p2))
@@ -213,57 +248,42 @@ fun RepInfoDialogMessage() {
 
                     LocalContentColor provides Color.DarkGray,
                 ) {
+
                     Column(
                         modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(stringResource(Res.string.rep_weight_selector_table_col_rpe))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_10))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_9))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_8))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_7))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_6))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_5))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rpe_1_4))
+                        sortedRpe.forEach { rpe ->
+                            Text(rpe.rpe.toString())
+                        }
                     }
                     Column(
                         modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(stringResource(Res.string.rep_weight_selector_table_col_rir))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rir_0))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rir_1))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rir_2))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rir_3))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rir_4))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rir_5_6))
-                        Text(stringResource(Res.string.rep_weight_selector_table_rir_6_plus))
+                        sortedRpe.forEachIndexed { index, rpe ->
+                            Text("${rpe.rir}${if (index == RPE.entries.size - 1) "+" else ""}")
+                        }
                     }
                     Column(
                         modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(stringResource(Res.string.rep_weight_selector_table_col_percent))
-                        Text(stringResource(Res.string.rep_weight_selector_table_percent_100))
-                        Text(stringResource(Res.string.rep_weight_selector_table_percent_95))
-                        Text(stringResource(Res.string.rep_weight_selector_table_percent_90))
-                        Text(stringResource(Res.string.rep_weight_selector_table_percent_85))
-                        Text(stringResource(Res.string.rep_weight_selector_table_percent_75))
-                        Text(stringResource(Res.string.rep_weight_selector_table_percent_60))
-                        Text(stringResource(Res.string.rep_weight_selector_table_percent_50))
+                        sortedRpe.forEachIndexed { index, rpe ->
+                            Text((rpe.percentMax * 100).toInt().toString())
+                        }
                     }
                     Column(
                         modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Text(stringResource(Res.string.rep_weight_selector_table_col_vibe))
-                        Text("\uD83D\uDC80")
-                        Text("\uD83E\uDD75")
-                        Text("\uD83D\uDE30")
-                        Text("\uD83D\uDE05")
-                        Text("\uD83D\uDCAA")
-                        Text("\uD83D\uDE42")
-                        Text("\uD83E\uDD29")
+                        RPE.entries.sortedByDescending { it.rpe }.forEachIndexed { index, rpe ->
+                            Text(rpe.emoji)
+                        }
                     }
                 }
             }

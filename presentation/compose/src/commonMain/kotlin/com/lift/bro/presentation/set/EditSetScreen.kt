@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -55,15 +54,12 @@ import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.RpeSelector
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.TempoInfoDialogText
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.calendar.Calendar
-import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.toLocalDate
 import com.lift.bro.utils.toString
 import com.lift.bro.utils.vertical_padding.padding
@@ -76,8 +72,6 @@ import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
 import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
-import lift_bro.core.generated.resources.tempo_selector_dialog_title
-import lift_bro.core.generated.resources.tempo_selector_with_tempo_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -85,14 +79,16 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 
 enum class RPE(
     val rpe: Int,
+    val rir: Int,
+    val percentMax: Float,
     val emoji: String,
 ) {
-    Five(5, "😇"),
-    Six(6, "😀"),
-    Seven(7, "💪"),
-    Eight(8, "😰"),
-    Nine(9, "😳"),
-    Ten(10, "💀")
+    Five(5, rir = 6, percentMax = .6f, "😇"),
+    Six(6, rir = 4, percentMax = .75f, "😀"),
+    Seven(7, rir = 3, percentMax = .85f, "💪"),
+    Eight(8, rir = 2, percentMax = .9f, "😰"),
+    Nine(9, rir = 1, percentMax = .95f, "🥵"),
+    Ten(10, rir = 0, percentMax = 1f, "💀")
 }
 
 @Composable
@@ -152,8 +148,9 @@ fun EditSetScreen(
                 checked = useV2,
                 onCheckedChange = { useV2 = !useV2 },
                 thumbContent = {
+
                     Text(
-                        "V2",
+                        if (useV2) "V2" else "V1",
                         style = MaterialTheme.typography.titleSmall,
                     )
                 }
@@ -242,7 +239,11 @@ fun EditSetScreen(
                     ).clip(MaterialTheme.shapes.medium),
             ) {
                 TempoSelector(
-                    modifier = Modifier.padding(top = MaterialTheme.spacing.one),
+                    modifier = Modifier.padding(
+                        top = MaterialTheme.spacing.one,
+                        bottom = MaterialTheme.spacing.quarter,
+                        horizontal = MaterialTheme.spacing.quarter
+                    ),
                     tempo = state.tempo,
                     tempoChanged = { sendEvent(EditSetEvent.TempoChanged(it)) }
                 )
