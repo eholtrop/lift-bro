@@ -59,7 +59,7 @@ fun RpeSelector(
                     showInfoDialog = true
                 }
             )
-                .defaultMinSize(minHeight = 48.dp, minWidth = 48.dp)
+                .defaultMinSize(minHeight = 48.dp, minWidth = 52.dp)
                 .padding(
                     horizontal = MaterialTheme.spacing.half,
                     vertical = MaterialTheme.spacing.quarter,
