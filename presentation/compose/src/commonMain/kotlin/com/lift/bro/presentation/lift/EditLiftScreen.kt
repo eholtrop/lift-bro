@@ -356,7 +356,8 @@ private fun VariationItem(
 }
 
 @Composable
-fun TextFieldDefaults.transparentColors(): TextFieldColors = TextFieldDefaults.colors(
+fun TextFieldDefaults.transparentColors(
+): TextFieldColors = TextFieldDefaults.colors(
     unfocusedContainerColor = Color.Transparent,
     focusedContainerColor = Color.Transparent,
     errorContainerColor = Color.Transparent,

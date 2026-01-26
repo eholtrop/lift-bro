@@ -241,37 +241,8 @@ fun EditSetScreen(
                         shape = MaterialTheme.shapes.medium,
                     ).clip(MaterialTheme.shapes.medium),
             ) {
-                Row(
-                    modifier = Modifier.padding(start = MaterialTheme.spacing.one, top = MaterialTheme.spacing.one),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = stringResource(Res.string.tempo_selector_with_tempo_text),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Space(MaterialTheme.spacing.half)
-                    InfoDialogButton(
-                        modifier = Modifier.size(16.dp),
-                        dialogTitle = { Text(stringResource(Res.string.tempo_selector_dialog_title)) },
-                        dialogMessage = { TempoInfoDialogText() }
-                    )
-                }
                 TempoSelector(
-                    modifier = Modifier
-                        .padding(
-                            horizontal = MaterialTheme.spacing.half,
-                            vertical = MaterialTheme.spacing.half,
-                        )
-                        .background(
-                            color = MaterialTheme.colorScheme.surfaceContainer,
-                            shape = MaterialTheme.shapes.small,
-                        )
-                        .border(
-                            color = MaterialTheme.colorScheme.onSurface,
-                            width = 1.dp,
-                            shape = MaterialTheme.shapes.small
-                        ),
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.one),
                     tempo = state.tempo,
                     tempoChanged = { sendEvent(EditSetEvent.TempoChanged(it)) }
                 )
