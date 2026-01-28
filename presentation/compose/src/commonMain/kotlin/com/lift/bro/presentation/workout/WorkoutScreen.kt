@@ -78,7 +78,7 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
-import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.compose.AccessibilityMinimumSize
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat

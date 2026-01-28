@@ -49,9 +49,9 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.percentageFormat
-import com.lift.bro.utils.toColor
+import com.lift.bro.compose.toColor
 import com.lift.bro.`ktx-datetime`.toLocalDate
-import com.lift.bro.utils.vertical_padding.padding
+import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res

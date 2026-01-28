@@ -82,7 +82,7 @@ import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxDate
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.prettyPrintSet
-import com.lift.bro.utils.toColor
+import com.lift.bro.compose.toColor
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch

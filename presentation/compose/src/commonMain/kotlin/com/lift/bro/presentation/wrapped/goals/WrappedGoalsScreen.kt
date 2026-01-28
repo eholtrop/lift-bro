@@ -48,8 +48,8 @@ import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.horizontal_padding.padding
-import com.lift.bro.utils.vertical_padding.padding
+import com.lift.bro.compose.horizontal_padding.padding
+import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.delay
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_goals_add_button_content_description

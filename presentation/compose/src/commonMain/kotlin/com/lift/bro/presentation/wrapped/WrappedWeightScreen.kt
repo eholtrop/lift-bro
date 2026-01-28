@@ -26,7 +26,7 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
-import com.lift.bro.utils.vertical_padding.padding
+import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable

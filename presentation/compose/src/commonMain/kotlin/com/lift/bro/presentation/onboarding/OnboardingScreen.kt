@@ -56,7 +56,7 @@ import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.ui.theme.amber
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.compose.AccessibilityMinimumSize
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.launch

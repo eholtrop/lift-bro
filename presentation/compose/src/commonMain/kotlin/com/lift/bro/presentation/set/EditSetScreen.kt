@@ -62,7 +62,7 @@ import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.`ktx-datetime`.toLocalDate
-import com.lift.bro.utils.vertical_padding.padding
+import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res

@@ -1,4 +1,4 @@
-package com.lift.bro.utils.horizontal_padding
+package com.lift.bro.compose.horizontal_padding
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
