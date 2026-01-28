@@ -15,7 +15,7 @@ import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
-import com.lift.bro.utils.toLocalDate
+import com.lift.bro.`ktx-datetime`.toLocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce

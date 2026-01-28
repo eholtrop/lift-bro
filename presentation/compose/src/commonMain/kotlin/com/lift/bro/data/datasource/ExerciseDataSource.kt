@@ -8,7 +8,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
-import com.lift.bro.utils.toLocalDate
+import com.lift.bro.`ktx-datetime`.toLocalDate
 import comliftbrodb.ExerciseQueries
 import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
