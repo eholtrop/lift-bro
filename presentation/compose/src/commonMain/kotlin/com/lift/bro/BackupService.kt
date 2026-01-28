@@ -19,7 +19,8 @@ import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
-import com.lift.bro.utils.today
+import com.lift.bro.ext.ktx.datetime.toString
+import com.lift.bro.`ktx-datetime`.today
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.createDirectories
 import io.github.vinceglb.filekit.dialogs.FileKitType

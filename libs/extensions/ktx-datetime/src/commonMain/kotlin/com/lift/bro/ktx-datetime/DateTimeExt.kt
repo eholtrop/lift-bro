@@ -1,4 +1,4 @@
-package com.lift.bro.utils
+package com.lift.bro.`ktx-datetime`
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone

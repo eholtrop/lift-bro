@@ -15,7 +15,7 @@ import com.lift.bro.BackupUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.utils.toLocalDate
-import com.lift.bro.utils.today
+import com.lift.bro.`ktx-datetime`.today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
