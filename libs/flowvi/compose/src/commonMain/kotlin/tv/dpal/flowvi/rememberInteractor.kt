@@ -1,13 +1,10 @@
-package com.lift.bro.mvi.compose
+package tv.dpal.flowvi
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.Reducer
-import com.lift.bro.mvi.SideEffect
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

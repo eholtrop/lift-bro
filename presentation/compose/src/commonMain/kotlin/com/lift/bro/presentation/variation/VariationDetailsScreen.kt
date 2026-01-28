@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.ext.ktx.datetime.toString
-import com.lift.bro.mvi.Interactor
+import tv.dpal.flowvi.Interactor
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold

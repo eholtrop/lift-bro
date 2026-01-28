@@ -14,10 +14,10 @@ import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.ApplicationScope
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.Reducer
-import com.lift.bro.mvi.SideEffect
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.AddExercise
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.AddSuperSet
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.DeleteExercise

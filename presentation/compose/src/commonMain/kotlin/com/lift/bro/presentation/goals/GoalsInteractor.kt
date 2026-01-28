@@ -6,10 +6,10 @@ import com.lift.bro.di.goalsRepository
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.domain.models.GoalId
 import com.lift.bro.domain.repositories.IGoalRepository
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.Reducer
-import com.lift.bro.mvi.SideEffect
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 

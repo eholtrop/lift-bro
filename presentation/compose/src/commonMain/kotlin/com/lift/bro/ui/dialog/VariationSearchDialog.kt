@@ -52,10 +52,10 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ext.ktx.datetime.toString
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.Reducer
-import com.lift.bro.mvi.SideEffect
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing

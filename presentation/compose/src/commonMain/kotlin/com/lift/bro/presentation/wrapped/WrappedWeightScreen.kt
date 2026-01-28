@@ -17,8 +17,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetTotalWeightMovedUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
 import com.lift.bro.ui.dialog.InfoSpeechBubble

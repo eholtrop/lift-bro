@@ -3,8 +3,8 @@ package com.lift.bro.presentation.wrapped.summary
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.lift.bro.domain.models.Goal
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.wrapped.HeavyThing
 import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import com.lift.bro.presentation.wrapped.heavyThings

@@ -1,7 +1,7 @@
 package com.lift.bro.ui.calculator
 
 import com.lift.bro.domain.models.UOM
-import com.lift.bro.mvi.Reducer
+import tv.dpal.flowvi.Reducer
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals

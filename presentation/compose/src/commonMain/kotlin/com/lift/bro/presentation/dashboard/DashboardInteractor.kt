@@ -7,9 +7,9 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.SideEffect
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.navigation.Destination
