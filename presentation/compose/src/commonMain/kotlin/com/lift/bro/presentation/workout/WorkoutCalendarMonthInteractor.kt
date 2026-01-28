@@ -6,7 +6,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.mvi.compose.rememberInteractor
-import com.lift.bro.utils.toLocalDate
+import com.lift.bro.`ktx-datetime`.toLocalDate
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate

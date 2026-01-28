@@ -6,6 +6,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.models.oneRepMax
+import com.lift.bro.`ktx-datetime`.toLocalDate
 import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalTMaxSettings
 import com.lift.bro.presentation.lift.uom
