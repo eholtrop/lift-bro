@@ -63,10 +63,11 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.presentation.ApplicationScope
+import com.lift.bro.ext.ktx.datetime.toString
 import com.lift.bro.mvi.Interactor
 import com.lift.bro.mvi.SideEffect
 import com.lift.bro.mvi.compose.rememberInteractor
+import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calendar.Calendar

@@ -16,6 +16,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.ext.ktx.datetime.toString
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider

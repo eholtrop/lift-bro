@@ -46,6 +46,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.ext.ktx.datetime.toString
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.LocalNavCoordinator

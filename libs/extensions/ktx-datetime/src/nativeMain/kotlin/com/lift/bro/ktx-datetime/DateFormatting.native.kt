@@ -1,4 +1,4 @@
-package com.lift.bro.utils
+package com.lift.bro.ext.ktx.datetime
 
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -27,3 +27,7 @@ actual fun LocalDate.toString(pattern: String): String {
 actual fun LocalDateTime.toString(pattern: String): String {
     return dateFormatter(pattern).stringFromDate(this.toInstant(TimeZone.currentSystemDefault()).toNSDate())
 }
+
+
+
+

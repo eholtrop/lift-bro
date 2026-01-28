@@ -55,6 +55,7 @@ kotlin {
             implementation(project(":libs:mvi:compose"))
             implementation(project(":libs:extensions:flow"))
             implementation(project(":libs:logging"))
+            implementation(project(":libs:extensions:ktx-datetime"))
 
 
             // Compose Multiplatform
