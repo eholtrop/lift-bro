@@ -1,0 +1,12 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.lift.bro.presentation////PointingToDeclaration/mvi/com.lift.bro.presentation/index.html
+$dokka.location:com.lift.bro.presentation//rememberInteractor/#TypeParam(bounds=[kotlin.Any?])#kotlin.collections.List[com.lift.bro.presentation.Reducer[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?])]]#kotlin.collections.List[kotlin.coroutines.SuspendFunction2[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?]),kotlin.Unit]]#kotlinx.coroutines.CoroutineScope#kotlin.Function2[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?])]#kotlin.Function1[TypeParam(bounds=[kotlin.Any?]),kotlinx.coroutines.flow.Flow[TypeParam(bounds=[kotlin.Any?])]]/PointingToDeclaration/mvi/com.lift.bro.presentation/remember-interactor.html
+$dokka.location:com.lift.bro.presentation/Interactor///PointingToDeclaration/mvi/com.lift.bro.presentation/-interactor/index.html
+$dokka.location:com.lift.bro.presentation/Interactor/Interactor/#TypeParam(bounds=[kotlin.Any?])#kotlinx.coroutines.flow.Flow[TypeParam(bounds=[kotlin.Any?])]#kotlinx.coroutines.CoroutineScope#kotlin.collections.List[com.lift.bro.presentation.Reducer[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?])]]#kotlin.collections.List[kotlin.coroutines.SuspendFunction2[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?]),kotlin.Unit]]#kotlin.Function2[TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?]),TypeParam(bounds=[kotlin.Any?])]/PointingToDeclaration/mvi/com.lift.bro.presentation/-interactor/-interactor.html
+$dokka.location:com.lift.bro.presentation/Interactor/invoke/#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/mvi/com.lift.bro.presentation/-interactor/invoke.html
+$dokka.location:com.lift.bro.presentation/Interactor/state/#/PointingToDeclaration/mvi/com.lift.bro.presentation/-interactor/state.html
+$dokka.location:com.lift.bro.presentation/Reducer///PointingToDeclaration/mvi/com.lift.bro.presentation/-reducer/index.html
+$dokka.location:com.lift.bro.presentation/Reducer/invoke/#TypeParam(bounds=[kotlin.Any?])#TypeParam(bounds=[kotlin.Any?])/PointingToDeclaration/mvi/com.lift.bro.presentation/-reducer/invoke.html
+$dokka.location:com.lift.bro.presentation/SideEffect///PointingToDeclaration/mvi/com.lift.bro.presentation/-side-effect/index.html
+com.lift.bro.presentation

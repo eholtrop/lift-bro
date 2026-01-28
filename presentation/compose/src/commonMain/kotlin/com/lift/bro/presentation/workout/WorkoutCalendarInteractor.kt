@@ -20,9 +20,9 @@ import com.lift.bro.mvi.SideEffect
 import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.LocalNavCoordinator
-import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.`ktx-datetime`.toLocalDate
+import com.lift.bro.swipenavhost.LocalNavCoordinator
+import com.lift.bro.swipenavhost.NavCoordinator
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

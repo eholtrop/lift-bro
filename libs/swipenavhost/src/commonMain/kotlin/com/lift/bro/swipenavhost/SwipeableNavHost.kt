@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.lift.bro.ui.navigation
+package com.lift.bro.swipenavhost
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -27,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,22 +37,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.window.core.layout.WindowSizeClass
-import com.lift.bro.config.BuildConfig
-import com.lift.bro.ui.theme.spacing
-import io.sentry.kotlin.multiplatform.Sentry
-import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.absoluteValue
 
+@Serializable
+open class Destination
+
+val LocalNavCoordinator = compositionLocalOf<NavCoordinator> {
+    error("NavHostController was not set")
+}
+
 @Composable
-fun SwipeableNavHost(
+inline fun <reified T: Destination> SwipeableNavHost(
     modifier: Modifier = Modifier,
     navCoordinator: NavCoordinator,
-    key: (Destination) -> Any = { Json.encodeToString(it) },
-    content: @Composable (Destination) -> Unit,
+    crossinline key: (T) -> Any = { Json.encodeToString(it).hashCode() },
+    crossinline content: @Composable (T) -> Unit,
 ) {
     val tabletMode = currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(
         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
@@ -75,12 +81,10 @@ fun SwipeableNavHost(
     )
 
     LaunchedEffect(currentPage) {
-        if (currentPage != Destination.Unknown) {
-            if (tabletMode && savedPagerState.currentPage > 0) {
-                savedPagerState.animateScrollToPage(pages.indexOf(currentPage) - 1)
-            } else {
-                savedPagerState.animateScrollToPage(pages.indexOf(currentPage))
-            }
+        if (tabletMode && savedPagerState.currentPage > 0) {
+            savedPagerState.animateScrollToPage(pages.indexOf(currentPage) - 1)
+        } else {
+            savedPagerState.animateScrollToPage(pages.indexOf(currentPage))
         }
     }
     val keyboard = LocalSoftwareKeyboardController.current
@@ -91,11 +95,6 @@ fun SwipeableNavHost(
             navCoordinator.updateCurrentIndex(savedPagerState.currentPage)
         }
         keyboard?.hide()
-    }
-    LaunchedEffect(savedPagerState.currentPage) {
-        if (!BuildConfig.isDebug) {
-            Sentry.addBreadcrumb(Breadcrumb.navigation("unknown", navCoordinator.currentPage.toString()))
-        }
     }
 
     CompositionLocalProvider(
@@ -111,7 +110,7 @@ fun SwipeableNavHost(
                         .fillMaxHeight()
                         .animateContentSize()
                 ) {
-                    content(it)
+                    content(it as T)
                 }
             }
             AnimatedVisibility(
@@ -126,7 +125,7 @@ fun SwipeableNavHost(
                             pagerSize = this.size
                         },
                         key = {
-                            key(pagerPages[it])
+                            key(pagerPages[it.hashCode()] as T)
                         },
                         state = savedPagerState,
                     ) { currentPage ->
@@ -161,19 +160,19 @@ fun SwipeableNavHost(
                             modifier = animationModifier
                                 .fillMaxSize()
                         ) {
-                            content(pagerPages[currentPage])
+                            content(pagerPages[currentPage] as T)
                         }
                     }
                     if (pagerPages.size > 1) {
                         Row(
                             modifier = Modifier.align(Alignment.TopCenter)
                                 .statusBarsPadding()
-                                .padding(top = MaterialTheme.spacing.quarter),
-                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
+                                .padding(top = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
                             pagerPages.forEachIndexed { index, _ ->
                                 Surface(
-                                    modifier = Modifier.height(MaterialTheme.spacing.half).aspectRatio(1f),
+                                    modifier = Modifier.height(8.dp).aspectRatio(1f),
                                     color = if (index == savedPagerState.currentPage) {
                                         MaterialTheme.colorScheme.primary
                                     } else {

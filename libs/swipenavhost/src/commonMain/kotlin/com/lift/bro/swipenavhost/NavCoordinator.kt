@@ -1,4 +1,4 @@
-package com.lift.bro.ui.navigation
+package com.lift.bro.swipenavhost
 
 import kotlinx.coroutines.flow.StateFlow
 

@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.example.compose.AppTheme
@@ -20,9 +19,9 @@ import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.swipenavhost.JetpackComposeCoordinator
+import com.lift.bro.swipenavhost.LocalNavCoordinator
 import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.JetpackComposeCoordinator
-import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 

@@ -48,6 +48,7 @@ import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.presentation.wrapped.WrappedDialog
+import com.lift.bro.swipenavhost.LocalNavCoordinator
 import com.lift.bro.ui.AnimatedRotatingText
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
@@ -55,7 +56,6 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.delay

@@ -53,6 +53,9 @@ import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
 import com.lift.bro.presentation.home.iconRes
+import com.lift.bro.swipenavhost.NavCoordinator
+import com.lift.bro.swipenavhost.SwipeableNavHost
+import com.lift.bro.swipenavhost.rememberNavCoordinator
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.LiftCardYValue
@@ -60,9 +63,6 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.calculator.WeightCalculatorBottomSheet
 import com.lift.bro.ui.dialog.BackupAlertDialog
 import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.ui.navigation.NavCoordinator
-import com.lift.bro.ui.navigation.SwipeableNavHost
-import com.lift.bro.ui.navigation.rememberNavCoordinator
 import com.lift.bro.ui.theme.spacing
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
@@ -172,7 +172,7 @@ fun CheckAppConsent() {
 @Composable
 fun App(
     modifier: Modifier = Modifier,
-    navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Unknown),
+    navCoordinator: NavCoordinator = rememberNavCoordinator<com.lift.bro.swipenavhost.Destination>(Destination.Unknown),
 ) {
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null
@@ -257,7 +257,7 @@ fun App(
                 BackupAlertDialog()
 
                 Column {
-                    SwipeableNavHost(
+                    SwipeableNavHost<Destination>(
                         modifier = Modifier.weight(1f),
                         navCoordinator = navCoordinator,
                     ) { route ->
