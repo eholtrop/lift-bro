@@ -13,10 +13,10 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.SideEffect
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.Serializable
 
@@ -86,7 +86,7 @@ fun editLiftSideEffects(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: ISetRepository = dependencies.setRepository,
-): SideEffect<EditLiftState?, EditLiftEvent> = { state: EditLiftState?, event: EditLiftEvent ->
+): SideEffect<EditLiftState?, EditLiftEvent> = SideEffect { _, state, event ->
     when (event) {
         EditLiftEvent.DeleteLift -> {
             if (state?.id != null) {

@@ -2,9 +2,10 @@ package com.lift.bro.presentation.settings.client
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.presentation.settings.client.ClientMode.Local
 import com.lift.bro.presentation.settings.client.ClientMode.Remote
 import kotlinx.coroutines.flow.flow
@@ -82,7 +83,7 @@ fun rememberClientSettingsInteractor(): ClientSettingsInteractor = rememberInter
         }
     ),
     sideEffects = listOf(
-        { _, event ->
+        SideEffect { _, _, event ->
             when (event) {
                 is ClientSettingsEvent.ClientModeSelected -> {}
                 is ClientSettingsEvent.UrlUpdated -> {}

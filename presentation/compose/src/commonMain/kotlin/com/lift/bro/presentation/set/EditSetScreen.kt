@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.presentation.Interactor
+import com.lift.bro.mvi.Interactor
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.presentation.set.components.EditSetVariationSelector
 import com.lift.bro.ui.Fade

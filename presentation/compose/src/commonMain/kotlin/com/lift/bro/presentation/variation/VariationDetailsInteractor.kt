@@ -5,9 +5,10 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.navigation.LocalNavCoordinator
@@ -30,13 +31,13 @@ data class VariationDetailCard(
 )
 
 sealed interface VariationDetailsEvent {
-    data class NotesUpdated(val notes: String) : VariationDetailsEvent
-    data class SetClicked(val setId: String) : VariationDetailsEvent
-    data object AddSetClicked : VariationDetailsEvent
+    data class NotesUpdated(val notes: String): VariationDetailsEvent
+    data class SetClicked(val setId: String): VariationDetailsEvent
+    data object AddSetClicked: VariationDetailsEvent
 
-    data class NameUpdated(val name: String) : VariationDetailsEvent
+    data class NameUpdated(val name: String): VariationDetailsEvent
 
-    data object ToggleBodyWeight : VariationDetailsEvent
+    data object ToggleBodyWeight: VariationDetailsEvent
 }
 
 @Composable
@@ -62,37 +63,39 @@ fun rememberVariationDetailInteractor(
                 )
             }
         },
-        sideEffects = listOf { state, event ->
-            when (event) {
-                VariationDetailsEvent.AddSetClicked -> {
-                    navCoordinator.present(CreateSet())
-                }
+        sideEffects = listOf(
+            SideEffect { _, state, event ->
+                when (event) {
+                    VariationDetailsEvent.AddSetClicked -> {
+                        navCoordinator.present(CreateSet())
+                    }
 
-                is VariationDetailsEvent.NotesUpdated -> {
-                    if (event.notes.isNotBlank() && state.variation.notes.isNullOrBlank()) {
-                        dependencies.database.variantDataSource.save(
-                            state.variation.copy(notes = event.notes)
+                    is VariationDetailsEvent.NotesUpdated -> {
+                        if (event.notes.isNotBlank() && state.variation.notes.isNullOrBlank()) {
+                            dependencies.database.variantDataSource.save(
+                                state.variation.copy(notes = event.notes)
+                            )
+                        }
+                    }
+
+                    is VariationDetailsEvent.SetClicked -> {
+                        navCoordinator.present(EditSet(event.setId))
+                    }
+
+                    is VariationDetailsEvent.NameUpdated -> {
+                        dependencies.variationRepository.save(
+                            state.variation.copy(name = event.name)
+                        )
+                    }
+
+                    VariationDetailsEvent.ToggleBodyWeight -> {
+                        dependencies.variationRepository.save(
+                            state.variation.copy(bodyWeight = state.variation.bodyWeight?.not() ?: true)
                         )
                     }
                 }
-
-                is VariationDetailsEvent.SetClicked -> {
-                    navCoordinator.present(EditSet(event.setId))
-                }
-
-                is VariationDetailsEvent.NameUpdated -> {
-                    dependencies.variationRepository.save(
-                        state.variation.copy(name = event.name)
-                    )
-                }
-
-                VariationDetailsEvent.ToggleBodyWeight -> {
-                    dependencies.variationRepository.save(
-                        state.variation.copy(bodyWeight = state.variation.bodyWeight?.not() ?: true)
-                    )
-                }
             }
-        },
+        ),
         reducers = listOf(
             Reducer { state, event ->
                 when (event) {
@@ -101,6 +104,7 @@ fun rememberVariationDetailInteractor(
                             notes = event.notes
                         )
                     )
+
                     VariationDetailsEvent.AddSetClicked -> state
                     is VariationDetailsEvent.SetClicked -> state
                     is VariationDetailsEvent.NameUpdated -> state

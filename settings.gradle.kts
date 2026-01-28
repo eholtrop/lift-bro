@@ -26,5 +26,6 @@ include(":presentation:server")
 include(":data:sqldelight")
 include(":data:core")
 
-include(":libs:mvi")
+include(":libs:mvi:core")
+include(":libs:mvi:compose")
 include(":libs:logging")

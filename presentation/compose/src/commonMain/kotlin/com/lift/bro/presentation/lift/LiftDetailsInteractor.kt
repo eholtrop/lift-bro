@@ -8,8 +8,9 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.EditLift
 import com.lift.bro.ui.navigation.Destination.EditSet
@@ -34,15 +35,15 @@ data class VariationCardState(
 )
 
 sealed interface LiftDetailsEvent {
-    data class LiftColorChanged(val color: ULong) : LiftDetailsEvent
-    data class VariationClicked(val variation: Variation) : LiftDetailsEvent
-    data class SetClicked(val lbSet: LBSet) : LiftDetailsEvent
+    data class LiftColorChanged(val color: ULong): LiftDetailsEvent
+    data class VariationClicked(val variation: Variation): LiftDetailsEvent
+    data class SetClicked(val lbSet: LBSet): LiftDetailsEvent
 
-    data class ToggleFavourite(val variation: Variation) : LiftDetailsEvent
+    data class ToggleFavourite(val variation: Variation): LiftDetailsEvent
 
-    data object AddSetClicked : LiftDetailsEvent
+    data object AddSetClicked: LiftDetailsEvent
 
-    data object EditLiftClicked : LiftDetailsEvent
+    data object EditLiftClicked: LiftDetailsEvent
 }
 
 @Composable
@@ -70,52 +71,54 @@ fun rememberLiftDetailsInteractor(
             )
         }
     },
-    sideEffects = listOf { state, event ->
-        when (event) {
-            LiftDetailsEvent.AddSetClicked -> navCoordinator.present(
-                Destination.CreateSet(
-                    liftId = liftId
-                )
-            )
-
-            is LiftDetailsEvent.LiftColorChanged -> {
-                dependencies.liftRepository.save(
-                    Lift(
-                        id = liftId,
-                        name = state.liftName ?: "",
-                        color = event.color,
-                    )
-                )
-            }
-
-            is LiftDetailsEvent.SetClicked ->
-                navCoordinator.present(
-                    EditSet(
-                        setId = event.lbSet.id
-                    )
-                )
-
-            is LiftDetailsEvent.VariationClicked ->
-                navCoordinator.present(
-                    VariationDetails(
-                        variationId = event.variation.id
-                    )
-                )
-
-            is LiftDetailsEvent.EditLiftClicked ->
-                navCoordinator.present(
-                    EditLift(
+    sideEffects = listOf(
+        SideEffect { _, state, event ->
+            when (event) {
+                LiftDetailsEvent.AddSetClicked -> navCoordinator.present(
+                    Destination.CreateSet(
                         liftId = liftId
                     )
                 )
 
-            is LiftDetailsEvent.ToggleFavourite -> {
-                dependencies.database.variantDataSource.save(
-                    event.variation.copy(
-                        favourite = !event.variation.favourite
+                is LiftDetailsEvent.LiftColorChanged -> {
+                    dependencies.liftRepository.save(
+                        Lift(
+                            id = liftId,
+                            name = state.liftName ?: "",
+                            color = event.color,
+                        )
                     )
-                )
+                }
+
+                is LiftDetailsEvent.SetClicked ->
+                    navCoordinator.present(
+                        EditSet(
+                            setId = event.lbSet.id
+                        )
+                    )
+
+                is LiftDetailsEvent.VariationClicked ->
+                    navCoordinator.present(
+                        VariationDetails(
+                            variationId = event.variation.id
+                        )
+                    )
+
+                is LiftDetailsEvent.EditLiftClicked ->
+                    navCoordinator.present(
+                        EditLift(
+                            liftId = liftId
+                        )
+                    )
+
+                is LiftDetailsEvent.ToggleFavourite -> {
+                    dependencies.database.variantDataSource.save(
+                        event.variation.copy(
+                            favourite = !event.variation.favourite
+                        )
+                    )
+                }
             }
         }
-    }
+    )
 )

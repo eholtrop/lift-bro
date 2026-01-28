@@ -7,8 +7,9 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.navigation.Destination
@@ -67,12 +68,13 @@ fun rememberDashboardInteractor(
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): DashboardInteractor = rememberInteractor<DashboardState, DashboardEvent>(
     initialState = Loading,
-    sideEffects = listOf { state, event ->
-        when (event) {
-            DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
-            is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
-        }
-    },
+    sideEffects = listOf(
+        SideEffect { _, _, event ->
+            when (event) {
+                DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
+                is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
+            }
+        }),
     source = {
         combine(
             liftRepository.listenAll().onStart { emit(emptyList()) },

@@ -14,10 +14,10 @@ import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.ApplicationScope
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.SideEffect
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.AddExercise
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.AddSuperSet
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.DeleteExercise
@@ -33,6 +33,7 @@ import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
@@ -67,31 +68,31 @@ sealed interface VariationItem {
         override val id: String,
         override val variation: Variation,
         val sets: List<LBSet>,
-    ) : VariationItem
+    ): VariationItem
 
     @Serializable
     data class WithoutSets(
         override val id: String,
         override val variation: Variation,
         val lastSet: LBSet?,
-    ) : VariationItem
+    ): VariationItem
 }
 
 sealed class CreateWorkoutEvent {
-    data class UpdateNotes(val notes: String) : CreateWorkoutEvent()
-    data class AddExercise(val variation: Variation) : CreateWorkoutEvent()
-    data class AddSuperSet(val exercise: ExerciseItem, val variation: Variation) :
+    data class UpdateNotes(val notes: String): CreateWorkoutEvent()
+    data class AddExercise(val variation: Variation): CreateWorkoutEvent()
+    data class AddSuperSet(val exercise: ExerciseItem, val variation: Variation):
         CreateWorkoutEvent()
 
-    data class UpdateFinisher(val finisher: String) : CreateWorkoutEvent()
-    data class UpdateWarmup(val warmup: String) : CreateWorkoutEvent()
-    data class DuplicateSet(val set: LBSet, val forceToday: Boolean = false) : CreateWorkoutEvent()
-    data class DeleteSet(val set: LBSet) : CreateWorkoutEvent()
-    data class DeleteExercise(val exercise: ExerciseItem) : CreateWorkoutEvent()
+    data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
+    data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
+    data class DuplicateSet(val set: LBSet, val forceToday: Boolean = false): CreateWorkoutEvent()
+    data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
+    data class DeleteExercise(val exercise: ExerciseItem): CreateWorkoutEvent()
 
-    data class CopyWorkout(val workout: Workout) : CreateWorkoutEvent()
+    data class CopyWorkout(val workout: Workout): CreateWorkoutEvent()
 
-    data class DeleteVariation(val exerciseVariation: VariationItem) :
+    data class DeleteVariation(val exerciseVariation: VariationItem):
         CreateWorkoutEvent()
 }
 
@@ -189,7 +190,7 @@ fun workoutSideEffects(
     workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
     setRepository: ISetRepository = dependencies.setRepository,
     liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource,
-): SideEffect<CreateWorkoutState, CreateWorkoutEvent> = { state, event ->
+): SideEffect<CreateWorkoutState, CreateWorkoutEvent> = SideEffect { _, state, event ->
     when (event) {
         is UpdateNotes -> {
             val log = liftLogRepository.getByDate(state.date).executeAsOneOrNull()?.copy(
@@ -244,7 +245,7 @@ fun workoutSideEffects(
                     date = if (event.set.date.toLocalDate() != today && !event.forceToday) {
                         event.set.date.plus(1, DateTimeUnit.SECOND)
                     } else {
-                        kotlinx.datetime.Clock.System
+                        Clock.System
                             .now()
                     }
                 )

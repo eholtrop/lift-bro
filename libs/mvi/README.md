@@ -5,7 +5,6 @@ A tiny, Compose-first MVI toolkit designed to be easy to learn, portable across 
 - Reducer: pure (State, Event) -> State
 - SideEffect: suspend (State, Event) -> Unit
 - Interactor: orchestrates a source Flow<State> + Event stream into a StateFlow<State>
-- rememberInteractor: Compose helper that wires Interactor to a lifecycle and persists State via rememberSaveable
 
 ## Why this library
 - Minimal surface area that fits naturally with Kotlin Flow and Jetpack/Compose Multiplatform
@@ -14,18 +13,9 @@ A tiny, Compose-first MVI toolkit designed to be easy to learn, portable across 
 
 ## Quick start
 
-Define your State and Event, create reducers and side-effects, and wire them up in your Composable using `rememberInteractor`.
+Define your State and Event, create reducers and side-effects, and wire them up in your Composable using `rememberInteractor` from `mvi:compose`.
 
 ```kotlin path=null start=null
-import androidx.compose.runtime.*
-import androidx.compose.runtime.collectAsState
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.SideEffect
-import com.lift.bro.presentation.rememberInteractor
-import kotlinx.coroutines.flow.flow
-
-@kotlinx.serialization.Serializable
 data class CounterState(val value: Int = 0)
 
 sealed interface CounterEvent {
@@ -61,10 +51,10 @@ fun CounterScreen() {
 
 ## Concepts
 
-- State: a snapshot of UI data. Make it `@Serializable` to enable automatic persistence via `rememberSaveable`.
+- State: a snapshot of UI data. Note: if using other wrappers they may have restrictions. ex: State must be `@Serializable` to enable automatic persistence via `rememberSaveable` in `:mvi:compose`.
 - Event: user or system intent (button clicks, results, timers, etc.). Use a sealed interface.
 - Reducer: pure function that computes the next state. Side-effect free.
-- SideEffect: suspend function to perform I/O, navigation, etc. Dispatch follow-up events if needed.
+- SideEffect: suspend function to perform I/O, navigation, any async task. Dispatch follow-up events if needed.
 - Interactor: coordinates the loop; exposes `state: StateFlow<State>` and a function-call `operator fun invoke(event)` to dispatch.
 
 ## Advanced usage
@@ -72,7 +62,7 @@ fun CounterScreen() {
 - Upstream source
   Provide a `Flow<State>` for your upstream data (e.g., repositories). The interactor will fold events on top of the latest upstream emission.
 
-```kotlin path=null start=null
+```kotlin
 rememberInteractor(
     initialState = MyState(),
     reducers = reducers,
@@ -114,6 +104,9 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":libs:mvi"))
+            
+            // optional
+            implementation(project(":libs:mvi:compose"))
         }
     }
 }
@@ -124,10 +117,9 @@ When published, you’ll be able to use:
 ```kotlin path=null start=null
 // build.gradle.kts
 dependencies {
-    implementation("com.lift.bro:mvi:<version>")
+    implementation("tv.dpal:mvi:<version>")
+            
+    // optional
+    implementation(project(":tv.dpal:mvi-compose:<version>"))
 }
 ```
-
-## License
-
-Your license text here.

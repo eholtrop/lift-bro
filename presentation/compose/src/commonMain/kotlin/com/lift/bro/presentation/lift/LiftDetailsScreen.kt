@@ -60,7 +60,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.models.oneRepMax
-import com.lift.bro.presentation.Interactor
+import com.lift.bro.mvi.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
