@@ -71,7 +71,7 @@ import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.home.concernedIconRes
 import com.lift.bro.presentation.home.iconRes
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space

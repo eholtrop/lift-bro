@@ -4,10 +4,10 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.goalsRepository
 import com.lift.bro.di.liftRepository
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.SideEffect
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditLift
@@ -15,7 +15,6 @@ import com.lift.bro.ui.navigation.Destination.Settings
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
 typealias HomeInteractor = Interactor<HomeState, HomeEvent>
@@ -79,16 +78,18 @@ fun rememberHomeInteractor(
 
 internal fun homeSideEffects(
     navCoordinator: NavCoordinator,
-) = listOf<SideEffect<HomeState, HomeEvent>> { state, event ->
-    when (event) {
-        HomeEvent.DashboardClicked -> {}
-        HomeEvent.CalendarClicked -> {}
-        HomeEvent.AddSetClicked -> navCoordinator.present(CreateSet())
-        is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
-        HomeEvent.SettingsClicked -> navCoordinator.present(Settings)
-        HomeEvent.GoalsClicked -> navCoordinator.present(Destination.Goals)
+) = listOf<SideEffect<HomeState, HomeEvent>>(
+    SideEffect { _, _, event ->
+        when (event) {
+            HomeEvent.DashboardClicked -> {}
+            HomeEvent.CalendarClicked -> {}
+            HomeEvent.AddSetClicked -> navCoordinator.present(CreateSet())
+            is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
+            HomeEvent.SettingsClicked -> navCoordinator.present(Settings)
+            HomeEvent.GoalsClicked -> navCoordinator.present(Destination.Goals)
+        }
     }
-}
+)
 
 internal val homeReducer = Reducer<HomeState, HomeEvent> { state, event ->
     when (state) {

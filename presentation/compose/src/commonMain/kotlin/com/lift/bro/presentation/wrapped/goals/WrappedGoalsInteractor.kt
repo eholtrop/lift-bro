@@ -5,9 +5,10 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.goalsRepository
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.domain.repositories.IGoalRepository
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
@@ -48,7 +49,7 @@ fun rememberWrappedGoalsInteractor(
         }
     ),
     sideEffects = listOf(
-        { state, event ->
+        SideEffect { _, state, event ->
             when (event) {
                 is WrappedGoalsEvent.GoalAdded -> state
                 is WrappedGoalsEvent.GoalNameChanged -> goalsRepository.save(

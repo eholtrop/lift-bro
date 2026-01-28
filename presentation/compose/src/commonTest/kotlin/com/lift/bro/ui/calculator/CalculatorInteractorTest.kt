@@ -1,6 +1,7 @@
 package com.lift.bro.ui.calculator
 
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.mvi.Reducer
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -470,7 +471,7 @@ class CalculatorInteractorTest {
     private suspend fun applyReducers(
         state: CalculatorState,
         event: CalculatorEvent,
-        reducers: List<com.lift.bro.presentation.Reducer<CalculatorState, CalculatorEvent>>,
+        reducers: List<Reducer<CalculatorState, CalculatorEvent>>,
     ): CalculatorState {
         return reducers.fold(state) { currentState, reducer ->
             reducer(currentState, event)

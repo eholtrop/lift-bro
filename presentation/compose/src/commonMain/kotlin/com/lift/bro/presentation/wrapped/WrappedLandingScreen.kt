@@ -37,7 +37,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lift.bro.presentation.Interactor
+import com.lift.bro.mvi.Interactor
 import com.lift.bro.presentation.wrapped.goals.WrappedGoalsScreen
 import com.lift.bro.presentation.wrapped.goals.rememberWrappedGoalsInteractor
 import com.lift.bro.presentation.wrapped.progress.WrappedProgressScreen

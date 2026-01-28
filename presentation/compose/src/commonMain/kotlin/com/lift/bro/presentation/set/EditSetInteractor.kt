@@ -14,10 +14,10 @@ import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.logging.Log
 import com.lift.bro.logging.d
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.SideEffect
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
 import com.lift.bro.utils.fullName
@@ -139,7 +139,11 @@ fun rememberEditSetInteractor(
     initialState = null,
     source = { editSetSource(setId) },
     reducers = listOf(EditSetReducer),
-    sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
+    sideEffects = listOf(editSetSideEffects()) + listOf(
+        SideEffect { _, _, event ->
+            if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed()
+        }
+    )
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -155,7 +159,9 @@ fun rememberCreateSetInteractor(
         source = {
             editSetSource(id)
         },
-        sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() },
+        sideEffects = listOf(editSetSideEffects()) + listOf(
+            SideEffect { _, _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
+        ),
         reducers = listOf(EditSetReducer),
     )
 }
@@ -181,13 +187,14 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
                 state.date.toLocalDateTime(TimeZone.currentSystemDefault()).time
             ).toInstant(TimeZone.currentSystemDefault())
         )
+
         EditSetEvent.DeleteSetClicked -> state
     }
 }
 
 fun editSetSideEffects(
     setRepository: ISetRepository = dependencies.setRepository,
-): SideEffect<EditSetState?, EditSetEvent> = { state, event ->
+): SideEffect<EditSetState?, EditSetEvent> = SideEffect { _, state, event ->
     when (event) {
         is EditSetEvent.DeleteSetClicked -> {
             state?.toDomain()?.let {

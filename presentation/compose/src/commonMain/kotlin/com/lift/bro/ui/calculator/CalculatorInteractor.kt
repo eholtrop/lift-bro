@@ -2,7 +2,7 @@ package com.lift.bro.ui.calculator
 
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.models.convert
-import com.lift.bro.presentation.Reducer
+import com.lift.bro.mvi.Reducer
 import com.lift.bro.utils.decimalFormat
 import kotlinx.serialization.Serializable
 

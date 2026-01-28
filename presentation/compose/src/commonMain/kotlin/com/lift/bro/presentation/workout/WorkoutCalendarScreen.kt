@@ -64,8 +64,9 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.ApplicationScope
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calendar.Calendar
@@ -205,37 +206,39 @@ fun rememberDailyWorkoutDetailsInteractor(
             selectedWorkout = null,
             potentialExercises = emptyList(),
         ),
-        sideEffects = listOf { state, event ->
-            when (event) {
-                is DailyWorkoutDetailsEvent.CreateWorkoutClicked -> navCoordinator.present(
-                    Destination.CreateWorkout(state.selectedDate)
-                )
-
-                is DailyWorkoutDetailsEvent.OpenWorkoutClicked -> navCoordinator.present(
-                    Destination.EditWorkout(
-                        state.selectedDate
+        sideEffects = listOf(
+            SideEffect { _, state, event ->
+                when (event) {
+                    is DailyWorkoutDetailsEvent.CreateWorkoutClicked -> navCoordinator.present(
+                        Destination.CreateWorkout(state.selectedDate)
                     )
-                )
 
-                is DailyWorkoutDetailsEvent.AddToWorkout -> {
-                    ApplicationScope.launch {
-                        val exerciseId = uuid4().toString()
-                        val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
-                        with(dependencies.workoutRepository) {
-                            addVariation(exerciseId, event.variationId)
-                            addExercise(workoutId, exerciseId)
+                    is DailyWorkoutDetailsEvent.OpenWorkoutClicked -> navCoordinator.present(
+                        Destination.EditWorkout(
+                            state.selectedDate
+                        )
+                    )
 
-                            save(
-                                Workout(
-                                    workoutId,
-                                    date = state.selectedDate
+                    is DailyWorkoutDetailsEvent.AddToWorkout -> {
+                        ApplicationScope.launch {
+                            val exerciseId = uuid4().toString()
+                            val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
+                            with(dependencies.workoutRepository) {
+                                addVariation(exerciseId, event.variationId)
+                                addExercise(workoutId, exerciseId)
+
+                                save(
+                                    Workout(
+                                        workoutId,
+                                        date = state.selectedDate
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }
             }
-        }
+        )
     ) { state ->
         combine(
             dependencies.workoutRepository.get(date),

@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.domain.models.Goal
-import com.lift.bro.presentation.Interactor
+import com.lift.bro.mvi.Interactor
 import com.lift.bro.presentation.wrapped.heavyThings
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing

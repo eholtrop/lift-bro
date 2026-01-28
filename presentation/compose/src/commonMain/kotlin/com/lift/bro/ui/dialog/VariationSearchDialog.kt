@@ -51,9 +51,10 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -78,11 +79,11 @@ data class VariationSearchState(
 }
 
 sealed interface VariationSearchEvent {
-    data class QueryChanged(val query: String) : VariationSearchEvent
+    data class QueryChanged(val query: String): VariationSearchEvent
 
-    data class VariationSelected(val variation: Variation) : VariationSearchEvent
+    data class VariationSelected(val variation: Variation): VariationSearchEvent
 
-    data object Dismiss : VariationSearchEvent
+    data object Dismiss: VariationSearchEvent
 }
 
 @Composable
@@ -123,13 +124,15 @@ fun VariationSearchDialog(
                     }
                 }
             ),
-            sideEffects = listOf { state, event ->
-                when (event) {
-                    VariationSearchEvent.Dismiss -> onDismissRequest()
-                    is VariationSearchEvent.QueryChanged -> {}
-                    is VariationSearchEvent.VariationSelected -> onVariationSelected(event.variation)
+            sideEffects = listOf(
+                SideEffect { _, _, event ->
+                    when (event) {
+                        VariationSearchEvent.Dismiss -> onDismissRequest()
+                        is VariationSearchEvent.QueryChanged -> {}
+                        is VariationSearchEvent.VariationSelected -> onVariationSelected(event.variation)
+                    }
                 }
-            }
+            )
         )
     )
 }
@@ -286,9 +289,11 @@ private fun VariationSearchContent(
 
                     if (latestSet != null) {
                         Text(
-                            text = "${latestSet.date.toString(
-                                "MMM d"
-                            )}: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
+                            text = "${
+                                latestSet.date.toString(
+                                    "MMM d"
+                                )
+                            }: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
                             style = MaterialTheme.typography.bodyMedium
                         )
                         latestSet.tempo.render()

@@ -2,9 +2,10 @@ package com.lift.bro.presentation.settings.server
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.domain.server.LiftBroServer
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withTimeoutOrNull
@@ -43,19 +44,19 @@ fun rememberServerSettingsInteractor(
         }
     ),
     sideEffects = listOf(
-        { state, event ->
+        SideEffect { dispatcher, _, event ->
             when (event) {
                 ServerSettingsEvent.TurnOffServer -> {
                     server.stop()
                     while (server.isRunning()) {
                         delay(500)
                     }
-                    invoke(ServerSettingsEvent.ServerStatusUpdated(ServerStatus.Off))
+                    dispatcher(ServerSettingsEvent.ServerStatusUpdated(ServerStatus.Off))
                 }
                 ServerSettingsEvent.TurnOnServer -> {
                     server.start()
                     withTimeoutOrNull(2000L) {
-                        invoke(ServerSettingsEvent.ServerStatusUpdated(ServerStatus.On))
+                        dispatcher(ServerSettingsEvent.ServerStatusUpdated(ServerStatus.On))
                     }
                     while (!server.isRunning()) {
                         delay(500)

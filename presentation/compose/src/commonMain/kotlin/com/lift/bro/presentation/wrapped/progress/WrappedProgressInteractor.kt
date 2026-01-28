@@ -3,7 +3,7 @@ package com.lift.bro.presentation.wrapped.progress
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.lift.bro.domain.models.VariationId
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.compose.rememberInteractor
 import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase

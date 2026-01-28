@@ -51,7 +51,8 @@ kotlin {
             implementation(project(":data:sqldelight"))
             implementation(project(":data:client"))
             implementation(project(":data:core"))
-            implementation(project(":libs:mvi"))
+            implementation(project(":libs:mvi:core"))
+            implementation(project(":libs:mvi:compose"))
             implementation(project(":libs:logging"))
 
 

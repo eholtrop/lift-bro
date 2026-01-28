@@ -64,7 +64,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.presentation.Interactor
+import com.lift.bro.mvi.Interactor
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.lift.WarningDialog
@@ -82,7 +82,6 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
-import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toString
 import kotlinx.coroutines.launch

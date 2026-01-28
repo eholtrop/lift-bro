@@ -1,8 +1,8 @@
 package com.lift.bro.presentation.wrapped
 
 import androidx.compose.runtime.Composable
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.compose.rememberInteractor
 import kotlinx.coroutines.flow.flow
 
 val heavyThings = listOf(

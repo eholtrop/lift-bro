@@ -6,9 +6,10 @@ import com.lift.bro.di.goalsRepository
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.domain.models.GoalId
 import com.lift.bro.domain.repositories.IGoalRepository
-import com.lift.bro.presentation.Interactor
-import com.lift.bro.presentation.Reducer
-import com.lift.bro.presentation.rememberInteractor
+import com.lift.bro.mvi.Interactor
+import com.lift.bro.mvi.Reducer
+import com.lift.bro.mvi.SideEffect
+import com.lift.bro.mvi.compose.rememberInteractor
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 
@@ -37,6 +38,7 @@ val GoalsReducer = Reducer<GoalsState, GoalsEvents> { state, event ->
                 } else {
                     it
                 }
+//                TestAlias
             }
         )
         is GoalsEvents.ToggleGoalAchieved -> state.copy(
@@ -53,7 +55,7 @@ val GoalsReducer = Reducer<GoalsState, GoalsEvents> { state, event ->
 
 fun goalsSideEffects(
     goalsRepository: IGoalRepository = dependencies.goalsRepository
-): com.lift.bro.presentation.SideEffect<GoalsState, GoalsEvents> = { state, event ->
+): SideEffect<GoalsState, GoalsEvents> = SideEffect { _, state, event ->
     when (event) {
         GoalsEvents.AddGoalClicked -> Unit
         is GoalsEvents.DeleteGoalClicked -> goalsRepository.delete(Goal(event.goalId, name = ""))
