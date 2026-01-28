@@ -1,7 +1,8 @@
-package com.lift.bro.ui.navigation
+package com.lift.bro.swipenavhost
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import kotlinx.coroutines.CoroutineScope
@@ -16,16 +17,16 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Serializable
-private data class NavCoordinatorSaveable(
+data class NavCoordinatorSaveable(
     val pages: List<Destination>,
     val currentPage: Destination,
 )
 
 @Composable
-fun rememberNavCoordinator(
-    initialDestination: Destination,
+fun <T: Destination> rememberNavCoordinator(
+    initialDestination: T,
 ): NavCoordinator = rememberSaveable(
-    saver = object: androidx.compose.runtime.saveable.Saver<NavCoordinator, String> {
+    saver = object: Saver<NavCoordinator, String> {
         override fun SaverScope.save(value: NavCoordinator): String {
             return Json.encodeToString(
                 NavCoordinatorSaveable(

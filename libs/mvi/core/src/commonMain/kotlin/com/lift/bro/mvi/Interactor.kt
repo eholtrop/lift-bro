@@ -46,7 +46,6 @@ import kotlinx.coroutines.withContext
  * @param stateResolver Given the previously saved initial state (e.g., from restore) and the latest
  *                      emitted state from the source, return the merged state to start scanning from.
  */
-@OptIn(ExperimentalCoroutinesApi::class)
 class Interactor<State, Event>(
     initialState: State,
     source: Flow<State>,
@@ -73,6 +72,7 @@ class Interactor<State, Event>(
     /**
      * Hot StateFlow that emits the current state. Collected values are suitable for driving UI.
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     val state: StateFlow<State> = source
         .flatMapLatest { sourceState ->
             events.receiveAsFlow()

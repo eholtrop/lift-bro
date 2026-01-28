@@ -15,10 +15,10 @@ import com.lift.bro.presentation.variation.VariationDetailsScreen
 import com.lift.bro.presentation.workout.WorkoutScreen
 import com.lift.bro.presentation.workout.rememberWorkoutInteractor
 import com.lift.bro.presentation.wrapped.WrappedLandingScreen
+import com.lift.bro.swipenavhost.LocalNavCoordinator
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
-import com.lift.bro.ui.navigation.LocalNavCoordinator
 
 @Composable
 fun AppRouter(route: Destination) {

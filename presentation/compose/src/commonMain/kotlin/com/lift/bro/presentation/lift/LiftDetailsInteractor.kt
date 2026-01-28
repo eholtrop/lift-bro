@@ -11,12 +11,12 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.mvi.Interactor
 import com.lift.bro.mvi.SideEffect
 import com.lift.bro.mvi.compose.rememberInteractor
+import com.lift.bro.swipenavhost.LocalNavCoordinator
+import com.lift.bro.swipenavhost.NavCoordinator
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.EditLift
 import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.navigation.Destination.VariationDetails
-import com.lift.bro.ui.navigation.LocalNavCoordinator
-import com.lift.bro.ui.navigation.NavCoordinator
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable

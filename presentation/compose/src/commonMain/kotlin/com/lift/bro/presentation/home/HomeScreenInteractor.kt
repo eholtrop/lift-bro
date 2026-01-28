@@ -8,12 +8,12 @@ import com.lift.bro.mvi.Interactor
 import com.lift.bro.mvi.Reducer
 import com.lift.bro.mvi.SideEffect
 import com.lift.bro.mvi.compose.rememberInteractor
+import com.lift.bro.swipenavhost.LocalNavCoordinator
+import com.lift.bro.swipenavhost.NavCoordinator
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditLift
 import com.lift.bro.ui.navigation.Destination.Settings
-import com.lift.bro.ui.navigation.LocalNavCoordinator
-import com.lift.bro.ui.navigation.NavCoordinator
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.Serializable
 
