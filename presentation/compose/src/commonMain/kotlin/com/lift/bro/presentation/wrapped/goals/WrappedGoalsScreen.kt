@@ -41,7 +41,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Goal
-import com.lift.bro.mvi.Interactor
+import tv.dpal.flowvi.Interactor
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble

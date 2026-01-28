@@ -2,10 +2,10 @@ package com.lift.bro.presentation.settings.server
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.domain.server.LiftBroServer
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.Reducer
-import com.lift.bro.mvi.SideEffect
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withTimeoutOrNull

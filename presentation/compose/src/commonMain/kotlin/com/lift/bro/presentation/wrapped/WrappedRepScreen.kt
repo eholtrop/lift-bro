@@ -16,8 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.lift.bro.domain.models.fullName
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetTotalRepsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostRepsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetWorkoutAverageUseCase

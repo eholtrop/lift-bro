@@ -15,9 +15,9 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
-import com.lift.bro.mvi.Reducer
-import com.lift.bro.mvi.SideEffect
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.`ktx-datetime`.toLocalDate

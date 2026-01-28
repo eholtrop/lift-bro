@@ -28,8 +28,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ext.ktx.datetime.toString
-import com.lift.bro.mvi.Interactor
-import com.lift.bro.mvi.compose.rememberInteractor
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentDayUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentMonthUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentVariationUseCase

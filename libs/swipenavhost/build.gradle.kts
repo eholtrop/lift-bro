@@ -14,7 +14,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":libs:mvi:core"))
+            api(project(":libs:flowvi:core"))
             implementation(project(":libs:logging"))
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization)

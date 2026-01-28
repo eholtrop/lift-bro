@@ -1,4 +1,4 @@
-package com.lift.bro.mvi
+package tv.dpal.flowvi
 
 /**
  * Lightweight, Compose-first MVI toolkit for Kotlin Multiplatform.
