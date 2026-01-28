@@ -58,8 +58,8 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
-import com.lift.bro.utils.horizontal_padding.padding
-import com.lift.bro.utils.listCorners
+import com.lift.bro.compose.horizontal_padding.padding
+import com.lift.bro.compose.listCorners
 import com.lift.bro.utils.maxText
 import com.lift.bro.`ktx-datetime`.toLocalDate
 import kotlinx.datetime.Clock

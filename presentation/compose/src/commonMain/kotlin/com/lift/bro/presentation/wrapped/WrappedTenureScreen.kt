@@ -31,7 +31,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.`ktx-datetime`.toLocalDate
-import com.lift.bro.utils.vertical_padding.padding
+import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable

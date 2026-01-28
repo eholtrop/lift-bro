@@ -48,7 +48,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.RadioButtonCard
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.AccessibilityMinimumSize
+import com.lift.bro.compose.AccessibilityMinimumSize
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay

@@ -39,7 +39,7 @@ import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.format
 import com.lift.bro.utils.percentageFormat
-import com.lift.bro.utils.vertical_padding.padding
+import com.lift.bro.compose.vertical_padding.padding
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_summary_screen_consistency_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_goals_title

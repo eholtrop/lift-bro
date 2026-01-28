@@ -40,7 +40,6 @@ import androidx.compose.ui.util.lerp
 import androidx.window.core.layout.WindowSizeClass
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.horizontal_padding.padding
 import io.sentry.kotlin.multiplatform.Sentry
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlinx.serialization.encodeToString

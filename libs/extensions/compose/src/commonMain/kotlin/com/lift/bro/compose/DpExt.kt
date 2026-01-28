@@ -1,4 +1,4 @@
-package com.lift.bro.utils
+package com.lift.bro.compose
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
