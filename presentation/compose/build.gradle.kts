@@ -53,10 +53,10 @@ kotlin {
             implementation(project(":data:core"))
             implementation(project(":libs:mvi:core"))
             implementation(project(":libs:mvi:compose"))
-            implementation(project(":libs:extensions:flow"))
+            implementation(project(":libs:ext:flow"))
             implementation(project(":libs:logging"))
-            implementation(project(":libs:extensions:ktx-datetime"))
-            implementation(project(":libs:extensions:compose"))
+            implementation(project(":libs:ext:ktx-datetime"))
+            implementation(project(":libs:ext:compose"))
 
             // Compose Multiplatform
             implementation(compose.ui)
