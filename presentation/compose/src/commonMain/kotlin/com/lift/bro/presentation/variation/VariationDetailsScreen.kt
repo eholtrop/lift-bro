@@ -61,7 +61,6 @@ import com.lift.bro.utils.horizontal_padding.padding
 import com.lift.bro.utils.listCorners
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.toLocalDate
-import com.lift.bro.utils.toString
 import kotlinx.datetime.Clock
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description

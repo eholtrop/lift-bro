@@ -12,7 +12,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.lift.bro.utils.toString
 import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.date_selector_dialog_confirm_button_text

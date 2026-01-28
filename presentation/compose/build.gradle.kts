@@ -53,6 +53,7 @@ kotlin {
             implementation(project(":data:core"))
             implementation(project(":libs:mvi:core"))
             implementation(project(":libs:mvi:compose"))
+            implementation(project(":libs:extensions:flow"))
             implementation(project(":libs:logging"))
 
 

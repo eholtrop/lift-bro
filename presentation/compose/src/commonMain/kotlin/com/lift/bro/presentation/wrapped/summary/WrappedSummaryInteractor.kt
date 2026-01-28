@@ -15,7 +15,7 @@ import com.lift.bro.presentation.wrapped.usecase.GetVariationConsistencyUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostRepsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
-import com.lift.bro.utils.combine
+import com.lift.bro.ext.flow.combine
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable

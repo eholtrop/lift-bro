@@ -61,7 +61,6 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
-import com.lift.bro.utils.toString
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 

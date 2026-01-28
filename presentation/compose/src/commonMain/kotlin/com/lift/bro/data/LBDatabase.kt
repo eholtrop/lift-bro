@@ -20,7 +20,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.Sorting
-import com.lift.bro.utils.mapEach
+import com.lift.bro.ext.flow.mapEach
 import com.lift.bro.utils.toLocalDate
 import comliftbrodb.GetAll
 import comliftbrodb.GetAllByVariation
