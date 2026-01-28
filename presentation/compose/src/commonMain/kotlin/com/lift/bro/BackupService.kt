@@ -19,7 +19,6 @@ import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
-import com.lift.bro.utils.toString
 import com.lift.bro.utils.today
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.createDirectories

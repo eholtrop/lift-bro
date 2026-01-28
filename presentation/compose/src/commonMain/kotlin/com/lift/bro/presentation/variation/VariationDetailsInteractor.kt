@@ -13,7 +13,6 @@ import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.navigation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.NavCoordinator
-import com.lift.bro.utils.toString
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.Serializable
 
