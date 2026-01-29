@@ -5,14 +5,14 @@ import com.lift.bro.data.client.createConnectionFlow
 import com.lift.bro.data.client.createLiftBroClient
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.domain.repositories.IGoalRepository
-import com.lift.bro.logging.Log
-import com.lift.bro.logging.d
 import io.ktor.client.request.delete
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import kotlinx.coroutines.flow.Flow
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
 
 class KtorGoalRepository(
     val baseUrl: String,

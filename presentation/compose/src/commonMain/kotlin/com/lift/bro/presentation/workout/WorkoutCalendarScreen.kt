@@ -54,7 +54,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
-import com.lift.bro.compose.toColor
 import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.workoutRepository
@@ -64,14 +63,11 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.variation.render
-import com.lift.bro.swipenavhost.LocalNavCoordinator
-import com.lift.bro.swipenavhost.NavCoordinator
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calendar.Calendar
 import com.lift.bro.ui.calendar.CalendarMonth
@@ -102,6 +98,10 @@ import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_tit
 import lift_bro.core.generated.resources.workout_calendar_screen_start_workout_cta
 import lift_bro.core.generated.resources.workout_calendar_screen_warmup_label
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.compose.toColor
+import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.swipenavhost.NavCoordinator
 
 @Composable
 fun WorkoutCalendarContent(

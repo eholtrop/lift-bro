@@ -20,9 +20,6 @@ import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.`ktx-datetime`.toLocalDate
-import com.lift.bro.swipenavhost.LocalNavCoordinator
-import com.lift.bro.swipenavhost.NavCoordinator
 import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -33,6 +30,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
+import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.swipenavhost.NavCoordinator
 
 @Serializable
 data class WorkoutCalendarState(

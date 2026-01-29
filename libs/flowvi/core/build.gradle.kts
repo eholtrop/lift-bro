@@ -15,7 +15,8 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":libs:logging"))
+            // TODO: Replace with published dependency when available
+            // implementation("tv.dpal:logging:<version>")
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization)
             implementation(compose.runtime)
@@ -31,7 +32,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.lift.bro.mvi"
+    namespace = "tv.dpal.flowvi"
     compileSdk = 36
     defaultConfig { minSdk = 24 }
     buildFeatures { compose = true }

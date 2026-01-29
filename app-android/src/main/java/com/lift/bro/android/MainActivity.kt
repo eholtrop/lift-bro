@@ -15,8 +15,8 @@ import com.lift.bro.presentation.LocalPlatformContext
 import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.StoreManager
 import com.lift.bro.presentation.server.createLiftBroServer
-import com.lift.bro.swipenavhost.rememberNavCoordinator
 import com.lift.bro.ui.navigation.Destination
+import tv.dpal.swipenavhost.rememberNavCoordinator
 
 class MainActivity : ComponentActivity() {
 

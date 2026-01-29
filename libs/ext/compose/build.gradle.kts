@@ -27,7 +27,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.lift.bro.extensions.flow"
+    namespace = "tv.dpal.ext.compose"
     compileSdk = 36
     defaultConfig { minSdk = 24 }
     buildFeatures { compose = true }

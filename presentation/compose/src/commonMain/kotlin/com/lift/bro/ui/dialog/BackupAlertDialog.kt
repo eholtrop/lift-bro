@@ -14,8 +14,6 @@ import androidx.compose.ui.Modifier
 import com.lift.bro.BackupUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.repositories.BackupSettings
-import com.lift.bro.`ktx-datetime`.toLocalDate
-import com.lift.bro.`ktx-datetime`.today
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -29,6 +27,8 @@ import lift_bro.core.generated.resources.backup_dialog_primary_cta
 import lift_bro.core.generated.resources.backup_dialog_secondary_cta
 import lift_bro.core.generated.resources.backup_dialog_title
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.`ktx-datetime`.today
 
 @Composable
 fun BackupAlertDialog(

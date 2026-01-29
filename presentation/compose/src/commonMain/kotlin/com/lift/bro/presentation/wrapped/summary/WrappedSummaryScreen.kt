@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import com.lift.bro.domain.models.Goal
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.presentation.wrapped.heavyThings
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -39,7 +38,6 @@ import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.format
 import com.lift.bro.utils.percentageFormat
-import com.lift.bro.compose.vertical_padding.padding
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_summary_screen_consistency_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_goals_title
@@ -53,6 +51,8 @@ import lift_bro.core.generated.resources.wrapped_summary_screen_total_weight_mov
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.flowvi.Interactor
 
 @Composable
 fun WrappedSummaryScreen(

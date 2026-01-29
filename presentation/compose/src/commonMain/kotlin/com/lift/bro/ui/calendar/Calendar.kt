@@ -39,7 +39,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lift.bro.ext.ktx.datetime.toString
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
@@ -58,6 +57,7 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.ext.ktx.datetime.toString
 
 object ComposeCalendarDefaults {
 

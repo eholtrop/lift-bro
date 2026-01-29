@@ -30,14 +30,14 @@ import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.`ktx-datetime`.toLocalDate
-import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.*
 import lift_bro.core.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.`ktx-datetime`.toLocalDate
 
 @Serializable
 data class WrappedTenureState(

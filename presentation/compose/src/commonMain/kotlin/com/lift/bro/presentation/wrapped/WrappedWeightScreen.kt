@@ -17,8 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetTotalWeightMovedUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
 import com.lift.bro.ui.dialog.InfoSpeechBubble
@@ -26,13 +24,14 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
-import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.*
-import lift_bro.core.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.rememberInteractor
 
 @Serializable
 data class WrappedWeightState(

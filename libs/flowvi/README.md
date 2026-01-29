@@ -97,22 +97,22 @@ Until this library is published, depend on it via a composite build/module inclu
 
 ```kotlin path=null start=null
 // settings.gradle.kts
-include(":libs:flowvi")
+include(":flowvi")
 
 // build.gradle.kts of your module
 kotlin {
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":libs:flowvi"))
+            implementation(project(":flowvi"))
             
             // optional
-            implementation(project(":libs:flowvi:compose"))
+            implementation(project(":flowvi:compose"))
         }
     }
 }
 ```
 
-When published, you’ll be able to use:
+When published, you'll be able to use:
 
 ```kotlin path=null start=null
 // build.gradle.kts
@@ -120,6 +120,6 @@ dependencies {
     implementation("tv.dpal:flowvi:<version>")
             
     // optional
-    implementation(project(":tv.dpal:flowvi-compose:<version>"))
+    implementation("tv.dpal:flowvi-compose:<version>")
 }
 ```

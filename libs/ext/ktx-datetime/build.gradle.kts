@@ -20,7 +20,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.lift.bro.ext.ktx.datetime"
+    namespace = "tv.dpal.ext.ktx.datetime"
     compileSdk = 36
     defaultConfig { minSdk = 24 }
 }

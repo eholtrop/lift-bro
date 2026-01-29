@@ -1,7 +1,5 @@
 package com.lift.bro.data.client
 
-import com.lift.bro.logging.Log
-import com.lift.bro.logging.d
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.HttpRequestRetry
@@ -23,6 +21,8 @@ import io.ktor.websocket.readText
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
 
 internal inline fun <reified T> createConnectionFlow(
     httpClient: HttpClient,

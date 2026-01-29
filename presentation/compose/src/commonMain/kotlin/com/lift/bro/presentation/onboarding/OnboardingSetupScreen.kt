@@ -48,7 +48,6 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.RadioButtonCard
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.compose.AccessibilityMinimumSize
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -59,6 +58,7 @@ import lift_bro.core.generated.resources.onboarding_setup_screen_select_lifts_ti
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_uom_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_title
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.compose.AccessibilityMinimumSize
 
 @Composable
 fun OnboardingSetupScreen(

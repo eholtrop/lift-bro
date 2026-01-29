@@ -11,6 +11,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            // use composite builds to fix this
             implementation(project(":libs:logging"))
             implementation(libs.kotlinx.coroutines.core)
         }
@@ -21,7 +22,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.lift.bro.extensions.flow"
+    namespace = "tv.dpal.ext.flow"
     compileSdk = 36
     defaultConfig { minSdk = 24 }
 }

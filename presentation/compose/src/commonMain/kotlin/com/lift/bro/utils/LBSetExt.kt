@@ -8,12 +8,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.UOM
-import com.lift.bro.logging.Log
-import com.lift.bro.logging.d
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.weightFormat
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
 
 @Composable
 internal fun LBSet.prettyPrintSet(

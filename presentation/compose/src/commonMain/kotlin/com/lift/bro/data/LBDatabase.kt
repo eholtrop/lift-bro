@@ -20,8 +20,6 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.Sorting
-import com.lift.bro.ext.flow.mapEach
-import com.lift.bro.`ktx-datetime`.toLocalDate
 import comliftbrodb.GetAll
 import comliftbrodb.GetAllByVariation
 import comliftbrodb.Goal
@@ -45,6 +43,8 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
+import tv.dpal.ext.flow.mapEach
+import tv.dpal.`ktx-datetime`.toLocalDate
 import kotlin.math.min
 
 class LBDatabase(

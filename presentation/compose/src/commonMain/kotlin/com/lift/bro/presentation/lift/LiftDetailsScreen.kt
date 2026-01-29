@@ -60,8 +60,6 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.models.oneRepMax
-import com.lift.bro.ext.ktx.datetime.toString
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
@@ -74,14 +72,10 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.compose.AccessibilityMinimumSize
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
-import com.lift.bro.compose.listCorners
 import com.lift.bro.utils.maxText
-import com.lift.bro.compose.toColor
-import com.lift.bro.`ktx-datetime`.toLocalDate
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
@@ -103,6 +97,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import tv.dpal.compose.AccessibilityMinimumSize
+import tv.dpal.compose.listCorners
+import tv.dpal.compose.toColor
+import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.flowvi.Interactor
+import tv.dpal.`ktx-datetime`.toLocalDate
 
 @Composable
 fun LiftDetailsScreen(

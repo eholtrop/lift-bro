@@ -48,7 +48,6 @@ import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.presentation.wrapped.WrappedDialog
-import com.lift.bro.swipenavhost.LocalNavCoordinator
 import com.lift.bro.ui.AnimatedRotatingText
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
@@ -73,6 +72,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import tv.dpal.swipenavhost.LocalNavCoordinator
 
 @Composable
 fun HomeScreen(

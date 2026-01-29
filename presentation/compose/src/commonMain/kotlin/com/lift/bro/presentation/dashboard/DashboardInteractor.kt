@@ -7,15 +7,9 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.SideEffect
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.ui.LiftCardData
 import com.lift.bro.ui.LiftCardState
 import com.lift.bro.ui.navigation.Destination
-import com.lift.bro.`ktx-datetime`.toLocalDate
-import com.lift.bro.swipenavhost.LocalNavCoordinator
-import com.lift.bro.swipenavhost.NavCoordinator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
@@ -23,6 +17,12 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
+import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.swipenavhost.NavCoordinator
 
 typealias DashboardInteractor = Interactor<DashboardState, DashboardEvent>
 

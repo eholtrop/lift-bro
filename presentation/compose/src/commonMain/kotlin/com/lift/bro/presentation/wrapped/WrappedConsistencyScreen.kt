@@ -27,9 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.lift.bro.ext.ktx.datetime.toString
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentDayUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentMonthUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentVariationUseCase
@@ -41,7 +38,6 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
-import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
@@ -56,6 +52,10 @@ import lift_bro.core.generated.resources.wrapped_consistency_speech_bubble_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.rememberInteractor
 
 @Serializable
 @Immutable
