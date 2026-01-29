@@ -12,13 +12,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.lift.bro.ext.ktx.datetime.toString
 import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.date_selector_dialog_confirm_button_text
 import lift_bro.core.generated.resources.date_selector_dialog_dismiss_button_text
 import lift_bro.core.generated.resources.date_selector_title
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.ext.ktx.datetime.toString
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

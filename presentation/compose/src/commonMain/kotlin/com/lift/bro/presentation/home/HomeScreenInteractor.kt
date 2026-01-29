@@ -4,18 +4,18 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.goalsRepository
 import com.lift.bro.di.liftRepository
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.Reducer
-import tv.dpal.flowvi.SideEffect
-import tv.dpal.flowvi.rememberInteractor
-import com.lift.bro.swipenavhost.LocalNavCoordinator
-import com.lift.bro.swipenavhost.NavCoordinator
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditLift
 import com.lift.bro.ui.navigation.Destination.Settings
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
+import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.swipenavhost.NavCoordinator
 
 typealias HomeInteractor = Interactor<HomeState, HomeEvent>
 

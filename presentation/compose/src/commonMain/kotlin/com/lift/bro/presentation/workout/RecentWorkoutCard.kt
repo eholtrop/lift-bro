@@ -16,7 +16,6 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.ext.ktx.datetime.toString
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
@@ -25,6 +24,7 @@ import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import tv.dpal.ext.ktx.datetime.toString
 
 @Composable
 fun RecentWorkoutCard(

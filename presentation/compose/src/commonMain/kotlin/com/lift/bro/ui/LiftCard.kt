@@ -44,12 +44,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.lift.bro.compose.toColor
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.UOM
-import com.lift.bro.ext.ktx.datetime.toString
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.swipenavhost.LocalNavCoordinator
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
@@ -64,6 +61,9 @@ import lift_bro.core.generated.resources.lift_card_empty_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.compose.toColor
+import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.swipenavhost.LocalNavCoordinator
 import kotlin.math.max
 import kotlin.text.Typography.nbsp
 

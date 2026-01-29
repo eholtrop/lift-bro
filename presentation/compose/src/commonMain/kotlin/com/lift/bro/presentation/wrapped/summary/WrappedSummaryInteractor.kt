@@ -3,8 +3,6 @@ package com.lift.bro.presentation.wrapped.summary
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.lift.bro.domain.models.Goal
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.wrapped.HeavyThing
 import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import com.lift.bro.presentation.wrapped.heavyThings
@@ -15,10 +13,12 @@ import com.lift.bro.presentation.wrapped.usecase.GetVariationConsistencyUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostRepsUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
-import com.lift.bro.ext.flow.combine
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
+import tv.dpal.ext.flow.combine
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.rememberInteractor
 
 @Composable
 fun rememberWrappedSummaryInteractor(

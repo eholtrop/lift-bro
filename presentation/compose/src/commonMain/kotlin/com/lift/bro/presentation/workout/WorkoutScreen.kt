@@ -60,17 +60,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
-import com.lift.bro.compose.AccessibilityMinimumSize
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.ext.ktx.datetime.toString
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.lift.WarningDialog
-import com.lift.bro.swipenavhost.LocalNavCoordinator
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.SetInfoRow
@@ -110,6 +106,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import tv.dpal.compose.AccessibilityMinimumSize
+import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.flowvi.Interactor
+import tv.dpal.swipenavhost.LocalNavCoordinator
 import kotlin.math.absoluteValue
 
 @Composable

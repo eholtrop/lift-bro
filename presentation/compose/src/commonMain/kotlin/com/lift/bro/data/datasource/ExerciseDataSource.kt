@@ -8,7 +8,6 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
-import com.lift.bro.`ktx-datetime`.toLocalDate
 import comliftbrodb.ExerciseQueries
 import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
+import tv.dpal.`ktx-datetime`.toLocalDate
 
 interface ExerciseDataSource {
 

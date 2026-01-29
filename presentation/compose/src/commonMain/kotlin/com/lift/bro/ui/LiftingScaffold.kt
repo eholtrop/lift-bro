@@ -39,13 +39,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
-import com.lift.bro.swipenavhost.LocalNavCoordinator
-import com.lift.bro.swipenavhost.NavCoordinator
 import com.lift.bro.ui.navigation.LocalSnackbarHostState
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.toolbar_back_button_content_description
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.swipenavhost.NavCoordinator
 import kotlin.math.absoluteValue
 
 data class FabProperties(

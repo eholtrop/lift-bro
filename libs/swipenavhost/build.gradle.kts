@@ -14,8 +14,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(project(":libs:flowvi:core"))
-            implementation(project(":libs:logging"))
+            // TODO: Replace with published dependencies when available
+            // api("tv.dpal:flowvi-core:<version>")
+            // implementation("tv.dpal:logging:<version>")
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.serialization)
             implementation(compose.runtime)
@@ -34,7 +35,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.lift.bro.swipenavhost"
+    namespace = "tv.dpal.swipenavhost"
     compileSdk = 36
     defaultConfig { minSdk = 24 }
     buildFeatures { compose = true }

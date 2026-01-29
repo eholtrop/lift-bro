@@ -6,10 +6,10 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.`ktx-datetime`.toLocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
+import tv.dpal.`ktx-datetime`.toLocalDate
 
 class GetMostConsistentVariationUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,

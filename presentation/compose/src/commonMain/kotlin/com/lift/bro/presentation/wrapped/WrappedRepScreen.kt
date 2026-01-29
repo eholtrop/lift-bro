@@ -24,7 +24,6 @@ import com.lift.bro.presentation.wrapped.usecase.GetWorkoutAverageUseCase
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.format
-import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
@@ -37,6 +36,7 @@ import lift_bro.core.generated.resources.wrapped_reps_total_subtitle
 import lift_bro.core.generated.resources.wrapped_reps_total_title
 import lift_bro.core.generated.resources.wrapped_reps_workout_average
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.compose.vertical_padding.padding
 
 @Serializable
 data class WrappedRepState(

@@ -48,8 +48,6 @@ import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.compose.horizontal_padding.padding
-import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.coroutines.delay
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_goals_add_button_content_description
@@ -59,6 +57,8 @@ import lift_bro.core.generated.resources.wrapped_goals_section_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.compose.horizontal_padding.padding
+import tv.dpal.compose.vertical_padding.padding
 
 @Composable
 fun WrappedGoalsScreen(

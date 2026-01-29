@@ -54,9 +54,6 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.amber
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.compose.AccessibilityMinimumSize
-import com.lift.bro.swipenavhost.LocalNavCoordinator
-import com.lift.bro.swipenavhost.NavCoordinator
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.launch
@@ -82,6 +79,9 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.compose.AccessibilityMinimumSize
+import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.swipenavhost.NavCoordinator
 
 @Composable
 internal fun Modifier.onboardingBackground(): Modifier = this

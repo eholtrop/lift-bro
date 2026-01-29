@@ -23,7 +23,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.lift.bro.logging"
+    namespace = "tv.dpal.logging"
     compileSdk = 36
     defaultConfig { minSdk = 24 }
 }

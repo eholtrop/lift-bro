@@ -51,11 +51,6 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.ext.ktx.datetime.toString
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.Reducer
-import tv.dpal.flowvi.SideEffect
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -64,6 +59,11 @@ import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
+import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 
 @Serializable
 data class VariationSearchState(

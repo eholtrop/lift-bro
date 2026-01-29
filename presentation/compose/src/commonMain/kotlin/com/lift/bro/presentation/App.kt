@@ -53,9 +53,6 @@ import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
 import com.lift.bro.presentation.home.iconRes
-import com.lift.bro.swipenavhost.NavCoordinator
-import com.lift.bro.swipenavhost.SwipeableNavHost
-import com.lift.bro.swipenavhost.rememberNavCoordinator
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.LiftCardYValue
@@ -83,6 +80,9 @@ import lift_bro.core.generated.resources.consent_dialog_cta
 import lift_bro.core.generated.resources.consent_dialog_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.swipenavhost.NavCoordinator
+import tv.dpal.swipenavhost.SwipeableNavHost
+import tv.dpal.swipenavhost.rememberNavCoordinator
 import kotlin.random.Random
 
 val LocalLiftBro = compositionLocalOf<LiftBro> {
@@ -172,7 +172,7 @@ fun CheckAppConsent() {
 @Composable
 fun App(
     modifier: Modifier = Modifier,
-    navCoordinator: NavCoordinator = rememberNavCoordinator<com.lift.bro.swipenavhost.Destination>(Destination.Unknown),
+    navCoordinator: NavCoordinator = rememberNavCoordinator<tv.dpal.swipenavhost.Destination>(Destination.Unknown),
 ) {
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null

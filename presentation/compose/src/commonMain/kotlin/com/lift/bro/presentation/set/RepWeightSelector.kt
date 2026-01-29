@@ -49,7 +49,6 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialog
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.compose.AccessibilityMinimumSize
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
@@ -66,6 +65,7 @@ import lift_bro.core.generated.resources.rep_weight_selector_times_symbol
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.compose.AccessibilityMinimumSize
 
 @Preview
 @Composable

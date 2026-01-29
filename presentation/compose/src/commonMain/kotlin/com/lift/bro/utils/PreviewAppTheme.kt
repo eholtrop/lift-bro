@@ -19,11 +19,11 @@ import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.swipenavhost.JetpackComposeCoordinator
-import com.lift.bro.swipenavhost.LocalNavCoordinator
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import tv.dpal.swipenavhost.JetpackComposeCoordinator
+import tv.dpal.swipenavhost.LocalNavCoordinator
 
 @Composable
 internal fun PreviewAppTheme(

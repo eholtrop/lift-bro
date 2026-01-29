@@ -12,14 +12,6 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Sorting
-import com.lift.bro.logging.Log
-import com.lift.bro.logging.d
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.Reducer
-import tv.dpal.flowvi.SideEffect
-import tv.dpal.flowvi.rememberInteractor
-import com.lift.bro.swipenavhost.LocalNavCoordinator
-import com.lift.bro.swipenavhost.NavCoordinator
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
@@ -35,6 +27,14 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
+import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.swipenavhost.NavCoordinator
 import kotlin.math.max
 
 @Serializable

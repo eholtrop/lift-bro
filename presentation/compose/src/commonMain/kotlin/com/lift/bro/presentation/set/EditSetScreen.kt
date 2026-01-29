@@ -47,8 +47,6 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
-import com.lift.bro.ext.ktx.datetime.toString
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.presentation.set.components.EditSetVariationSelector
 import com.lift.bro.ui.Fade
@@ -61,8 +59,6 @@ import com.lift.bro.ui.calendar.Calendar
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.`ktx-datetime`.toLocalDate
-import com.lift.bro.compose.vertical_padding.padding
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import lift_bro.core.generated.resources.Res
@@ -76,6 +72,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.flowvi.Interactor
+import tv.dpal.`ktx-datetime`.toLocalDate
 
 enum class RPE(
     val rpe: Int,
