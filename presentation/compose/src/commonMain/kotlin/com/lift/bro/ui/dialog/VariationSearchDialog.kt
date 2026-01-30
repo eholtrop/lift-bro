@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -25,7 +26,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -36,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,6 +47,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -64,6 +70,7 @@ import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -282,6 +289,9 @@ private fun VariationSearchContent(
                 var addVariationClicked by remember { mutableStateOf(false) }
 
                 if (addVariationClicked) {
+                    var variation by remember { mutableStateOf(Variation()) }
+
+                    val coroutineScope = rememberCoroutineScope()
                     VariationTextField(
                         modifier = Modifier
                             .border(
@@ -290,20 +300,58 @@ private fun VariationSearchContent(
                                 color = MaterialTheme.colorScheme.onSurface,
                             ),
                         backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
-                        variation = Variation(),
-                        liftName = "",
+                        variation = variation,
                         focusRequester = FocusRequester(),
-                        onNameChange = {},
-                        onDelete = {},
+                        onNameChanged = {
+                            variation = variation.copy(
+                                name = it
+                            )
+                        },
+                        onLiftChanged = {
+                            variation = variation.copy(
+                                lift = it
+                            )
+                        },
+                        action = {
+                            IconButton(
+                                enabled = variation.name?.isNotBlank() == true && variation.lift != null,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        dependencies.variationRepository
+                                            .save(variation).also {
+                                                variationSelected(variation)
+                                            }
+                                    }
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = "Save and Select"
+                                )
+                            }
+                        }
                     )
                 } else {
                     Button(
+                        modifier = Modifier.fillMaxWidth()
+                            .defaultMinSize(TextFieldDefaults.MinHeight),
                         onClick = {
                             addVariationClicked = true
                         },
+                        shape = MaterialTheme.shapes.medium,
                         colors = ButtonDefaults.textButtonColors(),
                     ) {
-                        Text("Add Variation")
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                "Cant find what you're looking for?",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            Text("Create Variation")
+                        }
                     }
                 }
             }

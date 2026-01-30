@@ -18,7 +18,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -41,12 +40,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
@@ -67,7 +64,6 @@ import lift_bro.core.generated.resources.edit_lift_screen_lift_name_placeholder
 import lift_bro.core.generated.resources.edit_lift_screen_lift_warning_dialog_text
 import lift_bro.core.generated.resources.edit_lift_screen_title
 import lift_bro.core.generated.resources.edit_lift_screen_variation_delete_cta_content_description
-import lift_bro.core.generated.resources.edit_lift_screen_variation_name_placeholder
 import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_negative_cta
 import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_positive_cta
 import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_title
@@ -244,15 +240,25 @@ internal fun EditLiftScreen(
                         modifier = Modifier.animateItem(),
                         focusRequester = FocusRequester(),
                         variation = variation,
-                        liftName = state.name,
-                        onNameChange = {
+                        onNameChanged = {
                             interactor(EditLiftEvent.VariationNameChanged(variation, it))
                         },
-                        onDelete = {
-                            if (variation.eMax != null || variation.oneRepMax != null) {
-                                showVariationWarning = true
-                            } else {
-                                interactor(EditLiftEvent.VariationRemoved(variation))
+                        action = {
+                            IconButton(onClick = {
+
+                                if (variation.eMax != null || variation.oneRepMax != null) {
+                                    showVariationWarning = true
+                                } else {
+                                    interactor(EditLiftEvent.VariationRemoved(variation))
+                                }
+                            }) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = stringResource(
+                                        Res.string.edit_lift_screen_variation_delete_cta_content_description
+                                    )
+                                )
+
                             }
                         }
                     )
@@ -287,6 +293,7 @@ fun WarningDialog(
         text = { Text(text) },
     )
 }
+
 @Composable
 fun TextFieldDefaults.transparentColors(): TextFieldColors = TextFieldDefaults.colors(
     unfocusedContainerColor = Color.Transparent,
@@ -299,7 +306,7 @@ fun TextFieldDefaults.transparentColors(): TextFieldColors = TextFieldDefaults.c
     unfocusedIndicatorColor = Color.Transparent,
 )
 
-class EditLiftStateProvider : PreviewParameterProvider<EditLiftState> {
+class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
     override val values: Sequence<EditLiftState>
         get() = sequenceOf(
             // New lift - empty
@@ -366,7 +373,7 @@ class EditLiftStateProvider : PreviewParameterProvider<EditLiftState> {
 @Preview
 @Composable
 fun EditLiftScreenPreview(
-    @PreviewParameter(EditLiftStateProvider::class) state: EditLiftState
+    @PreviewParameter(EditLiftStateProvider::class) state: EditLiftState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
         LiftingScaffold(
