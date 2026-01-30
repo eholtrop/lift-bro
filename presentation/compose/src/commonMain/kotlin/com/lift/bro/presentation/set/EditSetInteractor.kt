@@ -12,6 +12,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Sorting
+import com.lift.bro.ui.calendar.today
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
@@ -97,37 +99,40 @@ sealed interface EditSetEvent {
 @OptIn(ExperimentalCoroutinesApi::class)
 private fun editSetSource(
     setId: String,
+    date: Instant? = null,
+    variationId: String? = null,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
 ) = setRepository.listen(setId)
+    .map {
+        it ?: LBSet(
+            id = setId,
+            date = date ?: Clock.System.now(),
+            variationId = variationId ?: "",
+        )
+    }
     .flatMapLatest { set ->
-        if (set == null) {
-            flow {
-                emit(EditSetState(id = setId))
-            }
-        } else {
-            variationRepository.listen(set.variationId)
-                .flatMapLatest { variation ->
-                    combine(
-                        setRepository.listenAll(
-                            variationId = variation?.id,
-                            limit = 1,
-                            sorting = Sorting.weight
-                        ).map { it.firstOrNull() },
-                        setRepository.listenAllForLift(
-                            liftId = variation?.lift?.id ?: "",
-                            limit = 1,
-                            sorting = Sorting.weight
-                        ).map { it.firstOrNull() }
-                    ) { maxVariation, maxLift ->
-                        set.toUiState(
-                            variation = variation,
-                            maxVariationSet = maxVariation,
-                            maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null
-                        )
-                    }
+        variationRepository.listen(set.variationId)
+            .flatMapLatest { variation ->
+                combine(
+                    setRepository.listenAll(
+                        variationId = variation?.id,
+                        limit = 1,
+                        sorting = Sorting.weight
+                    ).map { it.firstOrNull() },
+                    setRepository.listenAllForLift(
+                        liftId = variation?.lift?.id ?: "",
+                        limit = 1,
+                        sorting = Sorting.weight
+                    ).map { it.firstOrNull() }
+                ) { maxVariation, maxLift ->
+                    set.toUiState(
+                        variation = variation,
+                        maxVariationSet = maxVariation,
+                        maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null
+                    )
                 }
-        }
+            }
     }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -157,7 +162,7 @@ fun rememberCreateSetInteractor(
     return rememberInteractor(
         initialState = null,
         source = {
-            editSetSource(id)
+            editSetSource(id, date, variationId)
         },
         sideEffects = listOf(editSetSideEffects()) + listOf(
             SideEffect { _, _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
@@ -217,21 +222,23 @@ internal suspend fun LBSet.toUiState(
     maxLiftSet: LBSet?,
 ) = EditSetState(
     id = this.id,
-    variation = SetVariation(
-        variation = Variation(id = this.variationId),
-        variationMaxPercentage = maxVariationSet?.let {
-            EditSetMaxPercentageState(
-                percentage = ((this.weight / max(maxVariationSet.weight, 1.0)) * 100).toInt(),
-                variationName = variation?.fullName ?: ""
-            )
-        },
-        liftMaxPercentage = maxLiftSet?.let {
-            EditSetMaxPercentageState(
-                percentage = ((this.weight / max(maxLiftSet.weight, 1.0)) * 100).toInt(),
-                variationName = dependencies.liftRepository.get(variation?.lift?.id).firstOrNull()?.name ?: ""
-            )
-        }
-    ),
+    variation = variation?.let {
+        SetVariation(
+            variation = Variation(id = this.variationId),
+            variationMaxPercentage = maxVariationSet?.let {
+                EditSetMaxPercentageState(
+                    percentage = ((this.weight / max(maxVariationSet.weight, 1.0)) * 100).toInt(),
+                    variationName = variation.fullName
+                )
+            },
+            liftMaxPercentage = maxLiftSet?.let {
+                EditSetMaxPercentageState(
+                    percentage = ((this.weight / max(maxLiftSet.weight, 1.0)) * 100).toInt(),
+                    variationName = dependencies.liftRepository.get(variation.lift?.id).firstOrNull()?.name ?: ""
+                )
+            }
+        )
+    },
     weight = this.weight,
     reps = this.reps,
     tempo = TempoState(
