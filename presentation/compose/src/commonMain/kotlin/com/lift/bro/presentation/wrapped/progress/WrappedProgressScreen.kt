@@ -58,7 +58,7 @@ import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.compose.toColor
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.random.Random
 
 @Composable

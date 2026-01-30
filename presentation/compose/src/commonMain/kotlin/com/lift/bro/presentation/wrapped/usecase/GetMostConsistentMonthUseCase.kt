@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 
 class GetMostConsistentMonthUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,

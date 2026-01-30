@@ -10,7 +10,7 @@ import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalTMaxSettings
 import com.lift.bro.presentation.lift.uom
 import kotlinx.datetime.LocalDate
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.math.roundToInt
 
 val Variation.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()

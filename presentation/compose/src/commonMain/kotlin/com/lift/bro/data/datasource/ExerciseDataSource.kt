@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 
 interface ExerciseDataSource {
 

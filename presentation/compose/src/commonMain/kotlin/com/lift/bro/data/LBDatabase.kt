@@ -44,7 +44,7 @@ import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.atTime
 import kotlinx.datetime.toInstant
 import tv.dpal.ext.flow.mapEach
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.math.min
 
 class LBDatabase(

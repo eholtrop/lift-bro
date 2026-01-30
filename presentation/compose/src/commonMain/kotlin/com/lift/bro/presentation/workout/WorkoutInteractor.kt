@@ -37,7 +37,7 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 
 @Serializable
 data class CreateWorkoutState(
