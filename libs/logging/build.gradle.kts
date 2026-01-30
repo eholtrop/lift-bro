@@ -11,12 +11,6 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        commonMain.dependencies {
-            // no-op
-        }
-        androidMain.dependencies {
-            // no-op
-        }
         commonTest.dependencies {
             implementation(kotlin("test"))
         }

@@ -18,8 +18,8 @@ import kotlinx.serialization.Serializable
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.swipenavhost.LocalNavCoordinator
-import tv.dpal.swipenavhost.NavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
+import tv.dpal.navi.NavCoordinator
 
 @Serializable
 data class LiftDetailsState(

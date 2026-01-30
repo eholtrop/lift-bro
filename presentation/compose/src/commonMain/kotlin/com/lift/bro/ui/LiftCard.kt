@@ -63,7 +63,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tv.dpal.compose.toColor
 import tv.dpal.ext.ktx.datetime.toString
-import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
 import kotlin.math.max
 import kotlin.text.Typography.nbsp
 

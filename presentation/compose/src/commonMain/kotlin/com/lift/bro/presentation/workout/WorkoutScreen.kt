@@ -109,7 +109,7 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
-import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
 import kotlin.math.absoluteValue
 
 @Composable

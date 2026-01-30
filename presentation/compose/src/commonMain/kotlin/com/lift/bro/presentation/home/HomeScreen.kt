@@ -72,7 +72,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
-import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
 
 @Composable
 fun HomeScreen(

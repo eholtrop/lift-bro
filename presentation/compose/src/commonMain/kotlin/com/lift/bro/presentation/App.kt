@@ -80,9 +80,9 @@ import lift_bro.core.generated.resources.consent_dialog_cta
 import lift_bro.core.generated.resources.consent_dialog_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import tv.dpal.swipenavhost.NavCoordinator
-import tv.dpal.swipenavhost.SwipeableNavHost
-import tv.dpal.swipenavhost.rememberNavCoordinator
+import tv.dpal.navi.NavCoordinator
+import tv.dpal.navi.SwipeableNavHost
+import tv.dpal.navi.rememberNavCoordinator
 import kotlin.random.Random
 
 val LocalLiftBro = compositionLocalOf<LiftBro> {
@@ -172,7 +172,7 @@ fun CheckAppConsent() {
 @Composable
 fun App(
     modifier: Modifier = Modifier,
-    navCoordinator: NavCoordinator = rememberNavCoordinator<tv.dpal.swipenavhost.Destination>(Destination.Unknown),
+    navCoordinator: NavCoordinator = rememberNavCoordinator<tv.dpal.navi.Destination>(Destination.Unknown),
 ) {
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null

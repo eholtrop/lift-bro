@@ -5,7 +5,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Destination: tv.dpal.swipenavhost.Destination() {
+sealed class Destination: tv.dpal.navi.Destination() {
 
     @Serializable
     data object Unknown: Destination()

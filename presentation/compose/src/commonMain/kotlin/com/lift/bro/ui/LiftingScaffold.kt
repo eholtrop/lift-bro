@@ -44,8 +44,8 @@ import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.toolbar_back_button_content_description
 import org.jetbrains.compose.resources.stringResource
-import tv.dpal.swipenavhost.LocalNavCoordinator
-import tv.dpal.swipenavhost.NavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
+import tv.dpal.navi.NavCoordinator
 import kotlin.math.absoluteValue
 
 data class FabProperties(
