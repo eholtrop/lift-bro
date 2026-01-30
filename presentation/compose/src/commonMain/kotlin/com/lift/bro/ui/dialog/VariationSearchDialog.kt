@@ -27,6 +27,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,10 +57,14 @@ import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
@@ -144,6 +150,20 @@ fun VariationSearchDialog(
 ) {
     val state by interactor.state.collectAsState()
 
+    VariationSearchDialog(
+        onDismissRequest = onDismissRequest,
+        state = state,
+        onEvent = { interactor(it) }
+    )
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun VariationSearchDialog(
+    onDismissRequest: () -> Unit,
+    state: VariationSearchState,
+    onEvent: (VariationSearchEvent) -> Unit,
+) {
     var show by remember { mutableStateOf(state.visible) }
 
     Box {
@@ -189,7 +209,7 @@ fun VariationSearchDialog(
                     value = text,
                     onValueChange = {
                         text = it
-                        interactor(VariationSearchEvent.QueryChanged(it))
+                        onEvent(VariationSearchEvent.QueryChanged(it))
                     },
                 )
                 LaunchedEffect(Unit) {
@@ -209,7 +229,7 @@ fun VariationSearchDialog(
                     modifier = Modifier.fillMaxWidth(),
                     variations = state.filteredVariations,
                     variationSelected = {
-                        interactor(VariationSearchEvent.VariationSelected(it))
+                        onEvent(VariationSearchEvent.VariationSelected(it))
                     }
                 )
             }
@@ -255,6 +275,17 @@ private fun VariationSearchContent(
                     onClick = variationSelected
                 )
             }
+
+            item {
+                Button(
+                    onClick = {
+
+                    },
+                    colors = ButtonDefaults.textButtonColors(),
+                ) {
+                    Text("Add Variation")
+                }
+            }
         }
     }
 }
@@ -296,10 +327,7 @@ private fun SearchVariationItem(
             variation.maxText(),
             style = MaterialTheme.typography.bodyMedium
         )
-        val latestSet = dependencies.database.setDataSource.getAll(variation.id)
-            .maxByOrNull { it.date }
-
-        if (latestSet != null) {
+        variation.latestSet?.let { latestSet ->
             Text(
                 text = "${
                     latestSet.date.toString(
@@ -316,6 +344,28 @@ private fun SearchVariationItem(
                 )
             }
         }
+    }
+}
+
+@Composable
+@Preview
+fun VariationSearchDialogPreview(@PreviewParameter(DarkModeProvider::class) isDarkMode: Boolean) {
+    PreviewAppTheme(isDarkMode = isDarkMode) {
+        VariationSearchDialog(
+            onDismissRequest = {},
+            state = VariationSearchState(
+                visible = true,
+                query = "test",
+                placeholder = "asdf",
+                variations = listOf(
+                    Variation(
+
+                    )
+                )
+
+            ),
+            onEvent = {}
+        )
     }
 }
 
