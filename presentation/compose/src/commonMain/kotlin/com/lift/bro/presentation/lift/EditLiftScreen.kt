@@ -51,6 +51,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
+import com.lift.bro.ui.VariationTextField
 import com.lift.bro.ui.dialog.InfoDialogButton
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
@@ -239,7 +240,7 @@ internal fun EditLiftScreen(
                             }
                         )
                     }
-                    VariationItem(
+                    VariationTextField(
                         modifier = Modifier.animateItem(),
                         focusRequester = FocusRequester(),
                         variation = variation,
@@ -286,75 +287,6 @@ fun WarningDialog(
         text = { Text(text) },
     )
 }
-
-@Composable
-private fun VariationItem(
-    variation: Variation,
-    liftName: String,
-    focusRequester: FocusRequester = FocusRequester(),
-    onNameChange: (String) -> Unit,
-    onDelete: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = MaterialTheme.shapes.medium,
-            ),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        var name by remember { mutableStateOf(variation.name ?: "") }
-
-        TextField(
-            modifier = Modifier.weight(1f).focusRequester(focusRequester),
-            value = name,
-            leadingIcon = if (variation.favourite) {
-                {
-                    Icon(
-                        imageVector = Icons.Default.Favorite,
-                        contentDescription = "Favourite",
-                    )
-                }
-            } else {
-                null
-            },
-            singleLine = true,
-            onValueChange = {
-                name = it
-                onNameChange(it)
-            },
-            maxLines = 1,
-            placeholder = { Text(stringResource(Res.string.edit_lift_screen_variation_name_placeholder)) },
-            suffix = {
-                if (liftName.isNotBlank()) {
-                    Text(
-                        text = if (liftName.length > 12) {
-                            liftName.substring(
-                                0,
-                                11
-                            ) + "..."
-                        } else {
-                            liftName
-                        },
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            },
-            colors = TextFieldDefaults.transparentColors()
-        )
-        IconButton(onClick = onDelete) {
-            Icon(
-                Icons.Default.Delete,
-                contentDescription = stringResource(
-                    Res.string.edit_lift_screen_variation_delete_cta_content_description
-                )
-            )
-        }
-    }
-}
-
 @Composable
 fun TextFieldDefaults.transparentColors(): TextFieldColors = TextFieldDefaults.colors(
     unfocusedContainerColor = Color.Transparent,

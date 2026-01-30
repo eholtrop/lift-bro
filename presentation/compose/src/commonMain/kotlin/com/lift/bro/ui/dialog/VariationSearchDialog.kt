@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -55,6 +56,7 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.VariationTextField
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.DarkModeProvider
@@ -230,7 +232,7 @@ fun VariationSearchDialog(
                     variations = state.filteredVariations,
                     variationSelected = {
                         onEvent(VariationSearchEvent.VariationSelected(it))
-                    }
+                    },
                 )
             }
         }
@@ -277,13 +279,32 @@ private fun VariationSearchContent(
             }
 
             item {
-                Button(
-                    onClick = {
+                var addVariationClicked by remember { mutableStateOf(false) }
 
-                    },
-                    colors = ButtonDefaults.textButtonColors(),
-                ) {
-                    Text("Add Variation")
+                if (addVariationClicked) {
+                    VariationTextField(
+                        modifier = Modifier
+                            .border(
+                                width = 1.dp,
+                                shape = MaterialTheme.shapes.medium,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            ),
+                        backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
+                        variation = Variation(),
+                        liftName = "",
+                        focusRequester = FocusRequester(),
+                        onNameChange = {},
+                        onDelete = {},
+                    )
+                } else {
+                    Button(
+                        onClick = {
+                            addVariationClicked = true
+                        },
+                        colors = ButtonDefaults.textButtonColors(),
+                    ) {
+                        Text("Add Variation")
+                    }
                 }
             }
         }
