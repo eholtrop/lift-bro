@@ -2,14 +2,14 @@ package com.lift.bro.presentation.settings.client
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.Reducer
-import tv.dpal.flowvi.SideEffect
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.settings.client.ClientMode.Local
 import com.lift.bro.presentation.settings.client.ClientMode.Remote
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 
 typealias ClientSettingsInteractor = Interactor<ClientSettingsState, ClientSettingsEvent>
 

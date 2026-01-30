@@ -1,7 +1,5 @@
 package tv.dpal.ext.flow
 
-import tv.dpal.logging.Log
-import tv.dpal.logging.d
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
@@ -9,6 +7,8 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.flow.onStart
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
 import kotlinx.coroutines.flow.combine as flowCombine
 
 /*

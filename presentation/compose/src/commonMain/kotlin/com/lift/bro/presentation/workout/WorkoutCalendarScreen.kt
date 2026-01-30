@@ -63,9 +63,6 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.SideEffect
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
@@ -100,6 +97,9 @@ import lift_bro.core.generated.resources.workout_calendar_screen_warmup_label
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.toColor
 import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
 

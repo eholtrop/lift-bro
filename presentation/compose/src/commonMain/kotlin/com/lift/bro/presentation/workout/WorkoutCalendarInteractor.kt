@@ -15,9 +15,6 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
-import tv.dpal.flowvi.Reducer
-import tv.dpal.flowvi.SideEffect
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
 import comliftbrodb.LiftingLogQueries
@@ -30,6 +27,9 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.`ktx-datetime`.toLocalDate
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator

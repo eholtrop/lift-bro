@@ -41,7 +41,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Goal
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble
@@ -57,8 +56,9 @@ import lift_bro.core.generated.resources.wrapped_goals_section_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
-import tv.dpal.compose.horizontal_padding.padding
-import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.compose.padding.horizontal.padding
+import tv.dpal.compose.padding.vertical.padding
+import tv.dpal.flowvi.Interactor
 
 @Composable
 fun WrappedGoalsScreen(

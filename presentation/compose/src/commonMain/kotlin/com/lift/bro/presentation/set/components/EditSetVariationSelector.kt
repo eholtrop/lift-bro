@@ -18,12 +18,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import com.lift.bro.presentation.LocalShowMERCalcs
-import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.set.EditSetState
 import com.lift.bro.presentation.set.EditSetStateProvider
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.weightFormat
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
 import lift_bro.core.generated.resources.Res
@@ -118,7 +115,7 @@ fun EditSetVariationSelector(
 //                                        MaterialTheme.typography.titleSmall.toSpanStyle(),
 //                                    ) {
 //                                        append("+${state.mers ?: 0} MER(s)")
-////                                        append("TWM: ${weightFormat((state.weight ?: 0.0) * (state.reps ?: 0))}")
+// //                                        append("TWM: ${weightFormat((state.weight ?: 0.0) * (state.reps ?: 0))}")
 //                                    }
 //                                }
 

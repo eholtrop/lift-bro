@@ -3,7 +3,6 @@ package com.lift.bro.presentation.wrapped.progress
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.lift.bro.domain.models.VariationId
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.presentation.wrapped.usecase.GetVariationProgressUseCase
@@ -11,6 +10,7 @@ import com.lift.bro.utils.fullName
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.`ktx-datetime`.toLocalDate
 
 @Serializable

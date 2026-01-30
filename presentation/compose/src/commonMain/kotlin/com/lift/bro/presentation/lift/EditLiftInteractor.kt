@@ -13,12 +13,12 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
+import kotlinx.coroutines.flow.combine
+import kotlinx.serialization.Serializable
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import kotlinx.coroutines.flow.combine
-import kotlinx.serialization.Serializable
 
 @Serializable
 data class EditLiftState(

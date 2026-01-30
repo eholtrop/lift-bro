@@ -5,13 +5,13 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.goalsRepository
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.domain.repositories.IGoalRepository
+import com.lift.bro.presentation.wrapped.LocalWrappedYear
+import kotlinx.coroutines.flow.map
+import kotlinx.serialization.Serializable
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import com.lift.bro.presentation.wrapped.LocalWrappedYear
-import kotlinx.coroutines.flow.map
-import kotlinx.serialization.Serializable
 
 @Serializable
 data class WrappedGoalsState(

@@ -22,4 +22,3 @@ actual fun LocalDate.toString(pattern: String): String {
 actual fun LocalDateTime.toString(pattern: String): String {
     return SimpleDateFormat(pattern).format(Date(this.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()))
 }
-

@@ -2,14 +2,14 @@ package com.lift.bro.presentation.settings.server
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.domain.server.LiftBroServer
-import tv.dpal.flowvi.Interactor
-import tv.dpal.flowvi.Reducer
-import tv.dpal.flowvi.SideEffect
-import tv.dpal.flowvi.rememberInteractor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
+import tv.dpal.flowvi.SideEffect
+import tv.dpal.flowvi.rememberInteractor
 
 typealias ServerSettingsInteractor = Interactor<ServerSettingsState, ServerSettingsEvent>
 

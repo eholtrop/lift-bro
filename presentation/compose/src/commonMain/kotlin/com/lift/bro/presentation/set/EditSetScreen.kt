@@ -72,7 +72,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
-import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.`ktx-datetime`.toLocalDate
@@ -148,7 +148,6 @@ fun EditSetScreen(
                 checked = useV2,
                 onCheckedChange = { useV2 = !useV2 },
                 thumbContent = {
-
                     Text(
                         if (useV2) "V2" else "V1",
                         style = MaterialTheme.typography.titleSmall,

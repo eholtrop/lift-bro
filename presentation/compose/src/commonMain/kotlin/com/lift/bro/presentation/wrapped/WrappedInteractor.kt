@@ -1,9 +1,9 @@
 package com.lift.bro.presentation.wrapped
 
 import androidx.compose.runtime.Composable
+import kotlinx.coroutines.flow.flow
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.rememberInteractor
-import kotlinx.coroutines.flow.flow
 
 val heavyThings = listOf(
     HeavyThing(
