@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>InvalidPackageDeclaration:DateFormatting.android.kt$package tv.dpal.ext.ktx.datetime</ID>
+    <ID>InvalidPackageDeclaration:DateFormatting.kt$package tv.dpal.ext.ktx.datetime</ID>
+    <ID>InvalidPackageDeclaration:DateFormatting.native.kt$package tv.dpal.ext.ktx.datetime</ID>
+    <ID>PackageName:DateTimeExt.kt$package tv.dpal.`ktx-datetime`</ID>
+    <ID>PackageName:InstantExt.kt$package tv.dpal.`ktx-datetime`</ID>
+    <ID>PackageNaming:DateTimeExt.kt$package tv.dpal.`ktx-datetime`</ID>
+    <ID>PackageNaming:InstantExt.kt$package tv.dpal.`ktx-datetime`</ID>
+  </CurrentIssues>
+</SmellBaseline>

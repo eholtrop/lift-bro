@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>InvalidPackageDeclaration:FlowExt.kt$package tv.dpal.ext.flow</ID>
+    <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, flow7: Flow&lt;T7&gt;, transform: suspend (T1, T2, T3, T4, T5, T6, T7) -&gt; R )</ID>
+    <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, transform: suspend (T1, T2, T3, T4, T5, T6) -&gt; R )</ID>
+    <ID>MagicNumber:FlowExt.kt$3</ID>
+    <ID>MagicNumber:FlowExt.kt$4</ID>
+    <ID>MagicNumber:FlowExt.kt$5</ID>
+    <ID>MagicNumber:FlowExt.kt$6</ID>
+  </CurrentIssues>
+</SmellBaseline>
