@@ -98,7 +98,6 @@ enum class LiftCardYValue {
     Reps, Weight
 }
 
-
 private const val GRADIENT_SIZE = 50f
 
 typealias AnimatableOffset = Animatable<Offset, AnimationVector2D>
@@ -252,7 +251,6 @@ fun LiftCard(
                             (node.value - min * 0.95) / (max(1.0, max - min * 0.95))
                         val targetY = height - (normalizedPercentage * height).toFloat()
                         val newTargetOffset = Offset(targetX, targetY)
-
 
                         val animatablePair = animatedGraphNodes.getOrPut(node.date) {
                             Triple(

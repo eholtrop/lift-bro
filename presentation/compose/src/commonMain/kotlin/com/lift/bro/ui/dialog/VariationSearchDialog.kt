@@ -28,7 +28,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
@@ -48,7 +47,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -63,8 +61,8 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.VariationTextField
-import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.card.lift.weightFormat
+import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
@@ -427,9 +425,7 @@ fun VariationSearchDialogPreview(@PreviewParameter(DarkModeProvider::class) isDa
                 query = "test",
                 placeholder = "asdf",
                 variations = listOf(
-                    Variation(
-
-                    )
+                    Variation()
                 )
 
             ),
@@ -437,4 +433,3 @@ fun VariationSearchDialogPreview(@PreviewParameter(DarkModeProvider::class) isDa
         )
     }
 }
-

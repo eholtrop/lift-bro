@@ -21,20 +21,15 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,9 +49,9 @@ import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
 import com.lift.bro.ui.Card
+import com.lift.bro.ui.ReleaseNotesRow
 import com.lift.bro.ui.card.lift.LiftCard
 import com.lift.bro.ui.card.lift.LiftCardYValue
-import com.lift.bro.ui.ReleaseNotesRow
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
@@ -129,7 +124,8 @@ fun DashboardContent(
                                     Button(
                                         colors = ButtonDefaults.textButtonColors(),
                                         shape = MaterialTheme.shapes.medium.copy(
-                                            topEnd = CornerSize(0.dp), bottomEnd = CornerSize(0.dp),
+                                            topEnd = CornerSize(0.dp),
+                                            bottomEnd = CornerSize(0.dp),
                                         ),
                                         onClick = {
                                             showWeight.value =
@@ -140,12 +136,17 @@ fun DashboardContent(
                                                 }
                                         }
                                     ) {
-dd
                                         Text(
                                             text = buildAnnotatedString {
                                                 withStyle(
                                                     style = LocalTextStyle.current
-                                                        .copy(color = if (showWeight.value == LiftCardYValue.Weight) MaterialTheme.colorScheme.primary else TextFieldDefaults.colors().disabledTextColor)
+                                                        .copy(
+                                                            color = if (showWeight.value == LiftCardYValue.Weight) {
+                                                                MaterialTheme.colorScheme.primary
+                                                            } else {
+                                                                TextFieldDefaults.colors().disabledTextColor
+                                                            }
+                                                        )
                                                         .toSpanStyle()
                                                 ) {
                                                     append(LocalUnitOfMeasure.current.value)
@@ -153,7 +154,13 @@ dd
                                                 append("/")
                                                 withStyle(
                                                     style = LocalTextStyle.current
-                                                        .copy(color = if (showWeight.value == LiftCardYValue.Reps) MaterialTheme.colorScheme.primary else TextFieldDefaults.colors().disabledTextColor)
+                                                        .copy(
+                                                            color = if (showWeight.value == LiftCardYValue.Reps) {
+                                                                MaterialTheme.colorScheme.primary
+                                                            } else {
+                                                                TextFieldDefaults.colors().disabledTextColor
+                                                            }
+                                                        )
                                                         .toSpanStyle()
                                                 ) {
                                                     append(stringResource(Res.string.reps))
@@ -168,7 +175,14 @@ dd
                                             showRpe = !showRpe
                                         }
                                     ) {
-                                        Text(text = "rpe", color = if (showRpe) MaterialTheme.colorScheme.primary else TextFieldDefaults.colors().disabledTextColor)
+                                        Text(
+                                            text = "rpe",
+                                            color = if (showRpe) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                TextFieldDefaults.colors().disabledTextColor
+                                            }
+                                        )
                                     }
                                     Button(
                                         colors = ButtonDefaults.textButtonColors(),
@@ -177,7 +191,14 @@ dd
                                             showTempo = !showTempo
                                         }
                                     ) {
-                                        Text(text = "tempo", color = if (showTempo) MaterialTheme.colorScheme.primary else TextFieldDefaults.colors().disabledTextColor)
+                                        Text(
+                                            text = "tempo",
+                                            color = if (showTempo) {
+                                                MaterialTheme.colorScheme.primary
+                                            } else {
+                                                TextFieldDefaults.colors().disabledTextColor
+                                            }
+                                        )
                                     }
                                 }
                             }

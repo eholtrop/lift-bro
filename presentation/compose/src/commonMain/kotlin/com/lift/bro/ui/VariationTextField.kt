@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
@@ -29,7 +28,6 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
 import com.lift.bro.domain.models.Lift
@@ -86,7 +84,6 @@ fun VariationTextField(
         Row {
             val liftName = variation.lift?.name
             if (onLiftChanged != null) {
-
                 var lifts by remember { mutableStateOf(emptyList<Lift>()) }
                 var showMenu by remember { mutableStateOf(false) }
 
@@ -112,7 +109,6 @@ fun VariationTextField(
                             text = "Select Lift"
                         )
                     }
-
                 }
                 DropdownMenu(
                     expanded = showMenu,
@@ -151,4 +147,3 @@ fun VariationTextField(
         action?.invoke()
     }
 }
-
