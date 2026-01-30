@@ -11,13 +11,11 @@ env:
     LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
     REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY }}
 jobs:
-    deploy:
+    build:
         runs-on: ubuntu-latest
-
         steps:
             -   name: Checkout Repo
                 uses: actions/checkout@v4
-
 
             -   name: Set up Java
                 uses: actions/setup-java@v4
@@ -27,6 +25,39 @@ jobs:
 
             -   name: Setup Gradle cache
                 uses: gradle/actions/setup-gradle@v3
+
+            -   name: Build
+                run: ./gradlew assembleDebug assembleDebugUnitTest --no-daemon
+
+            -   name: Upload build artifacts
+                uses: actions/upload-artifact@v4
+                with:
+                    name: build-artifacts
+                    path: |
+                        **/build/
+                        .gradle/
+                    retention-days: 1
+
+    lint:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout Repo
+                uses: actions/checkout@v4
+
+            -   name: Set up Java
+                uses: actions/setup-java@v4
+                with:
+                    distribution: "temurin"
+                    java-version: 17
+
+            -   name: Setup Gradle cache
+                uses: gradle/actions/setup-gradle@v3
+
+            -   name: Download build artifacts
+                uses: actions/download-artifact@v4
+                with:
+                    name: build-artifacts
 
             -   name: Set up Ruby
                 uses: ruby/setup-ruby@v1
@@ -41,8 +72,42 @@ jobs:
                     name: "key.json"
                     json: ${{ secrets.FASTLANE_JSON }}
 
-            - name: Lint
-              run: bundle exec fastlane lint
-              
-            - name: Test
-              run: bundle exec fastlane test
+            -   name: Lint
+                run: bundle exec fastlane lint
+
+    test:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout Repo
+                uses: actions/checkout@v4
+
+            -   name: Set up Java
+                uses: actions/setup-java@v4
+                with:
+                    distribution: "temurin"
+                    java-version: 17
+
+            -   name: Setup Gradle cache
+                uses: gradle/actions/setup-gradle@v3
+
+            -   name: Download build artifacts
+                uses: actions/download-artifact@v4
+                with:
+                    name: build-artifacts
+
+            -   name: Set up Ruby
+                uses: ruby/setup-ruby@v1
+                with:
+                    ruby-version: 3.3
+                    bundler-cache: true
+
+            -   name: Create Fastlane Json
+                id: create-json-fastlane
+                uses: jsdaniell/create-json@v1.2.3
+                with:
+                    name: "key.json"
+                    json: ${{ secrets.FASTLANE_JSON }}
+
+            -   name: Test
+                run: bundle exec fastlane test
