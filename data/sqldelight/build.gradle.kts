@@ -22,6 +22,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            implementation(project(":libs:ext:ktx-datetime"))
             implementation(project(":domain"))
             implementation(project(":data:core"))
             implementation(project(":libs:logging"))

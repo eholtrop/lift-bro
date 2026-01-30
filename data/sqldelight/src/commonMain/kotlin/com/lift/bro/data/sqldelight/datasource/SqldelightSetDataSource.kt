@@ -19,10 +19,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.atTime
-import kotlinx.datetime.toInstant
+import tv.dpal.ktx.datetime.atEndOfDayIn
+import tv.dpal.ktx.datetime.atStartOfDayIn
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
 import kotlin.math.min
@@ -176,8 +174,3 @@ private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double):
 
     return min(reps.toInt(), ((setFatigue - merFatigueThreshold) / 4.0).toInt())
 }
-
-private fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())
-
-private fun LocalDate.atEndOfDayIn(): Instant =
-    this.atTime(23, 59, 59, 999).toInstant(TimeZone.currentSystemDefault())

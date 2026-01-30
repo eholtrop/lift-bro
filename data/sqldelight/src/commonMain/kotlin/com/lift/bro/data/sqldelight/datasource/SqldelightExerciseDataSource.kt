@@ -5,7 +5,6 @@ import com.lift.bro.data.core.datasource.ExerciseDataSource
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
-import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
@@ -21,8 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import tv.dpal.ktx.datetime.toLocalDate
 
 class SqldelightExerciseDataSource(
     private val exerciseQueries: ExerciseQueries,
@@ -170,5 +168,3 @@ class SqldelightExerciseDataSource(
         }
     }
 }
-
-fun Instant.toLocalDate() = this.toLocalDateTime(TimeZone.currentSystemDefault()).date
