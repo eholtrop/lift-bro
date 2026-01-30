@@ -245,7 +245,6 @@ internal fun EditLiftScreen(
                         },
                         action = {
                             IconButton(onClick = {
-
                                 if (variation.eMax != null || variation.oneRepMax != null) {
                                     showVariationWarning = true
                                 } else {
@@ -258,7 +257,6 @@ internal fun EditLiftScreen(
                                         Res.string.edit_lift_screen_variation_delete_cta_content_description
                                     )
                                 )
-
                             }
                         }
                     )

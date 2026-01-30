@@ -6,7 +6,8 @@
     <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
-    <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
+    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: DashboardInteractor = rememberDashboardInteractor(), )</ID>
+    <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, showRpe: Boolean = true, showTempo: Boolean = true, yUnit: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
@@ -29,6 +30,7 @@
     <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForRange( startDate: LocalDate, endDate: LocalDate, ): Flow&lt;List&lt;Pair&lt;Variation, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
     <ID>InvalidPackageDeclaration:ServerSettingsRow.android.kt$package com.lift.bro.presentation.settings.server</ID>
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
+    <ID>LongParameterList:LiftCard.kt$( color: Color, height: Float, targetHeight: Float, width: Float, topLeft: Float, alpha: Float, )</ID>
     <ID>MagicNumber:App.kt$1000</ID>
     <ID>MagicNumber:App.kt$2000</ID>
     <ID>MagicNumber:App.kt$20f</ID>
@@ -87,7 +89,6 @@
     <ID>MagicNumber:DebugBackup.kt$24</ID>
     <ID>MagicNumber:DebugBackup.kt$252</ID>
     <ID>MagicNumber:DebugBackup.kt$72</ID>
-    <ID>MagicNumber:EditLiftScreen.kt$11</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Eight$8</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Five$5</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Nine$9</ID>
@@ -110,6 +111,7 @@
     <ID>MagicNumber:LiftCard.kt$2024</ID>
     <ID>MagicNumber:LiftCard.kt$22</ID>
     <ID>MagicNumber:LiftCard.kt$29</ID>
+    <ID>MagicNumber:LiftCard.kt$3</ID>
     <ID>MagicNumber:LiftCard.kt$5</ID>
     <ID>MagicNumber:LiftCard.kt$5f</ID>
     <ID>MagicNumber:LiftCard.kt$8</ID>
@@ -131,6 +133,7 @@
     <ID>MagicNumber:ServerSettingsInteractor.kt$500</ID>
     <ID>MagicNumber:TempoSelector.kt$.33f</ID>
     <ID>MagicNumber:Toolbar.kt$.66f</ID>
+    <ID>MagicNumber:VariationTextField.kt$11</ID>
     <ID>MagicNumber:WeightSelector.kt$1000</ID>
     <ID>MagicNumber:WeightSelector.kt$1000f</ID>
     <ID>MagicNumber:WeightSelector.kt$400f</ID>
@@ -184,7 +187,6 @@
     <ID>MaxLineLength:DashboardInteractor.kt$(item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id &amp;&amp; it.favourite</ID>
     <ID>MaxLineLength:EditSetInteractor.kt$if</ID>
     <ID>MaxLineLength:EditSetScreen.kt$color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground</ID>
-    <ID>MaxLineLength:LiftCard.kt$mutableStateMapOf&lt;LocalDate, Pair&lt;Animatable&lt;Offset, AnimationVector2D&gt;, Animatable&lt;Float, AnimationVector1D&gt;?&gt;&gt;()</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder</ID>
     <ID>MaxLineLength:LiftingScaffold.kt$if</ID>
@@ -203,7 +205,6 @@
     <ID>MaximumLineLength:DashboardInteractor.kt$ </ID>
     <ID>MaximumLineLength:EditSetInteractor.kt$ </ID>
     <ID>MaximumLineLength:EditSetScreen.kt$ </ID>
-    <ID>MaximumLineLength:LiftCard.kt$ </ID>
     <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
@@ -228,8 +229,6 @@
     <ID>UnusedParameter:Calendar.kt$dateSelected: (LocalDate) -&gt; Unit</ID>
     <ID>UnusedParameter:Calendar.kt$selection: LocalDate?</ID>
     <ID>UnusedParameter:EditLiftScreen.kt$liftSaved: () -&gt; Unit</ID>
-    <ID>UnusedParameter:EditSetInteractor.kt$date: Instant?</ID>
-    <ID>UnusedParameter:EditSetInteractor.kt$variationId: String?</ID>
     <ID>UnusedParameter:EmptyHomeScreen.kt$loadDefaultLifts: () -&gt; Unit</ID>
     <ID>UnusedParameter:LineGraph.kt$maxX: LocalDate = graphData.maxOf { it.first }</ID>
     <ID>UnusedParameter:WeightSelector.kt$Confetti.Companion$height: Float</ID>
