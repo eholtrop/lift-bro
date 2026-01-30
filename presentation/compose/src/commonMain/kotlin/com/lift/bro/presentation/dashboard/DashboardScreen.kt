@@ -3,6 +3,9 @@
 package com.lift.bro.presentation.dashboard
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,21 +18,36 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.presentation.LocalLiftCardYValue
@@ -82,41 +100,87 @@ fun DashboardContent(
                         span = { GridItemSpan(2) }
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxSize(),
                             horizontalArrangement = Arrangement.Center,
                         ) {
-                            Button(
-                                onClick = {
-                                    showWeight.value =
-                                        if (showWeight.value == LiftCardYValue.Weight) {
-                                            LiftCardYValue.Reps
-                                        } else {
-                                            LiftCardYValue.Weight
-                                        }
-                                }
+                            Row(
+                                modifier = Modifier.background(
+                                    color = MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = MaterialTheme.shapes.medium
+                                ).border(
+                                    width = 1.dp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    shape = MaterialTheme.shapes.medium
+                                )
+                                    .animateContentSize()
                             ) {
-                                Text(
-                                    text = if (showWeight.value == LiftCardYValue.Weight) {
-                                        LocalUnitOfMeasure.current.value
-                                    } else {
-                                        stringResource(
-                                            Res.string.reps
+                                var showButtons by remember { mutableStateOf(false) }
+                                if (!showButtons) {
+                                    IconButton(
+                                        onClick = {
+                                            showButtons = true
+                                        }
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.BarChart,
+                                            contentDescription = "Graph Settings"
                                         )
                                     }
-                                )
+                                } else {
+                                    Button(
+                                        colors = ButtonDefaults.textButtonColors(),
+                                        shape = MaterialTheme.shapes.medium.copy(
+                                            topEnd = CornerSize(0.dp), bottomEnd = CornerSize(0.dp),
+                                        ),
+                                        onClick = {
+                                            showWeight.value =
+                                                if (showWeight.value == LiftCardYValue.Weight) {
+                                                    LiftCardYValue.Reps
+                                                } else {
+                                                    LiftCardYValue.Weight
+                                                }
+                                        }
+                                    ) {
+dd
+                                        Text(
+                                            text = buildAnnotatedString {
+                                                withStyle(
+                                                    style = LocalTextStyle.current
+                                                        .copy(color = if (showWeight.value == LiftCardYValue.Weight) MaterialTheme.colorScheme.primary else TextFieldDefaults.colors().disabledTextColor)
+                                                        .toSpanStyle()
+                                                ) {
+                                                    append(LocalUnitOfMeasure.current.value)
+                                                }
+                                                append("/")
+                                                withStyle(
+                                                    style = LocalTextStyle.current
+                                                        .copy(color = if (showWeight.value == LiftCardYValue.Reps) MaterialTheme.colorScheme.primary else TextFieldDefaults.colors().disabledTextColor)
+                                                        .toSpanStyle()
+                                                ) {
+                                                    append(stringResource(Res.string.reps))
+                                                }
+                                            }
+                                        )
+                                    }
+                                    Button(
+                                        colors = ButtonDefaults.textButtonColors(),
+                                        shape = RectangleShape,
+                                        onClick = {
+                                            showRpe = !showRpe
+                                        }
+                                    ) {
+                                        Text(text = "rpe", color = if (showRpe) MaterialTheme.colorScheme.primary else TextFieldDefaults.colors().disabledTextColor)
+                                    }
+                                    Button(
+                                        colors = ButtonDefaults.textButtonColors(),
+                                        shape = RectangleShape,
+                                        onClick = {
+                                            showTempo = !showTempo
+                                        }
+                                    ) {
+                                        Text(text = "tempo", color = if (showTempo) MaterialTheme.colorScheme.primary else TextFieldDefaults.colors().disabledTextColor)
+                                    }
+                                }
                             }
-                            Checkbox(
-                                checked = showTempo,
-                                onCheckedChange = {
-                                    showTempo = !showTempo
-                                }
-                            )
-                            Checkbox(
-                                checked = showRpe,
-                                onCheckedChange = {
-                                    showRpe = !showRpe
-                                }
-                            )
                         }
                     }
 
