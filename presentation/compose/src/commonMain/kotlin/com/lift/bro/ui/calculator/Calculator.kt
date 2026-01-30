@@ -75,7 +75,7 @@ import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.weightFormat
+import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.utils.decimalFormat
 import kotlinx.coroutines.delay
 import lift_bro.core.generated.resources.Res

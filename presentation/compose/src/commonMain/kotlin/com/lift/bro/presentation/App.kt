@@ -55,7 +55,7 @@ import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.ConsentCheckBoxField
-import com.lift.bro.ui.LiftCardYValue
+import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calculator.WeightCalculatorBottomSheet
 import com.lift.bro.ui.dialog.BackupAlertDialog

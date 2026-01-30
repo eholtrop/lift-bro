@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,8 +36,8 @@ import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
 import com.lift.bro.ui.Card
-import com.lift.bro.ui.LiftCard
-import com.lift.bro.ui.LiftCardYValue
+import com.lift.bro.ui.card.lift.LiftCard
+import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.ReleaseNotesRow
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
@@ -66,6 +70,8 @@ fun DashboardContent(
             }
 
             is Loaded -> {
+                var showRpe by rememberSaveable { mutableStateOf(true) }
+                var showTempo by rememberSaveable { mutableStateOf(true) }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     contentPadding = PaddingValues(MaterialTheme.spacing.one),
@@ -99,6 +105,18 @@ fun DashboardContent(
                                     }
                                 )
                             }
+                            Checkbox(
+                                checked = showTempo,
+                                onCheckedChange = {
+                                    showTempo = !showTempo
+                                }
+                            )
+                            Checkbox(
+                                checked = showRpe,
+                                onCheckedChange = {
+                                    showRpe = !showRpe
+                                }
+                            )
                         }
                     }
 
@@ -111,9 +129,11 @@ fun DashboardContent(
                                 when (val card = item as DashboardListItem.LiftCard) {
                                     is DashboardListItem.LiftCard.Loaded -> {
                                         LiftCard(
+                                            showRpe = showRpe,
+                                            showTempo = showTempo,
                                             state = card.state,
                                             onClick = { interactor(LiftClicked(card.state.lift.id)) },
-                                            value = showWeight.value
+                                            yUnit = showWeight.value
                                         )
                                     }
 

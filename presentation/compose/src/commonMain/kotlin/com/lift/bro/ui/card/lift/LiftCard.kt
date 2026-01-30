@@ -1,4 +1,4 @@
-package com.lift.bro.ui
+package com.lift.bro.ui.card.lift
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
@@ -36,6 +36,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -45,8 +46,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.ui.FloatVectorConverter
+import com.lift.bro.ui.Space
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
@@ -80,6 +84,7 @@ data class LiftCardData(
     val weight: Double,
     val reps: Int,
     val rpe: Int?,
+    val tempo: Tempo = Tempo(),
     private val offset: LBOffset = LBOffset(),
 )
 
@@ -93,25 +98,31 @@ enum class LiftCardYValue {
     Reps, Weight
 }
 
+
 private const val GRADIENT_SIZE = 50f
+
+typealias AnimatableOffset = Animatable<Offset, AnimationVector2D>
+typealias AnimatableFloat = Animatable<Float, AnimationVector1D>
 
 @Composable
 fun LiftCard(
     modifier: Modifier = Modifier,
     state: LiftCardState,
     onClick: (Lift) -> Unit,
-    value: LiftCardYValue = LiftCardYValue.Weight,
+    showRpe: Boolean = true,
+    showTempo: Boolean = true,
+    yUnit: LiftCardYValue = LiftCardYValue.Weight,
 ) {
     val lift = state.lift
-    val max = if (value == LiftCardYValue.Reps) state.maxReps ?: 0.0 else state.maxWeight ?: 0.0
+    val max = if (yUnit == LiftCardYValue.Reps) state.maxReps ?: 0.0 else state.maxWeight ?: 0.0
     val min = state.values.minOfOrNull {
-        when (value) {
+        when (yUnit) {
             LiftCardYValue.Reps -> 0.0
             LiftCardYValue.Weight -> it.second.weight
         }
     } ?: 0.0
 
-    Card(
+    _root_ide_package_.com.lift.bro.ui.Card(
         modifier = modifier
             .aspectRatio(1f),
         backgroundBrush = Brush.linearGradient(
@@ -156,7 +167,7 @@ fun LiftCard(
                 Space(width = MaterialTheme.spacing.half)
                 Text(
                     modifier = Modifier.wrapContentWidth(),
-                    text = when (value) {
+                    text = when (yUnit) {
                         LiftCardYValue.Weight -> weightFormat(max)
                         LiftCardYValue.Reps -> "${max.toInt()}${nbsp}reps"
                     },
@@ -195,36 +206,67 @@ fun LiftCard(
                 var canvasSize by remember { mutableStateOf(Size.Zero) }
                 val animatedGraphNodes =
                     remember {
-                        mutableStateMapOf<LocalDate, Pair<Animatable<Offset, AnimationVector2D>, Animatable<Float, AnimationVector1D>?>>()
+                        mutableStateMapOf<
+                            LocalDate,
+                            Triple<
+                                Animatable<Offset, AnimationVector2D>,
+                                AnimatableFloat,
+                                Triple<AnimatableFloat, AnimatableFloat, AnimatableFloat>
+                                >
+                            >()
                     }
 
-                LaunchedEffect(value, canvasSize, state.values) {
+                LaunchedEffect(
+                    yUnit,
+                    canvasSize,
+                    state.values,
+                    showRpe,
+                    showTempo
+                ) {
                     val height = canvasSize.height
                     val width = canvasSize.width
-                    val spacing = width.div(5)
 
-                    val nodeData = when (value) {
+                    val nodeData: List<LiftCardNodeData> = when (yUnit) {
                         LiftCardYValue.Reps -> state.values.map {
-                            it.first to Pair(it.second.reps.toDouble(), it.second.rpe)
+                            LiftCardNodeData(
+                                date = it.first,
+                                value = it.second.reps.toDouble(),
+                                rpe = it.second.rpe,
+                                tempo = it.second.tempo
+                            )
                         }
 
                         LiftCardYValue.Weight -> state.values.map {
-                            it.first to Pair(it.second.weight, it.second.rpe)
+                            LiftCardNodeData(
+                                date = it.first,
+                                value = it.second.weight,
+                                rpe = it.second.rpe,
+                                tempo = it.second.tempo
+                            )
                         }
                     }
 
-                    nodeData.forEachIndexed { index, pair ->
+                    nodeData.forEachIndexed { index, node ->
                         val targetX = width / 2f
                         val normalizedPercentage =
-                            (pair.second.first - min * 0.95) / (max(1.0, max - min * 0.95))
+                            (node.value - min * 0.95) / (max(1.0, max - min * 0.95))
                         val targetY = height - (normalizedPercentage * height).toFloat()
                         val newTargetOffset = Offset(targetX, targetY)
 
-                        val animatablePair = animatedGraphNodes.getOrPut(pair.first) {
-                            Animatable(
-                                Offset(targetX, targetY),
-                                Offset.VectorConverter
-                            ) to Animatable(0f, FloatVectorConverter)
+
+                        val animatablePair = animatedGraphNodes.getOrPut(node.date) {
+                            Triple(
+                                Animatable(
+                                    Offset(targetX, targetY),
+                                    Offset.VectorConverter
+                                ),
+                                Animatable(0f, FloatVectorConverter),
+                                Triple(
+                                    Animatable(0f, FloatVectorConverter),
+                                    Animatable(0f, FloatVectorConverter),
+                                    Animatable(0f, FloatVectorConverter),
+                                ),
+                            )
                         }
 
                         launch {
@@ -239,10 +281,39 @@ fun LiftCard(
 
                         launch {
                             animatablePair.second?.animateTo(
-                                targetValue = canvasSize.height * (
-                                    pair.second.second?.div(10f)
-                                        ?: 0f
-                                    ),
+                                targetValue = if (showRpe) {
+                                    canvasSize.height * (node.rpe?.div(10f) ?: 0f)
+                                } else {
+                                    0f
+                                },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            )
+                        }
+
+                        launch {
+                            animatablePair.third.first.animateTo(
+                                targetValue = if (showTempo) node.tempo.down.toFloat() else 0f,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            )
+                        }
+                        launch {
+                            animatablePair.third.second.animateTo(
+                                targetValue = if (showTempo) node.tempo.hold.toFloat() else 0f,
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioNoBouncy,
+                                    stiffness = Spring.StiffnessLow
+                                )
+                            )
+                        }
+                        launch {
+                            animatablePair.third.third.animateTo(
+                                targetValue = if (showTempo) node.tempo.up.toFloat() else 0f,
                                 animationSpec = spring(
                                     dampingRatio = Spring.DampingRatioNoBouncy,
                                     stiffness = Spring.StiffnessLow
@@ -297,27 +368,65 @@ fun LiftCard(
                                 )
                             }
 
-                            if (node.second.second?.value != null) {
-                                with(node.second.second?.value) {
-                                    if (this != 0f && this != null) {
-                                        drawRect(
-                                            color = color,
-                                            size = Size(size.width, 4.dp.value),
-                                            topLeft = Offset(
-                                                x = 0f,
-                                                y = size.height - (this)
-                                            )
-                                        )
-                                        drawRect(
-                                            color = color.copy(alpha = .4f),
-                                            size = Size(size.width, this),
-                                            topLeft = Offset(
-                                                x = 0f,
-                                                y = size.height - (this)
-                                            )
-                                        )
-                                    }
-                                }
+                            // Draw RPE
+                            val rpe = node.second.second
+                            if (rpe.value != 0f) {
+                                drawRect(
+                                    color = color,
+                                    size = Size(size.width, 4.dp.value),
+                                    topLeft = Offset(
+                                        x = 0f,
+                                        y = size.height - (rpe.targetValue)
+                                    ),
+                                    alpha = rpe.value / rpe.targetValue
+                                )
+                                drawRect(
+                                    color = color.copy(alpha = .4f),
+                                    size = Size(size.width, rpe.value),
+                                    topLeft = Offset(
+                                        x = 0f,
+                                        y = size.height - (rpe.value)
+                                    )
+                                )
+                            }
+
+                            // Draw Tempo
+                            val (ecc, iso, con) = node.second.third
+
+                            val max = listOf(5f, ecc.value, iso.value, con.value).max()
+                            val width = size.width / 3
+
+                            with(ecc) {
+                                drawGraphBar(
+                                    color = color,
+                                    height = size.height * (value / max),
+                                    targetHeight = size.height * (targetValue / max),
+                                    width = width,
+                                    topLeft = 0f,
+                                    alpha = if (value <= targetValue) value / targetValue else 0f,
+                                )
+                            }
+
+                            with(iso) {
+                                drawGraphBar(
+                                    color = color,
+                                    height = size.height * (value / max),
+                                    targetHeight = size.height * (targetValue / max),
+                                    width = width,
+                                    topLeft = width,
+                                    alpha = if (value <= targetValue) value / targetValue else 0f,
+                                )
+                            }
+
+                            with(con) {
+                                drawGraphBar(
+                                    color = color,
+                                    height = size.height * (value / max),
+                                    targetHeight = size.height * (targetValue / max),
+                                    width = width,
+                                    topLeft = width * 2,
+                                    alpha = if (value <= targetValue) value / targetValue else 0f,
+                                )
                             }
                         }
                     }
@@ -332,7 +441,7 @@ fun LiftCard(
                     )
                     Space()
                     Text(
-                        text = when (value) {
+                        text = when (yUnit) {
                             LiftCardYValue.Weight -> weightFormat(min)
                             LiftCardYValue.Reps -> "${min.toInt()} reps"
                         },
@@ -342,6 +451,36 @@ fun LiftCard(
             }
         }
     }
+}
+
+private fun DrawScope.drawGraphBar(
+    color: Color,
+    height: Float,
+    targetHeight: Float,
+    width: Float,
+    topLeft: Float,
+    alpha: Float,
+) {
+    drawRect(
+        color = color,
+        size = Size(width, 4.dp.value),
+        topLeft = Offset(
+            x = topLeft,
+            y = size.height - targetHeight
+        ),
+        alpha = alpha
+    )
+    drawRect(
+        color = color.copy(alpha = .4f),
+        size = Size(
+            width = width,
+            height = height
+        ),
+        topLeft = Offset(
+            x = topLeft,
+            y = size.height - height,
+        )
+    )
 }
 
 @Preview
@@ -388,7 +527,7 @@ fun LiftCardWeightPreview(
                 maxReps = 5.0
             ),
             onClick = {},
-            value = LiftCardYValue.Weight
+            yUnit = LiftCardYValue.Weight
         )
     }
 }
@@ -416,7 +555,7 @@ fun LiftCardRepsPreview(
                 maxReps = 15.0
             ),
             onClick = {},
-            value = LiftCardYValue.Reps
+            yUnit = LiftCardYValue.Reps
         )
     }
 }

@@ -5,6 +5,7 @@ package com.lift.bro.ui
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.animation.core.AnimationVector2D
+import androidx.compose.animation.core.AnimationVector3D
 import androidx.compose.animation.core.ExperimentalAnimationSpecApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.TwoWayConverter
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lift.bro.domain.models.Tempo
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,7 +37,11 @@ import kotlin.random.Random
 val FloatVectorConverter: TwoWayConverter<Float, AnimationVector1D> = TwoWayConverter(
     convertToVector = { AnimationVector1D(it) },
     convertFromVector = { it.value }
+)
 
+val TempoVectorConverter: TwoWayConverter<Tempo, AnimationVector3D> = TwoWayConverter(
+    convertToVector = { AnimationVector3D(it.up.toFloat(), it.down.toFloat(), it.hold.toFloat()) },
+    convertFromVector = { Tempo(it.v1.toLong(), it.v2.toLong(), it.v3.toLong()) }
 )
 
 val OffsetVectorConverter: TwoWayConverter<Offset, AnimationVector2D> =
