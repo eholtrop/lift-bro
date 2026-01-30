@@ -57,7 +57,7 @@ kotlin {
             implementation(project(":libs:logging"))
             implementation(project(":libs:ext:ktx-datetime"))
             implementation(project(":libs:ext:compose"))
-            api(project(":libs:swipenavhost"))
+            api(project(":libs:navi"))
 
             // Compose Multiplatform
             implementation(compose.ui)

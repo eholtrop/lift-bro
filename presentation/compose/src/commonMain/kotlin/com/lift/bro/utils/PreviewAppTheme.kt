@@ -22,8 +22,8 @@ import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
-import tv.dpal.swipenavhost.JetpackComposeCoordinator
-import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.navi.JetpackComposeCoordinator
+import tv.dpal.navi.LocalNavCoordinator
 
 @Composable
 internal fun PreviewAppTheme(

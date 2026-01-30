@@ -14,8 +14,8 @@ import com.lift.bro.ui.navigation.Destination.EditSet
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.Serializable
 import tv.dpal.ext.ktx.datetime.toString
-import tv.dpal.swipenavhost.LocalNavCoordinator
-import tv.dpal.swipenavhost.NavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
+import tv.dpal.navi.NavCoordinator
 
 @Serializable
 data class VariationDetailsState(

@@ -11,6 +11,7 @@ agp = "8.6.0"
 revenuecat = "2.0.0+15.0.0"
 turbine = "1.2.0"
 mockk = "1.13.14"
+vanniktech-publish = "0.30.0"
 
 # compose
 compose = "1.8.0"
@@ -98,7 +99,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-gradle" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-
+vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-publish"}
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.17.1" }
 
 sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.strictly = "0.13.0" }

@@ -100,8 +100,8 @@ import lift_bro.core.generated.resources.workout_calendar_screen_warmup_label
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.toColor
 import tv.dpal.ext.ktx.datetime.toString
-import tv.dpal.swipenavhost.LocalNavCoordinator
-import tv.dpal.swipenavhost.NavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
+import tv.dpal.navi.NavCoordinator
 
 @Composable
 fun WorkoutCalendarContent(

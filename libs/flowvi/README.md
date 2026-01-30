@@ -11,6 +11,18 @@ A tiny, Compose-first MVI toolkit designed to be easy to learn, portable across 
 - Works across Kotlin Multiplatform targets (Android, iOS, Desktop, etc.)
 - Does not prescribe navigation, DI, or data layers
 
+## Installation
+
+```kotlin path=null start=null
+// build.gradle.kts
+dependencies {
+    implementation("tv.dpal:flowvi:<version>")
+            
+    // optional
+    implementation("tv.dpal:flowvi-compose:<version>")
+}
+```
+
 ## Quick start
 
 Define your State and Event, create reducers and side-effects, and wire them up in your Composable using `rememberInteractor` from `mvi:compose`.
@@ -52,7 +64,7 @@ fun CounterScreen() {
 ## Concepts
 
 - State: a snapshot of UI data. Note: if using other wrappers they may have restrictions. ex: State must be `@Serializable` to enable automatic persistence via `rememberSaveable` in `:mvi:compose`.
-- Event: user or system intent (button clicks, results, timers, etc.). Use a sealed interface.
+- Event: user or system intent (button clicks, results, timers, etc.)
 - Reducer: pure function that computes the next state. Side-effect free.
 - SideEffect: suspend function to perform I/O, navigation, any async task. Dispatch follow-up events if needed.
 - Interactor: coordinates the loop; exposes `state: StateFlow<State>` and a function-call `operator fun invoke(event)` to dispatch.
@@ -80,46 +92,3 @@ rememberInteractor(
 
 - Lifecycle
   The returned `Interactor` is hosted by the provided `CoroutineScope` (defaults to a Compose scope). On Android, it behaves like a view-model–scoped state holder.
-
-## API surface (KDoc)
-
-All public symbols include KDoc:
-- Reducer<State, Event>
-- typealias SideEffect<State, Event>
-- class Interactor<State, Event>
-- @Composable rememberInteractor(...)
-
-Browse the source in `src/commonMain/kotlin` for details and parameter docs.
-
-## Installation
-
-Until this library is published, depend on it via a composite build/module include:
-
-```kotlin path=null start=null
-// settings.gradle.kts
-include(":flowvi")
-
-// build.gradle.kts of your module
-kotlin {
-    sourceSets {
-        commonMain.dependencies {
-            implementation(project(":flowvi"))
-            
-            // optional
-            implementation(project(":flowvi:compose"))
-        }
-    }
-}
-```
-
-When published, you'll be able to use:
-
-```kotlin path=null start=null
-// build.gradle.kts
-dependencies {
-    implementation("tv.dpal:flowvi:<version>")
-            
-    // optional
-    implementation("tv.dpal:flowvi-compose:<version>")
-}
-```

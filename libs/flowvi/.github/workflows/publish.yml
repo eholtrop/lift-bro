@@ -1,0 +1,125 @@
+name: Publish to Maven Central
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  version-check:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      should-publish: ${{ steps.check-version.outputs.should-publish }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get current version
+        id: get-version
+        run: |
+          VERSION=$(grep 'version = ' core/build.gradle.kts | head -n 1 | sed 's/.*version = "\(.*\)".*/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Current version: $VERSION"
+
+      - name: Verify all modules have same version
+        run: |
+          CORE_VER=$(grep 'version = ' core/build.gradle.kts | head -n 1 | sed 's/.*version = "\(.*\)".*/\1/')
+          COMPOSE_VER=$(grep 'version = ' compose/build.gradle.kts | head -n 1 | sed 's/.*version = "\(.*\)".*/\1/')
+          
+          if [ "$CORE_VER" != "$COMPOSE_VER" ]; then
+            echo "❌ ERROR: All modules must have the same version!"
+            echo "core: $CORE_VER"
+            echo "compose: $COMPOSE_VER"
+            exit 1
+          fi
+          
+          echo "✅ All modules have version: $CORE_VER"
+
+      - name: Get previous version from git tags
+        id: get-previous
+        run: |
+          PREV_VERSION=$(git tag --sort=-v:refname | head -n 1 | sed 's/^v//' || echo "0.0.0")
+          echo "previous=$PREV_VERSION" >> $GITHUB_OUTPUT
+          echo "Previous version: $PREV_VERSION"
+
+      - name: Check version increment
+        id: check-version
+        run: |
+          CURRENT="${{ steps.get-version.outputs.version }}"
+          PREVIOUS="${{ steps.get-previous.outputs.previous }}"
+          
+          if [ "$CURRENT" = "$PREVIOUS" ]; then
+            echo "❌ ERROR: Version has not been incremented!"
+            echo "Current version: $CURRENT"
+            echo "Previous version: $PREVIOUS"
+            echo "Please increment the version in all module build.gradle.kts files before publishing."
+            exit 1
+          fi
+          
+          echo "✅ Version check passed"
+          echo "Previous: $PREVIOUS → Current: $CURRENT"
+          echo "should-publish=true" >> $GITHUB_OUTPUT
+
+  publish:
+    needs: version-check
+    runs-on: ubuntu-latest
+    if: needs.version-check.outputs.should-publish == 'true'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Publish to Maven Central
+        env:
+          ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+          ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
+          ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_PASSWORD }}
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache
+
+      - name: Create git tag
+        run: |
+          VERSION="${{ needs.version-check.outputs.version }}"
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag -a "v$VERSION" -m "Release version $VERSION"
+          git push origin "v$VERSION"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ needs.version-check.outputs.version }}
+          name: Release ${{ needs.version-check.outputs.version }}
+          body: |
+            ## 📦 Maven Central
+            
+            ### FlowVi Core
+            ```gradle
+            dependencies {
+                implementation("tv.dpal:flowvi-core:${{ needs.version-check.outputs.version }}")
+            }
+            ```
+            
+            ### FlowVi Compose
+            ```gradle
+            dependencies {
+                implementation("tv.dpal:flowvi-compose:${{ needs.version-check.outputs.version }}")
+            }
+            ```
+            
+            ## 📚 Documentation
+            
+            See the [README](https://github.com/${{ github.repository }}) for usage examples and API documentation.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

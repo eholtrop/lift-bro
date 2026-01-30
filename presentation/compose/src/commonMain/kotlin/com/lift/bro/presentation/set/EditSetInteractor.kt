@@ -33,8 +33,8 @@ import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
-import tv.dpal.swipenavhost.LocalNavCoordinator
-import tv.dpal.swipenavhost.NavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
+import tv.dpal.navi.NavCoordinator
 import kotlin.math.max
 
 @Serializable

@@ -18,7 +18,7 @@ import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
-import tv.dpal.swipenavhost.LocalNavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
 
 @Composable
 fun AppRouter(route: Destination) {

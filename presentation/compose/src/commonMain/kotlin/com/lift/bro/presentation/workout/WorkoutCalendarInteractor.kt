@@ -31,8 +31,8 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 import tv.dpal.`ktx-datetime`.toLocalDate
-import tv.dpal.swipenavhost.LocalNavCoordinator
-import tv.dpal.swipenavhost.NavCoordinator
+import tv.dpal.navi.LocalNavCoordinator
+import tv.dpal.navi.NavCoordinator
 
 @Serializable
 data class WorkoutCalendarState(
