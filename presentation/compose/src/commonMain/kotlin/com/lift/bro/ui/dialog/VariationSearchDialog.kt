@@ -96,7 +96,6 @@ fun VariationSearchDialog(
 ) {
     VariationSearchDialog(
         onDismissRequest = onDismissRequest,
-        variationSelected = onVariationSelected,
         interactor = rememberInteractor(
             initialState = VariationSearchState(
                 visible = visible,
@@ -141,7 +140,6 @@ fun VariationSearchDialog(
 @Composable
 fun VariationSearchDialog(
     onDismissRequest: () -> Unit,
-    variationSelected: (Variation) -> Unit,
     interactor: Interactor<VariationSearchState, VariationSearchEvent>,
 ) {
     val state by interactor.state.collectAsState()
@@ -211,8 +209,7 @@ fun VariationSearchDialog(
                     modifier = Modifier.fillMaxWidth(),
                     variations = state.filteredVariations,
                     variationSelected = {
-                        variationSelected(it)
-//                        interactor(VariationSearchEvent.VariationSelected(it))
+                        interactor(VariationSearchEvent.VariationSelected(it))
                     }
                 )
             }
@@ -252,60 +249,73 @@ private fun VariationSearchContent(
             items(
                 variations
             ) { variation ->
-                Column(
-                    modifier = Modifier.animateItem()
-                        .fillMaxWidth()
-                        .clickable(
-                            onClick = { variationSelected(variation) }
-                        )
-                        .minimumInteractiveComponentSize()
-                        .padding(
-                            horizontal = MaterialTheme.spacing.half,
-                        ),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            variation.fullName,
-                            style = MaterialTheme.typography.titleMedium
-                        )
-                        if (variation.favourite) {
-                            Space(MaterialTheme.spacing.half)
-                            Icon(
-                                modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
-                                imageVector = Icons.Default.Star,
-                                contentDescription = "Favourite"
-                            )
-                        }
-                    }
-                    Text(
-                        variation.maxText(),
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    val latestSet = dependencies.database.setDataSource.getAll(variation.id)
-                        .maxByOrNull { it.date }
-
-                    if (latestSet != null) {
-                        Text(
-                            text = "${
-                                latestSet.date.toString(
-                                    "MMM d"
-                                )
-                            }: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                        latestSet.tempo.render()
-                        if (latestSet.notes.isNotBlank()) {
-                            Text(
-                                latestSet.notes,
-                                style = MaterialTheme.typography.labelMedium
-                            )
-                        }
-                    }
-                }
+                SearchVariationItem(
+                    modifier = Modifier.animateItem().fillMaxWidth(),
+                    variation = variation,
+                    onClick = variationSelected
+                )
             }
         }
     }
 }
+
+@Composable
+private fun SearchVariationItem(
+    variation: Variation,
+    modifier: Modifier = Modifier,
+    onClick: (Variation) -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .clickable(
+                onClick = { onClick(variation) }
+            )
+            .minimumInteractiveComponentSize()
+            .padding(
+                horizontal = MaterialTheme.spacing.half,
+            ),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                variation.fullName,
+                style = MaterialTheme.typography.titleMedium
+            )
+            if (variation.favourite) {
+                Space(MaterialTheme.spacing.half)
+                Icon(
+                    modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Favourite"
+                )
+            }
+        }
+        Text(
+            variation.maxText(),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        val latestSet = dependencies.database.setDataSource.getAll(variation.id)
+            .maxByOrNull { it.date }
+
+        if (latestSet != null) {
+            Text(
+                text = "${
+                    latestSet.date.toString(
+                        "MMM d"
+                    )
+                }: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
+                style = MaterialTheme.typography.bodyMedium
+            )
+            latestSet.tempo.render()
+            if (latestSet.notes.isNotBlank()) {
+                Text(
+                    latestSet.notes,
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+        }
+    }
+}
+
