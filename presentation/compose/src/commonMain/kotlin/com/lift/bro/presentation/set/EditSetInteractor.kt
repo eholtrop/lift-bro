@@ -167,7 +167,6 @@ fun rememberCreateSetInteractor(
 }
 
 val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, event ->
-    Log.d(message = event.toString())
     when (event) {
         is EditSetEvent.WeightChanged -> state?.copy(weight = event.weight)
         is EditSetEvent.RepChanged -> state?.copy(reps = event.reps)

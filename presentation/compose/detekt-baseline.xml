@@ -4,14 +4,11 @@
   <CurrentIssues>
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
     <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
-    <ID>ComplexCondition:EditSetScreen.kt$showNotes &amp;&amp; showRpe &amp;&amp; showTempo &amp;&amp; showDate</ID>
-    <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator(Destination.Unknown), )</ID>
+    <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
-    <ID>CyclomaticComplexMethod:EditSetScreen.kt$@Composable fun EditSetScreenV2( state: EditSetState, sendEvent: (EditSetEvent) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, value: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
-    <ID>CyclomaticComplexMethod:SwipeableNavHost.kt$@Composable fun SwipeableNavHost( modifier: Modifier = Modifier, navCoordinator: NavCoordinator, key: (Destination) -&gt; Any = { Json.encodeToString(it) }, content: @Composable (Destination) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
@@ -29,13 +26,9 @@
     <ID>ForbiddenComment:RepWeightSelector.kt$// TODO: figure out the accessibility here</ID>
     <ID>FunctionNaming:MainViewController.kt$fun MainViewController( bannerProvider: () -&gt; UIView )</ID>
     <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForMonth( year: Int, month: Month, ): Flow&lt;List&lt;Pair&lt;Variation, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
-    <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForRange( startDate: LocalDate, endDate: LocalDate ): Flow&lt;List&lt;Pair&lt;Variation, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
-    <ID>InvalidPackageDeclaration:DateFormatting.android.kt$package com.lift.bro.utils</ID>
+    <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForRange( startDate: LocalDate, endDate: LocalDate, ): Flow&lt;List&lt;Pair&lt;Variation, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
     <ID>InvalidPackageDeclaration:ServerSettingsRow.android.kt$package com.lift.bro.presentation.settings.server</ID>
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
-    <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, flow7: Flow&lt;T7&gt;, transform: suspend (T1, T2, T3, T4, T5, T6, T7) -&gt; R )</ID>
-    <ID>LongParameterList:FlowExt.kt$( flow1: Flow&lt;T1&gt;, flow2: Flow&lt;T2&gt;, flow3: Flow&lt;T3&gt;, flow4: Flow&lt;T4&gt;, flow5: Flow&lt;T5&gt;, flow6: Flow&lt;T6&gt;, transform: suspend (T1, T2, T3, T4, T5, T6) -&gt; R )</ID>
-    <ID>LongParameterList:RepWeightSelector.kt$( modifier: Modifier = Modifier, weight: Double?, reps: Long?, rpe: Int?, repChanged: (Long?) -&gt; Unit, weightChanged: (Double?) -&gt; Unit, rpeChanged: (Int?) -&gt; Unit, )</ID>
     <ID>MagicNumber:App.kt$1000</ID>
     <ID>MagicNumber:App.kt$2000</ID>
     <ID>MagicNumber:App.kt$20f</ID>
@@ -95,17 +88,12 @@
     <ID>MagicNumber:DebugBackup.kt$252</ID>
     <ID>MagicNumber:DebugBackup.kt$72</ID>
     <ID>MagicNumber:EditLiftScreen.kt$11</ID>
-    <ID>MagicNumber:EditSetScreen.kt$7</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Eight$8</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Five$5</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Nine$9</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Seven$7</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Six$6</ID>
     <ID>MagicNumber:EditSetScreen.kt$RPE.Ten$10</ID>
-    <ID>MagicNumber:FlowExt.kt$3</ID>
-    <ID>MagicNumber:FlowExt.kt$4</ID>
-    <ID>MagicNumber:FlowExt.kt$5</ID>
-    <ID>MagicNumber:FlowExt.kt$6</ID>
     <ID>MagicNumber:HomeScreen.kt$1000L</ID>
     <ID>MagicNumber:InfoDialog.kt$20f</ID>
     <ID>MagicNumber:InfoDialog.kt$60f</ID>
@@ -136,12 +124,11 @@
     <ID>MagicNumber:RecentWorkoutCard.kt$WorkoutProvider$10</ID>
     <ID>MagicNumber:RecentWorkoutCard.kt$WorkoutProvider$12</ID>
     <ID>MagicNumber:RecentWorkoutCard.kt$WorkoutProvider$2024</ID>
+    <ID>MagicNumber:RepWeightSelector.kt$100</ID>
     <ID>MagicNumber:RotatingAnimatedText.kt$1100</ID>
     <ID>MagicNumber:RotatingAnimatedText.kt$5000</ID>
     <ID>MagicNumber:ServerSettingsInteractor.kt$2000L</ID>
     <ID>MagicNumber:ServerSettingsInteractor.kt$500</ID>
-    <ID>MagicNumber:SwipeableNavHost.kt$.5f</ID>
-    <ID>MagicNumber:SwipeableNavHost.kt$.666f</ID>
     <ID>MagicNumber:TempoSelector.kt$.33f</ID>
     <ID>MagicNumber:Toolbar.kt$.66f</ID>
     <ID>MagicNumber:WeightSelector.kt$1000</ID>
@@ -196,16 +183,12 @@
     <ID>MaxLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$fun</ID>
     <ID>MaxLineLength:DashboardInteractor.kt$(item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id &amp;&amp; it.favourite</ID>
     <ID>MaxLineLength:EditSetInteractor.kt$if</ID>
-    <ID>MaxLineLength:EditSetInteractor.kt$sideEffects = listOf(editSetSideEffects()) + listOf { _: EditSetState?, event: EditSetEvent -&gt; if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }</ID>
     <ID>MaxLineLength:EditSetScreen.kt$color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground</ID>
-    <ID>MaxLineLength:EditSetScreen.kt$val bottomPadding = if (showNotes &amp;&amp; showRpe &amp;&amp; showTempo &amp;&amp; showDate) MaterialTheme.spacing.half else MaterialTheme.spacing.one</ID>
     <ID>MaxLineLength:LiftCard.kt$mutableStateMapOf&lt;LocalDate, Pair&lt;Animatable&lt;Offset, AnimationVector2D&gt;, Animatable&lt;Float, AnimationVector1D&gt;?&gt;&gt;()</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder</ID>
     <ID>MaxLineLength:LiftingScaffold.kt$if</ID>
-    <ID>MaxLineLength:NavCoordinator.kt$NavCoordinator$* Navigates the user back one page, returns true if the navigation was handled, false if nothing happens (ie. you need to handle it yourself)</ID>
     <ID>MaxLineLength:OnboardingSetupScreen.kt$imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown</ID>
-    <ID>MaxLineLength:SwipeableNavHost.kt$((savedPagerState.currentPage - currentPage) + savedPagerState.currentPageOffsetFraction)</ID>
     <ID>MaxLineLength:Toolbar.kt$horizontalArrangement = if ((scrollBehavior?.state?.collapsedFraction ?: 0f) &lt; .66f) Arrangement.Center else Arrangement.Start</ID>
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$potentialExercises = if (initial.selectedDate != source.selectedDate) initial.potentialExercises else source.potentialExercises</ID>
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$selectedDate = if (initial.selectedDate != source.selectedDate) initial.selectedDate else source.selectedDate</ID>
@@ -224,7 +207,6 @@
     <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
-    <ID>MaximumLineLength:SwipeableNavHost.kt$ </ID>
     <ID>MaximumLineLength:Toolbar.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarInteractor.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarScreen.kt$ </ID>
@@ -232,13 +214,8 @@
     <ID>MaximumLineLength:WrappedProgressInteractor.kt$ </ID>
     <ID>MaximumLineLength:WrappedProgressScreen.kt$ </ID>
     <ID>NestedBlockDepth:ServerSettingsRow.android.kt$actual fun getLocalIPAdderess(): String?</ID>
-    <ID>NoWildcardImports:WrappedConsistencyScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>NoWildcardImports:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>NoWildcardImports:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
-    <ID>PackageName:HorizontalPaddingExt.kt$package com.lift.bro.utils.horizontal_padding</ID>
-    <ID>PackageName:VerticalPaddingExt.kt$package com.lift.bro.utils.vertical_padding</ID>
-    <ID>PackageNaming:HorizontalPaddingExt.kt$package com.lift.bro.utils.horizontal_padding</ID>
-    <ID>PackageNaming:VerticalPaddingExt.kt$package com.lift.bro.utils.vertical_padding</ID>
     <ID>SpreadOperator:DashboardInteractor.kt$( *cards.map { it.onStart { emit(DashboardListItem.LiftCard.Loading) } } .toTypedArray() )</ID>
     <ID>SpreadOperator:ExerciseDataSource.kt$LBExerciseDataSource$( *variationSets.map { exercise -&gt; combine( setQueries.getOneRepMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getEMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getMaxRepsForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), ) { orm, volume, reps -&gt; Triple( exercise.exercise_variation_id, exercise.exercise_id, Variation( id = exercise.variation_id, name = exercise.variation_name, notes = exercise.variation_notes, favourite = exercise.variation_is_favourite == 1L, bodyWeight = exercise.variation_is_body_weight?.let { it == 1L }, lift = Lift( id = exercise.lift_id, color = exercise.lift_color?.toULong(), name = exercise.lift_name, ), oneRepMax = orm?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), eMax = volume?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), maxReps = reps?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), ) ) } }.toTypedArray() )</ID>
     <ID>SpreadOperator:WorkoutRepository.kt$WorkoutRepository$( *workouts.map { workout -&gt; database.exerciseDataSource.listen(workout.id).map { Workout( id = workout.id, date = workout.date, warmup = workout.warmup, exercises = it.toList(), finisher = workout.finisher ) } }.toTypedArray() )</ID>
@@ -263,7 +240,6 @@
     <ID>UnusedPrivateProperty:ExerciseDataSource.kt$LBExerciseDataSource$private val variationQueries: VariationQueries</ID>
     <ID>UnusedPrivateProperty:LiftDetailsScreen.kt$SortingOptions$reversed: Boolean</ID>
     <ID>UnusedPrivateProperty:WrappedProgressScreen.kt$val minSet = sets.minOf { it.second }</ID>
-    <ID>WildcardImport:WrappedConsistencyScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>WildcardImport:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>WildcardImport:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
   </CurrentIssues>
