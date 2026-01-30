@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:SwipeableNavHost.kt$@Composable inline fun &lt;reified T: Destination&gt; SwipeableNavHost( modifier: Modifier = Modifier, navCoordinator: NavCoordinator, crossinline key: (T) -&gt; Any = { Json.encodeToString(it).hashCode() }, crossinline content: @Composable (T) -&gt; Unit, )</ID>
+    <ID>MagicNumber:SwipeableNavHost.kt$.5f</ID>
+    <ID>MagicNumber:SwipeableNavHost.kt$.666f</ID>
+    <ID>MatchingDeclarationName:SwipeableNavHost.kt$Destination</ID>
+    <ID>MaxLineLength:SwipeableNavHost.kt$((savedPagerState.currentPage - currentPage) + savedPagerState.currentPageOffsetFraction)</ID>
+    <ID>MaximumLineLength:SwipeableNavHost.kt$ </ID>
+  </CurrentIssues>
+</SmellBaseline>
