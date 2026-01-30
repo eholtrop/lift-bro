@@ -22,6 +22,7 @@ data class Variation(
     val eMax: LBSet? = null,
     val oneRepMax: LBSet? = null,
     val maxReps: LBSet? = null,
+    val latestSet: LBSet? = null,
     val bodyWeight: Boolean? = false,
 )
 
