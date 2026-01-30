@@ -238,7 +238,6 @@ internal fun EditLiftScreen(
                     }
                     VariationTextField(
                         modifier = Modifier.animateItem(),
-                        focusRequester = FocusRequester(),
                         variation = variation,
                         onNameChanged = {
                             interactor(EditLiftEvent.VariationNameChanged(variation, it))

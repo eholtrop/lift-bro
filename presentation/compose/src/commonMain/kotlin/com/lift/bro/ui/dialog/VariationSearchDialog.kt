@@ -274,7 +274,8 @@ private fun VariationSearchContent(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
         ) {
             items(
-                variations
+                variations,
+                key = { it.id }
             ) { variation ->
                 SearchVariationItem(
                     modifier = Modifier.animateItem().fillMaxWidth(),
@@ -283,7 +284,9 @@ private fun VariationSearchContent(
                 )
             }
 
-            item {
+            item(
+                key = "add_variation"
+            ) {
                 var addVariationClicked by remember { mutableStateOf(false) }
 
                 if (addVariationClicked) {
@@ -332,7 +335,7 @@ private fun VariationSearchContent(
                 } else {
                     Button(
                         modifier = Modifier.fillMaxWidth()
-                            .defaultMinSize(TextFieldDefaults.MinHeight),
+                            .defaultMinSize(minHeight = TextFieldDefaults.MinHeight),
                         onClick = {
                             addVariationClicked = true
                         },
@@ -343,7 +346,7 @@ private fun VariationSearchContent(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
-                                "Cant find what you're looking for?",
+                                "Can't find what you're looking for?",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurface
                             )

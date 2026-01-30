@@ -220,7 +220,7 @@ class SetDataSource(
     fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())
 
     fun LocalDate.atEndOfDayIn(): Instant =
-        this.atTime(23, 59, 59, 999).toInstant(TimeZone.currentSystemDefault())
+        this.atTime(23, 59, 59, 999999999).toInstant(TimeZone.currentSystemDefault())
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 
