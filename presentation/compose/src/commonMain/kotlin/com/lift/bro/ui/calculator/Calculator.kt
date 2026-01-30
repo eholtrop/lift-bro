@@ -71,7 +71,6 @@ import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.home.concernedIconRes
 import com.lift.bro.presentation.home.iconRes
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
@@ -84,6 +83,7 @@ import lift_bro.core.generated.resources.calculator_backspace_content_descriptio
 import lift_bro.core.generated.resources.calculator_bigger_bar_message
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.flowvi.rememberInteractor
 
 enum class Digit(digit: Int) {
     One(1),

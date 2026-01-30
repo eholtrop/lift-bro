@@ -5,7 +5,6 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 
-
 /*
  * Modifies a CornerBasedShape based on the index of a list
  *

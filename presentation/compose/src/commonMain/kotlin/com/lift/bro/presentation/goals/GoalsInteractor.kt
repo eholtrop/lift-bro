@@ -6,12 +6,12 @@ import com.lift.bro.di.goalsRepository
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.domain.models.GoalId
 import com.lift.bro.domain.repositories.IGoalRepository
+import kotlinx.coroutines.flow.map
+import kotlinx.serialization.Serializable
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import kotlinx.coroutines.flow.map
-import kotlinx.serialization.Serializable
 
 typealias GoalsInteractor = Interactor<GoalsState, GoalsEvents>
 

@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.VariationId
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calendar.today
@@ -55,9 +54,10 @@ import lift_bro.core.generated.resources.wrapped_progress_header_title
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.compose.toColor
-import tv.dpal.compose.vertical_padding.padding
 import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.flowvi.Interactor
 import tv.dpal.`ktx-datetime`.toLocalDate
 import kotlin.random.Random
 

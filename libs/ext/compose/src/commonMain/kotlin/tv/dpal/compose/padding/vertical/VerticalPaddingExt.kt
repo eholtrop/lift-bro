@@ -1,4 +1,4 @@
-package tv.dpal.compose.vertical_padding
+package tv.dpal.compose.padding.vertical
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier

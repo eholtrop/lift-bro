@@ -224,7 +224,6 @@ fun RepInfoDialogMessage() {
 
                     LocalContentColor provides Color.DarkGray,
                 ) {
-
                     Column(
                         modifier = Modifier.weight(1f),
                         horizontalAlignment = Alignment.CenterHorizontally,

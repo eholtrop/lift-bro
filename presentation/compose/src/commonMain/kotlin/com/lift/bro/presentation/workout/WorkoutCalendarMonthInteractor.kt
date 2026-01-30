@@ -5,13 +5,13 @@ import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.LiftingLog
-import tv.dpal.flowvi.rememberInteractor
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.`ktx-datetime`.toLocalDate
 
 @Serializable

@@ -27,7 +27,3 @@ actual fun LocalDate.toString(pattern: String): String {
 actual fun LocalDateTime.toString(pattern: String): String {
     return dateFormatter(pattern).stringFromDate(this.toInstant(TimeZone.currentSystemDefault()).toNSDate())
 }
-
-
-
-

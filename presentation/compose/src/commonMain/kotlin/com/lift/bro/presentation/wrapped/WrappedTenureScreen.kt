@@ -24,9 +24,7 @@ import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
-import tv.dpal.flowvi.rememberInteractor
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
@@ -36,7 +34,9 @@ import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.*
 import lift_bro.core.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
-import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.compose.padding.vertical.padding
+import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.`ktx-datetime`.toLocalDate
 
 @Serializable

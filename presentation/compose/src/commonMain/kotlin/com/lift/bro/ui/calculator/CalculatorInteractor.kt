@@ -2,9 +2,9 @@ package com.lift.bro.ui.calculator
 
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.models.convert
-import tv.dpal.flowvi.Reducer
 import com.lift.bro.utils.decimalFormat
 import kotlinx.serialization.Serializable
+import tv.dpal.flowvi.Reducer
 
 @Serializable
 data class CalculatorState(

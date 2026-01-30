@@ -48,7 +48,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import com.lift.bro.domain.models.Variation
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
@@ -77,6 +76,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
+import tv.dpal.flowvi.Interactor
 
 @Composable
 fun EditLiftScreen(
@@ -356,8 +356,7 @@ private fun VariationItem(
 }
 
 @Composable
-fun TextFieldDefaults.transparentColors(
-): TextFieldColors = TextFieldDefaults.colors(
+fun TextFieldDefaults.transparentColors(): TextFieldColors = TextFieldDefaults.colors(
     unfocusedContainerColor = Color.Transparent,
     focusedContainerColor = Color.Transparent,
     errorContainerColor = Color.Transparent,

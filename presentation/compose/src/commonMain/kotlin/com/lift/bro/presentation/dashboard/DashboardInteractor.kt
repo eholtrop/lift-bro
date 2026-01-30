@@ -74,7 +74,8 @@ fun rememberDashboardInteractor(
                 DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
                 is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
             }
-        }),
+        }
+    ),
     source = {
         combine(
             liftRepository.listenAll().onStart { emit(emptyList()) },

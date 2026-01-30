@@ -29,7 +29,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.*
 import org.jetbrains.compose.resources.stringResource
-import tv.dpal.compose.vertical_padding.padding
+import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.rememberInteractor
 

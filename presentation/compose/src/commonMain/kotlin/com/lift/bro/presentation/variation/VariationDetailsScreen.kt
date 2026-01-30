@@ -48,7 +48,6 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
-import tv.dpal.flowvi.Interactor
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
@@ -58,8 +57,8 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
-import lift_bro.core.generated.resources.Res
 import kotlinx.datetime.Clock
+import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.variation_details_notes_label
 import lift_bro.core.generated.resources.variation_details_notes_placeholder
@@ -75,6 +74,7 @@ import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 import tv.dpal.compose.listCorners
 import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.flowvi.Interactor
 import tv.dpal.`ktx-datetime`.toLocalDate
 
 private enum class Grouping {
