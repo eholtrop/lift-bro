@@ -7,8 +7,8 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
-import com.lift.bro.ui.LiftCardData
-import com.lift.bro.ui.LiftCardState
+import com.lift.bro.ui.card.lift.LiftCardData
+import com.lift.bro.ui.card.lift.LiftCardState
 import com.lift.bro.ui.navigation.Destination
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine

@@ -74,7 +74,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.weightFormat
+import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat

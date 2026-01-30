@@ -65,7 +65,7 @@ import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.FabProperties
-import com.lift.bro.ui.LiftCardYValue
+import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space

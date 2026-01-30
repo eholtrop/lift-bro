@@ -11,7 +11,7 @@ import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.ui.weightFormat
+import com.lift.bro.ui.card.lift.weightFormat
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
 

@@ -41,7 +41,7 @@ import com.lift.bro.domain.models.VariationId
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calendar.today
-import com.lift.bro.ui.setFormat
+import com.lift.bro.ui.card.lift.setFormat
 import com.lift.bro.ui.theme.icons
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
