@@ -12,7 +12,7 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 
 @Serializable
 data class WorkoutMonthState(

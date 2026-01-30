@@ -38,7 +38,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import tv.dpal.ext.ktx.datetime.toString
-import tv.dpal.`ktx-datetime`.today
+import tv.dpal.ktx.datetime.today
 
 @Serializable
 data class Backup(

@@ -1,4 +1,4 @@
-package tv.dpal.`ktx-datetime`
+package tv.dpal.ktx.datetime
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone

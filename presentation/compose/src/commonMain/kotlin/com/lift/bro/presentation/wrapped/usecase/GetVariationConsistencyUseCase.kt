@@ -9,7 +9,7 @@ import com.lift.bro.domain.repositories.IVariationRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 
 class GetVariationConsistencyUseCase(
     val setRepository: ISetRepository = dependencies.setRepository,

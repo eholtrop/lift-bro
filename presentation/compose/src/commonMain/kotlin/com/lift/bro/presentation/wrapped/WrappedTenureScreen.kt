@@ -37,7 +37,7 @@ import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.`ktx-datetime`.toLocalDate
+import tv.dpal.ktx.datetime.toLocalDate
 
 @Serializable
 data class WrappedTenureState(
