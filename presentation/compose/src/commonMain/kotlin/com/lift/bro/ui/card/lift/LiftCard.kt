@@ -49,6 +49,7 @@ import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.ui.Card
 import com.lift.bro.ui.FloatVectorConverter
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.navigation.Destination
@@ -121,7 +122,7 @@ fun LiftCard(
         }
     } ?: 0.0
 
-    _root_ide_package_.com.lift.bro.ui.Card(
+    Card(
         modifier = modifier
             .aspectRatio(1f),
         backgroundBrush = Brush.linearGradient(
