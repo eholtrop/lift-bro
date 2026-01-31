@@ -7,6 +7,6 @@
     <ID>InvalidPackageDeclaration:DateFormatting.native.kt$package tv.dpal.ext.ktx.datetime</ID>
     <ID>MagicNumber:LocalDateExt.kt$23</ID>
     <ID>MagicNumber:LocalDateExt.kt$59</ID>
-    <ID>MagicNumber:LocalDateExt.kt$999</ID>
+    <ID>MagicNumber:LocalDateExt.kt$999999999</ID>
   </CurrentIssues>
 </SmellBaseline>
