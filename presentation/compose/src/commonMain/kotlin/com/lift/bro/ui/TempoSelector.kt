@@ -7,6 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,8 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.set.TempoState
 import com.lift.bro.ui.dialog.InfoDialogButton
+import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -37,32 +43,22 @@ import lift_bro.core.generated.resources.tempo_selector_with_tempo_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
+import tv.dpal.navi.LocalNavCoordinator
+import tv.dpal.navi.NavCoordinator
 
 @Composable
 fun TempoSelector(
     modifier: Modifier = Modifier,
     tempo: TempoState,
+    title: @Composable () -> Unit = { TempoTitle() },
     tempoChanged: (TempoState) -> Unit,
+    navCoordinator: NavCoordinator? = LocalNavCoordinator.current,
 ) {
     Column(
         modifier = modifier,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                modifier = Modifier.padding(start = MaterialTheme.spacing.half),
-                text = stringResource(Res.string.tempo_selector_with_tempo_text),
-                style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Space(MaterialTheme.spacing.half)
-            InfoDialogButton(
-                modifier = Modifier.size(16.dp),
-                dialogTitle = { Text(stringResource(Res.string.tempo_selector_dialog_title)) },
-                dialogMessage = { TempoInfoDialogText() }
-            )
-        }
+        title()
+        Space(MaterialTheme.spacing.quarter)
         Column(
             modifier = Modifier
                 .background(
@@ -94,8 +90,40 @@ fun TempoSelector(
                     selectedNum = tempo.con?.toInt(),
                     numberChanged = { tempoChanged(tempo.copy(con = it?.toLong())) }
                 )
+                navCoordinator?.let {
+                    IconButton(
+                        onClick = {
+                            navCoordinator.present(Destination.Timer(tempo = Tempo(), 3))
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Timer,
+                            contentDescription = "Timer"
+                        )
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+fun TempoTitle() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            modifier = Modifier.padding(start = MaterialTheme.spacing.half),
+            text = stringResource(Res.string.tempo_selector_with_tempo_text),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Space(MaterialTheme.spacing.half)
+        InfoDialogButton(
+            modifier = Modifier.size(16.dp),
+            dialogTitle = { Text(stringResource(Res.string.tempo_selector_dialog_title)) },
+            dialogMessage = { TempoInfoDialogText() }
+        )
     }
 }
 
