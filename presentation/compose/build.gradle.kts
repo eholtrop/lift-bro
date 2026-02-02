@@ -51,13 +51,15 @@ kotlin {
             implementation(project(":data:sqldelight"))
             implementation(project(":data:client"))
             implementation(project(":data:core"))
-            implementation(project(":libs:flowvi:core"))
-            implementation(project(":libs:flowvi:compose"))
             implementation(project(":libs:ext:flow"))
             implementation(project(":libs:logging"))
             implementation(project(":libs:ext:ktx-datetime"))
             implementation(project(":libs:ext:compose"))
             api(project(":libs:navi"))
+
+            // flowvi
+            implementation(libs.flowvi.core)
+            implementation(libs.flowvi.compose)
 
             // Compose Multiplatform
             implementation(compose.ui)

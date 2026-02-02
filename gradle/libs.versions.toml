@@ -1,5 +1,6 @@
 [versions]
 billing-ktx = "7.1.1"
+flowvi-core-version = "0.1.0"
 kotlin = "2.1.21"
 colorpicker-compose = "1.1.2"
 filekit = "0.10.0-beta04"
@@ -38,6 +39,8 @@ billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = 
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose" }
 
+flowvi-core = { module = "tv.dpal:flowvi-core", version.ref = "flowvi-core-version" }
+flowvi-compose = { module = "tv.dpal:flowvi-compose", version.ref = "flowvi-core-version" }
 revenuecat-core = { module = "com.revenuecat.purchases:purchases-kmp-core", version.ref = "revenuecat" }
 revenuecat-datetime = { module = "com.revenuecat.purchases:purchases-kmp-datetime", version.ref = "revenuecat" }
 revenuecat-ui = { module = "com.revenuecat.purchases:purchases-kmp-ui", version.ref = "revenuecat" }
