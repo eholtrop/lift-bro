@@ -35,6 +35,7 @@ class StringExtraction:
     context: str
     line_number: int
     file_path: str
+    file_name: str
     reasoning: str
     needs_import: bool = True
 
@@ -143,11 +144,12 @@ RESPONSE FORMAT (valid JSON only):
       "semantic_key": "generated_semantic_key",
       "context": "title|content_description|button|placeholder|dialog|text",
       "line_number": 123,
-      "file_path": "file/package/path/file.kt",
+      "file_name": "file.kt",
+      "file_path": "The full path to the parent directory of the file"
       "reasoning": "brief explanation of key generation"
     }}
   ],
-  "files_modified": ["file/package/path/file.kt"],
+  "files_modified": ["file.kt"],
   "import_required": true,
   "total_strings_extracted": 1
 }}
@@ -244,6 +246,7 @@ RESPONSE FORMAT (valid JSON only):
                 context=string_data['context'],
                 line_number=string_data.get('line_number', 0),
                 file_path=string_data['file_path'],
+                file_name=string_data['file_name'],
                 reasoning=string_data.get('reasoning', ''),
                 needs_import=response_data.get('import_required', True)
             )
@@ -377,6 +380,7 @@ def main():
                 'original_string': s.text,
                 'semantic_key': s.semantic_key,
                 'file_path': s.file_path,
+                'file_name': s.file_name,
                 'context': s.context,
                 'line_number': s.line_number,
                 'needs_import': s.needs_import
