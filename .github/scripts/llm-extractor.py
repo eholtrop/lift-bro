@@ -278,7 +278,7 @@ RESPONSE FORMAT (valid JSON only):
             # Create FileAnalysis for each file
             for file_path in files:
                 print(f"extracting {file_path}")
-                file_strings = [s for s in strings if file_path.endswith(s.file_path)]
+                file_strings = [s for s in strings if file_path.endswith(s.file_name)]
                 print(f"{file_strings}")
                 if file_strings:
                     analysis = FileAnalysis(
@@ -379,7 +379,7 @@ def main():
             {
                 'original_string': s.text,
                 'semantic_key': s.semantic_key,
-                'file_path': s.file_path,
+                'file_path': analysis.file_path,
                 'file_name': s.file_name,
                 'context': s.context,
                 'line_number': s.line_number,

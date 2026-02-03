@@ -135,7 +135,7 @@ def main():
     # Group strings by file
     files_to_update = {}
     for string_info in processed_strings:
-        file_path = f"{string_info['file_path']}.{string_info['file_path']}"
+        file_path = string_info['file_path']
         if file_path not in files_to_update:
             files_to_update[file_path] = []
         files_to_update[file_path].append(string_info)
