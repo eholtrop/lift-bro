@@ -91,17 +91,17 @@ jobs:
             --base-path ./presentation/compose/src/commonMain/composeResources \
             --output-dir /tmp/updated-resources
 
-      # 5. Translation Process
-      - name: Translate Strings
-        id: translation
-        if: steps.extraction.outputs.strings-found == 'true'
-        env:
-          LIBRETRANSLATE_API_KEY: ${{ secrets.LIBRETRANSLATE_API_KEY }}
-        run: |
-          python .github/scripts/translate-strings.py \
-            --input /tmp/updated-resources/values/strings.xml \
-            --languages es,pt,fr,de,ja,zh,ar,ru \
-            --output-dir /tmp/translated-resources
+#      # 5. Translation Process
+#      - name: Translate Strings
+#        id: translation
+#        if: steps.extraction.outputs.strings-found == 'true'
+#        env:
+#          LIBRETRANSLATE_API_KEY: ${{ secrets.LIBRETRANSLATE_API_KEY }}
+#        run: |
+#          python .github/scripts/translate-strings.py \
+#            --input /tmp/updated-resources/values/strings.xml \
+#            --languages es,pt,fr,de,ja,zh,ar,ru \
+#            --output-dir /tmp/translated-resources
 
       # 6. File Modifications
       - name: Update Kotlin Files

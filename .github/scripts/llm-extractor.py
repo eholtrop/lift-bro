@@ -143,11 +143,11 @@ RESPONSE FORMAT (valid JSON only):
       "semantic_key": "generated_semantic_key",
       "context": "title|content_description|button|placeholder|dialog|text",
       "line_number": 123,
-      "file_path": "path/to/file.kt",
+      "file_path": "file/package/path/file.kt",
       "reasoning": "brief explanation of key generation"
     }}
   ],
-  "files_modified": ["path/to/file.kt"],
+  "files_modified": ["file/package/path/file.kt"],
   "import_required": true,
   "total_strings_extracted": 1
 }}
@@ -168,14 +168,13 @@ RESPONSE FORMAT (valid JSON only):
         prompt = self.create_prompt(file_batch)
 
         # Debug: show the prompt
-        if debug:
-            print("⚠️ DEBUG MODE: Showing prompt sent to Gemini")
-            print("=" * 80)
-            print(prompt)
-            print("=" * 80)
-            print(f"Prompt length: {len(prompt)} characters")
-            print(f"Estimated tokens: ~{len(prompt) // 4}")
-            print()
+        print("⚠️ DEBUG MODE: Showing prompt sent to Gemini")
+        print("=" * 80)
+        print(prompt)
+        print("=" * 80)
+        print(f"Prompt length: {len(prompt)} characters")
+        print(f"Estimated tokens: ~{len(prompt) // 4}")
+        print()
 
         try:
             # Make API call with structured output
@@ -284,6 +283,7 @@ RESPONSE FORMAT (valid JSON only):
                         strings=file_strings,
                         needs_resource_import=True
                     )
+                    print(f"analysis: {analysis}")
                     all_analyses.append(analysis)
                 print(f"Analysis size: {len(all_analyses)}")
         else:
