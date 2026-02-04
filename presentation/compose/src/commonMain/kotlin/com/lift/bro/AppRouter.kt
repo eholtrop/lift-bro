@@ -98,6 +98,6 @@ fun AppRouter(route: Destination) {
             GoalsScreen()
         }
 
-        is Destination.Timer -> TimerScreen(state = TimerState(tempo = List(route.reps) { route.tempo }), onEvent = {})
+        is Destination.Timer -> TimerScreen()
     }
 }

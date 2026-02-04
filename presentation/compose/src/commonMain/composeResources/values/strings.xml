@@ -243,7 +243,12 @@ Soreness or pain?</string>
     <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
-    <string name="timer_screen_rest_label">Rest</string><string name="timer_screen_rest_placeholder">Rest</string><string name="timer_screen_rest_reset_label">Rest/Reset</string><string name="timer_screen_rest_reset_placeholder">Rest/Reset</string><string name="timer_screen_start_timer_content_description">Start Timer</string><string name="timer_screen_startup_time_buffer_label">Startup Time Buffer</string><string name="timer_screen_startup_time_placeholder">Startup Time Buffer</string><string name="timer_screen_tempo_count_cta">x${state.tempo.size}</string><string name="timer_screen_title">Timer</string><string name="toolbar_back_button_content_description">Back</string>
+    <string name="timer_screen_rest_reset_label">Rest/Reset</string>
+    <string name="timer_screen_fab_content_description">Start Timer</string>
+    <string name="timer_screen_startup_time_buffer_text">Startup Time Buffer</string>
+    <string name="timer_screen_set_count_cta">x%1$d</string>
+    <string name="timer_screen_title">Timer</string>
+    <string name="toolbar_back_button_content_description">Back</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
     <string name="toolbar_calculator_content_description">Calculator</string>
     <string name="toolbar_close_content_description">Close</string>

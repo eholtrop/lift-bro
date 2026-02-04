@@ -39,6 +39,7 @@ import lift_bro.core.generated.resources.tempo_selector_iso_title
 import lift_bro.core.generated.resources.tempo_selector_isometric_examples
 import lift_bro.core.generated.resources.tempo_selector_isometric_subtitle
 import lift_bro.core.generated.resources.tempo_selector_isometric_title
+import lift_bro.core.generated.resources.tempo_selector_timer_content_description
 import lift_bro.core.generated.resources.tempo_selector_with_tempo_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -98,7 +99,7 @@ fun TempoSelector(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Timer,
-                            contentDescription = "Timer"
+                            contentDescription = stringResource(Res.string.tempo_selector_timer_content_description)
                         )
                     }
                 }
