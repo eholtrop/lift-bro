@@ -1,5 +1,5 @@
-<resources>
-    <string name="app_congrats_text">Congrats!!</string>
+<?xml version='1.0' encoding='utf-8'?>
+<resources><string name="app_congrats_text">Congrats!!</string>
 
     <string name="backup_dialog_message">Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?</string>
     <string name="backup_dialog_primary_cta">Backup Now</string>
@@ -85,6 +85,8 @@ Soreness or pain?</string>
 
     <string name="kg">kg</string>
 
+    <string name="lbs">lbs</string>
+
     <string name="lift_card_empty_subtitle">Tap to add one</string>
     <string name="lift_card_empty_title">No Sets!</string>
     <string name="lift_details_fab_content_description">Add Set</string>
@@ -96,8 +98,6 @@ Soreness or pain?</string>
     <string name="lift_details_screen_sort_one_rep_max">One Rep Max</string>
 
     <string name="line_item_title_text">Title</string>
-    <string name="lbs">lbs</string>
-
     <string name="number_picker_reps_title">Reps</string>
     <string name="number_picker_weight_title">Weight</string>
 
@@ -184,8 +184,8 @@ Soreness or pain?</string>
     <string name="settings_experimental_message">Features here are experimental, and could break app functionality, use with caution!</string>
     <string name="settings_experimental_title">Experimental</string>
     <string name="settings_kg_text">kg</string>
-    <string name="settings_light_text">Light</string>
     <string name="settings_lbs_text">lbs</string>
+    <string name="settings_light_text">Light</string>
     <string name="settings_manage_subscription_cta">Manage Subscription</string>
     <string name="settings_mer_enable_text">Show MER calculations</string>
     <string name="settings_mer_fatigue_info_dialog_paragraph_one">The % fatigue that you must hit of your max for a rep to be considered a MER (default 80%), This can be calculated by taking a look at your Max</string>
@@ -206,8 +206,8 @@ Soreness or pain?</string>
     <string name="settings_restore_cta">Restore</string>
     <string name="settings_row_item_dark_text">Dark</string>
     <string name="settings_row_item_kg_text">kg</string>
-    <string name="settings_row_item_light_text">Light</string>
     <string name="settings_row_item_lbs_text">lbs</string>
+    <string name="settings_row_item_light_text">Light</string>
     <string name="settings_row_item_system_text">System</string>
     <string name="settings_system_text">System</string>
     <string name="settings_theme_option_one">System</string>
@@ -240,10 +240,10 @@ Soreness or pain?</string>
     <string name="tempo_selector_isometric_examples">• a deadlift/squad/bench press hold\n• time under tension</string>
     <string name="tempo_selector_isometric_subtitle">Between Eccentric and Concentric</string>
     <string name="tempo_selector_isometric_title">Isometric - Iso</string>
-    <string name="tempo_selector_with_tempo_text">Tempo</string>
+    <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
-    <string name="toolbar_back_button_content_description">Back</string>
+    <string name="timer_screen_rest_label">Rest</string><string name="timer_screen_rest_reset_label">Rest/Reset</string><string name="timer_screen_start_timer_content_description">Start Timer</string><string name="timer_screen_startup_time_buffer_label">Startup Time Buffer</string><string name="timer_screen_tempo_count_cta">x${state.tempo.size}</string><string name="timer_screen_title">Timer</string><string name="toolbar_back_button_content_description">Back</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
     <string name="toolbar_calculator_content_description">Calculator</string>
     <string name="toolbar_close_content_description">Close</string>
@@ -279,8 +279,8 @@ Soreness or pain?</string>
     <string name="workout_finisher_label">Finisher</string>
     <string name="workout_finisher_placeholder">Burpees</string>
     <string name="workout_notes_placeholder">Notes</string>
-    <string name="workout_screen_again_content_description">Again</string>
     <string name="workout_screen_add_set_content_description">Add Set</string>
+    <string name="workout_screen_again_content_description">Again</string>
     <string name="workout_screen_copy_recent_workout_subtitle">Tap one to start the gains!</string>
     <string name="workout_screen_copy_recent_workout_title">Or... Copy a recent workout!</string>
     <string name="workout_screen_copy_set_content_description">Copy Set</string>
@@ -299,13 +299,15 @@ Soreness or pain?</string>
     <string name="workout_warmup_label">Warmup</string>
     <string name="workout_warmup_placeholder">High Knees</string>
 
-    <string name="wrapped_consistency_header_title">And look at how consistent you were!</string>
     <string name="wrapped_consistency_best_month">Your most consistent month was %1$s with %2$d days!</string>
+    <string name="wrapped_consistency_header_title">And look at how consistent you were!</string>
     <string name="wrapped_consistency_screen_most_consistent_text">Your most consistent...</string>
     <string name="wrapped_consistency_speech_bubble_title">Way to go!</string>
     <string name="wrapped_goals_add_button_content_description">Add Goal</string>
     <string name="wrapped_goals_delete_button_content_description">Remove Goal</string>
     <string name="wrapped_goals_header_title">Now... How about Goals for next year?</string>
+    <string name="wrapped_goals_section_title">Goals</string>
+    <string name="wrapped_goals_suggestion_arm_wrestle">Beat "The Rock" in an arm wrestling match</string>
     <string name="wrapped_goals_suggestion_beach_season">Be ready for beach season</string>
     <string name="wrapped_goals_suggestion_chin_up">Do a full chin up</string>
     <string name="wrapped_goals_suggestion_exceed_bench">Exceed my Bench Press max by 5%</string>
@@ -315,8 +317,6 @@ Soreness or pain?</string>
     <string name="wrapped_goals_suggestion_pushup_no_knees">Do a push-up without using my knees</string>
     <string name="wrapped_goals_suggestion_pushups_monthly">Do 100 push-ups a month</string>
     <string name="wrapped_goals_suggestion_stretch">Stretch 3 days a week</string>
-    <string name="wrapped_goals_section_title">Goals</string>
-    <string name="wrapped_goals_suggestion_arm_wrestle">Beat "The Rock" in an arm wrestling match</string>
     <string name="wrapped_landing_back_button_content_description">Back</string>
     <string name="wrapped_landing_next_button_content_description">Next</string>
     <string name="wrapped_progress_header_title">You made some GREAT Progress this year!</string>
