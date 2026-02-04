@@ -4,7 +4,7 @@
     <string name="backup_dialog_message">Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?</string>
     <string name="backup_dialog_primary_cta">Backup Now</string>
     <string name="backup_dialog_secondary_cta">Ignore</string>
-    <string name="backup_dialog_title">Its been a while...</string>
+    <string name="backup_dialog_title">It's been a while...</string>
 
     <string name="calculator_backspace_content_description">Backspace</string>
     <string name="calculator_bigger_bar_message">We're gonna need a bigger bar... 🧔‍♂️</string>
@@ -64,7 +64,7 @@ Soreness or pain?</string>
     <string name="edit_lift_screen_title">Edit Lift</string>
     <string name="edit_lift_screen_variation_delete_cta_content_description">Delete Variation</string>
     <string name="edit_lift_screen_variation_name_placeholder">ex: Back, Front, Incline</string>
-    <string name="edit_lift_screen_variation_warning_dialog_text">This will delete all sets for this variation, This cannot be undone</string>
+    <string name="edit_lift_screen_variation_warning_dialog_text">This will delete all sets for this variation. This cannot be undone</string>
     <string name="edit_lift_screen_warning_dialog_negative_cta">Nevermind</string>
     <string name="edit_lift_screen_warning_dialog_positive_cta">Okay!</string>
     <string name="edit_lift_screen_warning_dialog_title">Warning</string>
@@ -112,12 +112,12 @@ Soreness or pain?</string>
     <string name="onboarding_setup_screen_continue_cta">Continue</string>
     <string name="onboarding_setup_screen_select_lifts_title">Select some Lifts! (the fun bit)</string>
     <string name="onboarding_setup_screen_select_uom_title">Select your preferred\nUnit of Measure</string>
-    <string name="onboarding_setup_screen_title">LETS GET STARTED</string>
+    <string name="onboarding_setup_screen_title">LET'S GET STARTED</string>
     <string name="onboarding_skip_screen_continue_cta">🧭 Just put me in Coach!</string>
     <string name="onboarding_skip_screen_restore_cta">🛺 Restore from a Backup</string>
     <string name="onboarding_skip_screen_setup_cta">🙏 Help me setup some Lifts</string>
     <string name="onboarding_skip_screen_subtitle">How would you like to get things started?</string>
-    <string name="onboarding_skip_screen_title">LETS\nGOOOOO!</string>
+    <string name="onboarding_skip_screen_title">LET'S\nGOOOOO!</string>
 
     <string name="privacy_policy">Privacy Policy</string>
 
@@ -217,7 +217,7 @@ Soreness or pain?</string>
     <string name="settings_title">Settings</string>
     <string name="settings_tmax_enable_text">Show theoretical one rep maxes (tMax) where applicable</string>
     <string name="settings_twm_enable_text">Show TWM calculations where applicable</string>
-    <string name="settings_twm_fatigue_info_dialog_paragraph_one">Total weight that you moved for a given set/excercise/workout!</string>
+    <string name="settings_twm_fatigue_info_dialog_paragraph_one">Total weight that you moved for a given set/exercise/workout!</string>
     <string name="settings_twm_fatigue_info_dialog_title">Total Weight Moved</string>
     <string name="settings_twm_title">Total Weight Moved (TWM)</string>
     <string name="settings_uom_title">Default Unit of Measure</string>
@@ -237,13 +237,18 @@ Soreness or pain?</string>
     <string name="tempo_selector_eccentric_subtitle">Muscle Extension</string>
     <string name="tempo_selector_eccentric_title">Eccentric - Ecc</string>
     <string name="tempo_selector_iso_title">Iso (Hold)</string>
-    <string name="tempo_selector_isometric_examples">• a deadlift/squad/bench press hold\n• time under tension</string>
+    <string name="tempo_selector_isometric_examples">• a deadlift/squat/bench press hold\n• time under tension</string>
     <string name="tempo_selector_isometric_subtitle">Between Eccentric and Concentric</string>
     <string name="tempo_selector_isometric_title">Isometric - Iso</string>
     <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
-    <string name="timer_screen_rest_label">Rest</string><string name="timer_screen_rest_placeholder">Rest</string><string name="timer_screen_rest_reset_label">Rest/Reset</string><string name="timer_screen_rest_reset_placeholder">Rest/Reset</string><string name="timer_screen_start_timer_content_description">Start Timer</string><string name="timer_screen_startup_time_buffer_label">Startup Time Buffer</string><string name="timer_screen_startup_time_placeholder">Startup Time Buffer</string><string name="timer_screen_tempo_count_cta">x${state.tempo.size}</string><string name="timer_screen_title">Timer</string><string name="toolbar_back_button_content_description">Back</string>
+    <string name="timer_screen_rest_reset_label">Rest/Reset</string>
+    <string name="timer_screen_fab_content_description">Start Timer</string>
+    <string name="timer_screen_startup_time_buffer_text">Startup Time Buffer</string>
+    <string name="timer_screen_set_count_cta">x%1$d</string>
+    <string name="timer_screen_title">Timer</string>
+    <string name="toolbar_back_button_content_description">Back</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
     <string name="toolbar_calculator_content_description">Calculator</string>
     <string name="toolbar_close_content_description">Close</string>
@@ -285,7 +290,7 @@ Soreness or pain?</string>
     <string name="workout_screen_copy_recent_workout_title">Or... Copy a recent workout!</string>
     <string name="workout_screen_copy_set_content_description">Copy Set</string>
     <string name="workout_screen_delete_variation_content_description">Delete %1$s</string>
-    <string name="workout_screen_delete_warning_text">This will delete all in this workout, are you sure?</string>
+    <string name="workout_screen_delete_warning_text">This will delete all sets in this workout, are you sure?</string>
     <string name="workout_screen_duplicate_last_set_content_description">Duplicate Last Set</string>
     <string name="workout_screen_most_recent_set_text">Most Recent Set - %1$s</string>
     <string name="workout_screen_next_content_description">Next</string>
@@ -324,7 +329,7 @@ Soreness or pain?</string>
     <string name="wrapped_progress_screen_bench_press_title">Bench Press</string>
     <string name="wrapped_progress_screen_dead_lift_title">Dead Lift</string>
     <string name="wrapped_progress_screen_favourite_content_description">Favourite</string>
-    <string name="wrapped_reps_daily_average">Thats an average of %1$d reps per day</string>
+    <string name="wrapped_reps_daily_average">That's an average of %1$d reps per day</string>
     <string name="wrapped_reps_header_title">Total Reps</string>
     <string name="wrapped_reps_most_reps_lift">You even did %1$d reps of %2$s 😵</string>
     <string name="wrapped_reps_speech_bubble_title">WOW</string>
@@ -341,19 +346,19 @@ Soreness or pain?</string>
     <string name="wrapped_summary_screen_reps_title">Reps</string>
     <string name="wrapped_summary_screen_to_content_description">To</string>
     <string name="wrapped_summary_screen_total_weight_moved_title">Total Weight Moved</string>
-    <string name="wrapped_tenure_first_year_speech_bubble_message">Lets take a look at all the gains! 💪</string>
+    <string name="wrapped_tenure_first_year_speech_bubble_message">Let's take a look at all the gains! 💪</string>
     <string name="wrapped_tenure_first_year_speech_bubble_title">Thank YOU!!!</string>
-    <string name="wrapped_tenure_first_year_subtitle">Whether you started using lift bro this year, or Lift Bro help you on your lifting journey</string>
+    <string name="wrapped_tenure_first_year_subtitle">Whether you started using lift bro this year, or Lift Bro helped you on your lifting journey</string>
     <string name="wrapped_tenure_first_year_title">%1$d\nYour first year using Lift Bro! 🎉</string>
     <string name="wrapped_tenure_header_title">Welcome to Lift Bro Wrapped!</string>
     <string name="wrapped_tenure_pro_thanks_subtitle">Support like yours is what keeps this app going!</string>
     <string name="wrapped_tenure_pro_thanks_title">And a VERY EXTRA SPECIAL THANK YOU! for being a Lift PRO!!!</string>
-    <string name="wrapped_tenure_veteran_subtitle">Congrats!! and thank YOU for the support</string>
+    <string name="wrapped_tenure_veteran_subtitle">Congrats!! And thank YOU for the support</string>
     <string name="wrapped_tenure_veteran_title">You've been a lift bro for %1$d years!</string>
     <string name="wrapped_weight_content_item_format">%1$s %2$ss %3$s</string>
-    <string name="wrapped_weight_content_title">Thats...</string>
+    <string name="wrapped_weight_content_title">That's...</string>
     <string name="wrapped_weight_header_title">Total Weight Moved</string>
     <string name="wrapped_weight_intro">You moved %1$s this year!</string>
     <string name="wrapped_weight_speech_bubble_message">You moved %1$s in %2$ss Alone!! 😵</string>
-    <string name="wrapped_weight_speech_bubble_title">Thats HUGE!!!! 💪</string>
+    <string name="wrapped_weight_speech_bubble_title">That's HUGE!!!! 💪</string>
 </resources>

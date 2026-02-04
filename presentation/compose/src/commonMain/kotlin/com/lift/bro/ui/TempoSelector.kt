@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.set.TempoState
 import com.lift.bro.ui.dialog.InfoDialogButton
@@ -39,6 +40,7 @@ import lift_bro.core.generated.resources.tempo_selector_iso_title
 import lift_bro.core.generated.resources.tempo_selector_isometric_examples
 import lift_bro.core.generated.resources.tempo_selector_isometric_subtitle
 import lift_bro.core.generated.resources.tempo_selector_isometric_title
+import lift_bro.core.generated.resources.tempo_selector_timer_content_description
 import lift_bro.core.generated.resources.tempo_selector_with_tempo_text
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -90,16 +92,18 @@ fun TempoSelector(
                     selectedNum = tempo.con?.toInt(),
                     numberChanged = { tempoChanged(tempo.copy(con = it?.toLong())) }
                 )
-                navCoordinator?.let {
-                    IconButton(
-                        onClick = {
-                            navCoordinator.present(Destination.Timer(tempo = Tempo(), 3))
+                if (dependencies.settingsRepository.enableTimer()) {
+                    navCoordinator?.let {
+                        IconButton(
+                            onClick = {
+                                navCoordinator.present(Destination.Timer(tempo = Tempo(), 3))
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Timer,
+                                contentDescription = stringResource(Res.string.tempo_selector_timer_content_description)
+                            )
                         }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Timer,
-                            contentDescription = "Timer"
-                        )
                     }
                 }
             }
