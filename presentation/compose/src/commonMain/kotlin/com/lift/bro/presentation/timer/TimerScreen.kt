@@ -37,6 +37,13 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.timer_screen_fab_content_description
+import lift_bro.core.generated.resources.timer_screen_rest_reset_label
+import lift_bro.core.generated.resources.timer_screen_set_count_cta
+import lift_bro.core.generated.resources.timer_screen_startup_time_buffer_text
+import lift_bro.core.generated.resources.timer_screen_title
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 data class TimerState(
@@ -56,13 +63,13 @@ fun TimerScreen(
     onEvent: (TimerEvent) -> Unit,
 ) {
     LiftingScaffold(
-        title = { Text("Timer") },
+        title = { Text(stringResource(Res.string.timer_screen_title)) },
         fabProperties = FabProperties(
             fabIcon = Icons.Default.PlayArrow,
             fabClicked = {
 
             },
-            contentDescription = "Start Timer",
+            contentDescription = stringResource(Res.string.timer_screen_fab_content_description),
         )
     ) { padding ->
         Column(
@@ -82,7 +89,7 @@ fun TimerScreen(
                         TextField(
                             value = state.startupTime.toString(),
                             onValueChange = {},
-                            label = { Text("Startup Time Buffer") },
+                            label = { Text(stringResource(Res.string.timer_screen_startup_time_buffer_text)) },
                             colors = TextFieldDefaults.transparentColors(),
                         )
                     }
@@ -129,7 +136,7 @@ fun TimerScreen(
                                         },
                                         colors = ButtonDefaults.textButtonColors(),
                                     ) {
-                                        Text("x${state.tempo.size}")
+                                        Text(stringResource(Res.string.timer_screen_set_count_cta, 3))
                                     }
                                     Icon(
                                         imageVector = Icons.Default.ArrowUpward,
@@ -143,7 +150,7 @@ fun TimerScreen(
                                     TextField(
                                         value = state.perSetRest.toString(),
                                         onValueChange = {},
-                                        label = { Text("Rest/Reset") },
+                                        label = { Text(stringResource(Res.string.timer_screen_rest_reset_label)) },
                                         colors = TextFieldDefaults.transparentColors(),
                                     )
                                 }
@@ -163,7 +170,7 @@ fun TimerScreen(
                                             TextField(
                                                 value = state.startupTime.toString(),
                                                 onValueChange = {},
-                                                label = { Text("Rest") },
+                                                label = { Text(stringResource(Res.string.timer_screen_rest_reset_label)) },
                                                 colors = TextFieldDefaults.transparentColors(),
                                             )
                                         }
