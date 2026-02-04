@@ -29,6 +29,8 @@ class KotlinFileUpdater:
             if not file_strings:
                 return False
 
+            print(f"📝 Updating {file_path} with {len(file_strings)} strings")
+
             # Update each string reference
             for string_info in sorted(file_strings, key=lambda x: x['line_number'], reverse=True):
                 old_string = string_info['original_string']
@@ -38,6 +40,7 @@ class KotlinFileUpdater:
                 old_pattern = re.escape(f'"{old_string}"')
                 new_reference = f'stringResource(Res.string.{new_key})'
 
+                print(f'replacing {old_pattern} with {new_reference}')
                 # Use regex for precise replacement
                 content = re.sub(
                     fr'"{re.escape(old_string)}"',
@@ -48,6 +51,7 @@ class KotlinFileUpdater:
 
             # Add necessary imports
             if any(s.get('needs_import', True) for s in file_strings):
+                print('adding imports')
                 content = self.add_required_imports(content, file_strings)
 
             # Write back if changed
@@ -101,9 +105,11 @@ class KotlinFileUpdater:
         if not has_string_resource_import:
             imports_to_add.append('import org.jetbrains.compose.resources.stringResource')
 
+        print(f"{required_string_imports}")
         # Add specific string imports
         imports_to_add.extend(sorted(required_string_imports))
 
+        print(f"{imports_to_add}")
         # Insert imports
         for i, import_line in enumerate(imports_to_add):
             lines.insert(insert_index + i, import_line)
