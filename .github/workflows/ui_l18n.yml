@@ -69,12 +69,6 @@ jobs:
           GITHUB_OUTPUT: ${{ github.output }}
         if: steps.changed-files.outputs.files != ''
         run: |
-          # Debug: verify environment variables
-          echo "🔍 Verifying environment..."
-          echo "   Model: ${GEMINI_MODEL:-not set}"
-          echo "   Files to process: ${{ steps.changed-files.outputs.files }}"
-          echo ""
-
           python .github/scripts/llm-extractor.py \
             --files "${{ steps.changed-files.outputs.files }}" \
             --pr-number ${{ github.event.number }} \
@@ -111,14 +105,6 @@ jobs:
             --input /tmp/extracted-strings/processed-strings.json \
             --base-path ./presentation/compose/src/commonMain/kotlin
 
-#      # 7. Validation
-#      - name: Validate Changes
-#        if: steps.extraction.outputs.strings-found == 'true'
-#        run: |
-#          python .github/scripts/validate-changes.py \
-#            --base-path ./presentation/compose/src/commonMain \
-#            --extracted-strings /tmp/extracted-strings/processed-strings.json
-
       # 8. Create Pull Request
       - name: Create Localization PR
         if: steps.extraction.outputs.strings-found == 'true'
@@ -127,6 +113,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: ${{ github.head_ref || github.ref_name || 'main' }}
           branch: "string-extraction-${{ github.event.number || github.run_id }}"
+          title: "🤖 String Extraction for ${{ github.event.pull_request.number }}"
           commit-message: |
             🌐 feat: Extract strings with LLM and add localizations
 
@@ -137,7 +124,6 @@ jobs:
             - Estimated cost: ${{ steps.extraction.outputs.estimated-cost }}
 
             Co-authored-by: github-actions[bot]@users.noreply.github.com
-          title: "🌐 String Extraction & Localization (AI-Powered)"
           body: |
             ## 🤖 Automated String Extraction & Localization
 
