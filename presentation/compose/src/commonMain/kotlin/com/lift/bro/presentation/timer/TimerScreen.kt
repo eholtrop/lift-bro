@@ -56,13 +56,13 @@ fun TimerScreen(
     onEvent: (TimerEvent) -> Unit,
 ) {
     LiftingScaffold(
-        title = { Text("Timer") },
+        title = { Text(stringResource(Res.string.timer_screen_title)) },
         fabProperties = FabProperties(
             fabIcon = Icons.Default.PlayArrow,
             fabClicked = {
 
             },
-            contentDescription = "Start Timer",
+            contentDescription = stringResource(Res.string.timer_screen_start_timer_content_description),
         )
     ) { padding ->
         Column(
@@ -82,7 +82,7 @@ fun TimerScreen(
                         TextField(
                             value = state.startupTime.toString(),
                             onValueChange = {},
-                            label = { Text("Startup Time Buffer") },
+                            label = { Text(stringResource(Res.string.timer_screen_startup_time_buffer_text)) },
                             colors = TextFieldDefaults.transparentColors(),
                         )
                     }
@@ -129,7 +129,7 @@ fun TimerScreen(
                                         },
                                         colors = ButtonDefaults.textButtonColors(),
                                     ) {
-                                        Text("x${state.tempo.size}")
+                                        Text(stringResource(Res.string.timer_screen_tempo_count_cta))
                                     }
                                     Icon(
                                         imageVector = Icons.Default.ArrowUpward,
@@ -143,7 +143,7 @@ fun TimerScreen(
                                     TextField(
                                         value = state.perSetRest.toString(),
                                         onValueChange = {},
-                                        label = { Text("Rest/Reset") },
+                                        label = { Text(stringResource(Res.string.timer_screen_rest_reset_text)) },
                                         colors = TextFieldDefaults.transparentColors(),
                                     )
                                 }
@@ -163,7 +163,7 @@ fun TimerScreen(
                                             TextField(
                                                 value = state.startupTime.toString(),
                                                 onValueChange = {},
-                                                label = { Text("Rest") },
+                                                label = { Text(stringResource(Res.string.timer_screen_rest_text)) },
                                                 colors = TextFieldDefaults.transparentColors(),
                                             )
                                         }

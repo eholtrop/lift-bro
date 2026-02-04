@@ -98,7 +98,7 @@ fun TempoSelector(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Timer,
-                            contentDescription = "Timer"
+                            contentDescription = stringResource(Res.string.tempo_selector_timer_content_description)
                         )
                     }
                 }
