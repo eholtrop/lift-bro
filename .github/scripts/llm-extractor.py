@@ -169,15 +169,6 @@ RESPONSE FORMAT (valid JSON only):
         # Create prompt
         prompt = self.create_prompt(file_batch)
 
-        # Debug: show the prompt
-        print("⚠️ DEBUG MODE: Showing prompt sent to Gemini")
-        print("=" * 80)
-        print(prompt)
-        print("=" * 80)
-        print(f"Prompt length: {len(prompt)} characters")
-        print(f"Estimated tokens: ~{len(prompt) // 4}")
-        print()
-
         try:
             # Make API call with structured output
             print("⏳ Making API call to Gemini...")
@@ -194,13 +185,6 @@ RESPONSE FORMAT (valid JSON only):
 
             # Get response text
             response_text = response.text if hasattr(response, 'text') else str(response)
-
-            print("✅ API call successful!")
-            print("⚠️ DEBUG MODE: Showing Gemini response")
-            print("=" * 80)
-            print(response_text)
-            print("=" * 80)
-            print()
 
             # Estimate tokens (rough estimation)
             input_tokens = len(prompt) // 4  # Rough token estimation
@@ -238,7 +222,6 @@ RESPONSE FORMAT (valid JSON only):
         """Convert response data to StringExtraction objects"""
         strings = []
 
-        print(f"Extracting Strings from Gemini response")
         for string_data in response_data.get('extracted_strings', []):
             extraction = StringExtraction(
                 text=string_data['text'],
@@ -252,7 +235,6 @@ RESPONSE FORMAT (valid JSON only):
             )
             strings.append(extraction)
 
-        print(f"Strings Extracted from Gemini: {len(strings)}")
         return strings
 
     def process_files(self, files: List[str], debug: bool = True) -> Tuple[List[FileAnalysis], Dict]:
@@ -277,18 +259,14 @@ RESPONSE FORMAT (valid JSON only):
 
             # Create FileAnalysis for each file
             for file_path in files:
-                print(f"extracting {file_path}")
                 file_strings = [s for s in strings if file_path.endswith(s.file_name)]
-                print(f"{file_strings}")
                 if file_strings:
                     analysis = FileAnalysis(
                         file_path=file_path,
                         strings=file_strings,
                         needs_resource_import=True
                     )
-                    print(f"analysis: {analysis}")
                     all_analyses.append(analysis)
-                print(f"Analysis size: {len(all_analyses)}")
         else:
             print(f"❌ Failed to process files")
             total_cost = 0
@@ -321,13 +299,6 @@ def main():
 
     api_key = os.environ.get('GEMINI_API_KEY')
     model = os.environ.get('GEMINI_MODEL', 'gemini-1.5-flash')
-
-    print(f"🔧 Configuration:")
-    print(f"   Model: {model}")
-    print(f"   Output dir: {args.output_dir}")
-    print(f"   Budget limit: ${args.budget_limit}")
-    print(f"   Debug mode: {args.debug}")
-    print()
 
     if not api_key:
         print("❌ Error: GEMINI_API_KEY environment variable not set")
