@@ -224,29 +224,29 @@ Soreness or pain?</string>
     <string name="settings_user_id_label">User Id: %1$s</string>
 
     <string name="tempo_selector_con_title">Con (Up)</string>
-    <string name="tempo_selector_concentric_examples">• picking up a deadlift\n• coming up from a squat\n• pushing the bar up in a bench press</string>
-    <string name="tempo_selector_concentric_subtitle">Muscle Contraction</string>
-    <string name="tempo_selector_concentric_title">Concentric - Con</string>
+    <string name="tempo_selector_concentric_examples">Lifting the weight during a bicep curl</string>
+    <string name="tempo_selector_concentric_subtitle">The concentric phase is when the muscle is shortening under load. This is often referred to as the "positive" portion of the lift.</string>
+    <string name="tempo_selector_concentric_title">Concentric</string>
     <string name="tempo_selector_dialog_ok_cta">Ok</string>
-    <string name="tempo_selector_dialog_title">What is Tempo?</string>
+    <string name="tempo_selector_dialog_title">Tempo Information</string>
     <string name="tempo_selector_dialog_what_mean_title">What do these mean?</string>
     <string name="tempo_selector_ecc_examples">• putting a deadlift down\n• going into a squat\n• lowering the bar towards your chest in a bench press</string>
     <string name="tempo_selector_ecc_subtitle">Muscle Extension</string>
     <string name="tempo_selector_ecc_title">Ecc (Down)</string>
-    <string name="tempo_selector_eccentric_examples">• putting a deadlift down\n• going into a squat\n• lowering the bar towards your chest in a bench press</string>
-    <string name="tempo_selector_eccentric_subtitle">Muscle Extension</string>
-    <string name="tempo_selector_eccentric_title">Eccentric - Ecc</string>
+    <string name="tempo_selector_eccentric_examples">Lowering the weight during a squat</string>
+    <string name="tempo_selector_eccentric_subtitle">The eccentric phase is when the muscle is lengthening under load. This is often referred to as the "negative" portion of the lift.</string>
+    <string name="tempo_selector_eccentric_title">Eccentric</string>
     <string name="tempo_selector_iso_title">Iso (Hold)</string>
-    <string name="tempo_selector_isometric_examples">• a deadlift/squad/bench press hold\n• time under tension</string>
-    <string name="tempo_selector_isometric_subtitle">Between Eccentric and Concentric</string>
-    <string name="tempo_selector_isometric_title">Isometric - Iso</string>
+    <string name="tempo_selector_isometric_examples">Holding a plank</string>
+    <string name="tempo_selector_isometric_subtitle">The isometric phase is when the muscle is under load but not changing in length. This is often a pause or hold during the lift.</string>
+    <string name="tempo_selector_isometric_title">Isometric</string>
     <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
-    <string name="timer_screen_rest_reset_label">Rest/Reset</string>
     <string name="timer_screen_fab_content_description">Start Timer</string>
+    <string name="timer_screen_rest_reset_label">Reset Rest</string>
+    <string name="timer_screen_set_count_cta">Set Count: %d</string>
     <string name="timer_screen_startup_time_buffer_text">Startup Time Buffer</string>
-    <string name="timer_screen_set_count_cta">x%1$d</string>
     <string name="timer_screen_title">Timer</string>
     <string name="toolbar_back_button_content_description">Back</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
