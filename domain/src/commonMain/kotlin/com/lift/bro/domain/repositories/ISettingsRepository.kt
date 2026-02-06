@@ -20,6 +20,14 @@ data class Consent(
 
 interface ISettingsRepository {
 
+    fun enableTimer(): Boolean
+
+    fun setEnableTimer(enabled: Boolean)
+
+    fun editSetVersion(): Int
+
+    fun setEditSetVersion(version: Int)
+
     fun getDeviceId(): String
 
     fun getDeviceConsent(): Flow<Consent?>

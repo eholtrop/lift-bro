@@ -1,5 +1,6 @@
 package com.lift.bro.di
 
+import com.lift.bro.audio.AudioPlayer
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.client.LiftBroClientConfig
 import com.lift.bro.data.client.createLiftBroClient
@@ -34,6 +35,8 @@ expect class DependencyContainer {
     fun launchUrl(url: String)
 
     fun launchManageSubscriptions()
+
+    val audioPlayer: AudioPlayer
 }
 
 private val remoteUrl: String?

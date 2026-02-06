@@ -28,6 +28,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -62,6 +64,7 @@ fun LiftingScaffold(
     title: @Composable () -> Unit,
     description: @Composable (() -> Unit)? = null,
     snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current,
+    fab: @Composable (() -> Unit)? = null,
     fabProperties: FabProperties? = null,
     leadingContent: @Composable () -> Unit = { LeadingNavigationButton() },
     trailingContent: @Composable () -> Unit = {},
@@ -72,11 +75,15 @@ fun LiftingScaffold(
         true -> TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
         false -> TopAppBarDefaults.enterAlwaysScrollBehavior()
     },
+    containerColor: Color = MaterialTheme.colorScheme.background,
+    contentColor: Color = contentColorFor(containerColor),
     content: @Composable (PaddingValues) -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.nestedScroll(topAppBarScrollBehavior.nestedScrollConnection)
             .imePadding(),
+        containerColor = containerColor,
+        contentColor = contentColor,
         topBar = {
             var currentOffset by remember { mutableStateOf(topAppBarScrollBehavior.state.contentOffset) }
             var visible by remember { mutableStateOf(true) }
@@ -103,7 +110,7 @@ fun LiftingScaffold(
             )
         },
         floatingActionButton = {
-            if (fabProperties != null) {
+            if (fabProperties != null || fab != null) {
                 var currentOffset by remember { mutableStateOf(topAppBarScrollBehavior.state.contentOffset) }
                 var visible by remember { mutableStateOf(true) }
 
@@ -118,32 +125,36 @@ fun LiftingScaffold(
                     exit = fadeOut() + slideOutVertically { it }
                 ) {
                     Row {
-                        fabProperties.preFab?.invoke()
+                        fabProperties?.preFab?.invoke()
                         Space(MaterialTheme.spacing.half)
-                        Button(
-                            modifier = Modifier.defaultMinSize(52.dp, 52.dp),
-                            enabled = fabProperties.fabEnabled,
-                            onClick = { fabProperties.fabClicked?.invoke() },
-                            shape = when {
-                                fabProperties.preFab != null || fabProperties.postFab != null -> {
-                                    RoundedCornerShape(
-                                        topStartPercent = if (fabProperties.preFab != null) 25 else 50,
-                                        bottomStartPercent = if (fabProperties.preFab != null) 25 else 50,
-                                        topEndPercent = if (fabProperties.postFab != null) 25 else 50,
-                                        bottomEndPercent = if (fabProperties.postFab != null) 25 else 50,
+                        fab?.let { it() } ?: run {
+                            fabProperties?.let {
+                                Button(
+                                    modifier = Modifier.defaultMinSize(52.dp, 52.dp),
+                                    enabled = fabProperties.fabEnabled,
+                                    onClick = { fabProperties.fabClicked?.invoke() },
+                                    shape = when {
+                                        fabProperties.preFab != null || fabProperties.postFab != null -> {
+                                            RoundedCornerShape(
+                                                topStartPercent = if (fabProperties.preFab != null) 25 else 50,
+                                                bottomStartPercent = if (fabProperties.preFab != null) 25 else 50,
+                                                topEndPercent = if (fabProperties.postFab != null) 25 else 50,
+                                                bottomEndPercent = if (fabProperties.postFab != null) 25 else 50,
+                                            )
+                                        }
+
+                                        else -> ButtonDefaults.shape
+                                    }
+                                ) {
+                                    Icon(
+                                        imageVector = fabProperties.fabIcon,
+                                        contentDescription = fabProperties.contentDescription,
                                     )
                                 }
-
-                                else -> ButtonDefaults.shape
                             }
-                        ) {
-                            Icon(
-                                imageVector = fabProperties.fabIcon,
-                                contentDescription = fabProperties.contentDescription,
-                            )
                         }
                         Space(MaterialTheme.spacing.half)
-                        fabProperties.postFab?.invoke()
+                        fabProperties?.postFab?.invoke()
                     }
                 }
             }
@@ -163,7 +174,7 @@ private fun LeadingNavigationButton(
     tabletMode: Boolean = currentWindowAdaptiveInfo().windowSizeClass.isWidthAtLeastBreakpoint(
         WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND
     ),
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ) {
     when {
         !tabletMode || (tabletMode && navCoordinator.currentPageIndex > 1) -> {
@@ -174,6 +185,7 @@ private fun LeadingNavigationButton(
                 onClick = { navCoordinator.onBackPressed() },
             )
         }
+
         tabletMode && navCoordinator.currentPageIndex == 1 -> {
             TopBarIconButton(
                 modifier = modifier,
