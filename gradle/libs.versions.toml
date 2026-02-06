@@ -1,14 +1,14 @@
 [versions]
 billing-ktx = "7.1.1"
 flowvi-core-version = "0.1.0"
-kotlin = "2.1.21"
+kotlin = "2.3.0"
 colorpicker-compose = "1.1.2"
 filekit = "0.10.0-beta04"
 kotlinx-coroutines-core = "1.8.0"
 kotlinx-coroutines-test = "1.8.0"
 play-services-ads = "24.3.0"
 sqldelight = "2.0.2"
-agp = "8.6.0"
+agp = "8.9.1"
 revenuecat = "2.0.0+15.0.0"
 turbine = "1.2.0"
 mockk = "1.13.14"
@@ -17,7 +17,7 @@ vanniktech-publish = "0.30.0"
 # compose
 compose = "1.8.0"
 compose-multiplatform = "1.8.1"
-compose-compiler = "2.1.0"
+compose-compiler = "2.3.0"
 
 # server
 ktor = "3.0.0"

@@ -120,7 +120,6 @@ fun EditSetScreen(
     interactor: Interactor<EditSetState?, EditSetEvent>,
 ) {
     val state by interactor.state.collectAsState()
-    var useV2 by rememberSaveable { mutableStateOf(BuildConfig.isDebug) }
     var showVariationDialog by remember { mutableStateOf(false) }
 
     LiftingScaffold(
@@ -145,11 +144,11 @@ fun EditSetScreen(
             }
 
             Switch(
-                checked = useV2,
-                onCheckedChange = { useV2 = !useV2 },
+                checked = state?.showV2 == true,
+                onCheckedChange = { interactor(EditSetEvent.ToggleV2) },
                 thumbContent = {
                     Text(
-                        if (useV2) "V2" else "V1",
+                        if (state?.showV2 == true) "V2" else "V1",
                         style = MaterialTheme.typography.titleSmall,
                     )
                 }
@@ -157,7 +156,7 @@ fun EditSetScreen(
         },
     ) { padding ->
         state?.let { set ->
-            if (useV2) {
+            if (set.showV2) {
                 EditSetScreenV2(
                     modifier = Modifier.padding(padding),
                     state = set,
@@ -646,7 +645,8 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                 weight = null,
                 reps = null,
                 rpe = 6,
-                date = Clock.System.now()
+                date = Clock.System.now(),
+                showV2 = false,
             ),
             // New set with variation but no data
             EditSetState(
@@ -666,7 +666,8 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                     ecc = 3,
                     iso = 1,
                     con = 1
-                )
+                ),
+                showV2 = true,
             ),
             // Partially filled set
             EditSetState(
@@ -688,7 +689,8 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                     ecc = 3,
                     iso = 1,
                     con = 1
-                )
+                ),
+                showV2 = true,
             ),
             // Complete set with all data
             EditSetState(
@@ -718,6 +720,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                     con = 1
                 ),
                 notes = "PR attempt! Felt heavy but moved well.",
+                showV2 = false
             )
         )
 }
