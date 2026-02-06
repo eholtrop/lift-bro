@@ -65,6 +65,22 @@ class ConsentDeviceUseCaseTest {
         var capturedConsent: Consent? = null
             private set
 
+        override fun enableTimer(): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override fun setEnableTimer(enabled: Boolean) {
+            TODO("Not yet implemented")
+        }
+
+        override fun editSetVersion(): Int {
+            TODO("Not yet implemented")
+        }
+
+        override fun setEditSetVersion(version: Int) {
+            TODO("Not yet implemented")
+        }
+
         override fun getDeviceId(): String = "test-device-123"
 
         override fun getDeviceConsent(): Flow<Consent?> = flowOf(existingConsent ?: capturedConsent)

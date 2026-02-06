@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -199,6 +200,35 @@ fun SettingsScreen() {
 
                     item {
                         ClientSettingsRow()
+                    }
+
+                    item {
+                        SettingsRowItem(
+                            title = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text("Timer")
+
+                                    var enabled by remember {
+                                        mutableStateOf(
+                                            dependencies.settingsRepository.enableTimer()
+                                        )
+                                    }
+                                    Checkbox(
+                                        checked = enabled,
+                                        onCheckedChange = {
+                                            enabled = !enabled
+                                            dependencies.settingsRepository.setEnableTimer(enabled)
+                                        }
+                                    )
+                                }
+                            },
+                        ) {
+                            Text(
+                                "Enable a set timer/recorder for counting you down as well as record video of a given set"
+                            )
+                        }
                     }
                 }
 

@@ -1,5 +1,6 @@
 package com.lift.bro.ui.navigation
 
+import com.lift.bro.domain.models.Tempo
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
@@ -15,6 +16,12 @@ sealed class Destination: tv.dpal.navi.Destination() {
 
     @Serializable
     data object Home: Destination()
+
+    @Serializable
+    data class Timer(
+        val tempo: Tempo,
+        val reps: Int,
+    ): Destination()
 
     @Serializable
     data class LiftDetails(val liftId: String): Destination()

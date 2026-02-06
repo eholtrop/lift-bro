@@ -42,6 +42,24 @@ class SettingsRepository(
             }
     }
 
+    override fun enableTimer(): Boolean {
+        return dataSource.getBool("timer_feature_flag", false)
+    }
+
+    override fun setEnableTimer(enabled: Boolean) {
+        dataSource.putBool("timer_feature_flag", enabled)
+        keyChanged("timer_feature_flag")
+    }
+
+    override fun editSetVersion(): Int {
+        return dataSource.getInt("edit_set_screen_version", 1)
+    }
+
+    override fun setEditSetVersion(version: Int) {
+        dataSource.putInt("edit_set_screen_version", version)
+        keyChanged("edit_set_screen_version")
+    }
+
     override fun getDeviceId(): String {
         return dataSource.getString("device_id") ?: uuid4().toString().also {
             dataSource.putString("device_id", it)

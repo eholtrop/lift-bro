@@ -10,6 +10,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.utils.fullName
@@ -57,6 +58,7 @@ data class EditSetState(
     val totalWeightMoved: Double? = null,
     val date: Instant = Clock.System.now(),
     val variation: SetVariation? = null,
+    val showV2: Boolean = false,
 ) {
     val saveEnabled: Boolean get() = variation != null && reps != null && tempo != null && weight != null
 }
@@ -91,6 +93,8 @@ sealed interface EditSetEvent {
     data class TempoChanged(val tempo: TempoState): EditSetEvent
 
     data class NotesChanged(val notes: String): EditSetEvent
+
+    data object ToggleV2: EditSetEvent
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -100,6 +104,7 @@ private fun editSetSource(
     variationId: String? = null,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository
 ) = setRepository.listen(setId)
     .map {
         it ?: LBSet(
@@ -126,7 +131,8 @@ private fun editSetSource(
                     set.toUiState(
                         variation = variation,
                         maxVariationSet = maxVariation,
-                        maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null
+                        maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null,
+                        v2 = settingsRepository.editSetVersion() == 2
                     )
                 }
             }
@@ -175,6 +181,7 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
         is EditSetEvent.RpeChanged -> state?.copy(rpe = event.rpe)
         is EditSetEvent.TempoChanged -> state?.copy(tempo = event.tempo)
         is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
+        is EditSetEvent.ToggleV2 -> state?.copy(showV2 = !state.showV2)
         is EditSetEvent.VariationSelected -> state!!.copy(
             variation = SetVariation(
                 variation = event.variation,
@@ -195,12 +202,16 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
 
 fun editSetSideEffects(
     setRepository: ISetRepository = dependencies.setRepository,
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository
 ): SideEffect<EditSetState?, EditSetEvent> = SideEffect { _, state, event ->
     when (event) {
         is EditSetEvent.DeleteSetClicked -> {
             state?.toDomain()?.let {
                 setRepository.delete(it)
             }
+        }
+        is EditSetEvent.ToggleV2 -> {
+            settingsRepository.setEditSetVersion(if (state?.showV2 == true) 2 else 1)
         }
 
         else -> {
@@ -217,6 +228,7 @@ internal suspend fun LBSet.toUiState(
     variation: Variation?,
     maxVariationSet: LBSet?,
     maxLiftSet: LBSet?,
+    v2: Boolean,
 ) = EditSetState(
     id = this.id,
     variation = variation?.let {
@@ -247,6 +259,7 @@ internal suspend fun LBSet.toUiState(
     notes = this.notes,
     rpe = this.rpe,
     mers = this.mer,
+    showV2 = v2,
     defaultRpe = null // maxVariationSet?.let { this.weight.div(it.weight).times(10).toInt() },
 
 )

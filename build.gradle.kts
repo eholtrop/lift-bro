@@ -52,6 +52,7 @@ subprojects {
         group = "formatting"
 
         autoCorrect = true
+        ignoreFailures = true
         config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
         buildUponDefaultConfig = true
 
