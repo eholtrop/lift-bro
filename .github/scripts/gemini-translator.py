@@ -15,6 +15,8 @@ from typing import Dict, List, Set, Optional, Any, Tuple
 from dataclasses import dataclass
 from collections import defaultdict
 
+print("WHAT IS HAPPENING")
+
 # Import Google Generative AI with error handling
 try:
     from google import genai
@@ -426,14 +428,17 @@ Return valid JSON only with the same structure and keys:
 def main():
     import argparse
 
+    print("Parsing args")
+
     parser = argparse.ArgumentParser(description='Gemini-Powered String Translation')
     parser.add_argument('--input', required=True, help='Input strings XML file')
     parser.add_argument('--base-path', required=True, help='Base path for composeResources')
     parser.add_argument('--budget-limit', type=float, default=30.0, help='Monthly budget limit')
-    parser.add_argument('--languages', help='Comma-separated list of languages (default: all)')
     parser.add_argument('--debug', action='store_true', help='Show debug output')
 
     args = parser.parse_args()
+
+    print("Args Parsed")
 
     # Validate inputs
     if not os.path.exists(args.input):
@@ -456,16 +461,13 @@ def main():
         print("ℹ️ No strings found to translate")
         exit(0)
 
-    # Filter languages if specified
+    # TODO: Filter languages if specified
     languages_to_translate = LANGUAGE_MAPPING.keys()
-    if args.languages:
-        specified_langs = [lang.strip() for lang in args.languages.split(',')]
-        languages_to_translate = [lang for lang in specified_langs if lang in LANGUAGE_MAPPING]
-        print(f"🎯 Translating to specified languages: {languages_to_translate}")
+    print(f"🎯 Translating to specified languages: {languages_to_translate}")
 
     # Start translation
     start_time = time.time()
-    results = translator.translate_all_languages(languages_to_translate, strings_to_translate, args.base_path)
+    results = translator.translate_all_languages(LANGUAGE_MAPPING.keys(), strings_to_translate, args.base_path)
     processing_time = time.time() - start_time
 
     # Report results

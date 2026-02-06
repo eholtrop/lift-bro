@@ -143,7 +143,7 @@ jobs:
             # 7. Upload artifacts for translation job
             -   name: Upload Strings for Translation
                 if: steps.strings-changed.outputs.strings-modified == 'true'
-                uses: actions/upload-artifact@v3
+                uses: actions/upload-artifact@v6
                 with:
                     name: extracted-strings
                     path: ./presentation/compose/src/commonMain/composeResources/values/strings.xml
@@ -178,7 +178,7 @@ jobs:
 
             # 2. Download extracted strings
             -   name: Download Extracted Strings
-                uses: actions/download-artifact@v4
+                uses: actions/download-artifact@v6
                 with:
                     name: extracted-strings
                     path: ./presentation/compose/src/commonMain/composeResources/values
@@ -189,9 +189,8 @@ jobs:
                 env:
                     GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
                     GEMINI_MODEL: ${{ env.GEMINI_MODEL }}
-                    GITHUB_OUTPUT: ${{ github.output }}
                 run: |
-                    python .github/scripts/gemini-translator.py \
+                    python -u .github/scripts/gemini-translator.py \
                       --input ./presentation/compose/src/commonMain/composeResources/values/strings.xml \
                       --base-path ./presentation/compose/src/commonMain/composeResources \
                       --budget-limit ${{ env.TRANSLATION_BUDGET }} \
@@ -215,7 +214,6 @@ jobs:
                         - Updated resource files and Kotlin imports automatically
                         - Extraction cost: ${{ needs.extract-strings.outputs.extraction-cost }}
                         - Translation cost: ${{ steps.translation.outputs.translation-cost }}
-                        - Total cost: ${{ needs.extract-strings.outputs.extraction-cost + steps.translation.outputs.translation-cost }}
 
                         Co-authored-by: github-actions[bot]@users.noreply.github.com
                     body: |

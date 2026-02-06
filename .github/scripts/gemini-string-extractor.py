@@ -259,7 +259,7 @@ RESPONSE FORMAT (valid JSON only):
 
             # Create FileAnalysis for each file
             for file_path in files:
-                file_strings = [s for s in strings if if Path(file_path).name == s.file_name]
+                file_strings = [s for s in strings if Path(file_path).name == s.file_name]
                 if file_strings:
                     analysis = FileAnalysis(
                         file_path=file_path,
