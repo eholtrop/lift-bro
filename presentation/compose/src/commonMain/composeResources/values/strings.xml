@@ -24,7 +24,7 @@
     <string name="consent_dialog_title">We made some updates</string>
 
     <string name="create_lift_screen_title">Create Lift</string>
-    <string name="create_set_screen_title">I Crushed</string>
+    <string name="create_set_screen_title">Create Set</string>
 
     <string name="dashboard_empty_primary_cta_title">Create Lift</string>
     <string name="dashboard_empty_secondary_cta_title">Restore a Backup</string>
@@ -32,7 +32,7 @@
     <string name="dashboard_fab_content_description">Add Set</string>
     <string name="dashboard_footer_leading_button_content_description">Dashboard</string>
     <string name="dashboard_footer_trailing_button_content_description">Calendar</string>
-    <string name="dashboard_footer_version">Version: %1$s</string>
+    <string name="dashboard_footer_version">Version</string>
     <string name="dashboard_title">LIFT BRO</string>
     <string name="dashboard_toolbar_leading_button_content_description">Settings</string>
     <string name="dashboard_toolbar_trailing_button_content_description">Add Lift</string>
@@ -73,11 +73,11 @@ Soreness or pain?</string>
     <string name="edit_set_screen_create_lift_cta">Create Lift</string>
     <string name="edit_set_screen_delete_acc_label">Delete</string>
     <string name="edit_set_screen_encouragement">You got this!</string>
-    <string name="edit_set_screen_extra_notes_label">Extra Notes: (optional)</string>
-    <string name="edit_set_screen_extra_notes_placeholder">I killed it today!</string>
+    <string name="edit_set_screen_extra_notes_label">Extra Notes</string>
+    <string name="edit_set_screen_extra_notes_placeholder">Add a note</string>
     <string name="edit_set_screen_save_cta_content_description">Save Set</string>
-    <string name="edit_set_screen_title">You Crushed</string>
-    <string name="edit_set_screen_variation_selector_empty_state_title">Select Lift</string>
+    <string name="edit_set_screen_title">Edit Set</string>
+    <string name="edit_set_screen_variation_selector_empty_state_title">Search Variations</string>
     <string name="edit_set_screen_variation_selector_lift_max">%1$s Max: %2$s</string>
     <string name="edit_set_screen_variation_selector_no_lift_max">None</string>
     <string name="edit_set_screen_variation_selector_no_variation_max">None</string>
@@ -166,8 +166,8 @@ Soreness or pain?</string>
     <string name="server_settings_row_title">Lift Bro Local Server</string>
     <string name="settings_backup_cta">Backup</string>
     <string name="settings_backup_restore_title">Backup / Restore</string>
-    <string name="settings_become_pro_description">Sign up for an Ad free experience and extra premium tracking metrics!</string>
-    <string name="settings_become_pro_title">Become Pro!</string>
+    <string name="settings_become_pro_description">Unlock all the features</string>
+    <string name="settings_become_pro_title">Become Pro</string>
     <string name="settings_dark_text">Dark</string>
     <string name="settings_emax_enable_text">Show estimated one rep maxes (eMax) where applicable</string>
     <string name="settings_emax_formula">weight x (1 + reps/30)</string>
@@ -196,12 +196,12 @@ Soreness or pain?</string>
     <string name="settings_mer_weekly_goal_info_dialog_message">MER's can be used to track your progress in a week! Set yourself a weekly goal and celebrate your successes!</string>
     <string name="settings_mer_weekly_goal_info_dialog_title">Weekly MER Goal</string>
     <string name="settings_mer_weekly_goal_input_title">Weekly MER Goal</string>
-    <string name="settings_other_discord_cta">Join the Discord!</string>
-    <string name="settings_other_github_cta">Check out the Source Code</string>
+    <string name="settings_other_discord_cta">Discord</string>
+    <string name="settings_other_github_cta">Github</string>
     <string name="settings_other_title">Other:</string>
     <string name="settings_pro_features_header">Pro Features</string>
-    <string name="settings_pro_status_text">You are a Lift PRO!!</string>
-    <string name="settings_pro_thanks_title">Thank you for the support!</string>
+    <string name="settings_pro_status_text">Pro</string>
+    <string name="settings_pro_thanks_title">Thanks for being Pro!</string>
     <string name="settings_release_notes_cta">Release Notes</string>
     <string name="settings_restore_cta">Restore</string>
     <string name="settings_row_item_dark_text">Dark</string>
@@ -209,19 +209,19 @@ Soreness or pain?</string>
     <string name="settings_row_item_lbs_text">lbs</string>
     <string name="settings_row_item_light_text">Light</string>
     <string name="settings_row_item_system_text">System</string>
-    <string name="settings_system_text">System</string>
+    <string name="settings_screen_title">Settings</string><string name="settings_system_text">System</string>
     <string name="settings_theme_option_one">System</string>
     <string name="settings_theme_option_three">Dark</string>
     <string name="settings_theme_option_two">Light</string>
     <string name="settings_theme_title">Theme</string>
-    <string name="settings_title">Settings</string>
+    <string name="settings_timer_feature_description">Enable a set timer/recorder for counting you down as well as record video of a given set</string><string name="settings_timer_feature_label">Timer</string><string name="settings_title">Settings</string>
     <string name="settings_tmax_enable_text">Show theoretical one rep maxes (tMax) where applicable</string>
     <string name="settings_twm_enable_text">Show TWM calculations where applicable</string>
     <string name="settings_twm_fatigue_info_dialog_paragraph_one">Total weight that you moved for a given set/exercise/workout!</string>
     <string name="settings_twm_fatigue_info_dialog_title">Total Weight Moved</string>
     <string name="settings_twm_title">Total Weight Moved (TWM)</string>
     <string name="settings_uom_title">Default Unit of Measure</string>
-    <string name="settings_user_id_label">User Id: %1$s</string>
+    <string name="settings_user_id_label">User Id: %s</string>
 
     <string name="tempo_selector_con_title">Con (Up)</string>
     <string name="tempo_selector_concentric_examples">• picking up a deadlift\n• coming up from a squat\n• pushing the bar up in a bench press</string>
@@ -242,13 +242,13 @@ Soreness or pain?</string>
     <string name="tempo_selector_isometric_title">Isometric - Iso</string>
     <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
-    <string name="terms_and_conditions">Terms &amp; Conditions</string>
-    <string name="timer_screen_rest_reset_label">Rest/Reset</string>
+    <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="timer_screen_fab_content_description">Start Timer</string>
-    <string name="timer_screen_startup_time_buffer_text">Startup Time Buffer</string>
-    <string name="timer_screen_set_count_cta">x%1$d</string>
+    <string name="timer_screen_rest_reset_label">Rest</string>
+    <string name="timer_screen_set_count_cta">Set Count</string>
+    <string name="timer_screen_startup_time_buffer_text">Startup Time</string>
     <string name="timer_screen_title">Timer</string>
-    <string name="toolbar_back_button_content_description">Back</string>
+    <string name="timer_segment_down">Down</string><string name="timer_segment_get_ready">Get Ready</string><string name="timer_segment_hold">Hold</string><string name="timer_segment_up">Up</string><string name="toolbar_back_button_content_description">Back</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
     <string name="toolbar_calculator_content_description">Calculator</string>
     <string name="toolbar_close_content_description">Close</string>
