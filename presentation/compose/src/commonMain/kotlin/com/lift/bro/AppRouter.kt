@@ -9,6 +9,7 @@ import com.lift.bro.presentation.lift.LiftDetailsScreen
 import com.lift.bro.presentation.onboarding.OnboardingScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
+import com.lift.bro.presentation.timer.TimerScreen
 import com.lift.bro.presentation.variation.VariationDetailsScreen
 import com.lift.bro.presentation.workout.WorkoutScreen
 import com.lift.bro.presentation.workout.rememberWorkoutInteractor
@@ -44,6 +45,7 @@ fun AppRouter(route: Destination) {
         is Destination.EditWorkout -> WorkoutScreen(
             interactor = rememberWorkoutInteractor(route.localDate),
         )
+
         is Destination.CreateWorkout -> WorkoutScreen(rememberWorkoutInteractor(route.localDate))
 
         is Destination.EditLift -> EditLiftScreen(
@@ -56,12 +58,12 @@ fun AppRouter(route: Destination) {
             },
         )
 
-        is Destination.EditSet ->
+        is EditSet ->
             EditSetScreen(
                 setId = route.setId,
             )
 
-        is Destination.CreateSet -> EditSetScreen(
+        is CreateSet -> EditSetScreen(
             variationId = route.variationId,
             date = route.date,
         )
@@ -94,5 +96,10 @@ fun AppRouter(route: Destination) {
         Destination.Goals -> {
             GoalsScreen()
         }
+
+        is Destination.Timer -> TimerScreen(
+            reps = route.reps,
+            tempo = route.tempo
+        )
     }
 }
