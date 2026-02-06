@@ -526,7 +526,7 @@ fun TimerRunningScreen_Preview() {
                         totalTime = 1000,
                     ),
                     TimerSegment(
-                        name = "Rest",
+                        name = stringResource(Res.string.timer_screen_rest_reset_label),
                         elapsedTime = 0,
                         totalTime = 3000
                     )
