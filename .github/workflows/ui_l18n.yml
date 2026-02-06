@@ -1,0 +1,254 @@
+name: 🌐 String Extraction & Localization
+
+on:
+    pull_request:
+        branches: [ main ]
+        types: [ opened, synchronize, reopened ]
+    workflow_dispatch:
+        inputs:
+            force_run:
+                description: 'Force run on all files (not just PR changes)'
+                required: false
+                default: 'false'
+            file_filter:
+                description: 'Filter files (optional)'
+                required: false
+                default: ''
+
+env:
+    PYTHON_VERSION: '3.11'
+    GEMINI_MODEL: 'gemini-2.0-flash'
+    EXTRACTION_BUDGET: 10.00  # $10/month budget for extraction
+    TRANSLATION_BUDGET: 30.00  # $30/month budget for translation
+
+jobs:
+    # Job 1: String Extraction (Kotlin -> strings.xml)
+    extract-strings:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            pull-requests: read
+        outputs:
+            strings-found: ${{ steps.extraction.outputs.strings-found }}
+            strings-count: ${{ steps.extraction.outputs.strings-count }}
+            extraction-cost: ${{ steps.extraction.outputs.estimated-cost }}
+            processing-time: ${{ steps.extraction.outputs.processing-time }}
+
+        steps:
+            # 1. Repository Setup
+            -   name: Checkout Repository
+                uses: actions/checkout@v4
+                with:
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    fetch-depth: 0
+
+            -   name: Setup Python & Dependencies
+                run: |
+                    python -m pip install --upgrade pip
+                    pip install google-genai lxml beautifulsoup4
+
+            # 2. Change Detection with Infinite Loop Prevention
+            -   name: Detect Changed Files
+                id: changed-files
+                run: |
+                    # Skip if this is a bot-generated PR from this workflow
+                    if [[ "${{ github.event.pull_request.user.login }}" == "github-actions[bot]" ]]; then
+                      if [[ "${{ github.event.pull_request.title }}" == *"String Extraction for"* ]]; then
+                        echo "🚫 Skipping bot-generated localization PR to prevent infinite loop"
+                        echo "files=" >> $GITHUB_OUTPUT
+                        exit 0
+                      fi
+                    fi
+
+                    # Skip if the last commit was from this workflow
+                    last_commit_author=$(git log -1 --pretty=format:'%an')
+                    if [[ "$last_commit_author" == "github-actions[bot]" ]]; then
+                      last_commit_message=$(git log -1 --pretty=format:'%s')
+                      if [[ "$last_commit_message" == *"String Extraction"* ]]; then
+                        echo "🚫 Skipping workflow-generated commit to prevent infinite loop"
+                        echo "files=" >> $GITHUB_OUTPUT
+                        exit 0
+                      fi
+                    fi
+
+                    if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+                      # Only look at Kotlin files, ignore strings.xml changes
+                      files=$(git diff --name-only origin/${{ github.base_ref }}..HEAD | grep '\.kt$' | grep -v 'composeResources' || echo "")
+                    else
+                      files=$(find . -name "*.kt" -path "*/commonMain/*" | grep -v node_modules | grep -v build | head -50 || echo "")
+                    fi
+
+                    if [[ -n "${{ github.event.inputs.file_filter }}" ]]; then
+                      files=$(echo "$files" | grep "${{ github.event.inputs.file_filter }}" || echo "")
+                    fi
+
+                    # Convert newlines to spaces for GitHub output
+                    files_formatted=$(echo "$files" | tr '\n' ' ' | sed 's/ *$//')
+                    echo "files=$files_formatted" >> $GITHUB_OUTPUT
+                    echo "📁 Processing $(echo "$files" | wc -w) Kotlin files"
+
+                    # Check if we actually have files to process
+                    if [[ -z "$files_formatted" ]]; then
+                      echo "ℹ️ No relevant Kotlin files changed"
+                      echo "strings-found=false" >> $GITHUB_OUTPUT
+                      exit 0
+                    fi
+
+            # 3. LLM-Powered String Extraction
+            -   name: Extract Strings with Gemini
+                id: extraction
+                env:
+                    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+                    GEMINI_MODEL: ${{ env.GEMINI_MODEL }}
+                if: steps.changed-files.outputs.files != ''
+                run: |
+                    python .github/scripts/gemini-string-extractor.py \
+                      --files "${{ steps.changed-files.outputs.files }}" \
+                      --pr-number ${{ github.event.number }} \
+                      --output-dir /tmp/extracted-strings \
+                      --budget-limit ${{ env.EXTRACTION_BUDGET }}
+
+            # 4. Resource File Updates (Base strings.xml only)
+            -   name: Update Base String Resources
+                id: resource-update
+                if: steps.extraction.outputs.strings-found == 'true'
+                run: |
+                    python .github/scripts/update-resources.py \
+                      --input /tmp/extracted-strings/processed-strings.json \
+                      --base-path ./presentation/compose/src/commonMain/composeResources \
+                      --output-dir /tmp/updated-resources
+
+            # 5. Check if strings.xml was modified
+            -   name: Check String Changes
+                id: strings-changed
+                if: steps.extraction.outputs.strings-found == 'true'
+                run: |
+                    # Check if base strings.xml was actually modified
+                    if git diff --quiet ./presentation/compose/src/commonMain/composeResources/values/strings.xml; then
+                      echo "No changes to base strings.xml"
+                      echo "strings-modified=false" >> $GITHUB_OUTPUT
+                    else
+                      echo "Base strings.xml was modified"
+                      echo "strings-modified=true" >> $GITHUB_OUTPUT
+                    fi
+
+            # 6. Update Kotlin Files
+            -   name: Update Kotlin Files
+                if: steps.extraction.outputs.strings-found == 'true'
+                run: |
+                    python .github/scripts/update-kotlin-files.py \
+                      --input /tmp/extracted-strings/processed-strings.json \
+                      --base-path ./presentation/compose/src/commonMain/kotlin
+
+            # 7. Upload artifacts for translation job
+            -   name: Upload Strings for Translation
+                if: steps.strings-changed.outputs.strings-modified == 'true'
+                uses: actions/upload-artifact@v6
+                with:
+                    name: extracted-strings
+                    path: ./presentation/compose/src/commonMain/composeResources/values/strings.xml
+                    retention-days: 1
+
+    # Job 2: Translation (strings.xml -> all languages)
+    translate-strings:
+        runs-on: ubuntu-latest
+        needs: extract-strings
+        if: needs.extract-strings.outputs.strings-found == 'true' && needs.extract-strings.outputs.extraction-cost != ''
+        permissions:
+            contents: write
+            pull-requests: write
+        outputs:
+            translation-success: ${{ steps.translation.outputs.translation-success }}
+            languages-updated: ${{ steps.translation.outputs.languages-updated }}
+            translation-cost: ${{ steps.translation.outputs.translation-cost }}
+            strings-translated: ${{ steps.translation.outputs.strings-translated }}
+
+        steps:
+            # 1. Repository Setup
+            -   name: Checkout Repository
+                uses: actions/checkout@v4
+                with:
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    fetch-depth: 0
+
+            -   name: Setup Python & Dependencies
+                run: |
+                    python -m pip install --upgrade pip
+                    pip install google-genai lxml beautifulsoup4
+
+            # 2. Download extracted strings
+            -   name: Download Extracted Strings
+                uses: actions/download-artifact@v6
+                with:
+                    name: extracted-strings
+                    path: ./presentation/compose/src/commonMain/composeResources/values
+
+            # 3. Translate Strings with Gemini
+            -   name: Translate Strings with Gemini
+                id: translation
+                env:
+                    GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+                    GEMINI_MODEL: ${{ env.GEMINI_MODEL }}
+                run: |
+                    python -u .github/scripts/gemini-translator.py \
+                      --input ./presentation/compose/src/commonMain/composeResources/values/strings.xml \
+                      --base-path ./presentation/compose/src/commonMain/composeResources \
+                      --budget-limit ${{ env.TRANSLATION_BUDGET }} \
+                      --debug
+
+            # 4. Create Pull Request
+            -   name: Create Localization PR
+                if: steps.translation.outputs.translation-success == 'true'
+                uses: peter-evans/create-pull-request@v5
+                with:
+                    token: ${{ secrets.GITHUB_TOKEN }}
+                    base: ${{ github.head_ref || github.ref_name || 'main' }}
+                    branch: "string-extraction-${{ github.event.number || github.run_id }}"
+                    title: "🤖 String Extraction for ${{ github.event.pull_request.number }}"
+                    commit-message: |
+                        🌐 feat: Extract strings with LLM and add localizations
+
+                        - Extracted ${{ needs.extract-strings.outputs.strings-count }} strings using Gemini AI
+                        - Generated semantic keys following project conventions
+                        - Added translations for 10 languages (es, pt, fr, pt-BR, uk, de, ja, zh-CN, ar, ru)
+                        - Updated resource files and Kotlin imports automatically
+                        - Extraction cost: ${{ needs.extract-strings.outputs.extraction-cost }}
+                        - Translation cost: ${{ steps.translation.outputs.translation-cost }}
+
+                        Co-authored-by: github-actions[bot]@users.noreply.github.com
+                    body: |
+                        ## 🤖 Automated String Extraction & Localization
+
+                        AI-powered string extraction using **Google Gemini** and automatic translation to 10 languages.
+
+                        ### 📊 Summary
+                        - **Strings Extracted**: ${{ needs.extract-strings.outputs.strings-count }}
+                        - **Languages**: Spanish, Portuguese, French, Brazilian Portuguese, Ukrainian, German, Japanese, Chinese (Simplified), Arabic, Russian
+                        - **Model**: ${{ env.GEMINI_MODEL }}
+                        - **Extraction Cost**: ${{ needs.extract-strings.outputs.extraction-cost }}
+                        - **Translation Cost**: ${{ steps.translation.outputs.translation-cost }}
+                        - **Extraction Time**: ${{ needs.extract-strings.outputs.processing-time }}s
+                        - **Translation Time**: ${{ steps.translation.outputs.processing-time }}s
+
+                        ### 📝 Changes
+                        - Updated `values/strings.xml` and all language variants
+                        - Modified Kotlin files to use `stringResource(Res.string.*)`
+                        - Added required imports automatically
+                        - Keys follow `{screen}_{component}_{purpose}_{type}` convention
+
+                        ### 🌍 Language Coverage
+                        - ✅ **Spanish (es)** - Latin America & Spain
+                        - ✅ **Portuguese (pt)** - International
+                        - ✅ **Portuguese (pt-BR)** - Brazil
+                        - ✅ **French (fr)** - France & international
+                        - ✅ **Ukrainian (uk)** - Ukraine
+                        - ✅ **German (de)** - Germany & Austria
+                        - ✅ **Japanese (ja)** - Japan
+                        - ✅ **Chinese (zh-CN)** - Simplified Chinese
+                        - ✅ **Arabic (ar)** - RTL support
+                        - ✅ **Russian (ru)** - Russia & CIS
+
+                        ---
+                        *Auto-generated by LLM-Powered String Extraction workflow*
+                    delete-branch: true
+                    labels: automation localization

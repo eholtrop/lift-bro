@@ -1,4 +1,4 @@
-name: Android Tests
+name: PR Checks
 
 on:
     push:

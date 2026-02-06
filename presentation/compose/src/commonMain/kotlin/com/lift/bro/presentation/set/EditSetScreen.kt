@@ -149,7 +149,7 @@ fun EditSetScreen(
                 onCheckedChange = { useV2 = !useV2 },
                 thumbContent = {
                     Text(
-                        if (useV2) "V2" else "V1",
+                        if (useV2) "V2" else "V1", 
                         style = MaterialTheme.typography.titleSmall,
                     )
                 }
