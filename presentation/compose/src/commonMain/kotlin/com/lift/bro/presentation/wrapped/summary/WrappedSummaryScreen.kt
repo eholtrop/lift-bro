@@ -28,6 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.presentation.wrapped.heavyThings
 import com.lift.bro.ui.Space
@@ -49,8 +51,6 @@ import lift_bro.core.generated.resources.wrapped_summary_screen_reps_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_to_content_description
 import lift_bro.core.generated.resources.wrapped_summary_screen_total_weight_moved_title
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.flowvi.Interactor
 

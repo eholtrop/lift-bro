@@ -18,6 +18,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.presentation.set.EditSetState
 import com.lift.bro.presentation.set.EditSetStateProvider
 import com.lift.bro.ui.theme.spacing
@@ -26,8 +28,6 @@ import com.lift.bro.utils.fullName
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun EditSetVariationSelector(

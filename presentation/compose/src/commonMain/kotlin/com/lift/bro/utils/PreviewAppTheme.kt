@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.example.compose.AppTheme
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
@@ -21,7 +22,6 @@ import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 import tv.dpal.navi.JetpackComposeCoordinator
 import tv.dpal.navi.LocalNavCoordinator
 

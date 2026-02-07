@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.set.TempoState
 import com.lift.bro.ui.dialog.InfoDialogButton
@@ -35,8 +37,6 @@ import lift_bro.core.generated.resources.tempo_selector_isometric_subtitle
 import lift_bro.core.generated.resources.tempo_selector_isometric_title
 import lift_bro.core.generated.resources.tempo_selector_with_tempo_text
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun TempoSelector(

@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.BackupUseCase
 import com.lift.bro.RestoreUseCase
 import com.lift.bro.ui.Space
@@ -20,8 +22,6 @@ import lift_bro.core.generated.resources.settings_backup_cta
 import lift_bro.core.generated.resources.settings_backup_restore_title
 import lift_bro.core.generated.resources.settings_restore_cta
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun BackupSettingsRow() {

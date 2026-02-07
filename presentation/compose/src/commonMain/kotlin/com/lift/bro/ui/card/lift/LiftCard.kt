@@ -44,6 +44,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
@@ -64,8 +66,6 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tv.dpal.compose.toColor
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.navi.LocalNavCoordinator

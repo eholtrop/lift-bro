@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.RadioField
@@ -18,8 +20,6 @@ import lift_bro.core.generated.resources.server_settings_row_status_disabled
 import lift_bro.core.generated.resources.server_settings_row_status_enabled
 import lift_bro.core.generated.resources.server_settings_row_title
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 expect fun getLocalIPAdderess(): String?
 

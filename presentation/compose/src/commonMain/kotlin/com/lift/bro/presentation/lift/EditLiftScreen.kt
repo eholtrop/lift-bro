@@ -43,6 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
@@ -69,9 +72,6 @@ import lift_bro.core.generated.resources.edit_lift_screen_warning_dialog_title
 import lift_bro.core.generated.resources.edit_lift_variation_heading
 import lift_bro.core.generated.resources.edit_lift_variation_warning_dialog_text
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 import tv.dpal.flowvi.Interactor
 
 @Composable
