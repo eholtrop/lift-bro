@@ -52,6 +52,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
@@ -94,9 +97,6 @@ import lift_bro.core.generated.resources.lift_details_screen_sort_name
 import lift_bro.core.generated.resources.lift_details_screen_sort_one_rep_max
 import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.compose.listCorners
 import tv.dpal.compose.toColor

@@ -1,3 +1,4 @@
+import com.android.utils.jvmArchitecture
 import com.lift.bro.versionCode
 import com.lift.bro.versionName
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -58,7 +59,7 @@ android {
     }
     kotlin {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget = JvmTarget.JVM_11
         }
     }
 }

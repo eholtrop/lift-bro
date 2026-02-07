@@ -5,6 +5,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.ui.RadioField
@@ -16,8 +18,6 @@ import lift_bro.core.generated.resources.settings_theme_option_three
 import lift_bro.core.generated.resources.settings_theme_option_two
 import lift_bro.core.generated.resources.settings_theme_title
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 
 @Composable
 fun ThemeSettingsRow() {

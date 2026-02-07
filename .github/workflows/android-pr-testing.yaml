@@ -72,3 +72,28 @@ jobs:
 
             -   name: Test
                 run: bundle exec fastlane test
+
+    screenshot-validation:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout Repo
+                uses: actions/checkout@v4
+
+            -   name: Set up Java
+                uses: actions/setup-java@v4
+                with:
+                    distribution: "temurin"
+                    java-version: 17
+
+            -   name: Setup Gradle cache
+                uses: gradle/actions/setup-gradle@v3
+
+            -   name: Validate UI Screenshots
+                run: ./gradlew :presentation:compose:validateDebugScreenshotTest -Pandroid.experimental.enableScreenshotTest=true
+
+            -   name: Upload Screenshot Diff Report
+                if: failure()
+                uses: actions/upload-artifact@v4
+                with:
+                    name: screenshot-diff-report
+                    path: presentation/compose/build/reports/screenshotTest/
