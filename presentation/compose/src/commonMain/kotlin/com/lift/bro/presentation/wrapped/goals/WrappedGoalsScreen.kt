@@ -39,6 +39,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.presentation.lift.transparentColors
@@ -54,8 +56,6 @@ import lift_bro.core.generated.resources.wrapped_goals_delete_button_content_des
 import lift_bro.core.generated.resources.wrapped_goals_header_title
 import lift_bro.core.generated.resources.wrapped_goals_section_title
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tv.dpal.compose.padding.horizontal.padding
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.flowvi.Interactor

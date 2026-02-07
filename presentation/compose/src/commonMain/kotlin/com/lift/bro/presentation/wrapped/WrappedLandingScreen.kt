@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.wrapped.goals.WrappedGoalsScreen
 import com.lift.bro.presentation.wrapped.goals.rememberWrappedGoalsInteractor
@@ -52,8 +54,6 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_landing_back_button_content_description
 import lift_bro.core.generated.resources.wrapped_landing_next_button_content_description
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tv.dpal.flowvi.Interactor
 
 internal val LocalWrappedYear = compositionLocalOf<Int> {

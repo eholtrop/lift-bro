@@ -13,11 +13,12 @@ revenuecat = "2.0.0+15.0.0"
 turbine = "1.2.0"
 mockk = "1.13.14"
 vanniktech-publish = "0.30.0"
+screenshot = "0.0.1-alpha13"
 
 # compose
-compose = "1.8.0"
-compose-multiplatform = "1.8.1"
-compose-compiler = "2.3.0"
+compose = "1.12.3"
+compose-multiplatform = "1.10.0"
+compose-compiler = "2.1.21"
 
 # server
 ktor = "3.0.0"
@@ -64,6 +65,7 @@ app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.re
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
+screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot" }
 
 # Ktor server (Multiplatform)
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -110,3 +112,4 @@ vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanni
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.17.1" }
 
 sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.strictly = "0.13.0" }
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
