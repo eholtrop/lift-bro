@@ -14,12 +14,20 @@ import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.presentation.LocalAdBannerProvider
 import com.lift.bro.presentation.LocalCalculatorVisibility
+import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalLiftBro
+import com.lift.bro.presentation.LocalLiftCardYValue
+import com.lift.bro.presentation.LocalPaywallVisibility
+import com.lift.bro.presentation.LocalPlatformContext
+import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
+import com.lift.bro.presentation.LocalTMaxSettings
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import tv.dpal.navi.JetpackComposeCoordinator
@@ -42,7 +50,14 @@ internal fun PreviewAppTheme(
         LocalTwmSettings provides true,
         LocalShowMERCalcs provides MERSettings(enabled = true),
         LocalCalculatorVisibility provides calculatorVisibility,
-        LocalSubscriptionStatusProvider provides subscriptionType
+        LocalSubscriptionStatusProvider provides subscriptionType,
+        LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
+        LocalPlatformContext provides null,
+        LocalServer provides null,
+        LocalEMaxSettings provides true,
+        LocalTMaxSettings provides true,
+        LocalAdBannerProvider provides {},
+        LocalPaywallVisibility provides mutableStateOf(false)
     ) {
         AppTheme(
             theme = if (isDarkMode) ThemeMode.Dark else ThemeMode.Light

@@ -1,4 +1,11 @@
 pluginManagement {
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.google.devtools.ksp") {
+                useVersion("2.1.21-2.0.1")
+            }
+        }
+    }
     repositories {
         google()
         gradlePluginPortal()
@@ -12,6 +19,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+        maven("https://plugins.gradle.org/m2/")
     }
 }
 
@@ -33,3 +41,4 @@ include(":libs:ext:flow")
 include(":libs:ext:ktx-datetime")
 include(":libs:ext:compose")
 include(":libs:navi")
+include(":libs:screenshot-processor")

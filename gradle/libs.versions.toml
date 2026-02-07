@@ -34,11 +34,21 @@ uuid = "0.8.1"
 firebase-crashlytics-gradle = "3.0.2"
 
 lexilabs-basic = "2.6.0"
+ksp = "2.1.21-2.0.1"
+
+
+kotlinpoet = "1.18.1"
+auto-service = "1.1.1"
 
 [libraries]
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing-ktx" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose" }
+ksp-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
+kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
+auto-service = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto-service" }
+auto-service-processor = { group = "com.google.auto.service", name = "auto-service", version.ref = "auto-service" }
+
 
 flowvi-core = { module = "tv.dpal:flowvi-core", version.ref = "flowvi-core-version" }
 flowvi-compose = { module = "tv.dpal:flowvi-compose", version.ref = "flowvi-core-version" }
@@ -106,6 +116,8 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-publish"}
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.17.1" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.strictly = "0.13.0" }
+
 screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }
