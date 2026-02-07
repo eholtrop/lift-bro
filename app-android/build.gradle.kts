@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.screenshot)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -62,6 +64,8 @@ android {
             jvmTarget = JvmTarget.JVM_11
         }
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
@@ -71,4 +75,8 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.billing.ktx)
+
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation(compose.uiTooling)
+    ksp(project(":libs:screenshot-processor"))
 }
