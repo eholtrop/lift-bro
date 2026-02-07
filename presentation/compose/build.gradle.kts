@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sentry)
+    alias(libs.plugins.screenshot)
 }
 
 compose.resources {
@@ -62,13 +63,13 @@ kotlin {
             implementation(libs.flowvi.compose)
 
             // Compose Multiplatform
-            implementation(compose.ui)
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
+            implementation("org.jetbrains.compose.ui:ui:1.10.0")
+            implementation("org.jetbrains.compose.runtime:runtime:1.10.0")
+            implementation("org.jetbrains.compose.foundation:foundation:1.10.0")
+            implementation("org.jetbrains.compose.material3:material3:1.9.0-beta03")
+            implementation("org.jetbrains.compose.material:material-icons-extended:1.7.3")
+            implementation("org.jetbrains.compose.components:components-resources:1.10.0")
+            implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.10.0")
             implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.2.0")
             implementation("org.jetbrains.compose.ui:ui-backhandler:1.8.0")
 
@@ -141,8 +142,11 @@ android {
         kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 }
 
 dependencies {
     implementation(libs.appcompat)
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation(compose.uiTooling)
 }
