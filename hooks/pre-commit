@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Pre-commit hook that runs generateArchDiagram before each commit
+#
+
+echo "Running architecture diagram generation..."
+
+sdk use java 21.0.9-jbr
+
+# Run the gradle task
+./gradlew generateArchDiagram
+
+# Check the exit code
+if [ $? -ne 0 ]; then
+    echo "Error: generateArchDiagram failed. Commit aborted."
+    exit 3
+fi
+
+echo "Architecture diagram generated successfully."
+exit 0

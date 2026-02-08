@@ -9,12 +9,57 @@ It is built using Kotlin Multiplatform and Jetpack Compose Multiplatform to allo
 
 # Architecture
 
-### CLEAN
+```mermaid
+graph TD
+  subgraph data
+    data:client
+    data:core
+    data:sqldelight
+  end
+  subgraph libs
+    libs:ext
+    libs:logging
+    libs:navi
+    libs:compose
+    libs:flow
+    libs:ktx-datetime
+  end
+  subgraph presentation
+    presentation:compose
+    presentation:server
+  end
+
+ app-android -.-> presentation:compose
+ app-android -.-> presentation:server
+ app-android -.-> domain
+ data:client -.-> domain
+ data:client -.-> data:core
+ data:client -.-> libs:logging
+ data:core -.-> domain
+ data:sqldelight -.-> libs:ktx-datetime
+ data:sqldelight -.-> domain
+ data:sqldelight -.-> data:core
+ data:sqldelight -.-> libs:logging
+ presentation:compose -.-> domain
+ presentation:compose -.-> data:sqldelight
+ presentation:compose -.-> data:client
+ presentation:compose -.-> data:core
+ presentation:compose -.-> libs:flow
+ presentation:compose -.-> libs:logging
+ presentation:compose -.-> libs:ktx-datetime
+ presentation:compose -.-> libs:compose
+ presentation:server -.-> presentation:compose
+ presentation:server -.-> domain
+ presentation:server -.-> libs:logging
+ libs:flow -.-> libs:logging
+
+```
 
 - app-*
 - presentation
 - domain
 - data
+- libs
 
 #### App-*
 These are the application modules. These house the application specific logic (mostly configuration) They then "glue" the other modules together.
@@ -37,6 +82,10 @@ Holds the implementation of the repositories defined in the domain layer and the
 - a Ktor Client that can connect to a server
 
 Responsible for fetching the data from the source as well as map from the Data models (ie. database entities) to the Domain Models
+
+#### Libs
+
+Any extra libraries that could be used across all layers. Or things that I may be looking to extract and provide via maven
 
 ## Presentation MVI Structure
 
@@ -112,4 +161,3 @@ Android release signing (for release builds):
 - STORE_PASSWORD
 - KEY_ALIAS
 - KEY_PASSWORD
-

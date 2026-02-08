@@ -1,3 +1,5 @@
+import com.android.utils.text.dropPrefix
+
 plugins {
     //trick: for the same plugin versions in all sub-modules
     alias(libs.plugins.compose) apply false
@@ -74,6 +76,65 @@ tasks.register("detektFormat") {
     group = "formatting"
     description = "Run detekt with auto-correction on all modules"
     dependsOn(subprojects.mapNotNull { it.tasks.findByName("detektFormat") })
+}
+
+tasks.register("generateArchDiagram") {
+    group = "documentation"
+    description = "Generates a Mermaid.js diagram of the project's module dependencies."
+
+    doLast {
+        val outputFile = file("README.md")
+        val content = StringBuilder("graph TD\n")
+
+        val groups = subprojects.groupBy {
+            it.group.toString().dropPrefix("Lift_Bro").dropPrefix(".").removeSuffix(".ext")
+        }
+
+        groups.forEach { (key, value) ->
+
+            if (key.isNotBlank()) {
+                content.append("  subgraph $key\n")
+                value.forEach {
+                    content.append("    ${key}:${it.name}\n")
+                }
+                content.append("  end\n")
+            }
+        }
+
+        content.append("\n")
+
+        // Loop through all modules
+        subprojects.forEach { proj ->
+            val id = proj.group.toString().dropPrefix("Lift_Bro").dropPrefix(".").removeSuffix(".ext")
+
+            val moduleName = (if (id.isNotBlank()) "$id:" else "") + proj.name
+            // Find dependencies in 'implementation' or 'commonMainImplementation'
+            proj.configurations.forEach { config ->
+                if (config.name.contains("implementation", ignoreCase = true)) {
+                    config.dependencies.forEach { dep ->
+                        if (dep is ProjectDependency) {
+                            val group = dep.group?.dropPrefix("Lift_Bro")?.dropPrefix(".")?.removeSuffix(".ext") ?: ""
+                            content.append(" $moduleName -.-> ${if (group.isNotBlank()) "$group:" else ""}${dep.name}\n")
+                        }
+                    }
+                }
+            }
+        }
+
+        val readmeContent = outputFile.readText()
+
+        val lines = readmeContent.split("\n")
+        val mermaidStart = lines.indexOf("```mermaid")
+        val mermaidEnd = lines.indexOf("```")
+
+
+        outputFile.writeText(
+            (lines.subList(0, mermaidStart + 1) +
+                content.toString().split("\n") +
+                lines.subList(mermaidEnd, lines.lastIndex)).reduce
+            { x, y -> x + "\n" + y }
+        )
+    }
 }
 
 tasks.register("clean", Delete::class) {
