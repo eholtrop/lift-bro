@@ -9,6 +9,7 @@ It is built using Kotlin Multiplatform and Jetpack Compose Multiplatform to allo
 
 # Architecture
 
+Diagram generated using `./gradlew generateArchDiagrams`
 ```mermaid
 graph TD
   subgraph data
