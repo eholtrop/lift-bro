@@ -134,7 +134,6 @@
     <ID>MagicNumber:ServerSettingsInteractor.kt$2000L</ID>
     <ID>MagicNumber:ServerSettingsInteractor.kt$500</ID>
     <ID>MagicNumber:TempoSelector.kt$.33f</ID>
-    <ID>MagicNumber:TempoSelector.kt$3</ID>
     <ID>MagicNumber:TimerInteractor.kt$1000</ID>
     <ID>MagicNumber:TimerInteractor.kt$50</ID>
     <ID>MagicNumber:TimerScreen.kt$1000.0</ID>
@@ -197,6 +196,7 @@
     <ID>MaxLineLength:DashboardInteractor.kt$(item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id &amp;&amp; it.favourite</ID>
     <ID>MaxLineLength:EditSetInteractor.kt$if</ID>
     <ID>MaxLineLength:EditSetScreen.kt$color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground</ID>
+    <ID>MaxLineLength:EditSetScreen.kt$val tempo = state?.let { Tempo(down = it.tempo.ecc ?: 3, hold = it.tempo.iso ?: 1, up = it.tempo.con ?: 1) } ?: Tempo()</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder</ID>
     <ID>MaxLineLength:LiftingScaffold.kt$if</ID>
@@ -243,6 +243,7 @@
     <ID>TooGenericExceptionCaught:LiftDetailsScreen.kt$e: Exception</ID>
     <ID>TooManyFunctions:LBDatabase.kt$SetDataSource</ID>
     <ID>TooManyFunctions:SettingsRepository.kt$SettingsRepository : ISettingsRepository</ID>
+    <ID>TooManyFunctions:TimerScreen.kt$com.lift.bro.presentation.timer.TimerScreen.kt</ID>
     <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
     <ID>UnusedParameter:Calendar.kt$dateSelected: (LocalDate) -&gt; Unit</ID>
     <ID>UnusedParameter:Calendar.kt$selection: LocalDate?</ID>

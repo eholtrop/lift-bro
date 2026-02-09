@@ -24,8 +24,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -43,7 +46,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.presentation.set.components.EditSetVariationSelector
@@ -55,6 +60,7 @@ import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.calendar.Calendar
 import com.lift.bro.ui.dialog.VariationSearchDialog
+import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.Clock
@@ -66,6 +72,7 @@ import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
 import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
+import lift_bro.core.generated.resources.tempo_selector_timer_content_description
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
@@ -74,6 +81,7 @@ import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.toLocalDate
+import tv.dpal.navi.LocalNavCoordinator
 
 enum class RPE(
     val rpe: Int,
@@ -151,6 +159,20 @@ fun EditSetScreen(
                     )
                 }
             )
+            if (dependencies.settingsRepository.enableTimer()) {
+                val navCoordinator = LocalNavCoordinator.current
+                val tempo = state?.let { Tempo(down = it.tempo.ecc ?: 3, hold = it.tempo.iso ?: 1, up = it.tempo.con ?: 1) } ?: Tempo()
+                IconButton(
+                    onClick = {
+                        navCoordinator.present(Destination.Timer(reps = state?.reps?.toInt() ?: 1, tempo = tempo))
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Timer,
+                        contentDescription = stringResource(Res.string.tempo_selector_timer_content_description)
+                    )
+                }
+            }
         },
     ) { padding ->
         state?.let { set ->
