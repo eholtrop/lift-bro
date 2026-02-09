@@ -208,7 +208,7 @@ fun SettingsScreen() {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
-                                    Text("Timer")
+                                    Text("Timer (Experimental) - Expect \uD83E\uDD97")
 
                                     var enabled by remember {
                                         mutableStateOf(

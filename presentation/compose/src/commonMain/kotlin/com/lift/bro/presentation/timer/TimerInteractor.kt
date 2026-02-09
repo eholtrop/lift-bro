@@ -29,7 +29,7 @@ fun rememberTimerInteractor(
     tempo: Tempo,
 ): TimerInteractor = rememberInteractor(
     initialState = Plan(
-        tempo = (0..reps).map { tempo.copy() }
+        tempo = (0 until reps).map { tempo.copy() }
     ),
     reducers = listOf(
         planningTimerReducer() as Reducer<TimerState, TimerEvent>,
@@ -56,8 +56,8 @@ data class CameraState(
 sealed class TimerState {
     @Serializable
     data class Plan(
-        val startupTime: Long = 10,
-        val tempo: List<Tempo> = listOf(Tempo(), Tempo(), Tempo()),
+        val startupTime: Long = 5,
+        val tempo: List<Tempo> = listOf(Tempo()),
         val perSetRest: Long = 3,
     ): TimerState() {
         val runningTimer get() = this.runningTimer()
@@ -96,8 +96,10 @@ data class TimerSegment(
 sealed interface TimerEvent {
     sealed interface Plan: TimerEvent {
         data class StartupTimeChanged(val value: Long): Plan
-        data class TempoChanged(val rep: Int, val tempo: Tempo): Plan
+        data class TempoChanged(val rep: Int?, val tempo: Tempo): Plan
         data class PerSetRestChanged(val value: Long): Plan
+        data object AddTimer: Plan
+        data class RemoveTimer(val index: Int = 0): Plan
         object Start: Plan
     }
 
@@ -119,13 +121,27 @@ private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { 
     when (event) {
         is TimerEvent.Plan.PerSetRestChanged -> state.copy(perSetRest = event.value)
         is TimerEvent.Plan.StartupTimeChanged -> state.copy(startupTime = event.value)
-        is TimerEvent.Plan.TempoChanged -> state.copy(
-            tempo = state.tempo.mapIndexed { index, tempo ->
-                if (index == event.rep) event.tempo else tempo
-            }
-        )
+        is TimerEvent.Plan.TempoChanged -> if (event.rep != null) {
+            state.copy(
+                tempo = state.tempo.mapIndexed { index, tempo ->
+                    if (index == event.rep) event.tempo else tempo
+                }
+            )
+        } else {
+            state.copy(
+                tempo = state.tempo.map { event.tempo.copy() }
+            )
+        }
 
         TimerEvent.Plan.Start -> state.runningTimer(beep = true)
+
+        TimerEvent.Plan.AddTimer -> state.copy(
+            tempo = state.tempo + state.tempo.last().copy()
+        )
+
+        is TimerEvent.Plan.RemoveTimer -> state.copy(
+            tempo = state.tempo.filterIndexed { index, _ -> index != event.index }
+        )
     }
 }
 
@@ -231,6 +247,7 @@ private fun runningSideEffects(
                 timer.elapsedTime > 1000 -> audioPlayer.speak(
                     ((1000 + timer.totalTime - timer.elapsedTime) / 1000).toString()
                 )
+
                 else -> audioPlayer.speak(timer.speak)
             }
             Log.d(message = "Beep")

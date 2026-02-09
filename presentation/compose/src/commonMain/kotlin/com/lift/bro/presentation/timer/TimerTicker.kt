@@ -39,6 +39,7 @@ import kotlinx.coroutines.launch
 fun TimerTrack(
     modifier: Modifier = Modifier,
     state: TimerState.Running,
+    scrollable: Boolean = state.paused
 ) {
     Column(
         modifier = modifier,
@@ -53,7 +54,7 @@ fun TimerTrack(
         Box {
             LazyRow(
                 state = listState,
-                userScrollEnabled = false,
+                userScrollEnabled = scrollable,
                 contentPadding = PaddingValues(
                     start = MaterialTheme.spacing.oneAndHalf,
                 )
@@ -123,7 +124,7 @@ fun TimerTrack(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = MaterialTheme.spacing.one.minus(3.dp))
-                .height(24.dp),
+                .height(12.dp),
             progress = state.elapsedTime.toFloat() / totalTime
         )
     }
