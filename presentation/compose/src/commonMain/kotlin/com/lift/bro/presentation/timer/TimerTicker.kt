@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -49,7 +50,6 @@ fun TimerTrack(
 
         val listState = rememberLazyListState()
         val coroutineScope = rememberCoroutineScope()
-        val tickerWidth = state.totalTime.div(1000).times(16).toInt()
 
         Box {
             LazyRow(
@@ -62,12 +62,13 @@ fun TimerTrack(
                 itemsIndexed(items = state.timers) { index, timer ->
                     val timerWidth = timer.totalTime.div(1000).times(16).toInt()
 
+                    val density = LocalDensity.current
                     SideEffect {
                         if (timer.elapsedTime > 0 && timer.elapsedTime < timer.totalTime && timer.elapsedTime <= timer.totalTime) {
                             coroutineScope.launch {
                                 listState.scrollToItem(
                                     index,
-                                    (timerWidth.dp.value * (timer.elapsedTime / timer.totalTime.toFloat())).toInt() * 3
+                                    (timerWidth.dp.value * (timer.elapsedTime / timer.totalTime.toFloat()) * density.density).toInt()
                                 )
                             }
                         }
@@ -79,22 +80,18 @@ fun TimerTrack(
                         timer = timer,
                     )
                 }
-                item {
-                    Spacer(
-                        modifier = Modifier.width(MaterialTheme.spacing.oneAndHalf)
-                    )
-                }
             }
 
+            // snapshot the remaining time when the list cannot be scrolled forward
             val remainingTime by remember(
                 listState.canScrollForward
             ) { mutableStateOf(state.totalTime - state.elapsedTime) }
 
             var lineSize by remember { mutableStateOf(Size(0f, 0f)) }
-
-            val lineTravel = listState.layoutInfo.viewportSize.width - lineSize.width - MaterialTheme.spacing.one.minus(2.dp).value
+            val linePadding = MaterialTheme.spacing.one.minus(MaterialTheme.spacing.eighth)
+            val lineTranslationTotal = listState.layoutInfo.viewportSize.width - lineSize.width - linePadding.value
             Column(
-                modifier = Modifier.padding(horizontal = MaterialTheme.spacing.one.minus(2.dp))
+                modifier = Modifier.padding(horizontal = linePadding)
                     .onSizeChanged {
                         lineSize = Size(it.width.toFloat(), it.height.toFloat())
                     }
@@ -102,8 +99,8 @@ fun TimerTrack(
                         translationX = if (listState.canScrollForward) {
                             0f
                         } else {
-                            lineTravel -
-                                (lineTravel * ((state.totalTime - state.elapsedTime) / remainingTime.toFloat()))
+                            lineTranslationTotal -
+                                (lineTranslationTotal * ((state.totalTime - state.elapsedTime) / remainingTime.toFloat()))
                         }
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
