@@ -56,6 +56,7 @@ kotlin {
             implementation(project(":libs:ext:ktx-datetime"))
             implementation(project(":libs:ext:compose"))
             api(project(":libs:navi"))
+            implementation("network.chaintech:compose-multiplatform-media-player:1.0.53")
 
             // flowvi
             implementation(libs.flowvi.core)

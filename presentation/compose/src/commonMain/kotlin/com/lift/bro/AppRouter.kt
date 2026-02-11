@@ -97,9 +97,12 @@ fun AppRouter(route: Destination) {
             GoalsScreen()
         }
 
-        is Destination.Timer -> TimerScreen(
-            reps = route.reps,
-            tempo = route.tempo
-        )
+        is Destination.Timer -> when (route) {
+            is Destination.Timer.From -> TimerScreen(route.setId)
+            is Destination.Timer.With -> TimerScreen(
+                tempo = route.tempo,
+                reps = route.reps,
+            )
+        }
     }
 }
