@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,14 +40,15 @@ import kotlinx.coroutines.launch
 @Composable
 fun TimerTrack(
     modifier: Modifier = Modifier,
-    state: TimerState.Running,
-    scrollable: Boolean = state.paused
+    segments: List<TimerSegment> = emptyList(),
+    scrollable: Boolean,
 ) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
     ) {
-        val totalTime = state.totalTime
+        val totalTime by derivedStateOf { segments.sumOf { it.totalTime } }
+        val elapsedTime by derivedStateOf { segments.sumOf { it.elapsedTime } }
 
         val listState = rememberLazyListState()
         val coroutineScope = rememberCoroutineScope()
@@ -59,7 +61,7 @@ fun TimerTrack(
                     start = MaterialTheme.spacing.oneAndHalf,
                 )
             ) {
-                itemsIndexed(items = state.timers) { index, timer ->
+                itemsIndexed(items = segments) { index, timer ->
                     val timerWidth = timer.totalTime.div(1000).times(16).toInt()
 
                     val density = LocalDensity.current
@@ -85,7 +87,7 @@ fun TimerTrack(
             // snapshot the remaining time when the list cannot be scrolled forward
             val remainingTime by remember(
                 listState.canScrollForward
-            ) { mutableStateOf(state.totalTime - state.elapsedTime) }
+            ) { mutableStateOf(totalTime - elapsedTime) }
 
             var lineSize by remember { mutableStateOf(Size(0f, 0f)) }
             val linePadding = MaterialTheme.spacing.one.minus(MaterialTheme.spacing.eighth)
@@ -100,7 +102,7 @@ fun TimerTrack(
                             0f
                         } else {
                             lineTranslationTotal -
-                                (lineTranslationTotal * ((state.totalTime - state.elapsedTime) / remainingTime.toFloat()))
+                                (lineTranslationTotal * ((totalTime - elapsedTime) / remainingTime.toFloat()))
                         }
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -122,7 +124,7 @@ fun TimerTrack(
                 .fillMaxWidth()
                 .padding(horizontal = MaterialTheme.spacing.one.minus(3.dp))
                 .height(12.dp),
-            progress = state.elapsedTime.toFloat() / totalTime
+            progress = elapsedTime.toFloat() / totalTime
         )
     }
 }

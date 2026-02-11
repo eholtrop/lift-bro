@@ -18,10 +18,14 @@ sealed class Destination: tv.dpal.navi.Destination() {
     data object Home: Destination()
 
     @Serializable
-    data class Timer(
-        val tempo: Tempo,
-        val reps: Int,
-    ): Destination()
+    sealed class Timer: Destination() {
+
+        @Serializable
+        data class With(val tempo: Tempo, val reps: Int): Timer()
+
+        @Serializable
+        data class From(val setId: String): Timer()
+    }
 
     @Serializable
     data class LiftDetails(val liftId: String): Destination()

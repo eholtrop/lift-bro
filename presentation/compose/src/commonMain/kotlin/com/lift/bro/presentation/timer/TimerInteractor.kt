@@ -3,10 +3,18 @@ package com.lift.bro.presentation.timer
 import androidx.compose.runtime.Composable
 import com.lift.bro.audio.AudioPlayer
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
+import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.presentation.timer.TimerState.*
 import com.lift.bro.presentation.timer.TimerState.Plan
+import io.github.l2hyunwoo.compose.camera.core.VideoRecording
+import io.github.l2hyunwoo.compose.camera.core.VideoRecordingResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -25,17 +33,45 @@ typealias TimerInteractor = Interactor<TimerState, TimerEvent>
 
 @Composable
 fun rememberTimerInteractor(
+    setId: String,
+    setRepository: ISetRepository = dependencies.setRepository,
+    uiEffects: SideEffect<TimerState, TimerEvent> = { },
+): TimerInteractor = rememberInteractor(
+    initialState = Plan(),
+    source = {
+        setRepository.listen(setId)
+            .filterNotNull()
+            .map { set ->
+                Plan(
+                    set = set,
+                )
+            }
+    },
+    reducers = timerReducers(),
+    sideEffects = listOf(
+        SideEffect { _, state, _ ->
+            if (state is TimerState.Plan) {
+                if (state.set != null) {
+                    setRepository.save(state.set)
+                }
+            }
+        },
+        uiEffects,
+        timerSideEffects(),
+    )
+)
+
+@Composable
+fun rememberTimerInteractor(
     reps: Int,
     tempo: Tempo,
+    uiEffects: SideEffect<TimerState, TimerEvent> = { _, s, e -> },
 ): TimerInteractor = rememberInteractor(
     initialState = Plan(
         tempo = (0 until reps).map { tempo.copy() }
     ),
-    reducers = listOf(
-        planningTimerReducer() as Reducer<TimerState, TimerEvent>,
-        runningTimerReducer() as Reducer<TimerState, TimerEvent>,
-    ),
-    sideEffects = listOf(runningSideEffects())
+    reducers = timerReducers(),
+    sideEffects = listOf(timerSideEffects(), uiEffects)
 )
 
 enum class RecordingStatus {
@@ -53,12 +89,13 @@ data class CameraState(
 )
 
 @Serializable
-sealed class TimerState {
+sealed class TimerState() {
     @Serializable
     data class Plan(
         val startupTime: Long = 5,
-        val tempo: List<Tempo> = listOf(Tempo()),
         val perSetRest: Long = 3,
+        val set: LBSet? = null,
+        val tempo: List<Tempo> =  set?.let { (0 until it.reps).map { set.tempo }  } ?: listOf(Tempo()),
     ): TimerState() {
         val runningTimer get() = this.runningTimer()
     }
@@ -70,6 +107,8 @@ sealed class TimerState {
         val paused: Boolean,
         val beep: Boolean,
         val lastTickTime: Instant = Clock.System.now(),
+        val set: LBSet? = null,
+        val recording: VideoRecording? = null,
     ): TimerState() {
         val totalTime = timers.sumOf { it.totalTime }
 
@@ -78,8 +117,9 @@ sealed class TimerState {
 
     @Serializable
     data class Ended(
-        val elapsedTime: Long,
         val timers: List<TimerSegment>,
+        val recording: String? = null,
+        val set: LBSet? = null,
     ): TimerState()
 }
 
@@ -109,12 +149,39 @@ sealed interface TimerEvent {
         object Stop: Running
         object End: Running
         object Tick: Running
+        data class RecordingStarted(val recording: VideoRecording): Running
     }
 
     sealed interface Ended: TimerEvent {
         object Restart: Ended
     }
 }
+
+private fun timerReducers() = listOf(
+    planningTimerReducer(),
+    runningTimerReducer(),
+    // end timer reducer
+    Reducer { state, event ->
+        if (state !is TimerState.Ended && event !is TimerEvent.Ended) return@Reducer state
+
+        return@Reducer if (state is TimerState.Ended) {
+            when (event) {
+                TimerEvent.Ended.Restart -> Plan(
+                    tempo = state.timers.drop(1).chunked(4).map {
+                        Tempo(
+                            down = it[0].totalTime / 1000 ,
+                            hold = it[1].totalTime / 1000,
+                            up = it[2].totalTime / 1000,
+                        )
+                    }
+                )
+                else -> state
+            }
+        } else {
+            state
+        }
+    }
+)
 
 private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { state, event ->
     if (state !is TimerState.Plan || event !is TimerEvent.Plan) return@Reducer state
@@ -125,23 +192,112 @@ private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { 
             state.copy(
                 tempo = state.tempo.mapIndexed { index, tempo ->
                     if (index == event.rep) event.tempo else tempo
-                }
+                },
             )
         } else {
             state.copy(
-                tempo = state.tempo.map { event.tempo.copy() }
+                tempo = state.tempo.map { event.tempo.copy() },
             )
-        }
+        }.copy(
+            set = if ( event.rep != 0) state.set else state.set?.copy(tempo = event.tempo)
+        )
 
         TimerEvent.Plan.Start -> state.runningTimer(beep = true)
 
         TimerEvent.Plan.AddTimer -> state.copy(
-            tempo = state.tempo + state.tempo.last().copy()
+            tempo = state.tempo + state.tempo.last().copy(),
+            set = state.set?.copy(reps = state.set.reps + 1)
         )
 
         is TimerEvent.Plan.RemoveTimer -> state.copy(
-            tempo = state.tempo.filterIndexed { index, _ -> index != event.index }
+            tempo = state.tempo.filterIndexed { index, _ -> index != event.index },
+            set = state.set?.copy(reps = state.set.reps - 1)
         )
+    }
+}
+
+private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { state, event ->
+    if (state !is TimerState.Running || event !is TimerEvent.Running) return@Reducer state
+    when (event) {
+        TimerEvent.Running.Pause -> state.copy(paused = true)
+        TimerEvent.Running.Resume -> state.copy(
+            paused = false,
+            lastTickTime = Clock.System.now()
+        )
+
+        TimerEvent.Running.Stop -> Plan()
+        TimerEvent.Running.Tick -> {
+            if (state.paused) return@Reducer state
+
+            val now = Clock.System.now()
+            val elapsedTime = state.elapsedTime + state.lastTickTime.until(now, DateTimeUnit.MILLISECOND)
+            var timerStart = 0L
+            state.copy(
+                elapsedTime = elapsedTime,
+                beep = (elapsedTime / 1000) != (state.elapsedTime / 1000),
+                timers = state.timers.map { timer ->
+                    timer.copy(
+                        elapsedTime = when {
+                            elapsedTime >= timerStart -> minOf(elapsedTime - timerStart, timer.totalTime)
+                            else -> 0L
+                        },
+                    ).also {
+                        timerStart += timer.totalTime
+                    }
+                },
+                lastTickTime = now,
+            )
+        }
+
+        TimerEvent.Running.End -> {
+            val recording = (state.recording?.stop() as? VideoRecordingResult.Success)?.uri
+            Log.d(message = recording.toString())
+            Ended(
+                timers = state.timers,
+                set = state.set,
+                recording = recording
+            )
+        }
+
+        is TimerEvent.Running.RecordingStarted -> state.copy(
+            recording = event.recording
+        )
+    }
+}
+
+private fun timerSideEffects(
+    audioPlayer: AudioPlayer = dependencies.audioPlayer,
+): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
+    when (event) {
+        TimerEvent.Plan.Start, TimerEvent.Running.Resume, TimerEvent.Running.Tick -> {
+            if (state is TimerState.Running) {
+                if (state.elapsedTime < state.totalTime) {
+                    withContext(Dispatchers.Default) {
+                        delay(50)
+                        disp(TimerEvent.Running.Tick)
+                    }
+                } else {
+                    disp(TimerEvent.Running.End)
+                }
+            }
+        }
+
+        else -> {}
+    }
+
+    if (state is TimerState.Running && state.beep) {
+        val timer = state.currentTimer
+
+        timer?.let {
+            when {
+                timer.elapsedTime > 1000 -> audioPlayer.speak(
+                    ((1000 + timer.totalTime - timer.elapsedTime) / 1000).toString()
+                )
+
+                else -> audioPlayer.speak(timer.speak)
+            }
+            Log.d(message = state.recording?.isRecording?.toString() ?: "")
+        }
     }
 }
 
@@ -149,6 +305,7 @@ private fun TimerState.Plan.runningTimer(beep: Boolean = false): TimerState.Runn
     elapsedTime = 0L,
     paused = beep,
     beep = beep,
+    set = set,
     timers = listOf(
         TimerSegment(
             name = "Setup",
@@ -185,72 +342,3 @@ private fun TimerState.Plan.runningTimer(beep: Boolean = false): TimerState.Runn
         )
     }.flatten(),
 )
-
-private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { state, event ->
-    if (state !is TimerState.Running || event !is TimerEvent.Running) return@Reducer state
-    when (event) {
-        TimerEvent.Running.Pause -> state.copy(paused = true)
-        TimerEvent.Running.Resume -> state.copy(
-            paused = false,
-            lastTickTime = Clock.System.now()
-        )
-
-        TimerEvent.Running.Stop -> Plan()
-        TimerEvent.Running.Tick -> {
-            if (state.paused) return@Reducer state
-
-            val now = Clock.System.now()
-            val elapsedTime = state.elapsedTime + state.lastTickTime.until(now, DateTimeUnit.MILLISECOND)
-            var timerStart = 0L
-            state.copy(
-                elapsedTime = elapsedTime,
-                beep = (elapsedTime / 1000) != (state.elapsedTime / 1000),
-                timers = state.timers.map { timer ->
-                    timer.copy(
-                        elapsedTime = when {
-                            elapsedTime >= timerStart -> minOf(elapsedTime - timerStart, timer.totalTime)
-                            else -> 0L
-                        },
-                    ).also {
-                        timerStart += timer.totalTime
-                    }
-                },
-                lastTickTime = now,
-            )
-        }
-
-        TimerEvent.Running.End -> state // TODO()
-    }
-}
-
-private fun runningSideEffects(
-    audioPlayer: AudioPlayer = dependencies.audioPlayer,
-): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
-    when (event) {
-        TimerEvent.Plan.Start, TimerEvent.Running.Resume, TimerEvent.Running.Tick -> {
-            if (state is TimerState.Running && state.elapsedTime < state.totalTime) {
-                withContext(Dispatchers.Default) {
-                    delay(50)
-                    disp(TimerEvent.Running.Tick)
-                }
-            }
-        }
-
-        else -> {}
-    }
-
-    if (state is TimerState.Running && state.beep) {
-        val timer = state.currentTimer
-
-        timer?.let {
-            when {
-                timer.elapsedTime > 1000 -> audioPlayer.speak(
-                    ((1000 + timer.totalTime - timer.elapsedTime) / 1000).toString()
-                )
-
-                else -> audioPlayer.speak(timer.speak)
-            }
-            Log.d(message = "Beep")
-        }
-    }
-}
