@@ -8,7 +8,7 @@ captures
 .cxx
 local.properties
 xcuserdata
-Gemfile.lock
+Gemfile.lock~
 
 
 .kotlin/metadata/kotlinTransformedMetadataLibraries/
@@ -36,3 +36,4 @@ iosApp/SubscriptionKey_0AE80D1D.p8
 
 # Generated MVI docs
 libs/mvi/docs/
+app-android/src/screenshotTest/kotlin/com/lift/bro/ScreenshotTests.kt
