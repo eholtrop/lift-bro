@@ -81,8 +81,6 @@ import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.toLocalDate
-import tv.dpal.logging.Log
-import tv.dpal.logging.d
 import tv.dpal.navi.LocalNavCoordinator
 
 enum class RPE(
@@ -166,14 +164,15 @@ fun EditSetScreen(
                 val tempo = state?.let { Tempo(down = it.tempo.ecc ?: 3, hold = it.tempo.iso ?: 1, up = it.tempo.con ?: 1) } ?: Tempo()
                 IconButton(
                     onClick = {
-                        if (state?.saveEnabled == true) {
-                            Log.d(message = "launching with ID")
+                        val id = state?.id ?: ""
+                        if (state?.saveEnabled == true && id.isNotBlank()) {
                             navCoordinator.present(
-                                Destination.Timer.From(setId = state?.id ?: "")
+                                Destination.Timer.From(setId = id)
                             )
                         } else {
-                            Log.d(message = "launching with defaults")
-                            navCoordinator.present(Destination.Timer.With(reps = state?.reps?.toInt() ?: 1, tempo = tempo))
+                            navCoordinator.present(
+                                Destination.Timer.With(reps = state?.reps?.toInt() ?: 1, tempo = tempo)
+                            )
                         }
                     }
                 ) {

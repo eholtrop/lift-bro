@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.launch
+import kotlin.math.max
 
 @Composable
 fun TimerTrack(
@@ -47,7 +47,7 @@ fun TimerTrack(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
     ) {
-        val totalTime by derivedStateOf { segments.sumOf { it.totalTime } }
+        val totalTime by remember(segments) { derivedStateOf { segments.sumOf { it.totalTime } } }
         val elapsedTime by derivedStateOf { segments.sumOf { it.elapsedTime } }
 
         val listState = rememberLazyListState()
@@ -66,7 +66,7 @@ fun TimerTrack(
 
                     val density = LocalDensity.current
                     SideEffect {
-                        if (timer.elapsedTime > 0 && timer.elapsedTime < timer.totalTime && timer.elapsedTime <= timer.totalTime) {
+                        if (timer.elapsedTime > 0 && timer.elapsedTime <= timer.totalTime) {
                             coroutineScope.launch {
                                 listState.scrollToItem(
                                     index,
@@ -87,7 +87,7 @@ fun TimerTrack(
             // snapshot the remaining time when the list cannot be scrolled forward
             val remainingTime by remember(
                 listState.canScrollForward
-            ) { mutableStateOf(totalTime - elapsedTime) }
+            ) { mutableStateOf(max(totalTime - elapsedTime, 1L)) }
 
             var lineSize by remember { mutableStateOf(Size(0f, 0f)) }
             val linePadding = MaterialTheme.spacing.one.minus(MaterialTheme.spacing.eighth)
