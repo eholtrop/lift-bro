@@ -9,8 +9,6 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.presentation.timer.TimerState.*
 import com.lift.bro.presentation.timer.TimerState.Plan
-import io.github.l2hyunwoo.compose.camera.core.VideoRecording
-import io.github.l2hyunwoo.compose.camera.core.VideoRecordingResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
@@ -25,8 +23,6 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.logging.Log
-import tv.dpal.logging.d
 import kotlin.math.max
 
 typealias TimerInteractor = Interactor<TimerState, TimerEvent>
@@ -70,7 +66,21 @@ fun rememberTimerInteractor(
     initialState = Plan(
         tempo = (0 until reps).map { tempo.copy() }
     ),
-    reducers = timerReducers(),
+    reducers = timerReducers() + Reducer { state, event ->
+        if (event is TimerEvent.ToggleAudio) {
+            when (state) {
+                is Ended -> state
+                is Plan ->
+                    state.copy(audio = !state.audio)
+
+                is Running ->
+                    state.copy(audio = !state.audio)
+            }
+        } else {
+            state
+        }
+
+    },
     sideEffects = listOf(timerSideEffects(), uiEffects)
 )
 
@@ -89,13 +99,15 @@ data class CameraState(
 )
 
 @Serializable
-sealed class TimerState() {
+sealed class TimerState(
+) {
     @Serializable
     data class Plan(
-        val startupTime: Long = 5,
-        val perSetRest: Long = 3,
+        val startupTime: Long = 1,
+        val perSetRest: Long = 1,
         val set: LBSet? = null,
-        val tempo: List<Tempo> =  set?.let { (0 until it.reps).map { set.tempo }  } ?: listOf(Tempo()),
+        val tempo: List<Tempo> = set?.let { (0 until it.reps).map { set.tempo } } ?: listOf(Tempo()),
+        val audio: Boolean = true,
     ): TimerState() {
         val runningTimer get() = this.runningTimer()
     }
@@ -108,7 +120,7 @@ sealed class TimerState() {
         val beep: Boolean,
         val lastTickTime: Instant = Clock.System.now(),
         val set: LBSet? = null,
-        val recording: VideoRecording? = null,
+        val audio: Boolean = true,
     ): TimerState() {
         val totalTime = timers.sumOf { it.totalTime }
 
@@ -134,6 +146,10 @@ data class TimerSegment(
 }
 
 sealed interface TimerEvent {
+
+    object ToggleAudio: TimerEvent
+
+
     sealed interface Plan: TimerEvent {
         data class StartupTimeChanged(val value: Long): Plan
         data class TempoChanged(val rep: Int?, val tempo: Tempo): Plan
@@ -149,7 +165,6 @@ sealed interface TimerEvent {
         object Stop: Running
         object End: Running
         object Tick: Running
-        data class RecordingStarted(val recording: VideoRecording): Running
     }
 
     sealed interface Ended: TimerEvent {
@@ -169,12 +184,13 @@ private fun timerReducers() = listOf(
                 TimerEvent.Ended.Restart -> Plan(
                     tempo = state.timers.drop(1).chunked(4).map {
                         Tempo(
-                            down = it[0].totalTime / 1000 ,
+                            down = it[0].totalTime / 1000,
                             hold = it[1].totalTime / 1000,
                             up = it[2].totalTime / 1000,
                         )
                     }
                 )
+
                 else -> state
             }
         } else {
@@ -199,7 +215,7 @@ private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { 
                 tempo = state.tempo.map { event.tempo.copy() },
             )
         }.copy(
-            set = if ( event.rep != 0) state.set else state.set?.copy(tempo = event.tempo)
+            set = if (event.rep != 0) state.set else state.set?.copy(tempo = event.tempo)
         )
 
         TimerEvent.Plan.Start -> state.runningTimer(beep = true)
@@ -250,18 +266,11 @@ private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { s
         }
 
         TimerEvent.Running.End -> {
-            val recording = (state.recording?.stop() as? VideoRecordingResult.Success)?.uri
-            Log.d(message = recording.toString())
             Ended(
                 timers = state.timers,
                 set = state.set,
-                recording = recording
             )
         }
-
-        is TimerEvent.Running.RecordingStarted -> state.copy(
-            recording = event.recording
-        )
     }
 }
 
@@ -285,7 +294,7 @@ private fun timerSideEffects(
         else -> {}
     }
 
-    if (state is TimerState.Running && state.beep) {
+    if (state is TimerState.Running && state.beep && state.audio) {
         val timer = state.currentTimer
 
         timer?.let {
@@ -296,7 +305,6 @@ private fun timerSideEffects(
 
                 else -> audioPlayer.speak(timer.speak)
             }
-            Log.d(message = state.recording?.isRecording?.toString() ?: "")
         }
     }
 }

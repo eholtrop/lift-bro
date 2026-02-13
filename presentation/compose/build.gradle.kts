@@ -56,7 +56,6 @@ kotlin {
             implementation(project(":libs:ext:ktx-datetime"))
             implementation(project(":libs:ext:compose"))
             api(project(":libs:navi"))
-            implementation("network.chaintech:compose-multiplatform-media-player:1.0.53")
 
             // flowvi
             implementation(libs.flowvi.core)
@@ -72,10 +71,6 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.2.0")
             implementation("org.jetbrains.compose.ui:ui-backhandler:1.8.0")
-
-            // Camera
-            implementation("io.github.l2hyunwoo:compose-camera-core:1.2.2")
-            implementation("io.github.l2hyunwoo:compose-camera-ui:1.2.2")
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.uuid)
@@ -106,6 +101,11 @@ kotlin {
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
             implementation(compose.uiTooling)
+
+            // exoplayer
+            implementation(libs.media3.exoplayer)
+            implementation(libs.media3.ui)
+            implementation(libs.media3.ui.compose)
         }
 
         iosMain.dependencies {
