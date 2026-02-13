@@ -7,6 +7,7 @@
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
     <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: DashboardInteractor = rememberDashboardInteractor(), )</ID>
+    <ID>CyclomaticComplexMethod:EditSetScreen.kt$@Composable fun EditSetScreen( interactor: Interactor&lt;EditSetState?, EditSetEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, showRpe: Boolean = true, showTempo: Boolean = true, yUnit: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
@@ -131,16 +132,18 @@
     <ID>MagicNumber:RepWeightSelector.kt$100</ID>
     <ID>MagicNumber:RotatingAnimatedText.kt$1100</ID>
     <ID>MagicNumber:RotatingAnimatedText.kt$5000</ID>
+    <ID>MagicNumber:RunningTimerOverlay.kt$1000.0</ID>
+    <ID>MagicNumber:RunningTimerOverlay.kt$3</ID>
     <ID>MagicNumber:ServerSettingsInteractor.kt$2000L</ID>
     <ID>MagicNumber:ServerSettingsInteractor.kt$500</ID>
     <ID>MagicNumber:TempoSelector.kt$.33f</ID>
     <ID>MagicNumber:TimerInteractor.kt$1000</ID>
+    <ID>MagicNumber:TimerInteractor.kt$4</ID>
     <ID>MagicNumber:TimerInteractor.kt$50</ID>
-    <ID>MagicNumber:TimerScreen.kt$1000.0</ID>
+    <ID>MagicNumber:TimerScreen.kt$.6f</ID>
     <ID>MagicNumber:TimerScreen.kt$3</ID>
     <ID>MagicNumber:TimerTicker.kt$1000</ID>
     <ID>MagicNumber:TimerTicker.kt$16</ID>
-    <ID>MagicNumber:TimerTicker.kt$3</ID>
     <ID>MagicNumber:Toolbar.kt$.66f</ID>
     <ID>MagicNumber:VariationTextField.kt$11</ID>
     <ID>MagicNumber:WeightSelector.kt$1000</ID>
@@ -201,11 +204,10 @@
     <ID>MaxLineLength:LiftDetailsScreen.kt$imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder</ID>
     <ID>MaxLineLength:LiftingScaffold.kt$if</ID>
     <ID>MaxLineLength:OnboardingSetupScreen.kt$imageVector = if (expanded) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown</ID>
+    <ID>MaxLineLength:RunningTimerOverlay.kt$color = if (remainingTime &lt;= 5) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface</ID>
     <ID>MaxLineLength:SettingsScreen.kt$"Enable a set timer/recorder for counting you down as well as record video of a given set"</ID>
-    <ID>MaxLineLength:TimerScreen.kt$color = if (remainingTime &lt;= 5) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface</ID>
     <ID>MaxLineLength:TimerScreen.kt$is TimerState.Running -&gt; if (state.paused) Icons.Default.PlayArrow else Icons.Default.Pause</ID>
-    <ID>MaxLineLength:TimerTicker.kt$if</ID>
-    <ID>MaxLineLength:TimerTicker.kt$val lineTravel = listState.layoutInfo.viewportSize.width - lineSize.width - MaterialTheme.spacing.one.minus(2.dp).value</ID>
+    <ID>MaxLineLength:TimerTicker.kt$(timerWidth.dp.value * (timer.elapsedTime / timer.totalTime.toFloat()) * density.density).toInt()</ID>
     <ID>MaxLineLength:Toolbar.kt$horizontalArrangement = if ((scrollBehavior?.state?.collapsedFraction ?: 0f) &lt; .66f) Arrangement.Center else Arrangement.Start</ID>
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$potentialExercises = if (initial.selectedDate != source.selectedDate) initial.potentialExercises else source.potentialExercises</ID>
     <ID>MaxLineLength:WorkoutCalendarInteractor.kt$selectedDate = if (initial.selectedDate != source.selectedDate) initial.selectedDate else source.selectedDate</ID>
@@ -223,6 +225,7 @@
     <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
+    <ID>MaximumLineLength:RunningTimerOverlay.kt$ </ID>
     <ID>MaximumLineLength:SettingsScreen.kt$ </ID>
     <ID>MaximumLineLength:TimerScreen.kt$ </ID>
     <ID>MaximumLineLength:TimerTicker.kt$ </ID>
@@ -250,7 +253,6 @@
     <ID>UnusedParameter:EditLiftScreen.kt$liftSaved: () -&gt; Unit</ID>
     <ID>UnusedParameter:EmptyHomeScreen.kt$loadDefaultLifts: () -&gt; Unit</ID>
     <ID>UnusedParameter:LineGraph.kt$maxX: LocalDate = graphData.maxOf { it.first }</ID>
-    <ID>UnusedParameter:TimerScreen.kt$onEvent: (TimerEvent) -&gt; Unit</ID>
     <ID>UnusedParameter:WeightSelector.kt$Confetti.Companion$height: Float</ID>
     <ID>UnusedParameter:WrappedGoalsInteractor.kt$year: Int = LocalWrappedYear.current</ID>
     <ID>UnusedParameter:WrappedProgressScreen.kt$contentColor: Color = MaterialTheme.colorScheme.primary</ID>
@@ -258,7 +260,6 @@
     <ID>UnusedPrivateProperty:Calculator.kt$Digit$digit: Int</ID>
     <ID>UnusedPrivateProperty:ExerciseDataSource.kt$LBExerciseDataSource$private val variationQueries: VariationQueries</ID>
     <ID>UnusedPrivateProperty:LiftDetailsScreen.kt$SortingOptions$reversed: Boolean</ID>
-    <ID>UnusedPrivateProperty:TimerTicker.kt$val tickerWidth = state.totalTime.div(1000).times(16).toInt()</ID>
     <ID>UnusedPrivateProperty:WrappedProgressScreen.kt$val minSet = sets.minOf { it.second }</ID>
     <ID>WildcardImport:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>WildcardImport:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>

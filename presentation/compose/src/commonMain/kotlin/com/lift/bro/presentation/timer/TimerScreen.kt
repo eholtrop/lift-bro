@@ -20,19 +20,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.VolumeMute
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.Audiotrack
-import androidx.compose.material.icons.filled.Camera
-import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Repeat
-import androidx.compose.material.icons.filled.Speaker
-import androidx.compose.material.icons.filled.VoiceChat
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -59,24 +51,19 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.presentation.LocalPlatformContext
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.LiftingScaffold
-import com.lift.bro.ui.VideoPlayer
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.convertContentUriToFileUri
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import tv.dpal.compose.isOpen
-import tv.dpal.logging.Log
-import tv.dpal.logging.d
 
 @Composable
 fun TimerScreen(
@@ -125,7 +112,6 @@ fun TimerScreen(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-
                         when (state) {
                             is TimerState.Ended -> {
                                 TimerTrack(
@@ -147,6 +133,11 @@ fun TimerScreen(
                                     if (state.audio) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeUp,
+                                            contentDescription = "Mute Sound"
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Default.VolumeOff,
                                             contentDescription = "Play Sound"
                                         )
                                     }
@@ -170,6 +161,11 @@ fun TimerScreen(
                                     if (state.audio) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeUp,
+                                            contentDescription = "Mute Sound"
+                                        )
+                                    } else {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Default.VolumeOff,
                                             contentDescription = "Play Sound"
                                         )
                                     }
@@ -184,7 +180,6 @@ fun TimerScreen(
                             }
                         }
                         Row {
-
                             Button(
                                 modifier = Modifier.defaultMinSize(52.dp, 52.dp),
                                 onClick = {
@@ -271,15 +266,6 @@ fun TimerOverlay(
                             "Great job!",
                             style = MaterialTheme.typography.displayMedium
                         )
-                    }
-
-                    if (state.recording != null) {
-                        item {
-                            VideoPlayer(
-                                modifier = Modifier.height(128.dp).width(100.dp),
-                                uri = convertContentUriToFileUri(state.recording, LocalPlatformContext.current)
-                            )
-                        }
                     }
 
                     state.set?.let { set ->

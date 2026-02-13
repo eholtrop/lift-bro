@@ -7,9 +7,11 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.presentation.timer.TimerState.*
+import com.lift.bro.presentation.timer.TimerState.Ended
 import com.lift.bro.presentation.timer.TimerState.Plan
+import com.lift.bro.presentation.timer.TimerState.Running
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
@@ -48,7 +50,9 @@ fun rememberTimerInteractor(
         SideEffect { _, state, _ ->
             if (state is TimerState.Plan) {
                 if (state.set != null) {
-                    setRepository.save(state.set)
+                    withContext(Dispatchers.IO) {
+                        setRepository.save(state.set)
+                    }
                 }
             }
         },
@@ -76,8 +80,7 @@ fun rememberTimerInteractor(
 )
 
 @Serializable
-sealed class TimerState(
-) {
+sealed class TimerState {
     @Serializable
     data class Plan(
         val startupTime: Long = 7,
@@ -107,7 +110,6 @@ sealed class TimerState(
     @Serializable
     data class Ended(
         val timers: List<TimerSegment>,
-        val recording: String? = null,
         val set: LBSet? = null,
     ): TimerState()
 }
@@ -165,7 +167,6 @@ private fun timerReducers() = listOf(
         } else {
             state
         }
-
     },
     // end timer reducer
     Reducer { state, event ->

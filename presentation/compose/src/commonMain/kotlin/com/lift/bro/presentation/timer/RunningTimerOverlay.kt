@@ -125,4 +125,3 @@ fun TimerRunning2Screen_Preview() {
         )
     }
 }
-
