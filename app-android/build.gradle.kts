@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.screenshot)
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.google.services) apply false
 }
@@ -33,6 +34,14 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
+    sourceSets {
+        val screenshotTest by creating {
+            kotlin.srcDir("src/screenshotTest/kotlin")
         }
     }
 
@@ -64,6 +73,18 @@ android {
     }
 }
 
+val copyScreenshotTests by tasks.registering(Copy::class) {
+    dependsOn(project(":presentation:compose").tasks.named("kspDebugKotlinAndroid"))
+    from(project(":presentation:compose").layout.buildDirectory.dir("generated/ksp/android/androidDebug/kotlin/com/lift/bro"))
+    into(file("src/screenshotTest/kotlin/com/lift/bro"))
+    include("*.kt")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.matching { it.name.startsWith("compile") && it.name.contains("Kotlin") && it.name.contains("ScreenshotTest") }.configureEach {
+    dependsOn(copyScreenshotTests)
+}
+
 dependencies {
     implementation(project(":presentation:compose"))
     implementation(project(":presentation:server"))
@@ -72,4 +93,5 @@ dependencies {
     implementation(libs.kotlinx.serialization)
     implementation(libs.billing.ktx)
     screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation("org.jetbrains.compose.ui:ui-tooling:1.10.0")
 }
