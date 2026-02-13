@@ -41,6 +41,8 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.LocalTwmSettings
@@ -63,8 +65,6 @@ import lift_bro.core.generated.resources.rep_weight_selector_table_col_rpe
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_vibe
 import lift_bro.core.generated.resources.rep_weight_selector_times_symbol
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tv.dpal.compose.AccessibilityMinimumSize
 
 @Preview

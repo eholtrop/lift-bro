@@ -13,11 +13,12 @@ revenuecat = "2.0.0+15.0.0"
 turbine = "1.2.0"
 mockk = "1.13.14"
 vanniktech-publish = "0.30.0"
+screenshot = "0.0.1-alpha13"
 
 # compose
-compose = "1.8.0"
-compose-multiplatform = "1.8.1"
-compose-compiler = "2.3.0"
+compose = "1.12.3"
+compose-multiplatform = "1.10.0"
+compose-compiler = "2.1.21"
 
 # server
 ktor = "3.0.0"
@@ -33,11 +34,21 @@ uuid = "0.8.1"
 firebase-crashlytics-gradle = "3.0.2"
 
 lexilabs-basic = "2.6.0"
+ksp = "2.1.21-2.0.1"
+
+
+kotlinpoet = "1.18.1"
+auto-service = "1.1.1"
 
 [libraries]
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing-ktx" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
 compose-activity = { module = "androidx.activity:activity-compose", version.ref = "compose" }
+ksp-api = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
+kotlinpoet-ksp = { group = "com.squareup", name = "kotlinpoet-ksp", version.ref = "kotlinpoet" }
+auto-service = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto-service" }
+auto-service-processor = { group = "com.google.auto.service", name = "auto-service", version.ref = "auto-service" }
+
 
 flowvi-core = { module = "tv.dpal:flowvi-core", version.ref = "flowvi-core-version" }
 flowvi-compose = { module = "tv.dpal:flowvi-compose", version.ref = "flowvi-core-version" }
@@ -63,6 +74,7 @@ app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.re
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
+screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot" }
 
 # Ktor server (Multiplatform)
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -104,5 +116,8 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-publish"}
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.17.1" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.strictly = "0.13.0" }
+
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot" }

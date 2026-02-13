@@ -45,6 +45,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
@@ -74,9 +77,6 @@ import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
 import lift_bro.core.generated.resources.tempo_selector_timer_content_description
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameterProvider
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor

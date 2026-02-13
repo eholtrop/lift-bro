@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentDayUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentMonthUseCase
@@ -50,8 +52,6 @@ import lift_bro.core.generated.resources.wrapped_consistency_header_title
 import lift_bro.core.generated.resources.wrapped_consistency_screen_most_consistent_text
 import lift_bro.core.generated.resources.wrapped_consistency_speech_bubble_title
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.ui.tooling.preview.PreviewParameter
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor

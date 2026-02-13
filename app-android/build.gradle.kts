@@ -1,3 +1,4 @@
+import com.android.utils.jvmArchitecture
 import com.lift.bro.versionCode
 import com.lift.bro.versionName
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -7,6 +8,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.screenshot)
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.google.services) apply false
 }
@@ -35,6 +37,14 @@ android {
         }
     }
 
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
+
+    sourceSets {
+        val screenshotTest by creating {
+            kotlin.srcDir("src/screenshotTest/kotlin")
+        }
+    }
+
     signingConfigs {
         register("release") {
             storeFile = file("release.jks")
@@ -58,9 +68,21 @@ android {
     }
     kotlin {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
+            jvmTarget = JvmTarget.JVM_11
         }
     }
+}
+
+val copyScreenshotTests by tasks.registering(Copy::class) {
+    dependsOn(project(":presentation:compose").tasks.named("kspDebugKotlinAndroid"))
+    from(project(":presentation:compose").layout.buildDirectory.dir("generated/ksp/android/androidDebug/kotlin/com/lift/bro"))
+    into(file("src/screenshotTest/kotlin/com/lift/bro"))
+    include("*.kt")
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
+tasks.matching { it.name.startsWith("compile") && it.name.contains("Kotlin") && it.name.contains("ScreenshotTest") }.configureEach {
+    dependsOn(copyScreenshotTests)
 }
 
 dependencies {
@@ -70,4 +92,6 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.billing.ktx)
+    screenshotTestImplementation(libs.screenshot.validation.api)
+    screenshotTestImplementation("org.jetbrains.compose.ui:ui-tooling:1.10.0")
 }

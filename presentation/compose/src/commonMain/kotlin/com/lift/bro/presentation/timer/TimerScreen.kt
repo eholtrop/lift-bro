@@ -72,7 +72,7 @@ import kotlinx.datetime.minus
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.timer_screen_set_count_cta
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Preview
 import tv.dpal.compose.isOpen
 import tv.dpal.ext.ktx.datetime.toString
 
