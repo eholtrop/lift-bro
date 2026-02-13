@@ -1,6 +1,8 @@
 package com.lift.bro.presentation.set
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
@@ -104,7 +106,7 @@ private fun editSetSource(
     variationId: String? = null,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
-    settingsRepository: ISettingsRepository = dependencies.settingsRepository
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
 ) = setRepository.listen(setId)
     .map {
         it ?: LBSet(
@@ -161,9 +163,11 @@ fun rememberCreateSetInteractor(
     date: Instant?,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> {
-    val id = uuid4().toString()
+    val id = rememberSaveable(variationId, date) { uuid4().toString() }
     return rememberInteractor(
-        initialState = null,
+        initialState = EditSetState(
+            id = id
+        ),
         source = {
             editSetSource(id, date, variationId)
         },
@@ -202,7 +206,7 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
 
 fun editSetSideEffects(
     setRepository: ISetRepository = dependencies.setRepository,
-    settingsRepository: ISettingsRepository = dependencies.settingsRepository
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
 ): SideEffect<EditSetState?, EditSetEvent> = SideEffect { _, state, event ->
     when (event) {
         is EditSetEvent.DeleteSetClicked -> {
@@ -210,6 +214,7 @@ fun editSetSideEffects(
                 setRepository.delete(it)
             }
         }
+
         is EditSetEvent.ToggleV2 -> {
             settingsRepository.setEditSetVersion(if (state?.showV2 == true) 2 else 1)
         }
