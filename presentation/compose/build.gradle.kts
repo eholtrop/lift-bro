@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.sentry)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.screenshot)
 }
 
 compose.resources {
@@ -149,5 +150,6 @@ dependencies {
     implementation(libs.appcompat)
     screenshotTestImplementation("org.jetbrains.compose.ui:ui-tooling:1.10.0")
     screenshotTestImplementation(libs.screenshot.validation.api)
+    implementation(libs.screenshot.validation.api)
     ksp(project(":libs:screenshot-processor"))
 }
