@@ -53,7 +53,8 @@ fun rememberTimerInteractor(
             }
         },
         uiEffects,
-        timerSideEffects(),
+        beepSideEffect(),
+        tickSideEffect(),
     )
 )
 
@@ -66,36 +67,12 @@ fun rememberTimerInteractor(
     initialState = Plan(
         tempo = (0 until reps).map { tempo.copy() }
     ),
-    reducers = timerReducers() + Reducer { state, event ->
-        if (event is TimerEvent.ToggleAudio) {
-            when (state) {
-                is Ended -> state
-                is Plan ->
-                    state.copy(audio = !state.audio)
-
-                is Running ->
-                    state.copy(audio = !state.audio)
-            }
-        } else {
-            state
-        }
-
-    },
-    sideEffects = listOf(timerSideEffects(), uiEffects)
-)
-
-enum class RecordingStatus {
-    Planning, Started, Paused, Resumed, Stopped,
-}
-
-data class RecordState(
-    val timerState: TimerState?,
-    val cameraState: CameraState?,
-    val status: RecordingStatus,
-)
-
-data class CameraState(
-    val value: Int,
+    reducers = timerReducers(),
+    sideEffects = listOf(
+        uiEffects,
+        beepSideEffect(),
+        tickSideEffect(),
+    )
 )
 
 @Serializable
@@ -103,8 +80,8 @@ sealed class TimerState(
 ) {
     @Serializable
     data class Plan(
-        val startupTime: Long = 1,
-        val perSetRest: Long = 1,
+        val startupTime: Long = 7,
+        val perSetRest: Long = 3,
         val set: LBSet? = null,
         val tempo: List<Tempo> = set?.let { (0 until it.reps).map { set.tempo } } ?: listOf(Tempo()),
         val audio: Boolean = true,
@@ -149,7 +126,6 @@ sealed interface TimerEvent {
 
     object ToggleAudio: TimerEvent
 
-
     sealed interface Plan: TimerEvent {
         data class StartupTimeChanged(val value: Long): Plan
         data class TempoChanged(val rep: Int?, val tempo: Tempo): Plan
@@ -175,10 +151,25 @@ sealed interface TimerEvent {
 private fun timerReducers() = listOf(
     planningTimerReducer(),
     runningTimerReducer(),
+    // planning and running reducer
+    Reducer { state, event ->
+        if (event is TimerEvent.ToggleAudio) {
+            when (state) {
+                is Ended -> state
+                is Plan ->
+                    state.copy(audio = !state.audio)
+
+                is Running ->
+                    state.copy(audio = !state.audio)
+            }
+        } else {
+            state
+        }
+
+    },
     // end timer reducer
     Reducer { state, event ->
         if (state !is TimerState.Ended && event !is TimerEvent.Ended) return@Reducer state
-
         return@Reducer if (state is TimerState.Ended) {
             when (event) {
                 TimerEvent.Ended.Restart -> Plan(
@@ -274,9 +265,25 @@ private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { s
     }
 }
 
-private fun timerSideEffects(
+private fun beepSideEffect(
     audioPlayer: AudioPlayer = dependencies.audioPlayer,
 ): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
+    if (state is TimerState.Running && state.beep && state.audio) {
+        val timer = state.currentTimer
+
+        timer?.let {
+            when {
+                timer.elapsedTime > 1000 -> audioPlayer.speak(
+                    ((1000 + timer.totalTime - timer.elapsedTime) / 1000).toString()
+                )
+
+                else -> audioPlayer.speak(timer.speak)
+            }
+        }
+    }
+}
+
+private fun tickSideEffect(): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
     when (event) {
         TimerEvent.Plan.Start, TimerEvent.Running.Resume, TimerEvent.Running.Tick -> {
             if (state is TimerState.Running) {
@@ -293,25 +300,11 @@ private fun timerSideEffects(
 
         else -> {}
     }
-
-    if (state is TimerState.Running && state.beep && state.audio) {
-        val timer = state.currentTimer
-
-        timer?.let {
-            when {
-                timer.elapsedTime > 1000 -> audioPlayer.speak(
-                    ((1000 + timer.totalTime - timer.elapsedTime) / 1000).toString()
-                )
-
-                else -> audioPlayer.speak(timer.speak)
-            }
-        }
-    }
 }
 
 private fun TimerState.Plan.runningTimer(beep: Boolean = false): TimerState.Running = TimerState.Running(
     elapsedTime = 0L,
-    paused = beep,
+    paused = !beep,
     beep = beep,
     set = set,
     timers = listOf(
