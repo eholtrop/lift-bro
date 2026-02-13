@@ -83,6 +83,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_confirm_cta
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_placeholder
@@ -103,17 +104,51 @@ import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
 
+data class CalendarScreenStrings(
+    val notesSaveButton: String,
+    val notesCancelButton: String,
+    val notesPlaceholder: String,
+    val notesDialogTitle: String,
+    val editNotesContentDescription: String,
+    val startWorkoutButton: String,
+    val otherGainsTitle: String,
+    val otherGainsSubtitle: String,
+    val warmupLabel: String,
+    val finisherLabel: String,
+    val favoriteContentDescription: String,
+) {
+    companion object {
+        @Composable
+        fun default(): CalendarScreenStrings = CalendarScreenStrings(
+            notesSaveButton = stringResource(Res.string.edit_daily_notes_dialog_confirm_cta),
+            notesCancelButton = stringResource(Res.string.edit_daily_notes_dialog_dismiss_cta),
+            notesPlaceholder = stringResource(Res.string.edit_daily_notes_dialog_placeholder),
+
+            notesDialogTitle = stringResource(Res.string.edit_daily_notes_dialog_title),
+            editNotesContentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta),
+            startWorkoutButton = stringResource(Res.string.workout_calendar_screen_start_workout_cta),
+            otherGainsTitle = stringResource(Res.string.workout_calendar_screen_other_gains_title),
+            otherGainsSubtitle = stringResource(Res.string.workout_calendar_screen_warmup_label),
+            warmupLabel = stringResource(Res.string.workout_calendar_screen_finisher_label),
+            finisherLabel = stringResource(Res.string.workout_calendar_screen_favourite_content_description),
+            favoriteContentDescription = stringResource(Res.string.dashboard_fab_content_description),
+        )
+    }
+}
+
 @Composable
 fun WorkoutCalendarContent(
     modifier: Modifier = Modifier,
     interactor: Interactor<WorkoutCalendarState, WorkoutCalendarEvent> = rememberWorkoutCalendarInteractor(),
+    strings: CalendarScreenStrings = CalendarScreenStrings.default(),
 ) {
     val state by interactor.state.collectAsState()
 
     WorkoutCalendarContent(
         modifier = modifier,
         state = state,
-        onEvent = { interactor(it) }
+        onEvent = { interactor(it) },
+        strings = strings,
     )
 }
 
@@ -122,7 +157,9 @@ fun WorkoutCalendarContent(
     modifier: Modifier = Modifier,
     state: WorkoutCalendarState,
     onEvent: (WorkoutCalendarEvent) -> Unit = {},
+    strings: CalendarScreenStrings = CalendarScreenStrings.default(),
 ) {
+
     val calendarState = rememberCalendarState()
 
     LazyColumn(
@@ -168,7 +205,8 @@ fun WorkoutCalendarContent(
 
         item {
             DailyWorkoutDetails(
-                date = state.selectedDate
+                date = state.selectedDate,
+                strings = strings,
             )
         }
 
@@ -271,6 +309,7 @@ fun DailyWorkoutDetails(
     interactor: Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> = rememberDailyWorkoutDetailsInteractor(
         date
     ),
+    strings: CalendarScreenStrings = CalendarScreenStrings.default()
 ) {
     val state by interactor.state.collectAsState()
 
@@ -295,7 +334,7 @@ fun DailyWorkoutDetails(
                             }
                         }
                     ) {
-                        Text(stringResource(Res.string.edit_daily_notes_dialog_confirm_cta))
+                        Text(strings.notesSaveButton)
                     }
                 },
                 dismissButton = {
@@ -304,7 +343,7 @@ fun DailyWorkoutDetails(
                             showNotesDialog = false
                         }
                     ) {
-                        Text(stringResource(Res.string.edit_daily_notes_dialog_dismiss_cta))
+                        Text(strings.notesCancelButton)
                     }
                 },
                 title = {
@@ -323,7 +362,7 @@ fun DailyWorkoutDetails(
                         value = todaysNotes,
                         onValueChange = { todaysNotes = it },
                         placeholder = {
-                            Text(stringResource(Res.string.edit_daily_notes_dialog_placeholder))
+                            Text(strings.notesPlaceholder)
                         }
                     )
 
