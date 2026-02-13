@@ -13,21 +13,26 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeMute
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.Audiotrack
 import androidx.compose.material.icons.filled.Camera
+import androidx.compose.material.icons.filled.Headphones
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Repeat
 import androidx.compose.material.icons.filled.Speaker
+import androidx.compose.material.icons.filled.VoiceChat
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,9 +43,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
-import androidx.compose.material3.adaptive.currentWindowDpSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,32 +57,19 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import chaintech.videoplayer.host.MediaPlayerHost
-import chaintech.videoplayer.ui.video.VideoPlayerComposable
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.presentation.LocalPlatformContext
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.VideoPlayer
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import io.github.l2hyunwoo.compose.camera.core.CameraConfiguration
-import io.github.l2hyunwoo.compose.camera.core.CameraController
-import io.github.l2hyunwoo.compose.camera.core.CameraLens
-import io.github.l2hyunwoo.compose.camera.core.Directory
-import io.github.l2hyunwoo.compose.camera.core.PermissionResult
-import io.github.l2hyunwoo.compose.camera.core.rememberCameraPermissionManager
-import io.github.l2hyunwoo.compose.camera.ui.CameraPreview
-import io.github.vinceglb.filekit.FileKit
-import io.github.vinceglb.filekit.absolutePath
-import io.github.vinceglb.filekit.cacheDir
-import io.github.vinceglb.filekit.div
-import io.github.vinceglb.filekit.exists
-import io.github.vinceglb.filekit.list
-import io.github.vinceglb.filekit.name
+import com.lift.bro.utils.convertContentUriToFileUri
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
@@ -89,63 +79,15 @@ import tv.dpal.logging.Log
 import tv.dpal.logging.d
 
 @Composable
-fun getFileUrlFromContentUri(uri: String): String? {
-    val fileName = uri.split("/").last()
-
-    return (FileKit.cacheDir / "video_cache" / fileName).let {
-        (FileKit.cacheDir / "video_cache").list().forEach {
-            Log.d(message = it.name)
-        }
-        if (it.exists()) {
-            Log.d(message = "exists")
-            return it.absolutePath()
-        } else {
-            Log.d(message = "nope")
-            null
-        }
-    }
-}
-
-@Composable
 fun TimerScreen(
     reps: Int,
     tempo: Tempo,
 ) {
-    var cameraController by remember {
-        mutableStateOf<CameraController?>(null)
-    }
-    val interactor: TimerInteractor = rememberTimerInteractor(reps, tempo) { disp, state, event ->
-        cameraController?.let { controller ->
-            when (event) {
-                TimerEvent.Plan.Start -> {
-                    Log.d(message = "START RECORDING")
-                    disp(TimerEvent.Running.RecordingStarted(controller.startRecording()))
-                }
-
-                else -> {}
-            }
-            if (state is TimerState.Running) {
-                when (event) {
-                    TimerEvent.Running.Pause -> {
-                        state.recording?.pause()
-                    }
-
-                    TimerEvent.Running.Resume -> {
-                        state.recording?.resume()
-                    }
-
-                    else -> {}
-                }
-            }
-        }
-    }
+    val interactor: TimerInteractor = rememberTimerInteractor(reps, tempo)
 
     TimerScreen(
         state = interactor.state.collectAsState().value,
         onEvent = interactor::invoke,
-        onCameraControllerReady = {
-            cameraController = it
-        }
     )
 }
 
@@ -153,41 +95,11 @@ fun TimerScreen(
 fun TimerScreen(
     setId: String,
 ) {
-    var cameraController by remember {
-        mutableStateOf<CameraController?>(null)
-    }
-    val interactor: TimerInteractor = rememberTimerInteractor(setId) { disp, state, event ->
-        cameraController?.let { controller ->
-            when (event) {
-                TimerEvent.Plan.Start -> {
-                    Log.d(message = "START RECORDING")
-                    disp(TimerEvent.Running.RecordingStarted(controller.startRecording()))
-                }
-
-                else -> {}
-            }
-            if (state is TimerState.Running) {
-                when (event) {
-                    TimerEvent.Running.Pause -> {
-                        state.recording?.pause()
-                    }
-
-                    TimerEvent.Running.Resume -> {
-                        state.recording?.resume()
-                    }
-
-                    else -> {}
-                }
-            }
-        }
-    }
+    val interactor: TimerInteractor = rememberTimerInteractor(setId)
 
     TimerScreen(
         state = interactor.state.collectAsState().value,
         onEvent = interactor::invoke,
-        onCameraControllerReady = {
-            cameraController = it
-        }
     )
 }
 
@@ -196,43 +108,10 @@ fun TimerScreen(
 fun TimerScreen(
     state: TimerState,
     onEvent: (TimerEvent) -> Unit,
-    onCameraControllerReady: (CameraController) -> Unit,
 ) {
-    var showCamera by remember { mutableStateOf(false) }
-    var cameraController by remember { mutableStateOf<CameraController?>(null) }
     Box(
         contentAlignment = Alignment.Center,
     ) {
-        val permissionManager = rememberCameraPermissionManager()
-        var cameraPermissionRequest by remember { mutableStateOf<PermissionResult?>(null) }
-        LaunchedEffect(showCamera) {
-            if (showCamera) {
-                cameraPermissionRequest = permissionManager.requestCameraPermissions()
-                permissionManager
-            }
-        }
-
-        if (showCamera && state !is TimerState.Ended) {
-            if (cameraPermissionRequest?.cameraGranted == true) {
-                CameraPreview(
-                    modifier = Modifier.fillMaxSize(),
-                    configuration = CameraConfiguration(
-                        lens = CameraLens.FRONT,
-                        directory = Directory.CACHE,
-                    ),
-                    onCameraControllerReady = onCameraControllerReady
-                )
-            } else {
-                Text("No Camera Permissions")
-                Button(
-                    onClick = {
-                        permissionManager.openAppSettings()
-                    }
-                ) {
-                    Text("Request Permissions")
-                }
-            }
-        }
         LiftingScaffold(
             title = { },
             containerColor = Color.Transparent,
@@ -246,6 +125,7 @@ fun TimerScreen(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
+
                         when (state) {
                             is TimerState.Ended -> {
                                 TimerTrack(
@@ -257,31 +137,53 @@ fun TimerScreen(
                                 )
                             }
 
-                            is TimerState.Plan -> TimerTrack(
-                                modifier = Modifier.fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .padding(bottom = MaterialTheme.spacing.threeQuarters),
-                                segments = state.runningTimer.timers,
-                                scrollable = true,
-                            )
-
-                            is TimerState.Running -> TimerTrack(
-                                modifier = Modifier.fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.background)
-                                    .padding(bottom = MaterialTheme.spacing.threeQuarters),
-                                segments = state.timers,
-                                scrollable = state.paused
-                            )
-                        }
-                        Row {
-                            IconButton(
-                                onClick = {}
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Speaker,
-                                    contentDescription = "Play Sound"
+                            is TimerState.Plan -> {
+                                IconButton(
+                                    modifier = Modifier.align(Alignment.Start),
+                                    onClick = {
+                                        onEvent(TimerEvent.ToggleAudio)
+                                    },
+                                ) {
+                                    if (state.audio) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Default.VolumeUp,
+                                            contentDescription = "Play Sound"
+                                        )
+                                    }
+                                }
+                                TimerTrack(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .padding(bottom = MaterialTheme.spacing.threeQuarters),
+                                    segments = state.runningTimer.timers,
+                                    scrollable = true,
                                 )
                             }
+
+                            is TimerState.Running -> {
+                                IconButton(
+                                    modifier = Modifier.align(Alignment.Start),
+                                    onClick = {
+                                        onEvent(TimerEvent.ToggleAudio)
+                                    },
+                                ) {
+                                    if (state.audio) {
+                                        Icon(
+                                            imageVector = Icons.AutoMirrored.Default.VolumeUp,
+                                            contentDescription = "Play Sound"
+                                        )
+                                    }
+                                }
+                                TimerTrack(
+                                    modifier = Modifier.fillMaxWidth()
+                                        .background(MaterialTheme.colorScheme.background)
+                                        .padding(bottom = MaterialTheme.spacing.threeQuarters),
+                                    segments = state.timers,
+                                    scrollable = state.paused
+                                )
+                            }
+                        }
+                        Row {
 
                             Button(
                                 modifier = Modifier.defaultMinSize(52.dp, 52.dp),
@@ -318,24 +220,7 @@ fun TimerScreen(
                                             is TimerState.Running -> if (state.paused) "Resume" else "Pause"
                                         },
                                     )
-                                    if (showCamera) {
-                                        Text("/")
-                                        Icon(
-                                            imageVector = Icons.Default.RecordVoiceOver,
-                                            contentDescription = "Record"
-                                        )
-                                    }
                                 }
-                            }
-                            IconButton(
-                                onClick = {
-                                    showCamera = !showCamera
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Camera,
-                                    contentDescription = "Record with Camera"
-                                )
                             }
                         }
                     }
@@ -371,7 +256,6 @@ fun TimerOverlay(
             is TimerState.Running -> RunningTimerContent(
                 modifier = modifier,
                 state = state,
-                onEvent = onEvent,
             )
 
             is TimerState.Ended -> {
@@ -389,19 +273,11 @@ fun TimerOverlay(
                         )
                     }
 
-                    state.recording?.let {
+                    if (state.recording != null) {
                         item {
-                            Log.d(message = "DOING STUFF")
-                            Log.d(message = state.recording)
-                            val file = getFileUrlFromContentUri(state.recording)
-                            Log.d(message = file ?: "")
-                            VideoPlayerComposable(
-                                modifier = Modifier.height(256.dp)
-                                    .aspectRatio(currentWindowDpSize().width.value / currentWindowDpSize().height.value),
-                                playerHost = MediaPlayerHost(
-                                    mediaUrl = file ?: "",
-                                    autoPlay = true
-                                )
+                            VideoPlayer(
+                                modifier = Modifier.height(128.dp).width(100.dp),
+                                uri = convertContentUriToFileUri(state.recording, LocalPlatformContext.current)
                             )
                         }
                     }
@@ -544,7 +420,6 @@ fun TimerScreenPreview() {
                 tempo = listOf(Tempo(), Tempo(), Tempo())
             ),
             onEvent = {},
-            onCameraControllerReady = {}
         )
     }
 }
@@ -558,7 +433,6 @@ fun TimerScreen_Preview() {
                 tempo = listOf(Tempo(down = 10), Tempo(), Tempo())
             ),
             onEvent = {},
-            onCameraControllerReady = {}
         )
     }
 }
@@ -604,7 +478,6 @@ fun TimerEndedScreen_Preview() {
                 )
             ),
             onEvent = {},
-            onCameraControllerReady = {}
         )
     }
 }
@@ -649,7 +522,6 @@ fun TimerRunningScreen_Preview() {
                 set = null,
             ),
             onEvent = {},
-            onCameraControllerReady = {}
         )
     }
 }

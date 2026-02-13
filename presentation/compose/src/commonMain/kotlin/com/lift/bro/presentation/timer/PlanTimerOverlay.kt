@@ -251,7 +251,6 @@ fun TimerScreenPlanOverlayPreview() {
                 tempo = listOf(Tempo(), Tempo(), Tempo())
             ),
             onEvent = {},
-            onCameraControllerReady = {}
         )
     }
 }
@@ -265,7 +264,6 @@ fun TimerScreenPlanOverlay_Preview() {
                 tempo = listOf(Tempo(down = 10), Tempo(), Tempo())
             ),
             onEvent = {},
-            onCameraControllerReady = {}
         )
     }
 }
