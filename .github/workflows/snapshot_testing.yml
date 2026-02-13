@@ -1,0 +1,49 @@
+name: Snapshot Tests
+
+on:
+  pull_request:
+    paths:
+      - 'presentation/compose/**'
+
+jobs:
+  snapshot-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper/
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      - name: Run UI screenshot validation
+        run: ./gradlew :presentation:compose:testDebugUnitTest --stacktrace
+
+      - name: Upload generated screenshots (if any)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot-diffs
+          path: presentation/compose/src/screenshotTest/**/*.png
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const {data} = await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: '⚠️ Screenshot validation failed. Please review the differences and update the golden images if intentional.'
+            })

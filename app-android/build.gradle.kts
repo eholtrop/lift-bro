@@ -8,6 +8,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.screenshot)
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.google.services) apply false
 }
@@ -35,6 +37,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
     signingConfigs {
         register("release") {
@@ -71,4 +75,15 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.billing.ktx)
+    screenshotTestImplementation("org.jetbrains.compose.ui:ui-tooling:1.10.0")
+    screenshotTestImplementation(libs.screenshot.validation.api)
+}
+
+val copyScreenshotTests by tasks.registering(Copy::class) {
+    dependsOn(":presentation:compose:kspDebugKotlinAndroid")
+    val sourceFile = project(":presentation:compose").layout.buildDirectory.get().asFile
+        .resolve("generated/ksp/android/androidDebug/kotlin/com/lift/bro/LiftBroScreenshots.kt")
+    from(sourceFile)
+    into(file("src/screenshotTestDebug/kotlin/com/lift/bro"))
+    doNotTrackState("Generated file needs to be copied each time")
 }

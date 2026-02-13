@@ -146,6 +146,7 @@ android {
 
 dependencies {
     implementation(libs.appcompat)
+    implementation(libs.screenshot.validation.api)
     screenshotTestImplementation("org.jetbrains.compose.ui:ui-tooling:1.10.0")
     screenshotTestImplementation(libs.screenshot.validation.api)
     ksp(project(":libs:screenshot-processor"))
