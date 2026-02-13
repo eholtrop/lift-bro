@@ -39,11 +39,11 @@ android {
 
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
-    sourceSets {
-        val screenshotTest by creating {
-            kotlin.srcDir("src/screenshotTest/kotlin")
-        }
+sourceSets {
+    val screenshotTest by creating {
+        kotlin.srcDir("src/screenshotTest/kotlin")
     }
+}
 
     signingConfigs {
         register("release") {
@@ -92,6 +92,7 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.billing.ktx)
+    screenshotTestImplementation(project(":presentation:compose"))
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation("org.jetbrains.compose.ui:ui-tooling:1.10.0")
 }
