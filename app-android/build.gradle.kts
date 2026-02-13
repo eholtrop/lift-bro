@@ -71,4 +71,5 @@ dependencies {
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.billing.ktx)
+    screenshotTestImplementation(libs.screenshot.validation.api)
 }
