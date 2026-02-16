@@ -124,6 +124,7 @@ import com.lift.bro.presentation.workout.*
 import com.lift.bro.presentation.wrapped.*
 import com.lift.bro.presentation.settings.*
 import com.lift.bro.presentation.onboarding.*
+import com.lift.bro.presentation.dashboard.*
 import com.lift.bro.ui.*
 """.trimIndent()
 
