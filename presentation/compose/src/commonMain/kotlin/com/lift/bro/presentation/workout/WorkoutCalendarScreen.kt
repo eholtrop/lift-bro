@@ -104,43 +104,12 @@ import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
 
-data class CalendarScreenStrings(
-    val notesSaveButton: String,
-    val notesCancelButton: String,
-    val notesPlaceholder: String,
-    val notesDialogTitle: String,
-    val editNotesContentDescription: String,
-    val startWorkoutButton: String,
-    val otherGainsTitle: String,
-    val otherGainsSubtitle: String,
-    val warmupLabel: String,
-    val finisherLabel: String,
-    val favoriteContentDescription: String,
-) {
-    companion object {
-        @Composable
-        fun default(): CalendarScreenStrings = CalendarScreenStrings(
-            notesSaveButton = stringResource(Res.string.edit_daily_notes_dialog_confirm_cta),
-            notesCancelButton = stringResource(Res.string.edit_daily_notes_dialog_dismiss_cta),
-            notesPlaceholder = stringResource(Res.string.edit_daily_notes_dialog_placeholder),
-
-            notesDialogTitle = stringResource(Res.string.edit_daily_notes_dialog_title),
-            editNotesContentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta),
-            startWorkoutButton = stringResource(Res.string.workout_calendar_screen_start_workout_cta),
-            otherGainsTitle = stringResource(Res.string.workout_calendar_screen_other_gains_title),
-            otherGainsSubtitle = stringResource(Res.string.workout_calendar_screen_warmup_label),
-            warmupLabel = stringResource(Res.string.workout_calendar_screen_finisher_label),
-            finisherLabel = stringResource(Res.string.workout_calendar_screen_favourite_content_description),
-            favoriteContentDescription = stringResource(Res.string.dashboard_fab_content_description),
-        )
-    }
-}
 
 @Composable
 fun WorkoutCalendarContent(
     modifier: Modifier = Modifier,
     interactor: Interactor<WorkoutCalendarState, WorkoutCalendarEvent> = rememberWorkoutCalendarInteractor(),
-    strings: CalendarScreenStrings = CalendarScreenStrings.default(),
+    strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(),
 ) {
     val state by interactor.state.collectAsState()
 
@@ -157,7 +126,7 @@ fun WorkoutCalendarContent(
     modifier: Modifier = Modifier,
     state: WorkoutCalendarState,
     onEvent: (WorkoutCalendarEvent) -> Unit = {},
-    strings: CalendarScreenStrings = CalendarScreenStrings.default(),
+    strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(),
 ) {
 
     val calendarState = rememberCalendarState()
@@ -309,7 +278,7 @@ fun DailyWorkoutDetails(
     interactor: Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> = rememberDailyWorkoutDetailsInteractor(
         date
     ),
-    strings: CalendarScreenStrings = CalendarScreenStrings.default()
+    strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default()
 ) {
     val state by interactor.state.collectAsState()
 
