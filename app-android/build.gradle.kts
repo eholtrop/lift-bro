@@ -39,12 +39,6 @@ android {
 
     experimentalProperties["android.experimental.enableScreenshotTest"] = true
 
-sourceSets {
-    val screenshotTest by creating {
-        kotlin.srcDir("src/screenshotTest/kotlin")
-    }
-}
-
     signingConfigs {
         register("release") {
             storeFile = file("release.jks")
