@@ -33,6 +33,7 @@ include(":presentation:server")
 
 include(":data:sqldelight")
 include(":data:core")
+include(":data:atproto")
 
 //include(":libs:flowvi:core")
 //include(":libs:flowvi:compose")

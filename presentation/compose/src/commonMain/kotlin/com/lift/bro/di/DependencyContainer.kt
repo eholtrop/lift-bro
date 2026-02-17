@@ -2,6 +2,8 @@ package com.lift.bro.di
 
 import com.lift.bro.audio.AudioPlayer
 import com.lift.bro.data.LBDatabase
+import com.lift.bro.data.atproto.ATProtoAuthDataSource
+import com.lift.bro.data.atproto.ATProtoFeedDataSource
 import com.lift.bro.data.client.LiftBroClientConfig
 import com.lift.bro.data.client.createLiftBroClient
 import com.lift.bro.data.client.datasources.KtorGoalRepository
@@ -9,6 +11,8 @@ import com.lift.bro.data.client.datasources.KtorLiftDataSource
 import com.lift.bro.data.client.datasources.KtorSetDataSource
 import com.lift.bro.data.client.datasources.KtorVariationDataSource
 import com.lift.bro.data.core.repository.ExerciseRepository
+import com.lift.bro.data.core.repository.FeedAuthenticationRepository
+import com.lift.bro.data.core.repository.FeedRepository
 import com.lift.bro.data.core.repository.GoalRepository
 import com.lift.bro.data.core.repository.LiftRepository
 import com.lift.bro.data.core.repository.SetRepository
@@ -19,6 +23,8 @@ import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightLiftDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
+import com.lift.bro.domain.feed.IFeedAuthenticationRepository
+import com.lift.bro.domain.feed.IFeedRepository
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
@@ -140,6 +146,16 @@ val DependencyContainer.localGoalsRepository: IGoalRepository
         goalDataSource = SqlDelightGoalDataSource(
             goalQueries = database.goalQueries
         )
+    )
+
+val DependencyContainer.feedRepository: IFeedRepository
+    get() = FeedRepository(
+        feedDataSource = ATProtoFeedDataSource()
+    )
+
+val DependencyContainer.feedAuthRepository: IFeedAuthenticationRepository
+    get() = FeedAuthenticationRepository(
+        feedAuthDataSource = ATProtoAuthDataSource()
     )
 
 expect val dependencies: DependencyContainer

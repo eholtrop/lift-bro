@@ -14,6 +14,7 @@ kotlin {
             implementation(project(":domain"))
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))

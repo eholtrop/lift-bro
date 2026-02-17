@@ -42,6 +42,15 @@ class SettingsRepository(
             }
     }
 
+    override fun enableATProto(): Boolean {
+        return dataSource.getBool("at_proto_feature_flag", false)
+    }
+
+    override fun setEnableATProto(enabled: Boolean) {
+        dataSource.putBool("at_proto_feature_flag", enabled)
+        keyChanged("at_proto_feature_flag")
+    }
+
     override fun enableTimer(): Boolean {
         return dataSource.getBool("timer_feature_flag", false)
     }
@@ -120,7 +129,7 @@ class SettingsRepository(
     }
 
     override fun saveBackupSettings(settings: BackupSettings) {
-        dataSource.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays())
+        dataSource.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays().toInt())
         keyChanged("last_backup_epoch_days")
     }
 

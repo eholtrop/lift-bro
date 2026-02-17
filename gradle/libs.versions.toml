@@ -1,3 +1,5 @@
+# ATProto / Bluesky
+
 [versions]
 billing-ktx = "7.1.1"
 flowvi-core-version = "0.1.0"
@@ -39,6 +41,9 @@ media3-exoplayer = "1.9.2"
 ksp = "2.1.21-2.0.1"
 kotlinpoet = "1.18.1"
 auto-service = "1.1.1"
+
+# ATProto / Bluesky
+kbsky = "0.3.0"
 
 [libraries]
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing-ktx" }
@@ -102,6 +107,10 @@ ktor-server-js = { module = "io.ktor:ktor-server-js", version.ref = "ktor" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-exoplayer" }
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-exoplayer" }
 media3-ui-compose = { group = "androidx.media3", name = "media3-ui-compose", version.ref = "media3-exoplayer" }
+
+# ATProto / Bluesky
+kbsky-core = { module = "work.socialhub.kbsky:core", version.ref = "kbsky" }
+kbsky-auth = { module = "work.socialhub.kbsky:auth", version.ref = "kbsky" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

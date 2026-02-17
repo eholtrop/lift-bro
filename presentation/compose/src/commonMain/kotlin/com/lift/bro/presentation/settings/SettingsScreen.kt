@@ -230,6 +230,35 @@ fun SettingsScreen() {
                             )
                         }
                     }
+
+                    item {
+                        SettingsRowItem(
+                            title = {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text("AT Proto (Bluesky \uD83E\uDD8B) - Expect \uD83E\uDD97")
+
+                                    var enabled by remember {
+                                        mutableStateOf(
+                                            dependencies.settingsRepository.enableATProto()
+                                        )
+                                    }
+                                    Checkbox(
+                                        checked = enabled,
+                                        onCheckedChange = {
+                                            enabled = !enabled
+                                            dependencies.settingsRepository.setEnableATProto(enabled)
+                                        }
+                                    )
+                                }
+                            },
+                        ) {
+                            Text(
+                                "Enable ATProto/BlueSky integration. Share your gains with other lifters!"
+                            )
+                        }
+                    }
                 }
 
                 if (showPro || subscriptionType == SubscriptionType.Pro) {

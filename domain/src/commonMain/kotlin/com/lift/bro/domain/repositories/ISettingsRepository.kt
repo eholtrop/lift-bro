@@ -20,6 +20,10 @@ data class Consent(
 
 interface ISettingsRepository {
 
+    fun enableATProto(): Boolean
+
+    fun setEnableATProto(enabled: Boolean)
+
     fun enableTimer(): Boolean
 
     fun setEnableTimer(enabled: Boolean)

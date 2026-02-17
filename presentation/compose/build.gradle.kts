@@ -50,14 +50,17 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":domain"))
-            implementation(project(":data:sqldelight"))
-            implementation(project(":data:client"))
             implementation(project(":data:core"))
             implementation(project(":libs:ext:flow"))
             implementation(project(":libs:logging"))
             implementation(project(":libs:ext:ktx-datetime"))
             implementation(project(":libs:ext:compose"))
             api(project(":libs:navi"))
+
+            // data layer implementaions, ONLY used for DI... should not be here TBH
+            implementation(project(":data:sqldelight"))
+            implementation(project(":data:client"))
+            implementation(project(":data:atproto"))
 
             // flowvi
             implementation(libs.flowvi.core)

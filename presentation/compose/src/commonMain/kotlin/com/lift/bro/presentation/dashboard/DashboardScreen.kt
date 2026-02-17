@@ -263,6 +263,18 @@ fun DashboardContent(
                                     }
                                 }
                             }
+
+                            is DashboardListItem.ATProtoItem.PostCarousel -> {
+                                Text(item.posts.size.toString())
+                            }
+                            DashboardListItem.ATProtoItem.SignIn -> {
+                                Button(
+                                    onClick = {
+                                    }
+                                ) {
+                                    Text("Sign in with Blue Sky \uD83E\uDD8B")
+                                }
+                            }
                         }
                     }
 
@@ -290,4 +302,6 @@ private fun DashboardListItem.gridSize(listSize: Int = 0): Int = when (this) {
     is DashboardListItem.LiftCard -> 1
     DashboardListItem.ReleaseNotes -> 2
     DashboardListItem.AddLiftButton -> if (listSize % 2 == 0) 2 else 1
+    is DashboardListItem.ATProtoItem.PostCarousel -> 2
+    DashboardListItem.ATProtoItem.SignIn -> 2
 }

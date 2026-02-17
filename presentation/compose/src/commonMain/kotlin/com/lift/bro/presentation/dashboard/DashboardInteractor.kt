@@ -3,9 +3,15 @@ package com.lift.bro.presentation.dashboard
 import androidx.compose.runtime.Composable
 import com.lift.bro.data.LiftDataSource
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.feedAuthRepository
+import com.lift.bro.di.feedRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
+import com.lift.bro.domain.feed.IFeedAuthenticationRepository
+import com.lift.bro.domain.feed.IFeedRepository
+import com.lift.bro.domain.feed.Post
 import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.ui.card.lift.LiftCardData
 import com.lift.bro.ui.card.lift.LiftCardState
@@ -14,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.serialization.Serializable
@@ -52,12 +59,23 @@ sealed class DashboardListItem {
     data object ReleaseNotes: DashboardListItem()
 
     @Serializable
+    sealed class ATProtoItem: DashboardListItem() {
+        @Serializable
+        data object SignIn: ATProtoItem()
+
+        @Serializable
+        data class PostCarousel(val posts: List<Post>): ATProtoItem()
+    }
+
+    @Serializable
     data object AddLiftButton: DashboardListItem()
 }
 
 sealed interface DashboardEvent {
     data object AddLiftClicked: DashboardEvent
     data class LiftClicked(val liftId: String): DashboardEvent
+
+    data object SignInAtProto: DashboardEvent
 }
 
 @Composable
@@ -65,6 +83,9 @@ fun rememberDashboardInteractor(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: ISetRepository = dependencies.setRepository,
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
+    feedAuthenticationRepository: IFeedAuthenticationRepository = dependencies.feedAuthRepository,
+    feedRepository: IFeedRepository = dependencies.feedRepository,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): DashboardInteractor = rememberInteractor<DashboardState, DashboardEvent>(
     initialState = Loading,
@@ -73,15 +94,41 @@ fun rememberDashboardInteractor(
             when (event) {
                 DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
                 is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
+                DashboardEvent.SignInAtProto -> feedAuthenticationRepository.startOAuth()
             }
         }
     ),
     source = {
         combine(
             liftRepository.listenAll().onStart { emit(emptyList()) },
-            variationRepository.listenAll().onStart { emit(emptyList()) }
-        ) { lifts, variations -> lifts to variations }
-            .flatMapLatest { (lifts, variations) ->
+            variationRepository.listenAll().onStart { emit(emptyList()) },
+            feedAuthenticationRepository.isAuthenticated()
+                .flatMapLatest {
+                    if (!settingsRepository.enableATProto()) {
+                        return@flatMapLatest flowOf(
+                            null
+                        ) as Flow<DashboardListItem.ATProtoItem?>
+                    }
+                    when (it) {
+                        true -> {
+                            feedRepository.getWorkoutPosts(feedAuthenticationRepository.getStoredCredentials()!!)
+                                .map { result ->
+                                    result.fold(
+                                        onSuccess = { posts ->
+                                            DashboardListItem.ATProtoItem.PostCarousel(posts = posts)
+                                        },
+                                        onFailure = {
+                                            DashboardListItem.ATProtoItem.PostCarousel(posts = emptyList())
+                                        }
+                                    )
+                                }
+                        }
+
+                        false -> flowOf(DashboardListItem.ATProtoItem.SignIn)
+                    }
+                },
+        ) { lifts, variations, atProto -> Triple(lifts, variations, atProto) }
+            .flatMapLatest { (lifts, variations, atProto) ->
                 val variationsByLift = variations.groupBy { it.lift?.id }
                 val cards: List<Flow<DashboardListItem?>> = lifts.map { lift ->
                     val liftVariations = variationsByLift[lift.id] ?: emptyList()
@@ -125,6 +172,9 @@ fun rememberDashboardInteractor(
                         Loaded(
                             items = items.toMutableList().apply {
                                 add(0, DashboardListItem.ReleaseNotes)
+                                atProto?.let {
+                                    add(1, it)
+                                }
                                 add(DashboardListItem.AddLiftButton)
                             }
                         )
