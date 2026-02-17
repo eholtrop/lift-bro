@@ -66,8 +66,8 @@ import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.create_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
@@ -80,6 +80,7 @@ import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
+import tv.dpal.ktx.datetime.atStartOfDayIn
 import tv.dpal.ktx.datetime.toLocalDate
 import tv.dpal.navi.LocalNavCoordinator
 
@@ -674,7 +675,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                 weight = null,
                 reps = null,
                 rpe = 6,
-                date = Clock.System.now(),
+                date = LocalDate(2025, 10, 20).atStartOfDayIn(),
                 showV2 = false,
             ),
             // New set with variation but no data
@@ -691,6 +692,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                 ),
                 weight = null,
                 reps = null,
+                date = LocalDate(2025, 10, 20).atStartOfDayIn(),
                 tempo = TempoState(
                     ecc = 3,
                     iso = 1,
@@ -719,6 +721,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                     iso = 1,
                     con = 1
                 ),
+                date = LocalDate(2025, 10, 20).atStartOfDayIn(),
                 showV2 = true,
             ),
             // Complete set with all data
@@ -749,6 +752,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                     con = 1
                 ),
                 notes = "PR attempt! Felt heavy but moved well.",
+                date = LocalDate(2025, 10, 20).atStartOfDayIn(),
                 showV2 = false
             )
         )

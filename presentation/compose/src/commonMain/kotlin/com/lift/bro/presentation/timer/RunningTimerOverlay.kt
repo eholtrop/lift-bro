@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -18,7 +19,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.minus
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import tv.dpal.ext.ktx.datetime.toString
 
 @Composable
