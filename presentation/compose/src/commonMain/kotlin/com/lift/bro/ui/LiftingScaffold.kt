@@ -185,7 +185,6 @@ private fun LeadingNavigationButton(
                 onClick = { navCoordinator.onBackPressed() },
             )
         }
-
         tabletMode && navCoordinator.currentPageIndex == 1 -> {
             TopBarIconButton(
                 modifier = modifier,

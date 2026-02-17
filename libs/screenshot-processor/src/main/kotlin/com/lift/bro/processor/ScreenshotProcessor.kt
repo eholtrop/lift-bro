@@ -27,7 +27,7 @@ class ScreenshotProcessor(
 
         val previewFunctions = getPreviewFunctions(resolver)
         if (previewFunctions.isNotEmpty()) {
-            generateScreenshotTests(previewFunctions, resolver)
+            generateScreenshotTests(previewFunctions)
         }
         hasProcessed = true
         return emptyList()
@@ -41,7 +41,6 @@ class ScreenshotProcessor(
 
     private fun generateScreenshotTests(
         functions: List<KSFunctionDeclaration>,
-        resolver: Resolver,
     ) {
         val packageName = "com.lift.bro"
         val fileName = "ScreenshotTests"
@@ -111,6 +110,7 @@ import com.lift.bro.ui.*$${
 
                 outputStream.write(
                     """
+@file:Suppress("all")
 package $packageName
 
 import androidx.compose.ui.tooling.preview.Preview

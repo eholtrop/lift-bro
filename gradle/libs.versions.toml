@@ -36,6 +36,10 @@ firebase-crashlytics-gradle = "3.0.2"
 lexilabs-basic = "2.6.0"
 media3-exoplayer = "1.9.2"
 
+ksp = "2.1.21-2.0.1"
+kotlinpoet = "1.18.1"
+auto-service = "1.1.1"
+
 [libraries]
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing-ktx" }
 colorpicker-compose = { module = "com.github.skydoves:colorpicker-compose", version.ref = "colorpicker-compose" }
