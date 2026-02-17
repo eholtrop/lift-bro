@@ -9,7 +9,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import java.io.IOException
 
-class ScreenshotProcessorProvider : SymbolProcessorProvider {
+class ScreenshotProcessorProvider: SymbolProcessorProvider {
     override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
         return ScreenshotProcessor(environment)
     }
@@ -17,7 +17,7 @@ class ScreenshotProcessorProvider : SymbolProcessorProvider {
 
 class ScreenshotProcessor(
     private val environment: SymbolProcessorEnvironment,
-) : SymbolProcessor {
+): SymbolProcessor {
     private var hasProcessed = false
 
     override fun process(resolver: Resolver): List<KSAnnotated> {
@@ -48,26 +48,14 @@ class ScreenshotProcessor(
 
         val allProviderClasses = mutableSetOf<Pair<String, String>>()
 
-        val providerClassesInModule = mutableMapOf<String, String>()
-        resolver.getAllFiles().forEach { file ->
-            file.declarations.forEach { decl ->
-                if (decl is com.google.devtools.ksp.symbol.KSClassDeclaration) {
-                    val fqName = decl.qualifiedName?.asString()
-                    if (fqName != null) {
-                        val simpleName = fqName.substringAfterLast(".")
-                        providerClassesInModule[simpleName] = fqName
-                    }
-                }
-            }
-        }
-
         val functionsWithParams = functions.map { function ->
-            val funcPackage = function.containingFile?.packageName?.asString() ?: ""
+
             val previewParameters = function.parameters.filter { param ->
                 param.annotations.any {
                     it.annotationType.resolve().declaration.simpleName.asString() == "PreviewParameter"
                 }
             }
+
             val paramInfoList = previewParameters.mapNotNull { param ->
                 val paramType = param.type.resolve().declaration.qualifiedName?.asString()
                     ?: param.type.toString()
@@ -76,24 +64,19 @@ class ScreenshotProcessor(
                     it.annotationType.resolve().declaration.simpleName.asString() == "PreviewParameter"
                 }
 
-                val providerClassInfo: String = previewParamAnnotation?.let { ann ->
-                    val arg = ann.arguments.firstOrNull()
-                    if (arg != null) {
-                        val value = arg.value
+                val providerClassInfo = previewParamAnnotation?.let { ann ->
+                    ann.arguments.map { value ->
                         when (value) {
                             is com.google.devtools.ksp.symbol.KSClassDeclaration -> {
                                 value.qualifiedName?.asString()?.substringAfterLast(".")
-                                    ?: "UnknownProvider"
                             }
+
                             else -> {
-                                value.toString().substringBefore("::class").substringAfterLast(".")
-                                    .ifEmpty { "UnknownProvider" }
+                                value.toString().substringBefore("::class").substringAfterLast(".").substringAfterLast(":")
                             }
                         }
-                    } else {
-                        "UnknownProvider"
                     }
-                } ?: "UnknownProvider"
+                }
 
                 Triple(paramName, paramType, providerClassInfo)
             }
@@ -114,18 +97,14 @@ class ScreenshotProcessor(
                     "import $fqName"
                 }
 
-                val commonImports = """
+                val commonImports = $$"""
 import com.lift.bro.utils.*
-import com.lift.bro.presentation.home.*
-import com.lift.bro.presentation.lift.*
-import com.lift.bro.presentation.set.*
-import com.lift.bro.presentation.variation.*
-import com.lift.bro.presentation.workout.*
-import com.lift.bro.presentation.wrapped.*
-import com.lift.bro.presentation.settings.*
-import com.lift.bro.presentation.onboarding.*
-import com.lift.bro.presentation.dashboard.*
-import com.lift.bro.ui.*
+import com.lift.bro.ui.*$${
+                    functions.map { function -> (function.qualifiedName?.asString() ?: function.simpleName.asString()) }
+                        .map { it.substringBeforeLast(".") + ".*" }
+                        .distinct()
+                        .fold("") { acc, function -> "$acc\nimport $function" }
+                }
 """.trimIndent()
 
                 outputStream.write(
@@ -161,7 +140,7 @@ class LiftBroScreenshots {
     private fun generateTestFunction(
         outputStream: java.io.OutputStream,
         function: KSFunctionDeclaration,
-        paramInfoList: List<Triple<String, String, String>>,
+        paramInfoList: List<Triple<String, String, List<String?>?>>,
     ) {
         val functionName = function.simpleName.asString()
         val composableFunction = function.qualifiedName?.asString() ?: functionName
@@ -179,7 +158,7 @@ class LiftBroScreenshots {
             )
         } else {
             val paramDeclarations = paramInfoList.joinToString(",\n") { (paramName, paramType, providerClass) ->
-                "@PreviewParameter($providerClass::class) $paramName: $paramType"
+                "@PreviewParameter(${providerClass?.firstOrNull()}::class) $paramName: $paramType"
             }
 
             val paramArguments = paramInfoList.joinToString(", ") { (paramName, _, _) ->
