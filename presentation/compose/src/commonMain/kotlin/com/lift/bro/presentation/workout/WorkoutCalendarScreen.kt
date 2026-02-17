@@ -83,10 +83,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.dashboard_fab_content_description
-import lift_bro.core.generated.resources.edit_daily_notes_dialog_confirm_cta
-import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
-import lift_bro.core.generated.resources.edit_daily_notes_dialog_placeholder
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_title
 import lift_bro.core.generated.resources.workout_calendar_edit_daily_notes_cta
 import lift_bro.core.generated.resources.workout_calendar_screen_favourite_content_description
@@ -103,7 +99,6 @@ import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
-
 
 @Composable
 fun WorkoutCalendarContent(
@@ -128,7 +123,6 @@ fun WorkoutCalendarContent(
     onEvent: (WorkoutCalendarEvent) -> Unit = {},
     strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(),
 ) {
-
     val calendarState = rememberCalendarState()
 
     LazyColumn(

@@ -72,7 +72,9 @@ class ScreenshotProcessor(
                             }
 
                             else -> {
-                                value.toString().substringBefore("::class").substringAfterLast(".").substringAfterLast(":")
+                                value.toString().substringBefore(
+                                    "::class"
+                                ).substringAfterLast(".").substringAfterLast(":")
                             }
                         }
                     }
@@ -105,7 +107,7 @@ import com.lift.bro.ui.*$${
                         .distinct()
                         .fold("") { acc, function -> "$acc\nimport $function" }
                 }
-""".trimIndent()
+                """.trimIndent()
 
                 outputStream.write(
                     """
