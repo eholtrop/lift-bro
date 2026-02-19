@@ -16,6 +16,7 @@ data class LBSet(
     val rpe: Int? = null,
     val mer: Int = 0,
     val bodyWeightRep: Boolean? = null,
+    val videoUri: String? = null,
 ) {
     val totalWeightMoved = weight * reps
 }

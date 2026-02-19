@@ -94,6 +94,7 @@ class SqldelightSetDataSource(
                         rpe = it.rpe?.toInt(),
                         mer = 0,
                         bodyWeightRep = it.body_weight?.let { it == 1L },
+                        videoUri = it.videoUri,
                     )
                 }
             }
@@ -114,6 +115,7 @@ class SqldelightSetDataSource(
             date = lbSet.date,
             notes = lbSet.notes,
             rpe = lbSet.rpe?.toLong(),
+            videoUri = lbSet.videoUri,
         )
     }
 
@@ -144,6 +146,7 @@ fun GetAllSets.toDomain() = LBSet(
     notes = this.notes,
     rpe = this.rpe?.toInt(),
     bodyWeightRep = this.body_weight?.let { it == 1L },
+    videoUri = this.videoUri,
 )
 
 fun LiftingSet.toDomain() = LBSet(
@@ -159,6 +162,7 @@ fun LiftingSet.toDomain() = LBSet(
     date = this.date,
     notes = this.notes,
     rpe = this.rpe?.toInt(),
+    videoUri = this.videoUri,
 )
 
 private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {

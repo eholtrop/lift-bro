@@ -35,10 +35,14 @@ firebase-crashlytics-gradle = "3.0.2"
 
 lexilabs-basic = "2.6.0"
 media3-exoplayer = "1.9.2"
+camera-camera2 = "1.3.4"
+camera-lifecycle = "1.3.4"
+camera-video = "1.3.4"
 
 ksp = "2.1.21-2.0.1"
 kotlinpoet = "1.18.1"
 auto-service = "1.1.1"
+camera-view = "1.5.3"
 
 [libraries]
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing-ktx" }
@@ -102,6 +106,10 @@ ktor-server-js = { module = "io.ktor:ktor-server-js", version.ref = "ktor" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3-exoplayer" }
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3-exoplayer" }
 media3-ui-compose = { group = "androidx.media3", name = "media3-ui-compose", version.ref = "media3-exoplayer" }
+camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "camera-camera2" }
+camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "camera-lifecycle" }
+camera-video = { group = "androidx.camera", name = "camera-video", version.ref = "camera-video" }
+camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "camera-view" }
 
 [plugins]
 compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }

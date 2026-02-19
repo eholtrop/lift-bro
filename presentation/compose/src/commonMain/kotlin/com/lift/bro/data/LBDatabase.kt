@@ -237,6 +237,7 @@ class SetDataSource(
                 date = set.date,
                 notes = set.notes,
                 rpe = set.rpe?.toLong(),
+                videoUri = set.videoUri,
             )
         }
     }

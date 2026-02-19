@@ -108,6 +108,12 @@ kotlin {
             implementation(libs.media3.exoplayer)
             implementation(libs.media3.ui)
             implementation(libs.media3.ui.compose)
+
+            // camera
+            implementation(libs.camera.camera2)
+            implementation(libs.camera.lifecycle)
+            implementation(libs.camera.video)
+            implementation(libs.camera.view)
         }
 
         iosMain.dependencies {
