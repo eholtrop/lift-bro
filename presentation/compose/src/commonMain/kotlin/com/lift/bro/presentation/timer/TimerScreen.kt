@@ -25,6 +25,8 @@ import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -124,22 +126,43 @@ fun TimerScreen(
                             }
 
                             is TimerState.Plan -> {
-                                IconButton(
-                                    modifier = Modifier.align(Alignment.Start),
-                                    onClick = {
-                                        onEvent(TimerEvent.ToggleAudio)
-                                    },
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    if (state.audio) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = "Mute Sound"
-                                        )
-                                    } else {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = "Play Sound"
-                                        )
+                                    IconButton(
+                                        onClick = {
+                                            onEvent(TimerEvent.ToggleAudio)
+                                        },
+                                    ) {
+                                        if (state.audio) {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Default.VolumeUp,
+                                                contentDescription = "Mute Sound"
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Default.VolumeOff,
+                                                contentDescription = "Play Sound"
+                                            )
+                                        }
+                                    }
+                                    IconButton(
+                                        onClick = {
+                                            onEvent(TimerEvent.ToggleCamera)
+                                        },
+                                    ) {
+                                        if (state.cameraEnabled) {
+                                            Icon(
+                                                imageVector = Icons.Default.Videocam,
+                                                contentDescription = "Disable Camera"
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = Icons.Default.VideocamOff,
+                                                contentDescription = "Enable Camera"
+                                            )
+                                        }
                                     }
                                 }
                                 TimerTrack(

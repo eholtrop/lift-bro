@@ -88,6 +88,7 @@ sealed class TimerState {
         val set: LBSet? = null,
         val tempo: List<Tempo> = set?.let { (0 until it.reps).map { set.tempo } } ?: listOf(Tempo()),
         val audio: Boolean = true,
+        val cameraEnabled: Boolean = false,
     ): TimerState() {
         val runningTimer get() = this.runningTimer()
     }
@@ -101,6 +102,7 @@ sealed class TimerState {
         val lastTickTime: Instant = Clock.System.now(),
         val set: LBSet? = null,
         val audio: Boolean = true,
+        val videoUri: String? = null,
     ): TimerState() {
         val totalTime = timers.sumOf { it.totalTime }
 
@@ -111,6 +113,7 @@ sealed class TimerState {
     data class Ended(
         val timers: List<TimerSegment>,
         val set: LBSet? = null,
+        val videoUri: String? = null,
     ): TimerState()
 }
 
@@ -127,6 +130,10 @@ data class TimerSegment(
 sealed interface TimerEvent {
 
     object ToggleAudio: TimerEvent
+
+    object ToggleCamera: TimerEvent
+
+    data class SetVideoUri(val uri: String?): TimerEvent
 
     sealed interface Plan: TimerEvent {
         data class StartupTimeChanged(val value: Long): Plan
@@ -163,6 +170,33 @@ private fun timerReducers() = listOf(
 
                 is Running ->
                     state.copy(audio = !state.audio)
+            }
+        } else {
+            state
+        }
+    },
+    // toggle camera reducer
+    Reducer { state, event ->
+        if (event is TimerEvent.ToggleCamera) {
+            when (state) {
+                is Ended -> state
+                is Plan ->
+                    state.copy(cameraEnabled = !state.cameraEnabled)
+
+                is Running ->
+                    state.copy()
+            }
+        } else {
+            state
+        }
+    },
+    // set video uri reducer
+    Reducer { state, event ->
+        if (event is TimerEvent.SetVideoUri) {
+            when (state) {
+                is Ended -> state.copy(videoUri = event.uri)
+                is Plan -> state
+                is Running -> state.copy(videoUri = event.uri)
             }
         } else {
             state
@@ -210,7 +244,7 @@ private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { 
             set = if (event.rep != 0) state.set else state.set?.copy(tempo = event.tempo)
         )
 
-        TimerEvent.Plan.Start -> state.runningTimer(beep = true)
+        TimerEvent.Plan.Start -> state.runningTimer(beep = true, cameraEnabled = state.cameraEnabled)
 
         TimerEvent.Plan.AddTimer -> state.copy(
             tempo = state.tempo + state.tempo.last().copy(),
@@ -261,6 +295,7 @@ private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { s
             Ended(
                 timers = state.timers,
                 set = state.set,
+                videoUri = state.videoUri,
             )
         }
     }
@@ -303,11 +338,12 @@ private fun tickSideEffect(): SideEffect<TimerState, TimerEvent> = SideEffect { 
     }
 }
 
-private fun TimerState.Plan.runningTimer(beep: Boolean = false): TimerState.Running = TimerState.Running(
+private fun TimerState.Plan.runningTimer(beep: Boolean = false, cameraEnabled: Boolean = false): TimerState.Running = TimerState.Running(
     elapsedTime = 0L,
     paused = !beep,
     beep = beep,
     set = set,
+    videoUri = null,
     timers = listOf(
         TimerSegment(
             name = "Setup",
