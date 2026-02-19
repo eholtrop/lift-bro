@@ -6,6 +6,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.video.FileOutputOptions
+import androidx.camera.video.FallbackStrategy
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
@@ -13,24 +14,25 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import java.io.File
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 actual class CameraPermission
 
@@ -73,34 +75,44 @@ class AndroidCameraController(
     override val recordingComplete: StateFlow<String?> = _recordingComplete.asStateFlow()
 
     private var cameraProvider: ProcessCameraProvider? = null
+    private var previewView: PreviewView? = null
+    private var lifecycleOwner: LifecycleOwner? = null
+    private var isInitialized = false
 
-    suspend fun initialize(): ProcessCameraProvider = suspendCoroutine { continuation ->
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-        cameraProviderFuture.addListener({
-            continuation.resume(cameraProviderFuture.get())
-        }, ContextCompat.getMainExecutor(context))
-    }
-
+    @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
     fun setupCamera(
         previewView: PreviewView,
-        lifecycleOwner: androidx.lifecycle.LifecycleOwner,
+        lifecycleOwner: LifecycleOwner,
     ) {
-        CoroutineScope(Dispatchers.Main).launch {
-            cameraProvider = initialize()
-
-            val preview = Preview.Builder().build().also {
-                it.surfaceProvider = previewView.surfaceProvider
-            }
-
-            val recorder = Recorder.Builder()
-                .setQualitySelector(QualitySelector.from(Quality.FHD))
-                .build()
-
-            videoCapture = VideoCapture.withOutput(recorder)
-
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
+        if (isInitialized) return
+        
+        this.previewView = previewView
+        this.lifecycleOwner = lifecycleOwner
+        
+        val mainExecutor = ContextCompat.getMainExecutor(context)
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
+        
+        cameraProviderFuture.addListener({
             try {
+                cameraProvider = cameraProviderFuture.get()
+                
+                val preview = Preview.Builder().build().also {
+                    it.setSurfaceProvider(previewView.surfaceProvider)
+                }
+
+                val recorder = Recorder.Builder()
+                    .setQualitySelector(
+                        QualitySelector.from(
+                            Quality.HD,
+                            FallbackStrategy.higherQualityOrLowerThan(Quality.HD)
+                        )
+                    )
+                    .build()
+
+                videoCapture = VideoCapture.withOutput(recorder)
+
+                val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+
                 cameraProvider?.unbindAll()
                 cameraProvider?.bindToLifecycle(
                     lifecycleOwner,
@@ -108,11 +120,15 @@ class AndroidCameraController(
                     preview,
                     videoCapture
                 )
+                
+                isInitialized = true
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
+        }, mainExecutor)
     }
+
+    fun isReady(): Boolean = cameraProvider != null
 
     override fun startRecording(outputFile: File) {
         val videoCapture = this.videoCapture ?: return
@@ -146,6 +162,7 @@ class AndroidCameraController(
     override fun release() {
         recording?.stop()
         cameraProvider?.unbindAll()
+        isInitialized = false
     }
 }
 
@@ -154,8 +171,17 @@ actual fun CameraPreview(
     controller: CameraController,
     modifier: Modifier,
 ) {
+    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraController = controller as? AndroidCameraController
+
+    var previewView by remember { mutableStateOf<PreviewView?>(null) }
+
+    LaunchedEffect(cameraController, previewView, lifecycleOwner) {
+        if (cameraController != null && previewView != null && lifecycleOwner != null) {
+            cameraController.setupCamera(previewView!!, lifecycleOwner)
+        }
+    }
 
     DisposableEffect(Unit) {
         onDispose {
@@ -171,11 +197,12 @@ actual fun CameraPreview(
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
                 scaleType = PreviewView.ScaleType.FILL_CENTER
+                implementationMode = PreviewView.ImplementationMode.COMPATIBLE
             }
         },
         modifier = modifier,
         update = { view ->
-            cameraController?.setupCamera(view, lifecycleOwner)
+            previewView = view
         }
     )
 }
