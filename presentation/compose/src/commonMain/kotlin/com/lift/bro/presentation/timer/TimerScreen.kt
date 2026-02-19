@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,6 +58,10 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
+import com.lift.bro.presentation.camera.CameraController
+import com.lift.bro.presentation.camera.CameraPreview
+import com.lift.bro.presentation.camera.rememberCameraControllerFactory
+import com.lift.bro.presentation.camera.rememberCameraPermissionHandler
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.card.lift.weightFormat
@@ -101,6 +107,20 @@ fun TimerScreen(
     Box(
         contentAlignment = Alignment.Center,
     ) {
+        var cameraController by remember { mutableStateOf<CameraController?>(null) }
+        val cameraControllerFactory = rememberCameraControllerFactory()
+
+        if (cameraController != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                CameraPreview(
+                    controller = cameraController!!,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
+        }
         LiftingScaffold(
             title = { },
             containerColor = Color.Transparent,
@@ -126,6 +146,8 @@ fun TimerScreen(
                             }
 
                             is TimerState.Plan -> {
+                                val permissionHandler = rememberCameraPermissionHandler()
+
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.SpaceBetween
@@ -149,7 +171,23 @@ fun TimerScreen(
                                     }
                                     IconButton(
                                         onClick = {
-                                            onEvent(TimerEvent.ToggleCamera)
+                                            if (state.cameraEnabled) {
+                                                cameraController?.release()
+                                                cameraController = null
+                                                onEvent(TimerEvent.ToggleCamera)
+                                            } else {
+                                                if (permissionHandler.isGranted) {
+                                                    cameraController = cameraControllerFactory.create()
+                                                    onEvent(TimerEvent.ToggleCamera)
+                                                } else {
+                                                    permissionHandler.requestPermission { granted ->
+                                                        if (granted) {
+                                                            cameraController = cameraControllerFactory.create()
+                                                            onEvent(TimerEvent.ToggleCamera)
+                                                        }
+                                                    }
+                                                }
+                                            }
                                         },
                                     ) {
                                         if (state.cameraEnabled) {
@@ -165,6 +203,7 @@ fun TimerScreen(
                                         }
                                     }
                                 }
+
                                 TimerTrack(
                                     modifier = Modifier.fillMaxWidth()
                                         .background(MaterialTheme.colorScheme.background)
