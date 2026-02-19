@@ -52,5 +52,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>Lift Bro needs camera access to record videos of your workout sets so you can review your form later.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Lift Bro needs microphone access to record audio with your workout videos.</string>
 </dict>
 </plist>

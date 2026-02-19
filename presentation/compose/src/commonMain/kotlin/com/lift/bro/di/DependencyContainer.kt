@@ -25,6 +25,7 @@ import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
 import com.lift.bro.domain.analytics.Analytics
 import com.lift.bro.domain.filter.Filter
 import com.lift.bro.domain.filter.FilterRepository
+import com.lift.bro.data.video.VideoStorage
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
@@ -49,6 +50,7 @@ expect class DependencyContainer {
     val audioPlayer: AudioPlayer
 
     val analytics: Analytics
+    val videoStorage: VideoStorage
 }
 
 val DependencyContainer.filterRepository: FilterRepository get() = object: FilterRepository {
