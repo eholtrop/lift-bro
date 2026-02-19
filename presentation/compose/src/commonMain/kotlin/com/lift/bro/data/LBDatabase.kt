@@ -366,10 +366,3 @@ internal fun comliftbrodb.Variation.toDomain(
     notes = this.notes,
     bodyWeight = this.body_weight?.let { it == 1L },
 )
-
-expect class DriverFactory {
-
-    fun provideDbDriver(
-        schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
-    ): SqlDriver
-}

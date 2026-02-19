@@ -49,7 +49,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
@@ -68,15 +67,6 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.create_set_screen_title
-import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
-import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
-import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
-import lift_bro.core.generated.resources.edit_set_screen_title
-import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
-import lift_bro.core.generated.resources.tempo_selector_timer_content_description
-import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
@@ -127,23 +117,34 @@ fun EditSetScreen(
     interactor: Interactor<EditSetState?, EditSetEvent>,
 ) {
     val state by interactor.state.collectAsState()
+
+    state?.let {
+        EditSetScreen(
+            state = it,
+            onEvent = { interactor(it) }
+        )
+    }
+}
+
+@Composable
+fun EditSetScreen(
+    state: EditSetState,
+    onEvent: (EditSetEvent) -> Unit,
+    strings: EditSetScreenStrings = EditSetScreenStrings.default(),
+) {
     var showVariationDialog by remember { mutableStateOf(false) }
 
     LiftingScaffold(
         title = {
-            state?.let {
-                Text(
-                    stringResource(
-                        if (it.id != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title
-                    )
-                )
-            }
+            Text(
+                if (state.id != null) strings.createSetTitle else strings.editSetTitle
+            )
         },
         trailingContent = {
             Fade(visible = state?.saveEnabled == true) {
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(Res.string.edit_set_screen_delete_acc_label),
+                    contentDescription = strings.deleteContentDescription,
                     onClick = {
                         interactor(EditSetEvent.DeleteSetClicked)
                     }
@@ -179,7 +180,7 @@ fun EditSetScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Timer,
-                        contentDescription = stringResource(Res.string.tempo_selector_timer_content_description)
+                        contentDescription = strings.timerContentDescription
                     )
                 }
             }
@@ -193,7 +194,8 @@ fun EditSetScreen(
                     sendEvent = { interactor(it) },
                     showVariationDialog = {
                         showVariationDialog = true
-                    }
+                    },
+                    strings = strings,
                 )
             } else {
                 EditSetScreen(
@@ -202,7 +204,8 @@ fun EditSetScreen(
                     sendEvent = { interactor(it) },
                     showVariationDialog = {
                         showVariationDialog = true
-                    }
+                    },
+                    strings = strings,
                 )
             }
         }
@@ -211,7 +214,7 @@ fun EditSetScreen(
     if (showVariationDialog) {
         VariationSearchDialog(
             visible = showVariationDialog,
-            textFieldPlaceholder = stringResource(Res.string.edit_set_screen_variation_selector_empty_state_title),
+            textFieldPlaceholder = strings.variationSelectorEmptyState,
             onDismissRequest = { showVariationDialog = false },
             onVariationSelected = {
                 showVariationDialog = false
@@ -227,6 +230,7 @@ fun EditSetScreen(
     state: EditSetState,
     sendEvent: (EditSetEvent) -> Unit,
     showVariationDialog: () -> Unit,
+    strings: EditSetScreenStrings = EditSetScreenStrings.default(),
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -375,10 +379,10 @@ fun EditSetScreen(
                     value = notes,
                     singleLine = true,
                     placeholder = {
-                        Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
+                        Text(strings.extraNotesPlaceholder)
                     },
                     label = {
-                        Text(stringResource(Res.string.edit_set_screen_extra_notes_label))
+                        Text(strings.extraNotesLabel)
                     },
                     onValueChange = {
                         notes = it
@@ -397,6 +401,7 @@ fun EditSetScreenV2(
     state: EditSetState,
     sendEvent: (EditSetEvent) -> Unit,
     showVariationDialog: () -> Unit,
+    strings: EditSetScreenStrings = EditSetScreenStrings.default(),
 ) {
     var showRpe by remember { mutableStateOf(false) }
     var showTempo by remember { mutableStateOf(false) }
@@ -542,10 +547,10 @@ fun EditSetScreenV2(
                         value = notes,
                         singleLine = true,
                         placeholder = {
-                            Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
+                            Text(strings.extraNotesPlaceholder)
                         },
                         label = {
-                            Text(stringResource(Res.string.edit_set_screen_extra_notes_label))
+                            Text(strings.extraNotesLabel)
                         },
                         onValueChange = {
                             notes = it
