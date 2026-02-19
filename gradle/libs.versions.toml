@@ -8,6 +8,7 @@ kotlinx-coroutines-core = "1.8.0"
 kotlinx-coroutines-test = "1.8.0"
 play-services-ads = "24.3.0"
 sqldelight = "2.0.2"
+sqlcipher = "4.5.4"
 agp = "8.9.1"
 revenuecat = "2.0.0+15.0.0"
 turbine = "1.2.0"
@@ -66,6 +67,8 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 sqldelight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqldelight" }
 sqldelight-android-driver = { module = "app.cash.sqldelight:android-driver", version.ref = "sqldelight" }
 sqldelight-native-driver = { module = "app.cash.sqldelight:native-driver", version.ref = "sqldelight" }
+android-database-sqlcipher = { module = "net.zetetic:android-database-sqlcipher", version.ref = "sqlcipher" }
+androidx-security-crypto = { module = "androidx.security:security-crypto", version = "1.1.0-alpha06" }
 
 kotlinx-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
