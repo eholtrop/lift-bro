@@ -40,6 +40,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,12 +63,15 @@ import com.lift.bro.presentation.camera.CameraController
 import com.lift.bro.presentation.camera.CameraPreview
 import com.lift.bro.presentation.camera.rememberCameraControllerFactory
 import com.lift.bro.presentation.camera.rememberCameraPermissionHandler
+import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.data.video.VideoStorage
+import com.lift.bro.di.dependencies
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
@@ -77,8 +81,15 @@ import tv.dpal.compose.isOpen
 fun TimerScreen(
     reps: Int,
     tempo: Tempo,
+    cameraController: CameraController? = null,
+    videoStorage: VideoStorage? = null,
 ) {
-    val interactor: TimerInteractor = rememberTimerInteractor(reps, tempo)
+    val interactor: TimerInteractor = rememberTimerInteractor(
+        reps = reps,
+        tempo = tempo,
+        cameraController = cameraController,
+        videoStorage = videoStorage,
+    )
 
     TimerScreen(
         state = interactor.state.collectAsState().value,
@@ -89,8 +100,14 @@ fun TimerScreen(
 @Composable
 fun TimerScreen(
     setId: String,
+    cameraController: CameraController? = null,
+    videoStorage: VideoStorage? = null,
 ) {
-    val interactor: TimerInteractor = rememberTimerInteractor(setId)
+    val interactor: TimerInteractor = rememberTimerInteractor(
+        setId = setId,
+        cameraController = cameraController,
+        videoStorage = videoStorage,
+    )
 
     TimerScreen(
         state = interactor.state.collectAsState().value,
@@ -104,23 +121,80 @@ fun TimerScreen(
     state: TimerState,
     onEvent: (TimerEvent) -> Unit,
 ) {
+    val cameraControllerFactory = rememberCameraControllerFactory()
+    val videoStorage = remember { dependencies.videoStorage }
+
+    var cameraController by remember { mutableStateOf<CameraController?>(null) }
+
+    // Handle recording based on state transitions
+    LaunchedEffect(state) {
+        when (state) {
+            is TimerState.Running -> {
+                if (state.cameraEnabled && cameraController != null) {
+                    // Start recording when entering Running state
+                    try {
+                        val tempFile = java.io.File.createTempFile("video_", ".mp4")
+                        cameraController?.startRecording(tempFile)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            is TimerState.Ended -> {
+                // Stop recording and save
+                if (cameraController != null) {
+                    try {
+                        cameraController?.stopRecording()
+                        
+                        // Wait briefly then save
+                        kotlinx.coroutines.delay(500)
+                        val recordingPath = cameraController?.recordingComplete?.value
+                        if (recordingPath != null) {
+                            val setId = state.set?.id ?: "temp_${System.currentTimeMillis()}"
+                            val videoFile = java.io.File(recordingPath)
+                            
+                            val saveResult = videoStorage.saveVideo(videoFile, setId)
+                            saveResult.onSuccess { videoUri ->
+                                // Dispatch event to update state with videoUri
+                                onEvent(TimerEvent.SetVideoUri(videoUri))
+                                
+                                // Also save to database
+                                state.set?.let { set ->
+                                    val updatedSet = set.copy(videoUri = videoUri)
+                                    // Note: Need to get setRepository here to save
+                                }
+                            }
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+
+    val showCamera = when (state) {
+        is TimerState.Plan -> state.cameraEnabled && cameraController != null
+        is TimerState.Running -> state.cameraEnabled
+        is TimerState.Ended -> false
+    }
+
+    if (showCamera && cameraController != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            CameraPreview(
+                controller = cameraController!!,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+    
     Box(
         contentAlignment = Alignment.Center,
     ) {
-        var cameraController by remember { mutableStateOf<CameraController?>(null) }
-        val cameraControllerFactory = rememberCameraControllerFactory()
-
-        if (cameraController != null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                CameraPreview(
-                    controller = cameraController!!,
-                    modifier = Modifier.fillMaxSize()
-                )
-            }
-        }
         LiftingScaffold(
             title = { },
             containerColor = Color.Transparent,
@@ -328,6 +402,25 @@ fun TimerOverlay(
                             "Great job!",
                             style = MaterialTheme.typography.displayMedium
                         )
+                    }
+
+                    state.videoUri?.let { videoUri ->
+                        item {
+                            val videoFile = dependencies.videoStorage.getVideoFile(videoUri)
+                            videoFile?.let { file ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(300.dp)
+                                        .padding(horizontal = MaterialTheme.spacing.two)
+                                ) {
+                                    VideoPlayer(
+                                        videoFile = file,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            }
+                        }
                     }
 
                     state.set?.let { set ->
