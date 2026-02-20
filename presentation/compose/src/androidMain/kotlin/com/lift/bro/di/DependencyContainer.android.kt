@@ -70,6 +70,8 @@ actual class DependencyContainer {
             ),
             context = PostHogContext(context?.applicationContext as Application)
         )
+    }
+
     actual val videoStorage: VideoStorage by lazy {
         LocalVideoStorage(context!!)
     }

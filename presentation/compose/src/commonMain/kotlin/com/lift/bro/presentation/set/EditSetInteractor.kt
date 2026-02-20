@@ -105,6 +105,7 @@ private fun editSetSource(
     movementId: String? = null,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
 ) = setRepository.listen(setId)
     .map {
         it ?: LBSet(
@@ -132,6 +133,8 @@ private fun editSetSource(
                         movement = movement,
                         maxVariationSet = maxVariation,
                         maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null,
+                    ).copy(
+                        timerEnabled = settingsRepository.get(Setting.Timer)
                     )
                 }
             }
