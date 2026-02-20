@@ -6,13 +6,13 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.native.NativeSqliteDriver
 
-actual class DriverFactory(
-    encryptionKeyProvider: EncryptionKeyProvider,
+actual class DriverFactory actual constructor(
+    @Suppress("UNUSED_PARAMETER") context: Any,
 ) {
     actual fun provideDbDriver(schema: SqlSchema<QueryResult.AsyncValue<Unit>>): SqlDriver {
         return NativeSqliteDriver(
             schema = schema.synchronous(),
-            databaseName = "liftbro.db",
+            databaseName = "test.db",
         )
     }
 }
