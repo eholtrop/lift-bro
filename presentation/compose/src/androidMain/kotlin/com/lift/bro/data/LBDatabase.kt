@@ -1,6 +1,7 @@
 package com.lift.bro.data
 
 import android.content.Context
+import android.util.Log
 import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
@@ -14,20 +15,45 @@ actual class DriverFactory actual constructor(
 ) {
     private val androidContext: Context = context as Context
     private val encryptionKeyProvider = EncryptionKeyProviderImpl(androidContext)
+    private val migrationManager by lazy { DatabaseMigrationManager(androidContext, encryptionKeyProvider) }
 
     actual fun provideDbDriver(
         schema: SqlSchema<QueryResult.AsyncValue<Unit>>
     ): SqlDriver {
-        val encryptionKey = runBlocking { encryptionKeyProvider.getOrCreateKey() }
-        val passphrase = String(encryptionKey, Charsets.UTF_8)
+        runBlocking {
+            migrationManager.migrateIfNeeded()
+        }
 
-        val factory = SupportFactory(passphrase.toByteArray(Charsets.UTF_8))
+        migrationManager.cleanupIfComplete()
 
-        return AndroidSqliteDriver(
-            schema = schema.synchronous(),
-            context = androidContext,
-            name = "test.db",
-//            factory = factory,
-        )
+        val encryptedDb = androidContext.getDatabasePath(ENCRYPTED_DB_NAME)
+        val passphrase = runBlocking { encryptionKeyProvider.getOrCreateKey() }
+        val passphraseBytes = passphrase.toString(Charsets.UTF_8).toByteArray(Charsets.UTF_8)
+
+        return if (encryptedDb.exists()) {
+            try {
+                AndroidSqliteDriver(
+                    schema = schema.synchronous(),
+                    context = androidContext,
+                    name = ENCRYPTED_DB_NAME,
+                    factory = SupportFactory(passphraseBytes),
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to open encrypted database", e)
+                throw e
+            }
+        } else {
+            AndroidSqliteDriver(
+                schema = schema.synchronous(),
+                context = androidContext,
+                name = ENCRYPTED_DB_NAME,
+                factory = SupportFactory(passphraseBytes),
+            )
+        }
+    }
+
+    companion object {
+        private const val TAG = "DriverFactory"
+        private const val ENCRYPTED_DB_NAME = "liftbro.db"
     }
 }
