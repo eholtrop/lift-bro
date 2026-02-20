@@ -1,6 +1,8 @@
 package com.lift.bro.di
 
 import com.lift.bro.data.DriverFactory
+import com.lift.bro.data.EncryptionKeyProvider
+import com.lift.bro.data.EncryptionKeyProviderImpl
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.datasource.UserPreferencesDataSource
 import com.lift.bro.data.repository.SettingsRepository
@@ -10,7 +12,9 @@ import platform.UIKit.UIApplication
 
 actual class DependencyContainer {
 
-    actual val database: LBDatabase by lazy { LBDatabase(DriverFactory()) }
+    actual val database: LBDatabase by lazy {
+        LBDatabase(DriverFactory(Unit))
+    }
 
     actual val settingsRepository: ISettingsRepository by lazy {
         SettingsRepository(UserPreferencesDataSource())

@@ -49,7 +49,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
-import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
@@ -68,15 +67,6 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.create_set_screen_title
-import lift_bro.core.generated.resources.edit_set_screen_delete_acc_label
-import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
-import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
-import lift_bro.core.generated.resources.edit_set_screen_title
-import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
-import lift_bro.core.generated.resources.tempo_selector_timer_content_description
-import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
@@ -127,82 +117,95 @@ fun EditSetScreen(
     interactor: Interactor<EditSetState?, EditSetEvent>,
 ) {
     val state by interactor.state.collectAsState()
+
+    state?.let {
+        EditSetScreen(
+            state = it,
+            onEvent = { interactor(it) }
+        )
+    }
+}
+
+@Composable
+fun EditSetScreen(
+    state: EditSetState,
+    onEvent: (EditSetEvent) -> Unit,
+    strings: EditSetScreenStrings = EditSetScreenStrings.default(),
+) {
     var showVariationDialog by remember { mutableStateOf(false) }
 
     LiftingScaffold(
         title = {
-            state?.let {
-                Text(
-                    stringResource(
-                        if (it.id != null) Res.string.create_set_screen_title else Res.string.edit_set_screen_title
-                    )
-                )
-            }
+            Text(
+                if (state.id != null) strings.createSetTitle else strings.editSetTitle
+            )
         },
         trailingContent = {
-            Fade(visible = state?.saveEnabled == true) {
+            Fade(visible = state.saveEnabled) {
                 TopBarIconButton(
                     imageVector = Icons.Default.Delete,
-                    contentDescription = stringResource(Res.string.edit_set_screen_delete_acc_label),
+                    contentDescription = strings.deleteContentDescription,
                     onClick = {
-                        interactor(EditSetEvent.DeleteSetClicked)
+                        onEvent(EditSetEvent.DeleteSetClicked)
                     }
                 )
             }
 
             Switch(
-                checked = state?.showV2 == true,
-                onCheckedChange = { interactor(EditSetEvent.ToggleV2) },
+                checked = state.showV2,
+                onCheckedChange = { onEvent(EditSetEvent.ToggleV2) },
                 thumbContent = {
                     Text(
-                        if (state?.showV2 == true) "V2" else "V1",
+                        if (state.showV2) "V2" else "V1",
                         style = MaterialTheme.typography.titleSmall,
                     )
                 }
             )
-            if (dependencies.settingsRepository.enableTimer()) {
+            if (state.timerEnabled) {
                 val navCoordinator = LocalNavCoordinator.current
-                val tempo = state?.let { Tempo(down = it.tempo.ecc ?: 3, hold = it.tempo.iso ?: 1, up = it.tempo.con ?: 1) } ?: Tempo()
+                val tempo = state.let { Tempo(down = it.tempo.ecc ?: 3, hold = it.tempo.iso ?: 1, up = it.tempo.con ?: 1) }
                 IconButton(
                     onClick = {
-                        val id = state?.id ?: ""
-                        if (state?.saveEnabled == true && id.isNotBlank()) {
+                        val id = state.id ?: ""
+                        if (state.saveEnabled && id.isNotBlank()) {
                             navCoordinator.present(
                                 Destination.Timer.From(setId = id)
                             )
                         } else {
                             navCoordinator.present(
-                                Destination.Timer.With(reps = state?.reps?.toInt() ?: 1, tempo = tempo)
+                                Destination.Timer.With(reps = state.reps?.toInt() ?: 1, tempo = tempo)
                             )
                         }
                     }
                 ) {
                     Icon(
                         imageVector = Icons.Default.Timer,
-                        contentDescription = stringResource(Res.string.tempo_selector_timer_content_description)
+                        contentDescription = strings.timerContentDescription
                     )
                 }
             }
         },
     ) { padding ->
-        state?.let { set ->
+        state.let { set ->
             if (set.showV2) {
                 EditSetScreenV2(
                     modifier = Modifier.padding(padding),
                     state = set,
-                    sendEvent = { interactor(it) },
+                    sendEvent = { onEvent(it) },
                     showVariationDialog = {
                         showVariationDialog = true
-                    }
+                    },
+                    strings = strings,
                 )
             } else {
                 EditSetScreen(
                     modifier = Modifier.padding(padding),
                     state = set,
-                    sendEvent = { interactor(it) },
+                    sendEvent = { onEvent(it) },
                     showVariationDialog = {
                         showVariationDialog = true
-                    }
+                    },
+                    strings = strings,
                 )
             }
         }
@@ -211,11 +214,11 @@ fun EditSetScreen(
     if (showVariationDialog) {
         VariationSearchDialog(
             visible = showVariationDialog,
-            textFieldPlaceholder = stringResource(Res.string.edit_set_screen_variation_selector_empty_state_title),
+            textFieldPlaceholder = strings.variationSelectorEmptyState,
             onDismissRequest = { showVariationDialog = false },
             onVariationSelected = {
                 showVariationDialog = false
-                interactor(EditSetEvent.VariationSelected(it))
+                onEvent(EditSetEvent.VariationSelected(it))
             }
         )
     }
@@ -227,6 +230,7 @@ fun EditSetScreen(
     state: EditSetState,
     sendEvent: (EditSetEvent) -> Unit,
     showVariationDialog: () -> Unit,
+    strings: EditSetScreenStrings = EditSetScreenStrings.default(),
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -375,10 +379,10 @@ fun EditSetScreen(
                     value = notes,
                     singleLine = true,
                     placeholder = {
-                        Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
+                        Text(strings.extraNotesPlaceholder)
                     },
                     label = {
-                        Text(stringResource(Res.string.edit_set_screen_extra_notes_label))
+                        Text(strings.extraNotesLabel)
                     },
                     onValueChange = {
                         notes = it
@@ -397,6 +401,7 @@ fun EditSetScreenV2(
     state: EditSetState,
     sendEvent: (EditSetEvent) -> Unit,
     showVariationDialog: () -> Unit,
+    strings: EditSetScreenStrings = EditSetScreenStrings.default(),
 ) {
     var showRpe by remember { mutableStateOf(false) }
     var showTempo by remember { mutableStateOf(false) }
@@ -542,10 +547,10 @@ fun EditSetScreenV2(
                         value = notes,
                         singleLine = true,
                         placeholder = {
-                            Text(stringResource(Res.string.edit_set_screen_extra_notes_placeholder))
+                            Text(strings.extraNotesPlaceholder)
                         },
                         label = {
-                            Text(stringResource(Res.string.edit_set_screen_extra_notes_label))
+                            Text(strings.extraNotesLabel)
                         },
                         onValueChange = {
                             notes = it

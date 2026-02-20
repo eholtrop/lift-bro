@@ -100,6 +100,8 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.android.database.sqlcipher)
+            implementation(libs.androidx.security.crypto)
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
             implementation(compose.uiTooling)

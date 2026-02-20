@@ -220,6 +220,44 @@ fun WorkoutScreen(
 - **Use `LaunchedEffect`** for one-time events
 - **Leverage `produceState`** for external data sources
 
+#### String Resource Abstraction
+Abstract `Res.string.*` references into a data class for testability and reusability:
+
+```kotlin
+// File: EditSetScreenStrings.kt
+data class EditSetScreenStrings(
+    val createSetTitle: String,
+    val editSetTitle: String,
+    val deleteContentDescription: String,
+    val extraNotesLabel: String,
+    val extraNotesPlaceholder: String,
+    val variationSelectorEmptyState: String,
+    val timerContentDescription: String,
+) {
+    companion object {
+        @Composable
+        fun default(): EditSetScreenStrings = EditSetScreenStrings(
+            createSetTitle = stringResource(Res.string.create_set_screen_title),
+            editSetTitle = stringResource(Res.string.edit_set_screen_title),
+            // ... other string resources
+        )
+    }
+}
+```
+
+Usage in composable:
+```kotlin
+@Composable
+fun EditSetScreen(
+    state: EditSetState,
+    onEvent: (EditSetEvent) -> Unit,
+    strings: EditSetScreenStrings = EditSetScreenStrings.default(),
+) {
+    Text(strings.editSetTitle)
+    // Use strings object instead of stringResource(Res.string.*)
+}
+```
+
 ### Database Guidelines (SQLDelight)
 
 #### Schema Files

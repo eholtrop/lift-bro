@@ -60,6 +60,7 @@ data class EditSetState(
     val date: Instant = Clock.System.now(),
     val variation: SetVariation? = null,
     val showV2: Boolean = false,
+    val timerEnabled: Boolean = false,
 ) {
     val saveEnabled: Boolean get() = variation != null && reps != null && tempo != null && weight != null
 }
