@@ -42,7 +42,7 @@ class EncryptionKeyProviderImpl(
         )
     }
 
-    suspend fun getOrCreateKey(): ByteArray {
+    override suspend fun getOrCreateKey(): ByteArray {
         val existingKey = encryptedPrefs.getString(KEY_DB_ENCRYPTION_KEY, null)
         return if (existingKey != null) {
             android.util.Base64.decode(existingKey, android.util.Base64.NO_WRAP)

@@ -13,8 +13,7 @@ import platform.UIKit.UIApplication
 actual class DependencyContainer {
 
     actual val database: LBDatabase by lazy {
-        val encryptionKeyProvider = EncryptionKeyProvider()
-        LBDatabase(DriverFactory(encryptionKeyProvider))
+        LBDatabase(DriverFactory(Unit))
     }
 
     actual val settingsRepository: ISettingsRepository by lazy {

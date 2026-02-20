@@ -28,9 +28,7 @@ actual class DependencyContainer {
     }
 
     actual val database: LBDatabase by lazy {
-        val encryptionKeyProvider: EncryptionKeyProvider = EncryptionKeyProviderImpl(context!!)
-        val driverFactory = DriverFactory(encryptionKeyProvider)
-        driverFactory.setContext(context!!)
+        val driverFactory = DriverFactory(context!!)
         LBDatabase(driverFactory)
     }
 
