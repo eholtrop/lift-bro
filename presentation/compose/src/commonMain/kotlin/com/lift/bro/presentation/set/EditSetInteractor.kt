@@ -135,6 +135,8 @@ private fun editSetSource(
                         maxVariationSet = maxVariation,
                         maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null,
                         v2 = settingsRepository.editSetVersion() == 2
+                    ).copy(
+                        timerEnabled = settingsRepository.enableTimer()
                     )
                 }
             }
