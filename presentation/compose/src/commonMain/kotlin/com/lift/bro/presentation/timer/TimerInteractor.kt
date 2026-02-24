@@ -29,7 +29,6 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import java.io.File
 import kotlin.math.max
 
 typealias TimerInteractor = Interactor<TimerState, TimerEvent>
@@ -38,8 +37,6 @@ typealias TimerInteractor = Interactor<TimerState, TimerEvent>
 fun rememberTimerInteractor(
     setId: String,
     setRepository: ISetRepository = dependencies.setRepository,
-    cameraController: CameraController? = null,
-    videoStorage: VideoStorage? = null,
     uiEffects: SideEffect<TimerState, TimerEvent> = { },
 ): TimerInteractor = rememberInteractor(
     initialState = Plan(),
@@ -66,7 +63,6 @@ fun rememberTimerInteractor(
         uiEffects,
         beepSideEffect(),
         tickSideEffect(),
-        recordingSideEffect(cameraController, videoStorage, setRepository),
     )
 )
 
@@ -74,8 +70,6 @@ fun rememberTimerInteractor(
 fun rememberTimerInteractor(
     reps: Int,
     tempo: Tempo,
-    cameraController: CameraController? = null,
-    videoStorage: VideoStorage? = null,
     uiEffects: SideEffect<TimerState, TimerEvent> = { _, s, e -> },
 ): TimerInteractor = rememberInteractor(
     initialState = Plan(
@@ -86,7 +80,6 @@ fun rememberTimerInteractor(
         uiEffects,
         beepSideEffect(),
         tickSideEffect(),
-        recordingSideEffect(cameraController, videoStorage, null),
     )
 )
 
@@ -346,62 +339,6 @@ private fun tickSideEffect(): SideEffect<TimerState, TimerEvent> = SideEffect { 
             }
         }
 
-        else -> {}
-    }
-}
-
-private fun recordingSideEffect(
-    cameraController: CameraController?,
-    videoStorage: VideoStorage?,
-    setRepository: ISetRepository?,
-): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
-    when (event) {
-        is TimerEvent.Plan.Start -> {
-            val currentState = state
-            if (currentState is Plan && currentState.cameraEnabled && cameraController != null) {
-                try {
-                    val tempFile = File.createTempFile("video_", ".mp4")
-                    cameraController.startRecording(tempFile)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-        
-        is TimerEvent.Running.End -> {
-            val currentState = state
-            if (currentState is Running && currentState.cameraEnabled && cameraController != null) {
-                try {
-                    cameraController.stopRecording()
-                    
-                    // Wait for recording to complete and save
-                    GlobalScope.launch(Dispatchers.IO) {
-                        delay(500) // Wait for recording to finalize
-                        
-                        val recordingPath = cameraController.recordingComplete.value
-                        if (recordingPath != null && videoStorage != null) {
-                            val setId = currentState.set?.id ?: "temp_${System.currentTimeMillis()}"
-                            val videoFile = File(recordingPath)
-                            
-                            val saveResult = videoStorage.saveVideo(videoFile, setId)
-                            saveResult.onSuccess { videoUri ->
-                                // Update the set with video URI
-                                currentState.set?.let { set ->
-                                    val updatedSet = set.copy(videoUri = videoUri)
-                                    if (setRepository != null) {
-                                        setRepository.save(updatedSet)
-                                    }
-                                }
-                                disp(TimerEvent.SetVideoUri(videoUri))
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-        }
-        
         else -> {}
     }
 }

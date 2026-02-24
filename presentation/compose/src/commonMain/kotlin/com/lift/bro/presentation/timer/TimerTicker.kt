@@ -58,7 +58,7 @@ fun TimerTrack(
                 state = listState,
                 userScrollEnabled = scrollable,
                 contentPadding = PaddingValues(
-                    start = MaterialTheme.spacing.oneAndHalf,
+                    horizontal = MaterialTheme.spacing.oneAndHalf,
                 )
             ) {
                 itemsIndexed(items = segments) { index, timer ->

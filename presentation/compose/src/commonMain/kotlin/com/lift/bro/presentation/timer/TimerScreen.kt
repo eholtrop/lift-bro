@@ -48,8 +48,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,6 +78,7 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.data.video.VideoStorage
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
@@ -81,14 +88,10 @@ import tv.dpal.compose.isOpen
 fun TimerScreen(
     reps: Int,
     tempo: Tempo,
-    cameraController: CameraController? = null,
-    videoStorage: VideoStorage? = null,
 ) {
     val interactor: TimerInteractor = rememberTimerInteractor(
         reps = reps,
         tempo = tempo,
-        cameraController = cameraController,
-        videoStorage = videoStorage,
     )
 
     TimerScreen(
@@ -100,18 +103,15 @@ fun TimerScreen(
 @Composable
 fun TimerScreen(
     setId: String,
-    cameraController: CameraController? = null,
-    videoStorage: VideoStorage? = null,
 ) {
     val interactor: TimerInteractor = rememberTimerInteractor(
         setId = setId,
-        cameraController = cameraController,
-        videoStorage = videoStorage,
     )
 
     TimerScreen(
         state = interactor.state.collectAsState().value,
         onEvent = interactor::invoke,
+        videoStorage = remember { dependencies.videoStorage }
     )
 }
 
@@ -120,9 +120,9 @@ fun TimerScreen(
 fun TimerScreen(
     state: TimerState,
     onEvent: (TimerEvent) -> Unit,
+    videoStorage: VideoStorage? = null,
 ) {
     val cameraControllerFactory = rememberCameraControllerFactory()
-    val videoStorage = remember { dependencies.videoStorage }
 
     var cameraController by remember { mutableStateOf<CameraController?>(null) }
 
@@ -140,28 +140,27 @@ fun TimerScreen(
                     }
                 }
             }
+
             is TimerState.Ended -> {
                 // Stop recording and save
-                if (cameraController != null) {
+                if (cameraController != null && videoStorage != null) {
                     try {
                         cameraController?.stopRecording()
-                        
+
                         // Wait briefly then save
                         kotlinx.coroutines.delay(500)
                         val recordingPath = cameraController?.recordingComplete?.value
                         if (recordingPath != null) {
                             val setId = state.set?.id ?: "temp_${System.currentTimeMillis()}"
                             val videoFile = java.io.File(recordingPath)
-                            
+
                             val saveResult = videoStorage.saveVideo(videoFile, setId)
                             saveResult.onSuccess { videoUri ->
                                 // Dispatch event to update state with videoUri
                                 onEvent(TimerEvent.SetVideoUri(videoUri))
-                                
                                 // Also save to database
                                 state.set?.let { set ->
-                                    val updatedSet = set.copy(videoUri = videoUri)
-                                    // Note: Need to get setRepository here to save
+                                    dependencies.setRepository.save(set.copy(videoUri = videoUri))
                                 }
                             }
                         }
@@ -170,6 +169,7 @@ fun TimerScreen(
                     }
                 }
             }
+
             else -> {}
         }
     }
@@ -191,7 +191,7 @@ fun TimerScreen(
             )
         }
     }
-    
+
     Box(
         contentAlignment = Alignment.Center,
     ) {
@@ -208,11 +208,26 @@ fun TimerScreen(
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
+                        var tickerSize by remember { mutableStateOf(Size.Zero) }
+
                         when (state) {
                             is TimerState.Ended -> {
                                 TimerTrack(
                                     modifier = Modifier.fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.background)
+                                        .graphicsLayer {
+                                            tickerSize = size
+                                            compositingStrategy = CompositingStrategy.Offscreen
+                                        }
+                                        .background(
+                                            brush = Brush.radialGradient(
+                                                colors = listOf(
+                                                    MaterialTheme.colorScheme.background,
+                                                    Color.Transparent,
+                                                ),
+                                                center = Offset(tickerSize.width / 2, tickerSize.height / 2),
+                                                radius = tickerSize.width / 1.5f
+                                            )
+                                        )
                                         .padding(bottom = MaterialTheme.spacing.threeQuarters),
                                     scrollable = true,
                                     segments = state.timers
@@ -280,7 +295,20 @@ fun TimerScreen(
 
                                 TimerTrack(
                                     modifier = Modifier.fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.background)
+                                        .graphicsLayer {
+                                            tickerSize = size
+                                            compositingStrategy = CompositingStrategy.Offscreen
+                                        }
+                                        .background(
+                                            brush = Brush.radialGradient(
+                                                colors = listOf(
+                                                    MaterialTheme.colorScheme.background,
+                                                    Color.Transparent,
+                                                ),
+                                                center = Offset(tickerSize.width / 2, tickerSize.height / 2),
+                                                radius = tickerSize.width / 1.5f
+                                            )
+                                        )
                                         .padding(bottom = MaterialTheme.spacing.threeQuarters),
                                     segments = state.runningTimer.timers,
                                     scrollable = true,
@@ -308,7 +336,20 @@ fun TimerScreen(
                                 }
                                 TimerTrack(
                                     modifier = Modifier.fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.background)
+                                        .graphicsLayer {
+                                            tickerSize = size
+                                            compositingStrategy = CompositingStrategy.Offscreen
+                                        }
+                                        .background(
+                                            brush = Brush.radialGradient(
+                                                colors = listOf(
+                                                    MaterialTheme.colorScheme.background,
+                                                    Color.Transparent,
+                                                ),
+                                                center = Offset(tickerSize.width / 2, tickerSize.height / 2),
+                                                radius = tickerSize.width / 1.5f
+                                            )
+                                        )
                                         .padding(bottom = MaterialTheme.spacing.threeQuarters),
                                     segments = state.timers,
                                     scrollable = state.paused
