@@ -7,18 +7,14 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.presentation.camera.CameraController
-import com.lift.bro.data.video.VideoStorage
 import com.lift.bro.presentation.timer.TimerState.Ended
 import com.lift.bro.presentation.timer.TimerState.Plan
 import com.lift.bro.presentation.timer.TimerState.Running
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
@@ -138,7 +134,7 @@ sealed interface TimerEvent {
 
     object ToggleCamera: TimerEvent
 
-    data class SetVideoUri(val uri: String?): TimerEvent
+    data class VideoSaved(val uri: String?): TimerEvent
 
     sealed interface Plan: TimerEvent {
         data class StartupTimeChanged(val value: Long): Plan
@@ -197,7 +193,7 @@ private fun timerReducers() = listOf(
     },
     // set video uri reducer
     Reducer { state, event ->
-        if (event is TimerEvent.SetVideoUri) {
+        if (event is TimerEvent.VideoSaved) {
             when (state) {
                 is Ended -> state.copy(videoUri = event.uri)
                 is Plan -> state

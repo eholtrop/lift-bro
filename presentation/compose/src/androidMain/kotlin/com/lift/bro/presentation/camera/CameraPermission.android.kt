@@ -11,7 +11,6 @@ import androidx.compose.runtime.setValue
 
 @Composable
 actual fun rememberCameraPermissionHandler(): ICameraPermissionHandler {
-
     var hasPermission by remember { mutableStateOf(false) }
 
     val permissionLauncher = rememberLauncherForActivityResult(

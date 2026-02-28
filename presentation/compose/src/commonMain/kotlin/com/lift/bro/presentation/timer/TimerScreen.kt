@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,12 +54,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalViewConfiguration
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lift.bro.data.video.VideoStorage
+import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.LocalShowMERCalcs
@@ -69,19 +70,19 @@ import com.lift.bro.presentation.camera.CameraController
 import com.lift.bro.presentation.camera.CameraPreview
 import com.lift.bro.presentation.camera.rememberCameraControllerFactory
 import com.lift.bro.presentation.camera.rememberCameraPermissionHandler
-import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.presentation.lift.transparentColors
+import com.lift.bro.presentation.pose.PoseOverlay
+import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.data.video.VideoStorage
-import com.lift.bro.di.dependencies
-import com.lift.bro.di.setRepository
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.filterNotNull
 import tv.dpal.compose.isOpen
 
 @Composable
@@ -126,11 +127,17 @@ fun TimerScreen(
 
     var cameraController by remember { mutableStateOf<CameraController?>(null) }
 
+    val isRecording by cameraController?.isRecording?.collectAsState() ?: remember { mutableStateOf(false) }
+
     // Handle recording based on state transitions
     LaunchedEffect(state) {
         when (state) {
+            is TimerState.Plan -> {
+                // Recording flag will reset when camera is released
+            }
+
             is TimerState.Running -> {
-                if (state.cameraEnabled && cameraController != null) {
+                if (state.cameraEnabled && cameraController != null && !isRecording) {
                     // Start recording when entering Running state
                     try {
                         val tempFile = java.io.File.createTempFile("video_", ".mp4")
@@ -143,13 +150,14 @@ fun TimerScreen(
 
             is TimerState.Ended -> {
                 // Stop recording and save
-                if (cameraController != null && videoStorage != null) {
+                if (cameraController != null && videoStorage != null && isRecording) {
                     try {
                         cameraController?.stopRecording()
 
-                        // Wait briefly then save
-                        kotlinx.coroutines.delay(500)
-                        val recordingPath = cameraController?.recordingComplete?.value
+                        // Wait for recording to complete (flow emission)
+                        val recordingPath = cameraController?.recordingComplete
+                            ?.filterNotNull()
+                            ?.firstOrNull()
                         if (recordingPath != null) {
                             val setId = state.set?.id ?: "temp_${System.currentTimeMillis()}"
                             val videoFile = java.io.File(recordingPath)
@@ -157,7 +165,7 @@ fun TimerScreen(
                             val saveResult = videoStorage.saveVideo(videoFile, setId)
                             saveResult.onSuccess { videoUri ->
                                 // Dispatch event to update state with videoUri
-                                onEvent(TimerEvent.SetVideoUri(videoUri))
+                                onEvent(TimerEvent.VideoSaved(videoUri))
                                 // Also save to database
                                 state.set?.let { set ->
                                     dependencies.setRepository.save(set.copy(videoUri = videoUri))
@@ -180,15 +188,23 @@ fun TimerScreen(
         is TimerState.Ended -> false
     }
 
-    if (showCamera && cameraController != null) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            CameraPreview(
-                controller = cameraController!!,
-                modifier = Modifier.fillMaxSize()
-            )
+    if (showCamera) {
+        cameraController?.let { controller ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                CameraPreview(
+                    controller = controller,
+                    modifier = Modifier.fillMaxSize()
+                )
+
+                val poseResult by controller.poseResult.collectAsState()
+                PoseOverlay(
+                    poseResult = poseResult,
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 

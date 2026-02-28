@@ -14,7 +14,7 @@ actual class LocalVideoStorage(
 
     override suspend fun saveVideo(sourceFile: File, setId: String): Result<String> = withContext(Dispatchers.IO) {
         try {
-            val videoFile = File(videosDir, "${setId}.mp4")
+            val videoFile = File(videosDir, "$setId.mp4")
             sourceFile.copyTo(videoFile, overwrite = true)
             Result.success("local://${videoFile.name}")
         } catch (e: Exception) {

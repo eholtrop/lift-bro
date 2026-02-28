@@ -28,7 +28,7 @@ This guide helps agentic coding agents work effectively with the Lift Bro Kotlin
 # iOS development
 ./gradlew :presentation:compose:linkDebugFrameworkIosSimulatorArm64
 
-# Linting & formatting
+# Linting & Linting, ignore linting rules (use format or let the user update them)
 ./gradlew detekt                              # Run static analysis
 ./gradlew detektFormat                        # Auto-fix formatting issues
 ./gradlew detekt --continue                   # See all module results
@@ -37,10 +37,6 @@ This guide helps agentic coding agents work effectively with the Lift Bro Kotlin
 ./gradlew :domain:testDebugUnitTest           # Domain layer tests
 ./gradlew :presentation:compose:testDebugUnitTest  # UI tests
 ./gradlew :domain:allTests                    # All platform tests
-
-# UI Testing (Maestro)
-maestro test .maestro                         # All UI tests
-maestro test .maestro/onboarding_tests.yaml   # Specific test flow
 
 # Documentation
 ./gradlew generateArchDiagram                 # Update README architecture diagram
@@ -263,7 +259,7 @@ class DomainModule(
 
 #### Coroutines
 - **Use `IO` dispatcher** for database/network operations
-- **Use `Main` dispatcher** for UI operations (platform-specific)
+- **Use `Main` dispatcher** for UI operations (platform-specific), this should be handled by the Interactor
 - **Prefer `Flow`** for reactive data streams
 - **Use `sharedFlow`** for events, `stateFlow` for state
 
@@ -272,24 +268,12 @@ class DomainModule(
 - **Use `inline` classes** for type wrappers
 - **Prefer immutable data structures**
 
-### Platform-Specific Notes
-
-#### Android
-- Target SDK 36, min SDK 24
-- Use Material Design 3
-- Handle configuration changes properly
-
-#### iOS
-- Use iOS-style navigation patterns
-- Respect platform-specific UI conventions
-- Handle iOS permissions properly
-
 ### Common Pitfalls to Avoid
 
 1. **Mixing platform-specific code in common modules**
 2. **Using `!!` operator** - prefer safe calls or explicit null checks
 3. **Global state** - use dependency injection
-4. **Direct database access from UI** - always use repositories
+4. **Direct database access from UI** - always use repositories that are abstracted through the domain layer
 5. **Ignoring coroutines cancellation** - use structured concurrency
 
 ### Before Submitting Changes
@@ -302,8 +286,4 @@ class DomainModule(
 
 ### Getting Help
 
-- **README.md**: Project overview and setup instructions
-- **CONTRIBUTING.md**: Contribution guidelines
-- **WARP.md**: WARP-specific development guide
-- **Check existing tests** for patterns and conventions
-- **Review similar components** for implementation guidance
+1. **ook at code examples vs documentation** when in doubt

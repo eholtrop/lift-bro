@@ -4,8 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import java.io.File
 
-expect @Composable
-fun VideoPlayer(
+@Composable expect fun VideoPlayer(
     videoFile: File,
     modifier: Modifier = Modifier,
     onPlayPause: (() -> Unit)? = null,

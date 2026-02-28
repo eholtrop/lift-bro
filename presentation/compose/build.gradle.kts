@@ -114,6 +114,7 @@ kotlin {
             implementation(libs.camera.lifecycle)
             implementation(libs.camera.video)
             implementation(libs.camera.view)
+            implementation(libs.mediapipe.vision)
         }
 
         iosMain.dependencies {

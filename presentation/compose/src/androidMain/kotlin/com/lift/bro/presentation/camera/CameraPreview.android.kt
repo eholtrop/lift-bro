@@ -3,10 +3,12 @@ package com.lift.bro.presentation.camera
 import android.content.Context
 import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.FallbackStrategy
+import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
@@ -14,7 +16,6 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -27,12 +28,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import com.lift.bro.presentation.pose.PoseAnalyzer
+import com.lift.bro.presentation.pose.PoseResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.io.File
+import java.util.concurrent.Executors
+import android.util.Log
 
 actual class CameraPermission
 
@@ -48,8 +52,8 @@ actual class CameraControllerFactory {
         this.context = context
     }
 
-    actual fun create(): CameraController {
-        return AndroidCameraController(context!!)
+    actual fun create(modelPath: String?): CameraController {
+        return AndroidCameraController(context!!, modelPath)
     }
 }
 
@@ -63,16 +67,24 @@ actual fun rememberCameraControllerFactory(): CameraControllerFactory {
 
 class AndroidCameraController(
     private val context: Context,
+    private val modelPath: String? = null,
 ) : CameraController {
 
     private var videoCapture: VideoCapture<Recorder>? = null
     private var recording: Recording? = null
+    private var imageAnalysis: ImageAnalysis? = null
+    private var poseDetector: PoseAnalyzer? = null
 
     private val _isRecording = MutableStateFlow(false)
     override val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
 
     private val _recordingComplete = MutableStateFlow<String?>(null)
     override val recordingComplete: StateFlow<String?> = _recordingComplete.asStateFlow()
+
+    private val _poseResult = MutableStateFlow<PoseResult?>(null)
+    override val poseResult: StateFlow<PoseResult?> = _poseResult.asStateFlow()
+
+    private val analysisExecutor = Executors.newSingleThreadExecutor()
 
     private var cameraProvider: ProcessCameraProvider? = null
     private var previewView: PreviewView? = null
@@ -85,17 +97,17 @@ class AndroidCameraController(
         lifecycleOwner: LifecycleOwner,
     ) {
         if (isInitialized) return
-        
+
         this.previewView = previewView
         this.lifecycleOwner = lifecycleOwner
-        
+
         val mainExecutor = ContextCompat.getMainExecutor(context)
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-        
+
         cameraProviderFuture.addListener({
             try {
                 cameraProvider = cameraProviderFuture.get()
-                
+
                 val preview = Preview.Builder().build().also {
                     it.setSurfaceProvider(previewView.surfaceProvider)
                 }
@@ -111,6 +123,21 @@ class AndroidCameraController(
 
                 videoCapture = VideoCapture.withOutput(recorder)
 
+                poseDetector = if (modelPath != null) {
+                    PoseAnalyzer(modelPath, context)
+                } else {
+                    null
+                }
+
+                imageAnalysis = ImageAnalysis.Builder()
+                    .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                    .build()
+                    .also { analysis ->
+                        analysis.setAnalyzer(analysisExecutor) { imageProxy ->
+                            analyzeFrame(imageProxy)
+                        }
+                    }
+
                 val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
 
                 cameraProvider?.unbindAll()
@@ -118,14 +145,32 @@ class AndroidCameraController(
                     lifecycleOwner,
                     cameraSelector,
                     preview,
-                    videoCapture
+                    videoCapture,
+                    imageAnalysis
                 )
-                
+
                 isInitialized = true
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("CameraPreview", "Camera setup failed", e)
             }
         }, mainExecutor)
+    }
+
+    @androidx.annotation.OptIn(androidx.camera.core.ExperimentalGetImage::class)
+    private fun analyzeFrame(imageProxy: ImageProxy) {
+        val analyzer = poseDetector ?: run {
+            imageProxy.close()
+            return
+        }
+
+        try {
+            val result = analyzer.analyzeImageProxy(imageProxy)
+            _poseResult.value = result
+        } catch (e: Exception) {
+            Log.e("CameraPreview", "Frame analysis failed", e)
+        } finally {
+            imageProxy.close()
+        }
     }
 
     fun isReady(): Boolean = cameraProvider != null
@@ -162,6 +207,9 @@ class AndroidCameraController(
     override fun release() {
         recording?.stop()
         cameraProvider?.unbindAll()
+        poseDetector?.close()
+        poseDetector = null
+        analysisExecutor.shutdown()
         isInitialized = false
     }
 }

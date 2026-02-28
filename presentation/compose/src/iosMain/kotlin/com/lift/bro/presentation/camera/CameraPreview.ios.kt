@@ -4,12 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import platform.Foundation.NSFileManager
+import com.lift.bro.presentation.pose.PoseResult
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 actual class CameraPermission
 
 actual class CameraControllerFactory {
-    actual fun create(): CameraController {
+    actual fun create(modelPath: String?): CameraController {
         return IosCameraController()
     }
 }
@@ -20,11 +23,14 @@ actual fun rememberCameraControllerFactory(): CameraControllerFactory {
 }
 
 class IosCameraController : CameraController {
-    private val _isRecording = kotlinx.coroutines.flow.MutableStateFlow(false)
-    override val isRecording: kotlinx.coroutines.flow.StateFlow<Boolean> = _isRecording.asStateFlow()
+    private val _isRecording = MutableStateFlow(false)
+    override val isRecording: StateFlow<Boolean> = _isRecording.asStateFlow()
 
-    private val _recordingComplete = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
-    override val recordingComplete: kotlinx.coroutines.flow.StateFlow<String?> = _recordingComplete.asAsStateFlow()
+    private val _recordingComplete = MutableStateFlow<String?>(null)
+    override val recordingComplete: StateFlow<String?> = _recordingComplete.asStateFlow()
+
+    private val _poseResult = MutableStateFlow<PoseResult?>(null)
+    override val poseResult: StateFlow<PoseResult?> = _poseResult.asStateFlow()
 
     override fun startRecording(outputFile: java.io.File) {
         _isRecording.value = true
@@ -34,6 +40,7 @@ class IosCameraController : CameraController {
         _isRecording.value = false
     }
 
+@Suppress("EmptyFunctionBlock")
     override fun release() {
     }
 }
@@ -49,5 +56,3 @@ actual fun CameraPreview(
         }
     }
 }
-
-private fun <T> kotlinx.coroutines.flow.MutableStateFlow<T>.asAsStateFlow(): kotlinx.coroutines.flow.StateFlow<T> = this
