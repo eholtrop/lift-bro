@@ -19,6 +19,7 @@ import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightLiftDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
+import com.lift.bro.domain.analytics.AnalyticsTracker
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
@@ -37,6 +38,8 @@ expect class DependencyContainer {
     fun launchManageSubscriptions()
 
     val audioPlayer: AudioPlayer
+
+    val analyticsTracker: AnalyticsTracker
 }
 
 private val remoteUrl: String?
