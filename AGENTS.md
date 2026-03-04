@@ -1,309 +1,195 @@
 # AGENTS.md - Lift Bro Development Guide
 
-This guide helps agentic coding agents work effectively with the Lift Bro Kotlin Multiplatform fitness tracking application.
-
 ## Project Overview
 
-**Lift Bro** is a Kotlin Multiplatform (KMP) fitness tracking app built with Jetpack Compose Multiplatform, targeting Android and iOS. It follows Clean Architecture with MVI (Model-View-Intent) pattern for UI state management.
+Lift Bro is a Kotlin Multiplatform app using Jetpack Compose for Android and iOS. It tracks gym workouts with a custom MVI architecture (no ViewModels) and custom dependency injection.
 
-**Tech Stack:**
-- Kotlin 2.3.0 + KMP
-- Jetpack Compose Multiplatform 1.8.1
-- SQLDelight 2.0.2 (database)
-- Ktor 3.0.0 (networking)
-- Custom dependency injection (no DI framework)
+## Build Commands
 
-## Build & Development Commands
-
-### Essential Commands
+### Common Tasks
 ```bash
-# Build entire project
+# Build all modules
 ./gradlew build
 
-# Android development
-./gradlew :app-android:assembleDebug          # Build debug APK
-./gradlew :app-android:installDebug           # Install on device
-./gradlew :app-android:run                    # Run on connected device
+# Build debug APK only
+./gradlew assembleDebug
 
-# iOS development
-./gradlew :presentation:compose:linkDebugFrameworkIosSimulatorArm64
-
-# Linting & formatting
-./gradlew detekt                              # Run static analysis
-./gradlew detektFormat                        # Auto-fix formatting issues
-./gradlew detekt --continue                   # See all module results
-
-# Testing
-./gradlew :domain:testDebugUnitTest           # Domain layer tests
-./gradlew :presentation:compose:testDebugUnitTest  # UI tests
-./gradlew :domain:allTests                    # All platform tests
-
-# UI Testing (Maestro)
-maestro test .maestro                         # All UI tests
-maestro test .maestro/onboarding_tests.yaml   # Specific test flow
-
-# Documentation
-./gradlew generateArchDiagram                 # Update README architecture diagram
+# Clean build
+./gradlew clean
 ```
 
-### Running Single Tests
+### Testing
 ```bash
-# Run specific test class
-./gradlew :domain:testDebugUnitTest --tests "*WorkoutRepositoryTest"
+# Run all tests
+./gradlew test
 
-# Run specific test method
-./gradlew :domain:testDebugUnitTest --tests "*WorkoutRepositoryTest.saveWorkout*"
+# Run tests for a specific module
+./gradlew :domain:test
+./gradlew :presentation:compose:test
 
-# Run tests with filter
-./gradlew :presentation:compose:testDebugUnitTest --tests "*ReducerTest"
+# Run a single test class
+./gradlew :domain:test --tests "com.lift.bro.domain.models.LBSetTest"
+
+# Run a single test method
+./gradlew :domain:test --tests "com.lift.bro.domain.models.LBSetTest.calculateMax tests"
+
+# Run screenshot tests (validation)
+./gradlew validateScreenshotTests
+
+# Update screenshot tests
+./gradlew updateScreenshotTests
+```
+
+### Linting & Formatting
+```bash
+# Run detekt lint (fail on issues)
+./gradlew detekt
+
+# Auto-fix lint issues
+./gradlew detektFormat
+
+# Run detekt on specific module
+./gradlew :domain:detekt
+./gradlew :presentation:compose:detektFormat
+```
+
+## Architecture
+
+### Module Structure
+- **app-android**: Android app entry point
+- **domain**: Domain models and repository interfaces (dependency-free)
+- **data**: Repository implementations, SQLDelight database, Ktor client
+- **presentation**: UI Composables, MVI interactors (flowvi)
+- **libs**: Shared libraries (logging, navi, ext)
+
+### MVI Pattern (flowvi)
+- State: Immutable data classes with `@Serializable` for persistence
+- Events: Sealed interfaces for user actions
+- Interactors: `Interactor<State, Event>` with `rememberInteractor()`
+- SideEffects: Handle navigation and async operations
+
+Example structure:
+```kotlin
+@Serializable
+data class MyState(val value: String = "")
+
+sealed interface MyEvent {
+    data class ValueChanged(val value: String): MyEvent
+    data object SubmitClicked: MyEvent
+}
+
+@Composable
+fun rememberMyInteractor(): Interactor<MyState, MyEvent> = rememberInteractor(
+    initialState = MyState(),
+    sideEffects = listOf(
+        SideEffect { state, event -> /* handle events */ }
+    )
+)
+```
+
+### Dependency Injection
+Custom static injection via `DependencyContainer`:
+```kotlin
+object DependencyContainer {
+    // Lazy singletons
+    val liftRepository: ILiftRepository by lazy { LiftRepository(...) }
+    
+    // JIT via get()
+    fun createSetRepository(db: LBDatabase) = SetRepository(db)
+}
 ```
 
 ## Code Style Guidelines
 
-### File Structure & Organization
-```
-module/
-├── src/
-│   ├── commonMain/kotlin/        # Shared KMP code
-│   ├── androidMain/kotlin/       # Android-specific
-│   ├── iosMain/kotlin/          # iOS-specific
-│   └── commonTest/kotlin/        # Shared tests
-```
-
 ### Naming Conventions
-- **Classes**: PascalCase (`WorkoutRepository`, `WorkoutScreen`)
-- **Functions**: camelCase (`saveWorkout`, `onExerciseClick`)
-- **Variables**: camelCase (`workoutId`, `exerciseName`)
-- **Constants**: SCREAMING_SNAKE_CASE (`DEFAULT_SET_COUNT`)
-- **Enum entries**: PascalCase (`InProgress`, `Completed`)
-- **Files**: Same as class name (`WorkoutRepository.kt`)
+- **Classes/Interfaces**: `PascalCase` (e.g., `LiftDetailsInteractor`)
+- **Functions/Properties**: `camelCase` (e.g., `calculateMax`)
+- **Constants**: `UPPER_SNAKE_CASE` (e.g., `MER_DENOMINATOR`)
+- **Packages**: lowercase (e.g., `com.lift.bro.domain.models`)
 
-### Import Organization
+### File Organization
+- One class/interface per file (filename matches class name)
+- Group related files in packages by feature
+- Test files in `src/commonTest/kotlin/` mirror main source structure
+
+### Imports
+- Explicit imports required (no wildcard except `java.util.*`)
+- Group: standard library → external → internal
+- Sort alphabetically within groups
+
+### Formatting (detekt enforced)
+- **Max line length**: 120 characters
+- **Indent**: 4 spaces (no tabs)
+- **No trailing whitespace**
+- **Newline at end of file**
+
+### Complexity Limits (detekt)
+- Max functions per class/interface/object: 11
+- Max cyclomatic complexity: 15
+- Max nested block depth: 4
+- Max parameters: 6 (ignore default, data classes)
+- Max return statements: 2
+
+### Error Handling
+- Use specific exception types (no generic `Exception`, `RuntimeException`, `Throwable`)
+- Never swallow exceptions silently (use `ignoredExceptionTypes` pattern)
+- Provide meaningful messages in exceptions
+
+### Type Safety
+- Avoid `!!` operator (prefer safe calls or `requireNotNull`)
+- Use `?` for nullable types
+- Prefer `val` over `var`
+- Use data classes for immutable models
+
+### Kotlin Specific
+- Use extension functions for domain-specific behavior
+- Use `@Composable` annotation for all Compose UI
+- Mark state classes as `@Serializable` for persistence
+- Use `when` expressions exhaustively
+
+## Testing Conventions
+
+### Test Structure
 ```kotlin
-// 1. Kotlin stdlib
-import kotlinx.coroutines.flow.Flow
-
-// 2. Third-party libraries
-import com.benasher44.uuid.uuid4
-
-// 3. Project modules (alphabetical)
-import com.lift.bro.domain.model.Workout
-import com.lift.bro.domain.repository.WorkoutRepository
-
-// 4. Same module imports
-import .ui.WorkoutState
-```
-
-### Code Style Rules
-- **4-space indentation** (no tabs)
-- **120-character max line length**
-- **LF line endings**
-- **Trim trailing whitespace**
-- **Use explicit `it` parameter** in multiline lambdas
-- **Prefer `val` over `var`**
-- **No wildcard imports** (`import *`)
-
-### Architecture Patterns
-
-#### Clean Architecture Layers
-1. **Domain**: Pure Kotlin, business logic, no dependencies
-2. **Data**: Repository implementations, database, network
-3. **Presentation**: UI, view models, navigation
-
-#### MVI Pattern Structure
-```kotlin
-// State (immutable data class)
-data class WorkoutState(
-    val workout: Workout? = null,
-    val isLoading: Boolean = false,
-    val error: String? = null
-)
-
-// Intent (sealed class for user actions)
-sealed class WorkoutIntent {
-    data class LoadWorkout(val id: UUID) : WorkoutIntent()
-    data class UpdateExercise(val exercise: Exercise) : WorkoutIntent()
-}
-
-// Reducer (pure function)
-fun reduce(state: WorkoutState, intent: WorkoutIntent): WorkoutState {
-    return when (intent) {
-        is WorkoutIntent.LoadWorkout -> state.copy(isLoading = true)
-        // ...
+class MyClassTest {
+    @Test
+    fun `Given condition When action Then result`() {
+        // Arrange
+        val input = ...
+        
+        // Act
+        val result = functionUnderTest(input)
+        
+        // Assert
+        assertEquals(expected, result)
     }
 }
 ```
 
-#### Repository Pattern
-```kotlin
-// Interface in domain layer
-interface WorkoutRepository {
-    suspend fun getWorkout(id: UUID): Flow<Workout?>
-    suspend fun saveWorkout(workout: Workout): Result<Unit>
-}
+### Test Dependencies
+- `kotlin.test` - testing framework
+- `kotlinx.coroutines.test` - coroutine testing
+- `turbine` - Flow testing
 
-// Implementation in data layer
-class SqlDelightWorkoutRepository(
-    private val database: LiftBroDatabase
-) : WorkoutRepository {
-    // Implementation
-}
-```
+## Detekt Configuration
 
-### Error Handling Guidelines
-- **Use `Result<T>`** for operations that can fail
-- **Prefer `null`** for optional values vs empty collections
-- **Never catch `Exception`** - catch specific exceptions
-- **Wrap external library exceptions** in domain exceptions
+Key rules in `config/detekt/detekt.yml`:
+- `WildcardImport`: active (excludes `java.util.*`)
+- `ForbiddenComment`: blocks `TODO:`, `FIXME:`, `STOPSHIP:`
+- `MagicNumber`: allows -1, 0, 1, 2
+- `ReturnCount`: max 2
+- `ThrowsCount`: max 2
+- `TooManyFunctions`: 11 per file/class/interface
 
-```kotlin
-// Good
-suspend fun saveWorkout(workout: Workout): Result<Unit> = try {
-    database.insertWorkout(workout.toEntity())
-    Result.success(Unit)
-} catch (e: SQLException) {
-    Result.failure(WorkoutSaveException("Failed to save workout", e))
-}
+## Common Issues
 
-// Bad
-suspend fun saveWorkout(workout: Workout) {
-    try {
-        database.insertWorkout(workout.toEntity())
-    } catch (e: Exception) {
-        print(e.message)
-    }
-}
-```
+- **Detekt failures**: Run `./gradlew detektFormat` to auto-fix
+- **Missing tests**: Add tests in `src/commonTest/kotlin/`
+- **Multiplatform issues**: Platform-specific code goes in `androidMain`, `nativeMain`, etc.
 
-### Testing Guidelines
-
-#### Test Structure (Given-When-Then)
-```kotlin
-@Test
-fun `should load workout when id is valid`() = runTest {
-    // Given
-    val workout = Workout.sample()
-    every { repository.getWorkout(workout.id) } returns flowOf(workout)
-    
-    // When
-    val result = useCase.loadWorkout(workout.id)
-    
-    // Then
-    assertEquals(workout, result.first())
-}
-```
-
-#### Test Naming
-- Use backticks for descriptive test names
-- Structure: `should [expected behavior] when [condition]`
-- Focus on behavior, not implementation details
-
-### Compose UI Guidelines
-
-#### Composable Structure
-```kotlin
-@Composable
-fun WorkoutScreen(
-    state: WorkoutState,
-    onIntent: (WorkoutIntent) -> Unit
-) {
-    when {
-        state.isLoading -> LoadingIndicator()
-        state.error != null -> ErrorMessage(state.error)
-        else -> WorkoutContent(state.workout, onIntent)
-    }
-}
-```
-
-#### State Management
-- **Prefer `remember`** for local state
-- **Use `LaunchedEffect`** for one-time events
-- **Leverage `produceState`** for external data sources
-
-### Database Guidelines (SQLDelight)
-
-#### Schema Files
-- Location: `src/commonMain/sqldelight/`
-- Extension: `.sq`
-- Use descriptive table and column names
-
-```sql
-CREATE TABLE Workout (
-    id TEXT NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL,
-    date INTEGER NOT NULL,
-    completed INTEGER NOT NULL DEFAULT 0
-);
-```
-
-#### Type Safety
-- Always use generated types from SQLDelight
-- Avoid raw SQL queries
-- Use prepared statements for parameters
-
-### Dependency Injection Guidelines
-
-**No DI framework** - use manual dependency injection with factories:
-
-```kotlin
-class DomainModule(
-    private val dataModule: DataModule
-) {
-    val workoutRepository: WorkoutRepository by lazy {
-        SqlDelightWorkoutRepository(dataModule.database)
-    }
-    
-    val getWorkoutUseCase: GetWorkoutUseCase by lazy {
-        GetWorkoutUseCase(workoutRepository)
-    }
-}
-```
-
-### Performance Guidelines
-
-#### Coroutines
-- **Use `IO` dispatcher** for database/network operations
-- **Use `Main` dispatcher** for UI operations (platform-specific)
-- **Prefer `Flow`** for reactive data streams
-- **Use `sharedFlow`** for events, `stateFlow` for state
-
-#### Memory Management
-- **Avoid object pooling** - let Kotlin's GC handle it
-- **Use `inline` classes** for type wrappers
-- **Prefer immutable data structures**
-
-### Platform-Specific Notes
-
-#### Android
-- Target SDK 36, min SDK 24
-- Use Material Design 3
-- Handle configuration changes properly
-
-#### iOS
-- Use iOS-style navigation patterns
-- Respect platform-specific UI conventions
-- Handle iOS permissions properly
-
-### Common Pitfalls to Avoid
-
-1. **Mixing platform-specific code in common modules**
-2. **Using `!!` operator** - prefer safe calls or explicit null checks
-3. **Global state** - use dependency injection
-4. **Direct database access from UI** - always use repositories
-5. **Ignoring coroutines cancellation** - use structured concurrency
-
-### Before Submitting Changes
-
-1. **Run full test suite**: `./gradlew detekt && ./gradlew test`
-2. **Check for formatting issues**: `./gradlew detektFormat`
-3. **Update documentation** if adding new features
-4. **Run UI tests** if changing UI components
-5. **Generate architecture diagram** if changing module structure
-
-### Getting Help
-
-- **README.md**: Project overview and setup instructions
-- **CONTRIBUTING.md**: Contribution guidelines
-- **WARP.md**: WARP-specific development guide
-- **Check existing tests** for patterns and conventions
-- **Review similar components** for implementation guidance
+## Environment Variables (Build/Release)
+- `LIFT_BRO_ADMOB_APP_ID`
+- `LIFT_BRO_AD_UNIT_ID`
+- `LIFT_BRO_SENTRY_DSN`
+- `REVENUE_CAT_API_KEY`
+- `STORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` (Android signing)

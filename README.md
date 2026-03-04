@@ -5,8 +5,6 @@ Lift Bro is a Lift tracking app created as a side project to help me replace my 
 
 It is built using Kotlin Multiplatform and Jetpack Compose Multiplatform to allow for shared logic between Android and iOS
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/B0B71MI0CT)
-
 # Architecture
 
 Diagram generated using `./gradlew generateArchDiagrams`
@@ -64,14 +62,16 @@ graph TD
 
 #### App-*
 These are the application modules. These house the application specific logic (mostly configuration) They then "glue" the other modules together.
+The only exception to this is iosApp (where iOS lives)
 
 #### Presentation
 This holds and is responsible for anything directly user facing. This could include things like:
 
 - The UI Composables alongside their UI logic. (the compose module), more details located below.
-- An API service that exposes JSON models for other instances of liftbro to consume (the server module)
+- The State/Events for that ui
+- The interactor that handles the given state/event relationship
 
-Responsible for fetching the domain models and mapping them to what is required by that module can understand.
+Responsible for fetching the domain models and mapping them to UI State.
 
 #### Domain
 Holds the dependency-free Domain models that are mapped to and from both the Presentation and Data Models
@@ -88,10 +88,6 @@ Responsible for fetching the data from the source as well as map from the Data m
 
 Any extra libraries that could be used across all layers. Or things that I may be looking to extract and provide via maven
 
-## Presentation MVI Structure
-
-![img.png](img.png)
-
 ## Dependencies!
 Lift Bro started out as a side project where I also wanted to tinker with replacing some of the "standard" libraries for android development
 
@@ -101,24 +97,24 @@ A few things you will not find in the project:
 2. Dependency Injection
 
 ### Why no ViewModels?
-ViewModels were designed as a requirement for maintaining state when a Fragment was no longer on the stack (or configuration changes) Since this app is fully JetpackCompose and the "state" is handled in either the view or the local DB (ie. there are no network calls) I took this as an opportunity to make something completely different!
-
-What this has resulted in is "bloating" the Composable with business logic which I dont love so this will be refactored as I go forward. But in general the saveStateHandler is utilized to store UI state and then any extra state is fetched from the DB when needed!
+ViewModels were designed as a solution for maintaining state when a Fragment was no longer on the stack 
+(or configuration changes) Since this app is fully JetpackCompose and the "state" is handled in either the view or the local DB 
+(ie. there are no network calls) I took this as an opportunity to make something completely different!
 
 The goal being a truely MVI system that stores and UI state in the handler and any side effects handle the work required.
 
-Problems with the current setup:
-1. Ive been trying new stuff on each page so there is no "consistency" (side projects amiright!)
-2. The view cannot handle long lived tasks very well, storing and maintaining state works fine! But as of right now any long lived tasks (ie. backup/restore or saving to the DB) are treated as "fire and forget"
+The one major downside of this is any "long lived tasks" that may exist outside of the view state.
+These would require reconnection (not possible currently) But the work would still be done (ex: fire and forget events, like saving an object)
 
 ### Why no "standard" Dependency Injection (ie. Dagger)
-(you will start to see a pattern here)
+Due to this being a side project I decided to try rolling my own dependency injection scheme. 
+The current implementation is messy to say the least! But it does seem to be working
 
-Due to this being a side project I decided to try rolling my own dependency injection scheme. The current implementation is messy to say the least! But a refactor is coming
+DependencyInjector:
+A class that handles all dependency injection, handled statically
 
-Problems with the current setup:
-1. Stores context statically
-2. Easy to inject in a non testable way
+Anything that is using a factory/singleton pattern uses lazy injection. 
+Anything outside of that (JIT objects) are handled via get() functions
 
 # Release Schedule
 
@@ -128,27 +124,14 @@ Android is released to `open testing` whenever code is pushed to `main`. This ca
 This beta build is promoted to production every Saturday at midnight!
 
 ## iOS
-Currently iOS is very manual, I tried to "vibe code" a CI solution similar to android but it failed miserably...
-
-Need to spend some time on this in the future. Until then! Manual (I try to release once a week same as android)
+iOS is built using manual builds for now (pipelines exist but are failing)
 
 ### Goal for iOS
 Release to testflight nightly, promote to production every Saturday at midnight
 
-# UI Testing
-ui tests are run using maestro, to install follow this link
-
-https://docs.maestro.dev/getting-started/installing-maestro
-
-To run the ui tests you can then run it will target whatever currently running/connected device you have
-```bash
-maestro test .maestro
-```
-
-you can also target a specific flow:
-```bash
-maestro test .maestro/onboarding_tests.yaml
-```
+# Snapshot testing
+Snapshots can be generated using `./gradlew updateScreenshotTests`
+Snapshot tests can be validated u sing `./gradlew validateScreenshotTests`
 
 ## Local configuration
 
