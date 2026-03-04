@@ -2,7 +2,6 @@ package com.lift.bro.presentation.workout
 
 import androidx.compose.runtime.Composable
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_confirm_cta
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_dismiss_cta
 import lift_bro.core.generated.resources.edit_daily_notes_dialog_placeholder
@@ -10,6 +9,7 @@ import lift_bro.core.generated.resources.edit_daily_notes_dialog_title
 import lift_bro.core.generated.resources.workout_calendar_edit_daily_notes_cta
 import lift_bro.core.generated.resources.workout_calendar_screen_favourite_content_description
 import lift_bro.core.generated.resources.workout_calendar_screen_finisher_label
+import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_subtitle
 import lift_bro.core.generated.resources.workout_calendar_screen_other_gains_title
 import lift_bro.core.generated.resources.workout_calendar_screen_start_workout_cta
 import lift_bro.core.generated.resources.workout_calendar_screen_warmup_label
@@ -38,10 +38,12 @@ data class WorkoutCalendarScreenStrings(
             editNotesContentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta),
             startWorkoutButton = stringResource(Res.string.workout_calendar_screen_start_workout_cta),
             otherGainsTitle = stringResource(Res.string.workout_calendar_screen_other_gains_title),
-            otherGainsSubtitle = stringResource(Res.string.workout_calendar_screen_warmup_label),
-            warmupLabel = stringResource(Res.string.workout_calendar_screen_finisher_label),
-            finisherLabel = stringResource(Res.string.workout_calendar_screen_favourite_content_description),
-            favoriteContentDescription = stringResource(Res.string.dashboard_fab_content_description),
+            otherGainsSubtitle = stringResource(Res.string.workout_calendar_screen_other_gains_subtitle),
+            warmupLabel = stringResource(Res.string.workout_calendar_screen_warmup_label),
+            finisherLabel = stringResource(Res.string.workout_calendar_screen_finisher_label),
+            favoriteContentDescription = stringResource(
+                Res.string.workout_calendar_screen_favourite_content_description
+            ),
         )
     }
 }
