@@ -7,7 +7,7 @@
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
     <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: DashboardInteractor = rememberDashboardInteractor(), )</ID>
-    <ID>CyclomaticComplexMethod:EditSetScreen.kt$@Composable fun EditSetScreen( interactor: Interactor&lt;EditSetState?, EditSetEvent&gt;, )</ID>
+    <ID>CyclomaticComplexMethod:EditSetScreen.kt$@Composable fun EditSetScreen( state: EditSetState, onEvent: (EditSetEvent) -&gt; Unit, strings: EditSetScreenStrings = EditSetScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, showRpe: Boolean = true, showTempo: Boolean = true, yUnit: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
@@ -23,6 +23,8 @@
     <ID>EmptyFunctionBlock:GetTotalWeightMovedUseCaseTest.kt$GetTotalWeightMovedUseCaseTest.FakeSetRepository${}</ID>
     <ID>EmptyFunctionBlock:StoreManager.native.kt$StoreManager${ }</ID>
     <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
+    <ID>Filename:EncryptionKeyProvider.android.kt$com.lift.bro.data.EncryptionKeyProvider.android.kt</ID>
+    <ID>Filename:EncryptionKeyProvider.native.kt$com.lift.bro.data.EncryptionKeyProvider.native.kt</ID>
     <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
     <ID>Filename:LBDatabase.native.kt$com.lift.bro.data.LBDatabase.native.kt</ID>
     <ID>Filename:eMaxSettingsRow.kt$com.lift.bro.presentation.settings.eMaxSettingsRow.kt</ID>
@@ -188,6 +190,7 @@
     <ID>MagicNumber:WrappedWeightScreen.kt$12</ID>
     <ID>MagicNumber:WrappedWeightScreen.kt$31</ID>
     <ID>MatchingDeclarationName:AnimatedText.kt$AnimatedTextDefaults</ID>
+    <ID>MatchingDeclarationName:EncryptionKeyProvider.native.kt$EncryptionKeyProviderImpl : EncryptionKeyProvider</ID>
     <ID>MatchingDeclarationName:LBDatabase.kt$DriverFactory</ID>
     <ID>MatchingDeclarationName:LBDatabase.native.kt$DriverFactory</ID>
     <ID>MatchingDeclarationName:LiftingScaffold.kt$FabProperties</ID>
@@ -202,7 +205,6 @@
     <ID>MaxLineLength:DashboardInteractor.kt$(item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id &amp;&amp; it.favourite</ID>
     <ID>MaxLineLength:EditSetInteractor.kt$if</ID>
     <ID>MaxLineLength:EditSetScreen.kt$color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground</ID>
-    <ID>MaxLineLength:EditSetScreen.kt$val tempo = state?.let { Tempo(down = it.tempo.ecc ?: 3, hold = it.tempo.iso ?: 1, up = it.tempo.con ?: 1) } ?: Tempo()</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight</ID>
     <ID>MaxLineLength:LiftDetailsScreen.kt$imageVector = if (variation.favourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder</ID>
     <ID>MaxLineLength:LiftingScaffold.kt$if</ID>
@@ -246,7 +248,10 @@
     <ID>SpreadOperator:WorkoutRepository.kt$WorkoutRepository$( *workouts.map { workout -&gt; database.exerciseDataSource.listen(workout.id).map { Workout( id = workout.id, date = workout.date, warmup = workout.warmup, exercises = it.toList(), finisher = workout.finisher ) } }.toTypedArray() )</ID>
     <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
     <ID>SwallowedException:LiftDetailsScreen.kt$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LBDatabase.kt$DriverFactory$e: Exception</ID>
     <ID>TooGenericExceptionCaught:LiftDetailsScreen.kt$e: Exception</ID>
+    <ID>TooManyFunctions:EditSetScreen.kt$com.lift.bro.presentation.set.EditSetScreen.kt</ID>
     <ID>TooManyFunctions:LBDatabase.kt$SetDataSource</ID>
     <ID>TooManyFunctions:SettingsRepository.kt$SettingsRepository : ISettingsRepository</ID>
     <ID>TooManyFunctions:TimerScreen.kt$com.lift.bro.presentation.timer.TimerScreen.kt</ID>
