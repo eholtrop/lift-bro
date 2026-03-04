@@ -33,7 +33,7 @@ typealias TimerInteractor = Interactor<TimerState, TimerEvent>
 fun rememberTimerInteractor(
     setId: String,
     setRepository: ISetRepository = dependencies.setRepository,
-    uiEffects: SideEffect<TimerState, TimerEvent> = { },
+    uiEffects: SideEffect<TimerState, TimerEvent> = SideEffect { _, _, _ ->  },
 ): TimerInteractor = rememberInteractor(
     initialState = Plan(),
     source = {

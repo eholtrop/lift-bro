@@ -12,6 +12,7 @@
     <string name="calendar_next_month_content_description">Next Month</string>
     <string name="calendar_previous_month_content_description">Previous Month</string>
     <string name="calendar_today_content_description">Today</string>
+    <string name="edit_lift_variation_warning_dialog_text">This will delete all sets within this variation, are you sure?</string>
 
     <string name="color_picker_dialog_blue">blue</string>
     <string name="color_picker_dialog_green">green</string>
