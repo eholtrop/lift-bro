@@ -2,13 +2,13 @@ package com.lift.bro.data
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.edit
 import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.lift.bro.db.LiftBroDB
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.runBlocking
 import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import java.io.File
 
@@ -19,9 +19,7 @@ class DatabaseMigrationManager(
     private val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     suspend fun migrateIfNeeded(): MigrationResult = withContext(Dispatchers.IO) {
-        val migrationRequired = context.databaseList().let {
-            !it.contains(ENCRYPTED_DB_NAME) || it.contains(UNENCRYPTED_DB_NAME)
-        }
+        val migrationRequired = context.databaseList().contains(UNENCRYPTED_DB_NAME)
 
         if (migrationRequired) {
             Log.d(TAG, "Performing Migration")
@@ -35,13 +33,15 @@ class DatabaseMigrationManager(
         }
     }
 
-    private suspend fun performMigration(unencryptedDb: File, encryptedDb: File): MigrationResult = withContext(Dispatchers.IO) {
+    private suspend fun performMigration(unencryptedDb: File, encryptedDb: File): MigrationResult = withContext(
+        Dispatchers.IO
+    ) {
         prefs.edit().putString(KEY_MIGRATION_STATE, MIGRATION_IN_PROGRESS).apply()
 
         var targetDriver: SqlDriver? = null
 
         try {
-            val passphrase = runBlocking { encryptionKeyProvider.getOrCreateKey() }
+            val passphrase = encryptionKeyProvider.getOrCreateKey()
             val passphraseString = String(passphrase, Charsets.UTF_8)
             val passphraseBytes = passphraseString.toByteArray(Charsets.UTF_8)
 
@@ -63,27 +63,28 @@ class DatabaseMigrationManager(
 
             if (!encryptedDb.exists()) {
                 Log.e(TAG, "Encrypted DB was not created!")
-                prefs.edit().putString(KEY_MIGRATION_STATE, null).apply()
+                prefs.edit { putString(KEY_MIGRATION_STATE, null) }
                 return@withContext MigrationResult.Failed("Encrypted DB was not created")
             }
+            context.deleteDatabase(UNENCRYPTED_DB_NAME)
 
-            unencryptedDb.delete()
             Log.i(TAG, "Migration completed successfully!")
 
-            prefs.edit()
-                .putString(KEY_MIGRATION_STATE, MIGRATION_COMPLETE)
-                .apply()
+            prefs.edit {
+                putString(KEY_MIGRATION_STATE, MIGRATION_COMPLETE)
+            }
 
             MigrationResult.Success
         } catch (e: Exception) {
             Log.e(TAG, "Migration failed", e)
-            encryptedDb.delete()
-            prefs.edit().putString(KEY_MIGRATION_STATE, null).apply()
+            context.deleteDatabase(ENCRYPTED_DB_NAME)
+            prefs.edit { putString(KEY_MIGRATION_STATE, null) }
             MigrationResult.Failed(e.message ?: "Unknown error")
         } finally {
             try {
                 targetDriver?.close()
-            } catch (e: Exception) { /* ignore */
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to close target driver", e)
             }
         }
     }
@@ -101,7 +102,16 @@ class DatabaseMigrationManager(
             throw e
         }
 
-        val tables = listOf("Lift", "Variation", "LiftingSet", "LiftingLog", "Workout", "Goal", "Exercise", "ExerciseVariation")
+        val tables = listOf(
+            "Lift",
+            "Variation",
+            "LiftingSet",
+            "LiftingLog",
+            "Workout",
+            "Goal",
+            "Exercise",
+            "ExerciseVariation"
+        )
 
         for (table in tables) {
             Log.d(TAG, "Copying table: $table")

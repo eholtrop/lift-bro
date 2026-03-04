@@ -1,8 +1,6 @@
 package com.lift.bro.di
 
 import com.lift.bro.data.DriverFactory
-import com.lift.bro.data.EncryptionKeyProvider
-import com.lift.bro.data.EncryptionKeyProviderImpl
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.datasource.UserPreferencesDataSource
 import com.lift.bro.data.repository.SettingsRepository

@@ -14,8 +14,10 @@ actual class DriverFactory actual constructor(
     @Suppress("UNUSED_PARAMETER") context: Any,
 ) {
     private val androidContext: Context = context as Context
-    private val encryptionKeyProvider = EncryptionKeyProviderImpl(androidContext)
-    private val migrationManager by lazy { DatabaseMigrationManager(androidContext, encryptionKeyProvider) }
+    private val encryptionKeyProvider = EncryptionKeyProviderImpl(androidContext.applicationContext)
+    private val migrationManager by lazy {
+        DatabaseMigrationManager(androidContext.applicationContext, encryptionKeyProvider)
+    }
 
     init {
         System.loadLibrary("sqlcipher")
@@ -26,9 +28,8 @@ actual class DriverFactory actual constructor(
     ): SqlDriver {
         runBlocking {
             migrationManager.migrateIfNeeded()
+            migrationManager.cleanupIfComplete()
         }
-
-        migrationManager.cleanupIfComplete()
 
         val encryptedDb = androidContext.getDatabasePath(ENCRYPTED_DB_NAME)
         val passphrase = runBlocking { encryptionKeyProvider.getOrCreateKey() }

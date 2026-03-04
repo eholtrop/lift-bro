@@ -137,7 +137,7 @@ fun EditSetScreen(
     LiftingScaffold(
         title = {
             Text(
-                if (state.id != null) strings.createSetTitle else strings.editSetTitle
+                if (state.id == null) strings.createSetTitle else strings.editSetTitle
             )
         },
         trailingContent = {
@@ -163,7 +163,13 @@ fun EditSetScreen(
             )
             if (state.timerEnabled) {
                 val navCoordinator = LocalNavCoordinator.current
-                val tempo = state.let { Tempo(down = it.tempo.ecc ?: 3, hold = it.tempo.iso ?: 1, up = it.tempo.con ?: 1) }
+                val tempo = state.let {
+                    Tempo(
+                        down = it.tempo.ecc ?: 3,
+                        hold = it.tempo.iso ?: 1,
+                        up = it.tempo.con ?: 1
+                    )
+                }
                 IconButton(
                     onClick = {
                         val id = state.id ?: ""

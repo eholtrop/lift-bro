@@ -12,7 +12,7 @@ actual class DriverFactory actual constructor(
     actual fun provideDbDriver(schema: SqlSchema<QueryResult.AsyncValue<Unit>>): SqlDriver {
         return NativeSqliteDriver(
             schema = schema.synchronous(),
-            databaseName = "test.db",
+            databaseName = "liftbro.db",
         )
     }
 }
