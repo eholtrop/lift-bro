@@ -8,7 +8,7 @@ import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import kotlinx.coroutines.runBlocking
-import net.sqlcipher.database.SupportFactory
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 
 actual class DriverFactory actual constructor(
     @Suppress("UNUSED_PARAMETER") context: Any,
@@ -16,6 +16,10 @@ actual class DriverFactory actual constructor(
     private val androidContext: Context = context as Context
     private val encryptionKeyProvider = EncryptionKeyProviderImpl(androidContext)
     private val migrationManager by lazy { DatabaseMigrationManager(androidContext, encryptionKeyProvider) }
+
+    init {
+        System.loadLibrary("sqlcipher")
+    }
 
     actual fun provideDbDriver(
         schema: SqlSchema<QueryResult.AsyncValue<Unit>>
@@ -36,7 +40,7 @@ actual class DriverFactory actual constructor(
                     schema = schema.synchronous(),
                     context = androidContext,
                     name = ENCRYPTED_DB_NAME,
-                    factory = SupportFactory(passphraseBytes),
+                    factory = SupportOpenHelperFactory(passphraseBytes),
                 )
             } catch (e: Exception) {
                 Log.e(TAG, "Failed to open encrypted database", e)
@@ -47,7 +51,7 @@ actual class DriverFactory actual constructor(
                 schema = schema.synchronous(),
                 context = androidContext,
                 name = ENCRYPTED_DB_NAME,
-                factory = SupportFactory(passphraseBytes),
+                factory = SupportOpenHelperFactory(passphraseBytes),
             )
         }
     }
