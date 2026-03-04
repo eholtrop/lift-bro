@@ -137,7 +137,7 @@ fun EditSetScreen(
     LiftingScaffold(
         title = {
             Text(
-                if (state.id != null) strings.createSetTitle else strings.editSetTitle
+                if (state.id == null) strings.createSetTitle else strings.editSetTitle
             )
         },
         trailingContent = {

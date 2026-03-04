@@ -41,7 +41,7 @@ class DatabaseMigrationManager(
         var targetDriver: SqlDriver? = null
 
         try {
-            val passphrase = runBlocking { encryptionKeyProvider.getOrCreateKey() }
+            val passphrase = encryptionKeyProvider.getOrCreateKey()
             val passphraseString = String(passphrase, Charsets.UTF_8)
             val passphraseBytes = passphraseString.toByteArray(Charsets.UTF_8)
 
@@ -83,7 +83,8 @@ class DatabaseMigrationManager(
         } finally {
             try {
                 targetDriver?.close()
-            } catch (e: Exception) { /* ignore */
+            } catch (e: Exception) {
+                Log.e(TAG, "Failed to close target driver", e)
             }
         }
     }

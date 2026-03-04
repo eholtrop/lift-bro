@@ -26,9 +26,9 @@ actual class DriverFactory actual constructor(
     ): SqlDriver {
         runBlocking {
             migrationManager.migrateIfNeeded()
+            migrationManager.cleanupIfComplete()
         }
 
-        migrationManager.cleanupIfComplete()
 
         val encryptedDb = androidContext.getDatabasePath(ENCRYPTED_DB_NAME)
         val passphrase = runBlocking { encryptionKeyProvider.getOrCreateKey() }

@@ -1,55 +1,60 @@
 package com.lift.bro.data
 
 import android.content.Context
-import android.security.keystore.KeyGenParameterSpec
-import android.security.keystore.KeyProperties
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKey
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import com.google.crypto.tink.Aead
+import com.google.crypto.tink.KeyTemplates
+import com.google.crypto.tink.aead.AeadConfig
+import com.google.crypto.tink.integration.android.AndroidKeysetManager
+import kotlinx.coroutines.flow.first
 import java.security.SecureRandom
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "liftbro_encrypted_prefs")
 
 class EncryptionKeyProviderImpl(
     private val context: Context,
 ) : EncryptionKeyProvider {
 
     private companion object {
-        private const val PREFS_NAME = "liftbro_encrypted_prefs"
-        private const val KEY_DB_ENCRYPTION_KEY = "db_encryption_key"
+        private val KEY_DB_ENCRYPTION_KEY = stringPreferencesKey("db_encryption_key")
         private const val KEY_LENGTH_BYTES = 32
+        private const val KEYSET_NAME = "liftbro_keyset"
+        private const val PREFERENCE_FILE = "liftbro_keyset_prefs"
+        private const val MASTER_KEY_URI = "android-keystore://liftbro_master_key"
+        private const val ASSOCIATED_DATA = "liftbro"
     }
 
-    private val masterKey: MasterKey by lazy {
-        val spec = KeyGenParameterSpec.Builder(
-            MasterKey.DEFAULT_MASTER_KEY_ALIAS,
-            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-        )
-            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .setKeySize(256)
+    private val aead: Aead by lazy {
+        AeadConfig.register()
+
+        val keysetManager = AndroidKeysetManager.Builder()
+            .withSharedPref(context, KEYSET_NAME, PREFERENCE_FILE)
+            .withKeyTemplate(KeyTemplates.get("AES256_GCM"))
+            .withMasterKeyUri(MASTER_KEY_URI)
             .build()
 
-        MasterKey.Builder(context)
-            .setKeyGenParameterSpec(spec)
-            .build()
-    }
-
-    private val encryptedPrefs by lazy {
-        EncryptedSharedPreferences.create(
-            context,
-            PREFS_NAME,
-            masterKey,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
+        keysetManager.keysetHandle.getPrimitive(Aead::class.java)
     }
 
     override suspend fun getOrCreateKey(): ByteArray {
-        val existingKey = encryptedPrefs.getString(KEY_DB_ENCRYPTION_KEY, null)
-        return if (existingKey != null) {
-            android.util.Base64.decode(existingKey, android.util.Base64.NO_WRAP)
+        val preferences = context.dataStore.data.first()
+        val encryptedKeyBase64 = preferences[KEY_DB_ENCRYPTION_KEY]
+
+        return if (encryptedKeyBase64 != null) {
+            val encryptedKey = android.util.Base64.decode(encryptedKeyBase64, android.util.Base64.NO_WRAP)
+            aead.decrypt(encryptedKey, ASSOCIATED_DATA.toByteArray())
         } else {
             val newKey = generateKey()
-            val encodedKey = android.util.Base64.encodeToString(newKey, android.util.Base64.NO_WRAP)
-            encryptedPrefs.edit().putString(KEY_DB_ENCRYPTION_KEY, encodedKey).apply()
+            val encryptedKey = aead.encrypt(newKey, ASSOCIATED_DATA.toByteArray())
+            val encodedKey = android.util.Base64.encodeToString(encryptedKey, android.util.Base64.NO_WRAP)
+
+            context.dataStore.edit { prefs ->
+                prefs[KEY_DB_ENCRYPTION_KEY] = encodedKey
+            }
             newKey
         }
     }
@@ -60,3 +65,5 @@ class EncryptionKeyProviderImpl(
         return key
     }
 }
+
+
