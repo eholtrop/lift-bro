@@ -9,7 +9,7 @@ import com.lift.bro.db.LiftBroDB
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.runBlocking
-import net.sqlcipher.database.SupportFactory
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory
 import java.io.File
 
 class DatabaseMigrationManager(
@@ -48,7 +48,7 @@ class DatabaseMigrationManager(
             val unencryptedSize = unencryptedDb.length()
             Log.d(TAG, "Unencrypted DB size: $unencryptedSize bytes")
 
-            val targetFactory = SupportFactory(passphraseBytes)
+            val targetFactory = SupportOpenHelperFactory(passphraseBytes)
             targetDriver = AndroidSqliteDriver(
                 schema = LiftBroDB.Schema.synchronous(),
                 context = context,
