@@ -77,6 +77,8 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import tv.dpal.compose.isOpen
 import tv.dpal.compose.padding.vertical.padding
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
 
 @Composable
 fun TimerScreen(
@@ -84,17 +86,12 @@ fun TimerScreen(
     reps: Int = 1,
     tempo: Tempo = Tempo(),
 ) {
-    var cameraController by remember { mutableStateOf<CameraController?>(null) }
-
     TimerScreen(
         interactor = rememberTimerInteractor(
             setId = setId,
             reps = reps,
             tempo = tempo,
-            cameraController = { cameraController },
         ),
-        cameraController = cameraController,
-        onCameraCreated = { cameraController = it }
     )
 }
 
@@ -102,19 +99,13 @@ fun TimerScreen(
 @Composable
 fun TimerScreen(
     interactor: TimerInteractor,
-    cameraController: CameraController?,
-    onCameraCreated: (CameraController) -> Unit,
 ) {
-
     val state by interactor.state.collectAsState()
 
     TimerScreen(
         state = state,
         onEvent = interactor::invoke,
-        cameraController = cameraController,
-        onCameraCreated = onCameraCreated,
     )
-
 }
 
 
@@ -123,10 +114,13 @@ fun TimerScreen(
 fun TimerScreen(
     state: TimerState,
     onEvent: (TimerEvent) -> Unit,
-    cameraController: CameraController? = null,
-    onCameraCreated: (CameraController) -> Unit = {},
 ) {
     val cameraControllerFactory = rememberCameraControllerFactory()
+    val cameraController = when (state) {
+        is TimerState.Ended -> null
+        is TimerState.Plan -> state.controller
+        is TimerState.Running -> state.controller
+    }
 
     val showCamera = when (state) {
         is TimerState.Plan -> state.cameraEnabled && cameraController != null
@@ -214,9 +208,11 @@ fun TimerScreen(
                                             }
                                         }
 
-                                        LaunchedEffect(state.cameraEnabled) {
-                                            if (state.cameraEnabled) {
-                                                onCameraCreated(cameraControllerFactory.create())
+                                        if (state.cameraEnabled) {
+                                            LaunchedEffect(state.cameraEnabled) {
+                                                if (state.cameraEnabled) {
+                                                    onEvent(TimerEvent.Plan.CameraLoaded(cameraControllerFactory.create()))
+                                                }
                                             }
                                         }
 
@@ -376,6 +372,7 @@ fun TimerOverlay(
                     }
 
                     state.videoUri?.let { videoUri ->
+                        Log.d(message = "render $videoUri")
                         item {
                             val videoFile = dependencies.videoStorage.getVideoFile(videoUri)
                             videoFile?.let { file ->
