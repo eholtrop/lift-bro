@@ -48,7 +48,7 @@ data class EditSetMaxPercentageState(
 
 @Serializable
 data class EditSetState(
-    val id: String?,
+    val id: String,
     val weight: Double? = null,
     val reps: Long? = null,
     val rpe: Int? = null,
