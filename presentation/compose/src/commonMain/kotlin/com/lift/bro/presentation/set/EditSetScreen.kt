@@ -69,6 +69,9 @@ import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.atStartOfDayIn
 import tv.dpal.ktx.datetime.toLocalDate
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
+import tv.dpal.navi.LocalNavCoordinator
 
 enum class RPE(
     val rpe: Int,
@@ -168,7 +171,8 @@ fun EditSetScreen(
                             navCoordinator.present(
                                 Destination.Timer.With(
                                     setId = state.id,
-                                    reps = state.reps?.toInt() ?: 1, tempo = tempo
+                                    reps = state.reps?.toInt() ?: 1,
+                                    tempo = tempo
                                 )
                             )
                         }
