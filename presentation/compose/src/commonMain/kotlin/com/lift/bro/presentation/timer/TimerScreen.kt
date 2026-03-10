@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -56,6 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.LocalShowMERCalcs
@@ -64,16 +64,14 @@ import com.lift.bro.presentation.camera.CameraController
 import com.lift.bro.presentation.camera.CameraPreview
 import com.lift.bro.presentation.camera.rememberCameraControllerFactory
 import com.lift.bro.presentation.camera.rememberCameraPermissionHandler
-import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.presentation.lift.transparentColors
+import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.Space
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.data.video.VideoStorage
-import com.lift.bro.di.dependencies
-import com.lift.bro.ui.Space
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
@@ -82,43 +80,43 @@ import tv.dpal.compose.padding.vertical.padding
 
 @Composable
 fun TimerScreen(
-    reps: Int,
-    tempo: Tempo,
+    setId: String,
+    reps: Int = 1,
+    tempo: Tempo = Tempo(),
 ) {
     var cameraController by remember { mutableStateOf<CameraController?>(null) }
 
-    val interactor: TimerInteractor = rememberTimerInteractor(
-        reps = reps,
-        tempo = tempo,
-        cameraController = { cameraController },
-    )
-
     TimerScreen(
-        state = interactor.state.collectAsState().value,
-        onEvent = interactor::invoke,
+        interactor = rememberTimerInteractor(
+            setId = setId,
+            reps = reps,
+            tempo = tempo,
+            cameraController = { cameraController },
+        ),
         cameraController = cameraController,
         onCameraCreated = { cameraController = it }
     )
 }
+
 
 @Composable
 fun TimerScreen(
-    setId: String,
+    interactor: TimerInteractor,
+    cameraController: CameraController?,
+    onCameraCreated: (CameraController) -> Unit,
 ) {
-    var cameraController by remember { mutableStateOf<CameraController?>(null) }
 
-    val interactor: TimerInteractor = rememberTimerInteractor(
-        setId = setId,
-        cameraController = { cameraController },
-    )
+    val state by interactor.state.collectAsState()
 
     TimerScreen(
-        state = interactor.state.collectAsState().value,
+        state = state,
         onEvent = interactor::invoke,
         cameraController = cameraController,
-        onCameraCreated = { cameraController = it }
+        onCameraCreated = onCameraCreated,
     )
+
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -37,17 +37,25 @@ typealias TimerInteractor = Interactor<TimerState, TimerEvent>
 @Composable
 fun rememberTimerInteractor(
     setId: String,
+    reps: Int = 1,
+    tempo: Tempo = Tempo(),
     cameraController: () -> CameraController?,
     setRepository: ISetRepository = dependencies.setRepository,
     uiEffects: SideEffect<TimerState, TimerEvent> = SideEffect { _, _, _ -> },
 ): TimerInteractor = rememberInteractor(
-    initialState = Plan(),
+    initialState = Plan(
+        tempo = (0 until reps).map { tempo.copy() }
+    ),
     source = {
         setRepository.listen(setId)
-            .filterNotNull()
             .map { set ->
                 Plan(
-                    set = set,
+                    set = set ?: LBSet(
+                        id = setId,
+                        reps = reps.toLong(),
+                        tempo = tempo,
+                        variationId = "",
+                    ),
                 )
             }
     },
@@ -69,25 +77,6 @@ fun rememberTimerInteractor(
             cameraController = cameraController,
             setRepository = setRepository
         ),
-    )
-)
-
-@Composable
-fun rememberTimerInteractor(
-    reps: Int,
-    tempo: Tempo,
-    cameraController: () -> CameraController?,
-    uiEffects: SideEffect<TimerState, TimerEvent> = { _, s, e -> },
-): TimerInteractor = rememberInteractor(
-    initialState = Plan(
-        tempo = (0 until reps).map { tempo.copy() }
-    ),
-    reducers = timerReducers(),
-    sideEffects = listOf(
-        uiEffects,
-        beepSideEffect(),
-        tickSideEffect(),
-        recordingSideEffect(cameraController, null),
     )
 )
 

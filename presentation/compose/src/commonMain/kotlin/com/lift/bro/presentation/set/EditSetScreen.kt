@@ -172,14 +172,18 @@ fun EditSetScreen(
                 }
                 IconButton(
                     onClick = {
-                        val id = state.id ?: ""
-                        if (state.saveEnabled && id.isNotBlank()) {
+                        if (state.saveEnabled) {
                             navCoordinator.present(
-                                Destination.Timer.From(setId = id)
+                                Destination.Timer.From(
+                                    setId = state.id
+                                )
                             )
                         } else {
                             navCoordinator.present(
-                                Destination.Timer.With(reps = state.reps?.toInt() ?: 1, tempo = tempo)
+                                Destination.Timer.With(
+                                    setId = state.id,
+                                    reps = state.reps?.toInt() ?: 1, tempo = tempo
+                                )
                             )
                         }
                     }
@@ -681,7 +685,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
         get() = sequenceOf(
             // New set - no variation selected yet
             EditSetState(
-                id = null,
+                id = "",
                 variation = null,
                 weight = null,
                 reps = null,
@@ -691,7 +695,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             ),
             // New set with variation but no data
             EditSetState(
-                id = null,
+                id = "",
                 variation = SetVariation(
                     Variation(
                         lift = Lift(
