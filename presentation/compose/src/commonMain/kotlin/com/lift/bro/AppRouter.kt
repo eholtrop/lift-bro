@@ -128,11 +128,13 @@ fun AppRouter(
 
         is Destination.Timer -> when (route) {
             is Destination.Timer.From -> TimerScreen(route.setId)
-            is Destination.Timer.With -> TimerScreen(
-                setId = route.setId,
-                tempo = route.tempo,
-                reps = route.reps,
-            )
+            is Destination.Timer.With -> {
+                TimerScreen(
+                    setId = route.setId,
+                    tempo = route.tempo,
+                    reps = route.reps,
+                )
+            }
         }
     }
 }
