@@ -11,11 +11,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import io.github.vinceglb.filekit.AndroidFile
+import io.github.vinceglb.filekit.PlatformFile
 import java.io.File
 
 @Composable
 actual fun VideoPlayer(
-    videoFile: File,
+    videoFile: PlatformFile,
     modifier: Modifier,
     onPlayPause: (() -> Unit)?,
 ) {
@@ -23,7 +25,10 @@ actual fun VideoPlayer(
 
     val exoPlayer = remember {
         ExoPlayer.Builder(context).build().apply {
-            val mediaItem = MediaItem.fromUri(Uri.fromFile(videoFile))
+            val mediaItem = when (val file = videoFile.androidFile) {
+                is AndroidFile.FileWrapper -> MediaItem.fromUri(Uri.fromFile(file.file))
+                is AndroidFile.UriWrapper -> MediaItem.fromUri(file.uri)
+            }
             setMediaItem(mediaItem)
             prepare()
         }

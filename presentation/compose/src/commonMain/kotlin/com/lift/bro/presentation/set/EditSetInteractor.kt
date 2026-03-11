@@ -40,6 +40,7 @@ import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.time.Instant
 
+
 @Serializable
 data class EditSetMaxPercentageState(
     val percentage: Int,
@@ -61,9 +62,10 @@ data class EditSetState(
     val totalWeightMoved: Double? = null,
     @Serializable(with = InstantSerializer::class) val date: Instant = Clock.System.now(),
     val variation: SetVariation? = null,
+    val videoUri: String? = null,
     val timerEnabled: Boolean = false,
 ) {
-    val saveEnabled: Boolean get() = variation != null && reps != null && tempo != null && weight != null
+    val saveEnabled: Boolean get() = variation != null && reps != null && weight != null
 }
 
 @Serializable
@@ -185,7 +187,7 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
         is EditSetEvent.RpeChanged -> state?.copy(rpe = event.rpe)
         is EditSetEvent.TempoChanged -> state?.copy(tempo = event.tempo)
         is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
-        is EditSetEvent.VariationSelected -> state!!.copy(
+        is EditSetEvent.VariationSelected -> state?.copy(
             variation = SetVariation(
                 variation = event.variation,
                 variationMaxPercentage = null,
@@ -259,8 +261,8 @@ internal suspend fun LBSet.toUiState(
     rpe = this.rpe,
     mers = this.mer,
     timerEnabled = dependencies.settingsRepository.get(Setting.Timer),
-    defaultRpe = null // maxVariationSet?.let { this.weight.div(it.weight).times(10).toInt() },
-
+    defaultRpe = null, // maxVariationSet?.let { this.weight.div(it.weight).times(10).toInt() },
+    videoUri = this.videoUri,
 )
 
 internal fun EditSetState.toDomain(): LBSet? =

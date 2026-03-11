@@ -60,11 +60,9 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
-import com.lift.bro.presentation.camera.CameraController
 import com.lift.bro.presentation.camera.CameraPreview
 import com.lift.bro.presentation.camera.rememberCameraControllerFactory
 import com.lift.bro.presentation.camera.rememberCameraPermissionHandler
-import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
@@ -76,17 +74,10 @@ import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import tv.dpal.compose.isOpen
-import kotlin.time.Clock
-import com.lift.bro.data.video.VideoStorage
-import com.lift.bro.di.dependencies
-import com.lift.bro.ui.Space
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.minus
-import tv.dpal.compose.isOpen
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
+import kotlin.time.Clock
 
 @Composable
 fun TimerScreen(
