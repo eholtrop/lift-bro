@@ -3,12 +3,13 @@ package com.lift.bro.presentation.camera
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import io.github.vinceglb.filekit.PlatformFile
 import java.io.File
 
 expect class CameraPermission
 
 interface CameraController {
-    fun startRecording(outputFile: File)
+    fun startRecording(outputFile: PlatformFile)
     fun stopRecording()
     fun release()
     val isRecording: kotlinx.coroutines.flow.StateFlow<Boolean>

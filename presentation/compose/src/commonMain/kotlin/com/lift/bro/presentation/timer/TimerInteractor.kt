@@ -15,6 +15,10 @@ import com.lift.bro.presentation.camera.CameraController
 import com.lift.bro.presentation.timer.TimerState.Ended
 import com.lift.bro.presentation.timer.TimerState.Plan
 import com.lift.bro.presentation.timer.TimerState.Running
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.cacheDir
+import io.github.vinceglb.filekit.div
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
@@ -362,8 +366,7 @@ private fun recordingSideEffect(
             if (state.cameraEnabled && controller?.isRecording?.value == false) {
                 // Start recording when entering Running state
                 try {
-                    val tempFile = java.io.File.createTempFile("video_", ".mp4")
-                    controller.startRecording(tempFile)
+                    controller.startRecording(FileKit.cacheDir / "video.mp4")
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
@@ -383,16 +386,12 @@ private fun recordingSideEffect(
                 try {
                     controller.stopRecording()
                     delay(500)
+
                     val recordingPath = controller.recordingComplete.value
-                    Log.d(message = recordingPath ?: "")
                     if (recordingPath != null) {
                         val setId = set?.id ?: "temp_${System.currentTimeMillis()}"
-                        val videoFile = java.io.File(recordingPath)
-
-                        Log.d(message = "saving video")
-                        val saveResult = videoStorage.saveVideo(videoFile, setId)
+                        val saveResult = videoStorage.saveVideo(PlatformFile(recordingPath), setId)
                         saveResult.onSuccess { videoUri ->
-                            Log.d(message = "video saved")
                             disp(TimerEvent.SetVideoUri(videoUri))
                             set?.copy(
                                 videoUri = videoUri
@@ -401,7 +400,6 @@ private fun recordingSideEffect(
                             }
                         }
                         saveResult.onFailure { throwable ->
-                            Log.d(message = "video failed ${throwable.message}")
                             throwable.printStackTrace()
                         }
                     }

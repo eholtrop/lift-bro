@@ -55,7 +55,7 @@ actual class DependencyContainer {
     }
 
     actual val videoStorage: VideoStorage by lazy {
-        LocalVideoStorage(context!!)
+        LocalVideoStorage()
     }
 }
 

@@ -27,8 +27,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.net.toFile
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import io.github.vinceglb.filekit.AndroidFile
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.absolutePath
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -85,17 +89,17 @@ class AndroidCameraController(
         lifecycleOwner: LifecycleOwner,
     ) {
         if (isInitialized) return
-        
+
         this.previewView = previewView
         this.lifecycleOwner = lifecycleOwner
-        
+
         val mainExecutor = ContextCompat.getMainExecutor(context)
         val cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-        
+
         cameraProviderFuture.addListener({
             try {
                 cameraProvider = cameraProviderFuture.get()
-                
+
                 val preview = Preview.Builder().build().also {
                     it.setSurfaceProvider(previewView.surfaceProvider)
                 }
@@ -120,7 +124,7 @@ class AndroidCameraController(
                     preview,
                     videoCapture
                 )
-                
+
                 isInitialized = true
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -130,10 +134,15 @@ class AndroidCameraController(
 
     fun isReady(): Boolean = cameraProvider != null
 
-    override fun startRecording(outputFile: File) {
+    override fun startRecording(outputFile: PlatformFile) {
         val videoCapture = this.videoCapture ?: return
 
-        val outputOptions = FileOutputOptions.Builder(outputFile).build()
+        val file = when (val af = outputFile.androidFile) {
+            is AndroidFile.FileWrapper -> af.file
+            is AndroidFile.UriWrapper -> af.uri.toFile()
+        }
+
+        val outputOptions = FileOutputOptions.Builder(file).build()
 
         recording = videoCapture.output
             .prepareRecording(context, outputOptions)
@@ -147,7 +156,7 @@ class AndroidCameraController(
                         if (event.hasError()) {
                             _recordingComplete.value = null
                         } else {
-                            _recordingComplete.value = outputFile.absolutePath
+                            _recordingComplete.value = outputFile.absolutePath()
                         }
                     }
                 }

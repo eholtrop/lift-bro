@@ -15,6 +15,7 @@ import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.utils.fullName
+import io.github.vinceglb.filekit.dialogs.FileKitType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
@@ -37,6 +38,8 @@ import tv.dpal.logging.d
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
 import kotlin.math.max
+import java.io.File
+
 
 @Serializable
 data class EditSetMaxPercentageState(
@@ -59,10 +62,11 @@ data class EditSetState(
     val totalWeightMoved: Double? = null,
     val date: Instant = Clock.System.now(),
     val variation: SetVariation? = null,
+    val videoUri: String? = null,
     val showV2: Boolean = false,
     val timerEnabled: Boolean = false,
 ) {
-    val saveEnabled: Boolean get() = variation != null && reps != null && tempo != null && weight != null
+    val saveEnabled: Boolean get() = variation != null && reps != null && weight != null
 }
 
 @Serializable
@@ -188,7 +192,7 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
         is EditSetEvent.TempoChanged -> state?.copy(tempo = event.tempo)
         is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
         is EditSetEvent.ToggleV2 -> state?.copy(showV2 = !state.showV2)
-        is EditSetEvent.VariationSelected -> state!!.copy(
+        is EditSetEvent.VariationSelected ->             state?.copy(
             variation = SetVariation(
                 variation = event.variation,
                 variationMaxPercentage = null,
@@ -267,7 +271,8 @@ internal suspend fun LBSet.toUiState(
     rpe = this.rpe,
     mers = this.mer,
     showV2 = v2,
-    defaultRpe = null // maxVariationSet?.let { this.weight.div(it.weight).times(10).toInt() },
+    defaultRpe = null, // maxVariationSet?.let { this.weight.div(it.weight).times(10).toInt() },
+    videoUri = this.videoUri,
 
 )
 
