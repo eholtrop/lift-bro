@@ -2,6 +2,7 @@ package com.lift.bro.presentation.timer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.traceEventEnd
 import com.lift.bro.audio.AudioPlayer
 import com.lift.bro.data.video.VideoStorage
@@ -74,7 +75,8 @@ fun rememberTimerInteractor(
         beepSideEffect(),
         tickSideEffect(),
         recordingSideEffect(
-            setRepository = setRepository
+            setRepository = setRepository,
+            videoStorage = remember { dependencies.videoStorage }
         ),
     )
 )
@@ -119,6 +121,7 @@ sealed class TimerState {
         val timers: List<TimerSegment>,
         val set: LBSet? = null,
         val videoUri: String? = null,
+        @Transient val controller: CameraController? = null,
     ): TimerState()
 }
 
@@ -304,6 +307,7 @@ private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { s
                 timers = state.timers,
                 set = state.set,
                 videoUri = state.videoUri,
+                controller = state.controller,
             )
         }
     }
@@ -351,7 +355,7 @@ private fun recordingSideEffect(
     videoStorage: VideoStorage = dependencies.videoStorage,
 ): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
     val controller = when (state) {
-        is Ended -> null
+        is Ended -> state.controller
         is Plan -> state.controller
         is Running -> state.controller
     }
@@ -377,7 +381,6 @@ private fun recordingSideEffect(
                 is Plan -> state.set
                 is Running -> state.set
             }
-            Log.d(message = "saving video")
             if (controller != null) {
                 try {
                     controller.stopRecording()
@@ -390,7 +393,6 @@ private fun recordingSideEffect(
 
                         Log.d(message = "saving video")
                         val saveResult = videoStorage.saveVideo(videoFile, setId)
-                        Log.d(message = "$saveResult")
                         saveResult.onSuccess { videoUri ->
                             Log.d(message = "video saved")
                             disp(TimerEvent.SetVideoUri(videoUri))
@@ -400,8 +402,13 @@ private fun recordingSideEffect(
                                 setRepository?.save(it)
                             }
                         }
+                        saveResult.onFailure { throwable ->
+                            Log.d(message = "video failed ${throwable.message}")
+                            throwable.printStackTrace()
+                        }
                     }
                 } catch (e: Exception) {
+                    Log.d(message = "exception ${e.message}")
                     e.printStackTrace()
                 }
             }
