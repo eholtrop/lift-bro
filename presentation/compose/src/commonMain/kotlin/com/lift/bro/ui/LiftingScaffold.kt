@@ -125,8 +125,10 @@ fun LiftingScaffold(
                     exit = fadeOut() + slideOutVertically { it }
                 ) {
                     Row {
-                        fabProperties?.preFab?.invoke()
-                        Space(MaterialTheme.spacing.half)
+                        fabProperties?.preFab?.let {
+                            it()
+                            Space(MaterialTheme.spacing.half)
+                        }
                         fab?.let { it() } ?: run {
                             fabProperties?.let {
                                 Button(
@@ -153,8 +155,10 @@ fun LiftingScaffold(
                                 }
                             }
                         }
-                        Space(MaterialTheme.spacing.half)
-                        fabProperties?.postFab?.invoke()
+                        fabProperties?.postFab?.let {
+                            Space(MaterialTheme.spacing.half)
+                            it()
+                        }
                     }
                 }
             }
@@ -185,6 +189,7 @@ private fun LeadingNavigationButton(
                 onClick = { navCoordinator.onBackPressed() },
             )
         }
+
         tabletMode && navCoordinator.currentPageIndex == 1 -> {
             TopBarIconButton(
                 modifier = modifier,
