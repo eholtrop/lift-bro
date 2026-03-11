@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,11 +50,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.presentation.set.components.EditSetVariationSelector
+import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.RpeSelector
@@ -73,6 +76,7 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.atStartOfDayIn
 import tv.dpal.ktx.datetime.toLocalDate
 import tv.dpal.navi.LocalNavCoordinator
+
 
 enum class RPE(
     val rpe: Int,
@@ -172,14 +176,19 @@ fun EditSetScreen(
                 }
                 IconButton(
                     onClick = {
-                        val id = state.id ?: ""
-                        if (state.saveEnabled && id.isNotBlank()) {
+                        if (state.saveEnabled) {
                             navCoordinator.present(
-                                Destination.Timer.From(setId = id)
+                                Destination.Timer.From(
+                                    setId = state.id
+                                )
                             )
                         } else {
                             navCoordinator.present(
-                                Destination.Timer.With(reps = state.reps?.toInt() ?: 1, tempo = tempo)
+                                Destination.Timer.With(
+                                    setId = state.id,
+                                    reps = state.reps?.toInt() ?: 1,
+                                    tempo = tempo
+                                )
                             )
                         }
                     }
@@ -643,6 +652,18 @@ fun EditSetScreenV2(
                     }
                 }
             }
+
+            state.videoUri?.let { uri ->
+                item {
+                    val video = dependencies.videoStorage.getVideoFile(uri)
+                    if (video != null) {
+                        VideoPlayer(
+                            modifier = Modifier.fillMaxWidth().aspectRatio(1f),
+                            videoFile = video,
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -681,7 +702,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
         get() = sequenceOf(
             // New set - no variation selected yet
             EditSetState(
-                id = null,
+                id = "",
                 variation = null,
                 weight = null,
                 reps = null,
@@ -691,7 +712,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             ),
             // New set with variation but no data
             EditSetState(
-                id = null,
+                id = "",
                 variation = SetVariation(
                     Variation(
                         lift = Lift(

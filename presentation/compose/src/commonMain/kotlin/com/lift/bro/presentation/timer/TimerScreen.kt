@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -25,6 +26,8 @@ import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Repeat
+import androidx.compose.material.icons.filled.Videocam
+import androidx.compose.material.icons.filled.VideocamOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,6 +47,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
@@ -50,12 +55,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
+import com.lift.bro.presentation.camera.CameraController
+import com.lift.bro.presentation.camera.CameraPreview
+import com.lift.bro.presentation.camera.rememberCameraControllerFactory
+import com.lift.bro.presentation.camera.rememberCameraPermissionHandler
 import com.lift.bro.presentation.lift.transparentColors
+import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.ui.LiftingScaffold
+import com.lift.bro.ui.Space
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
@@ -64,31 +76,38 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import tv.dpal.compose.isOpen
-
-@Composable
-fun TimerScreen(
-    reps: Int,
-    tempo: Tempo,
-) {
-    val interactor: TimerInteractor = rememberTimerInteractor(reps, tempo)
-
-    TimerScreen(
-        state = interactor.state.collectAsState().value,
-        onEvent = interactor::invoke,
-    )
-}
+import tv.dpal.compose.padding.vertical.padding
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
 
 @Composable
 fun TimerScreen(
     setId: String,
+    reps: Int = 1,
+    tempo: Tempo = Tempo(),
 ) {
-    val interactor: TimerInteractor = rememberTimerInteractor(setId)
+    TimerScreen(
+        interactor = rememberTimerInteractor(
+            setId = setId,
+            reps = reps,
+            tempo = tempo,
+        ),
+    )
+}
+
+
+@Composable
+fun TimerScreen(
+    interactor: TimerInteractor,
+) {
+    val state by interactor.state.collectAsState()
 
     TimerScreen(
-        state = interactor.state.collectAsState().value,
+        state = state,
         onEvent = interactor::invoke,
     )
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,6 +115,31 @@ fun TimerScreen(
     state: TimerState,
     onEvent: (TimerEvent) -> Unit,
 ) {
+    val cameraControllerFactory = rememberCameraControllerFactory()
+    val cameraController = when (state) {
+        is TimerState.Ended -> null
+        is TimerState.Plan -> state.controller
+        is TimerState.Running -> state.controller
+    }
+
+    val showCamera = when (state) {
+        is TimerState.Plan -> state.cameraEnabled && cameraController != null
+        is TimerState.Running -> state.cameraEnabled
+        is TimerState.Ended -> false
+    }
+
+    if (showCamera && cameraController != null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            CameraPreview(
+                controller = cameraController,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+
     Box(
         contentAlignment = Alignment.Center,
     ) {
@@ -109,113 +153,172 @@ fun TimerScreen(
                     enter = fadeIn() + slideInVertically { it },
                     exit = fadeOut() + slideOutVertically { it },
                 ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        when (state) {
-                            is TimerState.Ended -> {
-                                TimerTrack(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.background)
-                                        .padding(bottom = MaterialTheme.spacing.threeQuarters),
-                                    scrollable = true,
-                                    segments = state.timers
+                    Column {
+                        Column(
+                            modifier = Modifier
+                                .padding(
+                                    horizontal = MaterialTheme.spacing.half,
                                 )
-                            }
-
-                            is TimerState.Plan -> {
-                                IconButton(
-                                    modifier = Modifier.align(Alignment.Start),
-                                    onClick = {
-                                        onEvent(TimerEvent.ToggleAudio)
+                                .shadow(
+                                    elevation = when (state) {
+                                        is TimerState.Ended -> 0.dp
+                                        is TimerState.Plan -> if (state.cameraEnabled) 3.dp else 0.dp
+                                        is TimerState.Running -> if (state.cameraEnabled) 3.dp else 0.dp
                                     },
-                                ) {
-                                    if (state.audio) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = "Mute Sound"
-                                        )
-                                    } else {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = "Play Sound"
-                                        )
-                                    }
-                                }
-                                TimerTrack(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.background)
-                                        .padding(bottom = MaterialTheme.spacing.threeQuarters),
-                                    segments = state.runningTimer.timers,
-                                    scrollable = true,
+                                    shape = MaterialTheme.shapes.large
                                 )
-                            }
-
-                            is TimerState.Running -> {
-                                IconButton(
-                                    modifier = Modifier.align(Alignment.Start),
-                                    onClick = {
-                                        onEvent(TimerEvent.ToggleAudio)
-                                    },
-                                ) {
-                                    if (state.audio) {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = "Mute Sound"
-                                        )
-                                    } else {
-                                        Icon(
-                                            imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = "Play Sound"
-                                        )
-                                    }
-                                }
-                                TimerTrack(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .background(MaterialTheme.colorScheme.background)
-                                        .padding(bottom = MaterialTheme.spacing.threeQuarters),
-                                    segments = state.timers,
-                                    scrollable = state.paused
+                                .background(
+                                    color = MaterialTheme.colorScheme.background,
+                                    shape = MaterialTheme.shapes.large,
                                 )
-                            }
-                        }
-                        Row {
-                            Button(
-                                modifier = Modifier.defaultMinSize(52.dp, 52.dp),
-                                onClick = {
-                                    when (state) {
-                                        is TimerState.Plan -> onEvent(TimerEvent.Plan.Start)
-                                        is TimerState.Running -> if (state.paused) {
-                                            onEvent(
-                                                TimerEvent.Running.Resume
-                                            )
-                                        } else {
-                                            onEvent(TimerEvent.Running.Pause)
-                                        }
-
-                                        is TimerState.Ended -> onEvent(TimerEvent.Ended.Restart)
-                                    }
-                                },
-                                shape = when {
-                                    else -> ButtonDefaults.shape
-                                }
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Icon(
-                                        imageVector = when (state) {
-                                            is TimerState.Plan -> Icons.Default.PlayArrow
-                                            is TimerState.Running -> if (state.paused) Icons.Default.PlayArrow else Icons.Default.Pause
-                                            is TimerState.Ended -> Icons.Default.Repeat
-                                        },
-                                        contentDescription = when (state) {
-                                            is TimerState.Ended -> "Restart"
-                                            is TimerState.Plan -> "Start"
-                                            is TimerState.Running -> if (state.paused) "Resume" else "Pause"
-                                        },
+                                .padding(bottom = MaterialTheme.spacing.half),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            when (state) {
+                                is TimerState.Ended -> {
+                                    TimerTrack(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        scrollable = true,
+                                        segments = state.timers
                                     )
                                 }
+
+                                is TimerState.Plan -> {
+                                    val permissionHandler = rememberCameraPermissionHandler()
+
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                onEvent(TimerEvent.ToggleAudio)
+                                            },
+                                        ) {
+                                            if (state.audio) {
+                                                Icon(
+                                                    imageVector = Icons.AutoMirrored.Default.VolumeUp,
+                                                    contentDescription = "Mute Sound"
+                                                )
+                                            } else {
+                                                Icon(
+                                                    imageVector = Icons.AutoMirrored.Default.VolumeOff,
+                                                    contentDescription = "Play Sound"
+                                                )
+                                            }
+                                        }
+
+                                        if (state.cameraEnabled) {
+                                            LaunchedEffect(state.cameraEnabled) {
+                                                if (state.cameraEnabled) {
+                                                    onEvent(TimerEvent.Plan.CameraLoaded(cameraControllerFactory.create()))
+                                                }
+                                            }
+                                        }
+
+                                        IconButton(
+                                            onClick = {
+                                                if (state.cameraEnabled) {
+                                                    cameraController?.release()
+                                                    onEvent(TimerEvent.ToggleCamera)
+                                                } else {
+                                                    if (permissionHandler.isGranted) {
+                                                        onEvent(TimerEvent.ToggleCamera)
+                                                    } else {
+                                                        permissionHandler.requestPermission { granted ->
+                                                            if (granted) {
+                                                                onEvent(TimerEvent.ToggleCamera)
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        ) {
+                                            if (state.cameraEnabled) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Videocam,
+                                                    contentDescription = "Disable Camera"
+                                                )
+                                            } else {
+                                                Icon(
+                                                    imageVector = Icons.Default.VideocamOff,
+                                                    contentDescription = "Enable Camera"
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    TimerTrack(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        segments = state.runningTimer.timers,
+                                        scrollable = true,
+                                    )
+                                }
+
+                                is TimerState.Running -> {
+                                    IconButton(
+                                        modifier = Modifier.align(Alignment.Start),
+                                        onClick = {
+                                            onEvent(TimerEvent.ToggleAudio)
+                                        },
+                                    ) {
+                                        if (state.audio) {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Default.VolumeUp,
+                                                contentDescription = "Mute Sound"
+                                            )
+                                        } else {
+                                            Icon(
+                                                imageVector = Icons.AutoMirrored.Default.VolumeOff,
+                                                contentDescription = "Play Sound"
+                                            )
+                                        }
+                                    }
+                                    TimerTrack(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        segments = state.timers,
+                                        scrollable = state.paused
+                                    )
+                                }
+                            }
+                        }
+                        Space(MaterialTheme.spacing.one)
+                        Button(
+                            modifier = Modifier.defaultMinSize(51.dp, 52.dp)
+                                .align(Alignment.CenterHorizontally),
+                            onClick = {
+                                when (state) {
+                                    is TimerState.Plan -> onEvent(TimerEvent.Plan.Start)
+                                    is TimerState.Running -> if (state.paused) {
+                                        onEvent(
+                                            TimerEvent.Running.Resume
+                                        )
+                                    } else {
+                                        onEvent(TimerEvent.Running.Pause)
+                                    }
+
+                                    is TimerState.Ended -> onEvent(TimerEvent.Ended.Restart)
+                                }
+                            },
+                            shape = when {
+                                else -> ButtonDefaults.shape
+                            }
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Icon(
+                                    imageVector = when (state) {
+                                        is TimerState.Plan -> Icons.Default.PlayArrow
+                                        is TimerState.Running -> if (state.paused) Icons.Default.PlayArrow else Icons.Default.Pause
+                                        is TimerState.Ended -> Icons.Default.Repeat
+                                    },
+                                    contentDescription = when (state) {
+                                        is TimerState.Ended -> "Restart"
+                                        is TimerState.Plan -> "Start"
+                                        is TimerState.Running -> if (state.paused) "Resume" else "Pause"
+                                    },
+                                )
                             }
                         }
                     }
@@ -266,6 +369,26 @@ fun TimerOverlay(
                             "Great job!",
                             style = MaterialTheme.typography.displayMedium
                         )
+                    }
+
+                    state.videoUri?.let { videoUri ->
+                        Log.d(message = "render $videoUri")
+                        item {
+                            val videoFile = dependencies.videoStorage.getVideoFile(videoUri)
+                            videoFile?.let { file ->
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(300.dp)
+                                        .padding(horizontal = MaterialTheme.spacing.two)
+                                ) {
+                                    VideoPlayer(
+                                        videoFile = file,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
+                            }
+                        }
                     }
 
                     state.set?.let { set ->
