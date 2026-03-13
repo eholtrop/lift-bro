@@ -5,7 +5,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -22,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -40,17 +43,20 @@ fun AnimatedRotatingText(
     var currentIndex by remember { mutableStateOf(startIndex) }
     var visibility by remember { mutableStateOf(true) }
 
-    AnimatedVisibility(
-        modifier = modifier,
-        visible = visibility,
-        enter = fadeIn(animationSpec = tween(durationMillis = 1000)),
-        exit = fadeOut(animationSpec = tween(durationMillis = 1000))
+    Box(
+        modifier = modifier.defaultMinSize(minHeight = 52.dp),
     ) {
-        Text(
-            text = text[currentIndex],
-            style = style,
-            color = color,
-        )
+        AnimatedVisibility(
+            visible = visibility,
+            enter = fadeIn(animationSpec = tween(durationMillis = 1000)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 1000))
+        ) {
+            Text(
+                text = text[currentIndex],
+                style = style,
+                color = color,
+            )
+        }
     }
 
     LaunchedEffect(Unit) {
