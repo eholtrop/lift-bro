@@ -34,7 +34,7 @@ class AndroidLiftBroServer : LiftBroServer {
                     configureLiftBroApp()
                     Log.d("AndroidLiftBroServer", "Lift Bro Server configured")
                 }
-                engine = server.engine
+                engine = server
                 server.start(wait = false)
                 Log.d("AndroidLiftBroServer", "Server started on http://$host:$port")
             } catch (e: Exception) {

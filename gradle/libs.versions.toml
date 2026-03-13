@@ -19,15 +19,16 @@ screenshot = "0.0.1-alpha13"
 # compose
 compose = "1.12.3"
 compose-multiplatform = "1.10.0"
-compose-compiler = "2.1.21"
+compose-compiler = "2.3.0"
 
 # server
-ktor = "3.0.0"
+ktor = "2.3.3"
 
 google-services = "4.4.3"
 detekt = "1.23.8"
 kotlinx-serialization = "1.6.3"
 kotlinx-datetime = "0.6.1"
+kotlinx-datetime-version = "0.6.1"
 app-update = "2.1.0"
 
 appcompat = "1.7.0"
@@ -40,7 +41,7 @@ media3-exoplayer = "1.9.2"
 datastore = "1.1.1"
 tink = "1.12.0"
 
-ksp = "2.1.21-2.0.1"
+ksp = "2.3.0"
 kotlinpoet = "1.18.1"
 auto-service = "1.1.1"
 

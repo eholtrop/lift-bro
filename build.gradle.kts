@@ -20,6 +20,14 @@ plugins {
 }
 
 subprojects {
+    configurations.all {
+        resolutionStrategy {
+            force("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+        }
+    }
+}
+
+subprojects {
     apply(plugin = "io.gitlab.arturbosch.detekt")
 
     dependencies {

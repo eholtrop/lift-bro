@@ -75,6 +75,7 @@ kotlin {
             implementation("org.jetbrains.compose.ui:ui-backhandler:1.8.0")
 
             implementation(libs.kotlinx.datetime)
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
             implementation(libs.uuid)
             implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.serialization)
@@ -117,6 +118,7 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
+            implementation(libs.kotlinx.datetime)
         }
 
         commonTest.dependencies {
@@ -157,4 +159,9 @@ dependencies {
     screenshotTestImplementation(libs.screenshot.validation.api)
     implementation(libs.screenshot.validation.api)
     ksp(project(":libs:screenshot-processor"))
+}
+
+// Disable KSP for iOS targets - screenshot tests are Android only
+tasks.matching { it.name.startsWith("ksp") }.configureEach {
+    enabled = false
 }

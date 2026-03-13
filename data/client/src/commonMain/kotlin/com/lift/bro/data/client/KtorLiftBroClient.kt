@@ -11,7 +11,6 @@ import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.websocket.WebSockets
-import io.ktor.client.plugins.websocket.pingInterval
 import io.ktor.client.plugins.websocket.webSocket
 import io.ktor.http.HttpMethod
 import io.ktor.http.URLProtocol
@@ -88,7 +87,6 @@ internal fun createConfiguredHttpClient(
         }
 
         install(WebSockets) {
-            pingInterval = kotlin.time.Duration.parse("20s")
         }
 
         if (config.enableLogging) {
