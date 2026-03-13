@@ -16,8 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -117,7 +115,7 @@ fun WorkoutCalendarContent(
 }
 
 @Composable
-fun WorkoutCalendarContent(
+private fun WorkoutCalendarContent(
     modifier: Modifier = Modifier,
     state: WorkoutCalendarState,
     onEvent: (WorkoutCalendarEvent) -> Unit = {},
@@ -131,8 +129,7 @@ fun WorkoutCalendarContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Calendar(
-            modifier = Modifier.fillMaxWidth()
-                .wrapContentHeight(),
+            modifier = Modifier.fillMaxWidth(),
             selectedDate = state.selectedDate,
             contentPadding = PaddingValues(0.dp),
             dateSelected = {
@@ -144,8 +141,8 @@ fun WorkoutCalendarContent(
             dateDecorations = { date, decoration -> }
         ) { year, month ->
             WorkoutCalendarMonth(
-                year,
-                month,
+                year = year,
+                month = month,
                 selectedDate = state.selectedDate,
                 dateSelected = {
                     onEvent(
@@ -174,7 +171,15 @@ data class DailyWorkoutDetailsState(
     val log: LiftingLog?,
     val selectedWorkout: Workout?,
     val potentialExercises: List<Pair<Variation, List<LBSet>>>,
-)
+) {
+    val selectedWorkoutPopulated: Boolean =
+        selectedWorkout == null ||
+            (
+                selectedWorkout.exercises.isEmpty() &&
+                    selectedWorkout.warmup.isNullOrBlank() &&
+                    selectedWorkout.finisher.isNullOrBlank()
+                )
+}
 
 sealed interface DailyWorkoutDetailsEvent {
     data object CreateWorkoutClicked: DailyWorkoutDetailsEvent
@@ -257,6 +262,7 @@ fun rememberDailyWorkoutDetailsInteractor(
 
 @Composable
 fun DailyWorkoutDetails(
+    modifier: Modifier = Modifier,
     date: LocalDate,
     interactor: Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> = rememberDailyWorkoutDetailsInteractor(
         date
@@ -265,7 +271,7 @@ fun DailyWorkoutDetails(
 ) {
     val state by interactor.state.collectAsState()
 
-    Column {
+    Column(modifier = modifier) {
         var showNotesDialog by remember { mutableStateOf(false) }
         var todaysNotes by remember { mutableStateOf(state.log?.notes ?: "") }
 
@@ -330,32 +336,36 @@ fun DailyWorkoutDetails(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
-            Column(
+            Row(
                 modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = state.selectedDate.toString("EEEE, MMM d"),
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.tertiary,
-                )
-                Text(
-                    text = state.selectedDate.toString("yyyy"),
-                    style = MaterialTheme.typography.labelMedium
-                )
-            }
-            IconButton(
-                onClick = {
-                    showNotesDialog = true
+                Column {
+                    Text(
+                        text = state.selectedDate.toString("EEEE, MMM d"),
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.tertiary,
+                    )
+                    Text(
+                        text = state.selectedDate.toString("yyyy"),
+                        style = MaterialTheme.typography.labelMedium
+                    )
                 }
-            ) {
-                Icon(
-                    modifier = Modifier.size(12.dp),
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta)
-                )
+                if (state.selectedWorkoutPopulated) {
+                    IconButton(
+                        onClick = {
+                            showNotesDialog = true
+                        }
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(12.dp),
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta)
+                        )
+                    }
+                }
             }
-            val workout = state.selectedWorkout
-            if (workout == null || (workout.exercises.isEmpty() && workout.warmup.isNullOrBlank() && workout.finisher.isNullOrBlank())) {
+            if (state.selectedWorkoutPopulated) {
                 Button(
                     onClick = {
                         interactor(DailyWorkoutDetailsEvent.CreateWorkoutClicked)
@@ -434,8 +444,6 @@ fun DailyWorkoutDetails(
                 }
         }
     }
-
-    Spacer(modifier = Modifier.height(72.dp))
 }
 
 @Composable
@@ -600,6 +608,7 @@ fun VariationSet(
 
 @Composable
 fun WorkoutCalendarMonth(
+    modifier: Modifier = Modifier,
     year: Int,
     month: Month,
     selectedDate: LocalDate? = null,
@@ -608,6 +617,7 @@ fun WorkoutCalendarMonth(
     val monthState by rememberWorkoutMonthInteractor(year, month).state.collectAsState()
 
     CalendarMonth(
+        modifier = modifier,
         year = year,
         month = month,
         selection = selectedDate,
