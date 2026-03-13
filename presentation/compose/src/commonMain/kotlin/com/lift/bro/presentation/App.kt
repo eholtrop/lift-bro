@@ -39,9 +39,11 @@ import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
+import com.lift.bro.data.analytics.NoOpAnalyticsTracker
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
+import com.lift.bro.domain.analytics.AnalyticsEvents
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
@@ -176,6 +178,13 @@ fun App(
 ) {
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current != null
+    val analyticsTracker = remember {
+        if (BuildConfig.isDebug) {
+            NoOpAnalyticsTracker()
+        } else {
+            dependencies.analyticsTracker
+        }
+    }
 
     LaunchedEffect("setup_revenuecat") {
         if (BuildConfig.isDebug) {
@@ -240,6 +249,24 @@ fun App(
 
             if (!BuildConfig.isDebug) {
                 Firebase.initialize(context)
+            }
+        }
+
+        val hasConsent by HasDeviceConsentedUseCase(dependencies.settingsRepository).invoke()
+            .collectAsState(null)
+
+        LaunchedEffect("initialize_analytics", hasConsent) {
+            if (!BuildConfig.isDebug && hasConsent == true) {
+                val platform = if (isAndroid) "android" else "ios"
+                analyticsTracker.setUserProperty(AnalyticsEvents.Properties.PLATFORM, platform)
+                analyticsTracker.setUserProperty(AnalyticsEvents.Properties.APP_VERSION, BuildKonfig.VERSION_NAME)
+
+                Purchases.sharedInstance.getCustomerInfo(
+                    onError = { },
+                    onSuccess = { customerInfo ->
+                        analyticsTracker.setUserId(customerInfo.originalAppUserId)
+                    }
+                )
             }
         }
 
