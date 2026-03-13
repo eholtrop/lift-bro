@@ -125,57 +125,48 @@ fun WorkoutCalendarContent(
 ) {
     val calendarState = rememberCalendarState()
 
-    LazyColumn(
+    Column(
         modifier = modifier,
-        contentPadding = PaddingValues(MaterialTheme.spacing.one),
         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        item {
-            Calendar(
-                modifier = Modifier.fillMaxWidth()
-                    .wrapContentHeight(),
+        Calendar(
+            modifier = Modifier.fillMaxWidth()
+                .wrapContentHeight(),
+            selectedDate = state.selectedDate,
+            contentPadding = PaddingValues(0.dp),
+            dateSelected = {
+                onEvent(
+                    WorkoutCalendarEvent.DateSelected(it)
+                )
+            },
+            pagerState = calendarState,
+            dateDecorations = { date, decoration -> }
+        ) { year, month ->
+            WorkoutCalendarMonth(
+                year,
+                month,
                 selectedDate = state.selectedDate,
-                contentPadding = PaddingValues(0.dp),
                 dateSelected = {
                     onEvent(
                         WorkoutCalendarEvent.DateSelected(it)
                     )
-                },
-                pagerState = calendarState,
-                dateDecorations = { date, decoration -> }
-            ) { year, month ->
-                WorkoutCalendarMonth(
-                    year,
-                    month,
-                    selectedDate = state.selectedDate,
-                    dateSelected = {
-                        onEvent(
-                            WorkoutCalendarEvent.DateSelected(it)
-                        )
-                    }
-                )
-            }
-        }
-
-        item {
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .height(height = 2.dp)
-                    .background(MaterialTheme.colorScheme.surfaceDim)
-            ) {}
-        }
-
-        item {
-            DailyWorkoutDetails(
-                date = state.selectedDate,
-                strings = strings,
+                }
             )
         }
 
-        item {
-            Spacer(modifier = Modifier.height(72.dp))
-        }
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .height(height = 2.dp)
+                .background(MaterialTheme.colorScheme.surfaceDim)
+        ) {}
+
+        DailyWorkoutDetails(
+            date = state.selectedDate,
+            strings = strings,
+        )
+
+        Spacer(modifier = Modifier.height(72.dp))
     }
 }
 
@@ -272,7 +263,7 @@ fun DailyWorkoutDetails(
     interactor: Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> = rememberDailyWorkoutDetailsInteractor(
         date
     ),
-    strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default()
+    strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(),
 ) {
     val state by interactor.state.collectAsState()
 
