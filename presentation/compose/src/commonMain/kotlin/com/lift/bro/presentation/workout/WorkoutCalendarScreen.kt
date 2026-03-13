@@ -165,8 +165,6 @@ fun WorkoutCalendarContent(
             date = state.selectedDate,
             strings = strings,
         )
-
-        Spacer(modifier = Modifier.height(72.dp))
     }
 }
 
@@ -332,10 +330,19 @@ fun DailyWorkoutDetails(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
         ) {
-            Text(
-                text = state.selectedDate.toString("EEEE, MMM d - yyyy"),
-                style = MaterialTheme.typography.titleLarge
-            )
+            Column(
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(
+                    text = state.selectedDate.toString("EEEE, MMM d"),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+                Text(
+                    text = state.selectedDate.toString("yyyy"),
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
             IconButton(
                 onClick = {
                     showNotesDialog = true
@@ -346,6 +353,17 @@ fun DailyWorkoutDetails(
                     imageVector = Icons.Default.Edit,
                     contentDescription = stringResource(Res.string.workout_calendar_edit_daily_notes_cta)
                 )
+            }
+            val workout = state.selectedWorkout
+            if (workout == null || (workout.exercises.isEmpty() && workout.warmup.isNullOrBlank() && workout.finisher.isNullOrBlank())) {
+                Button(
+                    onClick = {
+                        interactor(DailyWorkoutDetailsEvent.CreateWorkoutClicked)
+                    },
+                    colors = ButtonDefaults.elevatedButtonColors()
+                ) {
+                    Text(stringResource(Res.string.workout_calendar_screen_start_workout_cta))
+                }
             }
         }
 
@@ -360,14 +378,7 @@ fun DailyWorkoutDetails(
     val workout = state.selectedWorkout
     when {
         workout == null || (workout.exercises.isEmpty() && workout.warmup.isNullOrBlank() && workout.finisher.isNullOrBlank()) -> {
-            Button(
-                onClick = {
-                    interactor(DailyWorkoutDetailsEvent.CreateWorkoutClicked)
-                },
-                colors = ButtonDefaults.elevatedButtonColors()
-            ) {
-                Text(stringResource(Res.string.workout_calendar_screen_start_workout_cta))
-            }
+            // no-op
         }
 
         else -> {
