@@ -40,7 +40,7 @@ fun AnimatedRotatingText(
 ) {
     if (text.isEmpty()) return
 
-    var currentIndex by remember { mutableStateOf(startIndex) }
+    var currentIndex by remember(text) { mutableStateOf(startIndex) }
     var visibility by remember { mutableStateOf(true) }
 
     Box(
@@ -59,7 +59,7 @@ fun AnimatedRotatingText(
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(text.size) {
         while (true) {
             visibility = false
             delay(1100)

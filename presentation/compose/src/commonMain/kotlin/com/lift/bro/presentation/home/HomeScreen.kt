@@ -182,7 +182,10 @@ fun HomeScreenContent(
                 trailingContent = {
                     Switch(
                         checked = dashboardV3,
-                        onCheckedChange = { dashboardV3 = !dashboardV3 },
+                        onCheckedChange = {
+                            dashboardV3 = !dashboardV3
+                            onEvent(HomeEvent.DashboardClicked)
+                        },
                         thumbContent = {
                             Icon(
                                 imageVector = Icons.Default.Flare,

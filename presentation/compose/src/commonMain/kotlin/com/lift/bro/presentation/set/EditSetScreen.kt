@@ -56,7 +56,6 @@ import com.lift.bro.presentation.set.components.EditSetVariationSelector
 import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.RpeSelector
-import com.lift.bro.ui.Space
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.calendar.Calendar
@@ -408,9 +407,6 @@ fun EditSetScreenV2(
     showVariationDialog: () -> Unit,
     strings: EditSetScreenStrings = EditSetScreenStrings.default(),
 ) {
-    var showRpe by remember { mutableStateOf(false) }
-    var showTempo by remember { mutableStateOf(false) }
-
     SharedTransitionLayout {
         LazyColumn(
             modifier = modifier.fillMaxHeight(),
@@ -428,7 +424,6 @@ fun EditSetScreenV2(
                 Box {
                     Column(
                         modifier = Modifier
-                            .padding(bottom = if (showRpe && showTempo) 0.dp else MaterialTheme.spacing.one)
                             .background(
                                 brush = Brush.linearGradient(
                                     colors = listOf(
@@ -437,15 +432,7 @@ fun EditSetScreenV2(
                                     ),
                                 ),
                                 shape = MaterialTheme.shapes.medium,
-                            ).padding(
-                                horizontal = MaterialTheme.spacing.one,
-                                top = MaterialTheme.spacing.half,
-                                bottom = if (showRpe && showTempo) {
-                                    MaterialTheme.spacing.half
-                                } else {
-                                    MaterialTheme.spacing.one
-                                },
-                            ),
+                            ).padding(all = MaterialTheme.spacing.half),
                         verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
                     ) {
                         RepWeightSelector(
@@ -459,71 +446,38 @@ fun EditSetScreenV2(
                             showRpe = false
                         )
 
-                        AnimatedVisibility(showRpe) {
-                            var rpe by remember {
-                                mutableStateOf(
-                                    state.rpe
-                                        ?: state.defaultRpe
-                                )
-                            }
-                            Column {
-                                RpeSelector(
-                                    modifier = Modifier.background(
-                                        color = MaterialTheme.colorScheme.surfaceContainer,
-                                        shape = MaterialTheme.shapes.medium,
-                                    )
-                                        .border(
-                                            1.dp,
-                                            MaterialTheme.colorScheme.onSurface,
-                                            shape = MaterialTheme.shapes.medium
-                                        ).clip(MaterialTheme.shapes.medium),
-                                    rpe = rpe,
-                                    rpeChanged = {
-                                        rpe = it
-                                        sendEvent(EditSetEvent.RpeChanged(it))
-                                    }
-                                )
-                            }
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            TempoSelector(
+                                tempo = state.tempo,
+                                tempoChanged = { sendEvent(EditSetEvent.TempoChanged(it)) }
+                            )
                         }
 
-                        AnimatedVisibility(showTempo) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                            ) {
-                                TempoSelector(
-                                    tempo = state.tempo,
-                                    tempoChanged = { sendEvent(EditSetEvent.TempoChanged(it)) }
+                        var rpe by remember {
+                            mutableStateOf(
+                                state.rpe
+                                    ?: state.defaultRpe
+                            )
+                        }
+                        Column {
+                            RpeSelector(
+                                modifier = Modifier.background(
+                                    color = MaterialTheme.colorScheme.surfaceContainer,
+                                    shape = MaterialTheme.shapes.medium,
                                 )
-                            }
-                        }
-                    }
-                    Row(
-                        modifier = Modifier
-                            .animateContentSize()
-                            .align(Alignment.BottomStart)
-                            .padding(horizontal = MaterialTheme.spacing.half),
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-                    ) {
-                        Space()
-                        ChipButton(
-                            visible = !showRpe,
-                            onClick = { showRpe = true },
-                        ) {
-                            RPE.entries.firstOrNull { state.rpe == it.rpe }?.let {
-                                Text("${it.emoji} RPE: ${it.rpe}")
-                            } ?: run {
-                                Text("RPE+")
-                            }
-                        }
-                        ChipButton(
-                            visible = !showTempo,
-                            onClick = { showTempo = true },
-                        ) {
-                            if (state.tempo == TempoState()) {
-                                Text("Tempo")
-                            } else {
-                                Text("Tempo: ${state.tempo.ecc}/${state.tempo.iso}/${state.tempo.con}")
-                            }
+                                    .border(
+                                        1.dp,
+                                        MaterialTheme.colorScheme.onSurface,
+                                        shape = MaterialTheme.shapes.medium
+                                    ).clip(MaterialTheme.shapes.medium),
+                                rpe = rpe,
+                                rpeChanged = {
+                                    rpe = it
+                                    sendEvent(EditSetEvent.RpeChanged(it))
+                                }
+                            )
                         }
                     }
                 }
