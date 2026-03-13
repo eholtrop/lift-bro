@@ -39,6 +39,9 @@ data object Loading: DashboardState
 sealed class DashboardListItem {
 
     @Serializable
+    data class LiftHeader(val v3: Boolean): DashboardListItem()
+
+    @Serializable
     sealed class LiftCard: DashboardListItem() {
 
         @Serializable
@@ -52,6 +55,9 @@ sealed class DashboardListItem {
     data object ReleaseNotes: DashboardListItem()
 
     @Serializable
+    data object WorkoutCalendar: DashboardListItem()
+
+    @Serializable
     data object AddLiftButton: DashboardListItem()
 }
 
@@ -62,6 +68,7 @@ sealed interface DashboardEvent {
 
 @Composable
 fun rememberDashboardInteractor(
+    v3: Boolean,
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: ISetRepository = dependencies.setRepository,
@@ -124,7 +131,16 @@ fun rememberDashboardInteractor(
                     .map { items ->
                         Loaded(
                             items = items.toMutableList().apply {
-                                add(0, DashboardListItem.ReleaseNotes)
+                                if (!v3) {
+                                    // lift header at top if not v3
+                                    add(0, DashboardListItem.ReleaseNotes)
+                                    add(0, DashboardListItem.LiftHeader(v3))
+                                } else {
+                                    // release notes -> workout calendar -> lift header
+                                    add(0, DashboardListItem.LiftHeader(v3))
+                                    add(0, DashboardListItem.WorkoutCalendar)
+                                    add(0, DashboardListItem.ReleaseNotes)
+                                }
                                 add(DashboardListItem.AddLiftButton)
                             }
                         )

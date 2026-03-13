@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Flare
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +32,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.dashboard.DashboardContent
+import com.lift.bro.presentation.dashboard.rememberDashboardInteractor
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.presentation.wrapped.WrappedDialog
 import com.lift.bro.ui.AnimatedRotatingText
@@ -93,6 +96,8 @@ fun HomeScreenContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
 ) {
+    var dashboardV3 by remember { mutableStateOf(BuildConfig.isDebug) }
+
     when (val currentState = state) {
         is HomeState.Content -> {
             LiftingScaffold(
@@ -175,6 +180,16 @@ fun HomeScreenContent(
                 leadingContent = {
                 },
                 trailingContent = {
+                    Switch(
+                        checked = dashboardV3,
+                        onCheckedChange = { dashboardV3 = !dashboardV3 },
+                        thumbContent = {
+                            Icon(
+                                imageVector = Icons.Default.Flare,
+                                contentDescription = "New Dashboard"
+                            )
+                        }
+                    )
                     TopBarIconButton(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(
@@ -189,77 +204,81 @@ fun HomeScreenContent(
                     contentDescription = stringResource(Res.string.dashboard_fab_content_description),
                     fabClicked = { onEvent(HomeEvent.AddSetClicked) },
                     preFab = {
-                        Button(
-                            modifier = Modifier.size(72.dp, 52.dp),
-                            onClick = {
-                                onEvent(HomeEvent.DashboardClicked)
-                            },
-                            shape = RoundedCornerShape(
-                                topStartPercent = 50,
-                                bottomStartPercent = 50,
-                                topEndPercent = 25,
-                                bottomEndPercent = 25,
-                            )
-                        ) {
-                            Column {
-                                Icon(
-                                    painter = painterResource(Res.drawable.view_dashboard),
-                                    contentDescription = stringResource(
-                                        Res.string.dashboard_footer_leading_button_content_description
-                                    ),
+                        if (!dashboardV3) {
+                            Button(
+                                modifier = Modifier.size(72.dp, 52.dp),
+                                onClick = {
+                                    onEvent(HomeEvent.DashboardClicked)
+                                },
+                                shape = RoundedCornerShape(
+                                    topStartPercent = 50,
+                                    bottomStartPercent = 50,
+                                    topEndPercent = 25,
+                                    bottomEndPercent = 25,
                                 )
-
-                                AnimatedVisibility(currentState.selectedTab == Tab.Dashboard) {
-                                    Box(
-                                        modifier = Modifier.padding(
-                                            top = MaterialTheme.spacing.quarter.div(
-                                                2
-                                            )
-                                        )
-                                            .height(2.dp)
-                                            .fillMaxWidth()
-                                            .background(
-                                                color = MaterialTheme.colorScheme.onPrimary,
-                                            )
+                            ) {
+                                Column {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.view_dashboard),
+                                        contentDescription = stringResource(
+                                            Res.string.dashboard_footer_leading_button_content_description
+                                        ),
                                     )
+
+                                    AnimatedVisibility(currentState.selectedTab == Tab.Dashboard) {
+                                        Box(
+                                            modifier = Modifier.padding(
+                                                top = MaterialTheme.spacing.quarter.div(
+                                                    2
+                                                )
+                                            )
+                                                .height(2.dp)
+                                                .fillMaxWidth()
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.onPrimary,
+                                                )
+                                        )
+                                    }
                                 }
                             }
                         }
                     },
                     postFab = {
-                        Button(
-                            modifier = Modifier.size(72.dp, 52.dp),
-                            onClick = {
-                                onEvent(HomeEvent.CalendarClicked)
-                            },
-                            shape = RoundedCornerShape(
-                                topStartPercent = 25,
-                                bottomStartPercent = 25,
-                                topEndPercent = 50,
-                                bottomEndPercent = 50,
-                            )
-                        ) {
-                            Column {
-                                Icon(
-                                    painter = painterResource(Res.drawable.ic_calendar),
-                                    contentDescription = stringResource(
-                                        Res.string.dashboard_footer_trailing_button_content_description
-                                    ),
+                        if (!dashboardV3) {
+                            Button(
+                                modifier = Modifier.size(72.dp, 52.dp),
+                                onClick = {
+                                    onEvent(HomeEvent.CalendarClicked)
+                                },
+                                shape = RoundedCornerShape(
+                                    topStartPercent = 25,
+                                    bottomStartPercent = 25,
+                                    topEndPercent = 50,
+                                    bottomEndPercent = 50,
                                 )
-
-                                AnimatedVisibility(currentState.selectedTab == Tab.WorkoutCalendar) {
-                                    Box(
-                                        modifier = Modifier.padding(
-                                            top = MaterialTheme.spacing.quarter.div(
-                                                2
-                                            )
-                                        )
-                                            .height(2.dp)
-                                            .fillMaxWidth()
-                                            .background(
-                                                color = MaterialTheme.colorScheme.onPrimary,
-                                            )
+                            ) {
+                                Column {
+                                    Icon(
+                                        painter = painterResource(Res.drawable.ic_calendar),
+                                        contentDescription = stringResource(
+                                            Res.string.dashboard_footer_trailing_button_content_description
+                                        ),
                                     )
+
+                                    AnimatedVisibility(currentState.selectedTab == Tab.WorkoutCalendar) {
+                                        Box(
+                                            modifier = Modifier.padding(
+                                                top = MaterialTheme.spacing.quarter.div(
+                                                    2
+                                                )
+                                            )
+                                                .height(2.dp)
+                                                .fillMaxWidth()
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.onPrimary,
+                                                )
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -273,6 +292,13 @@ fun HomeScreenContent(
                         Tab.Dashboard -> {
                             DashboardContent(
                                 modifier = Modifier.padding(padding),
+                                interactor = if (dashboardV3) {
+                                    rememberDashboardInteractor(
+                                        true
+                                    )
+                                } else {
+                                    rememberDashboardInteractor(false)
+                                },
                             )
                         }
 
@@ -326,7 +352,7 @@ fun HomeScreenContent(
     }
 }
 
-class HomeStateProvider : PreviewParameterProvider<HomeState> {
+class HomeStateProvider: PreviewParameterProvider<HomeState> {
     override val values: Sequence<HomeState>
         get() = sequenceOf(
             // Loading state
@@ -361,7 +387,7 @@ class HomeStateProvider : PreviewParameterProvider<HomeState> {
 @Preview
 @Composable
 fun HomeScreenContentPreview(
-    @PreviewParameter(HomeStateProvider::class) state: HomeState
+    @PreviewParameter(HomeStateProvider::class) state: HomeState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
         HomeScreenContent(

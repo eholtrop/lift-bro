@@ -5,7 +5,6 @@ package com.lift.bro.presentation.set
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -509,8 +508,6 @@ fun EditSetScreenV2(
                         ChipButton(
                             visible = !showRpe,
                             onClick = { showRpe = true },
-                            transitionKey = "rpe",
-                            sharedTransitionScope = this@SharedTransitionLayout,
                         ) {
                             RPE.entries.firstOrNull { state.rpe == it.rpe }?.let {
                                 Text("${it.emoji} RPE: ${it.rpe}")
@@ -521,8 +518,6 @@ fun EditSetScreenV2(
                         ChipButton(
                             visible = !showTempo,
                             onClick = { showTempo = true },
-                            transitionKey = "tempo",
-                            sharedTransitionScope = this@SharedTransitionLayout,
                         ) {
                             if (state.tempo == TempoState()) {
                                 Text("Tempo")
@@ -649,30 +644,22 @@ fun EditSetScreenV2(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun ChipButton(
+fun ChipButton(
     onClick: () -> Unit,
-    visible: Boolean,
-    transitionKey: String,
-    sharedTransitionScope: SharedTransitionScope,
+    visible: Boolean = true,
     content: @Composable RowScope.() -> Unit,
 ) {
     AnimatedVisibility(
         visible,
         exit = fadeOut(),
     ) {
-        with(sharedTransitionScope) {
-            Button(
-                modifier = Modifier.height(24.dp)
-                    .sharedElement(
-                        rememberSharedContentState(transitionKey),
-                        animatedVisibilityScope = this@AnimatedVisibility
-                    ),
-                onClick = onClick,
-                content = content,
-                contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.quarter),
-                shape = MaterialTheme.shapes.small,
-            )
-        }
+        Button(
+            modifier = Modifier.height(24.dp),
+            onClick = onClick,
+            content = content,
+            contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.quarter),
+            shape = MaterialTheme.shapes.small,
+        )
     }
 }
 
