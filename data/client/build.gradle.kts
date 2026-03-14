@@ -25,6 +25,7 @@ kotlin {
             implementation(libs.ktor.client.websockets)
             implementation(libs.ktor.client.logging)
             implementation(libs.ktor.serialization.kotlinx.json)
+            implementation(libs.ktor.client.cio)
         }
 
         androidMain.dependencies {
@@ -32,7 +33,6 @@ kotlin {
         }
 
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
         }
 
         jvmMain.dependencies {

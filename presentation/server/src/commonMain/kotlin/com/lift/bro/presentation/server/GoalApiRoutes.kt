@@ -5,6 +5,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.localGoalsRepository
 import com.lift.bro.domain.models.Goal
 import com.lift.bro.domain.repositories.IGoalRepository
+import io.ktor.server.application.call
 import io.ktor.server.request.receive
 import io.ktor.server.routing.Route
 import io.ktor.server.routing.delete

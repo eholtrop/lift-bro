@@ -2,7 +2,7 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             if (requested.id.id == "com.google.devtools.ksp") {
-                useVersion("2.1.21-2.0.1")
+                useVersion("2.3.0")
             }
         }
     }

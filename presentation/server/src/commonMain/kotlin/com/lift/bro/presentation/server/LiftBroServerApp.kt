@@ -3,6 +3,7 @@ package com.lift.bro.presentation.server
 import com.lift.bro.domain.server.LiftBroServer
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
+import io.ktor.server.application.call
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.doublereceive.DoubleReceive
