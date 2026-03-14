@@ -2,11 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>MagicNumber:AndroidLiftBroServer.kt$AndroidLiftBroServer$1000</ID>
-    <ID>MagicNumber:AndroidLiftBroServer.kt$AndroidLiftBroServer$5000</ID>
-    <ID>MagicNumber:JvmLiftBroServer.kt$JvmLiftBroServer$1000</ID>
-    <ID>MagicNumber:JvmLiftBroServer.kt$JvmLiftBroServer$5000</ID>
-    <ID>MagicNumber:LiftBroServerApp.kt$15_000</ID>
     <ID>NoWildcardImports:JvmLiftBroServer.kt$import io.ktor.server.cio.*</ID>
     <ID>NoWildcardImports:JvmLiftBroServer.kt$import io.ktor.server.engine.*</ID>
     <ID>TooGenericExceptionCaught:AndroidLiftBroServer.kt$AndroidLiftBroServer$e: Exception</ID>
