@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.DarkModeProvider
@@ -20,13 +21,13 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun ThemeSettingsRow() {
-    val themeMode by dependencies.settingsRepository.getThemeMode()
+    val themeMode by dependencies.settingsRepository.listen(Setting.ThemeModeKey)
         .collectAsState(ThemeMode.System)
 
     ThemeSettingsRowContent(
         selectedTheme = themeMode,
         onThemeSelected = { theme ->
-            dependencies.settingsRepository.setThemeMode(theme)
+            dependencies.settingsRepository.set(Setting.ThemeModeKey, theme)
         }
     )
 }

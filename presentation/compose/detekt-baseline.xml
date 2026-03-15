@@ -70,6 +70,7 @@
     <ID>UnusedParameter:EditLiftScreen.kt$liftSaved: () -&gt; Unit</ID>
     <ID>UnusedParameter:EmptyHomeScreen.kt$loadDefaultLifts: () -&gt; Unit</ID>
     <ID>UnusedParameter:LineGraph.kt$maxX: LocalDate = graphData.maxOf { it.first }</ID>
+    <ID>UnusedParameter:SettingsScreen.kt$onEvent: (SettingsEvent) -&gt; Unit</ID>
     <ID>UnusedParameter:WeightSelector.kt$Confetti.Companion$height: Float</ID>
     <ID>UnusedParameter:WrappedGoalsInteractor.kt$year: Int = LocalWrappedYear.current</ID>
     <ID>UnusedParameter:WrappedProgressScreen.kt$contentColor: Color = MaterialTheme.colorScheme.primary</ID>

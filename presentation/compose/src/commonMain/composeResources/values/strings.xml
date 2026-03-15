@@ -168,7 +168,7 @@ Soreness or pain?</string>
     <string name="settings_backup_cta">Backup</string>
     <string name="settings_backup_restore_title">Backup / Restore</string>
     <string name="settings_become_pro_description">Sign up for an Ad free experience and extra premium tracking metrics!</string>
-    <string name="settings_become_pro_title">Become Pro!</string>
+    <string name="settings_become_pro_title">Become a Lift Pro!</string>
     <string name="settings_dark_text">Dark</string>
     <string name="settings_emax_enable_text">Show estimated one rep maxes (eMax) where applicable</string>
     <string name="settings_emax_formula">weight x (1 + reps/30)</string>
