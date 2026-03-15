@@ -7,13 +7,14 @@ import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
+import com.lift.bro.domain.models.BackupSettings
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
+import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
@@ -74,7 +75,7 @@ class BackupUseCase(
             FileKit.shareFile(backupFile)
 
             // ensure last backup date is updated
-            dependencies.settingsRepository.saveBackupSettings(BackupSettings(lastBackupDate = Clock.System.today))
+            dependencies.settingsRepository.set(Setting.BackupSettingsKey, BackupSettings(lastBackupDate = Clock.System.today))
         }
     }
 

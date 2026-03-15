@@ -1,7 +1,8 @@
 package com.lift.bro.domain.usecases
 
 import com.lift.bro.core.buildconfig.BuildKonfig
-import com.lift.bro.domain.repositories.Consent
+import com.lift.bro.domain.models.Consent
+import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.repositories.ISettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,9 +14,10 @@ class ConsentDeviceUseCase(
     val settingsRepository: ISettingsRepository
 ) {
     operator fun invoke() {
-        settingsRepository.setDeviceConsent(
+        settingsRepository.set(
+            Setting.DeviceConsent,
             Consent(
-                deviceId = settingsRepository.getDeviceId(),
+                deviceId = settingsRepository.get(Setting.DeviceId),
                 appVersion = BuildKonfig.VERSION_NAME,
                 tncVersion = 1.0,
                 privacyPolicyVersion = 1.0,
@@ -28,7 +30,6 @@ class ConsentDeviceUseCase(
 class HasDeviceConsentedUseCase(
     val settingsRepository: ISettingsRepository
 ) {
-
-    operator fun invoke(): Flow<Boolean> = settingsRepository.getDeviceConsent()
+    operator fun invoke(): Flow<Boolean> = settingsRepository.listen(Setting.DeviceConsent)
         .map { it != null }
 }

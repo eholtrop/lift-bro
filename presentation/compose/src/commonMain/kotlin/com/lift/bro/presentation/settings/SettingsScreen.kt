@@ -39,6 +39,7 @@ import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
+import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalPlatformContext
@@ -107,7 +108,8 @@ fun SettingsScreen() {
                         IconButton(
                             modifier = Modifier.size(128.dp),
                             onClick = {
-                                dependencies.settingsRepository.setBro(
+                                dependencies.settingsRepository.set(
+                                    Setting.Bro,
                                     when (bro) {
                                         LiftBro.Leo -> LiftBro.Lisa
                                         LiftBro.Lisa -> LiftBro.Leo
@@ -212,14 +214,14 @@ fun SettingsScreen() {
 
                                     var enabled by remember {
                                         mutableStateOf(
-                                            dependencies.settingsRepository.enableTimer()
+                                            dependencies.settingsRepository.get(Setting.TimerEnabled)
                                         )
                                     }
                                     Checkbox(
                                         checked = enabled,
                                         onCheckedChange = {
                                             enabled = !enabled
-                                            dependencies.settingsRepository.setEnableTimer(enabled)
+                                            dependencies.settingsRepository.set(Setting.TimerEnabled, enabled)
                                         }
                                     )
                                 }

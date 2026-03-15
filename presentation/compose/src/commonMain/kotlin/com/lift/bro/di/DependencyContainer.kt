@@ -19,6 +19,7 @@ import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightLiftDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
+import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
@@ -41,7 +42,7 @@ expect class DependencyContainer {
 
 private val remoteUrl: String?
     get() {
-        return dependencies.settingsRepository.getClientUrl()
+        return dependencies.settingsRepository.get(Setting.ClientUrl)
     }
 
 val DependencyContainer.setRepository: ISetRepository
