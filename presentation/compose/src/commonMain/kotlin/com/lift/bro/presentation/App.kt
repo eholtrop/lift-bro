@@ -1,4 +1,5 @@
 package com.lift.bro.presentation
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -46,6 +47,7 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
+import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
@@ -65,7 +67,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
-import com.revenuecat.purchases.kmp.configure
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import dev.gitlive.firebase.Firebase
@@ -149,7 +150,7 @@ val ApplicationScope = GlobalScope
 
 @Composable
 fun CheckAppConsent(
-    settingsRepository: ISettingsRepository = dependencies.settingsRepository
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
 ) {
     val hasConsent by HasDeviceConsentedUseCase(dependencies.settingsRepository).invoke()
         .collectAsState(null)
@@ -189,36 +190,21 @@ fun App(
         LocalDependencies provides dependencies
     ) {
         val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
-        val isAndroid = LocalPlatformContext.current is Platform.Android
 
         LaunchedEffect("setup_revenuecat") {
             if (BuildConfig.isDebug) {
                 Purchases.logLevel = LogLevel.DEBUG
             }
-
-            Purchases.configure(
-                if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS
-            )
-            Purchases.sharedInstance.getCustomerInfo(
-                onError = { error ->
-                    Sentry.captureException(Throwable(message = error.message))
-                },
-                onSuccess = { success ->
-                    if (success.entitlements.active.containsKey("pro")) {
-                        subscriptionType.value = SubscriptionType.Pro
-                    }
-                }
-            )
         }
 
-        val bro by dependencies.settingsRepository.getBro().collectAsState(null)
-        val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
+        val bro by dependencies.settingsRepository.listen(Setting.Bro).collectAsState(null)
+        val uom by dependencies.settingsRepository.listen(Setting.UnitOfMeasure).map { it.uom }
             .collectAsState(UOM.POUNDS)
-        val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
-        val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved()
+        val showMerCalcs by dependencies.settingsRepository.listen(Setting.MerSettings).collectAsState(null)
+        val twmSettings by dependencies.settingsRepository.listen(Setting.ShowTotalWeightMoved)
             .collectAsState(false)
-        val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
-        val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
+        val emaxSettings by dependencies.settingsRepository.listen(Setting.EMaxEnabled).collectAsState(false)
+        val tMaxSettings by dependencies.settingsRepository.listen(Setting.TMaxEnabled).collectAsState(false)
         val showPaywall = remember { mutableStateOf(false) }
         val showCalculator = remember { mutableStateOf(false) }
 
@@ -236,7 +222,7 @@ fun App(
         ) {
             if (navCoordinator.currentPage == Destination.Unknown) {
                 LaunchedEffect("landing_selection") {
-                    dependencies.settingsRepository.getDeviceFtux().collectLatest {
+                    dependencies.settingsRepository.listen(Setting.DeviceFtux).collectLatest {
                         when (it) {
                             true -> navCoordinator.setRoot(Destination.Home)
                             false -> navCoordinator.setRoot(Destination.Onboarding)
@@ -259,7 +245,9 @@ fun App(
                 }
             }
 
-            val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
+            val themeMode by dependencies.settingsRepository.listen(
+                Setting.ThemeModeKey
+            ).collectAsState(ThemeMode.System)
 
             AppTheme(
                 theme = themeMode

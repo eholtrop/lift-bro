@@ -3,6 +3,7 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.goalsRepository
 import com.lift.bro.di.liftRepository
+import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
@@ -67,11 +68,11 @@ fun rememberHomeInteractor(
         combine(
             liftRepository.listenAll(),
             goalsRepository.getAll(),
-        ) { lifts, goals ->
+            settingsRepository.listen(Setting.DashboardV3)
+        ) { lifts, goals, v3 ->
             if (lifts.isEmpty()) {
                 HomeState.Empty
             } else {
-                val v3 = settingsRepository.dashboardV3()
                 HomeState.Content(
                     selectedTab = if (v3) Tab.Dashboard else (state as? HomeState.Content)?.selectedTab ?: initialTab,
                     goals = goals.map { it.name },

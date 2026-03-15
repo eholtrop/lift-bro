@@ -7,13 +7,14 @@ import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
+import com.lift.bro.domain.models.BackupSettings
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.LiftingLog
+import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ILiftingLogRepository
@@ -35,12 +36,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import tv.dpal.ext.ktx.datetime.toString
+import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.time.Clock
 
 @Serializable
@@ -80,8 +80,9 @@ class BackupUseCase(
             FileKit.shareFile(backupFile)
 
             // ensure last backup date is updated
-            settingsRepository.saveBackupSettings(
-                BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
+            dependencies.settingsRepository.set(
+                Setting.BackupSettingsKey,
+                BackupSettings(lastBackupDate = Clock.System.now().toLocalDate())
             )
         }
     }
