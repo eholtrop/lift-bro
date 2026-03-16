@@ -30,7 +30,10 @@ typealias DashboardInteractor = Interactor<DashboardState, DashboardEvent>
 sealed interface DashboardState
 
 @Serializable
-data class Loaded(val items: List<DashboardListItem>): DashboardState
+data class Loaded(
+    val items: List<DashboardListItem>,
+    val sortingSettings: SortingSettings,
+): DashboardState
 
 @Serializable
 data object Loading: DashboardState
@@ -61,9 +64,26 @@ sealed class DashboardListItem {
     data object AddLiftButton: DashboardListItem()
 }
 
+@Serializable
+enum class SortingOption {
+    Heaviest,
+    Reps,
+    Latest,
+    Name
+}
+
+@Serializable
+data class SortingSettings(
+    val option: SortingOption = SortingOption.Name,
+    val favouritesAtTop: Boolean = true,
+)
+
 sealed interface DashboardEvent {
     data object AddLiftClicked: DashboardEvent
     data class LiftClicked(val liftId: String): DashboardEvent
+
+    data class SortingOptionSelected(val sortingOption: SortingOption): DashboardEvent
+    data object FavouritesAtTopToggled: DashboardEvent
 }
 
 @Composable
@@ -80,10 +100,12 @@ fun rememberDashboardInteractor(
             when (event) {
                 DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
                 is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
+                else -> {}
             }
         }
     ),
-    source = {
+    reducers = listOf(dashboardReducer),
+    source = { state ->
         combine(
             liftRepository.listenAll().onStart { emit(emptyList()) },
             variationRepository.listenAll().onStart { emit(emptyList()) }
@@ -107,6 +129,7 @@ fun rememberDashboardInteractor(
                                     maxWeight = liftVariations.maxOfOrNull {
                                         it.oneRepMax?.weight ?: 0.0
                                     },
+                                    favourite = liftVariations.any { it.favourite },
                                     maxReps = liftVariations.maxOfOrNull {
                                         it.maxReps?.reps?.toDouble() ?: 0.0
                                     },
@@ -121,12 +144,7 @@ fun rememberDashboardInteractor(
                 ) { it.toList().filterNotNull() }
                     .debounce { 100L }
                     .map { cards ->
-                        cards.sortedBy { (it as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.name }
-                            .sortedByDescending { item ->
-                                variations.any {
-                                    (item as? DashboardListItem.LiftCard.Loaded)?.state?.lift?.id == it.lift?.id && it.favourite
-                                }
-                            }
+                        cards.sortWithSettings(if (state is Loaded) state.sortingSettings else SortingSettings())
                     }
                     .map { items ->
                         Loaded(
@@ -142,7 +160,8 @@ fun rememberDashboardInteractor(
                                     add(0, DashboardListItem.ReleaseNotes)
                                 }
                                 add(DashboardListItem.AddLiftButton)
-                            }
+                            },
+                            sortingSettings = if (state is Loaded) state.sortingSettings else SortingSettings()
                         )
                     }
             }

@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Sort
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -118,8 +119,11 @@ fun DashboardContent(
                                     v2 = item.v3,
                                     showRpe = showRpe,
                                     showTempo = showTempo,
+                                    sortingSettings = state.sortingSettings,
                                     onToggleRpe = { showRpe = !showRpe },
-                                    onToggleTempo = { showTempo = !showTempo }
+                                    onToggleTempo = { showTempo = !showTempo },
+                                    toggleFavourite = { interactor(DashboardEvent.FavouritesAtTopToggled) },
+                                    optionSelected = { interactor(DashboardEvent.SortingOptionSelected(it)) }
                                 )
                             }
 
@@ -223,11 +227,14 @@ fun DashboardContent(
 fun LiftHeader(
     modifier: Modifier = Modifier,
     v2: Boolean,
+    sortingSettings: SortingSettings,
     showWeight: MutableState<LiftCardYValue> = LocalLiftCardYValue.current,
     showTempo: Boolean,
     showRpe: Boolean,
     onToggleTempo: () -> Unit,
     onToggleRpe: () -> Unit,
+    optionSelected: (SortingOption) -> Unit,
+    toggleFavourite: () -> Unit,
 ) {
     when (v2) {
         false -> Row(
@@ -451,6 +458,30 @@ fun LiftHeader(
                             } else {
                                 TextFieldDefaults.colors().disabledTextColor
                             }
+                        )
+                    }
+
+                    Space()
+
+                    var showSortingDialog by remember { mutableStateOf(false) }
+
+                    if (showSortingDialog) {
+                        DashboardSortingDialog(
+                            sortingSettings = sortingSettings,
+                            toggleFavourite = toggleFavourite,
+                            optionSelected = optionSelected,
+                            onDismissRequest = { showSortingDialog = false },
+                        )
+                    }
+
+                    ChipButton(
+                        onClick = {
+                            showSortingDialog = true
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Default.Sort,
+                            contentDescription = "Sort"
                         )
                     }
                 }

@@ -6,7 +6,9 @@
     <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
+    <ID>CyclomaticComplexMethod:DashboardReducer.kt$fun List&lt;DashboardListItem&gt;.sortWithSettings(settings: SortingSettings): List&lt;DashboardListItem&gt;</ID>
     <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: DashboardInteractor, )</ID>
+    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable fun LiftHeader( modifier: Modifier = Modifier, v2: Boolean, sortingSettings: SortingSettings, showWeight: MutableState&lt;LiftCardYValue&gt; = LocalLiftCardYValue.current, showTempo: Boolean, showRpe: Boolean, onToggleTempo: () -&gt; Unit, onToggleRpe: () -&gt; Unit, optionSelected: (SortingOption) -&gt; Unit, toggleFavourite: () -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:EditSetScreen.kt$@Composable fun EditSetScreen( state: EditSetState, onEvent: (EditSetEvent) -&gt; Unit, strings: EditSetScreenStrings = EditSetScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, showRpe: Boolean = true, showTempo: Boolean = true, yUnit: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
@@ -47,7 +49,6 @@
     <ID>MatchingDeclarationName:WrappedWeightScreen.kt$WrappedWeightState</ID>
     <ID>MaximumLineLength:App.kt$ </ID>
     <ID>MaximumLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$ </ID>
-    <ID>MaximumLineLength:DashboardInteractor.kt$ </ID>
     <ID>MaximumLineLength:EditSetInteractor.kt$ </ID>
     <ID>MaximumLineLength:EditSetScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftDetailsScreen.kt$ </ID>

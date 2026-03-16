@@ -27,7 +27,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -51,9 +50,8 @@ fun AnimatedRotatingText(
     ) {
         var minSize by remember { mutableStateOf(Size.Zero) }
         Box(
-            modifier = Modifier.defaultMinSize(minHeight = with (LocalDensity.current) { minSize.height.toDp() })
+            modifier = Modifier.defaultMinSize(minHeight = with(LocalDensity.current) { minSize.height.toDp() })
         ) {
-
         }
         AnimatedVisibility(
             modifier = Modifier.graphicsLayer {
