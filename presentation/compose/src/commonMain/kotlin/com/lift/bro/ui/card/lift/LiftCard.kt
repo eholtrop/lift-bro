@@ -78,6 +78,7 @@ data class LiftCardState(
     val values: List<Pair<LocalDate, LiftCardData>>,
     val maxWeight: Double? = null,
     val maxReps: Double? = null,
+    val favourite: Boolean = false,
 )
 
 @Serializable
