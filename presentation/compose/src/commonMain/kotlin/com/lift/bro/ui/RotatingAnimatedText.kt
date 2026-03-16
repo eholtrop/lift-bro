@@ -20,7 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -44,9 +47,18 @@ fun AnimatedRotatingText(
     var visibility by remember { mutableStateOf(true) }
 
     Box(
-        modifier = modifier.defaultMinSize(minHeight = 52.dp),
+        modifier = modifier,
     ) {
+        var minSize by remember { mutableStateOf(Size.Zero) }
+        Box(
+            modifier = Modifier.defaultMinSize(minHeight = with (LocalDensity.current) { minSize.height.toDp() })
+        ) {
+
+        }
         AnimatedVisibility(
+            modifier = Modifier.graphicsLayer {
+                minSize = size
+            },
             visible = visibility,
             enter = fadeIn(animationSpec = tween(durationMillis = 1000)),
             exit = fadeOut(animationSpec = tween(durationMillis = 1000))

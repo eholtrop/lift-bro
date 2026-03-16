@@ -45,6 +45,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -101,21 +103,6 @@ fun HomeScreenContent(
     when (val currentState = state) {
         is HomeState.Content -> {
             LiftingScaffold(
-                description = {
-                    AnimatedRotatingText(
-                        modifier = Modifier
-                            .clip(
-                                MaterialTheme.shapes.small,
-                            ).clickable(
-                                onClick = { onEvent(HomeEvent.GoalsClicked) },
-                                role = Role.Button
-                            )
-                            .padding(horizontal = MaterialTheme.spacing.half),
-                        text = currentState.goals,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
-                    )
-                },
                 title = {
                     Column {
                         var showWrapped by remember { mutableStateOf(false) }
@@ -136,7 +123,28 @@ fun HomeScreenContent(
                                 painter = painterResource(LocalLiftBro.current.iconRes()),
                                 contentDescription = ""
                             )
-                            Text(stringResource(Res.string.dashboard_title))
+                            Column {
+                                Text(stringResource(Res.string.dashboard_title))
+
+                                val shift = with(LocalDensity.current) { MaterialTheme.spacing.half.toPx() }
+
+                                AnimatedRotatingText(
+                                    modifier = Modifier
+                                        .graphicsLayer {
+                                            translationX -= shift
+                                        }
+                                        .clip(
+                                            MaterialTheme.shapes.small,
+                                        ).clickable(
+                                            onClick = { onEvent(HomeEvent.GoalsClicked) },
+                                            role = Role.Button
+                                        )
+                                        .padding(horizontal = MaterialTheme.spacing.half),
+                                    text = currentState.goals,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.5f),
+                                )
+                            }
 
                             if (today.month == Month.JANUARY || BuildConfig.isDebug) {
                                 var visible by rememberSaveable { mutableStateOf(false) }

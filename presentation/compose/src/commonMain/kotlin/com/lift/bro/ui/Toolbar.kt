@@ -52,7 +52,7 @@ fun TopBar(
     trailingContent: @Composable () -> Unit = {},
     leadingContent: @Composable () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    collapsedHeight: Dp = TopAppBarDefaults.LargeAppBarCollapsedHeight
+    collapsedHeight: Dp = TopAppBarDefaults.LargeAppBarCollapsedHeight,
 ) {
     LargeTopAppBar(
         modifier = modifier,
@@ -75,12 +75,10 @@ fun TopBar(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         title()
-                        if ((scrollBehavior?.state?.collapsedFraction ?: 0f) < .66f) {
-                            CompositionLocalProvider(
-                                LocalTextStyle provides MaterialTheme.typography.titleMedium,
-                            ) {
-                                description?.invoke()
-                            }
+                        CompositionLocalProvider(
+                            LocalTextStyle provides MaterialTheme.typography.titleMedium,
+                        ) {
+                            description?.invoke()
                         }
                     }
                 }
