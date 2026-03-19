@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.*
+
 pluginManagement {
     resolutionStrategy {
         eachPlugin {
@@ -34,11 +36,21 @@ include(":presentation:server")
 include(":data:sqldelight")
 include(":data:core")
 
-//include(":libs:flowvi:core")
-//include(":libs:flowvi:compose")
 include(":libs:logging")
 include(":libs:ext:flow")
 include(":libs:ext:ktx-datetime")
 include(":libs:ext:compose")
 include(":libs:navi")
 include(":libs:screenshot-processor")
+
+
+if (file("libs/flowvi/enablecompositebuilds").exists()) {
+    includeBuild("libs/flowvi") {
+        dependencySubstitution {
+            substitute(module("tv.dpal:flowvi-core")).using(project(":core"))
+        }
+        dependencySubstitution {
+            substitute(module("tv.dpal:flowvi-compose")).using(project(":compose"))
+        }
+    }
+}
