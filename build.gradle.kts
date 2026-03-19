@@ -140,3 +140,22 @@ tasks.register("generateArchDiagram") {
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
 }
+
+tasks.register("enableLocalFlowvi") {
+    group = "flowvi"
+    doLast {
+        with(file("libs/flowvi/enablecompositebuilds")) {
+            parentFile.mkdirs()
+            createNewFile()
+        }
+    }
+}
+
+tasks.register("disableLocalFlowvi") {
+    group = "flowvi"
+    doLast {
+        with(file("libs/flowvi/enablecompositebuilds")) {
+            if (exists()) delete()
+        }
+    }
+}
