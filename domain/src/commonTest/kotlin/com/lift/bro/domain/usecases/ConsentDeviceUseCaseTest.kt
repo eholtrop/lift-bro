@@ -73,6 +73,14 @@ class ConsentDeviceUseCaseTest {
             TODO("Not yet implemented")
         }
 
+        override fun dashboardV3(): Boolean {
+            TODO("Not yet implemented")
+        }
+
+        override fun enableDashboardV3(enabled: Boolean) {
+            TODO("Not yet implemented")
+        }
+
         override fun editSetVersion(): Int {
             TODO("Not yet implemented")
         }

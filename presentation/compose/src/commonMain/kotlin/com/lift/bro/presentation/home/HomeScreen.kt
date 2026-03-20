@@ -24,7 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Flare
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,7 +31,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -98,8 +96,6 @@ fun HomeScreenContent(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
 ) {
-    var dashboardV3 by remember { mutableStateOf(BuildConfig.isDebug) }
-
     when (val currentState = state) {
         is HomeState.Content -> {
             LiftingScaffold(
@@ -188,19 +184,6 @@ fun HomeScreenContent(
                 leadingContent = {
                 },
                 trailingContent = {
-                    Switch(
-                        checked = dashboardV3,
-                        onCheckedChange = {
-                            dashboardV3 = !dashboardV3
-                            onEvent(HomeEvent.DashboardClicked)
-                        },
-                        thumbContent = {
-                            Icon(
-                                imageVector = Icons.Default.Flare,
-                                contentDescription = "New Dashboard"
-                            )
-                        }
-                    )
                     TopBarIconButton(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(
@@ -215,7 +198,7 @@ fun HomeScreenContent(
                     contentDescription = stringResource(Res.string.dashboard_fab_content_description),
                     fabClicked = { onEvent(HomeEvent.AddSetClicked) },
                     preFab = {
-                        if (!dashboardV3) {
+                        if (!state.dashboardV3) {
                             Button(
                                 modifier = Modifier.size(72.dp, 52.dp),
                                 onClick = {
@@ -255,7 +238,7 @@ fun HomeScreenContent(
                         }
                     },
                     postFab = {
-                        if (!dashboardV3) {
+                        if (!state.dashboardV3) {
                             Button(
                                 modifier = Modifier.size(72.dp, 52.dp),
                                 onClick = {
@@ -303,7 +286,7 @@ fun HomeScreenContent(
                         Tab.Dashboard -> {
                             DashboardContent(
                                 modifier = Modifier.padding(padding),
-                                interactor = if (dashboardV3) {
+                                interactor = if (state.dashboardV3) {
                                     rememberDashboardInteractor(
                                         true
                                     )

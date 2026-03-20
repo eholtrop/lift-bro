@@ -4,6 +4,9 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.goalsRepository
 import com.lift.bro.di.liftRepository
+import com.lift.bro.domain.repositories.IGoalRepository
+import com.lift.bro.domain.repositories.ILiftRepository
+import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditLift
@@ -35,6 +38,7 @@ sealed interface HomeState {
     @Serializable
     data class Content(
         val selectedTab: Tab,
+        val dashboardV3: Boolean = false,
         val goals: List<String> = emptyList(),
     ): HomeState
 }
@@ -54,20 +58,25 @@ sealed class HomeEvent {
 @Composable
 fun rememberHomeInteractor(
     initialTab: Tab = Tab.Dashboard,
+    liftRepository: ILiftRepository = dependencies.liftRepository,
+    goalsRepository: IGoalRepository = dependencies.goalsRepository,
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): HomeInteractor = rememberInteractor(
     initialState = HomeState.Loading,
     source = { state ->
         combine(
-            dependencies.liftRepository.listenAll(),
-            dependencies.goalsRepository.getAll(),
+            liftRepository.listenAll(),
+            goalsRepository.getAll(),
         ) { lifts, goals ->
             if (lifts.isEmpty()) {
                 HomeState.Empty
             } else {
+                val v3 = settingsRepository.dashboardV3()
                 HomeState.Content(
-                    selectedTab = (state as? HomeState.Content)?.selectedTab ?: initialTab,
+                    selectedTab = if (v3) Tab.Dashboard else (state as? HomeState.Content)?.selectedTab ?: initialTab,
                     goals = goals.map { it.name },
+                    dashboardV3 = v3
                 )
             }
         }

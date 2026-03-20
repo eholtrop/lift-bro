@@ -24,6 +24,10 @@ interface ISettingsRepository {
 
     fun setEnableTimer(enabled: Boolean)
 
+    fun dashboardV3(): Boolean
+
+    fun enableDashboardV3(enabled: Boolean)
+
     fun editSetVersion(): Int
 
     fun setEditSetVersion(version: Int)

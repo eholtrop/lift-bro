@@ -51,6 +51,15 @@ class SettingsRepository(
         keyChanged("timer_feature_flag")
     }
 
+    override fun dashboardV3(): Boolean {
+        return dataSource.getBool("dashboard_v3", false)
+    }
+
+    override fun enableDashboardV3(enabled: Boolean) {
+        dataSource.putBool("dashboard_v3", enabled)
+        keyChanged("dashboard_v3")
+    }
+
     override fun editSetVersion(): Int {
         return dataSource.getInt("edit_set_screen_version", 1)
     }

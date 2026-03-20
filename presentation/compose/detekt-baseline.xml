@@ -14,6 +14,7 @@
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:LiftingScaffold.kt$@Composable fun LiftingScaffold( title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current, fab: @Composable (() -&gt; Unit)? = null, fabProperties: FabProperties? = null, leadingContent: @Composable () -&gt; Unit = { LeadingNavigationButton() }, trailingContent: @Composable () -&gt; Unit = {}, tallMode: Boolean = currentWindowAdaptiveInfo() .windowSizeClass .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND), topAppBarScrollBehavior: TopAppBarScrollBehavior = when (tallMode) { true -&gt; TopAppBarDefaults.exitUntilCollapsedScrollBehavior() false -&gt; TopAppBarDefaults.enterAlwaysScrollBehavior() }, containerColor: Color = MaterialTheme.colorScheme.background, contentColor: Color = contentColorFor(containerColor), content: @Composable (PaddingValues) -&gt; Unit, )</ID>
+    <ID>CyclomaticComplexMethod:SettingsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun SettingsScreen()</ID>
     <ID>CyclomaticComplexMethod:TimerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun TimerScreen( state: TimerState, onEvent: (TimerEvent) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = rememberDailyWorkoutDetailsInteractor( date ), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
@@ -55,7 +56,6 @@
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
     <ID>MaximumLineLength:RunningTimerOverlay.kt$ </ID>
-    <ID>MaximumLineLength:SettingsScreen.kt$ </ID>
     <ID>MaximumLineLength:TimerScreen.kt$ </ID>
     <ID>MaximumLineLength:TimerTicker.kt$ </ID>
     <ID>MaximumLineLength:Toolbar.kt$ </ID>
