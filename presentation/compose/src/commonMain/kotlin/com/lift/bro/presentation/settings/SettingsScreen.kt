@@ -47,6 +47,7 @@ import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.presentation.settings.client.ClientSettingsRow
 import com.lift.bro.presentation.settings.server.ServerSettingsRow
+import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.theme.spacing
@@ -85,11 +86,6 @@ fun SettingsScreen() {
         content = { padding ->
 
             var subscriptionType by LocalSubscriptionStatusProvider.current
-            var showExperimental by remember {
-                mutableStateOf(
-                    subscriptionType == SubscriptionType.Pro || BuildConfig.isDebug
-                )
-            }
             val localServer = LocalServer.current
             val showPro = LocalPlatformContext.current != null // (this means its iOS)
 
@@ -191,43 +187,53 @@ fun SettingsScreen() {
                     }
                 }
 
-                if (showExperimental) {
-                    if (localServer != null) {
-                        item {
-                            ServerSettingsRow(localServer)
-                        }
-                    }
+                item {
+                    ClientSettingsRow()
+                }
 
-                    item {
-                        ClientSettingsRow()
-                    }
-
-                    item {
-                        SettingsRowItem(
-                            title = {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Text("Timer (Experimental) - Expect \uD83E\uDD97")
-
-                                    var enabled by remember {
-                                        mutableStateOf(
-                                            dependencies.settingsRepository.enableTimer()
-                                        )
-                                    }
-                                    Checkbox(
-                                        checked = enabled,
-                                        onCheckedChange = {
-                                            enabled = !enabled
-                                            dependencies.settingsRepository.setEnableTimer(enabled)
-                                        }
+                item {
+                    SettingsRowItem(
+                        title = { Text("Experimental - Expect \uD83E\uDD97") }
+                    ) {
+                        Column(
+                        ) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                var enabled by remember {
+                                    mutableStateOf(
+                                        dependencies.settingsRepository.enableTimer()
                                     )
                                 }
-                            },
-                        ) {
-                            Text(
-                                "Enable a set timer/recorder for counting you down as well as record video of a given set"
-                            )
+                                Checkbox(
+                                    checked = enabled,
+                                    onCheckedChange = {
+                                        enabled = !enabled
+                                        dependencies.settingsRepository.setEnableTimer(enabled)
+                                    }
+                                )
+                                Column {
+                                    Text(
+                                        text = "Timer",
+                                        style = MaterialTheme.typography.titleMedium
+                                    )
+                                    Text(
+                                        text = "Enable a timer for counting down sets and rest periods",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
+
+                            if (showPro || subscriptionType == SubscriptionType.Pro) {
+                                SettingsRowItem(
+                                    backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    title = { Text("Lift Pros Only \uD83D\uDE0E") }
+                                ) {
+                                    if (localServer != null) {
+                                        ServerSettingsRow(localServer)
+                                    }
+                                }
+                            }
                         }
                     }
                 }

@@ -161,10 +161,10 @@ Soreness or pain?</string>
     <string name="reps">reps</string>
 
     <string name="server_settings_row_current_ip">Current IP is %1$s</string>
-    <string name="server_settings_row_description">Enabling this will run a Lift Bro server on this device. It will expose all lift bro data to anyone on your current network</string>
+    <string name="server_settings_row_description">Start a local server on this device.</string>
     <string name="server_settings_row_status_disabled">Server Disabled</string>
     <string name="server_settings_row_status_enabled">Server Enabled</string>
-    <string name="server_settings_row_title">Lift Bro Local Server</string>
+    <string name="server_settings_row_title">Local Server</string>
     <string name="settings_backup_cta">Backup</string>
     <string name="settings_backup_restore_title">Backup / Restore</string>
     <string name="settings_become_pro_description">Sign up for an Ad free experience and extra premium tracking metrics!</string>

@@ -30,7 +30,7 @@ enum class ServerStatus {
 @Composable
 fun ServerSettingsRow(
     server: LiftBroServer,
-    interactor: ServerSettingsInteractor = rememberServerSettingsInteractor(server)
+    interactor: ServerSettingsInteractor = rememberServerSettingsInteractor(server),
 ) {
     val state by interactor.state.collectAsState()
 
@@ -45,44 +45,43 @@ fun ServerSettingsRow(
 fun ServerSettingsRowContent(
     state: ServerSettingsState,
     localIPAddress: String?,
-    onEvent: (ServerSettingsEvent) -> Unit
+    onEvent: (ServerSettingsEvent) -> Unit,
 ) {
-    SettingsRowItem(
-        modifier = Modifier,
-        title = { Text(stringResource(Res.string.server_settings_row_title)) },
-    ) {
-        Column {
-            Text(
-                stringResource(Res.string.server_settings_row_description)
-            )
-            RadioField(
-                text = if (state.status == ServerStatus.On) {
-                    stringResource(Res.string.server_settings_row_status_enabled)
-                } else {
-                    stringResource(Res.string.server_settings_row_status_disabled)
-                },
-                selected = state.status == ServerStatus.On,
-                fieldSelected = {
-                    when (state.status) {
-                        ServerStatus.On -> onEvent(ServerSettingsEvent.TurnOffServer)
-                        ServerStatus.Unknown -> {}
-                        ServerStatus.Off -> onEvent(ServerSettingsEvent.TurnOnServer)
-                    }
-                },
-            )
-            localIPAddress?.let {
-                if (state.status == ServerStatus.On) {
-                    Text(stringResource(Res.string.server_settings_row_current_ip, it))
+    Column {
+        Text(stringResource(Res.string.server_settings_row_title))
+
+        Text(
+            stringResource(Res.string.server_settings_row_description)
+        )
+        Text(text = "Warning: This will expose read/write access to your lift bro data to anyone on your network. Use with caution ⚠\uFE0F")
+        RadioField(
+            text = if (state.status == ServerStatus.On) {
+                stringResource(Res.string.server_settings_row_status_enabled)
+            } else {
+                stringResource(Res.string.server_settings_row_status_disabled)
+            },
+            selected = state.status == ServerStatus.On,
+            fieldSelected = {
+                when (state.status) {
+                    ServerStatus.On -> onEvent(ServerSettingsEvent.TurnOffServer)
+                    ServerStatus.Unknown -> {}
+                    ServerStatus.Off -> onEvent(ServerSettingsEvent.TurnOnServer)
                 }
+            },
+        )
+        localIPAddress?.let {
+            if (state.status == ServerStatus.On) {
+                Text(stringResource(Res.string.server_settings_row_current_ip, it))
             }
         }
     }
+
 }
 
 @Preview
 @Composable
 fun ServerSettingsRowPreview(
-    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
 ) {
     PreviewAppTheme(isDarkMode = darkMode) {
         ServerSettingsRowContent(
