@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.ui.RadioField
@@ -25,6 +26,7 @@ import com.lift.bro.utils.PreviewAppTheme
 @Composable
 fun SettingsRowItem(
     modifier: Modifier = Modifier,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     title: @Composable () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -32,7 +34,7 @@ fun SettingsRowItem(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
             .background(
-                color = MaterialTheme.colorScheme.surface,
+                color = backgroundColor,
             )
             .padding(MaterialTheme.spacing.one)
     ) {
