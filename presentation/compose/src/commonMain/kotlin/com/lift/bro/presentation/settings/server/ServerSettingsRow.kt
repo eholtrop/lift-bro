@@ -5,11 +5,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.domain.server.LiftBroServer
-import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
@@ -53,7 +51,10 @@ fun ServerSettingsRowContent(
         Text(
             stringResource(Res.string.server_settings_row_description)
         )
-        Text(text = "Warning: This will expose read/write access to your lift bro data to anyone on your network. Use with caution ⚠\uFE0F")
+        Text(
+            text = "Warning: This will expose read/write access to your lift bro " +
+                "data to anyone on your network. Use with caution ⚠\uFE0F"
+        )
         RadioField(
             text = if (state.status == ServerStatus.On) {
                 stringResource(Res.string.server_settings_row_status_enabled)
@@ -75,7 +76,6 @@ fun ServerSettingsRowContent(
             }
         }
     }
-
 }
 
 @Preview

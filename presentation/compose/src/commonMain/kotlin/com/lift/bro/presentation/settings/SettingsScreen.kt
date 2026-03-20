@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,7 +34,6 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
@@ -47,7 +45,7 @@ import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.presentation.settings.client.ClientSettingsRow
 import com.lift.bro.presentation.settings.server.ServerSettingsRow
-import com.lift.bro.ui.Card
+import com.lift.bro.ui.CheckField
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.theme.spacing
@@ -75,6 +73,7 @@ import lift_bro.core.generated.resources.url_privacy_policy
 import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.compose.padding.horizontal.padding
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -195,37 +194,40 @@ fun SettingsScreen() {
                     SettingsRowItem(
                         title = { Text("Experimental - Expect \uD83E\uDD97") }
                     ) {
-                        Column(
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                var enabled by remember {
-                                    mutableStateOf(
-                                        dependencies.settingsRepository.enableTimer()
-                                    )
-                                }
-                                Checkbox(
-                                    checked = enabled,
-                                    onCheckedChange = {
-                                        enabled = !enabled
-                                        dependencies.settingsRepository.setEnableTimer(enabled)
-                                    }
+                        Column {
+                            var timer by remember {
+                                mutableStateOf(
+                                    dependencies.settingsRepository.enableTimer()
                                 )
-                                Column {
-                                    Text(
-                                        text = "Timer",
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
-                                    Text(
-                                        text = "Enable a timer for counting down sets and rest periods",
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                }
                             }
+                            CheckField(
+                                title = "Timer",
+                                description = "Enable a timer for counting down sets and rest periods",
+                                checked = timer,
+                                checkChanged = {
+                                    timer = it
+                                    dependencies.settingsRepository.setEnableTimer(it)
+                                }
+                            )
 
-                            if (showPro || subscriptionType == SubscriptionType.Pro) {
+                            var dashboardV3 by remember {
+                                mutableStateOf(
+                                    dependencies.settingsRepository.dashboardV3()
+                                )
+                            }
+                            CheckField(
+                                title = "Dashboard V3",
+                                description = "No more tabs!",
+                                checked = dashboardV3,
+                                checkChanged = {
+                                    dashboardV3 = it
+                                    dependencies.settingsRepository.enableDashboardV3(it)
+                                }
+                            )
+
+                            if (showPro || subscriptionType == SubscriptionType.Pro && localServer != null) {
                                 SettingsRowItem(
+                                    modifier = Modifier.padding(top = MaterialTheme.spacing.half),
                                     backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
                                     title = { Text("Lift Pros Only \uD83D\uDE0E") }
                                 ) {
