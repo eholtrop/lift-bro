@@ -1,21 +1,24 @@
 package com.lift.bro.presentation.settings.server
 
-import java.net.NetworkInterface
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import java.net.Inet4Address
 
-actual fun getLocalIPAdderess(): String? {
-    val interfaces = NetworkInterface.getNetworkInterfaces()
-    while (interfaces.hasMoreElements()) {
-        val networkInterface = interfaces.nextElement()
-
-        if (!networkInterface.isLoopback && networkInterface.isUp) {
-            val address = networkInterface.inetAddresses
-            while (address.hasMoreElements()) {
-                val nextElement = address.nextElement()
-                if (nextElement.isSiteLocalAddress && nextElement.hostAddress?.contains(".") == true) {
-                    return nextElement.hostAddress
-                }
-            }
-        }
-    }
-    return null
+@Composable
+actual fun getWifiIpAddress(): String? {
+    val context = LocalContext.current
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork
+    val capabilities = connectivityManager.getNetworkCapabilities(network)
+    val isWifi = capabilities?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true
+    val linkProperties = if (isWifi) connectivityManager.getLinkProperties(network) else null
+    val wifiAddress = linkProperties?.linkAddresses
+        ?.map { it.address }
+        ?.filterIsInstance<Inet4Address>()
+        ?.firstOrNull()
+        ?.hostAddress
+    return if (isWifi) wifiAddress else null
 }

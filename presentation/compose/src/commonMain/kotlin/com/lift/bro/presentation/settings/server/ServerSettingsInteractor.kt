@@ -19,7 +19,7 @@ data class ServerSettingsState(
 )
 
 sealed interface ServerSettingsEvent {
-    data object TurnOnServer: ServerSettingsEvent
+    data class TurnOnServer(val wifiIp: String): ServerSettingsEvent
     data object TurnOffServer: ServerSettingsEvent
 
     data class ServerStatusUpdated(val status: ServerStatus): ServerSettingsEvent
@@ -36,7 +36,7 @@ fun rememberServerSettingsInteractor(
     reducers = listOf(
         Reducer { state, event ->
             when (event) {
-                ServerSettingsEvent.TurnOffServer, ServerSettingsEvent.TurnOnServer -> state.copy(
+                ServerSettingsEvent.TurnOffServer, is ServerSettingsEvent.TurnOnServer -> state.copy(
                     status = ServerStatus.Unknown
                 )
                 is ServerSettingsEvent.ServerStatusUpdated -> state.copy(status = event.status)
@@ -53,8 +53,8 @@ fun rememberServerSettingsInteractor(
                     }
                     dispatcher(ServerSettingsEvent.ServerStatusUpdated(ServerStatus.Off))
                 }
-                ServerSettingsEvent.TurnOnServer -> {
-                    server.start()
+                is ServerSettingsEvent.TurnOnServer -> {
+                    server.start(host = event.wifiIp)
                     withTimeoutOrNull(2000L) {
                         dispatcher(ServerSettingsEvent.ServerStatusUpdated(ServerStatus.On))
                     }

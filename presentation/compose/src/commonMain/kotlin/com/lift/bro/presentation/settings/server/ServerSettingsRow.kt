@@ -21,7 +21,8 @@ import lift_bro.core.generated.resources.server_settings_row_status_enabled
 import lift_bro.core.generated.resources.server_settings_row_title
 import org.jetbrains.compose.resources.stringResource
 
-expect fun getLocalIPAdderess(): String?
+@Composable
+expect fun getWifiIpAddress(): String?
 
 enum class ServerStatus {
     On, Unknown, Off
@@ -33,18 +34,28 @@ fun ServerSettingsRow(
     interactor: ServerSettingsInteractor = rememberServerSettingsInteractor(server)
 ) {
     val state by interactor.state.collectAsState()
+    val wifiIp = getWifiIpAddress()
 
     ServerSettingsRowContent(
         state = state,
-        localIPAddress = getLocalIPAdderess(),
-        onEvent = { interactor(it) }
+        wifiIpAddress = wifiIp,
+        onEvent = { event ->
+            when (event) {
+                ServerSettingsEvent.TurnOffServer -> interactor(event)
+                is ServerSettingsEvent.TurnOnServer -> {
+                    val ip = wifiIp ?: "127.0.0.1"
+                    interactor(ServerSettingsEvent.TurnOnServer(ip))
+                }
+                is ServerSettingsEvent.ServerStatusUpdated -> interactor(event)
+            }
+        }
     )
 }
 
 @Composable
 fun ServerSettingsRowContent(
     state: ServerSettingsState,
-    localIPAddress: String?,
+    wifiIpAddress: String?,
     onEvent: (ServerSettingsEvent) -> Unit
 ) {
     SettingsRowItem(
@@ -66,11 +77,11 @@ fun ServerSettingsRowContent(
                     when (state.status) {
                         ServerStatus.On -> onEvent(ServerSettingsEvent.TurnOffServer)
                         ServerStatus.Unknown -> {}
-                        ServerStatus.Off -> onEvent(ServerSettingsEvent.TurnOnServer)
+                        ServerStatus.Off -> onEvent(ServerSettingsEvent.TurnOnServer(""))
                     }
                 },
             )
-            localIPAddress?.let {
+            wifiIpAddress?.let {
                 if (state.status == ServerStatus.On) {
                     Text(stringResource(Res.string.server_settings_row_current_ip, it))
                 }
@@ -87,17 +98,17 @@ fun ServerSettingsRowPreview(
     PreviewAppTheme(isDarkMode = darkMode) {
         ServerSettingsRowContent(
             state = ServerSettingsState(status = ServerStatus.On),
-            localIPAddress = "192.168.1.100",
+            wifiIpAddress = "192.168.1.100",
             onEvent = {}
         )
         ServerSettingsRowContent(
             state = ServerSettingsState(status = ServerStatus.Off),
-            localIPAddress = null,
+            wifiIpAddress = null,
             onEvent = {}
         )
         ServerSettingsRowContent(
             state = ServerSettingsState(status = ServerStatus.Off),
-            localIPAddress = "192.168.1.100",
+            wifiIpAddress = "192.168.1.100",
             onEvent = {}
         )
     }
