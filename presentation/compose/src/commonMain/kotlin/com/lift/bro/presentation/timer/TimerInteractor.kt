@@ -1,19 +1,27 @@
 package com.lift.bro.presentation.timer
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.traceEventEnd
 import com.lift.bro.audio.AudioPlayer
+import com.lift.bro.data.video.VideoStorage
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.presentation.camera.CameraController
 import com.lift.bro.presentation.timer.TimerState.Ended
 import com.lift.bro.presentation.timer.TimerState.Plan
 import com.lift.bro.presentation.timer.TimerState.Running
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.cacheDir
+import io.github.vinceglb.filekit.div
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
@@ -21,10 +29,15 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.Instant
 import kotlinx.datetime.until
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import tv.dpal.ext.flow.debug
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
+import java.io.File
 import kotlin.math.max
 
 typealias TimerInteractor = Interactor<TimerState, TimerEvent>
@@ -32,54 +45,47 @@ typealias TimerInteractor = Interactor<TimerState, TimerEvent>
 @Composable
 fun rememberTimerInteractor(
     setId: String,
+    reps: Int = 1,
+    tempo: Tempo = Tempo(),
     setRepository: ISetRepository = dependencies.setRepository,
     uiEffects: SideEffect<TimerState, TimerEvent> = SideEffect { _, _, _ -> },
 ): TimerInteractor = rememberInteractor(
-    initialState = Plan(),
-    source = {
+    initialState = Plan(
+        set = LBSet(
+            id = setId,
+            reps = reps.toLong(),
+            tempo = tempo,
+            variationId = "",
+        ),
+    ),
+    source = { state ->
         setRepository.listen(setId)
-            .filterNotNull()
+            .debug("DEBUGEH")
             .map { set ->
                 Plan(
                     set = set,
+                    controller = when (state) {
+                        is Ended -> null
+                        is Plan -> state.controller
+                        is Running -> state.controller
+                    },
                 )
             }
     },
     reducers = timerReducers(),
     sideEffects = listOf(
-        SideEffect { _, state, _ ->
-            if (state is TimerState.Plan) {
-                if (state.set != null) {
-                    withContext(Dispatchers.IO) {
-                        setRepository.save(state.set)
-                    }
-                }
-            }
-        },
         uiEffects,
         beepSideEffect(),
         tickSideEffect(),
-    )
-)
-
-@Composable
-fun rememberTimerInteractor(
-    reps: Int,
-    tempo: Tempo,
-    uiEffects: SideEffect<TimerState, TimerEvent> = { _, s, e -> },
-): TimerInteractor = rememberInteractor(
-    initialState = Plan(
-        tempo = (0 until reps).map { tempo.copy() }
-    ),
-    reducers = timerReducers(),
-    sideEffects = listOf(
-        uiEffects,
-        beepSideEffect(),
-        tickSideEffect(),
+        recordingSideEffect(
+            setRepository = setRepository,
+            videoStorage = remember { dependencies.videoStorage }
+        ),
     )
 )
 
 @Serializable
+@Stable
 sealed class TimerState {
     @Serializable
     data class Plan(
@@ -88,6 +94,8 @@ sealed class TimerState {
         val set: LBSet? = null,
         val tempo: List<Tempo> = set?.let { (0 until it.reps).map { set.tempo } } ?: listOf(Tempo()),
         val audio: Boolean = true,
+        val cameraEnabled: Boolean = false,
+        @Transient val controller: CameraController? = null,
     ): TimerState() {
         val runningTimer get() = this.runningTimer()
     }
@@ -101,6 +109,9 @@ sealed class TimerState {
         val lastTickTime: Instant = Clock.System.now(),
         val set: LBSet? = null,
         val audio: Boolean = true,
+        val videoUri: String? = null,
+        val cameraEnabled: Boolean = false,
+        @Transient val controller: CameraController? = null,
     ): TimerState() {
         val totalTime = timers.sumOf { it.totalTime }
 
@@ -111,6 +122,8 @@ sealed class TimerState {
     data class Ended(
         val timers: List<TimerSegment>,
         val set: LBSet? = null,
+        val videoUri: String? = null,
+        @Transient val controller: CameraController? = null,
     ): TimerState()
 }
 
@@ -128,12 +141,18 @@ sealed interface TimerEvent {
 
     object ToggleAudio: TimerEvent
 
+    object ToggleCamera: TimerEvent
+
+    data class SetVideoUri(val uri: String?): TimerEvent
+
+
     sealed interface Plan: TimerEvent {
         data class StartupTimeChanged(val value: Long): Plan
         data class TempoChanged(val rep: Int?, val tempo: Tempo): Plan
         data class PerSetRestChanged(val value: Long): Plan
         data object AddTimer: Plan
         data class RemoveTimer(val index: Int = 0): Plan
+        data class CameraLoaded(val cameraController: CameraController): Plan
         object Start: Plan
     }
 
@@ -168,6 +187,33 @@ private fun timerReducers() = listOf(
             state
         }
     },
+    // toggle camera reducer
+    Reducer { state, event ->
+        if (event is TimerEvent.ToggleCamera) {
+            when (state) {
+                is Ended -> state
+                is Plan ->
+                    state.copy(cameraEnabled = !state.cameraEnabled)
+
+                is Running ->
+                    state.copy()
+            }
+        } else {
+            state
+        }
+    },
+    // set video uri reducer
+    Reducer { state, event ->
+        if (event is TimerEvent.SetVideoUri) {
+            when (state) {
+                is Ended -> state.copy(videoUri = event.uri)
+                is Plan -> state
+                is Running -> state.copy(videoUri = event.uri)
+            }
+        } else {
+            state
+        }
+    },
     // end timer reducer
     Reducer { state, event ->
         if (state !is TimerState.Ended && event !is TimerEvent.Ended) return@Reducer state
@@ -196,6 +242,7 @@ private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { 
     when (event) {
         is TimerEvent.Plan.PerSetRestChanged -> state.copy(perSetRest = event.value)
         is TimerEvent.Plan.StartupTimeChanged -> state.copy(startupTime = event.value)
+        is TimerEvent.Plan.CameraLoaded -> state.copy(controller = event.cameraController)
         is TimerEvent.Plan.TempoChanged -> if (event.rep != null) {
             state.copy(
                 tempo = state.tempo.mapIndexed { index, tempo ->
@@ -210,7 +257,7 @@ private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { 
             set = if (event.rep != 0) state.set else state.set?.copy(tempo = event.tempo)
         )
 
-        TimerEvent.Plan.Start -> state.runningTimer(beep = true)
+        TimerEvent.Plan.Start -> state.runningTimer(beep = true, cameraEnabled = state.cameraEnabled)
 
         TimerEvent.Plan.AddTimer -> state.copy(
             tempo = state.tempo + state.tempo.last().copy(),
@@ -261,6 +308,8 @@ private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { s
             Ended(
                 timers = state.timers,
                 set = state.set,
+                videoUri = state.videoUri,
+                controller = state.controller,
             )
         }
     }
@@ -303,11 +352,76 @@ private fun tickSideEffect(): SideEffect<TimerState, TimerEvent> = SideEffect { 
     }
 }
 
-private fun TimerState.Plan.runningTimer(beep: Boolean = false): TimerState.Running = TimerState.Running(
+private fun recordingSideEffect(
+    setRepository: ISetRepository? = dependencies.setRepository,
+    videoStorage: VideoStorage = dependencies.videoStorage,
+): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
+    val controller = when (state) {
+        is Ended -> state.controller
+        is Plan -> state.controller
+        is Running -> state.controller
+    }
+    when (state) {
+        is TimerState.Running -> {
+            if (state.cameraEnabled && controller?.isRecording?.value == false) {
+                // Start recording when entering Running state
+                try {
+                    controller.startRecording(FileKit.cacheDir / "video.mp4")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        else -> {}
+    }
+    when (event) {
+        TimerEvent.Running.End -> {
+            val set = when (state) {
+                is Ended -> state.set
+                is Plan -> state.set
+                is Running -> state.set
+            }
+            if (controller != null) {
+                try {
+                    controller.stopRecording()
+                    delay(500)
+
+                    val recordingPath = controller.recordingComplete.value
+                    if (recordingPath != null) {
+                        val setId = set?.id ?: "temp_${System.currentTimeMillis()}"
+                        val saveResult = videoStorage.saveVideo(PlatformFile(recordingPath), setId)
+                        saveResult.onSuccess { videoUri ->
+                            disp(TimerEvent.SetVideoUri(videoUri))
+                            set?.copy(
+                                videoUri = videoUri
+                            )?.let {
+                                setRepository?.save(it)
+                            }
+                        }
+                        saveResult.onFailure { throwable ->
+                            throwable.printStackTrace()
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.d(message = "exception ${e.message}")
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        else -> {}
+    }
+}
+
+private fun TimerState.Plan.runningTimer(beep: Boolean = false, cameraEnabled: Boolean = false): TimerState.Running = TimerState.Running(
     elapsedTime = 0L,
     paused = !beep,
     beep = beep,
     set = set,
+    videoUri = null,
+    cameraEnabled = cameraEnabled,
+    controller = controller,
     timers = listOf(
         TimerSegment(
             name = "Setup",

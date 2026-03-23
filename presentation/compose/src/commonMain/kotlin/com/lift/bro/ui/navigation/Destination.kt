@@ -21,7 +21,7 @@ sealed class Destination: tv.dpal.navi.Destination() {
     sealed class Timer: Destination() {
 
         @Serializable
-        data class With(val tempo: Tempo, val reps: Int): Timer()
+        data class With(val setId: String, val tempo: Tempo, val reps: Int): Timer()
 
         @Serializable
         data class From(val setId: String): Timer()
