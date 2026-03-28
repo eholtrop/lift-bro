@@ -1,17 +1,17 @@
 package com.lift.bro.data
 
-import io.ktor.client.request.invoke
+import io.github.vinceglb.filekit.utils.toByteArray
+import io.github.vinceglb.filekit.utils.toNSData
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.convert
-import kotlinx.cinterop.refTo
 import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
 import platform.Foundation.NSUserDefaults
 import platform.posix.arc4random_buf
 
 @OptIn(ExperimentalForeignApi::class)
-class EncryptionKeyProviderImpl : EncryptionKeyProvider {
+class EncryptionKeyProviderImpl: EncryptionKeyProvider {
 
     private companion object {
         private const val SERVICE_NAME = "com.liftbro.database"
@@ -40,7 +40,7 @@ class EncryptionKeyProviderImpl : EncryptionKeyProvider {
             arc4random_buf(pinned.addressOf(0), KEY_LENGTH_BYTES.convert())
         }
 
-        val nsData = NSData(bytes = key.refTo(0), length = KEY_LENGTH_BYTES)
+        val nsData = key.toNSData()
         userDefaults.setObject(nsData, forKey = SERVICE_NAME)
         userDefaults.synchronize()
 
@@ -49,16 +49,6 @@ class EncryptionKeyProviderImpl : EncryptionKeyProvider {
 
     @OptIn(ExperimentalForeignApi::class)
     private fun nsDataToByteArray(nsData: NSData): ByteArray {
-        val bytesRef = nsData.bytes
-        val len = nsData.length.toInt()
-        return if (len > 0) {
-            val result = ByteArray(len)
-            for (i in 0 until len) {
-                result[i] = bytesRef[i].toByte()
-            }
-            result
-        } else {
-            ByteArray(0)
-        }
+        return nsData.toByteArray()
     }
 }

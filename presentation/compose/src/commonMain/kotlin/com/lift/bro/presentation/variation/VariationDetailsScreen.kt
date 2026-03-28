@@ -60,7 +60,6 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
-import kotlinx.datetime.Clock
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.variation_details_notes_label
@@ -76,6 +75,7 @@ import tv.dpal.compose.listCorners
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.toLocalDate
+import kotlin.time.Clock
 
 private enum class Grouping {
     Date,

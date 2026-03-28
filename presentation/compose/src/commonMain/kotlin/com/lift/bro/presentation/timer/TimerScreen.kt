@@ -60,10 +60,10 @@ import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import tv.dpal.compose.isOpen
+import kotlin.time.Clock
 
 @Composable
 fun TimerScreen(

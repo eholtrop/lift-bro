@@ -1,6 +1,5 @@
 package com.lift.bro.data
 
-import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
@@ -9,10 +8,10 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 actual class DriverFactory actual constructor(
     @Suppress("UNUSED_PARAMETER") context: Any,
 ) {
-    actual fun provideDbDriver(schema: SqlSchema<QueryResult.AsyncValue<Unit>>): SqlDriver {
+    actual fun provideDbDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver {
         return NativeSqliteDriver(
-            schema = schema.synchronous(),
-            databaseName = "liftbro.db",
+            schema = schema,
+            name = "liftbro.db",
         )
     }
 }

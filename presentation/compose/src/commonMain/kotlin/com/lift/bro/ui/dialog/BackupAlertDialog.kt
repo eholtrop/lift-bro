@@ -17,7 +17,6 @@ import com.lift.bro.domain.repositories.BackupSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.todayIn
@@ -28,7 +27,7 @@ import lift_bro.core.generated.resources.backup_dialog_secondary_cta
 import lift_bro.core.generated.resources.backup_dialog_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.ktx.datetime.toLocalDate
-import tv.dpal.ktx.datetime.today
+import kotlin.time.Clock
 
 @Composable
 fun BackupAlertDialog(
@@ -38,10 +37,10 @@ fun BackupAlertDialog(
     var showBackupModal by remember { mutableStateOf(false) }
     LaunchedEffect("force_backup_prompt") {
         val lastBackupDate = dependencies.settingsRepository.getBackupSettings().first().lastBackupDate
-        val today = Clock.System.today
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
         // if the user has not backed up before
-        val comparisonDate = if (lastBackupDate.toEpochDays() == 0) {
+        val comparisonDate = if (lastBackupDate.toEpochDays() == 0L) {
             val sets = dependencies.database.setDataSource.getAll()
             // use the earliest set as the reference date, if there are none just use the current day
             sets.minOfOrNull { it.date }?.toLocalDate() ?: today

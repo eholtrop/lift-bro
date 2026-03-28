@@ -2,7 +2,6 @@ package com.lift.bro.data
 
 import android.content.Context
 import android.util.Log
-import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.db.QueryResult
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.db.SqlSchema
@@ -24,7 +23,7 @@ actual class DriverFactory actual constructor(
     }
 
     actual fun provideDbDriver(
-        schema: SqlSchema<QueryResult.AsyncValue<Unit>>
+        schema: SqlSchema<QueryResult.Value<Unit>>
     ): SqlDriver {
         runBlocking {
             migrationManager.migrateIfNeeded()
@@ -38,7 +37,7 @@ actual class DriverFactory actual constructor(
         return if (encryptedDb.exists()) {
             try {
                 AndroidSqliteDriver(
-                    schema = schema.synchronous(),
+                    schema = schema,
                     context = androidContext,
                     name = ENCRYPTED_DB_NAME,
                     factory = SupportOpenHelperFactory(passphraseBytes),
@@ -49,7 +48,7 @@ actual class DriverFactory actual constructor(
             }
         } else {
             AndroidSqliteDriver(
-                schema = schema.synchronous(),
+                schema = schema,
                 context = androidContext,
                 name = ENCRYPTED_DB_NAME,
                 factory = SupportOpenHelperFactory(passphraseBytes),

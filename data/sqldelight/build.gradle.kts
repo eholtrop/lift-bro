@@ -9,7 +9,7 @@ sqldelight {
     databases {
         create("LiftBroDB") {
             packageName.set("com.lift.bro.db")
-            generateAsync.set(true)
+            generateAsync.set(false)
         }
     }
 }

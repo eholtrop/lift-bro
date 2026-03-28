@@ -5,9 +5,9 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
+import kotlin.time.Clock
 
 private val debugLifts = listOf(
     Lift(

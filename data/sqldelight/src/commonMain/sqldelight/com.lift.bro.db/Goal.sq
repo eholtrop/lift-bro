@@ -1,4 +1,5 @@
-import kotlinx.datetime.Instant;
+import kotlin.time.Instant;
+
 
 CREATE TABLE Goal (
     id TEXT NOT NULL PRIMARY KEY,

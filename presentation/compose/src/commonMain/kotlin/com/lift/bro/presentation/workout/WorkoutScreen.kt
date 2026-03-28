@@ -942,7 +942,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                                         weight = 225.0,
                                         reps = 5,
                                         rpe = 7,
-                                        date = kotlinx.datetime.Clock.System.now()
+                                        date = kotlin.time.Clock.System.now()
                                     ),
                                     com.lift.bro.domain.models.LBSet(
                                         id = "set2",
@@ -950,7 +950,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                                         weight = 245.0,
                                         reps = 3,
                                         rpe = 8,
-                                        date = kotlinx.datetime.Clock.System.now()
+                                        date = kotlin.time.Clock.System.now()
                                     )
                                 )
                             )
