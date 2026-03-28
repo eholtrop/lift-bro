@@ -7,6 +7,7 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.serializers.InstantSerializer
 import com.lift.bro.presentation.timer.TimerState.Ended
 import com.lift.bro.presentation.timer.TimerState.Plan
 import com.lift.bro.presentation.timer.TimerState.Running
@@ -16,9 +17,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
 import kotlinx.datetime.until
 import kotlinx.serialization.Serializable
 import tv.dpal.flowvi.Interactor
@@ -26,6 +25,8 @@ import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import kotlin.math.max
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 typealias TimerInteractor = Interactor<TimerState, TimerEvent>
 
@@ -98,6 +99,7 @@ sealed class TimerState {
         val timers: List<TimerSegment>,
         val paused: Boolean,
         val beep: Boolean,
+        @Serializable(with = InstantSerializer::class)
         val lastTickTime: Instant = Clock.System.now(),
         val set: LBSet? = null,
         val audio: Boolean = true,

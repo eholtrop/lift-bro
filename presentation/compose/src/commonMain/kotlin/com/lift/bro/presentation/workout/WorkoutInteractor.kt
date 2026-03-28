@@ -28,7 +28,6 @@ import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.plus
@@ -38,6 +37,7 @@ import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.ktx.datetime.toLocalDate
+import kotlin.time.Clock
 
 @Serializable
 data class CreateWorkoutState(

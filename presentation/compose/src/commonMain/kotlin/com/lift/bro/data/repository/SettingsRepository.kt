@@ -129,7 +129,7 @@ class SettingsRepository(
     }
 
     override fun saveBackupSettings(settings: BackupSettings) {
-        dataSource.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays())
+        dataSource.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays().toInt())
         keyChanged("last_backup_epoch_days")
     }
 

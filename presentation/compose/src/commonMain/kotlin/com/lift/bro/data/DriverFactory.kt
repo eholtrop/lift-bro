@@ -8,6 +8,6 @@ expect class DriverFactory(
     context: Any,
 ) {
     fun provideDbDriver(
-        schema: SqlSchema<QueryResult.AsyncValue<Unit>>,
+        schema: SqlSchema<QueryResult.Value<Unit>>,
     ): SqlDriver
 }

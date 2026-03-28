@@ -1,3 +1,5 @@
+@file:Suppress("UNCHECKED_CAST")
+
 package tv.dpal.ext.flow
 
 import kotlinx.coroutines.flow.Flow

@@ -27,7 +27,7 @@ ktor = "3.0.0"
 google-services = "4.4.3"
 detekt = "1.23.8"
 kotlinx-serialization = "1.6.3"
-kotlinx-datetime = "0.6.1"
+kotlinx-datetime = "0.7.1"
 app-update = "2.1.0"
 
 appcompat = "1.7.0"

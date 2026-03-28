@@ -15,11 +15,11 @@ import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.Instant
 import kotlinx.datetime.minus
 import tv.dpal.ext.ktx.datetime.toString
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Composable
 fun RunningTimerContent(

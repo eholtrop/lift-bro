@@ -1,6 +1,11 @@
 package com.lift.bro.audio
 
-actual interface AudioPlayer {
-    actual fun speak(text: String)
-    actual fun stop()
+class AudioPlayerImpl: AudioPlayer {
+    override fun speak(text: String) {
+        // TODO: Implement native audio
+    }
+
+    override fun stop() {
+        // TODO: Implement native audio
+    }
 }

@@ -34,7 +34,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -43,6 +42,7 @@ import kotlinx.datetime.toInstant
 import tv.dpal.ext.flow.mapEach
 import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.math.min
+import kotlin.time.Instant
 
 class LBDatabase(
     driverFactory: DriverFactory,
@@ -128,7 +128,7 @@ private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
     }
 
     override fun encode(value: LocalDate): Long {
-        return value.toEpochDays().toLong()
+        return value.toEpochDays()
     }
 }
 

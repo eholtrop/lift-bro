@@ -1,8 +1,9 @@
 package com.lift.bro.domain.models
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import com.lift.bro.domain.serializers.InstantSerializer
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Serializable
 data class LBSet(
@@ -11,7 +12,7 @@ data class LBSet(
     val weight: Double = 0.0,
     val reps: Long = 1,
     val tempo: Tempo = Tempo(),
-    val date: Instant = Clock.System.now(),
+    @Serializable(with = InstantSerializer::class) val date: Instant = Clock.System.now(),
     val notes: String = "",
     val rpe: Int? = null,
     val mer: Int = 0,

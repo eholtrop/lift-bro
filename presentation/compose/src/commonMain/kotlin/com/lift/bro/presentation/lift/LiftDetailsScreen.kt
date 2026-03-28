@@ -79,7 +79,6 @@ import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.color_picker_dialog_blue
@@ -682,7 +681,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                                 weight = 405.0,
                                 reps = 5,
                                 rpe = 8,
-                                date = Clock.System.now()
+                                date = kotlin.time.Clock.System.now(),
                             ),
                             LBSet(
                                 id = "set2",
@@ -690,7 +689,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                                 weight = 425.0,
                                 reps = 3,
                                 rpe = 9,
-                                date = Clock.System.now()
+                                date = kotlin.time.Clock.System.now(),
                             )
                         )
                     ),
@@ -710,7 +709,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                                 weight = 365.0,
                                 reps = 5,
                                 rpe = 7,
-                                date = Clock.System.now()
+                                date = kotlin.time.Clock.System.now()
                             )
                         )
                     )

@@ -14,14 +14,13 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Sorting
+import com.lift.bro.domain.serializers.InstantSerializer
 import com.lift.bro.utils.fullName
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
@@ -37,6 +36,8 @@ import tv.dpal.logging.d
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
 import kotlin.math.max
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Serializable
 data class EditSetMaxPercentageState(
@@ -57,7 +58,7 @@ data class EditSetState(
     val tMax: Int? = null,
     val notes: String = "",
     val totalWeightMoved: Double? = null,
-    val date: Instant = Clock.System.now(),
+    @Serializable(with = InstantSerializer::class) val date: Instant = Clock.System.now(),
     val variation: SetVariation? = null,
     val showV2: Boolean = false,
     val timerEnabled: Boolean = false,

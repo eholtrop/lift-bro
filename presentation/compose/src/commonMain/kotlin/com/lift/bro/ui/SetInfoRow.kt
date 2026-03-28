@@ -25,7 +25,7 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.prettyPrintSet
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 @Composable
 fun SetInfoRow(

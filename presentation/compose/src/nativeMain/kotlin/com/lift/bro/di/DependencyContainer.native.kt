@@ -1,5 +1,7 @@
 package com.lift.bro.di
 
+import com.lift.bro.audio.AudioPlayer
+import com.lift.bro.audio.AudioPlayerImpl
 import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.datasource.UserPreferencesDataSource
@@ -30,6 +32,10 @@ actual class DependencyContainer {
     }
 
     actual fun launchManageSubscriptions() {
+    }
+
+    actual val audioPlayer: AudioPlayer by lazy {
+        AudioPlayerImpl()
     }
 }
 

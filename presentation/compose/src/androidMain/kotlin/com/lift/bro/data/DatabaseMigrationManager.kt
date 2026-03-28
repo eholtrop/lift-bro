@@ -3,7 +3,6 @@ package com.lift.bro.data
 import android.content.Context
 import android.util.Log
 import androidx.core.content.edit
-import app.cash.sqldelight.async.coroutines.synchronous
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
 import com.lift.bro.db.LiftBroDB
@@ -50,7 +49,7 @@ class DatabaseMigrationManager(
 
             val targetFactory = SupportOpenHelperFactory(passphraseBytes)
             targetDriver = AndroidSqliteDriver(
-                schema = LiftBroDB.Schema.synchronous(),
+                schema = LiftBroDB.Schema,
                 context = context,
                 name = ENCRYPTED_DB_NAME,
                 factory = targetFactory,

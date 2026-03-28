@@ -27,11 +27,13 @@
     <ID>EmptyFunctionBlock:GetTotalWeightMovedUseCaseTest.kt$GetTotalWeightMovedUseCaseTest.FakeSetRepository${}</ID>
     <ID>EmptyFunctionBlock:StoreManager.native.kt$StoreManager${ }</ID>
     <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
+    <ID>Filename:AudioPlayer.native.kt$com.lift.bro.audio.AudioPlayer.native.kt</ID>
     <ID>Filename:EncryptionKeyProvider.android.kt$com.lift.bro.data.EncryptionKeyProvider.android.kt</ID>
     <ID>Filename:EncryptionKeyProvider.native.kt$com.lift.bro.data.EncryptionKeyProvider.native.kt</ID>
     <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
     <ID>Filename:LBDatabase.native.kt$com.lift.bro.data.LBDatabase.native.kt</ID>
     <ID>Filename:eMaxSettingsRow.kt$com.lift.bro.presentation.settings.eMaxSettingsRow.kt</ID>
+    <ID>ForbiddenComment:AudioPlayer.native.kt$AudioPlayerImpl$// TODO: Implement native audio</ID>
     <ID>ForbiddenComment:EmptyHomeScreen.kt$// TODO: need to setup back handling in onboarding</ID>
     <ID>ForbiddenComment:RepWeightSelector.kt$// TODO: figure out the accessibility here</ID>
     <ID>FunctionNaming:MainViewController.kt$fun MainViewController( bannerProvider: () -&gt; UIView )</ID>
@@ -41,6 +43,7 @@
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
     <ID>LongParameterList:LiftCard.kt$( color: Color, height: Float, targetHeight: Float, width: Float, topLeft: Float, alpha: Float, )</ID>
     <ID>MatchingDeclarationName:AnimatedText.kt$AnimatedTextDefaults</ID>
+    <ID>MatchingDeclarationName:AudioPlayer.native.kt$AudioPlayerImpl : AudioPlayer</ID>
     <ID>MatchingDeclarationName:EncryptionKeyProvider.native.kt$EncryptionKeyProviderImpl : EncryptionKeyProvider</ID>
     <ID>MatchingDeclarationName:LBDatabase.kt$DriverFactory</ID>
     <ID>MatchingDeclarationName:LBDatabase.native.kt$DriverFactory</ID>

@@ -33,12 +33,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import tv.dpal.ext.ktx.datetime.toString
-import tv.dpal.ktx.datetime.today
+import kotlin.time.Clock
 
 @Serializable
 data class Backup(
@@ -67,14 +67,16 @@ class BackupUseCase(
             if (!backupDir.exists()) {
                 backupDir.createDirectories()
             }
-            val backupFile = backupDir / "${Clock.System.now().toString("yyyy-MM-dd_HH:mm:ss")}.json"
+            val backupFile = backupDir / "${kotlin.time.Clock.System.now()}.json"
             backupFile.writeString(Json.encodeToString(this))
 
             // force user to pick where the backup goes (should probably be somewhere else!)
             FileKit.shareFile(backupFile)
 
             // ensure last backup date is updated
-            dependencies.settingsRepository.saveBackupSettings(BackupSettings(lastBackupDate = Clock.System.today))
+            dependencies.settingsRepository.saveBackupSettings(
+                BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
+            )
         }
     }
 

@@ -1,7 +1,11 @@
 package tv.dpal.ktx.datetime
 
-import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
+import kotlinx.datetime.toLocalDateTime
 
-val Clock.System.today get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
+val today: LocalDate
+    get() {
+        val now = kotlin.time.Clock.System.now()
+        return now.toLocalDateTime(TimeZone.currentSystemDefault()).date
+    }
