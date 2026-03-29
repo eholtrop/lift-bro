@@ -21,7 +21,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import tv.dpal.ktx.datetime.toLocalDate
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class SqldelightExerciseDataSource(
     private val exerciseQueries: ExerciseQueries,
     private val setQueries: SetQueries,
@@ -165,6 +167,12 @@ class SqldelightExerciseDataSource(
                 id = exerciseId,
                 workoutId = workoutId,
             )
+        }
+    }
+
+    override suspend fun deleteAll() {
+        withContext(dispatcher) {
+            exerciseQueries.deleteAll()
         }
     }
 }

@@ -1,5 +1,4 @@
 package com.lift.bro.presentation.wrapped
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues

@@ -50,9 +50,10 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":domain"))
-            implementation(project(":data:sqldelight"))
-            implementation(project(":data:client"))
-            implementation(project(":data:core"))
+            implementation(project(":di"))
+            api(project(":data:core"))
+            api(project(":data:sqldelight"))
+            api(project(":data:client"))
             implementation(project(":libs:ext:flow"))
             implementation(project(":libs:logging"))
             implementation(project(":libs:ext:ktx-datetime"))

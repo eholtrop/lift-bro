@@ -1,10 +1,9 @@
 package com.lift.bro.presentation.workout
-
 import androidx.compose.runtime.Composable
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.exerciseRepository
+import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
@@ -14,10 +13,10 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.domain.repositories.ILiftingLogRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
-import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -138,10 +137,10 @@ private fun dataSideEffects(): List<SideEffect<WorkoutCalendarState, WorkoutCale
 fun workoutCalendarSourceData(
     selectedDate: LocalDate = today,
     workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
-    logQueries: LiftingLogQueries = dependencies.database.logDataSource,
+    liftingLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository,
 ) = combine(
     workoutRepository.get(selectedDate),
-    logQueries.getByDate(selectedDate).flowToOneOrNull(),
+    liftingLogRepository.getByDate(selectedDate),
     FetchVariationSetsForMonth(
         selectedDate.year,
         selectedDate.month
@@ -150,14 +149,7 @@ fun workoutCalendarSourceData(
     WorkoutCalendarState(
         selectedDate = selectedDate,
         selectedWorkout = workout,
-        log = log?.let {
-            LiftingLog(
-                id = it.id,
-                date = selectedDate,
-                notes = it.notes ?: "",
-                vibe = it.vibe_check?.toInt() ?: 0
-            )
-        },
+        log = log,
         potentialExercises = unallocatedSets
             .filter { it.second.any { it.date.toLocalDate() == selectedDate } },
     )
@@ -212,7 +204,7 @@ val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> 
                 val selectedDate = event.date
                 combine(
                     dependencies.workoutRepository.get(selectedDate),
-                    dependencies.database.logDataSource.getByDate(selectedDate).flowToOneOrNull(),
+                    dependencies.liftingLogRepository.getByDate(selectedDate),
                     FetchVariationSetsForMonth(
                         selectedDate.year,
                         selectedDate.month
@@ -221,14 +213,7 @@ val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> 
                     WorkoutCalendarState(
                         selectedDate = selectedDate,
                         selectedWorkout = workout,
-                        log = log?.let {
-                            LiftingLog(
-                                id = it.id,
-                                date = selectedDate,
-                                notes = it.notes ?: "",
-                                vibe = it.vibe_check?.toInt() ?: 0
-                            )
-                        },
+                        log = log,
                         potentialExercises = unallocatedSets
                             .filter { it.second.any { it.date.toLocalDate() == selectedDate } },
                     )

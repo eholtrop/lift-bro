@@ -1,9 +1,9 @@
 package com.lift.bro
 
-import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.exerciseRepository
 import com.lift.bro.di.liftRepository
+import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
@@ -16,7 +16,9 @@ import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.ILiftRepository
+import com.lift.bro.domain.repositories.ILiftingLogRepository
 import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import io.github.vinceglb.filekit.FileKit
@@ -59,6 +61,9 @@ class BackupUseCase(
     private val liftRepository: ILiftRepository = dependencies.liftRepository,
     private val variationRepository: IVariationRepository = dependencies.variationRepository,
     private val setRepository: ISetRepository = dependencies.setRepository,
+    private val liftingLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository,
+    private val settingsRepository: ISettingsRepository = dependencies.settingsRepository,
+    private val workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
 ) {
     suspend operator fun invoke(backup: Backup? = null): Backup {
         // either use the provided backup or create one from the current DB
@@ -75,14 +80,14 @@ class BackupUseCase(
             FileKit.shareFile(backupFile)
 
             // ensure last backup date is updated
-            dependencies.settingsRepository.saveBackupSettings(
+            settingsRepository.saveBackupSettings(
                 BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
             )
         }
     }
 
     private suspend fun getAllWorkouts(): List<Workout> {
-        return dependencies.workoutRepository.getAll().first()
+        return workoutRepository.getAll().first()
     }
 
     private suspend fun getAllExercises(): List<Exercise> {
@@ -96,12 +101,12 @@ class BackupUseCase(
             lifts = liftRepository.getAll(),
             variations = variationRepository.getAll(),
             sets = setRepository.listenAll().first(),
-            liftingLogs = dependencies.database.logDataSource.getAll().executeAsList().map {
+            liftingLogs = liftingLogRepository.getAll().first().map {
                 LiftingLog(
                     id = it.id,
                     date = it.date,
-                    notes = it.notes ?: "",
-                    vibe = it.vibe_check?.toInt(),
+                    notes = it.notes,
+                    vibe = it.vibe,
                 )
             },
             workouts = getAllWorkouts(),
@@ -111,12 +116,12 @@ class BackupUseCase(
 }
 
 class RestoreUseCase(
-    private val database: LBDatabase = dependencies.database,
     private val liftRepository: ILiftRepository = dependencies.liftRepository,
     private val variationRepository: IVariationRepository = dependencies.variationRepository,
     private val setRepository: ISetRepository = dependencies.setRepository,
     private val workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
     private val exerciseRepository: IExerciseRepository = dependencies.exerciseRepository,
+    private val liftingLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository,
 ) {
     suspend operator fun invoke(): Boolean {
         // let the user pick a file to restore
@@ -139,35 +144,35 @@ class RestoreUseCase(
 
     private suspend fun applyBackup(backup: Backup) {
         // Delete existing data first
-        database.clear()
 
+        setRepository.deleteAll()
         backup.sets?.forEach {
             setRepository.save(it)
         }
 
+        variationRepository.deleteAll()
         backup.variations?.forEach {
             variationRepository.save(variation = it)
         }
 
+        liftRepository.deleteAll()
         backup.lifts?.forEach {
             liftRepository.save(it)
         }
 
+        liftingLogRepository.deleteAll()
         backup.liftingLogs?.forEach {
-            dependencies.database.logDataSource.save(
-                id = it.id,
-                notes = it.notes,
-                date = it.date,
-                vibe_check = it.vibe?.toLong(),
-            )
+            liftingLogRepository.save(it)
         }
 
         // Restore workouts
+        workoutRepository.deleteAll()
         backup.workouts?.forEach { workout ->
             workoutRepository.save(workout)
         }
 
         // Restore exercises
+        exerciseRepository.deleteAll()
         backup.exercises?.forEach { exercise ->
             exerciseRepository.save(exercise)
         }

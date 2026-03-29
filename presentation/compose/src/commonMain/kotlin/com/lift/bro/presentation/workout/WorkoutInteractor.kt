@@ -2,15 +2,18 @@ package com.lift.bro.presentation.workout
 
 import androidx.compose.runtime.Composable
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.exerciseRepository
+import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.domain.repositories.ILiftingLogRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.presentation.ApplicationScope
@@ -24,8 +27,8 @@ import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateFinisher
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateNotes
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.UpdateWarmup
 import com.lift.bro.ui.calendar.today
-import comliftbrodb.LiftingLogQueries
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -113,7 +116,7 @@ fun rememberWorkoutInteractor(
                         )
                     },
                 dependencies.workoutRepository.getAll(limit = 10),
-                dependencies.database.logDataSource.getByDate(date).flowToOneOrNull(),
+                dependencies.liftingLogRepository.getByDate(date),
             ) { workout, workouts, log ->
                 CreateWorkoutState(
                     id = workout.id,
@@ -128,10 +131,10 @@ fun rememberWorkoutInteractor(
                                         VariationItem.WithoutSets(
                                             id = variationSets.id,
                                             variation = variationSets.variation,
-                                            lastSet = dependencies.database.setDataSource.getAll(
+                                            lastSet = dependencies.setRepository.listenAll(
                                                 variationId = variationSets.variation.id,
                                                 limit = 1
-                                            ).firstOrNull()
+                                            ).first().firstOrNull()
                                         )
                                     }
 
@@ -189,18 +192,20 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
 fun workoutSideEffects(
     workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
     setRepository: ISetRepository = dependencies.setRepository,
-    liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource,
+    liftLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository,
 ): SideEffect<CreateWorkoutState, CreateWorkoutEvent> = SideEffect { _, state, event ->
     when (event) {
         is UpdateNotes -> {
-            val log = liftLogRepository.getByDate(state.date).executeAsOneOrNull()?.copy(
-                notes = event.notes
-            )
+            liftLogRepository.getByDate(state.date).map { log ->
+                log?.copy(notes = event.notes)
+            }
             liftLogRepository.save(
-                id = log?.id ?: uuid4().toString(),
-                date = state.date,
-                notes = event.notes,
-                vibe_check = log?.vibe_check
+                LiftingLog(
+                    id = uuid4().toString(),
+                    date = state.date,
+                    notes = event.notes,
+                    vibe = null,
+                )
             )
         }
 
@@ -296,7 +301,7 @@ fun workoutSideEffects(
         }
 
         is AddSuperSet -> {
-            dependencies.database.exerciseDataSource.addVariation(
+            dependencies.exerciseRepository.saveVariation(
                 exerciseId = event.exercise.id,
                 variationId = event.variation.id
             )

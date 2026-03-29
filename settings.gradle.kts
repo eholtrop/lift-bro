@@ -30,6 +30,7 @@ include(":app-android")
 include(":data")
 include(":data:client")
 include(":domain")
+include(":di")
 include(":presentation:compose")
 include(":presentation:server")
 
