@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.goalsRepository
 import com.lift.bro.di.liftRepository
+import com.lift.bro.domain.analytics.Analytics
+import com.lift.bro.domain.analytics.AnalyticsEvents
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
@@ -62,6 +64,7 @@ fun rememberHomeInteractor(
     liftRepository: ILiftRepository = dependencies.liftRepository,
     goalsRepository: IGoalRepository = dependencies.goalsRepository,
     settingsRepository: ISettingsRepository = dependencies.settingsRepository,
+    analytics: Analytics = dependencies.analytics,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): HomeInteractor = rememberInteractor(
     initialState = HomeState.Loading,
@@ -83,16 +86,23 @@ fun rememberHomeInteractor(
         }
     },
     reducers = listOf(homeReducer),
-    sideEffects = homeSideEffects(navCoordinator)
+    sideEffects = homeSideEffects(navCoordinator, analytics)
 )
 
 internal fun homeSideEffects(
     navCoordinator: NavCoordinator,
+    analytics: Analytics,
 ) = listOf<SideEffect<HomeState, HomeEvent>>(
     SideEffect { _, _, event ->
         when (event) {
-            HomeEvent.DashboardClicked -> {}
-            HomeEvent.CalendarClicked -> {}
+            HomeEvent.DashboardClicked -> {
+                analytics.trackEvent(AnalyticsEvents.Actions.DASHBOARD_BUTTON_CLICKED)
+            }
+
+            HomeEvent.CalendarClicked -> {
+                analytics.trackEvent(AnalyticsEvents.Actions.CALENDAR_BUTTON_CLICKED)
+            }
+
             HomeEvent.AddSetClicked -> navCoordinator.present(CreateSet())
             is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
             HomeEvent.SettingsClicked -> navCoordinator.present(Settings)
