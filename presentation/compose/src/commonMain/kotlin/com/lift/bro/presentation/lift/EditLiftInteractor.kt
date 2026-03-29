@@ -5,12 +5,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.LiftDataSource
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Lift
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import kotlinx.coroutines.flow.combine
@@ -83,7 +84,7 @@ val EditLiftReducer = Reducer<EditLiftState?, EditLiftEvent> { state, event ->
 }
 
 fun editLiftSideEffects(
-    liftRepository: LiftDataSource = dependencies.database.liftDataSource,
+    liftRepository: ILiftRepository = dependencies.liftRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: ISetRepository = dependencies.setRepository,
 ): SideEffect<EditLiftState?, EditLiftEvent> = SideEffect { _, state, event ->
@@ -130,7 +131,7 @@ fun rememberCreateLiftInteractor(): Interactor<EditLiftState?, EditLiftEvent> {
         initialState = null,
         source = {
             combine(
-                dependencies.database.liftDataSource.get(id),
+                dependencies.liftRepository.get(id),
                 dependencies.variationRepository.listenAll(id),
             ) { lift, variations ->
                 EditLiftState(
@@ -156,7 +157,7 @@ fun rememberEditLiftInteractor(
         initialState = null,
         source = {
             combine(
-                dependencies.database.liftDataSource.get(thisId),
+                dependencies.liftRepository.get(thisId),
                 dependencies.variationRepository.listenAll(thisId),
             ) { lift, variations ->
                 EditLiftState(

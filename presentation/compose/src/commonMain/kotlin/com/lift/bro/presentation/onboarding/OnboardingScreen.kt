@@ -1,5 +1,4 @@
 package com.lift.bro.presentation.onboarding
-
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn

@@ -1,5 +1,4 @@
 package com.lift.bro.presentation.wrapped.progress
-
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

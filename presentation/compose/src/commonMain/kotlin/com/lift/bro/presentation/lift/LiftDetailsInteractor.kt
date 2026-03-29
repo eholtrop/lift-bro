@@ -1,5 +1,4 @@
 package com.lift.bro.presentation.lift
-
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
@@ -112,7 +111,7 @@ fun rememberLiftDetailsInteractor(
                     )
 
                 is LiftDetailsEvent.ToggleFavourite -> {
-                    dependencies.database.variantDataSource.save(
+                    dependencies.variationRepository.save(
                         event.variation.copy(
                             favourite = !event.variation.favourite
                         )

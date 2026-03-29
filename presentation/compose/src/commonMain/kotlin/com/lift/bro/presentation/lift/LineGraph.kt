@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
-import io.ktor.client.request.invoke
 import kotlinx.datetime.LocalDate
 import kotlin.math.max
 import kotlin.math.min

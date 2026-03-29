@@ -1,5 +1,4 @@
 package com.lift.bro.presentation.workout
-
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -52,8 +51,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.LBSet
@@ -237,7 +236,7 @@ fun rememberDailyWorkoutDetailsInteractor(
     ) { state ->
         combine(
             dependencies.workoutRepository.get(date),
-            dependencies.database.logDataSource.getByDate(date).flowToOneOrNull(),
+            dependencies.liftingLogRepository.getByDate(date),
             FetchVariationSetsForRange(
                 date,
                 date
@@ -246,14 +245,7 @@ fun rememberDailyWorkoutDetailsInteractor(
             DailyWorkoutDetailsState(
                 selectedDate = date,
                 selectedWorkout = workout,
-                log = log?.let {
-                    LiftingLog(
-                        id = it.id,
-                        date = date,
-                        notes = it.notes ?: "",
-                        vibe = it.vibe_check?.toInt() ?: 0
-                    )
-                },
+                log = log,
                 potentialExercises = sets
                     .filter { vs -> (workout?.exercises ?: emptyList()).none { it.variationSets.any { it.variation.id == vs.first.id } } }
             )
@@ -282,11 +274,13 @@ fun DailyWorkoutDetails(
                     Button(
                         onClick = {
                             GlobalScope.launch {
-                                dependencies.database.logDataSource.save(
-                                    id = state.log?.id ?: uuid4().toString(),
-                                    date = state.log?.date ?: state.selectedDate,
-                                    notes = todaysNotes,
-                                    vibe_check = state.log?.vibe?.toLong()
+                                dependencies.liftingLogRepository.save(
+                                    LiftingLog(
+                                        id = state.log?.id ?: uuid4().toString(),
+                                        date = state.log?.date ?: state.selectedDate,
+                                        notes = todaysNotes,
+                                        vibe = state.log?.vibe
+                                    )
                                 )
                                 showNotesDialog = false
                             }

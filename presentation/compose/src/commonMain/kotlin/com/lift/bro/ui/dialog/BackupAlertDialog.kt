@@ -1,5 +1,4 @@
 package com.lift.bro.ui.dialog
-
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -13,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.lift.bro.BackupUseCase
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
 import com.lift.bro.domain.repositories.BackupSettings
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
@@ -41,9 +41,10 @@ fun BackupAlertDialog(
 
         // if the user has not backed up before
         val comparisonDate = if (lastBackupDate.toEpochDays() == 0L) {
-            val sets = dependencies.database.setDataSource.getAll()
-            // use the earliest set as the reference date, if there are none just use the current day
-            sets.minOfOrNull { it.date }?.toLocalDate() ?: today
+            dependencies.setRepository.listenAll().first().let { sets ->
+                // use the earliest set as the reference date, if there are none just use the current day
+                sets.minOfOrNull { it.date }?.toLocalDate() ?: today
+            }
         } else {
             // use the last backup date
             lastBackupDate
