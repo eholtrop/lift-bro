@@ -27,6 +27,7 @@ import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.presentation.LocalTMaxSettings
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.presentation.Platform
 import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
@@ -52,7 +53,7 @@ internal fun PreviewAppTheme(
         LocalCalculatorVisibility provides calculatorVisibility,
         LocalSubscriptionStatusProvider provides subscriptionType,
         LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
-        LocalPlatformContext provides null,
+        LocalPlatformContext provides Platform.iOS,
         LocalServer provides null,
         LocalEMaxSettings provides true,
         LocalTMaxSettings provides true,

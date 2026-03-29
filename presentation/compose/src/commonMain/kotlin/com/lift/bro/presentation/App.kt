@@ -105,7 +105,13 @@ val LocalEMaxSettings = compositionLocalOf<Boolean> {
     error("Show eMax was not set")
 }
 
-val LocalPlatformContext = compositionLocalOf<Any?> {
+val LocalPlatformContext = compositionLocalOf<Platform> {
+    error("Platform was not set")
+}
+
+sealed interface Platform {
+    data class Android(val context: Any): Platform
+    data object iOS: Platform
 }
 
 val LocalTMaxSettings = compositionLocalOf<Boolean> {
@@ -175,7 +181,7 @@ fun App(
     navCoordinator: NavCoordinator = rememberNavCoordinator<tv.dpal.navi.Destination>(Destination.Unknown),
 ) {
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
-    val isAndroid = LocalPlatformContext.current != null
+    val isAndroid = LocalPlatformContext.current is Platform.Android
 
     LaunchedEffect("setup_revenuecat") {
         if (BuildConfig.isDebug) {
@@ -239,7 +245,7 @@ fun App(
             }
 
             if (!BuildConfig.isDebug) {
-                Firebase.initialize(context)
+                Firebase.initialize((context as? Platform.Android)?.context)
             }
         }
 

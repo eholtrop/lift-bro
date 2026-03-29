@@ -8,6 +8,8 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.window.ComposeUIViewController
 import com.lift.bro.presentation.App
 import com.lift.bro.presentation.LocalAdBannerProvider
+import com.lift.bro.presentation.LocalPlatformContext
+import com.lift.bro.presentation.Platform
 import platform.UIKit.UIView
 
 fun MainViewController(
@@ -17,14 +19,18 @@ fun MainViewController(
         LocalAdBannerProvider provides bannerProvider
     ) {
         val keyboard = LocalSoftwareKeyboardController.current
-        App(
-            modifier = Modifier.pointerInput(Unit) {
-                detectTapGestures(
-                    onTap = {
-                        keyboard?.hide()
-                    },
-                )
-            }
-        )
+        CompositionLocalProvider(
+            LocalPlatformContext provides Platform.iOS
+        ) {
+            App(
+                modifier = Modifier.pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = {
+                            keyboard?.hide()
+                        },
+                    )
+                }
+            )
+        }
     }
 }
