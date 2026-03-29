@@ -19,6 +19,7 @@ import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightLiftDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
+import com.lift.bro.domain.analytics.Analytics
 import com.lift.bro.domain.filter.Filter
 import com.lift.bro.domain.filter.FilterRepository
 import com.lift.bro.domain.repositories.IExerciseRepository
@@ -43,6 +44,8 @@ expect class DependencyContainer {
     fun launchManageSubscriptions()
 
     val audioPlayer: AudioPlayer
+
+    val analytics: Analytics
 }
 
 val DependencyContainer.filterRepository: FilterRepository get() = object: FilterRepository {

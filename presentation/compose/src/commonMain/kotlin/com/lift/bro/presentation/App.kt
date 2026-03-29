@@ -202,6 +202,27 @@ fun App(
         )
     }
 
+    val hasConsent by HasDeviceConsentedUseCase(dependencies.settingsRepository).invoke()
+        .collectAsState(null)
+
+    LaunchedEffect("setup_analytics") {
+        hasConsent?.let { consented ->
+            val analytics = dependencies.analytics
+            if (consented) {
+                val appUserId = Purchases.sharedInstance.appUserID
+                analytics.setUserId(appUserId)
+                analytics.setUserProperty(
+                    com.lift.bro.domain.analytics.AnalyticsEvents.Properties.PLATFORM,
+                    if (isAndroid) "android" else "ios"
+                )
+                analytics.setUserProperty(
+                    com.lift.bro.domain.analytics.AnalyticsEvents.Properties.APP_VERSION,
+                    BuildKonfig.VERSION_NAME
+                )
+            }
+        }
+    }
+
     val bro by dependencies.settingsRepository.listen(Setting.Bro).collectAsState(null)
     val uom by dependencies.settingsRepository.listen(Setting.UnitOfMeasure).map { it.uom }
         .collectAsState(UOM.POUNDS)
