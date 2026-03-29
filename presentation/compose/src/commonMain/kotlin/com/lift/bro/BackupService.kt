@@ -38,6 +38,7 @@ import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import tv.dpal.ext.ktx.datetime.toString
 import kotlin.time.Clock
 
 @Serializable
@@ -67,7 +68,7 @@ class BackupUseCase(
             if (!backupDir.exists()) {
                 backupDir.createDirectories()
             }
-            val backupFile = backupDir / "${kotlin.time.Clock.System.now()}.json"
+            val backupFile = backupDir / "${Clock.System.now().toString("yyyy-MM-dd_HH:mm:ss")}.json"
             backupFile.writeString(Json.encodeToString(this))
 
             // force user to pick where the backup goes (should probably be somewhere else!)
