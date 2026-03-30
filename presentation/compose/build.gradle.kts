@@ -51,8 +51,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":domain"))
             implementation(project(":di"))
-            api(project(":data:core"))
-            api(project(":data:sqldelight"))
+            // required for a health check call.... need to abstract
             api(project(":data:client"))
             implementation(project(":libs:ext:flow"))
             implementation(project(":libs:logging"))
