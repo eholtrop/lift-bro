@@ -4,6 +4,6 @@ import androidx.compose.runtime.compositionLocalOf
 
 val LocalDependencies = compositionLocalOf<DependencyContainer> {
     error(
-        "DependencyContainer not provided. Wrap your app with CompositionLocalProvider(LocalDependencyContainer provides container)"
+        "DependencyContainer not provided."
     )
 }

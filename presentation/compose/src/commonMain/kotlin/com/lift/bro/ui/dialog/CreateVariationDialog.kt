@@ -111,8 +111,8 @@ fun VariationDialog(
                             isLoading = true
                             coroutineScope.launch(context = Dispatchers.IO) {
                                 dependencies.variationRepository.save(currentVariation)
-                                onVariationSaved(currentVariation.id)
                             }
+                            onVariationSaved(currentVariation.id)
                         },
                         colors = ButtonDefaults.textButtonColors(),
                     ) {

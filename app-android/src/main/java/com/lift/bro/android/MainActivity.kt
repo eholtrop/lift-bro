@@ -11,6 +11,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import com.lift.bro.di.DependencyContainer
 import com.lift.bro.di.LocalDependencies
+import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.App
 import com.lift.bro.presentation.LocalPlatformContext
 import com.lift.bro.presentation.LocalServer
@@ -32,10 +33,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val coordinator = rememberNavCoordinator(Destination.Unknown)
-            val dependencies = DependencyContainer()
             CompositionLocalProvider(
                 LocalPlatformContext provides Platform.Android(LocalContext.current),
-                LocalServer provides createLiftBroServer()
                 LocalServer provides createLiftBroServer(),
                 LocalDependencies provides dependencies
             ) {
