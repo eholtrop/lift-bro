@@ -4,7 +4,7 @@
   <CurrentIssues>
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
     <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
-    <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), )</ID>
+    <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), dependencies: DependencyContainer = com.lift.bro.di.dependencies, )</ID>
     <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
     <ID>CyclomaticComplexMethod:DashboardReducer.kt$fun List&lt;DashboardListItem&gt;.sortWithSettings(settings: SortingSettings): List&lt;DashboardListItem&gt;</ID>
     <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: DashboardInteractor, )</ID>
@@ -14,26 +14,18 @@
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:LiftingScaffold.kt$@Composable fun LiftingScaffold( title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current, fab: @Composable (() -&gt; Unit)? = null, fabProperties: FabProperties? = null, leadingContent: @Composable () -&gt; Unit = { LeadingNavigationButton() }, trailingContent: @Composable () -&gt; Unit = {}, tallMode: Boolean = currentWindowAdaptiveInfo() .windowSizeClass .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND), topAppBarScrollBehavior: TopAppBarScrollBehavior = when (tallMode) { true -&gt; TopAppBarDefaults.exitUntilCollapsedScrollBehavior() false -&gt; TopAppBarDefaults.enterAlwaysScrollBehavior() }, containerColor: Color = MaterialTheme.colorScheme.background, contentColor: Color = contentColorFor(containerColor), content: @Composable (PaddingValues) -&gt; Unit, )</ID>
-    <ID>CyclomaticComplexMethod:SettingsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun SettingsScreen()</ID>
     <ID>CyclomaticComplexMethod:TimerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun TimerScreen( state: TimerState, onEvent: (TimerEvent) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = rememberDailyWorkoutDetailsInteractor( date ), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
-    <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
+    <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedEvents$()</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedPageState$()</ID>
-    <ID>EmptyFunctionBlock:DependencyContainer.native.kt$DependencyContainer${ }</ID>
     <ID>EmptyFunctionBlock:GetTotalRepsUseCaseTest.kt$GetTotalRepsUseCaseTest.FakeSetRepository${}</ID>
     <ID>EmptyFunctionBlock:GetTotalWeightMovedUseCaseTest.kt$GetTotalWeightMovedUseCaseTest.FakeSetRepository${}</ID>
     <ID>EmptyFunctionBlock:StoreManager.native.kt$StoreManager${ }</ID>
     <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
-    <ID>Filename:AudioPlayer.native.kt$com.lift.bro.audio.AudioPlayer.native.kt</ID>
-    <ID>Filename:EncryptionKeyProvider.android.kt$com.lift.bro.data.EncryptionKeyProvider.android.kt</ID>
-    <ID>Filename:EncryptionKeyProvider.native.kt$com.lift.bro.data.EncryptionKeyProvider.native.kt</ID>
-    <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
-    <ID>Filename:LBDatabase.native.kt$com.lift.bro.data.LBDatabase.native.kt</ID>
     <ID>Filename:eMaxSettingsRow.kt$com.lift.bro.presentation.settings.eMaxSettingsRow.kt</ID>
-    <ID>ForbiddenComment:AudioPlayer.native.kt$AudioPlayerImpl$// TODO: Implement native audio</ID>
     <ID>ForbiddenComment:EmptyHomeScreen.kt$// TODO: need to setup back handling in onboarding</ID>
     <ID>ForbiddenComment:RepWeightSelector.kt$// TODO: figure out the accessibility here</ID>
     <ID>FunctionNaming:MainViewController.kt$fun MainViewController( bannerProvider: () -&gt; UIView )</ID>
@@ -43,10 +35,6 @@
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
     <ID>LongParameterList:LiftCard.kt$( color: Color, height: Float, targetHeight: Float, width: Float, topLeft: Float, alpha: Float, )</ID>
     <ID>MatchingDeclarationName:AnimatedText.kt$AnimatedTextDefaults</ID>
-    <ID>MatchingDeclarationName:AudioPlayer.native.kt$AudioPlayerImpl : AudioPlayer</ID>
-    <ID>MatchingDeclarationName:EncryptionKeyProvider.native.kt$EncryptionKeyProviderImpl : EncryptionKeyProvider</ID>
-    <ID>MatchingDeclarationName:LBDatabase.kt$DriverFactory</ID>
-    <ID>MatchingDeclarationName:LBDatabase.native.kt$DriverFactory</ID>
     <ID>MatchingDeclarationName:LiftingScaffold.kt$FabProperties</ID>
     <ID>MatchingDeclarationName:WrappedConsistencyScreen.kt$WrappedConsistencyState</ID>
     <ID>MatchingDeclarationName:WrappedRepScreen.kt$WrappedRepState</ID>
@@ -71,16 +59,10 @@
     <ID>NoWildcardImports:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>NoWildcardImports:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>SpreadOperator:DashboardInteractor.kt$( *cards.map { it.onStart { emit(DashboardListItem.LiftCard.Loading) } } .toTypedArray() )</ID>
-    <ID>SpreadOperator:ExerciseDataSource.kt$LBExerciseDataSource$( *variationSets.map { exercise -&gt; combine( setQueries.getOneRepMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getEMaxForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), setQueries.getMaxRepsForVariation( exercise.variation_id, Instant.DISTANT_FUTURE ).flowToOneOrNull(), ) { orm, volume, reps -&gt; Triple( exercise.exercise_variation_id, exercise.exercise_id, Variation( id = exercise.variation_id, name = exercise.variation_name, notes = exercise.variation_notes, favourite = exercise.variation_is_favourite == 1L, bodyWeight = exercise.variation_is_body_weight?.let { it == 1L }, lift = Lift( id = exercise.lift_id, color = exercise.lift_color?.toULong(), name = exercise.lift_name, ), oneRepMax = orm?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), eMax = volume?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), maxReps = reps?.toDomain() ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }), ) ) } }.toTypedArray() )</ID>
-    <ID>SpreadOperator:WorkoutRepository.kt$WorkoutRepository$( *workouts.map { workout -&gt; database.exerciseDataSource.listen(workout.id).map { Workout( id = workout.id, date = workout.date, warmup = workout.warmup, exercises = it.toList(), finisher = workout.finisher ) } }.toTypedArray() )</ID>
     <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
     <ID>SwallowedException:LiftDetailsScreen.kt$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:LBDatabase.kt$DriverFactory$e: Exception</ID>
     <ID>TooGenericExceptionCaught:LiftDetailsScreen.kt$e: Exception</ID>
     <ID>TooManyFunctions:EditSetScreen.kt$com.lift.bro.presentation.set.EditSetScreen.kt</ID>
-    <ID>TooManyFunctions:LBDatabase.kt$SetDataSource</ID>
-    <ID>TooManyFunctions:SettingsRepository.kt$SettingsRepository : ISettingsRepository</ID>
     <ID>TooManyFunctions:TimerScreen.kt$com.lift.bro.presentation.timer.TimerScreen.kt</ID>
     <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
     <ID>UnusedParameter:Calendar.kt$dateSelected: (LocalDate) -&gt; Unit</ID>
@@ -93,7 +75,6 @@
     <ID>UnusedParameter:WrappedProgressScreen.kt$contentColor: Color = MaterialTheme.colorScheme.primary</ID>
     <ID>UnusedPrivateProperty:App.kt$val cel = celebration</ID>
     <ID>UnusedPrivateProperty:Calculator.kt$Digit$digit: Int</ID>
-    <ID>UnusedPrivateProperty:ExerciseDataSource.kt$LBExerciseDataSource$private val variationQueries: VariationQueries</ID>
     <ID>UnusedPrivateProperty:LiftDetailsScreen.kt$SortingOptions$reversed: Boolean</ID>
     <ID>UnusedPrivateProperty:WrappedProgressScreen.kt$val minSet = sets.minOf { it.second }</ID>
     <ID>WildcardImport:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>

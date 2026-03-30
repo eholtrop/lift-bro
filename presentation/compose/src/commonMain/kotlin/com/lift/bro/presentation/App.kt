@@ -185,13 +185,6 @@ fun App(
     navCoordinator: NavCoordinator = rememberNavCoordinator<tv.dpal.navi.Destination>(Destination.Unknown),
     dependencies: DependencyContainer = com.lift.bro.di.dependencies,
 ) {
-    val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
-    val isAndroid = LocalPlatformContext.current is Platform.Android
-
-    LaunchedEffect("setup_revenuecat") {
-        if (BuildConfig.isDebug) {
-            Purchases.logLevel = LogLevel.DEBUG
-        }
     CompositionLocalProvider(
         LocalDependencies provides dependencies
     ) {
@@ -252,8 +245,6 @@ fun App(
                 }
             }
 
-            if (!BuildConfig.isDebug) {
-                Firebase.initialize((context as? Platform.Android)?.context)
             val context = LocalPlatformContext.current
             LaunchedEffect("initialize_sentry") {
                 // keep sentry until we know firebase is working
