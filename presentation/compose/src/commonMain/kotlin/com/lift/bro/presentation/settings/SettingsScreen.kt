@@ -1,4 +1,5 @@
 package com.lift.bro.presentation.settings
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -99,13 +100,15 @@ fun SettingsScreen(
                 }
 
                 item {
-                    Text(
-                        modifier = Modifier.semantics {
-                            heading()
-                        },
-                        text = stringResource(Res.string.settings_pro_features_header),
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
+                    SettingsRowItem(
+                        title = {
+                            Text("Experimental (expect bugs)")
+                        }
+                    ) {
+                        state.experimental.forEach {
+                            CardForSetting(it)
+                        }
+                    }
                 }
 
                 item {
@@ -118,34 +121,38 @@ fun SettingsScreen(
                     )
                 }
 
-                item {
-                    when (subscriptionType) {
-                        SubscriptionType.None -> {
-                            SettingsRowItem(
-                                modifier = Modifier.clickable { showPaywall = true },
-                                title = { Text(stringResource(Res.string.settings_become_pro_title)) },
-                            ) {
-                                Row {
-                                    Text(stringResource(Res.string.settings_become_pro_description))
+                if (state.proItems.isEmpty()) {
+                    item {
+                        when (subscriptionType) {
+                            SubscriptionType.None -> {
+                                SettingsRowItem(
+                                    modifier = Modifier.clickable { showPaywall = true },
+                                    title = { Text(stringResource(Res.string.settings_become_pro_title)) },
+                                ) {
+                                    Row {
+                                        Text(stringResource(Res.string.settings_become_pro_description))
+                                    }
+                                    Text("Other Goodies (experimental features)")
                                 }
-                                Text("Other Goodies (experimental features)")
                             }
+
+                            else -> {}
                         }
 
-                        else -> {}
-                    }
-
-                    LaunchedEffect(showPaywall) {
-                        Purchases.sharedInstance.getCustomerInfo(
-                            onError = { error ->
-                                Sentry.captureException(Throwable(message = error.message))
-                            },
-                            onSuccess = { success ->
-                                if (success.entitlements.active.containsKey("pro")) {
-                                    subscriptionType = SubscriptionType.Pro
+                        // need to refresh payments whenever the paywal changes... hacky but works
+                        // should abstract
+                        LaunchedEffect(showPaywall) {
+                            Purchases.sharedInstance.getCustomerInfo(
+                                onError = { error ->
+                                    Sentry.captureException(Throwable(message = error.message))
+                                },
+                                onSuccess = { success ->
+                                    if (success.entitlements.active.containsKey("pro")) {
+                                        subscriptionType = SubscriptionType.Pro
+                                    }
                                 }
-                            }
-                        )
+                            )
+                        }
                     }
                 }
 
