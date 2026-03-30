@@ -1,6 +1,7 @@
 package com.lift.bro.presentation.settings
 
 import androidx.compose.runtime.Composable
+import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.Setting
@@ -93,7 +94,7 @@ fun rememberSettingsInteractor(
                     SettingsItem.AppTheme(mode = theme),
                     SettingsItem.DbLocation(clientUrl = clientUrl),
                 ),
-                proItems = if (pro) {
+                proItems = if (pro || BuildConfig.isDebug) {
                     listOf(
                         SettingsItem.ShowTWM(enabled = twm),
                         SettingsItem.MerSettings(enabled = mer.enabled),
@@ -102,14 +103,10 @@ fun rememberSettingsInteractor(
                 } else {
                     emptyList()
                 },
-                experimental = if (pro) {
-                    listOf(
-                        SettingsItem.Timer(enabled = timer),
-                        SettingsItem.DashboardV3(enabled = dashboardV3),
-                    )
-                } else {
-                    emptyList()
-                }
+                experimental = listOf(
+                    SettingsItem.Timer(enabled = timer),
+                    SettingsItem.DashboardV3(enabled = dashboardV3),
+                )
             )
         }
     },

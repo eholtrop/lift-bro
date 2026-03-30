@@ -67,6 +67,7 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
+import com.revenuecat.purchases.kmp.configure
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import dev.gitlive.firebase.Firebase
@@ -190,11 +191,30 @@ fun App(
         LocalDependencies provides dependencies
     ) {
         val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
+        val platform = LocalPlatformContext.current
 
         LaunchedEffect("setup_revenuecat") {
             if (BuildConfig.isDebug) {
                 Purchases.logLevel = LogLevel.DEBUG
             }
+
+            Purchases.configure(
+                apiKey = when (platform) {
+                    is Platform.Android -> BuildKonfig.REVENUE_CAT_API_KEY_AND
+                    Platform.iOS -> BuildKonfig.REVENUE_CAT_API_KEY_IOS
+                }
+            )
+
+            Purchases.sharedInstance.getCustomerInfo(
+                onError = { error ->
+                    Sentry.captureException(Throwable(message = error.message))
+                },
+                onSuccess = { success ->
+                    if (success.entitlements.active.containsKey("pro")) {
+                        subscriptionType.value = SubscriptionType.Pro
+                    }
+                }
+            )
         }
 
         val bro by dependencies.settingsRepository.listen(Setting.Bro).collectAsState(null)
