@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
@@ -55,12 +54,16 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.presentation.dashboard.DashboardEvent.*
 import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
 import com.lift.bro.presentation.set.ChipButton
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.ui.Card
+import com.lift.bro.ui.CheckField
+import com.lift.bro.ui.RadioField
 import com.lift.bro.ui.ReleaseNotesRow
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.card.lift.DashboardGraphCard
 import com.lift.bro.ui.card.lift.LiftCard
 import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.theme.spacing
@@ -122,8 +125,8 @@ fun DashboardContent(
                                     sortingSettings = state.sortingSettings,
                                     onToggleRpe = { showRpe = !showRpe },
                                     onToggleTempo = { showTempo = !showTempo },
-                                    toggleFavourite = { interactor(DashboardEvent.FavouritesAtTopToggled) },
-                                    optionSelected = { interactor(DashboardEvent.SortingOptionSelected(it)) }
+                                    toggleFavourite = { interactor(FavouritesAtTopToggled) },
+                                    optionSelected = { interactor(SortingOptionSelected(it)) }
                                 )
                             }
 
@@ -190,7 +193,7 @@ fun DashboardContent(
                                     Button(
                                         modifier = Modifier.align(Alignment.Center),
                                         onClick = {
-                                            interactor(DashboardEvent.AddLiftClicked)
+                                            interactor(AddLiftClicked)
                                         },
                                         colors = ButtonDefaults.elevatedButtonColors()
                                     ) {
@@ -198,6 +201,85 @@ fun DashboardContent(
                                     }
                                 }
                             }
+
+                            is DashboardListItem.GraphCard -> DashboardGraphCard(
+                                state = item,
+                                onClick = {},
+                                showRpe = false,
+                                showTempo = false,
+                                yUnit = LiftCardYValue.Weight
+                            )
+
+                            is DashboardListItem.NoGraphsMigration -> {
+                                Column {
+                                    Text(
+                                        text = "Lifts are gone! \uD83D\uDE31",
+                                        style = MaterialTheme.typography.titleLarge,
+                                    )
+                                    Text(
+                                        text = "Your Coach has replaced them with \"Filters\"",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                    )
+                                    Text(
+                                        text = "Check out some of the filter templates to see even cooler stats then before!!",
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+
+                                    Row {
+                                        CheckField(
+                                            modifier = Modifier.weight(1f),
+                                            title = "One Rep Max",
+                                            description = "Any sets with a rep of 1",
+                                            checked = false,
+                                            checkChanged = {}
+                                        )
+                                        CheckField(
+                                            modifier = Modifier.weight(1f),
+                                            title = "SBD",
+                                            description = "All Sqat, Bench, and Deadlift",
+                                            checked = false,
+                                            checkChanged = {}
+                                        )
+                                    }
+                                    Row {
+                                        CheckField(
+                                            modifier = Modifier.weight(1f),
+                                            title = "Only Favs",
+                                            description = "Anything marked as favourite",
+                                            checked = false,
+                                            checkChanged = {}
+                                        )
+                                        CheckField(
+                                            modifier = Modifier.weight(1f),
+                                            title = "Bodyweight",
+                                            description = "All variations flagged as bodyweight",
+                                            checked = false,
+                                            checkChanged = {}
+                                        )
+                                    }
+                                    Text(
+                                        "Dont worry, you can still track your favourites!",
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+                                    Row {
+                                        CheckField(
+                                            modifier = Modifier.weight(1f),
+                                            title = "Squats",
+                                            description = "All variations under the Lift \"Squat\"",
+                                            checked = false,
+                                            checkChanged = {}
+                                        )
+                                        CheckField(
+                                            modifier = Modifier.weight(1f),
+                                            title = "Deadlifts",
+                                            description = "All variations under the Lift \"Squat\"",
+                                            checked = false,
+                                            checkChanged = {}
+                                        )
+                                    }
+                                }
+                            }
+
                         }
                     }
 
@@ -496,4 +578,6 @@ private fun DashboardListItem.gridSize(listSize: Int = 0): Int = when (this) {
     DashboardListItem.ReleaseNotes -> 2
     DashboardListItem.WorkoutCalendar -> 2
     DashboardListItem.AddLiftButton -> if (listSize % 2 == 0) 2 else 1
+    is DashboardListItem.GraphCard -> 1
+    is DashboardListItem.NoGraphsMigration -> 2
 }

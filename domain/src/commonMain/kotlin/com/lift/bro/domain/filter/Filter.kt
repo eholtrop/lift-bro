@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 data class Filter(
     val id: String = uuid4().toString(),
     val name: String = "",
+    val description: String = "",
     val conditions: List<Condition>,
 )
 
@@ -38,6 +39,15 @@ sealed class Field<T>(val name: String) {
 
     @Serializable
     data object Variation: Field<String>("variationId")
+
+    @Serializable
+    data object Favourite: Field<Boolean>("favourite")
+
+    @Serializable
+    data object BodyWeight: Field<Boolean>("body_weight")
+
+    @Serializable
+    data object Lift: Field<String>("liftId")
 
     @Serializable
     data object Tempo: Field<Tempo>("tempo")
