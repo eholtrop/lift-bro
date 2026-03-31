@@ -1,0 +1,16 @@
+CREATE TABLE FilterCondition (
+    id TEXT NOT NULL PRIMARY KEY,
+    filterId TEXT NOT NULL REFERENCES Filter(id) ON DELETE CASCADE,
+    fieldType TEXT NOT NULL,
+    operator TEXT NOT NULL,
+    value TEXT
+);
+
+getAllConditionsForFilter:
+SELECT * FROM FilterCondition WHERE filterId = :filterId;
+
+saveCondition:
+INSERT OR REPLACE INTO FilterCondition(id, filterId, fieldType, operator, value) VALUES(:id, :filterId, :fieldType, :operator, :value);
+
+deleteConditionsForFilter:
+DELETE FROM FilterCondition WHERE filterId = :filterId;
