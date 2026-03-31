@@ -17,9 +17,9 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2026.01.22</string>
+	<string>2026.03.29</string>
 	<key>CFBundleVersion</key>
-	<string>43</string>
+	<string>44</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-2361666372543198~5028694260</string>
 	<key>LSApplicationCategoryType</key>
