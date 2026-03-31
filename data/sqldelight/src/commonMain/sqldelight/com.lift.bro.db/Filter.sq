@@ -1,0 +1,19 @@
+CREATE TABLE Filter (
+    id TEXT NOT NULL PRIMARY KEY,
+    name TEXT
+);
+
+getAll:
+SELECT * FROM Filter;
+
+getById:
+SELECT * FROM Filter WHERE id = :id;
+
+saveFilter:
+INSERT OR REPLACE INTO Filter(id, name) VALUES(:id, :name);
+
+deleteFilter:
+DELETE FROM Filter WHERE id = :id;
+
+deleteAll:
+DELETE FROM Filter;

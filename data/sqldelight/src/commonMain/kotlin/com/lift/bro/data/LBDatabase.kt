@@ -30,6 +30,8 @@ class LBDatabase(
     val workoutQueries get() = database.workoutQueries
     val goalQueries get() = database.goalQueries
     val liftingLogQueries get() = database.liftingLogQueries
+    val filterQueries get() = database.filterQueries
+    val filterConditionQueries get() = database.filterConditionQueries
 }
 
 private val instantAdapter = object : ColumnAdapter<Instant, Long> {

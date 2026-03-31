@@ -20,6 +20,8 @@ import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightLiftDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
+import com.lift.bro.domain.filter.Filter
+import com.lift.bro.domain.filter.FilterRepository
 import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
@@ -29,6 +31,10 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 expect class DependencyContainer {
     val database: LBDatabase
@@ -40,6 +46,42 @@ expect class DependencyContainer {
     fun launchManageSubscriptions()
 
     val audioPlayer: AudioPlayer
+}
+
+val DependencyContainer.filterRepository: FilterRepository get() = object: FilterRepository {
+
+    private val filters = MutableStateFlow(mutableListOf<Filter>())
+
+    override fun listenAll(): Flow<List<Filter>> {
+        return filters
+    }
+
+    override fun listen(filterId: String): Flow<Filter?> {
+        return filters.map { it.filter { it.id == filterId } }.map { it.firstOrNull() }
+    }
+
+    override fun save(filter: Filter) {
+        filters.update {
+            val list = it.toMutableList()
+            list.add(filter)
+            list
+        }
+    }
+
+    override fun delete(filter: Filter) {
+        filters.update {
+            val list = it.toMutableList()
+            list.remove(filter)
+            list
+        }
+    }
+
+    override fun deleteAll() {
+        filters.update {
+            it.clear()
+            it
+        }
+    }
 }
 
 private val DependencyContainer.remoteUrl: String?
