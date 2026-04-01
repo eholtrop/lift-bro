@@ -46,7 +46,6 @@ import com.example.compose.AppTheme
 import com.lift.bro.RestoreUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
-import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
@@ -117,7 +116,7 @@ fun OnboardingScreen(
         ) { state ->
             when (state) {
                 0 -> OnboardingBroScreen {
-                    settingsRepository?.set(Setting.Bro, it)
+                    settingsRepository?.setBro(it)
                     onboardingState += 1
                 }
 
@@ -131,13 +130,13 @@ fun OnboardingScreen(
                 2 -> OnboardingSkipScreen(
                     setupClicked = { onboardingState += 1 },
                     continueClicked = {
-                        settingsRepository?.set(Setting.DeviceFtux, true)
+                        settingsRepository?.setDeviceFtux(true)
                         navCoordinator.setRoot(Destination.Home)
                     }
                 )
 
                 3 -> OnboardingSetupScreen {
-                    settingsRepository?.set(Setting.DeviceFtux, true)
+                    settingsRepository?.setDeviceFtux(true)
                     navCoordinator.setRoot(Destination.Home)
                 }
             }

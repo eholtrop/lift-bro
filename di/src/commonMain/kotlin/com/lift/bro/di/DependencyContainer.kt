@@ -22,7 +22,6 @@ import com.lift.bro.data.sqldelight.datasource.SqldelightLiftDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
 import com.lift.bro.domain.filter.Filter
 import com.lift.bro.domain.filter.FilterRepository
-import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
@@ -85,7 +84,7 @@ val DependencyContainer.filterRepository: FilterRepository get() = object: Filte
 }
 
 private val DependencyContainer.remoteUrl: String?
-    get() = settingsRepository.get(Setting.ClientUrl)
+    get() = settingsRepository.getClientUrl()
 
 val DependencyContainer.setRepository: ISetRepository
     get() =

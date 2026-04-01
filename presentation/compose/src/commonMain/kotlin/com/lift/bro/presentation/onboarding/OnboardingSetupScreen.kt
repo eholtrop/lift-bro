@@ -44,7 +44,6 @@ import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
 import com.lift.bro.di.variationRepository
-import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.models.Variation
@@ -65,7 +64,7 @@ import tv.dpal.compose.AccessibilityMinimumSize
 
 @Composable
 fun OnboardingSetupScreen(
-    formSubmitted: () -> Unit,
+    formSubmitted: () -> Unit
 ) {
     var uom by remember { mutableStateOf(UOM.POUNDS) }
     val selectedVariations = remember { mutableStateListOf<Variation>() }
@@ -155,9 +154,10 @@ fun OnboardingSetupScreen(
                 ) {
                     Button(
                         onClick = {
-                            dependencies.settingsRepository.set(
-                                Setting.UnitOfMeasure,
-                                Settings.UnitOfWeight(uom)
+                            dependencies.settingsRepository.saveUnitOfMeasure(
+                                Settings.UnitOfWeight(
+                                    uom
+                                )
                             )
 
                             GlobalScope.launch {

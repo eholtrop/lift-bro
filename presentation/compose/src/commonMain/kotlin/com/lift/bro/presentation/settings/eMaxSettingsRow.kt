@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.ui.Space
@@ -38,17 +37,17 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun eMaxSettingsRow() {
-    val emaxEnabled by dependencies.settingsRepository.listen(Setting.EMaxEnabled)
+    val emaxEnabled by dependencies.settingsRepository.eMaxEnabled()
         .collectAsState(false)
-    val tmaxEnabled by dependencies.settingsRepository.listen(Setting.TMaxEnabled)
+    val tmaxEnabled by dependencies.settingsRepository.tMaxEnabled()
         .collectAsState(false)
 
     eMaxSettingsRowContent(
         eMaxEnabled = emaxEnabled,
         tMaxEnabled = tmaxEnabled,
         isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
-        onEMaxToggle = { dependencies.settingsRepository.set(Setting.EMaxEnabled, it) },
-        onTMaxToggle = { dependencies.settingsRepository.set(Setting.TMaxEnabled, it) }
+        onEMaxToggle = { dependencies.settingsRepository.setEMaxEnabled(it) },
+        onTMaxToggle = { dependencies.settingsRepository.setTMaxEnabled(it) }
     )
 }
 

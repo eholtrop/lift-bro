@@ -43,8 +43,6 @@ include(":libs:ext:ktx-datetime")
 include(":libs:ext:compose")
 include(":libs:navi")
 include(":libs:screenshot-processor")
-include(":libs:ksp-values-processor")
-include(":libs:ksp-values-annotation")
 
 
 if (file("libs/flowvi/enablecompositebuilds").exists()) {

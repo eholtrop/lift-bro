@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.ui.dialog.InfoDialogButton
@@ -30,14 +29,14 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TWMSettingsRow() {
-    val showTwm by dependencies.settingsRepository.listen(Setting.ShowTotalWeightMoved)
+    val showTwm by dependencies.settingsRepository.shouldShowTotalWeightMoved()
         .collectAsState(false)
 
     TWMSettingsRowContent(
         enabled = showTwm,
         isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
         onToggle = { enabled ->
-            dependencies.settingsRepository.set(Setting.ShowTotalWeightMoved, enabled)
+            dependencies.settingsRepository.showTotalWeightMoved(enabled)
         }
     )
 }

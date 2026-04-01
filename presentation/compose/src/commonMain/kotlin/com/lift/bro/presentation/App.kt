@@ -1,5 +1,4 @@
 package com.lift.bro.presentation
-
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -47,7 +46,6 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
-import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
@@ -151,7 +149,7 @@ val ApplicationScope = GlobalScope
 
 @Composable
 fun CheckAppConsent(
-    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository
 ) {
     val hasConsent by HasDeviceConsentedUseCase(dependencies.settingsRepository).invoke()
         .collectAsState(null)
@@ -217,14 +215,14 @@ fun App(
             )
         }
 
-        val bro by dependencies.settingsRepository.listen(Setting.Bro).collectAsState(null)
-        val uom by dependencies.settingsRepository.listen(Setting.UnitOfMeasure).map { it.uom }
+        val bro by dependencies.settingsRepository.getBro().collectAsState(null)
+        val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
             .collectAsState(UOM.POUNDS)
-        val showMerCalcs by dependencies.settingsRepository.listen(Setting.MerSettings).collectAsState(null)
-        val twmSettings by dependencies.settingsRepository.listen(Setting.ShowTotalWeightMoved)
+        val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
+        val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved()
             .collectAsState(false)
-        val emaxSettings by dependencies.settingsRepository.listen(Setting.EMaxEnabled).collectAsState(false)
-        val tMaxSettings by dependencies.settingsRepository.listen(Setting.TMaxEnabled).collectAsState(false)
+        val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
+        val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
         val showPaywall = remember { mutableStateOf(false) }
         val showCalculator = remember { mutableStateOf(false) }
 
@@ -242,7 +240,7 @@ fun App(
         ) {
             if (navCoordinator.currentPage == Destination.Unknown) {
                 LaunchedEffect("landing_selection") {
-                    dependencies.settingsRepository.listen(Setting.DeviceFtux).collectLatest {
+                    dependencies.settingsRepository.getDeviceFtux().collectLatest {
                         when (it) {
                             true -> navCoordinator.setRoot(Destination.Home)
                             false -> navCoordinator.setRoot(Destination.Onboarding)
@@ -265,9 +263,7 @@ fun App(
                 }
             }
 
-            val themeMode by dependencies.settingsRepository.listen(
-                Setting.ThemeModeKey
-            ).collectAsState(ThemeMode.System)
+            val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
 
             AppTheme(
                 theme = themeMode

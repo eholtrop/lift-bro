@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.ui.RadioField
@@ -24,14 +23,13 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun UOMSettingsRow() {
-    val uom by dependencies.settingsRepository.listen(Setting.UnitOfMeasure)
+    val uom by dependencies.settingsRepository.getUnitOfMeasure()
         .collectAsState(null)
 
     UOMSettingsRowContent(
         selectedUOM = uom?.uom,
         onUOMSelected = { selectedUOM ->
-            dependencies.settingsRepository.set(
-                Setting.UnitOfMeasure,
+            dependencies.settingsRepository.saveUnitOfMeasure(
                 Settings.UnitOfWeight(selectedUOM)
             )
         }

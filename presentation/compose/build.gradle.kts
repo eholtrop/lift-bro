@@ -73,7 +73,6 @@ kotlin {
             implementation("org.jetbrains.compose.ui:ui-tooling-preview:1.10.0")
             implementation("org.jetbrains.compose.material3.adaptive:adaptive:1.2.0")
             implementation("org.jetbrains.compose.ui:ui-backhandler:1.8.0")
-            implementation(project(":libs:ksp-values-annotation"))
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.uuid)
@@ -158,5 +157,4 @@ dependencies {
     screenshotTestImplementation(libs.screenshot.validation.api)
     implementation(libs.screenshot.validation.api)
     "kspAndroid"(project(":libs:screenshot-processor"))
-    ksp(project(":libs:ksp-values-processor"))
 }

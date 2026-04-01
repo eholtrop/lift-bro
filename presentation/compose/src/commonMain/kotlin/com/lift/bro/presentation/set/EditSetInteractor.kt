@@ -7,7 +7,6 @@ import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Setting
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
@@ -135,7 +134,7 @@ private fun editSetSource(
                         variation = variation,
                         maxVariationSet = maxVariation,
                         maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null,
-                        v2 = settingsRepository.get(Setting.EditSetVersion) == 2
+                        v2 = settingsRepository.editSetVersion() == 2
                     )
                 }
             }
@@ -217,7 +216,7 @@ fun editSetSideEffects(
         }
 
         is EditSetEvent.ToggleV2 -> {
-            settingsRepository.set(Setting.EditSetVersion, if (state?.showV2 == true) 2 else 1)
+            settingsRepository.setEditSetVersion(if (state?.showV2 == true) 2 else 1)
         }
 
         else -> {
