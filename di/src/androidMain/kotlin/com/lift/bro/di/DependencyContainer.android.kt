@@ -15,7 +15,6 @@ import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 
 actual class DependencyContainer {
-
     companion object {
         private var context: Context? = null
 
@@ -45,8 +44,8 @@ actual class DependencyContainer {
         context?.startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://play.google.com/store/account/subscriptions?sku=pro&package=com.lift.bro")
-            )
+                Uri.parse("https://play.google.com/store/account/subscriptions?sku=pro&package=com.lift.bro"),
+            ),
         )
     }
 

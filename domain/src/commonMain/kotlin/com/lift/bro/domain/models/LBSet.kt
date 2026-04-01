@@ -21,9 +21,15 @@ data class LBSet(
     val totalWeightMoved = weight * reps
 }
 
-fun calculateMax(reps: Long?, weight: Double?) = calculateMax(reps?.toInt() ?: 0, weight ?: 0.0)
+fun calculateMax(
+    reps: Long?,
+    weight: Double?,
+) = calculateMax(reps?.toInt() ?: 0, weight ?: 0.0)
 
-fun calculateMax(reps: Int, weight: Double): Double {
+fun calculateMax(
+    reps: Int,
+    weight: Double,
+): Double {
     return when (reps) {
         1 -> weight
         else -> estimatedMax(reps, weight)
@@ -32,7 +38,10 @@ fun calculateMax(reps: Int, weight: Double): Double {
 
 private const val MER_DENOMINATOR = 30.0
 
-fun estimatedMax(reps: Int, weight: Double): Double {
+fun estimatedMax(
+    reps: Int,
+    weight: Double,
+): Double {
     return weight * (1 + (reps / MER_DENOMINATOR))
 }
 
@@ -51,7 +60,8 @@ val LBSet.formattedReps: String get() = "${this.formattedTempo} x ${this.reps}"
 
 val LBSet.oneRepMax: Double? get() = if (this.reps == 1L) weight else null
 
-val LBSet.estimateMax: Double? get() = estimatedMax(
-    this.reps.toInt(),
-    this.weight
-)
+val LBSet.estimateMax: Double? get() =
+    estimatedMax(
+        this.reps.toInt(),
+        this.weight,
+    )

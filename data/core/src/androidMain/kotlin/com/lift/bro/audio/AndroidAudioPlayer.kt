@@ -3,8 +3,7 @@ package com.lift.bro.audio
 import android.content.Context
 import android.speech.tts.TextToSpeech
 
-class AndroidAudioPlayer(context: Context): AudioPlayer {
-
+class AndroidAudioPlayer(context: Context) : AudioPlayer {
     private val tts: TextToSpeech by lazy {
         TextToSpeech(context) {
         }

@@ -18,7 +18,6 @@ class SqldelightLiftDataSource(
     private val liftQueries: LiftQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : LiftDataSource {
-
     override fun listenAll(): Flow<List<Lift>> =
         liftQueries.getAll().asFlow().mapToList(dispatcher).map { list -> list.map { it.toDomain() } }
 
@@ -47,8 +46,9 @@ class SqldelightLiftDataSource(
     }
 }
 
-private fun comliftbrodb.Lift.toDomain(): Lift = Lift(
-    id = this.id,
-    name = this.name,
-    color = this.color?.toULong(),
-)
+private fun comliftbrodb.Lift.toDomain(): Lift =
+    Lift(
+        id = this.id,
+        name = this.name,
+        color = this.color?.toULong(),
+    )

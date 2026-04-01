@@ -4,7 +4,6 @@ import com.lift.bro.domain.models.Variation
 import kotlinx.coroutines.flow.Flow
 
 interface IVariationRepository {
-
     suspend fun deleteAll()
 
     fun save(variation: Variation)

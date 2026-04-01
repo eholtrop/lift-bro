@@ -27,8 +27,7 @@ import kotlinx.datetime.LocalDate
 @Suppress("TooManyFunctions")
 class SettingsRepository(
     private val dataSource: UserPreferencesDataSource,
-): ISettingsRepository {
-
+) : ISettingsRepository {
     private val scope = CoroutineScope(Dispatchers.Default)
     private val refreshKey by lazy { MutableSharedFlow<String>() }
 
@@ -51,8 +50,9 @@ class SettingsRepository(
             Setting.DeviceFtux -> dataSource.getBool(key, false)
             Setting.BackupSettingsKey -> BackupSettings(LocalDate.fromEpochDays(dataSource.getInt(key, 0)))
             Setting.Bro -> dataSource.getString(key)?.let { LiftBro.valueOf(it) }
-            Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null)
-                ?: MERSettings(enabled = isUserProDefault())
+            Setting.MerSettings ->
+                dataSource.getSerializable<MERSettings>(key, null)
+                    ?: MERSettings(enabled = isUserProDefault())
 
             Setting.LatestReadReleaseNotes -> dataSource.getString(key)
             Setting.ThemeModeKey -> dataSource.getString(key)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
@@ -64,7 +64,10 @@ class SettingsRepository(
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T> set(setting: Setting<T>, value: T) {
+    override fun <T> set(
+        setting: Setting<T>,
+        value: T,
+    ) {
         val key = keyForSetting(setting)
         when (value) {
             is Int -> dataSource.getInt(key, value)

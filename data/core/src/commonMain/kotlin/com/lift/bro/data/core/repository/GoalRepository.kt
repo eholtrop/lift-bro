@@ -6,9 +6,8 @@ import com.lift.bro.domain.repositories.IGoalRepository
 import kotlinx.coroutines.flow.Flow
 
 class GoalRepository(
-    val goalDataSource: GoalDataSource
+    val goalDataSource: GoalDataSource,
 ) : IGoalRepository {
-
     override fun get(id: String): Flow<Goal?> = goalDataSource.get(id)
 
     override fun getAll(): Flow<List<Goal>> = goalDataSource.getAll()

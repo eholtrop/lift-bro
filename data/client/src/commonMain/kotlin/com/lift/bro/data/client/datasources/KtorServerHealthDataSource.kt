@@ -9,13 +9,14 @@ import tv.dpal.logging.Log
 import tv.dpal.logging.d
 
 class KtorServerHealthDataSource(
-    url: String
+    url: String,
 ) {
-    private val httpClient: HttpClient = createLiftBroClient(
-        LiftBroClientConfig(
-            baseUrl = url
+    private val httpClient: HttpClient =
+        createLiftBroClient(
+            LiftBroClientConfig(
+                baseUrl = url,
+            ),
         )
-    )
 
     suspend fun check(): Boolean {
         with(httpClient.get("/health").call) {

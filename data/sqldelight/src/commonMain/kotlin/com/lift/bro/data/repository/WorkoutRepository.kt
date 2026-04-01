@@ -13,7 +13,6 @@ import kotlinx.datetime.LocalDate
 class WorkoutRepository(
     private val database: LBDatabase,
 ) : IWorkoutRepository {
-
     override fun getAll(
         startDate: LocalDate?,
         endDate: LocalDate?,
@@ -26,13 +25,19 @@ class WorkoutRepository(
 
     override suspend fun save(workout: Workout) {}
 
-    override suspend fun addVariation(exerciseId: ExerciseId, variationId: VariationId) {}
+    override suspend fun addVariation(
+        exerciseId: ExerciseId,
+        variationId: VariationId,
+    ) {}
 
     override suspend fun removeVariation(exerciseVariationId: String) {}
 
     override suspend fun deleteExercise(exerciseId: String) {}
 
-    override suspend fun addExercise(workoutId: String, exerciseId: String) {}
+    override suspend fun addExercise(
+        workoutId: String,
+        exerciseId: String,
+    ) {}
 
     override suspend fun delete(workout: Workout) {}
 

@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class VariationRepository(
-    private val local: VariationDataSource
+    private val local: VariationDataSource,
 ) : IVariationRepository {
-
     override fun listenAll(liftId: String?): Flow<List<Variation>> = local.listenAllForLift(liftId)
+
     override fun listenAll(): Flow<List<Variation>> = local.listenAll()
 
     override fun listen(id: String): Flow<Variation?> = local.listen(id)

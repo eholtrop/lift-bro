@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 class KtorLiftDataSource(
     private val httpClient: HttpClient,
 ) : LiftDataSource {
-
     override fun listenAll(): Flow<List<Lift>> = createConnectionFlow(httpClient, "api/ws/lifts")
 
     override fun get(id: String?): Flow<Lift?> = createConnectionFlow(httpClient, "api/ws/lift?liftId=$id")

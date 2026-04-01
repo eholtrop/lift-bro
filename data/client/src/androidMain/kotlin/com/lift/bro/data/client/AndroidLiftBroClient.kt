@@ -9,6 +9,6 @@ import io.ktor.client.engine.okhttp.OkHttp
 actual fun createLiftBroClient(config: LiftBroClientConfig): HttpClient {
     return createConfiguredHttpClient(
         platformEngine = OkHttp.create(),
-        config = config
+        config = config,
     )
 }

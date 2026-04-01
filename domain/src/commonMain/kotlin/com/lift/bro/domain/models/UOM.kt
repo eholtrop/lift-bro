@@ -2,10 +2,13 @@ package com.lift.bro.domain.models
 
 enum class UOM(val value: String) {
     KG("kg"),
-    POUNDS("lbs")
+    POUNDS("lbs"),
 }
 
-fun UOM.convert(value: Double, convertTo: UOM): Double {
+fun UOM.convert(
+    value: Double,
+    convertTo: UOM,
+): Double {
     if (this == convertTo) return value
 
     return when (this) {

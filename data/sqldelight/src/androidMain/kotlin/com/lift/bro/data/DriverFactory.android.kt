@@ -24,9 +24,7 @@ actual class DriverFactory actual constructor(
         System.loadLibrary("sqlcipher")
     }
 
-    actual fun provideDbDriver(
-        schema: SqlSchema<QueryResult.Value<Unit>>
-    ): SqlDriver {
+    actual fun provideDbDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver {
         runBlocking {
             migrationManager.migrateIfNeeded()
             migrationManager.cleanupIfComplete()

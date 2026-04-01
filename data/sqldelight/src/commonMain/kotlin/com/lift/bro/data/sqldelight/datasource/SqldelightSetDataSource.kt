@@ -29,7 +29,6 @@ class SqldelightSetDataSource(
     private val setQueries: SetQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : SetDataSource {
-
     override fun listenAll(
         startDate: LocalDate?,
         endDate: LocalDate?,
@@ -52,14 +51,16 @@ class SqldelightSetDataSource(
             .map { sets ->
                 sets
                     .map { set ->
-                        val orm = setQueries.getOneRepMaxForVariation(
-                            variationId = set.variationId,
-                            before = set.date
-                        ).executeAsOneOrNull()?.weight
-                        val emax = setQueries.getEMaxForVariation(
-                            variationId = set.variationId,
-                            before = set.date
-                        ).executeAsOneOrNull()?.weight
+                        val orm =
+                            setQueries.getOneRepMaxForVariation(
+                                variationId = set.variationId,
+                                before = set.date,
+                            ).executeAsOneOrNull()?.weight
+                        val emax =
+                            setQueries.getEMaxForVariation(
+                                variationId = set.variationId,
+                                before = set.date,
+                            ).executeAsOneOrNull()?.weight
 
                         set.toDomain().copy(
                             mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0,
@@ -68,13 +69,17 @@ class SqldelightSetDataSource(
             }
     }
 
-    override fun listenAllForLift(liftId: String, limit: Long, sorting: Sorting): Flow<List<LBSet>> =
+    override fun listenAllForLift(
+        liftId: String,
+        limit: Long,
+        sorting: Sorting,
+    ): Flow<List<LBSet>> =
         setQueries.getAllForLift(
             liftId = liftId,
             startDate = Instant.DISTANT_PAST,
             endDate = Instant.DISTANT_FUTURE,
             limit = limit,
-            sortBy = sorting.toString()
+            sortBy = sorting.toString(),
         )
             .asFlow().mapToList(dispatcher)
             .map {
@@ -84,11 +89,12 @@ class SqldelightSetDataSource(
                         variationId = it.variationId,
                         weight = it.weight ?: 0.0,
                         reps = it.reps ?: 1,
-                        tempo = Tempo(
-                            down = it.tempoDown ?: 3,
-                            hold = it.tempoHold ?: 1,
-                            up = it.tempoUp ?: 1,
-                        ),
+                        tempo =
+                            Tempo(
+                                down = it.tempoDown ?: 3,
+                                hold = it.tempoHold ?: 1,
+                                up = it.tempoUp ?: 1,
+                            ),
                         date = it.date,
                         notes = it.notes,
                         rpe = it.rpe?.toInt(),
@@ -130,38 +136,46 @@ class SqldelightSetDataSource(
     }
 }
 
-fun GetAllSets.toDomain() = LBSet(
-    id = this.id,
-    variationId = this.variationId,
-    weight = this.weight ?: 0.0,
-    reps = this.reps ?: 1,
-    tempo = Tempo(
-        down = this.tempoDown ?: 3,
-        hold = this.tempoHold ?: 1,
-        up = this.tempoUp ?: 1,
-    ),
-    date = this.date,
-    notes = this.notes,
-    rpe = this.rpe?.toInt(),
-    bodyWeightRep = this.body_weight?.let { it == 1L },
-)
+fun GetAllSets.toDomain() =
+    LBSet(
+        id = this.id,
+        variationId = this.variationId,
+        weight = this.weight ?: 0.0,
+        reps = this.reps ?: 1,
+        tempo =
+            Tempo(
+                down = this.tempoDown ?: 3,
+                hold = this.tempoHold ?: 1,
+                up = this.tempoUp ?: 1,
+            ),
+        date = this.date,
+        notes = this.notes,
+        rpe = this.rpe?.toInt(),
+        bodyWeightRep = this.body_weight?.let { it == 1L },
+    )
 
-fun LiftingSet.toDomain() = LBSet(
-    id = this.id,
-    variationId = this.variationId,
-    weight = this.weight ?: 0.0,
-    reps = this.reps ?: 1,
-    tempo = Tempo(
-        down = this.tempoDown ?: 3,
-        hold = this.tempoHold ?: 1,
-        up = this.tempoUp ?: 1,
-    ),
-    date = this.date,
-    notes = this.notes,
-    rpe = this.rpe?.toInt(),
-)
+fun LiftingSet.toDomain() =
+    LBSet(
+        id = this.id,
+        variationId = this.variationId,
+        weight = this.weight ?: 0.0,
+        reps = this.reps ?: 1,
+        tempo =
+            Tempo(
+                down = this.tempoDown ?: 3,
+                hold = this.tempoHold ?: 1,
+                up = this.tempoUp ?: 1,
+            ),
+        date = this.date,
+        notes = this.notes,
+        rpe = this.rpe?.toInt(),
+    )
 
-private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {
+private fun calculateMer(
+    setWeight: Double?,
+    setReps: Long?,
+    maxWeight: Double,
+): Int {
     if (maxWeight <= 0.0) return 0
     val repFatigueCost = 4
 

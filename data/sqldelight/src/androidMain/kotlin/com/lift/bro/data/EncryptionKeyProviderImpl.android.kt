@@ -20,7 +20,6 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(na
 class EncryptionKeyProviderImpl(
     private val context: Context,
 ) : EncryptionKeyProvider {
-
     private companion object {
         private val KEY_DB_ENCRYPTION_KEY = stringPreferencesKey("db_encryption_key")
         private const val KEY_LENGTH_BYTES = 32
@@ -35,11 +34,12 @@ class EncryptionKeyProviderImpl(
     private val aead: Aead by lazy {
         AeadConfig.register()
 
-        val keysetManager = AndroidKeysetManager.Builder()
-            .withSharedPref(context, KEYSET_NAME, PREFERENCE_FILE)
-            .withKeyTemplate(KeyTemplates.get("AES256_GCM"))
-            .withMasterKeyUri(MASTER_KEY_URI)
-            .build()
+        val keysetManager =
+            AndroidKeysetManager.Builder()
+                .withSharedPref(context, KEYSET_NAME, PREFERENCE_FILE)
+                .withKeyTemplate(KeyTemplates.get("AES256_GCM"))
+                .withMasterKeyUri(MASTER_KEY_URI)
+                .build()
 
         keysetManager.keysetHandle.getPrimitive(Aead::class.java)
     }

@@ -5,5 +5,6 @@ data class User(
 )
 
 enum class SubscriptionType {
-    None, Pro
+    None,
+    Pro,
 }

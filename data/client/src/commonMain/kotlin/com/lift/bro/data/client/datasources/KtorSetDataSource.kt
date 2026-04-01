@@ -20,7 +20,6 @@ import kotlinx.datetime.LocalDate
 class KtorSetDataSource(
     private val httpClient: HttpClient = createLiftBroClient(),
 ) : SetDataSource {
-
     override fun listenAll(
         startDate: LocalDate?,
         endDate: LocalDate?,
@@ -29,22 +28,23 @@ class KtorSetDataSource(
         reps: Long?,
         sorting: Sorting,
         order: Order,
-    ): Flow<List<LBSet>> = createConnectionFlow(
-        httpClient,
-        "api/ws/sets?" +
-            "limit=$limit" +
-            (startDate?.let { "&startDate=$startDate" } ?: "") +
-            (endDate?.let { "&endDate=$endDate" } ?: "") +
-            (variationId?.let { "&variationId=$variationId" } ?: "") +
-            "&sort=$sorting" +
-            "&order=$order" +
-            ""
-    )
+    ): Flow<List<LBSet>> =
+        createConnectionFlow(
+            httpClient,
+            "api/ws/sets?" +
+                "limit=$limit" +
+                (startDate?.let { "&startDate=$startDate" } ?: "") +
+                (endDate?.let { "&endDate=$endDate" } ?: "") +
+                (variationId?.let { "&variationId=$variationId" } ?: "") +
+                "&sort=$sorting" +
+                "&order=$order" +
+                "",
+        )
 
     override fun listenAllForLift(
         liftId: String,
         limit: Long,
-        sorting: Sorting
+        sorting: Sorting,
     ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit&liftId=$liftId")
 
     override fun listen(id: String): Flow<LBSet?> = createConnectionFlow(httpClient, "api/ws/set?setId=$id")

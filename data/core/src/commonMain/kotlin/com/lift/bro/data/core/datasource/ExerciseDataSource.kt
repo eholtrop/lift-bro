@@ -6,12 +6,27 @@ import kotlinx.coroutines.flow.Flow
 
 interface ExerciseDataSource {
     fun get(workoutId: String): Flow<List<Exercise>>
+
     suspend fun save(exercise: Exercise)
-    suspend fun saveVariation(exerciseId: String, variationId: VariationId)
+
+    suspend fun saveVariation(
+        exerciseId: String,
+        variationId: VariationId,
+    )
+
     suspend fun delete(id: String)
-    suspend fun deleteVariation(exerciseId: String, variationId: VariationId)
+
+    suspend fun deleteVariation(
+        exerciseId: String,
+        variationId: VariationId,
+    )
+
     suspend fun deleteVariationSets(variationSetId: String)
-    suspend fun addExercise(workoutId: String, exerciseId: String)
+
+    suspend fun addExercise(
+        workoutId: String,
+        exerciseId: String,
+    )
 
     suspend fun deleteAll()
 }

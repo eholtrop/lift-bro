@@ -33,7 +33,7 @@ internal inline fun <reified T> createConnectionFlow(
         try {
             httpClient.webSocket(
                 method = HttpMethod.Get,
-                path = path
+                path = path,
             ) {
                 // Listen for incoming messages
                 for (frame in incoming) {
@@ -77,7 +77,7 @@ internal fun createConfiguredHttpClient(
                     prettyPrint = true
                     isLenient = true
                     ignoreUnknownKeys = true
-                }
+                },
             )
         }
 

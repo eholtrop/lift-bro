@@ -12,7 +12,10 @@ object InstantSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor =
         PrimitiveSerialDescriptor("kotlin.time.Instant", PrimitiveKind.LONG)
 
-    override fun serialize(encoder: Encoder, value: Instant) {
+    override fun serialize(
+        encoder: Encoder,
+        value: Instant,
+    ) {
         encoder.encodeLong(value.toEpochMilliseconds())
     }
 

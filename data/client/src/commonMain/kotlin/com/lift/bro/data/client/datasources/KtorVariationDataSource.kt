@@ -13,19 +13,20 @@ import kotlinx.coroutines.flow.Flow
 
 class KtorVariationDataSource(
     private val httpClient: HttpClient,
-): VariationDataSource {
-
-    override fun listen(id: String): Flow<Variation?> = createConnectionFlow(
-        httpClient,
-        "api/ws/variation?variationId=$id"
-    )
+) : VariationDataSource {
+    override fun listen(id: String): Flow<Variation?> =
+        createConnectionFlow(
+            httpClient,
+            "api/ws/variation?variationId=$id",
+        )
 
     override fun listenAll(): Flow<List<Variation>> = createConnectionFlow(httpClient, "api/ws/variations")
 
-    override fun listenAllForLift(liftId: String?): Flow<List<Variation>> = createConnectionFlow(
-        httpClient,
-        "api/ws/variations?liftId=$liftId"
-    )
+    override fun listenAllForLift(liftId: String?): Flow<List<Variation>> =
+        createConnectionFlow(
+            httpClient,
+            "api/ws/variations?liftId=$liftId",
+        )
 
     override suspend fun save(variation: Variation) {
         httpClient.post("api/rest/variation") {

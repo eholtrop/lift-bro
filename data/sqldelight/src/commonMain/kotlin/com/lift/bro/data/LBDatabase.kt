@@ -12,7 +12,6 @@ import kotlin.time.Instant
 class LBDatabase(
     driverFactory: DriverFactory,
 ) {
-
     private val database by lazy {
         LiftBroDB(
             driverFactory.provideDbDriver(LiftBroDB.Schema),
@@ -32,12 +31,16 @@ class LBDatabase(
     val liftingLogQueries get() = database.liftingLogQueries
 }
 
-private val instantAdapter = object : ColumnAdapter<Instant, Long> {
-    override fun decode(databaseValue: Long): Instant = Instant.fromEpochMilliseconds(databaseValue)
-    override fun encode(value: Instant): Long = value.toEpochMilliseconds()
-}
+private val instantAdapter =
+    object : ColumnAdapter<Instant, Long> {
+        override fun decode(databaseValue: Long): Instant = Instant.fromEpochMilliseconds(databaseValue)
 
-private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
-    override fun decode(databaseValue: Long): LocalDate = LocalDate.fromEpochDays(databaseValue.toInt())
-    override fun encode(value: LocalDate): Long = value.toEpochDays()
-}
+        override fun encode(value: Instant): Long = value.toEpochMilliseconds()
+    }
+
+private val dateAdapter =
+    object : ColumnAdapter<LocalDate, Long> {
+        override fun decode(databaseValue: Long): LocalDate = LocalDate.fromEpochDays(databaseValue.toInt())
+
+        override fun encode(value: LocalDate): Long = value.toEpochDays()
+    }

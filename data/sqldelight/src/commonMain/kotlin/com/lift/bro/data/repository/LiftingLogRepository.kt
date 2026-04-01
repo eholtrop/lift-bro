@@ -18,7 +18,6 @@ class LiftingLogRepository(
     private val database: LBDatabase,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ILiftingLogRepository {
-
     override fun getByDate(date: LocalDate): Flow<LiftingLog?> =
         database.liftingLogQueries.getByDate(date)
             .asFlow()

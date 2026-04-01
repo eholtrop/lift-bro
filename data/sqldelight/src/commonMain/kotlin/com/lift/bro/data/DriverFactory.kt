@@ -7,7 +7,5 @@ import app.cash.sqldelight.db.SqlSchema
 expect class DriverFactory(
     context: Any,
 ) {
-    fun provideDbDriver(
-        schema: SqlSchema<QueryResult.Value<Unit>>,
-    ): SqlDriver
+    fun provideDbDriver(schema: SqlSchema<QueryResult.Value<Unit>>): SqlDriver
 }

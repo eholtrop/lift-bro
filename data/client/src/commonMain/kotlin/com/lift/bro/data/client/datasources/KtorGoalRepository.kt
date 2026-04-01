@@ -16,8 +16,7 @@ import tv.dpal.logging.d
 
 class KtorGoalRepository(
     val baseUrl: String,
-): IGoalRepository {
-
+) : IGoalRepository {
     private val httpClient = createLiftBroClient(config = LiftBroClientConfig(baseUrl = baseUrl))
 
     override fun get(id: String): Flow<Goal?> = createConnectionFlow(httpClient, "api/ws/goal?goalId=$id")

@@ -13,32 +13,32 @@ data class Filter(
 @Serializable
 sealed interface Condition {
     @Serializable
-    data class Min<T>(val field: Field<T>, val value: T): Condition
+    data class Min<T>(val field: Field<T>, val value: T) : Condition
 
     @Serializable
-    data class Max<T>(val field: Field<T>, val value: T): Condition
+    data class Max<T>(val field: Field<T>, val value: T) : Condition
 
     @Serializable
-    data class Equals<T>(val field: Field<T>, val value: T): Condition
+    data class Equals<T>(val field: Field<T>, val value: T) : Condition
 }
 
 @Serializable
 sealed class Field<T>(val name: String) {
     @Serializable
-    data object Weight: Field<Double>("weight")
+    data object Weight : Field<Double>("weight")
 
     @Serializable
-    data object Reps: Field<Int>("reps")
+    data object Reps : Field<Int>("reps")
 
     @Serializable
-    data object RPE: Field<Int>("RPE")
+    data object RPE : Field<Int>("RPE")
 
     @Serializable
-    data object TotalWeightMoved: Field<Double>("twm")
+    data object TotalWeightMoved : Field<Double>("twm")
 
     @Serializable
-    data object Variation: Field<String>("variationId")
+    data object Variation : Field<String>("variationId")
 
     @Serializable
-    data object Tempo: Field<Tempo>("tempo")
+    data object Tempo : Field<Tempo>("tempo")
 }

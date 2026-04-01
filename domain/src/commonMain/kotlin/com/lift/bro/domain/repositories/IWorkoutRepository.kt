@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
 interface IWorkoutRepository {
-
     fun getAll(
         startDate: LocalDate? = null,
         endDate: LocalDate? = null,
@@ -27,7 +26,10 @@ interface IWorkoutRepository {
 
     suspend fun deleteExercise(exerciseId: String)
 
-    suspend fun addExercise(workoutId: String, exerciseId: String)
+    suspend fun addExercise(
+        workoutId: String,
+        exerciseId: String,
+    )
 
     suspend fun delete(workout: Workout)
 
