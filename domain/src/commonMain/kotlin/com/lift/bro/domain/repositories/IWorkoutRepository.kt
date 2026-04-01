@@ -12,8 +12,6 @@ interface IWorkoutRepository {
         limit: Long = Long.MAX_VALUE,
     ): Flow<List<Workout>>
 
-    fun get(id: String): Flow<Workout?>
-
     fun get(date: LocalDate): Flow<Workout?>
 
     suspend fun save(workout: Workout)

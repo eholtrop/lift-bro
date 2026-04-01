@@ -92,7 +92,15 @@ val DependencyContainer.localVariationRepository: IVariationRepository
             )
         )
 
-val DependencyContainer.workoutRepository: IWorkoutRepository get() = WorkoutRepository(database)
+val DependencyContainer.workoutRepository: IWorkoutRepository
+    get() = WorkoutRepository(
+        database = database,
+        exerciseDataSource = SqldelightExerciseDataSource(
+            exerciseQueries = database.exerciseQueries,
+            setQueries = database.setQueries,
+            variationQueries = database.variationQueries,
+        )
+    )
 
 val DependencyContainer.liftingLogRepository: ILiftingLogRepository get() = LiftingLogRepository(database)
 
