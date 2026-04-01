@@ -1,0 +1,6 @@
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+ktlint_standard_colon-spacing = disabled
+ktlint_type_reference_declaration_parenthesized_expression_colon_spacing = disabled

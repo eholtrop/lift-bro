@@ -9,7 +9,7 @@ data class Consent(
     val consentDateTime: kotlinx.datetime.LocalDateTime,
     val tncVersion: Double,
     val privacyPolicyVersion: Double,
-    val appVersion: String
+    val appVersion: String,
 )
 
 data class BackupSettings(

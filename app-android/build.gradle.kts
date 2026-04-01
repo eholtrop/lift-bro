@@ -1,4 +1,3 @@
-import com.android.utils.jvmArchitecture
 import com.lift.bro.versionCode
 import com.lift.bro.versionName
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -69,13 +68,19 @@ android {
 
 val copyScreenshotTests by tasks.registering(Copy::class) {
     dependsOn(project(":presentation:compose").tasks.named("kspDebugKotlinAndroid"))
-    from(project(":presentation:compose").layout.buildDirectory.dir("generated/ksp/android/androidDebug/kotlin/com/lift/bro"))
+    from(
+        project(
+            ":presentation:compose",
+        ).layout.buildDirectory.dir("generated/ksp/android/androidDebug/kotlin/com/lift/bro"),
+    )
     into(file("src/screenshotTest/kotlin/com/lift/bro"))
     include("*.kt")
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.matching { it.name.startsWith("compile") && it.name.contains("Kotlin") && it.name.contains("ScreenshotTest") }.configureEach {
+tasks.matching {
+    it.name.startsWith("compile") && it.name.contains("Kotlin") && it.name.contains("ScreenshotTest")
+}.configureEach {
     dependsOn(copyScreenshotTests)
 }
 

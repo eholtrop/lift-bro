@@ -22,7 +22,6 @@ import com.lift.bro.ui.navigation.Destination
 import tv.dpal.navi.rememberNavCoordinator
 
 class MainActivity : ComponentActivity() {
-
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         DependencyContainer.initialize(this)
@@ -36,15 +35,16 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalPlatformContext provides Platform.Android(LocalContext.current),
                 LocalServer provides createLiftBroServer(),
-                LocalDependencies provides dependencies
+                LocalDependencies provides dependencies,
             ) {
                 App(
-                    modifier = Modifier.semantics {
-                        // for ui tests. this ensures that our testTags will be readable by Appium
-                        testTagsAsResourceId = true
-                    },
+                    modifier =
+                        Modifier.semantics {
+                            // for ui tests. this ensures that our testTags will be readable by Appium
+                            testTagsAsResourceId = true
+                        },
                     navCoordinator = coordinator,
-                    dependencies = dependencies
+                    dependencies = dependencies,
                 )
             }
             BackHandler {

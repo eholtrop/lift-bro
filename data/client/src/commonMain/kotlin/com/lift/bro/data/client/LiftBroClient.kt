@@ -12,12 +12,10 @@ data class LiftBroClientConfig(
     val socketTimeoutMs: Long = 15_000,
     val enableLogging: Boolean = false,
     val retryOnConnectionFailure: Boolean = true,
-    val maxRetryAttempts: Int = 3
+    val maxRetryAttempts: Int = 3,
 )
 
 /**
  * Platform-specific client factory function
  */
-expect fun createLiftBroClient(
-    config: LiftBroClientConfig = LiftBroClientConfig()
-): HttpClient
+expect fun createLiftBroClient(config: LiftBroClientConfig = LiftBroClientConfig()): HttpClient

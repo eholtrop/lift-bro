@@ -11,7 +11,7 @@ import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 class ConsentDeviceUseCase(
-    val settingsRepository: ISettingsRepository
+    val settingsRepository: ISettingsRepository,
 ) {
     operator fun invoke() {
         settingsRepository.set(
@@ -21,15 +21,16 @@ class ConsentDeviceUseCase(
                 appVersion = BuildKonfig.VERSION_NAME,
                 tncVersion = 1.0,
                 privacyPolicyVersion = 1.0,
-                consentDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC)
-            )
+                consentDateTime = Clock.System.now().toLocalDateTime(TimeZone.UTC),
+            ),
         )
     }
 }
 
 class HasDeviceConsentedUseCase(
-    val settingsRepository: ISettingsRepository
+    val settingsRepository: ISettingsRepository,
 ) {
-    operator fun invoke(): Flow<Boolean> = settingsRepository.listen(Setting.DeviceConsent)
-        .map { it != null }
+    operator fun invoke(): Flow<Boolean> =
+        settingsRepository.listen(Setting.DeviceConsent)
+            .map { it != null }
 }

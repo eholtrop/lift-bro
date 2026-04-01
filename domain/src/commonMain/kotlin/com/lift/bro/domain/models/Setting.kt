@@ -11,7 +11,7 @@ sealed class Setting<T> {
     data object EditSetVersion : Setting<Int>()
 
     @Serializable
-    data object DashboardV3: Setting<Boolean>()
+    data object DashboardV3 : Setting<Boolean>()
 
     @Serializable
     data object DeviceId : Setting<String>()

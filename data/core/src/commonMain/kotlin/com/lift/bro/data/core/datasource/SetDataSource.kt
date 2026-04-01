@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
 interface SetDataSource {
-
     fun listenAll(
         startDate: LocalDate?,
         endDate: LocalDate?,
@@ -26,8 +25,12 @@ interface SetDataSource {
     ): Flow<List<LBSet>>
 
     fun listen(id: String): Flow<LBSet?>
+
     suspend fun save(lbSet: LBSet)
+
     suspend fun delete(lbSet: LBSet)
+
     suspend fun deleteAll()
+
     suspend fun deleteAll(variationId: VariationId)
 }

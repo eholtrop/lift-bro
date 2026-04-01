@@ -48,48 +48,52 @@ private val DependencyContainer.remoteUrl: String?
 val DependencyContainer.setRepository: ISetRepository
     get() =
         SetRepository(
-            local = if (remoteUrl == null) {
-                SqldelightSetDataSource(
-                    setQueries = database.setQueries,
-                )
-            } else {
-                KtorSetDataSource(
-                    createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!))
-                )
-            }
+            local =
+                if (remoteUrl == null) {
+                    SqldelightSetDataSource(
+                        setQueries = database.setQueries,
+                    )
+                } else {
+                    KtorSetDataSource(
+                        createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!)),
+                    )
+                },
         )
 
 val DependencyContainer.localSetRepository: ISetRepository
     get() =
         SetRepository(
-            local = SqldelightSetDataSource(
-                setQueries = database.setQueries
-            )
+            local =
+                SqldelightSetDataSource(
+                    setQueries = database.setQueries,
+                ),
         )
 
 val DependencyContainer.variationRepository: IVariationRepository
     get() =
         VariationRepository(
-            local = if (remoteUrl == null) {
-                SqlDelightVariationDataSource(
-                    liftQueries = database.liftQueries,
-                    setQueries = database.setQueries,
-                    variationQueries = database.variationQueries,
-                )
-            } else {
-                KtorVariationDataSource(
-                    createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!))
-                )
-            }
+            local =
+                if (remoteUrl == null) {
+                    SqlDelightVariationDataSource(
+                        liftQueries = database.liftQueries,
+                        setQueries = database.setQueries,
+                        variationQueries = database.variationQueries,
+                    )
+                } else {
+                    KtorVariationDataSource(
+                        createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!)),
+                    )
+                },
         )
 val DependencyContainer.localVariationRepository: IVariationRepository
     get() =
         VariationRepository(
-            local = SqlDelightVariationDataSource(
-                liftQueries = database.liftQueries,
-                setQueries = database.setQueries,
-                variationQueries = database.variationQueries,
-            )
+            local =
+                SqlDelightVariationDataSource(
+                    liftQueries = database.liftQueries,
+                    setQueries = database.setQueries,
+                    variationQueries = database.variationQueries,
+                ),
         )
 
 val DependencyContainer.workoutRepository: IWorkoutRepository get() = WorkoutRepository(database)
@@ -99,50 +103,57 @@ val DependencyContainer.liftingLogRepository: ILiftingLogRepository get() = Lift
 val DependencyContainer.liftRepository: ILiftRepository
     get() =
         LiftRepository(
-            local = if (remoteUrl == null) {
-                SqldelightLiftDataSource(
-                    liftQueries = database.liftQueries,
-                )
-            } else {
-                KtorLiftDataSource(
-                    createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!))
-                )
-            }
+            local =
+                if (remoteUrl == null) {
+                    SqldelightLiftDataSource(
+                        liftQueries = database.liftQueries,
+                    )
+                } else {
+                    KtorLiftDataSource(
+                        createLiftBroClient(config = LiftBroClientConfig(baseUrl = remoteUrl!!)),
+                    )
+                },
         )
 
 val DependencyContainer.localLiftRepository: ILiftRepository
-    get() = LiftRepository(
-        SqldelightLiftDataSource(
-            liftQueries = database.liftQueries,
+    get() =
+        LiftRepository(
+            SqldelightLiftDataSource(
+                liftQueries = database.liftQueries,
+            ),
         )
-    )
 
 val DependencyContainer.exerciseRepository: IExerciseRepository
     get() =
         ExerciseRepository(
-            local = SqldelightExerciseDataSource(
-                exerciseQueries = database.exerciseQueries,
-                setQueries = database.setQueries,
-                variationQueries = database.variationQueries,
-            )
+            local =
+                SqldelightExerciseDataSource(
+                    exerciseQueries = database.exerciseQueries,
+                    setQueries = database.setQueries,
+                    variationQueries = database.variationQueries,
+                ),
         )
 
 val DependencyContainer.goalsRepository: IGoalRepository
-    get() = if (remoteUrl == null) {
-        GoalRepository(
-            goalDataSource = SqlDelightGoalDataSource(
-                goalQueries = database.goalQueries
+    get() =
+        if (remoteUrl == null) {
+            GoalRepository(
+                goalDataSource =
+                    SqlDelightGoalDataSource(
+                        goalQueries = database.goalQueries,
+                    ),
             )
-        )
-    } else {
-        KtorGoalRepository(baseUrl = remoteUrl!!)
-    }
+        } else {
+            KtorGoalRepository(baseUrl = remoteUrl!!)
+        }
 
 val DependencyContainer.localGoalsRepository: IGoalRepository
-    get() = GoalRepository(
-        goalDataSource = SqlDelightGoalDataSource(
-            goalQueries = database.goalQueries
+    get() =
+        GoalRepository(
+            goalDataSource =
+                SqlDelightGoalDataSource(
+                    goalQueries = database.goalQueries,
+                ),
         )
-    )
 
 expect val dependencies: DependencyContainer

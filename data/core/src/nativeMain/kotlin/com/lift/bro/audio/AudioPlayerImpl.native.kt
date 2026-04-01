@@ -1,6 +1,6 @@
 package com.lift.bro.audio
 
-class AudioPlayerImpl: AudioPlayer {
+class AudioPlayerImpl : AudioPlayer {
     override fun speak(text: String) {
         // Not implemented for native
     }

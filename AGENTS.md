@@ -42,15 +42,15 @@ Lift Bro is a Kotlin Multiplatform app using Jetpack Compose for Android and iOS
 
 ### Linting & Formatting
 ```bash
-# Run detekt lint (fail on issues)
-./gradlew detekt
+# Run ktlint check (fail on issues)
+./gradlew ktlintCheck
 
 # Auto-fix lint issues
-./gradlew detektFormat
+./gradlew ktlintFormat
 
-# Run detekt on specific module
-./gradlew :domain:detekt
-./gradlew :presentation:compose:detektFormat
+# Run ktlint on specific module
+./gradlew :domain:ktlintCheck
+./gradlew :presentation:compose:ktlintFormat
 ```
 
 ## Architecture
@@ -117,13 +117,15 @@ object DependencyContainer {
 - Group: standard library → external → internal
 - Sort alphabetically within groups
 
-### Formatting (detekt enforced)
+### Formatting (ktlint enforced)
 - **Max line length**: 120 characters
 - **Indent**: 4 spaces (no tabs)
 - **No trailing whitespace**
 - **Newline at end of file**
 
-### Complexity Limits (detekt)
+### Complexity Limits
+
+ktlint focuses only on formatting. The following are advisory guidelines (not enforced):
 - Max functions per class/interface/object: 11
 - Max cyclomatic complexity: 15
 - Max nested block depth: 4
@@ -171,19 +173,15 @@ class MyClassTest {
 - `kotlinx.coroutines.test` - coroutine testing
 - `turbine` - Flow testing
 
-## Detekt Configuration
+## ktlint Configuration
 
-Key rules in `config/detekt/detekt.yml`:
-- `WildcardImport`: active (excludes `java.util.*`)
-- `ForbiddenComment`: blocks `TODO:`, `FIXME:`, `STOPSHIP:`
-- `MagicNumber`: allows -1, 0, 1, 2
-- `ReturnCount`: max 2
-- `ThrowsCount`: max 2
-- `TooManyFunctions`: 11 per file/class/interface
+ktlint handles formatting rules automatically via `.editorconfig`. It also enforces:
+- No wildcard imports (except `java.util.*`)
+- No `TODO:`, `FIXME:`, `STOPSHIP:` comments in code
 
 ## Common Issues
 
-- **Detekt failures**: Run `./gradlew detektFormat` to auto-fix
+- **ktlint failures**: Run `./gradlew ktlintFormat` to auto-fix
 - **Missing tests**: Add tests in `src/commonTest/kotlin/`
 - **Multiplatform issues**: Platform-specific code goes in `androidMain`, `nativeMain`, etc.
 

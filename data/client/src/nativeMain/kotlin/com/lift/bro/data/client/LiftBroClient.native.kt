@@ -28,7 +28,7 @@ actual fun createLiftBroClient(config: LiftBroClientConfig): io.ktor.client.Http
                     prettyPrint = true
                     isLenient = true
                     ignoreUnknownKeys = true
-                }
+                },
             )
         }
     }

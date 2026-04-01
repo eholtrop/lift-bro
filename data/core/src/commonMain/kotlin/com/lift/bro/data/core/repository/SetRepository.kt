@@ -12,7 +12,6 @@ import kotlinx.datetime.LocalDate
 class SetRepository(
     private val local: SetDataSource,
 ) : ISetRepository {
-
     override fun listenAll(
         startDate: LocalDate?,
         endDate: LocalDate?,
@@ -32,8 +31,12 @@ class SetRepository(
     ): Flow<List<LBSet>> = local.listenAllForLift(liftId, limit, sorting)
 
     override fun listen(id: String): Flow<LBSet?> = local.listen(id)
+
     override suspend fun save(lbSet: LBSet) = local.save(lbSet)
+
     override suspend fun delete(lbSet: LBSet) = local.delete(lbSet)
+
     override suspend fun deleteAll() = local.deleteAll()
+
     override suspend fun deleteAll(variationId: VariationId) = local.deleteAll(variationId)
 }

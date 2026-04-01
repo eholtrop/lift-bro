@@ -6,15 +6,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 
 enum class Sorting {
-    weight, date
+    weight,
+    date,
 }
 
 enum class Order {
-    Ascending, Descending
+    Ascending,
+    Descending,
 }
 
 interface ISetRepository {
-
     fun listenAll(
         startDate: LocalDate? = null,
         endDate: LocalDate? = null,
@@ -30,7 +31,7 @@ interface ISetRepository {
         startDate: LocalDate? = null,
         endDate: LocalDate? = null,
         limit: Long = Long.MAX_VALUE,
-        sorting: Sorting = Sorting.date
+        sorting: Sorting = Sorting.date,
     ): Flow<List<LBSet>>
 
     fun listen(id: String): Flow<LBSet?>

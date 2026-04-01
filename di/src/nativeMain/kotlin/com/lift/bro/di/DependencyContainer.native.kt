@@ -11,7 +11,6 @@ import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
 
 actual class DependencyContainer {
-
     actual val database: LBDatabase by lazy {
         LBDatabase(DriverFactory(Unit))
     }
@@ -26,7 +25,7 @@ actual class DependencyContainer {
             UIApplication.sharedApplication.openURL(
                 url = nsUrl,
                 options = emptyMap<Any?, Any>(),
-                completionHandler = null
+                completionHandler = null,
             )
         }
     }
