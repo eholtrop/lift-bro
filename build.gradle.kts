@@ -16,66 +16,24 @@ plugins {
     alias(libs.plugins.google.services) apply false
 
     alias(libs.plugins.buildkonfig) apply false
-    alias(libs.plugins.detekt) apply false
+
+    alias(libs.plugins.ktlint) apply false
 }
 
 subprojects {
-    apply(plugin = "io.gitlab.arturbosch.detekt")
-
-    dependencies {
-        add("detektPlugins", "io.gitlab.arturbosch.detekt:detekt-formatting:1.23.8")
-    }
-
-    configure<io.gitlab.arturbosch.detekt.extensions.DetektExtension> {
-        config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
-        buildUponDefaultConfig = true
-        baseline = file("$projectDir/detekt-baseline.xml")
-
-        // Auto-detect source sets based on project type
-        source.setFrom(
-            fileTree(projectDir) {
-                include(
-                    "src/**/kotlin/**/*.kt",
-                    "src/**/java/**/*.kt",
-                    "src/**/java/**/*.java"
-                )
-                exclude(
-                    "**/build/**",
-                    "**/resources/**",
-                    "**/generated/**"
-                )
-            }
-        )
-    }
-
-    // Create detektFormat task for each subproject with autoCorrect enabled
-    tasks.register("detektFormat", io.gitlab.arturbosch.detekt.Detekt::class.java) {
-        description = "Run detekt with auto-correction enabled"
-        group = "formatting"
-
-        autoCorrect = true
-        ignoreFailures = true
-        config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
-        buildUponDefaultConfig = true
-
-        setSource(files(projectDir))
-        include("**/*.kt", "**/*.java")
-        exclude("**/build/**", "**/resources/**", "**/generated/**")
-    }
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 }
 
-// Aggregate detekt task that runs on all modules
-tasks.register("detekt") {
+tasks.register("ktlintCheck") {
     group = "verification"
-    description = "Run detekt on all modules (use --continue to see all module results)"
-    dependsOn(subprojects.mapNotNull { it.tasks.findByName("detekt") })
+    description = "Run ktlint check on all modules (use --continue to see all module results)"
+    dependsOn(subprojects.mapNotNull { it.tasks.findByName("ktlintCheck") })
 }
 
-// Aggregate detektFormat task that runs on all modules
-tasks.register("detektFormat") {
+tasks.register("ktlintFormat") {
     group = "formatting"
-    description = "Run detekt with auto-correction on all modules"
-    dependsOn(subprojects.mapNotNull { it.tasks.findByName("detektFormat") })
+    description = "Run ktlint with auto-correction on all modules"
+    dependsOn(subprojects.mapNotNull { it.tasks.findByName("ktlintFormat") })
 }
 
 tasks.register("generateArchDiagram") {
