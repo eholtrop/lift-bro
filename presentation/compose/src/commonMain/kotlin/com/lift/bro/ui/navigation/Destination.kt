@@ -1,10 +1,11 @@
 package com.lift.bro.ui.navigation
 
 import com.lift.bro.domain.models.Tempo
-import kotlinx.datetime.Instant
+import com.lift.bro.domain.serializers.InstantSerializer
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Serializable
 sealed class Destination: tv.dpal.navi.Destination() {
@@ -46,8 +47,8 @@ sealed class Destination: tv.dpal.navi.Destination() {
     data class CreateSet(
         val liftId: String? = null,
         val variationId: String? = null,
-        @Contextual
-        val date: Instant? = null,
+        @Serializable(with = InstantSerializer::class)
+        val date: Instant = Clock.System.now(),
     ): Destination()
 
     @Serializable
