@@ -173,6 +173,26 @@ platform :ios do
     )
   end
 
+  desc "Build debug artifact for physical iOS device"
+  lane :build_debug_device do |options|
+    match_development
+    device_udid = options[:device_udid] || ENV["DEVICE_UDID"]
+    UI.user_error!("device_udid is required. Pass via options or DEVICE_UDID env variable.") unless device_udid
+
+    gym(
+      scheme: "iosApp",
+      project: "iosApp/iosApp.xcodeproj",
+      configuration: "Debug",
+      export_team_id: "Z5Z64LH578",
+      destination: "id=#{device_udid}",
+      export_method: "development",
+      output_directory: "build/artifacts/ios",
+      output_name: "ios_app_debug.ipa",
+      clean: true,
+      silent: false
+    )
+  end
+
   lane :test do |options|
     # run simulator
     simulator_name = options[:name] || "iPhone 15 Pro"
