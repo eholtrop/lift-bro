@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,13 +26,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.lift.bro.di.dependencies
-import com.lift.bro.ui.dialog.InfoDialog
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.release_notes_dialog_title
 import lift_bro.core.generated.resources.release_notes_row_ignore_content_description
 import lift_bro.core.generated.resources.release_notes_row_new_update_title
 import lift_bro.core.generated.resources.release_notes_row_tap_subtitle
@@ -101,22 +101,27 @@ fun ReleaseNotesRow(
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun ReleaseNotesDialog(
     onDismissRequest: () -> Unit,
 ) {
-    InfoDialog(
-        title = { Text(stringResource(Res.string.release_notes_dialog_title)) },
-        message = {
-            var releaseNotes: List<ReleaseNote> by remember { mutableStateOf(emptyList()) }
+    ModalBottomSheet(
+        onDismissRequest = onDismissRequest,
+    ) {
+        var releaseNotes: List<ReleaseNote> by remember { mutableStateOf(emptyList()) }
 
-            LaunchedEffect(Unit) {
-                launch {
-                    releaseNotes = Json.decodeFromString(
-                        Res.readBytes("files/release_notes.json").decodeToString()
-                    )
-                }
+        LaunchedEffect(Unit) {
+            launch {
+                releaseNotes = Json.decodeFromString(
+                    Res.readBytes("files/release_notes.json").decodeToString()
+                )
             }
-
+        }
+        Column(
+            modifier = Modifier.fillMaxWidth()
+                .padding(horizontal = MaterialTheme.spacing.one),
+            horizontalAlignment = Alignment.Start
+        ) {
             releaseNotes.groupBy { it.versionId }.forEach {
                 Column(
                     modifier = Modifier.fillMaxWidth().scrollable(
@@ -136,12 +141,11 @@ fun ReleaseNotesDialog(
                             Text(it.note.en)
                         }
                     }
-                    Space(MaterialTheme.spacing.half)
                 }
             }
-        },
-        onDismissRequest = onDismissRequest
-    )
+            Space(MaterialTheme.spacing.one)
+        }
+    }
 }
 
 @Serializable
