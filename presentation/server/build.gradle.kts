@@ -10,7 +10,9 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":di"))
+            // NOT GOOD, ONLY DOING THIS TO ACCESS DEPENDENCY INJECTION FOR NOW
+            // NEED TO REFACTOR LOCATION OF DEPENDENCY CONTAINER TO FIX THIS
+            implementation(project(":presentation:compose"))
             implementation(project(":domain"))
             implementation(project(":libs:logging"))
             implementation(libs.kotlinx.datetime)

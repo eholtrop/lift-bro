@@ -1,7 +1,8 @@
 package com.lift.bro.presentation.workout
+
 import androidx.compose.runtime.Composable
+import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.LiftingLog
 import kotlinx.coroutines.flow.combine
@@ -49,7 +50,7 @@ fun rememberWorkoutMonthInteractor(
                 year,
                 month,
             ),
-            dependencies.liftingLogRepository.getAll(),
+            dependencies.database.logDataSource.getAll().flowToList(),
         ) { workouts, unallocatedSets, logs ->
             val workoutMap = workouts.associateBy { it.date }
 
@@ -73,7 +74,14 @@ fun rememberWorkoutMonthInteractor(
                             }
                             .map { it.first.lift?.color }
                 },
-                logs = logs.associateBy { it.date },
+                logs = logs.map {
+                    LiftingLog(
+                        id = it.id,
+                        date = it.date,
+                        notes = it.notes ?: "",
+                        vibe = it.vibe_check?.toInt()
+                    )
+                }.associateBy { it.date },
             )
         }
     }

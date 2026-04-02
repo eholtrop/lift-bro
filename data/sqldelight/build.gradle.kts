@@ -21,19 +21,11 @@ kotlin {
     iosSimulatorArm64()
 
     sourceSets {
-        named { it.lowercase().startsWith("ios") }.configureEach {
-            languageSettings {
-                optIn("kotlinx.cinterop.ExperimentalForeignApi")
-            }
-        }
-
         commonMain.dependencies {
             implementation(project(":libs:ext:ktx-datetime"))
             implementation(project(":domain"))
             implementation(project(":data:core"))
             implementation(project(":libs:logging"))
-            implementation(project(":libs:ext:flow"))
-            implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization)
             implementation(libs.sqldelight.coroutines)
@@ -43,15 +35,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)
             implementation(libs.android.database.sqlcipher)
-            implementation(libs.datastore.preferences)
-            implementation(libs.tink.android)
-            implementation(libs.filekit.core)
-            implementation(libs.filekit.dialogs)
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)
-            implementation(libs.filekit.core)
-            implementation(libs.filekit.dialogs)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -65,8 +51,4 @@ android {
     namespace = "com.lift.bro.data"
     compileSdk = 36
     defaultConfig { minSdk = 24 }
-}
-
-dependencies {
-    implementation(libs.appcompat)
 }

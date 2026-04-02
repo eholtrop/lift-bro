@@ -18,6 +18,4 @@ interface IExerciseRepository {
     suspend fun deleteVariation(exerciseId: String, variationId: String)
 
     suspend fun deleteVariationSets(variationSetId: String)
-
-    suspend fun deleteAll()
 }

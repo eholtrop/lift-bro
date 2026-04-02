@@ -1,7 +1,7 @@
-package com.lift.bro.data.sqldelight.datasource
+package com.lift.bro.data.datasource
 
 import com.benasher44.uuid.uuid4
-import com.lift.bro.data.core.datasource.ExerciseDataSource
+import com.lift.bro.data.toDomain
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Lift
@@ -22,33 +22,54 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import tv.dpal.ktx.datetime.toLocalDate
 
-class SqldelightExerciseDataSource(
+interface ExerciseDataSource {
+
+    fun listen(
+        workoutId: String,
+    ): Flow<List<Exercise>>
+
+    suspend fun save(exercise: Exercise)
+
+    suspend fun delete(id: String)
+
+    suspend fun addVariation(exerciseId: String, variationId: VariationId)
+
+    suspend fun removeVariation(exerciseId: String, variationId: VariationId)
+
+    suspend fun removeVariaiton(exerciseVariationId: String)
+    suspend fun addExercise(workoutId: String, exerciseId: String = uuid4().toString())
+}
+
+class LBExerciseDataSource(
     private val exerciseQueries: ExerciseQueries,
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ExerciseDataSource {
 
-    override fun get(workoutId: String): Flow<List<Exercise>> = combine(
-        exerciseQueries.getByWorkoutId(workoutId).asFlowList(dispatcher),
-        exerciseQueries.getExerciseVariationsByWorkoutId(workoutId).asFlowList(dispatcher)
+    override fun listen(
+        workoutId: String,
+    ): Flow<List<Exercise>> = combine(
+        exerciseQueries.getByWorkoutId(workoutId).flowToList(dispatcher),
+        exerciseQueries.getExerciseVariationsByWorkoutId(workoutId).flowToList(dispatcher)
             .flatMapLatest { variationSets ->
                 if (variationSets.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
+
                 combine(
                     *variationSets.map { exercise ->
                         combine(
                             setQueries.getOneRepMaxForVariation(
                                 exercise.variation_id,
                                 Instant.DISTANT_FUTURE
-                            ).asFlowOneOrNull(dispatcher),
+                            ).flowToOneOrNull(),
                             setQueries.getEMaxForVariation(
                                 exercise.variation_id,
                                 Instant.DISTANT_FUTURE
-                            ).asFlowOneOrNull(dispatcher),
+                            ).flowToOneOrNull(),
                             setQueries.getMaxRepsForVariation(
                                 exercise.variation_id,
                                 Instant.DISTANT_FUTURE
-                            ).asFlowOneOrNull(dispatcher),
+                            ).flowToOneOrNull(),
                         ) { orm, volume, reps ->
                             Triple(
                                 exercise.exercise_variation_id,
@@ -58,6 +79,7 @@ class SqldelightExerciseDataSource(
                                     name = exercise.variation_name,
                                     notes = exercise.variation_notes,
                                     favourite = exercise.variation_is_favourite == 1L,
+                                    bodyWeight = exercise.variation_is_body_weight?.let { it == 1L },
                                     lift = Lift(
                                         id = exercise.lift_id,
                                         color = exercise.lift_color?.toULong(),
@@ -69,7 +91,6 @@ class SqldelightExerciseDataSource(
                                         ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
                                     maxReps = reps?.toDomain()
                                         ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
-                                    bodyWeight = exercise.variation_is_body_weight == 1L,
                                 )
                             )
                         }
@@ -77,7 +98,7 @@ class SqldelightExerciseDataSource(
                 ) { it.toList() }
             },
         setQueries.getByWorkoutId(workoutId = workoutId, limit = Long.MAX_VALUE)
-            .asFlowList(dispatcher),
+            .flowToList(dispatcher),
     ) { exercises, exerciseVariations, sets ->
         exercises.map { exercise ->
             Exercise(
@@ -90,7 +111,7 @@ class SqldelightExerciseDataSource(
                             id = id,
                             variation = variation,
                             sets = sets.filter { it.variationId == variation.id }
-                                .filter { it.date.toLocalDate() == it.date_ }
+                                .filter { it.date.toLocalDate() == it.date_ } // date_ is the workout date...
                                 .map {
                                     LBSet(
                                         id = it.id,
@@ -98,7 +119,7 @@ class SqldelightExerciseDataSource(
                                         weight = it.weight ?: 0.0,
                                         reps = it.reps ?: 1,
                                         date = it.date,
-                                        notes = it.notes ?: "",
+                                        notes = it.notes,
                                         rpe = it.rpe?.toInt(),
                                         tempo = com.lift.bro.domain.models.Tempo(
                                             down = it.tempoDown ?: 3,
@@ -120,6 +141,7 @@ class SqldelightExerciseDataSource(
                 id = exercise.id,
                 workoutId = exercise.workoutId,
             )
+
             exercise.variationSets.forEach { vSet ->
                 exerciseQueries.saveVariation(
                     id = vSet.id,
@@ -130,7 +152,29 @@ class SqldelightExerciseDataSource(
         }
     }
 
-    override suspend fun saveVariation(exerciseId: String, variationId: VariationId) {
+    override suspend fun delete(id: String) {
+        withContext(dispatcher) {
+            exerciseQueries.delete(id)
+            exerciseQueries.deleteVariationsByExercise(id)
+        }
+    }
+
+    override suspend fun addExercise(
+        workoutId: String,
+        exerciseId: String,
+    ) {
+        withContext(dispatcher) {
+            exerciseQueries.save(
+                id = exerciseId,
+                workoutId = workoutId,
+            )
+        }
+    }
+
+    override suspend fun addVariation(
+        exerciseId: String,
+        variationId: VariationId,
+    ) {
         withContext(dispatcher) {
             exerciseQueries.saveVariation(
                 id = uuid4().toString(),
@@ -140,31 +184,18 @@ class SqldelightExerciseDataSource(
         }
     }
 
-    override suspend fun delete(id: String) {
-        withContext(dispatcher) {
-            exerciseQueries.delete(id)
-            exerciseQueries.deleteVariationsByExercise(id)
-        }
-    }
-
-    override suspend fun deleteVariation(exerciseId: String, variationId: VariationId) {
+    override suspend fun removeVariation(
+        exerciseId: String,
+        variationId: VariationId,
+    ) {
         withContext(dispatcher) {
             exerciseQueries.deleteVariationBy(exerciseId, variationId)
         }
     }
 
-    override suspend fun deleteVariationSets(variationSetId: String) {
+    override suspend fun removeVariaiton(exerciseVariationId: String) {
         withContext(dispatcher) {
-            exerciseQueries.deleteVariationsById(variationSetId)
-        }
-    }
-
-    override suspend fun addExercise(workoutId: String, exerciseId: String) {
-        withContext(dispatcher) {
-            exerciseQueries.save(
-                id = exerciseId,
-                workoutId = workoutId,
-            )
+            exerciseQueries.deleteVariationsById(exerciseVariationId)
         }
     }
 }

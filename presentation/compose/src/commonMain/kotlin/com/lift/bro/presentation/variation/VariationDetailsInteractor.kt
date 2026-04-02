@@ -1,7 +1,7 @@
 package com.lift.bro.presentation.variation
+
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
-import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Variation
@@ -49,15 +49,15 @@ fun rememberVariationDetailInteractor(
         initialState = VariationDetailsState(Variation()),
         source = {
             combine(
-                dependencies.variationRepository.listen(variationId),
-                dependencies.setRepository.listenAll(variationId = variationId)
+                dependencies.database.variantDataSource.listen(variationId),
+                dependencies.database.setDataSource.listenAllForVariation(variationId)
             ) { variation, sets ->
                 VariationDetailsState(
                     variation = variation!!,
-                    cards = sets.groupBy { it.date }.map { (date, setsForDate) ->
+                    cards = sets.groupBy { it.date }.map {
                         VariationDetailCard(
-                            title = date.toString("EEEE, MM d"),
-                            sets = setsForDate
+                            title = it.key.toString("EEEE, MM d"),
+                            sets = it.value
                         )
                     }
                 )
@@ -72,7 +72,7 @@ fun rememberVariationDetailInteractor(
 
                     is VariationDetailsEvent.NotesUpdated -> {
                         if (event.notes.isNotBlank() && state.variation.notes.isNullOrBlank()) {
-                            dependencies.variationRepository.save(
+                            dependencies.database.variantDataSource.save(
                                 state.variation.copy(notes = event.notes)
                             )
                         }
