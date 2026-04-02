@@ -239,17 +239,19 @@ fun workoutSideEffects(
         }
 
         is DuplicateSet -> {
-            setRepository.save(
-                lbSet = event.set.copy(
-                    id = uuid4().toString(),
-                    date = if (event.set.date.toLocalDate() != today && !event.forceToday) {
-                        event.set.date.plus(1, DateTimeUnit.SECOND)
-                    } else {
-                        Clock.System
-                            .now()
-                    }
+            ApplicationScope.launch {
+                setRepository.save(
+                    lbSet = event.set.copy(
+                        id = uuid4().toString(),
+                        date = if (event.set.date.toLocalDate() != today && !event.forceToday) {
+                            event.set.date.plus(1, DateTimeUnit.SECOND)
+                        } else {
+                            Clock.System
+                                .now()
+                        }
+                    )
                 )
-            )
+            }
         }
 
         is DeleteSet -> {
