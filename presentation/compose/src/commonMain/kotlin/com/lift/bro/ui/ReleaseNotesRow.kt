@@ -1,5 +1,8 @@
 package com.lift.bro.ui
 
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +39,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun ReleaseNotesRow(
     modifier: Modifier = Modifier,
+    forceShow: Boolean = false,
 ) {
     var releaseNotes: List<ReleaseNote> by remember { mutableStateOf(emptyList()) }
 
@@ -50,7 +54,7 @@ fun ReleaseNotesRow(
         }
     }
 
-    if (latestReleaseNote == null || latestReleaseNote?.versionId == latestReadReleaseNotes) return
+    if (latestReleaseNote == null || latestReleaseNote?.versionId == latestReadReleaseNotes || !forceShow) return
 
     var showDialog by remember { mutableStateOf(false) }
     if (showDialog) {
@@ -115,8 +119,11 @@ fun ReleaseNotesDialog(
 
             releaseNotes.groupBy { it.versionId }.forEach {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start,
+                    modifier = Modifier.fillMaxWidth().scrollable(
+                        rememberScrollableState { it },
+                        orientation = Orientation.Vertical
+                    ),
+                    horizontalAlignment = Alignment.Start
                 ) {
                     Text(
                         it.key,
