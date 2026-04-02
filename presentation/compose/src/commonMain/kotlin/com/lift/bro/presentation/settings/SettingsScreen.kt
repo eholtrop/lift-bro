@@ -72,6 +72,7 @@ import lift_bro.core.generated.resources.url_privacy_policy
 import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.compose.padding.horizontal.padding
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)

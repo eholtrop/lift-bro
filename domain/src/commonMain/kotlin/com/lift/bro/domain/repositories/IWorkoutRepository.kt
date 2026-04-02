@@ -28,6 +28,4 @@ interface IWorkoutRepository {
     suspend fun addExercise(workoutId: String, exerciseId: String)
 
     suspend fun delete(workout: Workout)
-
-    suspend fun deleteAll()
 }

@@ -10,8 +10,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import com.lift.bro.di.DependencyContainer
-import com.lift.bro.di.LocalDependencies
-import com.lift.bro.di.dependencies
 import com.lift.bro.presentation.App
 import com.lift.bro.presentation.LocalPlatformContext
 import com.lift.bro.presentation.LocalServer
@@ -35,16 +33,14 @@ class MainActivity : ComponentActivity() {
             val coordinator = rememberNavCoordinator(Destination.Unknown)
             CompositionLocalProvider(
                 LocalPlatformContext provides Platform.Android(LocalContext.current),
-                LocalServer provides createLiftBroServer(),
-                LocalDependencies provides dependencies
+                LocalServer provides createLiftBroServer()
             ) {
                 App(
                     modifier = Modifier.semantics {
                         // for ui tests. this ensures that our testTags will be readable by Appium
                         testTagsAsResourceId = true
                     },
-                    navCoordinator = coordinator,
-                    dependencies = dependencies
+                    navCoordinator = coordinator
                 )
             }
             BackHandler {

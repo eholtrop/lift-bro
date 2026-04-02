@@ -20,7 +20,4 @@ class ExerciseRepository(
         variationId: String
     ) = local.deleteVariation(exerciseId, variationId)
     override suspend fun deleteVariationSets(variationSetId: String) = local.deleteVariationSets(variationSetId)
-    override suspend fun deleteAll() {
-        local.deleteAll()
-    }
 }

@@ -1,4 +1,5 @@
 package com.lift.bro.presentation.home
+
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.goalsRepository

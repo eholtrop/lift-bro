@@ -1,4 +1,5 @@
 package com.lift.bro.presentation
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -38,8 +39,6 @@ import com.example.compose.AppTheme
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
-import com.lift.bro.di.DependencyContainer
-import com.lift.bro.di.LocalDependencies
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
@@ -49,7 +48,6 @@ import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
-import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
@@ -148,9 +146,7 @@ val LocalServer = compositionLocalOf<LiftBroServer?> {
 val ApplicationScope = GlobalScope
 
 @Composable
-fun CheckAppConsent(
-    settingsRepository: ISettingsRepository = dependencies.settingsRepository
-) {
+fun CheckAppConsent() {
     val hasConsent by HasDeviceConsentedUseCase(dependencies.settingsRepository).invoke()
         .collectAsState(null)
 
@@ -168,7 +164,7 @@ fun CheckAppConsent(
             confirmButton = {
                 Button(
                     onClick = {
-                        ConsentDeviceUseCase(settingsRepository).invoke()
+                        ConsentDeviceUseCase(dependencies.settingsRepository).invoke()
                     },
                     enabled = accepted
                 ) {
@@ -183,215 +179,204 @@ fun CheckAppConsent(
 fun App(
     modifier: Modifier = Modifier,
     navCoordinator: NavCoordinator = rememberNavCoordinator<tv.dpal.navi.Destination>(Destination.Unknown),
-    dependencies: DependencyContainer = com.lift.bro.di.dependencies,
 ) {
-    CompositionLocalProvider(
-        LocalDependencies provides dependencies
-    ) {
-        val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
-        val platform = LocalPlatformContext.current
+    val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
+    val isAndroid = LocalPlatformContext.current is Platform.Android
 
-        LaunchedEffect("setup_revenuecat") {
-            if (BuildConfig.isDebug) {
-                Purchases.logLevel = LogLevel.DEBUG
-            }
-
-            Purchases.configure(
-                apiKey = when (platform) {
-                    is Platform.Android -> BuildKonfig.REVENUE_CAT_API_KEY_AND
-                    Platform.iOS -> BuildKonfig.REVENUE_CAT_API_KEY_IOS
-                }
-            )
-
-            Purchases.sharedInstance.getCustomerInfo(
-                onError = { error ->
-                    Sentry.captureException(Throwable(message = error.message))
-                },
-                onSuccess = { success ->
-                    if (success.entitlements.active.containsKey("pro")) {
-                        subscriptionType.value = SubscriptionType.Pro
-                    }
-                }
-            )
+    LaunchedEffect("setup_revenuecat") {
+        if (BuildConfig.isDebug) {
+            Purchases.logLevel = LogLevel.DEBUG
         }
 
-        val bro by dependencies.settingsRepository.getBro().collectAsState(null)
-        val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
-            .collectAsState(UOM.POUNDS)
-        val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
-        val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved()
-            .collectAsState(false)
-        val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
-        val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
-        val showPaywall = remember { mutableStateOf(false) }
-        val showCalculator = remember { mutableStateOf(false) }
+        Purchases.configure(if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS)
+        Purchases.sharedInstance.getCustomerInfo(
+            onError = { error ->
+                Sentry.captureException(Throwable(message = error.message))
+            },
+            onSuccess = { success ->
+                if (success.entitlements.active.containsKey("pro")) {
+                    subscriptionType.value = SubscriptionType.Pro
+                }
+            }
+        )
+    }
 
-        CompositionLocalProvider(
-            LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
-            LocalUnitOfMeasure provides uom,
-            LocalShowMERCalcs provides showMerCalcs,
-            LocalTwmSettings provides (twmSettings && (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug)),
-            LocalEMaxSettings provides (emaxSettings && (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug)),
-            LocalTMaxSettings provides (tMaxSettings && (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug)),
-            LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
-            LocalSubscriptionStatusProvider provides subscriptionType,
-            LocalPaywallVisibility provides showPaywall,
-            LocalCalculatorVisibility provides showCalculator
+    val bro by dependencies.settingsRepository.getBro().collectAsState(null)
+    val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
+        .collectAsState(UOM.POUNDS)
+    val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
+    val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved()
+        .collectAsState(false)
+    val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
+    val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
+    val showPaywall = remember { mutableStateOf(false) }
+    val showCalculator = remember { mutableStateOf(false) }
+
+    CompositionLocalProvider(
+        LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
+        LocalUnitOfMeasure provides uom,
+        LocalShowMERCalcs provides showMerCalcs,
+        LocalTwmSettings provides (twmSettings && (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug)),
+        LocalEMaxSettings provides (emaxSettings && (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug)),
+        LocalTMaxSettings provides (tMaxSettings && (subscriptionType.value == SubscriptionType.Pro || BuildConfig.isDebug)),
+        LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
+        LocalSubscriptionStatusProvider provides subscriptionType,
+        LocalPaywallVisibility provides showPaywall,
+        LocalCalculatorVisibility provides showCalculator
+    ) {
+        if (navCoordinator.currentPage == Destination.Unknown) {
+            LaunchedEffect("landing_selection") {
+                dependencies.settingsRepository.getDeviceFtux().collectLatest {
+                    when (it) {
+                        true -> navCoordinator.setRoot(Destination.Home)
+                        false -> navCoordinator.setRoot(Destination.Onboarding)
+                    }
+                }
+            }
+        }
+
+        val context = LocalPlatformContext.current
+        LaunchedEffect("initialize_sentry") {
+            // keep sentry until we know firebase is working
+            if (!BuildConfig.isDebug) {
+                Sentry.init { options ->
+                    options.dsn = BuildKonfig.SENTRY_DSN
+                }
+            }
+
+            if (!BuildConfig.isDebug) {
+                Firebase.initialize((context as? Platform.Android)?.context)
+            }
+        }
+
+        val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
+
+        AppTheme(
+            theme = themeMode
         ) {
-            if (navCoordinator.currentPage == Destination.Unknown) {
-                LaunchedEffect("landing_selection") {
-                    dependencies.settingsRepository.getDeviceFtux().collectLatest {
-                        when (it) {
-                            true -> navCoordinator.setRoot(Destination.Home)
-                            false -> navCoordinator.setRoot(Destination.Onboarding)
-                        }
-                    }
-                }
-            }
-
-            val context = LocalPlatformContext.current
-            LaunchedEffect("initialize_sentry") {
-                // keep sentry until we know firebase is working
-                if (!BuildConfig.isDebug) {
-                    Sentry.init { options ->
-                        options.dsn = BuildKonfig.SENTRY_DSN
-                    }
-                }
-
-                if (!BuildConfig.isDebug) {
-                    Firebase.initialize((context as? Platform.Android)?.context)
-                }
-            }
-
-            val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
-
-            AppTheme(
-                theme = themeMode
+            Box(
+                modifier = modifier,
             ) {
-                Box(
-                    modifier = modifier,
+                if (navCoordinator.currentPage != Destination.Onboarding) {
+                    CheckAppConsent()
+                }
+                BackupAlertDialog()
+
+                Column {
+                    SwipeableNavHost<Destination>(
+                        modifier = Modifier.weight(1f),
+                        navCoordinator = navCoordinator,
+                    ) { route ->
+                        AppRouter(route)
+                    }
+                }
+
+                val options = remember {
+                    PaywallOptions(dismissRequest = { showPaywall.value = false }) {
+                        shouldDisplayDismissButton = true
+                    }
+                }
+
+                AnimatedVisibility(
+                    visible = showPaywall.value,
+                    enter = slideInVertically { it },
+                    exit = slideOutVertically { it } + fadeOut()
                 ) {
-                    if (navCoordinator.currentPage != Destination.Onboarding) {
-                        CheckAppConsent()
-                    }
-                    BackupAlertDialog()
+                    Paywall(options)
+                }
 
-                    Column {
-                        SwipeableNavHost<Destination>(
-                            modifier = Modifier.weight(1f),
-                            navCoordinator = navCoordinator,
-                        ) { route ->
-                            AppRouter(route)
+                WeightCalculatorBottomSheet()
+
+                // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix
+                var celebration by remember { mutableStateOf<CelebrationType>(CelebrationType.None) }
+
+                LaunchedEffect(Unit) {
+                    GetCelebrationTypeUseCase(
+                        setRepository = dependencies.setRepository,
+                        variationRepository = dependencies.variationRepository
+                    )
+                        .collectLatest {
+                            celebration = it
                         }
-                    }
+                }
 
-                    val options = remember {
-                        PaywallOptions(dismissRequest = { showPaywall.value = false }) {
-                            shouldDisplayDismissButton = true
-                        }
-                    }
-
-                    AnimatedVisibility(
-                        visible = showPaywall.value,
-                        enter = slideInVertically { it },
-                        exit = slideOutVertically { it } + fadeOut()
+                if (celebration != CelebrationType.None) {
+                    Box(
+                        modifier = Modifier.fillMaxSize()
                     ) {
-                        Paywall(options)
-                    }
+                        ConfettiExplosion()
 
-                    WeightCalculatorBottomSheet()
-
-                    // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix
-                    var celebration by remember { mutableStateOf<CelebrationType>(CelebrationType.None) }
-
-                    LaunchedEffect(Unit) {
-                        GetCelebrationTypeUseCase(
-                            setRepository = dependencies.setRepository,
-                            variationRepository = dependencies.variationRepository
-                        )
-                            .collectLatest {
-                                celebration = it
-                            }
-                    }
-
-                    if (celebration != CelebrationType.None) {
-                        Box(
-                            modifier = Modifier.fillMaxSize()
+                        var showMessage by remember { mutableStateOf(false) }
+                        AnimatedVisibility(
+                            modifier = Modifier.align(Alignment.Center),
+                            visible = showMessage,
+                            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+                            exit = fadeOut(),
                         ) {
-                            ConfettiExplosion()
-
-                            var showMessage by remember { mutableStateOf(false) }
-                            AnimatedVisibility(
-                                modifier = Modifier.align(Alignment.Center),
-                                visible = showMessage,
-                                enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
-                                exit = fadeOut(),
-                            ) {
-                                val speechBubbleColor = MaterialTheme.colorScheme.primary
-                                Column {
-                                    Column(
-                                        modifier = Modifier
-                                            .semantics(
-                                                mergeDescendants = true,
-                                            ) {
-                                                liveRegion = LiveRegionMode.Assertive
-                                            }
-                                            .background(
-                                                speechBubbleColor,
-                                                shape = MaterialTheme.shapes.medium
-                                            )
-                                            .padding(MaterialTheme.spacing.one),
-                                        horizontalAlignment = Alignment.CenterHorizontally,
-                                    ) {
-                                        Text(
-                                            text = stringResource(Res.string.app_congrats_text),
-                                            style = MaterialTheme.typography.headlineLarge,
-                                            color = MaterialTheme.colorScheme.onPrimary,
-                                        )
-                                        Space(MaterialTheme.spacing.half)
-                                        Text(
-                                            text = when (val cel = celebration) {
-                                                is CelebrationType.NewEMax -> "New estimated Max!"
-                                                is CelebrationType.NewOneRepMax -> "New one rep max!"
-                                                CelebrationType.None -> ""
-                                            },
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = MaterialTheme.colorScheme.onPrimary
-                                        )
-                                    }
-                                    Row {
-                                        Image(
-                                            modifier = Modifier
-                                                .size(72.dp),
-                                            painter = painterResource(LocalLiftBro.current.iconRes()),
-                                            contentDescription = ""
-                                        )
-                                        Canvas(
-                                            modifier = Modifier.size(72.dp.div(2))
+                            val speechBubbleColor = MaterialTheme.colorScheme.primary
+                            Column {
+                                Column(
+                                    modifier = Modifier
+                                        .semantics(
+                                            mergeDescendants = true,
                                         ) {
-                                            drawPath(
-                                                Path().apply {
-                                                    moveTo(20f, 0f)
-                                                    lineTo(0f, 60f)
-                                                    lineTo(60f, 0f)
-                                                    lineTo(0f, 0f)
-                                                    close()
-                                                },
-                                                speechBubbleColor
-                                            )
+                                            liveRegion = LiveRegionMode.Assertive
                                         }
+                                        .background(
+                                            speechBubbleColor,
+                                            shape = MaterialTheme.shapes.medium
+                                        )
+                                        .padding(MaterialTheme.spacing.one),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    Text(
+                                        text = stringResource(Res.string.app_congrats_text),
+                                        style = MaterialTheme.typography.headlineLarge,
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                    )
+                                    Space(MaterialTheme.spacing.half)
+                                    Text(
+                                        text = when (val cel = celebration) {
+                                            is CelebrationType.NewEMax -> "New estimated Max!"
+                                            is CelebrationType.NewOneRepMax -> "New one rep max!"
+                                            CelebrationType.None -> ""
+                                        },
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                                Row {
+                                    Image(
+                                        modifier = Modifier
+                                            .size(72.dp),
+                                        painter = painterResource(LocalLiftBro.current.iconRes()),
+                                        contentDescription = ""
+                                    )
+                                    Canvas(
+                                        modifier = Modifier.size(72.dp.div(2))
+                                    ) {
+                                        drawPath(
+                                            Path().apply {
+                                                moveTo(20f, 0f)
+                                                lineTo(0f, 60f)
+                                                lineTo(60f, 0f)
+                                                lineTo(0f, 0f)
+                                                close()
+                                            },
+                                            speechBubbleColor
+                                        )
                                     }
                                 }
                             }
+                        }
 
-                            LaunchedEffect(Unit) {
-                                delay(1000)
-                                showMessage = true
-                                delay(4000)
-                                showMessage = false
-                                delay(2000)
-                                celebration = CelebrationType.None
-                            }
+                        LaunchedEffect(Unit) {
+                            delay(1000)
+                            showMessage = true
+                            delay(4000)
+                            showMessage = false
+                            delay(2000)
+                            celebration = CelebrationType.None
                         }
                     }
                 }

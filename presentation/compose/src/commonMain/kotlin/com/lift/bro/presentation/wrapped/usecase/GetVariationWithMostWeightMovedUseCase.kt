@@ -1,4 +1,5 @@
 package com.lift.bro.presentation.wrapped.usecase
+
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository

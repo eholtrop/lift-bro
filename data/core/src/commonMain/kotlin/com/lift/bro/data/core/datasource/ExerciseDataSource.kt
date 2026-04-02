@@ -12,6 +12,4 @@ interface ExerciseDataSource {
     suspend fun deleteVariation(exerciseId: String, variationId: VariationId)
     suspend fun deleteVariationSets(variationSetId: String)
     suspend fun addExercise(workoutId: String, exerciseId: String)
-
-    suspend fun deleteAll()
 }

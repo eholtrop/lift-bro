@@ -83,7 +83,6 @@ dependencies {
     implementation(project(":presentation:compose"))
     implementation(project(":presentation:server"))
     implementation(project(":domain"))
-    implementation(project(":di"))
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.billing.ktx)

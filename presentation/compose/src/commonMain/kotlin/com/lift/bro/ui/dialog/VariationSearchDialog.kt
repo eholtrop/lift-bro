@@ -1,4 +1,5 @@
 package com.lift.bro.ui.dialog
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn

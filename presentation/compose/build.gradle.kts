@@ -50,9 +50,9 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":domain"))
-            implementation(project(":di"))
-            // required for a health check call.... need to abstract
-            api(project(":data:client"))
+            implementation(project(":data:sqldelight"))
+            implementation(project(":data:client"))
+            implementation(project(":data:core"))
             implementation(project(":libs:ext:flow"))
             implementation(project(":libs:logging"))
             implementation(project(":libs:ext:ktx-datetime"))
