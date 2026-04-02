@@ -3,11 +3,14 @@ package com.lift.bro.ui.dialog
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
@@ -123,7 +126,8 @@ fun InfoDialog(
         InfoSpeechBubble(
             title = title,
             message = message,
-            forceDarkIcon = true
+            forceDarkIcon = true,
+            onConfirmClicked = onDismissRequest
         )
     }
 }
@@ -134,6 +138,7 @@ fun InfoSpeechBubble(
     title: @Composable () -> Unit,
     message: @Composable () -> Unit,
     forceDarkIcon: Boolean = false,
+    onConfirmClicked: (() -> Unit)? = null,
 ) {
     val speechBubbleColor = MaterialTheme.colorScheme.primary
     Column {
@@ -169,7 +174,9 @@ fun InfoSpeechBubble(
         Row {
             Image(
                 modifier = Modifier
+                    .clickable { onConfirmClicked?.invoke() }
                     .padding(top = MaterialTheme.spacing.quarter)
+                    .defaultMinSize(72.dp, 72.dp)
                     .size(72.dp),
                 painter = painterResource(
                     if (forceDarkIcon) LocalLiftBro.current.darkIconRes() else LocalLiftBro.current.iconRes()
@@ -189,6 +196,20 @@ fun InfoSpeechBubble(
                     },
                     speechBubbleColor
                 )
+            }
+            onConfirmClicked?.let {
+                Space()
+                Button(
+                    onClick = onConfirmClicked,
+                    shape = CircleShape,
+                    colors = ButtonDefaults.textButtonColors(),
+                ) {
+                    Text(
+                        text = "Okay",
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.tertiary
+                    )
+                }
             }
         }
     }
@@ -241,13 +262,15 @@ fun InfoSpeechBubblePreview(@PreviewParameter(DarkModeProvider::class) darkMode:
                         Text("It can contain multiple lines of text and complex layouts.")
                     }
                 },
-                forceDarkIcon = false
+                forceDarkIcon = false,
+                onConfirmClicked = {},
             )
 
             InfoSpeechBubble(
                 title = { Text("Pro Tip") },
                 message = { Text("Always warm up before lifting heavy weights!") },
-                forceDarkIcon = true
+                forceDarkIcon = true,
+                onConfirmClicked = {},
             )
         }
     }

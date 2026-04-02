@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -81,6 +84,24 @@ fun SettingsScreen() {
 
     LiftingScaffold(
         title = { Text(stringResource(Res.string.settings_title)) },
+        trailingContent = {
+            var showReleaseNotesDialog by remember { mutableStateOf(false) }
+            if (showReleaseNotesDialog) {
+                ReleaseNotesDialog(
+                    onDismissRequest = { showReleaseNotesDialog = false }
+                )
+            }
+            IconButton(
+                onClick = {
+                    showReleaseNotesDialog = true
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Default.Notes,
+                    contentDescription = "Release Notes"
+                )
+            }
+        },
         content = { padding ->
 
             var subscriptionType by LocalSubscriptionStatusProvider.current
