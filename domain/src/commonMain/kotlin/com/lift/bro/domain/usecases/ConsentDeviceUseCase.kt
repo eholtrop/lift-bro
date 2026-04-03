@@ -3,6 +3,7 @@ package com.lift.bro.domain.usecases
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
+import com.lift.bro.domain.repositories.Setting
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.TimeZone
@@ -13,7 +14,8 @@ class ConsentDeviceUseCase(
     val settingsRepository: ISettingsRepository
 ) {
     operator fun invoke() {
-        settingsRepository.setDeviceConsent(
+        settingsRepository.set(
+            Setting.Consent,
             Consent(
                 deviceId = settingsRepository.getDeviceId(),
                 appVersion = BuildKonfig.VERSION_NAME,
@@ -29,6 +31,6 @@ class HasDeviceConsentedUseCase(
     val settingsRepository: ISettingsRepository
 ) {
 
-    operator fun invoke(): Flow<Boolean> = settingsRepository.getDeviceConsent()
+    operator fun invoke(): Flow<Boolean> = settingsRepository.listen(Setting.Consent)
         .map { it != null }
 }

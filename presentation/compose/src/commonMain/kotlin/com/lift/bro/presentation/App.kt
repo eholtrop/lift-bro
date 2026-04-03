@@ -48,6 +48,7 @@ import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
@@ -201,14 +202,14 @@ fun App(
         )
     }
 
-    val bro by dependencies.settingsRepository.getBro().collectAsState(null)
-    val uom by dependencies.settingsRepository.getUnitOfMeasure().map { it.uom }
+    val bro by dependencies.settingsRepository.listen(Setting.Bro).collectAsState(null)
+    val uom by dependencies.settingsRepository.listen(Setting.UnitOfMeasure).map { it.uom }
         .collectAsState(UOM.POUNDS)
-    val showMerCalcs by dependencies.settingsRepository.getMerSettings().collectAsState(null)
-    val twmSettings by dependencies.settingsRepository.shouldShowTotalWeightMoved()
+    val showMerCalcs by dependencies.settingsRepository.listen(Setting.MerSettings).collectAsState(null)
+    val twmSettings by dependencies.settingsRepository.listen(Setting.ShowTotalWeightMoved)
         .collectAsState(false)
-    val emaxSettings by dependencies.settingsRepository.eMaxEnabled().collectAsState(false)
-    val tMaxSettings by dependencies.settingsRepository.tMaxEnabled().collectAsState(false)
+    val emaxSettings by dependencies.settingsRepository.listen(Setting.EMaxEnabled).collectAsState(false)
+    val tMaxSettings by dependencies.settingsRepository.listen(Setting.TMaxEnabled).collectAsState(false)
     val showPaywall = remember { mutableStateOf(false) }
     val showCalculator = remember { mutableStateOf(false) }
 
@@ -226,7 +227,7 @@ fun App(
     ) {
         if (navCoordinator.currentPage == Destination.Unknown) {
             LaunchedEffect("landing_selection") {
-                dependencies.settingsRepository.getDeviceFtux().collectLatest {
+                dependencies.settingsRepository.listen(Setting.DeviceFtux).collectLatest {
                     when (it) {
                         true -> navCoordinator.setRoot(Destination.Home)
                         false -> navCoordinator.setRoot(Destination.Onboarding)
@@ -249,7 +250,7 @@ fun App(
             }
         }
 
-        val themeMode by dependencies.settingsRepository.getThemeMode().collectAsState(ThemeMode.System)
+        val themeMode by dependencies.settingsRepository.listen(Setting.ThemeMode).collectAsState(ThemeMode.System)
 
         AppTheme(
             theme = themeMode

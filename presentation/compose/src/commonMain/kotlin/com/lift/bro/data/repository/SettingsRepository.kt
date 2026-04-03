@@ -54,10 +54,13 @@ class SettingsRepository(
     override fun <T> set(setting: Setting<T>, value: T) {
         val key = setting.key
         when (setting) {
-            Setting.BackupSettings -> dataSource.putInt(key, (value as BackupSettings).lastBackupDate.toEpochDays().toInt())
+            Setting.BackupSettings -> dataSource.putInt(
+                key,
+                (value as BackupSettings).lastBackupDate.toEpochDays().toInt()
+            )
             Setting.Bro -> dataSource.putString(key, (value as LiftBro).name)
             Setting.ClientUrl -> dataSource.putString(key, value as String?)
-            Setting.Consent -> dataSource.putSerializable(key, value as Consent)
+            Setting.Consent -> dataSource.putSerializable(key, value as Consent?)
             Setting.DashboardV3 -> dataSource.putBool(key, value as Boolean)
             Setting.DeviceFtux -> dataSource.putBool(key, value as Boolean)
             Setting.EMaxEnabled -> dataSource.putBool(key, value as Boolean)
@@ -97,7 +100,7 @@ class SettingsRepository(
             Setting.BackupSettings -> BackupSettings(
                 lastBackupDate = LocalDate.fromEpochDays(dataSource.getInt(key, 0))
             ) as T
-            Setting.Bro -> dataSource.getString(key, null)?.let { LiftBro.valueOf(it) }
+            Setting.Bro -> dataSource.getString(key, null)?.let { LiftBro.valueOf(it) } ?: LiftBro.entries.toTypedArray().random()
             Setting.ClientUrl -> dataSource.getString(key, null)
             Setting.Consent -> dataSource.getSerializable<Consent>(key, null)
             Setting.DashboardV3 -> dataSource.getBool(key, false)
@@ -110,35 +113,8 @@ class SettingsRepository(
             Setting.TMaxEnabled -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
             Setting.ThemeMode -> dataSource.getString(key, null)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
             Setting.Timer -> dataSource.getBool(key, false)
-            Setting.UnitOfMeasure -> Settings.UnitOfWeight(UOM.valueOf(dataSource.getString(key, "POUNDS")!!))
+            Setting.UnitOfMeasure -> Settings.UnitOfWeight(UOM.valueOf(dataSource.getString(key, "POUNDS") ?: "POUNDS"))
         } as T
-    }
-
-    override fun enableTimer(): Boolean {
-        return dataSource.getBool("timer_feature_flag", false)
-    }
-
-    override fun setEnableTimer(enabled: Boolean) {
-        dataSource.putBool("timer_feature_flag", enabled)
-        keyChanged("timer_feature_flag")
-    }
-
-    override fun dashboardV3(): Boolean {
-        return dataSource.getBool("dashboard_v3", false)
-    }
-
-    override fun enableDashboardV3(enabled: Boolean) {
-        dataSource.putBool("dashboard_v3", enabled)
-        keyChanged("dashboard_v3")
-    }
-
-    override fun editSetVersion(): Int {
-        return dataSource.getInt("edit_set_screen_version", 1)
-    }
-
-    override fun setEditSetVersion(version: Int) {
-        dataSource.putInt("edit_set_screen_version", version)
-        keyChanged("edit_set_screen_version")
     }
 
     override fun getDeviceId(): String {
@@ -147,160 +123,8 @@ class SettingsRepository(
         }
     }
 
-    override fun getDeviceConsent(): Flow<Consent?> {
-        return subscribeToKey(
-            key = "consent",
-            block = { key ->
-                dataSource.getSerializable<Consent>(key, null)
-            }
-        )
-    }
-
-    override fun setDeviceConsent(consent: Consent) {
-        dataSource.putSerializable("consent", consent)
-        keyChanged("consent")
-    }
-
-    override fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight> {
-        return subscribeToKey(
-            key = "unit_of_measure",
-            block = { key ->
-                Settings.UnitOfWeight(UOM.valueOf(dataSource.getString(key) ?: "POUNDS"))
-            }
-        )
-    }
-
-    override fun saveUnitOfMeasure(uom: Settings.UnitOfWeight) {
-        dataSource.putString("unit_of_measure", uom.uom.toString())
-        keyChanged("unit_of_measure")
-    }
-
-    override fun getDeviceFtux(): Flow<Boolean> {
-        return subscribeToKey(
-            key = "ftux",
-            block = { key ->
-                dataSource.getBool("ftux", false)
-            }
-        )
-    }
-
-    override fun setDeviceFtux(ftux: Boolean) {
-        dataSource.putBool("ftux", ftux)
-        keyChanged("ftux")
-    }
-
-    override fun getBackupSettings(): Flow<BackupSettings> {
-        return subscribeToKey(
-            key = "last_backup_epoch_days",
-            block = { key ->
-                BackupSettings(
-                    lastBackupDate = LocalDate.fromEpochDays(dataSource.getInt(key, 0))
-                )
-            }
-        )
-    }
-
-    override fun saveBackupSettings(settings: BackupSettings) {
-        dataSource.putInt("last_backup_epoch_days", settings.lastBackupDate.toEpochDays().toInt())
-        keyChanged("last_backup_epoch_days")
-    }
-
-    override fun getBro(): Flow<LiftBro?> {
-        return subscribeToKey(
-            key = "bro",
-            block = {
-                dataSource.getString("bro")?.let { LiftBro.valueOf(it) }
-            }
-        )
-    }
-
-    override fun setBro(bro: LiftBro) {
-        dataSource.putString("bro", bro.name)
-        keyChanged("bro")
-    }
-
-    override fun getMerSettings(): Flow<MERSettings> {
-        return subscribeToKey(
-            key = "mer_settings",
-            block = { key ->
-                dataSource.getSerializable<MERSettings>("mer_settings", null) ?: MERSettings(enabled = Purchases.sharedInstance.isUserPro())
-            }
-        )
-    }
-
-    override fun setMerSettings(merSettings: MERSettings) {
-        dataSource.putSerializable("mer_settings", merSettings)
-        keyChanged("mer_settings")
-    }
-
-    override fun getLatestReadReleaseNotes(): Flow<String?> {
-        return subscribeToKey(
-            "latest_read_release_notes",
-            block = { key ->
-                dataSource.getString(key)
-            }
-        )
-    }
-
-    override fun setLatestReadReleaseNotes(versionId: String) {
-        dataSource.putString("latest_read_release_notes", versionId)
-        keyChanged("latest_read_release_notes")
-    }
-
-    override fun getThemeMode(): Flow<ThemeMode> {
-        return subscribeToKey(
-            "theme_mode",
-            block = { key ->
-                dataSource.getString(key)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
-            }
-        )
-    }
-
-    override fun setThemeMode(themeMode: ThemeMode) {
-        dataSource.putString("theme_mode", themeMode.toString())
-        keyChanged("theme_mode")
-    }
-
-    override fun eMaxEnabled(): Flow<Boolean> {
-        return subscribeToKey("emax_enabled") {
-            dataSource.getBool("emax_enabled", Purchases.sharedInstance.isUserPro())
-        }
-    }
-
-    override fun setEMaxEnabled(enabled: Boolean) {
-        dataSource.putBool("emax_enabled", enabled)
-        keyChanged("emax_enabled")
-    }
-
-    override fun tMaxEnabled(): Flow<Boolean> {
-        return subscribeToKey("tmax_enabled") {
-            dataSource.getBool("tmax_enabled", Purchases.sharedInstance.isUserPro())
-        }
-    }
-
-    override fun setTMaxEnabled(enabled: Boolean) {
-        dataSource.putBool("tmax_enabled", enabled)
-        keyChanged("tmax_enabled")
-    }
-
     override fun getClientUrl(): String? {
         return dataSource.getString("remote_client_url", null)
-    }
-
-    override fun setClientUrl(url: String?) {
-        dataSource.putString("remote_client_url", url)
-        keyChanged("remote_client_url")
-    }
-
-    override fun showTotalWeightMoved(show: Boolean) {
-        dataSource.putBool("show_twm", show)
-        keyChanged("show_twm")
-    }
-
-    override fun shouldShowTotalWeightMoved(): Flow<Boolean> {
-        return subscribeToKey("show_twm") { key ->
-            dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
-        }
     }
 }
 

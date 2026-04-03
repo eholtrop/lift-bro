@@ -122,7 +122,8 @@ fun SettingsScreen() {
                         IconButton(
                             modifier = Modifier.size(128.dp),
                             onClick = {
-                                dependencies.settingsRepository.setBro(
+                                dependencies.settingsRepository.set(
+                                    Setting.Bro,
                                     when (bro) {
                                         LiftBro.Leo -> LiftBro.Lisa
                                         LiftBro.Lisa -> LiftBro.Leo

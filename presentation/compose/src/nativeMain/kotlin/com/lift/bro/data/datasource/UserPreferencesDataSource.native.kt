@@ -13,7 +13,7 @@ actual class UserPreferencesDataSource {
     }
 
     actual fun getString(key: String, default: String?): String? {
-        return userDefaults.stringForKey(key)
+        return userDefaults.stringForKey(key) ?: default
     }
 
     actual fun putInt(key: String, value: Int) {

@@ -22,15 +22,15 @@ sealed interface Setting<T> {
     data object Timer: Setting<Boolean>
     data object DashboardV3: Setting<Boolean>
     data object EditSetVersion: Setting<Int>
-    data object Consent: Setting<Consent?>
+    data object Consent: Setting<com.lift.bro.domain.repositories.Consent?>
     data object UnitOfMeasure: Setting<Settings.UnitOfWeight>
     data object DeviceFtux: Setting<Boolean>
-    data object BackupSettings: Setting<BackupSettings>
+    data object BackupSettings: Setting<com.lift.bro.domain.repositories.BackupSettings>
     data object Bro: Setting<LiftBro>
     data object MerSettings: Setting<MERSettings>
     data object ShowTotalWeightMoved: Setting<Boolean>
     data object LatestReadReleaseNotes: Setting<String?>
-    data object ThemeMode: Setting<ThemeMode>
+    data object ThemeMode: Setting<com.lift.bro.domain.models.ThemeMode>
     data object EMaxEnabled: Setting<Boolean>
     data object TMaxEnabled: Setting<Boolean>
     data object ClientUrl: Setting<String?>
@@ -42,67 +42,9 @@ interface ISettingsRepository {
     suspend fun <T> get(setting: Setting<T>): T
     fun <T> set(setting: Setting<T>, value: T)
 
-    fun enableTimer(): Boolean
-
-    fun setEnableTimer(enabled: Boolean)
-
-    fun dashboardV3(): Boolean
-
-    fun enableDashboardV3(enabled: Boolean)
-
-    fun editSetVersion(): Int
-
-    fun setEditSetVersion(version: Int)
-
     fun getDeviceId(): String
 
-    fun getDeviceConsent(): Flow<Consent?>
-
-    fun setDeviceConsent(consent: Consent)
-
-    fun getUnitOfMeasure(): Flow<Settings.UnitOfWeight>
-
-    fun saveUnitOfMeasure(uom: Settings.UnitOfWeight)
-
-    fun getDeviceFtux(): Flow<Boolean>
-
-    fun setDeviceFtux(ftux: Boolean)
-
-    fun getBackupSettings(): Flow<BackupSettings>
-
-    fun saveBackupSettings(settings: BackupSettings)
-
-    fun getBro(): Flow<LiftBro?>
-
-    fun setBro(bro: LiftBro)
-
-    fun getMerSettings(): Flow<MERSettings>
-
-    fun setMerSettings(merSettings: MERSettings)
-
-    fun showTotalWeightMoved(show: Boolean)
-
-    fun shouldShowTotalWeightMoved(): Flow<Boolean>
-
-    fun getLatestReadReleaseNotes(): Flow<String?>
-
-    fun setLatestReadReleaseNotes(versionId: String)
-
-    fun getThemeMode(): Flow<ThemeMode>
-
-    fun setThemeMode(themeMode: ThemeMode)
-
-    fun eMaxEnabled(): Flow<Boolean>
-
-    fun setEMaxEnabled(enabled: Boolean)
-
-    fun tMaxEnabled(): Flow<Boolean>
-
-    fun setTMaxEnabled(enabled: Boolean)
-
     fun getClientUrl(): String?
-
-    fun setClientUrl(url: String?)
 }
 
 data class BackupSettings(

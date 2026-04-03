@@ -136,7 +136,7 @@ private fun editSetSource(
                         variation = variation,
                         maxVariationSet = maxVariation,
                         maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null,
-                        v2 = settingsRepository.editSetVersion() == 2
+                        v2 = settingsRepository.get(Setting.EditSetVersion) == 2
                     )
                 }
             }
@@ -218,7 +218,7 @@ fun editSetSideEffects(
         }
 
         is EditSetEvent.ToggleV2 -> {
-            settingsRepository.setEditSetVersion(if (state?.showV2 == true) 2 else 1)
+            settingsRepository.set(Setting.EditSetVersion, if (state?.showV2 == true) 2 else 1)
         }
 
         else -> {

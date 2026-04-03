@@ -45,6 +45,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.ui.RadioButtonCard
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -152,7 +153,8 @@ fun OnboardingSetupScreen(
                 ) {
                     Button(
                         onClick = {
-                            dependencies.settingsRepository.saveUnitOfMeasure(
+                            dependencies.settingsRepository.set(
+                                Setting.UnitOfMeasure,
                                 Settings.UnitOfWeight(
                                     uom
                                 )

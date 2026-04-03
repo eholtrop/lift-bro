@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
@@ -44,7 +45,9 @@ fun ReleaseNotesRow(
     var releaseNotes: List<ReleaseNote> by remember { mutableStateOf(emptyList()) }
 
     val latestReleaseNote by remember { derivedStateOf { releaseNotes.maxByOrNull { it.versionId } } }
-    val latestReadReleaseNotes by dependencies.settingsRepository.getLatestReadReleaseNotes().collectAsState(null)
+    val latestReadReleaseNotes by dependencies.settingsRepository.listen(
+        Setting.LatestReadReleaseNotes
+    ).collectAsState(null)
 
     LaunchedEffect(Unit) {
         launch {
@@ -60,7 +63,7 @@ fun ReleaseNotesRow(
     if (showDialog) {
         ReleaseNotesDialog {
             showDialog = false
-            dependencies.settingsRepository.setLatestReadReleaseNotes(versionId = latestReleaseNote!!.versionId)
+            dependencies.settingsRepository.set(Setting.LatestReadReleaseNotes, latestReleaseNote!!.versionId)
         }
     }
 
@@ -88,7 +91,7 @@ fun ReleaseNotesRow(
 
             IconButton(
                 onClick = {
-                    dependencies.settingsRepository.setLatestReadReleaseNotes(versionId = latestReleaseNote!!.versionId)
+                    dependencies.settingsRepository.set(Setting.LatestReadReleaseNotes, latestReleaseNote!!.versionId)
                 }
             ) {
                 Icon(
