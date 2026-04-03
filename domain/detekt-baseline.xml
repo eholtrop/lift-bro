@@ -4,6 +4,5 @@
   <CurrentIssues>
     <ID>EnumEntryNameCase:ISetRepository.kt$Sorting$date</ID>
     <ID>EnumEntryNameCase:ISetRepository.kt$Sorting$weight</ID>
-    <ID>TooManyFunctions:ISettingsRepository.kt$ISettingsRepository</ID>
   </CurrentIssues>
 </SmellBaseline>

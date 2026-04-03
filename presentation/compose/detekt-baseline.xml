@@ -5,20 +5,14 @@
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
     <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), )</ID>
-    <ID>CyclomaticComplexMethod:AppRouter.kt$@Composable fun AppRouter(route: Destination)</ID>
-    <ID>CyclomaticComplexMethod:DashboardReducer.kt$fun List&lt;DashboardListItem&gt;.sortWithSettings(settings: SortingSettings): List&lt;DashboardListItem&gt;</ID>
-    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable fun DashboardContent( modifier: Modifier = Modifier, interactor: DashboardInteractor, )</ID>
-    <ID>CyclomaticComplexMethod:DashboardScreen.kt$@Composable fun LiftHeader( modifier: Modifier = Modifier, v2: Boolean, sortingSettings: SortingSettings, showWeight: MutableState&lt;LiftCardYValue&gt; = LocalLiftCardYValue.current, showTempo: Boolean, showRpe: Boolean, onToggleTempo: () -&gt; Unit, onToggleRpe: () -&gt; Unit, optionSelected: (SortingOption) -&gt; Unit, toggleFavourite: () -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:EditSetScreen.kt$@Composable fun EditSetScreen( state: EditSetState, onEvent: (EditSetEvent) -&gt; Unit, strings: EditSetScreenStrings = EditSetScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Lift) -&gt; Unit, showRpe: Boolean = true, showTempo: Boolean = true, yUnit: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun LiftDetailsScreen( interactor: Interactor&lt;LiftDetailsState, LiftDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:LiftDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: VariationCardState, onClick: (Variation) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Variation) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:LiftingScaffold.kt$@Composable fun LiftingScaffold( title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current, fab: @Composable (() -&gt; Unit)? = null, fabProperties: FabProperties? = null, leadingContent: @Composable () -&gt; Unit = { LeadingNavigationButton() }, trailingContent: @Composable () -&gt; Unit = {}, tallMode: Boolean = currentWindowAdaptiveInfo() .windowSizeClass .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND), topAppBarScrollBehavior: TopAppBarScrollBehavior = when (tallMode) { true -&gt; TopAppBarDefaults.exitUntilCollapsedScrollBehavior() false -&gt; TopAppBarDefaults.enterAlwaysScrollBehavior() }, containerColor: Color = MaterialTheme.colorScheme.background, contentColor: Color = contentColorFor(containerColor), content: @Composable (PaddingValues) -&gt; Unit, )</ID>
-    <ID>CyclomaticComplexMethod:TimerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun TimerScreen( state: TimerState, onEvent: (TimerEvent) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = rememberDailyWorkoutDetailsInteractor( date ), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
-    <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedEvents$()</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedPageState$()</ID>
     <ID>EmptyFunctionBlock:DependencyContainer.native.kt$DependencyContainer${ }</ID>
@@ -76,7 +70,6 @@
     <ID>TooGenericExceptionCaught:LiftDetailsScreen.kt$e: Exception</ID>
     <ID>TooManyFunctions:EditSetScreen.kt$com.lift.bro.presentation.set.EditSetScreen.kt</ID>
     <ID>TooManyFunctions:LBDatabase.kt$SetDataSource</ID>
-    <ID>TooManyFunctions:SettingsRepository.kt$SettingsRepository : ISettingsRepository</ID>
     <ID>TooManyFunctions:TimerScreen.kt$com.lift.bro.presentation.timer.TimerScreen.kt</ID>
     <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
     <ID>UnusedParameter:Calendar.kt$dateSelected: (LocalDate) -&gt; Unit</ID>

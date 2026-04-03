@@ -100,7 +100,8 @@ class SettingsRepository(
             Setting.BackupSettings -> BackupSettings(
                 lastBackupDate = LocalDate.fromEpochDays(dataSource.getInt(key, 0))
             ) as T
-            Setting.Bro -> dataSource.getString(key, null)?.let { LiftBro.valueOf(it) } ?: LiftBro.entries.toTypedArray().random()
+            Setting.Bro -> dataSource.getString(key, null)?.let { LiftBro.valueOf(it) }
+                ?: LiftBro.entries.toTypedArray().random()
             Setting.ClientUrl -> dataSource.getString(key, null)
             Setting.Consent -> dataSource.getSerializable<Consent>(key, null)
             Setting.DashboardV3 -> dataSource.getBool(key, false)
@@ -108,7 +109,8 @@ class SettingsRepository(
             Setting.EMaxEnabled -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
             Setting.EditSetVersion -> dataSource.getInt(key, 1)
             Setting.LatestReadReleaseNotes -> dataSource.getString(key, null)
-            Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null) ?: MERSettings(enabled = Purchases.sharedInstance.isUserPro())
+            Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null)
+                ?: MERSettings(enabled = Purchases.sharedInstance.isUserPro())
             Setting.ShowTotalWeightMoved -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
             Setting.TMaxEnabled -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
             Setting.ThemeMode -> dataSource.getString(key, null)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
