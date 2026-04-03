@@ -10,6 +10,7 @@ import com.lift.bro.domain.models.UOM
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
+import com.lift.bro.domain.repositories.Setting
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
 import kotlinx.coroutines.GlobalScope
@@ -40,6 +41,77 @@ class SettingsRepository(
             .onStart {
                 emit(block(key))
             }
+    }
+
+    override fun <T> listen(setting: Setting<T>): Flow<T> {
+        return subscribeToKey(setting.key) { setting.value() }
+    }
+
+    override suspend fun <T> get(setting: Setting<T>): T {
+        return setting.value()
+    }
+
+    override fun <T> set(setting: Setting<T>, value: T) {
+        val key = setting.key
+        when (setting) {
+            Setting.BackupSettings -> dataSource.putInt(key, (value as BackupSettings).lastBackupDate.toEpochDays().toInt())
+            Setting.Bro -> dataSource.putString(key, (value as LiftBro).name)
+            Setting.ClientUrl -> dataSource.putString(key, value as String?)
+            Setting.Consent -> dataSource.putSerializable(key, value as Consent)
+            Setting.DashboardV3 -> dataSource.putBool(key, value as Boolean)
+            Setting.DeviceFtux -> dataSource.putBool(key, value as Boolean)
+            Setting.EMaxEnabled -> dataSource.putBool(key, value as Boolean)
+            Setting.EditSetVersion -> dataSource.putInt(key, value as Int)
+            Setting.LatestReadReleaseNotes -> dataSource.putString(key, value as String?)
+            Setting.MerSettings -> dataSource.putSerializable(key, value as MERSettings)
+            Setting.ShowTotalWeightMoved -> dataSource.putBool(key, value as Boolean)
+            Setting.TMaxEnabled -> dataSource.putBool(key, value as Boolean)
+            Setting.ThemeMode -> dataSource.putString(key, (value as ThemeMode).toString())
+            Setting.Timer -> dataSource.putBool(key, value as Boolean)
+            Setting.UnitOfMeasure -> dataSource.putString(key, (value as Settings.UnitOfWeight).uom.toString())
+        }
+        keyChanged(key)
+    }
+
+    private val Setting<*>.key: String get() = when (this) {
+        Setting.BackupSettings -> "last_backup_epoch_days"
+        Setting.Bro -> "bro"
+        Setting.ClientUrl -> "remote_client_url"
+        Setting.Consent -> "consent"
+        Setting.DashboardV3 -> "dashboard_v3"
+        Setting.DeviceFtux -> "ftux"
+        Setting.EMaxEnabled -> "emax_enabled"
+        Setting.EditSetVersion -> "edit_set_screen_version"
+        Setting.LatestReadReleaseNotes -> "latest_read_release_notes"
+        Setting.MerSettings -> "mer_settings"
+        Setting.ShowTotalWeightMoved -> "show_twm"
+        Setting.TMaxEnabled -> "tmax_enabled"
+        Setting.ThemeMode -> "theme_mode"
+        Setting.Timer -> "timer_feature_flag"
+        Setting.UnitOfMeasure -> "unit_of_measure"
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private suspend fun <T> Setting<T>.value(): T {
+        return when (this) {
+            Setting.BackupSettings -> BackupSettings(
+                lastBackupDate = LocalDate.fromEpochDays(dataSource.getInt(key, 0))
+            ) as T
+            Setting.Bro -> dataSource.getString(key, null)?.let { LiftBro.valueOf(it) }
+            Setting.ClientUrl -> dataSource.getString(key, null)
+            Setting.Consent -> dataSource.getSerializable<Consent>(key, null)
+            Setting.DashboardV3 -> dataSource.getBool(key, false)
+            Setting.DeviceFtux -> dataSource.getBool(key, false)
+            Setting.EMaxEnabled -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
+            Setting.EditSetVersion -> dataSource.getInt(key, 1)
+            Setting.LatestReadReleaseNotes -> dataSource.getString(key, null)
+            Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null) ?: MERSettings(enabled = Purchases.sharedInstance.isUserPro())
+            Setting.ShowTotalWeightMoved -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
+            Setting.TMaxEnabled -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
+            Setting.ThemeMode -> dataSource.getString(key, null)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
+            Setting.Timer -> dataSource.getBool(key, false)
+            Setting.UnitOfMeasure -> Settings.UnitOfWeight(UOM.valueOf(dataSource.getString(key, "POUNDS")!!))
+        } as T
     }
 
     override fun enableTimer(): Boolean {
@@ -151,8 +223,7 @@ class SettingsRepository(
         return subscribeToKey(
             key = "mer_settings",
             block = { key ->
-                dataSource.getSerializable<MERSettings>("mer_settings", null)
-                    ?: MERSettings(enabled = Purchases.sharedInstance.isUserPro())
+                dataSource.getSerializable<MERSettings>("mer_settings", null) ?: MERSettings(enabled = Purchases.sharedInstance.isUserPro())
             }
         )
     }
