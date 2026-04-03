@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import com.lift.bro.BackupUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.repositories.BackupSettings
+import com.lift.bro.domain.repositories.Setting
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
@@ -36,7 +36,7 @@ fun BackupAlertDialog(
 ) {
     var showBackupModal by remember { mutableStateOf(false) }
     LaunchedEffect("force_backup_prompt") {
-        val lastBackupDate = dependencies.settingsRepository.getBackupSettings().first().lastBackupDate
+        val lastBackupDate = dependencies.settingsRepository.get(Setting.BackupSettings).lastBackupDate
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
         // if the user has not backed up before
@@ -76,7 +76,8 @@ fun BackupAlertDialog(
             dismissButton = {
                 Button(
                     onClick = {
-                        dependencies.settingsRepository.saveBackupSettings(
+                        dependencies.settingsRepository.set(
+                            Setting.BackupSettings,
                             BackupSettings(
                                 lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
                             )

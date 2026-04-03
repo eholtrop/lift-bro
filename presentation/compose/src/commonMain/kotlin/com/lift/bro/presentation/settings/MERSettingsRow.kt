@@ -17,6 +17,7 @@ import com.lift.bro.config.BuildConfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.SubscriptionType
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialogButton
@@ -33,14 +34,15 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MERSettingsRow() {
-    val showMerCalcs by dependencies.settingsRepository.getMerSettings()
+    val showMerCalcs by dependencies.settingsRepository.listen(Setting.MerSettings)
         .collectAsState(MERSettings())
 
     MERSettingsRowContent(
         enabled = showMerCalcs.enabled,
         isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
         onToggle = { enabled ->
-            dependencies.settingsRepository.setMerSettings(
+            dependencies.settingsRepository.set(
+                Setting.MerSettings,
                 showMerCalcs.copy(enabled = enabled)
             )
         }

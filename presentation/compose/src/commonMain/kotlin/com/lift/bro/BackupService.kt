@@ -19,6 +19,7 @@ import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import com.lift.bro.domain.repositories.Setting
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.createDirectories
 import io.github.vinceglb.filekit.dialogs.FileKitType
@@ -75,7 +76,8 @@ class BackupUseCase(
             FileKit.shareFile(backupFile)
 
             // ensure last backup date is updated
-            dependencies.settingsRepository.saveBackupSettings(
+            dependencies.settingsRepository.set(
+                Setting.BackupSettings,
                 BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
             )
         }

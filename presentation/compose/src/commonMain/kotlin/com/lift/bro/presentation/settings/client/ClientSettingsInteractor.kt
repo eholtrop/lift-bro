@@ -2,6 +2,7 @@ package com.lift.bro.presentation.settings.client
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.presentation.settings.client.ClientMode.Local
 import com.lift.bro.presentation.settings.client.ClientMode.Remote
 import kotlinx.coroutines.flow.flow
@@ -60,7 +61,9 @@ fun rememberClientSettingsInteractor(): ClientSettingsInteractor = rememberInter
     source = { state ->
         flow {
             emit(
-                ClientSettingsState(mode = dependencies.settingsRepository.getClientUrl()?.let { Remote(it) } ?: Local)
+                ClientSettingsState(
+                    mode = dependencies.settingsRepository.get(Setting.ClientUrl)?.let { Remote(it) } ?: Local
+                )
             )
         }
     },
@@ -89,8 +92,8 @@ fun rememberClientSettingsInteractor(): ClientSettingsInteractor = rememberInter
                 is ClientSettingsEvent.UrlUpdated -> {}
                 is ClientSettingsEvent.ApplyMode -> {
                     when (val mode = event.mode) {
-                        Local -> dependencies.settingsRepository.setClientUrl(null)
-                        is Remote -> dependencies.settingsRepository.setClientUrl(mode.url)
+                        Local -> dependencies.settingsRepository.set(Setting.ClientUrl, null)
+                        is Remote -> dependencies.settingsRepository.set(Setting.ClientUrl, mode.url)
                     }
                 }
             }
