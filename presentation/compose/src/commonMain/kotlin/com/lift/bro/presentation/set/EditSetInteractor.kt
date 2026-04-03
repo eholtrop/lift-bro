@@ -13,6 +13,7 @@ import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.domain.serializers.InstantSerializer
 import com.lift.bro.utils.fullName
@@ -266,6 +267,7 @@ internal suspend fun LBSet.toUiState(
     rpe = this.rpe,
     mers = this.mer,
     showV2 = v2,
+    timerEnabled = dependencies.settingsRepository.get(Setting.Timer),
     defaultRpe = null // maxVariationSet?.let { this.weight.div(it.weight).times(10).toInt() },
 
 )

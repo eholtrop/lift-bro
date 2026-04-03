@@ -7,6 +7,7 @@ import com.lift.bro.di.liftRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditLift
@@ -72,7 +73,7 @@ fun rememberHomeInteractor(
             if (lifts.isEmpty()) {
                 HomeState.Empty
             } else {
-                val v3 = settingsRepository.dashboardV3()
+                val v3 = settingsRepository.get(Setting.DashboardV3)
                 HomeState.Content(
                     selectedTab = if (v3) Tab.Dashboard else (state as? HomeState.Content)?.selectedTab ?: initialTab,
                     goals = goals.map { it.name },

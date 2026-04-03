@@ -41,6 +41,7 @@ import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.SubscriptionType
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.LocalSubscriptionStatusProvider
@@ -216,24 +217,25 @@ fun SettingsScreen() {
                     ) {
                         Column {
                             var timer by remember {
-                                mutableStateOf(
-                                    dependencies.settingsRepository.enableTimer()
-                                )
+                                mutableStateOf(false)
                             }
+                            LaunchedEffect(Unit) {
+                                timer = dependencies.settingsRepository.get(Setting.Timer)
+                            }
+
                             CheckField(
                                 title = "Timer",
                                 description = "Enable a timer for counting down sets and rest periods",
                                 checked = timer,
                                 checkChanged = {
                                     timer = it
-                                    dependencies.settingsRepository.setEnableTimer(it)
+                                    dependencies.settingsRepository.set(Setting.Timer, it)
                                 }
                             )
 
-                            var dashboardV3 by remember {
-                                mutableStateOf(
-                                    dependencies.settingsRepository.dashboardV3()
-                                )
+                            var dashboardV3 by remember { mutableStateOf(false) }
+                            LaunchedEffect(Unit) {
+                                dashboardV3 = dependencies.settingsRepository.get(Setting.DashboardV3)
                             }
                             CheckField(
                                 title = "Dashboard V3",
@@ -241,7 +243,7 @@ fun SettingsScreen() {
                                 checked = dashboardV3,
                                 checkChanged = {
                                     dashboardV3 = it
-                                    dependencies.settingsRepository.enableDashboardV3(it)
+                                    dependencies.settingsRepository.set(Setting.DashboardV3, it)
                                 }
                             )
 
