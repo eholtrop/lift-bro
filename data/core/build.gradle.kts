@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -14,6 +15,10 @@ kotlin {
             implementation(project(":domain"))
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.serialization)
+        }
+        androidMain.dependencies {
+            implementation(libs.mlkit.genai.prompt)
         }
         commonTest.dependencies {
             implementation(kotlin("test"))
@@ -26,5 +31,5 @@ kotlin {
 android {
     namespace = "com.lift.bro.data.core"
     compileSdk = 36
-    defaultConfig { minSdk = 24 }
+    defaultConfig { minSdk = 26 }
 }

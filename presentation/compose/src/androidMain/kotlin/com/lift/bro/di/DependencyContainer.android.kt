@@ -12,9 +12,11 @@ import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.analytics.NoOpAnalytics
 import com.lift.bro.data.analytics.PostHogAnalytics
+import com.lift.bro.data.core.ai.MLKitAIRepository
 import com.lift.bro.data.datasource.UserPreferencesDataSource
 import com.lift.bro.data.repository.SettingsRepository
 import com.lift.bro.domain.analytics.Analytics
+import com.lift.bro.domain.repositories.AIRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import io.github.samuolis.posthog.PostHogConfig
 import io.github.samuolis.posthog.PostHogContext
@@ -39,6 +41,10 @@ actual class DependencyContainer {
 
     actual val settingsRepository: ISettingsRepository by lazy {
         SettingsRepository(UserPreferencesDataSource(context!!))
+    }
+
+    actual val aiRepository: AIRepository by lazy {
+        MLKitAIRepository()
     }
 
     actual fun launchUrl(url: String) {

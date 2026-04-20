@@ -46,5 +46,5 @@ kotlin {
 android {
     namespace = "com.lift.bro.domain"
     compileSdk = 36
-    defaultConfig { minSdk = 24 }
+    defaultConfig { minSdk = 26 }
 }

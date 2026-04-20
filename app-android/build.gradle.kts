@@ -18,7 +18,7 @@ android {
     compileSdk = 36
     defaultConfig {
         applicationId = "com.lift.bro"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionName = project.versionName()
 
@@ -83,9 +83,11 @@ dependencies {
     implementation(project(":presentation:compose"))
     implementation(project(":presentation:server"))
     implementation(project(":domain"))
+    implementation(project(":data:core"))
     implementation(libs.compose.activity)
     implementation(libs.kotlinx.serialization)
     implementation(libs.billing.ktx)
+    implementation("com.google.mlkit:genai-prompt:1.0.0-beta2")
     screenshotTestImplementation(project(":presentation:compose"))
     screenshotTestImplementation(libs.screenshot.validation.api)
     screenshotTestImplementation("org.jetbrains.compose.ui:ui-tooling:1.10.0")

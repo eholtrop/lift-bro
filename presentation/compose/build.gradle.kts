@@ -105,6 +105,9 @@ kotlin {
             implementation(libs.app.update.ktx)
             implementation(compose.uiTooling)
 
+            // ML Kit GenAI Prompt API (Gemini Nano)
+            implementation(libs.mlkit.genai.prompt)
+
             // DataStore + Tink for secure key storage
             implementation(libs.datastore.preferences)
             implementation(libs.tink.android)

@@ -40,8 +40,9 @@ media3-exoplayer = "1.9.2"
 
 datastore = "1.1.1"
 tink = "1.12.0"
+mlkit-genai-prompt = "1.0.0-beta2"
 
-ksp = "2.1.21-2.0.1"
+ksp = "2.3.6"
 kotlinpoet = "1.18.1"
 auto-service = "1.1.1"
 
@@ -82,6 +83,7 @@ appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "a
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
 posthog-kmp = { module = "io.github.samuolis:posthog-kmp", version.ref = "posthog-kmp" }
 screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot" }
+mlkit-genai-prompt = { module = "com.google.mlkit:genai-prompt", version.ref = "mlkit-genai-prompt" }
 
 # Ktor server (Multiplatform)
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
