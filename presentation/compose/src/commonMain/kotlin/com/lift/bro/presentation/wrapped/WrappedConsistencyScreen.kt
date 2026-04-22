@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentDayUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentMonthUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetMostConsistentVariationUseCase
@@ -39,7 +40,6 @@ import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.fullName
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek

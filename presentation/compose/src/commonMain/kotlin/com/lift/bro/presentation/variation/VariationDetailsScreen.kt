@@ -51,6 +51,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
@@ -58,7 +59,6 @@ import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
@@ -124,12 +124,6 @@ private fun VariationDetailsScreen(
                     TextField(
                         modifier = Modifier.wrapContentWidth(),
                         value = name,
-                        suffix = {
-                            Text(
-                                state.variation.lift?.name ?: "",
-                                style = MaterialTheme.typography.headlineMedium,
-                            )
-                        },
                         textStyle = MaterialTheme.typography.headlineMedium,
                         onValueChange = {
                             name = it

@@ -10,13 +10,13 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.domain.serializers.InstantSerializer
-import com.lift.bro.utils.fullName
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull

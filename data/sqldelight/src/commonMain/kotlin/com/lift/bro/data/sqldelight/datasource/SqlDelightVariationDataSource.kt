@@ -28,7 +28,7 @@ class SqlDelightVariationDataSource(
     private val setQueries: SetQueries,
     private val movementQueries: MovementQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : VariationDataSource {
+): VariationDataSource {
 
     override suspend fun save(variation: Movement) {
         movementQueries.save(
@@ -80,9 +80,9 @@ class SqlDelightVariationDataSource(
                             bodyWeight = variation.body_weight == 1L,
                             favourite = variation.favourite == 1L,
                             lift = Category(
-                                id = variation.lift_id,
-                                color = variation.lift_color?.toULong(),
-                                name = variation.lift_name,
+                                id = variation.category_id,
+                                color = variation.category_color?.toULong(),
+                                name = variation.category_name,
                             ),
                             oneRepMax = orm?.let { it.toDomain() },
                             eMax = volume?.let { it.toDomain() },
@@ -105,15 +105,15 @@ class SqlDelightVariationDataSource(
                 sortBy = Sorting.date.toString(),
                 order = 0,
             ).asFlowList(),
-        ) { variations, sets ->
-            variations.map { variation ->
-                variation.toDomain(
+        ) { movements, sets ->
+            movements.map { movement ->
+                movement.toDomain(
                     parentLift = Category(
-                        id = variation.id_,
-                        color = variation.color?.toULong(),
-                        name = variation.name_,
+                        id = movement.category_id,
+                        color = movement.category_color?.toULong(),
+                        name = movement.category_name,
                     ),
-                    sets = sets.filter { it.categoryId == variation.id }.map { it.toDomain() }
+                    sets = sets.filter { it.categoryId == movement.category_id }.map { it.toDomain() }
                 )
             }
         }.flowOn(dispatcher)
@@ -145,9 +145,9 @@ class SqlDelightVariationDataSource(
                 notes = variation.notes,
                 favourite = variation.favourite == 1L,
                 lift = Category(
-                    id = variation.lift_id,
-                    color = variation.lift_color?.toULong(),
-                    name = variation.lift_name,
+                    id = variation.category_id,
+                    color = variation.category_color?.toULong(),
+                    name = variation.category_name,
                 ),
                 oneRepMax = sets.filter { it.variationId == variation.id && it.reps == 1L }
                     .maxByOrNull { it.weight },

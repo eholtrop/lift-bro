@@ -19,7 +19,7 @@ object InstantSerializer : KSerializer<Instant> {
     override fun deserialize(decoder: Decoder): Instant {
         try {
             return Instant.fromEpochMilliseconds(decoder.decodeLong())
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             return Instant.parse(decoder.decodeString())
         }
     }

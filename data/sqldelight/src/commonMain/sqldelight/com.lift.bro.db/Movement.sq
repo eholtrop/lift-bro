@@ -8,9 +8,19 @@ CREATE TABLE Movement (
 );
 
 getAllForCategory:
-SELECT * FROM Movement
+SELECT
+    Movement.id AS id,
+    Movement.favourite AS favourite,
+    Movement.name AS name,
+    Movement.notes AS notes,
+    Movement.body_weight AS body_weight,
+
+    Category.id AS category_id,
+    Category.color AS category_color,
+    Category.name AS category_name
+FROM Movement
 JOIN Category ON Category.id = Movement.categoryId
-WHERE (categoryId = :categoryId OR :categoryId = NULL)
+WHERE categoryId = :categoryId
 ;
 
 
@@ -22,9 +32,9 @@ SELECT
     Movement.notes AS notes,
     Movement.body_weight AS body_weight,
 
-    Category.id AS lift_id,
-    Category.color AS lift_color,
-    Category.name AS lift_name
+    Category.id AS category_id,
+    Category.color AS category_color,
+    Category.name AS category_name
 FROM Movement
 JOIN Category ON Category.id = Movement.categoryId
 ;

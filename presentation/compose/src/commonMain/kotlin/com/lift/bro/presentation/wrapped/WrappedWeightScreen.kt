@@ -17,13 +17,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.wrapped.usecase.GetTotalWeightMovedUseCase
 import com.lift.bro.presentation.wrapped.usecase.GetVariationWithMostWeightMovedUseCase
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.decimalFormat
-import com.lift.bro.utils.fullName
 import kotlinx.coroutines.flow.combine
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable

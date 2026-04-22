@@ -12,6 +12,7 @@ sdk use java 21.0.9-jbr
 
 # Run the gradle task
 ./gradlew generateArchDiagram
+./gradlew detektFormat --continue
 
 # Check the exit code
 if [ $? -ne 0 ]; then
