@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Movement
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.VariationTextField
@@ -67,7 +68,6 @@ import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch

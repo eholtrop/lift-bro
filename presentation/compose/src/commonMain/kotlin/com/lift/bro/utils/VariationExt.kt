@@ -13,8 +13,6 @@ import kotlinx.datetime.LocalDate
 import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.math.roundToInt
 
-val Movement.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
-
 @Composable
 fun Movement.maxText(): AnnotatedString {
     return buildAnnotatedString {

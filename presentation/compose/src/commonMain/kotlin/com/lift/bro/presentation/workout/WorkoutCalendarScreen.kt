@@ -61,6 +61,7 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.ApplicationScope
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
@@ -70,7 +71,6 @@ import com.lift.bro.ui.calendar.rememberCalendarState
 import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxDate
 import com.lift.bro.utils.maxText
 import com.lift.bro.utils.prettyPrintSet

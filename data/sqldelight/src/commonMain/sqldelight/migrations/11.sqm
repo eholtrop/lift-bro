@@ -1,5 +1,21 @@
 ALTER TABLE Lift RENAME TO Category;
 ALTER TABLE Variation RENAME TO Movement;
+
+
 ALTER TABLE Movement RENAME COLUMN liftId to categoryId;
 ALTER TABLE LiftingSet RENAME COLUMN variationId to movementId;
-ALTER TABLE ExerciseVariation RENAME COLUMN variationId to movementId;
+ALTER TABLE ExerciseVariation RENAME COLUMN varationId to movementId;
+
+
+-- Update the Movement table by concatenating its name with the Category name
+UPDATE Movement
+SET name = name || ' ' || (
+    SELECT name
+    FROM Category
+    WHERE Category.id = Movement.categoryId
+)
+WHERE EXISTS (
+    SELECT 1
+    FROM Category
+    WHERE Category.id = Movement.categoryId
+);

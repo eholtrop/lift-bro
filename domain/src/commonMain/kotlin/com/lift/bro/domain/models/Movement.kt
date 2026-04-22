@@ -26,4 +26,4 @@ data class Movement(
     val bodyWeight: Boolean? = false,
 )
 
-val Movement.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
+val Movement.fullName get(): String = name ?: ""

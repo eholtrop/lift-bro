@@ -62,6 +62,7 @@ import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.estimateMax
+import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
@@ -77,7 +78,6 @@ import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
-import com.lift.bro.utils.fullName
 import com.lift.bro.utils.maxText
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
