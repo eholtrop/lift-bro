@@ -5,11 +5,11 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.VariationDataSource
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.Sorting
+import comliftbrodb.CategoryQueries
 import comliftbrodb.GetAllSets
-import comliftbrodb.LiftQueries
 import comliftbrodb.SetQueries
 import comliftbrodb.VariationQueries
 import comliftbrodb.variation.GetAllForLift
@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.datetime.Instant
 
 class SqlDelightVariationDataSource(
-    private val liftQueries: LiftQueries,
+    private val categoryQueries: CategoryQueries,
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -53,7 +53,7 @@ class SqlDelightVariationDataSource(
             variationQueries.get(id).asFlow().mapToOneOrNull(dispatcher),
             setQueries.getAllByVariation(id, Long.MAX_VALUE).asFlow().mapToList(dispatcher),
         ) { variation, sets ->
-            val lift = liftQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
+            val lift = categoryQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
             variation?.toDomain(
                 parentLift = lift?.toDomain(),
                 sets = sets.map { it.toDomain() }
@@ -78,7 +78,7 @@ class SqlDelightVariationDataSource(
                             notes = variation.notes,
                             bodyWeight = variation.body_weight == 1L,
                             favourite = variation.favourite == 1L,
-                            lift = Lift(
+                            lift = Category(
                                 id = variation.lift_id,
                                 color = variation.lift_color?.toULong(),
                                 name = variation.lift_name,
@@ -107,7 +107,7 @@ class SqlDelightVariationDataSource(
         ) { variations: List<GetAllForLift>, sets: List<GetAllSets> ->
             variations.map { variation ->
                 variation.toDomain(
-                    parentLift = Lift(
+                    parentLift = Category(
                         id = variation.id_,
                         color = variation.color?.toULong(),
                         name = variation.name_,
@@ -119,7 +119,7 @@ class SqlDelightVariationDataSource(
 
     override fun get(id: String): Variation? {
         val variation = variationQueries.get(id).executeAsOneOrNull()
-        val lift = liftQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
+        val lift = categoryQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
         val sets = setQueries.getAllByVariation(id, Long.MAX_VALUE).executeAsList()
         return variation?.toDomain(
             parentLift = lift?.toDomain(),
@@ -143,7 +143,7 @@ class SqlDelightVariationDataSource(
                 name = variation.name,
                 notes = variation.notes,
                 favourite = variation.favourite == 1L,
-                lift = Lift(
+                lift = Category(
                     id = variation.lift_id,
                     color = variation.lift_color?.toULong(),
                     name = variation.lift_name,
@@ -160,7 +160,7 @@ class SqlDelightVariationDataSource(
     }
 }
 
-private fun comliftbrodb.Lift.toDomain() = Lift(
+private fun comliftbrodb.Lift.toDomain() = Category(
     id = this.id,
     name = this.name,
     color = this.color?.toULong(),
@@ -168,7 +168,7 @@ private fun comliftbrodb.Lift.toDomain() = Lift(
 
 private fun comliftbrodb.GetAll.toDomain(): Variation = Variation(
     id = this.id,
-    lift = Lift(
+    lift = Category(
         id = this.lift_id,
         name = this.lift_name,
         color = this.lift_color?.toULong(),
@@ -181,7 +181,7 @@ private fun comliftbrodb.GetAll.toDomain(): Variation = Variation(
 )
 
 private fun comliftbrodb.Variation.toDomain(
-    parentLift: Lift?,
+    parentLift: Category?,
     sets: List<LBSet>,
 ): Variation = Variation(
     id = this.id,
@@ -197,7 +197,7 @@ private fun comliftbrodb.Variation.toDomain(
 )
 
 private fun GetAllForLift.toDomain(
-    parentLift: Lift?,
+    parentLift: Category?,
     sets: List<LBSet>,
 ): Variation = Variation(
     id = this.id,

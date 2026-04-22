@@ -6,7 +6,7 @@ import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.EditLift
@@ -82,7 +82,7 @@ fun rememberLiftDetailsInteractor(
 
                 is LiftDetailsEvent.LiftColorChanged -> {
                     dependencies.liftRepository.save(
-                        Lift(
+                        Category(
                             id = liftId,
                             name = state.liftName ?: "",
                             color = event.color,

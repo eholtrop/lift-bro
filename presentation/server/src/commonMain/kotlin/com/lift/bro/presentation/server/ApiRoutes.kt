@@ -7,7 +7,7 @@ import com.lift.bro.di.localSetRepository
 import com.lift.bro.di.localVariationRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
@@ -48,7 +48,7 @@ fun Route.configureLiftRoutes(
             .collect()
     }
 
-    post<Lift>("rest/lift") {
+    post<Category>("rest/lift") {
         liftRepository.save(this.call.receive())
     }
 

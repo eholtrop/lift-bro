@@ -64,7 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.LocalTwmSettings
@@ -865,7 +865,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                                     VariationSets(
                                         id = "vs1",
                                         variation = com.lift.bro.domain.models.Variation(
-                                            lift = Lift(
+                                            lift = Category(
                                                 id = "lift1",
                                                 name = "Squat",
                                                 color = Color.Red.value
@@ -884,7 +884,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                                     VariationSets(
                                         id = "vs1",
                                         variation = com.lift.bro.domain.models.Variation(
-                                            lift = Lift(
+                                            lift = Category(
                                                 id = "lift1",
                                                 name = "Squat",
                                                 color = Color.Blue.value
@@ -929,7 +929,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                             VariationItem.WithSets(
                                 id = "var1",
                                 variation = com.lift.bro.domain.models.Variation(
-                                    lift = com.lift.bro.domain.models.Lift(
+                                    lift = com.lift.bro.domain.models.Category(
                                         name = "Squat",
                                         color = 0xFF2196F3uL
                                     ),

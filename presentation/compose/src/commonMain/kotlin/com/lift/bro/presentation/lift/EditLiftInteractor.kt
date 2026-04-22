@@ -9,7 +9,7 @@ import com.lift.bro.data.LiftDataSource
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
@@ -29,7 +29,7 @@ data class EditLiftState(
 ) {
 
     val lift
-        get() = Lift(
+        get() = Category(
             id = id ?: uuid4().toString(),
             name = name,
             color = liftColor?.color?.value

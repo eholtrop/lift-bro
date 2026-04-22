@@ -30,7 +30,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextOverflow
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.theme.spacing
@@ -46,7 +46,7 @@ fun VariationTextField(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     focusRequester: FocusRequester = FocusRequester(),
     onNameChanged: (String) -> Unit,
-    onLiftChanged: ((Lift) -> Unit)? = null,
+    onLiftChanged: ((Category) -> Unit)? = null,
     action: @Composable (() -> Unit)? = null,
 ) {
     Row(
@@ -84,7 +84,7 @@ fun VariationTextField(
         Row {
             val liftName = variation.lift?.name
             if (onLiftChanged != null) {
-                var lifts by remember { mutableStateOf(emptyList<Lift>()) }
+                var lifts by remember { mutableStateOf(emptyList<Category>()) }
                 var showMenu by remember { mutableStateOf(false) }
 
                 Button(

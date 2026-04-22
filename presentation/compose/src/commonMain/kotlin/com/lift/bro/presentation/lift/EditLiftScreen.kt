@@ -323,7 +323,7 @@ class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
                 name = "Bench Press",
                 variations = listOf(
                     Variation(
-                        lift = com.lift.bro.domain.models.Lift(
+                        lift = com.lift.bro.domain.models.Category(
                             name = "Bench Press",
                             color = 0xFF4CAF50uL
                         ),
@@ -338,7 +338,7 @@ class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
                 name = "Deadlift",
                 variations = listOf(
                     Variation(
-                        lift = com.lift.bro.domain.models.Lift(
+                        lift = com.lift.bro.domain.models.Category(
                             name = "Deadlift",
                             color = 0xFFFF5722uL
                         ),
@@ -346,7 +346,7 @@ class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
                         favourite = true
                     ),
                     Variation(
-                        lift = com.lift.bro.domain.models.Lift(
+                        lift = com.lift.bro.domain.models.Category(
                             name = "Deadlift",
                             color = 0xFFFF5722uL
                         ),
@@ -354,7 +354,7 @@ class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
                         favourite = false
                     ),
                     Variation(
-                        lift = com.lift.bro.domain.models.Lift(
+                        lift = com.lift.bro.domain.models.Category(
                             name = "Deadlift",
                             color = 0xFFFF5722uL
                         ),

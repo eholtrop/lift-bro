@@ -4,7 +4,7 @@ import com.benasher44.uuid.uuid4
 import com.lift.bro.data.core.datasource.ExerciseDataSource
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
@@ -58,7 +58,7 @@ class SqldelightExerciseDataSource(
                                     name = exercise.variation_name,
                                     notes = exercise.variation_notes,
                                     favourite = exercise.variation_is_favourite == 1L,
-                                    lift = Lift(
+                                    lift = Category(
                                         id = exercise.lift_id,
                                         color = exercise.lift_color?.toULong(),
                                         name = exercise.lift_name,

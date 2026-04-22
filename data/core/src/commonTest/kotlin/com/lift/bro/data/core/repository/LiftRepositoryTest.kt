@@ -1,7 +1,7 @@
 package com.lift.bro.data.core.repository
 
 import com.lift.bro.data.core.datasource.LiftDataSource
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -15,8 +15,8 @@ class LiftRepositoryTest {
     @Test
     fun `listenAll delegates to data source`() = runTest {
         val lifts = listOf(
-            Lift(id = "1", name = "Bench Press"),
-            Lift(id = "2", name = "Squat")
+            Category(id = "1", name = "Bench Press"),
+            Category(id = "2", name = "Squat")
         )
         val dataSource = FakeLiftDataSource(lifts = lifts)
         val repository = LiftRepository(dataSource)
@@ -29,8 +29,8 @@ class LiftRepositoryTest {
     @Test
     fun `getAll delegates to data source`() = runTest {
         val lifts = listOf(
-            Lift(id = "1", name = "Deadlift"),
-            Lift(id = "2", name = "Press")
+            Category(id = "1", name = "Deadlift"),
+            Category(id = "2", name = "Press")
         )
         val dataSource = FakeLiftDataSource(lifts = lifts)
         val repository = LiftRepository(dataSource)
@@ -42,7 +42,7 @@ class LiftRepositoryTest {
 
     @Test
     fun `get delegates to data source`() = runTest {
-        val lift = Lift(id = "1", name = "Row")
+        val lift = Category(id = "1", name = "Row")
         val dataSource = FakeLiftDataSource(singleLift = lift)
         val repository = LiftRepository(dataSource)
 
@@ -53,7 +53,7 @@ class LiftRepositoryTest {
 
     @Test
     fun `save delegates to data source`() = runTest {
-        val lift = Lift(id = "1", name = "Clean")
+        val lift = Category(id = "1", name = "Clean")
         val dataSource = FakeLiftDataSource()
         val repository = LiftRepository(dataSource)
 
@@ -85,20 +85,20 @@ class LiftRepositoryTest {
 
     // Fake data source for testing
     private class FakeLiftDataSource(
-        private val lifts: List<Lift> = emptyList(),
-        private val singleLift: Lift? = null
+        private val lifts: List<Category> = emptyList(),
+        private val singleLift: Category? = null
     ) : LiftDataSource {
-        var savedLift: Lift? = null
+        var savedLift: Category? = null
         var deleteAllCalled = false
         var deletedId: String? = null
 
-        override fun listenAll(): Flow<List<Lift>> = flowOf(lifts)
+        override fun listenAll(): Flow<List<Category>> = flowOf(lifts)
 
-        override fun getAll(): List<Lift> = lifts
+        override fun getAll(): List<Category> = lifts
 
-        override fun get(id: String?): Flow<Lift?> = flowOf(singleLift)
+        override fun get(id: String?): Flow<Category?> = flowOf(singleLift)
 
-        override fun save(lift: Lift): Boolean {
+        override fun save(lift: Category): Boolean {
             savedLift = lift
             return true
         }

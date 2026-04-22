@@ -3,24 +3,24 @@ package com.lift.bro
 import androidx.compose.ui.graphics.Color
 import com.benasher44.uuid.uuid4
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Variation
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import kotlin.time.Clock
 
 private val debugLifts = listOf(
-    Lift(
+    Category(
         id = "1",
         name = "Squat",
         color = null,
     ),
-    Lift(
+    Category(
         id = "2",
         name = "Press",
         color = Color.Red.value,
     ),
-    Lift(
+    Category(
         id = "3",
         name = "Deadlift",
         color = Color.Blue.value,
