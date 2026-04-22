@@ -11,7 +11,7 @@ import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
@@ -38,7 +38,7 @@ import tv.dpal.navi.NavCoordinator
 data class WorkoutCalendarState(
     val selectedDate: LocalDate = today,
     val selectedWorkout: Workout? = null,
-    val potentialExercises: List<Pair<Variation, List<LBSet>>> = emptyList(),
+    val potentialExercises: List<Pair<Movement, List<LBSet>>> = emptyList(),
     val log: LiftingLog? = null,
 )
 
@@ -166,7 +166,7 @@ fun workoutCalendarSourceData(
 fun FetchVariationSetsForMonth(
     year: Int,
     month: Month,
-): Flow<List<Pair<Variation, List<LBSet>>>> = combine(
+): Flow<List<Pair<Movement, List<LBSet>>>> = combine(
     dependencies.setRepository.listenAll(
         LocalDate(year = year, month = month, 1),
         LocalDate(year = year, month = month, 1)
@@ -181,7 +181,7 @@ fun FetchVariationSetsForMonth(
 fun FetchVariationSetsForRange(
     startDate: LocalDate,
     endDate: LocalDate,
-): Flow<List<Pair<Variation, List<LBSet>>>> = combine(
+): Flow<List<Pair<Movement, List<LBSet>>>> = combine(
     dependencies.setRepository.listenAll(
         startDate = startDate,
         endDate = endDate
@@ -197,7 +197,7 @@ sealed interface WorkoutCalendarEvent {
     data class WorkoutClicked(val workout: Workout): WorkoutCalendarEvent
 
     data class DateSelected(val date: LocalDate): WorkoutCalendarEvent
-    data class AddToWorkout(val date: LocalDate, val variation: Variation): WorkoutCalendarEvent
+    data class AddToWorkout(val date: LocalDate, val variation: Movement): WorkoutCalendarEvent
 }
 
 val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> =

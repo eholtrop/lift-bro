@@ -31,7 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
 import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun VariationTextField(
     modifier: Modifier = Modifier,
-    variation: Variation,
+    variation: Movement,
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     focusRequester: FocusRequester = FocusRequester(),
     onNameChanged: (String) -> Unit,

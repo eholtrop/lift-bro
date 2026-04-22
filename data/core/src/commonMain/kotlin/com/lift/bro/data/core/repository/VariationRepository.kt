@@ -1,7 +1,7 @@
 package com.lift.bro.data.core.repository
 
 import com.lift.bro.data.core.datasource.VariationDataSource
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.repositories.IVariationRepository
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
@@ -11,14 +11,14 @@ class VariationRepository(
     private val local: VariationDataSource
 ) : IVariationRepository {
 
-    override fun listenAll(liftId: String?): Flow<List<Variation>> = local.listenAllForLift(liftId)
-    override fun listenAll(): Flow<List<Variation>> = local.listenAll()
+    override fun listenAll(liftId: String?): Flow<List<Movement>> = local.listenAllForLift(liftId)
+    override fun listenAll(): Flow<List<Movement>> = local.listenAll()
 
-    override fun listen(id: String): Flow<Variation?> = local.listen(id)
+    override fun listen(id: String): Flow<Movement?> = local.listen(id)
 
-    override fun get(variationId: String?): Variation? = local.get(variationId ?: "")
+    override fun get(variationId: String?): Movement? = local.get(variationId ?: "")
 
-    override fun getAll(): List<Variation> = local.getAll()
+    override fun getAll(): List<Movement> = local.getAll()
 
     override fun delete(id: String) {
         GlobalScope.launch {
@@ -30,7 +30,7 @@ class VariationRepository(
         local.deleteAll()
     }
 
-    override fun save(variation: Variation) {
+    override fun save(variation: Movement) {
         GlobalScope.launch { local.save(variation) }
     }
 }

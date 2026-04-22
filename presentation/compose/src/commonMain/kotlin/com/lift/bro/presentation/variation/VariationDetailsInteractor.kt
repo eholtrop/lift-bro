@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
 import kotlinx.coroutines.flow.combine
@@ -19,7 +19,7 @@ import tv.dpal.navi.NavCoordinator
 
 @Serializable
 data class VariationDetailsState(
-    val variation: Variation,
+    val variation: Movement,
     val notes: String? = null,
     val cards: List<VariationDetailCard> = emptyList(),
 )
@@ -46,7 +46,7 @@ fun rememberVariationDetailInteractor(
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<VariationDetailsState, VariationDetailsEvent> =
     rememberInteractor(
-        initialState = VariationDetailsState(Variation()),
+        initialState = VariationDetailsState(Movement()),
         source = {
             combine(
                 dependencies.database.variantDataSource.listen(variationId),

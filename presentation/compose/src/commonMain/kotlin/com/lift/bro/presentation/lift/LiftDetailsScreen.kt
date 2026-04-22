@@ -60,7 +60,7 @@ import androidx.compose.ui.unit.dp
 import com.github.skydoves.colorpicker.compose.HsvColorPicker
 import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.LocalLiftCardYValue
@@ -404,9 +404,9 @@ fun LiftDetailsScreen(
 private fun VariationCard(
     modifier: Modifier = Modifier,
     state: VariationCardState,
-    onClick: (Variation) -> Unit,
+    onClick: (Movement) -> Unit,
     onSetClicked: (LBSet) -> Unit,
-    favouriteToggled: (Variation) -> Unit,
+    favouriteToggled: (Movement) -> Unit,
 ) {
     val variation = state.variation
     val sets = state.sets
@@ -648,7 +648,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                 liftColor = 0xFF4CAF50uL,
                 variations = listOf(
                     VariationCardState(
-                        variation = Variation(
+                        variation = Movement(
                             lift = com.lift.bro.domain.models.Category(
                                 name = "Bench Press",
                                 color = 0xFF4CAF50uL
@@ -666,7 +666,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                 liftColor = 0xFFFF5722uL,
                 variations = listOf(
                     VariationCardState(
-                        variation = Variation(
+                        variation = Movement(
                             lift = com.lift.bro.domain.models.Category(
                                 name = "Deadlift",
                                 color = 0xFFFF5722uL
@@ -694,7 +694,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                         )
                     ),
                     VariationCardState(
-                        variation = Variation(
+                        variation = Movement(
                             lift = com.lift.bro.domain.models.Category(
                                 name = "Deadlift",
                                 color = 0xFFFF5722uL

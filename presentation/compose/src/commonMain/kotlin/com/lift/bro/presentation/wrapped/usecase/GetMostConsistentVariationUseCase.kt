@@ -3,7 +3,7 @@ package com.lift.bro.presentation.wrapped.usecase
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +19,7 @@ class GetMostConsistentVariationUseCase(
     operator fun invoke(
         startDate: LocalDate? = null,
         endDate: LocalDate? = null,
-    ): Flow<Pair<Variation, Int>> = combine(
+    ): Flow<Pair<Movement, Int>> = combine(
         setRepository.listenAll(
             startDate = startDate,
             endDate = endDate

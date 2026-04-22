@@ -1,16 +1,17 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.lift.bro.data.sqldelight.datasource
 
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.core.datasource.ExerciseDataSource
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
 import comliftbrodb.ExerciseQueries
 import comliftbrodb.SetQueries
-import comliftbrodb.VariationQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -21,11 +22,11 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.Instant
 import tv.dpal.ktx.datetime.toLocalDate
+import kotlin.time.ExperimentalTime
 
 class SqldelightExerciseDataSource(
     private val exerciseQueries: ExerciseQueries,
     private val setQueries: SetQueries,
-    private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ExerciseDataSource {
 
@@ -37,39 +38,39 @@ class SqldelightExerciseDataSource(
                 combine(
                     *variationSets.map { exercise ->
                         combine(
-                            setQueries.getOneRepMaxForVariation(
-                                exercise.variation_id,
+                            setQueries.getOneRepMaxForMovement(
+                                exercise.movement_id,
                                 Instant.DISTANT_FUTURE
                             ).asFlowOneOrNull(dispatcher),
-                            setQueries.getEMaxForVariation(
-                                exercise.variation_id,
+                            setQueries.getEMaxForMovement(
+                                exercise.movement_id,
                                 Instant.DISTANT_FUTURE
                             ).asFlowOneOrNull(dispatcher),
-                            setQueries.getMaxRepsForVariation(
-                                exercise.variation_id,
+                            setQueries.getMaxRepsForMovement(
+                                exercise.movement_id,
                                 Instant.DISTANT_FUTURE
                             ).asFlowOneOrNull(dispatcher),
                         ) { orm, volume, reps ->
                             Triple(
                                 exercise.exercise_variation_id,
                                 exercise.exercise_id,
-                                Variation(
-                                    id = exercise.variation_id,
-                                    name = exercise.variation_name,
-                                    notes = exercise.variation_notes,
-                                    favourite = exercise.variation_is_favourite == 1L,
+                                Movement(
+                                    id = exercise.movement_id,
+                                    name = exercise.movement_name,
+                                    notes = exercise.movement_notes,
+                                    favourite = exercise.movement_is_favourite == 1L,
                                     lift = Category(
                                         id = exercise.lift_id,
                                         color = exercise.lift_color?.toULong(),
                                         name = exercise.lift_name,
                                     ),
                                     oneRepMax = orm?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
                                     eMax = volume?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
                                     maxReps = reps?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
-                                    bodyWeight = exercise.variation_is_body_weight == 1L,
+                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
+                                    bodyWeight = exercise.movement_is_body_weight == 1L,
                                 )
                             )
                         }
@@ -89,16 +90,16 @@ class SqldelightExerciseDataSource(
                         VariationSets(
                             id = id,
                             variation = variation,
-                            sets = sets.filter { it.variationId == variation.id }
+                            sets = sets.filter { it.movementId == variation.id }
                                 .filter { it.date.toLocalDate() == it.date_ }
                                 .map {
                                     LBSet(
                                         id = it.id,
-                                        variationId = it.variationId,
+                                        variationId = it.movementId,
                                         weight = it.weight ?: 0.0,
                                         reps = it.reps ?: 1,
                                         date = it.date,
-                                        notes = it.notes ?: "",
+                                        notes = it.notes,
                                         rpe = it.rpe?.toInt(),
                                         tempo = com.lift.bro.domain.models.Tempo(
                                             down = it.tempoDown ?: 3,
@@ -124,7 +125,7 @@ class SqldelightExerciseDataSource(
                 exerciseQueries.saveVariation(
                     id = vSet.id,
                     exerciseId = exercise.id,
-                    varationId = vSet.variation.id,
+                    movementId = vSet.variation.id,
                 )
             }
         }
@@ -135,7 +136,7 @@ class SqldelightExerciseDataSource(
             exerciseQueries.saveVariation(
                 id = uuid4().toString(),
                 exerciseId = exerciseId,
-                varationId = variationId,
+                movementId = variationId,
             )
         }
     }

@@ -2,10 +2,10 @@ package com.lift.bro.data.datasource
 
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.toDomain
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.VariationSets
 import comliftbrodb.ExerciseQueries
@@ -58,39 +58,39 @@ class LBExerciseDataSource(
                 combine(
                     *variationSets.map { exercise ->
                         combine(
-                            setQueries.getOneRepMaxForVariation(
-                                exercise.variation_id,
+                            setQueries.getOneRepMaxForMovement(
+                                exercise.movement_id,
                                 Instant.DISTANT_FUTURE
                             ).flowToOneOrNull(),
-                            setQueries.getEMaxForVariation(
-                                exercise.variation_id,
+                            setQueries.getEMaxForMovement(
+                                exercise.movement_id,
                                 Instant.DISTANT_FUTURE
                             ).flowToOneOrNull(),
-                            setQueries.getMaxRepsForVariation(
-                                exercise.variation_id,
+                            setQueries.getMaxRepsForMovement(
+                                exercise.movement_id,
                                 Instant.DISTANT_FUTURE
                             ).flowToOneOrNull(),
                         ) { orm, volume, reps ->
                             Triple(
                                 exercise.exercise_variation_id,
                                 exercise.exercise_id,
-                                Variation(
-                                    id = exercise.variation_id,
-                                    name = exercise.variation_name,
-                                    notes = exercise.variation_notes,
-                                    favourite = exercise.variation_is_favourite == 1L,
-                                    bodyWeight = exercise.variation_is_body_weight?.let { it == 1L },
+                                Movement(
+                                    id = exercise.movement_id,
+                                    name = exercise.movement_name,
+                                    notes = exercise.movement_notes,
+                                    favourite = exercise.movement_is_favourite == 1L,
+                                    bodyWeight = exercise.movement_is_body_weight?.let { it == 1L },
                                     lift = Category(
                                         id = exercise.lift_id,
                                         color = exercise.lift_color?.toULong(),
                                         name = exercise.lift_name,
                                     ),
                                     oneRepMax = orm?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
                                     eMax = volume?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
                                     maxReps = reps?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.variation_is_body_weight?.let { it == 1L }),
+                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
                                 )
                             )
                         }
@@ -110,12 +110,12 @@ class LBExerciseDataSource(
                         VariationSets(
                             id = id,
                             variation = variation,
-                            sets = sets.filter { it.variationId == variation.id }
+                            sets = sets.filter { it.movementId == variation.id }
                                 .filter { it.date.toLocalDate() == it.date_ } // date_ is the workout date...
                                 .map {
                                     LBSet(
                                         id = it.id,
-                                        variationId = it.variationId,
+                                        variationId = it.movementId,
                                         weight = it.weight ?: 0.0,
                                         reps = it.reps ?: 1,
                                         date = it.date,
@@ -146,7 +146,7 @@ class LBExerciseDataSource(
                 exerciseQueries.saveVariation(
                     id = vSet.id,
                     exerciseId = exercise.id,
-                    varationId = vSet.variation.id,
+                    movementId = vSet.variation.id,
                 )
             }
         }
@@ -179,7 +179,7 @@ class LBExerciseDataSource(
             exerciseQueries.saveVariation(
                 id = uuid4().toString(),
                 exerciseId = exerciseId,
-                varationId = variationId,
+                movementId = variationId,
             )
         }
     }

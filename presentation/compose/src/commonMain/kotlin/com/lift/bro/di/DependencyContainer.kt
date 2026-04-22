@@ -113,7 +113,7 @@ val DependencyContainer.variationRepository: IVariationRepository
                 SqlDelightVariationDataSource(
                     categoryQueries = database.categoryQueries,
                     setQueries = database.setQueries,
-                    variationQueries = database.variationQueries,
+                    movementQueries = database.movementQueries,
                 )
             } else {
                 KtorVariationDataSource(
@@ -127,7 +127,7 @@ val DependencyContainer.localVariationRepository: IVariationRepository
             local = SqlDelightVariationDataSource(
                 categoryQueries = database.categoryQueries,
                 setQueries = database.setQueries,
-                variationQueries = database.variationQueries,
+                movementQueries = database.movementQueries,
             )
         )
 
@@ -163,7 +163,6 @@ val DependencyContainer.exerciseRepository: IExerciseRepository
             local = SqldelightExerciseDataSource(
                 exerciseQueries = database.exerciseQueries,
                 setQueries = database.setQueries,
-                variationQueries = database.variationQueries,
             )
         )
 

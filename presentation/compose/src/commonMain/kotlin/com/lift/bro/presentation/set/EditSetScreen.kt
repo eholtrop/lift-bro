@@ -49,8 +49,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Category
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.domain.models.Variation
 import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.presentation.set.components.EditSetVariationSelector
 import com.lift.bro.ui.Fade
@@ -634,7 +634,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             EditSetState(
                 id = null,
                 variation = SetVariation(
-                    Variation(
+                    Movement(
                         lift = Category(
                             name = "Squat",
                             color = 0xFF2196F3uL
@@ -656,7 +656,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             EditSetState(
                 id = "set1",
                 variation = SetVariation(
-                    Variation(
+                    Movement(
                         lift = Category(
                             name = "Bench Press",
                             color = 0xFF4CAF50uL
@@ -680,7 +680,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             EditSetState(
                 id = "set2",
                 variation = SetVariation(
-                    Variation(
+                    Movement(
                         lift = Category(
                             name = "Deadlift",
                             color = 0xFFFF5722uL

@@ -59,7 +59,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.variationRepository
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.presentation.variation.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.VariationTextField
@@ -83,7 +83,7 @@ data class VariationSearchState(
     val visible: Boolean,
     val query: String,
     val placeholder: String,
-    val variations: List<Variation>,
+    val variations: List<Movement>,
 ) {
     val filteredVariations
         get() = variations.filter { it.fullName.contains(query, ignoreCase = true) }
@@ -94,7 +94,7 @@ data class VariationSearchState(
 sealed interface VariationSearchEvent {
     data class QueryChanged(val query: String): VariationSearchEvent
 
-    data class VariationSelected(val variation: Variation): VariationSearchEvent
+    data class VariationSelected(val variation: Movement): VariationSearchEvent
 
     data object Dismiss: VariationSearchEvent
 }
@@ -105,7 +105,7 @@ fun VariationSearchDialog(
     query: String = "",
     textFieldPlaceholder: String,
     onDismissRequest: () -> Unit,
-    onVariationSelected: (Variation) -> Unit,
+    onVariationSelected: (Movement) -> Unit,
 ) {
     VariationSearchDialog(
         onDismissRequest = onDismissRequest,
@@ -255,8 +255,8 @@ fun VariationSearchDialog(
 @Composable
 private fun VariationSearchContent(
     modifier: Modifier = Modifier,
-    variations: List<Variation> = emptyList(),
-    variationSelected: (Variation) -> Unit,
+    variations: List<Movement> = emptyList(),
+    variationSelected: (Movement) -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -290,7 +290,7 @@ private fun VariationSearchContent(
                 var addVariationClicked by remember { mutableStateOf(false) }
 
                 if (addVariationClicked) {
-                    var variation by remember { mutableStateOf(Variation()) }
+                    var variation by remember { mutableStateOf(Movement()) }
 
                     val coroutineScope = rememberCoroutineScope()
                     VariationTextField(
@@ -362,9 +362,9 @@ private fun VariationSearchContent(
 
 @Composable
 private fun SearchVariationItem(
-    variation: Variation,
+    variation: Movement,
     modifier: Modifier = Modifier,
-    onClick: (Variation) -> Unit,
+    onClick: (Movement) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -428,7 +428,7 @@ fun VariationSearchDialogPreview(@PreviewParameter(DarkModeProvider::class) isDa
                 query = "test",
                 placeholder = "asdf",
                 variations = listOf(
-                    Variation()
+                    Movement()
                 )
 
             ),

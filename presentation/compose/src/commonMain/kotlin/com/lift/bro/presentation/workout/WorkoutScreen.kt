@@ -63,8 +63,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Category
+import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.LocalTwmSettings
@@ -864,7 +864,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                                 variationSets = listOf(
                                     VariationSets(
                                         id = "vs1",
-                                        variation = com.lift.bro.domain.models.Variation(
+                                        variation = com.lift.bro.domain.models.Movement(
                                             lift = Category(
                                                 id = "lift1",
                                                 name = "Squat",
@@ -883,7 +883,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                                     ),
                                     VariationSets(
                                         id = "vs1",
-                                        variation = com.lift.bro.domain.models.Variation(
+                                        variation = com.lift.bro.domain.models.Movement(
                                             lift = Category(
                                                 id = "lift1",
                                                 name = "Squat",
@@ -928,7 +928,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                         variations = listOf(
                             VariationItem.WithSets(
                                 id = "var1",
-                                variation = com.lift.bro.domain.models.Variation(
+                                variation = com.lift.bro.domain.models.Movement(
                                     lift = com.lift.bro.domain.models.Category(
                                         name = "Squat",
                                         color = 0xFF2196F3uL

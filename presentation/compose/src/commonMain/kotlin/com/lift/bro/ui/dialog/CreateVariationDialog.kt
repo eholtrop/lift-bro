@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.DialogProperties
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.ui.DropDownButton
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 fun VariationDialog(
     modifier: Modifier = Modifier,
-    variation: Variation,
+    variation: Movement,
     title: String,
     onDismissRequest: () -> Unit,
     onVariationSaved: (String) -> Unit,

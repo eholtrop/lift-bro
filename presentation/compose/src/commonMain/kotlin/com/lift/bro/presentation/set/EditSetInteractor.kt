@@ -8,8 +8,8 @@ import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
@@ -69,7 +69,7 @@ data class EditSetState(
 
 @Serializable
 data class SetVariation(
-    val variation: Variation,
+    val variation: Movement,
     val variationMaxPercentage: EditSetMaxPercentageState? = null,
     val liftMaxPercentage: EditSetMaxPercentageState? = null,
 )
@@ -82,7 +82,7 @@ data class TempoState(
 )
 
 sealed interface EditSetEvent {
-    data class VariationSelected(val variation: Variation): EditSetEvent
+    data class VariationSelected(val variation: Movement): EditSetEvent
 
     data class DateSelected(val date: LocalDate): EditSetEvent
 
@@ -232,7 +232,7 @@ fun editSetSideEffects(
 }
 
 internal suspend fun LBSet.toUiState(
-    variation: Variation?,
+    variation: Movement?,
     maxVariationSet: LBSet?,
     maxLiftSet: LBSet?,
     v2: Boolean,
@@ -240,7 +240,7 @@ internal suspend fun LBSet.toUiState(
     id = this.id,
     variation = variation?.let {
         SetVariation(
-            variation = Variation(id = this.variationId),
+            variation = Movement(id = this.variationId),
             variationMaxPercentage = maxVariationSet?.let {
                 EditSetMaxPercentageState(
                     percentage = ((this.weight / max(maxVariationSet.weight, 1.0)) * 100).toInt(),

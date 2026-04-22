@@ -2,7 +2,7 @@ package com.lift.bro
 
 import com.benasher44.uuid.uuid4
 import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 
 private val defaultSBDLifts = listOf(
     Category(
@@ -24,45 +24,45 @@ private val defaultSBDLifts = listOf(
 
 private val debugVariations = listOf(
     // squat variations
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Squat" },
         name = "Back"
     ),
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Squat" },
         name = "Front"
     ),
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Squat" },
         name = "Zercher"
     ),
     // press variations
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Press" },
         name = "Bench"
     ),
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Press" },
         name = "Floor"
     ),
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Press" },
         name = "Incline Bench"
     ),
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Press" },
         name = "Military"
     ),
     // deadlift variations
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Deadlift" },
         name = "Sumo"
     ),
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Deadlift" },
         name = "Regular"
     ),
-    Variation(
+    Movement(
         lift = defaultSBDLifts.first { it.name == "Deadlift" },
         name = "Negative"
     ),

@@ -4,15 +4,14 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.VariationDataSource
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.repositories.Sorting
 import comliftbrodb.CategoryQueries
-import comliftbrodb.GetAllSets
+import comliftbrodb.GetAllForCategory
+import comliftbrodb.MovementQueries
 import comliftbrodb.SetQueries
-import comliftbrodb.VariationQueries
-import comliftbrodb.variation.GetAllForLift
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -21,18 +20,20 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.datetime.Instant
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 class SqlDelightVariationDataSource(
     private val categoryQueries: CategoryQueries,
     private val setQueries: SetQueries,
-    private val variationQueries: VariationQueries,
+    private val movementQueries: MovementQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : VariationDataSource {
 
-    override suspend fun save(variation: Variation) {
-        variationQueries.save(
+    override suspend fun save(variation: Movement) {
+        movementQueries.save(
             id = variation.id,
-            liftId = variation.lift?.id!!,
+            categoryId = variation.lift?.id!!,
             name = variation.name,
             notes = variation.notes,
             favourite = if (variation.favourite) 1 else 0,
@@ -41,38 +42,38 @@ class SqlDelightVariationDataSource(
     }
 
     override suspend fun delete(id: String) {
-        variationQueries.delete(id)
+        movementQueries.delete(id)
     }
 
     override suspend fun deleteAll() {
-        variationQueries.deleteAll()
+        movementQueries.deleteAll()
     }
 
-    override fun listen(id: String): Flow<Variation?> =
+    override fun listen(id: String): Flow<Movement?> =
         combine(
-            variationQueries.get(id).asFlow().mapToOneOrNull(dispatcher),
-            setQueries.getAllByVariation(id, Long.MAX_VALUE).asFlow().mapToList(dispatcher),
+            movementQueries.get(id).asFlow().mapToOneOrNull(dispatcher),
+            setQueries.getAllByMovement(id, Long.MAX_VALUE).asFlow().mapToList(dispatcher),
         ) { variation, sets ->
-            val lift = categoryQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
+            val lift = categoryQueries.get(variation?.categoryId ?: "").executeAsOneOrNull()
             variation?.toDomain(
                 parentLift = lift?.toDomain(),
                 sets = sets.map { it.toDomain() }
             )
         }.flowOn(dispatcher)
 
-    override fun listenAll(): Flow<List<Variation>> =
-        variationQueries.getAll().asFlow().mapToList(dispatcher).flatMapLatest { variations ->
+    override fun listenAll(): Flow<List<Movement>> =
+        movementQueries.getAll().asFlow().mapToList(dispatcher).flatMapLatest { variations ->
             combine(
                 *variations.map { variation ->
                     combine(
-                        setQueries.getOneRepMaxForVariation(variation.id, Instant.DISTANT_FUTURE)
+                        setQueries.getOneRepMaxForMovement(variation.id, Instant.DISTANT_FUTURE)
                             .asFlow().mapToOneOrNull(dispatcher),
-                        setQueries.getEMaxForVariation(variation.id, Instant.DISTANT_FUTURE)
+                        setQueries.getEMaxForMovement(variation.id, Instant.DISTANT_FUTURE)
                             .asFlow().mapToOneOrNull(dispatcher),
-                        setQueries.getMaxRepsForVariation(variation.id, Instant.DISTANT_FUTURE)
+                        setQueries.getMaxRepsForMovement(variation.id, Instant.DISTANT_FUTURE)
                             .asFlow().mapToOneOrNull(dispatcher),
                     ) { orm, volume, reps ->
-                        Variation(
+                        Movement(
                             id = variation.id,
                             name = variation.name,
                             notes = variation.notes,
@@ -92,19 +93,19 @@ class SqlDelightVariationDataSource(
             ) { it.toList() }
         }.flowOn(dispatcher)
 
-    override fun listenAllForLift(liftId: String?): Flow<List<Variation>> =
+    override fun listenAllForLift(liftId: String?): Flow<List<Movement>> =
         combine(
-            variationQueries.getAllForLift(liftId).asFlowList(),
+            movementQueries.getAllForCategory(liftId).asFlowList(),
             setQueries.getAllSets(
                 limit = Long.MAX_VALUE,
                 startDate = Instant.DISTANT_PAST,
                 endDate = Instant.DISTANT_FUTURE,
-                variationId = null,
+                movementId = null,
                 reps = null,
                 sortBy = Sorting.date.toString(),
                 order = 0,
             ).asFlowList(),
-        ) { variations: List<GetAllForLift>, sets: List<GetAllSets> ->
+        ) { variations, sets ->
             variations.map { variation ->
                 variation.toDomain(
                     parentLift = Category(
@@ -112,33 +113,33 @@ class SqlDelightVariationDataSource(
                         color = variation.color?.toULong(),
                         name = variation.name_,
                     ),
-                    sets = sets.filter { it.variationId == variation.id }.map { it.toDomain() }
+                    sets = sets.filter { it.categoryId == variation.id }.map { it.toDomain() }
                 )
             }
         }.flowOn(dispatcher)
 
-    override fun get(id: String): Variation? {
-        val variation = variationQueries.get(id).executeAsOneOrNull()
-        val lift = categoryQueries.get(variation?.liftId ?: "").executeAsOneOrNull()
-        val sets = setQueries.getAllByVariation(id, Long.MAX_VALUE).executeAsList()
+    override fun get(id: String): Movement? {
+        val variation = movementQueries.get(id).executeAsOneOrNull()
+        val lift = categoryQueries.get(variation?.categoryId ?: "").executeAsOneOrNull()
+        val sets = setQueries.getAllByMovement(id, Long.MAX_VALUE).executeAsList()
         return variation?.toDomain(
             parentLift = lift?.toDomain(),
             sets = sets.map { it.toDomain() }
         )
     }
 
-    override fun getAll(): List<Variation> {
+    override fun getAll(): List<Movement> {
         val sets = setQueries.getAllSets(
             limit = Long.MAX_VALUE,
             startDate = Instant.DISTANT_PAST,
             endDate = Instant.DISTANT_FUTURE,
-            variationId = null,
+            movementId = null,
             sortBy = Sorting.date.toString(),
             order = 0,
             reps = null,
         ).executeAsList().map { it.toDomain() }
-        return variationQueries.getAll().executeAsList().map { variation ->
-            Variation(
+        return movementQueries.getAll().executeAsList().map { variation ->
+            Movement(
                 id = variation.id,
                 name = variation.name,
                 notes = variation.notes,
@@ -165,25 +166,25 @@ private fun comliftbrodb.Lift.toDomain() = Category(
     name = this.name,
     color = this.color?.toULong(),
 )
+//
+// private fun comliftbrodb.GetAll.toDomain(): Movement = Movement(
+//    id = this.id,
+//    lift = Category(
+//        id = this.lift_id,
+//        name = this.lift_name,
+//        color = this.lift_color?.toULong(),
+//    ),
+//    name = this.name,
+//    eMax = null,
+//    maxReps = null,
+//    oneRepMax = null,
+//    bodyWeight = this.body_weight?.let { it == 1L },
+// )
 
-private fun comliftbrodb.GetAll.toDomain(): Variation = Variation(
-    id = this.id,
-    lift = Category(
-        id = this.lift_id,
-        name = this.lift_name,
-        color = this.lift_color?.toULong(),
-    ),
-    name = this.name,
-    eMax = null,
-    maxReps = null,
-    oneRepMax = null,
-    bodyWeight = this.body_weight?.let { it == 1L },
-)
-
-private fun comliftbrodb.Variation.toDomain(
+private fun comliftbrodb.Movement.toDomain(
     parentLift: Category?,
     sets: List<LBSet>,
-): Variation = Variation(
+): Movement = Movement(
     id = this.id,
     lift = parentLift,
     name = this.name,
@@ -196,10 +197,10 @@ private fun comliftbrodb.Variation.toDomain(
     bodyWeight = this.body_weight?.let { it == 1L },
 )
 
-private fun GetAllForLift.toDomain(
+private fun GetAllForCategory.toDomain(
     parentLift: Category?,
     sets: List<LBSet>,
-): Variation = Variation(
+): Movement = Movement(
     id = this.id,
     lift = parentLift,
     name = this.name,
@@ -211,9 +212,9 @@ private fun GetAllForLift.toDomain(
     bodyWeight = this.body_weight?.let { it == 1L },
 )
 
-private fun comliftbrodb.GetAllByVariation.toDomain(): LBSet = LBSet(
+private fun comliftbrodb.GetAllByMovement.toDomain(): LBSet = LBSet(
     id = this.id,
-    variationId = this.variationId,
+    variationId = this.movementId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
     tempo = com.lift.bro.domain.models.Tempo(

@@ -7,7 +7,7 @@ typealias ExerciseId = String
 @Serializable
 data class VariationSets(
     val id: String,
-    val variation: Variation,
+    val variation: Movement,
     val sets: List<LBSet>
 )
 

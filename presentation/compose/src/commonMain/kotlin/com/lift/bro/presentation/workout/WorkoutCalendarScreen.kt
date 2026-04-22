@@ -58,7 +58,7 @@ import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.presentation.ApplicationScope
@@ -170,7 +170,7 @@ data class DailyWorkoutDetailsState(
     val selectedDate: LocalDate,
     val log: LiftingLog?,
     val selectedWorkout: Workout?,
-    val potentialExercises: List<Pair<Variation, List<LBSet>>>,
+    val potentialExercises: List<Pair<Movement, List<LBSet>>>,
 ) {
     val selectedWorkoutPopulated: Boolean =
         selectedWorkout == null ||
@@ -523,7 +523,7 @@ private const val GRADIENT_SIZE = 50f
 @Composable
 fun VariationSet(
     modifier: Modifier = Modifier,
-    variation: Variation,
+    variation: Movement,
     index: Int? = null,
     sets: List<LBSet>,
 ) {

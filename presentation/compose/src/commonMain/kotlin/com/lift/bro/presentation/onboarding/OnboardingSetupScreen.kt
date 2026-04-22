@@ -42,9 +42,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
-import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.ui.RadioButtonCard
 import com.lift.bro.ui.Space
@@ -66,7 +66,7 @@ fun OnboardingSetupScreen(
     formSubmitted: () -> Unit
 ) {
     var uom by remember { mutableStateOf(UOM.POUNDS) }
-    val selectedVariations = remember { mutableStateListOf<Variation>() }
+    val selectedVariations = remember { mutableStateListOf<Movement>() }
 
     Column(
         modifier = Modifier
@@ -188,7 +188,7 @@ fun OnboardingSetupScreen(
 
 @Composable
 private fun OnboardingLiftSelector(
-    selectedVariations: SnapshotStateList<Variation>,
+    selectedVariations: SnapshotStateList<Movement>,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()

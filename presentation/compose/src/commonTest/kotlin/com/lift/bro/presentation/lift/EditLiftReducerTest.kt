@@ -1,6 +1,6 @@
 package com.lift.bro.presentation.lift
 
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,8 +40,8 @@ class EditLiftReducerTest {
     @Test
     fun `Given state with variations When VariationNameChanged Then updates matching variation`() = runTest {
         // Given
-        val variation1 = Variation(id = "v1", name = "Original Name 1")
-        val variation2 = Variation(id = "v2", name = "Original Name 2")
+        val variation1 = Movement(id = "v1", name = "Original Name 1")
+        val variation2 = Movement(id = "v2", name = "Original Name 2")
         val state = EditLiftState(
             id = "1",
             name = "Lift",
@@ -62,8 +62,8 @@ class EditLiftReducerTest {
     @Test
     fun `Given state When VariationNameChanged with non-existent variation Then returns state unchanged`() = runTest {
         // Given
-        val variation1 = Variation(id = "v1", name = "Name 1")
-        val nonExistentVariation = Variation(id = "non-existent", name = "Non Existent")
+        val variation1 = Movement(id = "v1", name = "Name 1")
+        val nonExistentVariation = Movement(id = "non-existent", name = "Non Existent")
         val state = EditLiftState(
             id = "1",
             name = "Lift",
@@ -83,7 +83,7 @@ class EditLiftReducerTest {
     @Test
     fun `Given state When AddVariation Then adds new variation to start of list`() = runTest {
         // Given
-        val existingVariation = Variation(id = "v1", name = "Existing")
+        val existingVariation = Movement(id = "v1", name = "Existing")
         val state = EditLiftState(
             id = "1",
             name = "Lift",
@@ -118,9 +118,9 @@ class EditLiftReducerTest {
     @Test
     fun `Given state with variations When VariationRemoved Then removes matching variation`() = runTest {
         // Given
-        val variation1 = Variation(id = "v1", name = "Variation 1")
-        val variation2 = Variation(id = "v2", name = "Variation 2")
-        val variation3 = Variation(id = "v3", name = "Variation 3")
+        val variation1 = Movement(id = "v1", name = "Variation 1")
+        val variation2 = Movement(id = "v2", name = "Variation 2")
+        val variation3 = Movement(id = "v3", name = "Variation 3")
         val state = EditLiftState(
             id = "1",
             name = "Lift",
@@ -141,8 +141,8 @@ class EditLiftReducerTest {
     @Test
     fun `Given state When VariationRemoved with non-existent variation Then returns state unchanged`() = runTest {
         // Given
-        val variation1 = Variation(id = "v1", name = "Variation 1")
-        val nonExistentVariation = Variation(id = "non-existent", name = "Non Existent")
+        val variation1 = Movement(id = "v1", name = "Variation 1")
+        val nonExistentVariation = Movement(id = "non-existent", name = "Non Existent")
         val state = EditLiftState(
             id = "1",
             name = "Lift",

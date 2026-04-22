@@ -3,7 +3,7 @@ package com.lift.bro.utils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.LocalEMaxSettings
@@ -13,10 +13,10 @@ import kotlinx.datetime.LocalDate
 import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.math.roundToInt
 
-val Variation.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
+val Movement.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
 
 @Composable
-fun Variation.maxText(): AnnotatedString {
+fun Movement.maxText(): AnnotatedString {
     return buildAnnotatedString {
         when {
             bodyWeight == true -> {
@@ -55,7 +55,7 @@ fun Variation.maxText(): AnnotatedString {
     }
 }
 
-val Variation.maxDate: LocalDate? get() = if (bodyWeight == true) {
+val Movement.maxDate: LocalDate? get() = if (bodyWeight == true) {
     maxReps?.date?.toLocalDate()
 } else {
     eMax?.date?.toLocalDate()
