@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
@@ -115,7 +114,7 @@ fun DashboardContent(
                     ) { index, item ->
                         when (item) {
                             is DashboardListItem.LiftHeader -> {
-                                LiftHeader(
+                                DashboardLiftHeader(
                                     v2 = item.v3,
                                     showRpe = showRpe,
                                     showTempo = showTempo,
@@ -123,7 +122,8 @@ fun DashboardContent(
                                     onToggleRpe = { showRpe = !showRpe },
                                     onToggleTempo = { showTempo = !showTempo },
                                     toggleFavourite = { interactor(DashboardEvent.FavouritesAtTopToggled) },
-                                    optionSelected = { interactor(DashboardEvent.SortingOptionSelected(it)) }
+                                    optionSelected = { interactor(DashboardEvent.SortingOptionSelected(it)) },
+                                    onAddCategoryClicked = { interactor(DashboardEvent.AddLiftClicked) }
                                 )
                             }
 
@@ -223,272 +223,6 @@ fun DashboardContent(
     }
 }
 
-@Composable
-fun LiftHeader(
-    modifier: Modifier = Modifier,
-    v2: Boolean,
-    sortingSettings: SortingSettings,
-    showWeight: MutableState<LiftCardYValue> = LocalLiftCardYValue.current,
-    showTempo: Boolean,
-    showRpe: Boolean,
-    onToggleTempo: () -> Unit,
-    onToggleRpe: () -> Unit,
-    optionSelected: (SortingOption) -> Unit,
-    toggleFavourite: () -> Unit,
-) {
-    when (v2) {
-        false -> Row(
-            modifier = modifier
-                .padding(top = MaterialTheme.spacing.two),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Row(
-                modifier = Modifier.background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = MaterialTheme.shapes.medium
-                ).border(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    shape = MaterialTheme.shapes.medium
-                )
-                    .animateContentSize()
-            ) {
-                var showButtons by remember { mutableStateOf(false) }
-                if (!showButtons) {
-                    IconButton(
-                        onClick = {
-                            showButtons = true
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.BarChart,
-                            contentDescription = "Graph Settings"
-                        )
-                    }
-                } else {
-                    Button(
-                        colors = ButtonDefaults.textButtonColors(),
-                        shape = MaterialTheme.shapes.medium.copy(
-                            topEnd = CornerSize(0.dp),
-                            bottomEnd = CornerSize(0.dp),
-                        ),
-                        onClick = {
-                            showWeight.value =
-                                if (showWeight.value == LiftCardYValue.Weight) {
-                                    LiftCardYValue.Reps
-                                } else {
-                                    LiftCardYValue.Weight
-                                }
-                        }
-                    ) {
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(
-                                    style = LocalTextStyle.current
-                                        .copy(
-                                            color = if (showWeight.value == LiftCardYValue.Weight) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                TextFieldDefaults.colors().disabledTextColor
-                                            }
-                                        )
-                                        .toSpanStyle()
-                                ) {
-                                    append(LocalUnitOfMeasure.current.value)
-                                }
-                                append("/")
-                                withStyle(
-                                    style = LocalTextStyle.current
-                                        .copy(
-                                            color = if (showWeight.value == LiftCardYValue.Reps) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                TextFieldDefaults.colors().disabledTextColor
-                                            }
-                                        )
-                                        .toSpanStyle()
-                                ) {
-                                    append(stringResource(Res.string.reps))
-                                }
-                            }
-                        )
-                    }
-                    Button(
-                        colors = ButtonDefaults.textButtonColors(),
-                        shape = RectangleShape,
-                        onClick = {
-                            onToggleRpe()
-                        }
-                    ) {
-                        Text(
-                            text = "rpe",
-                            color = if (showRpe) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                TextFieldDefaults.colors().disabledTextColor
-                            }
-                        )
-                    }
-                    Button(
-                        colors = ButtonDefaults.textButtonColors(),
-                        shape = RectangleShape,
-                        onClick = {
-                            onToggleTempo()
-                        }
-                    ) {
-                        Text(
-                            text = "tempo",
-                            color = if (showTempo) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                TextFieldDefaults.colors().disabledTextColor
-                            }
-                        )
-                    }
-                }
-            }
-        }
-
-        true -> {
-            Column(
-                modifier = Modifier
-                    .padding(
-                        top = MaterialTheme.spacing.one,
-                        bottom = MaterialTheme.spacing.half
-                    )
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.surface,
-                                Color.Transparent,
-                            ),
-                            end = Offset(80f, 50f),
-                        ),
-                        shape = MaterialTheme.shapes.medium.copy(
-                            bottomEnd = CornerSize(0.dp),
-                            bottomStart = CornerSize(0.dp),
-                        ),
-                    ).padding(
-                        top = MaterialTheme.spacing.threeQuarters,
-                        horizontal = MaterialTheme.spacing.half
-                    ),
-            ) {
-                Text(
-                    text = "Lift Stats \uD83E\uDD13",
-                    style = MaterialTheme.typography.titleLarge
-                )
-                Space(MaterialTheme.spacing.quarter)
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
-                ) {
-                    ChipButton(
-                        onClick = {
-                            showWeight.value =
-                                if (showWeight.value == LiftCardYValue.Weight) {
-                                    LiftCardYValue.Reps
-                                } else {
-                                    LiftCardYValue.Weight
-                                }
-                        }
-                    ) {
-                        Text(
-                            text = buildAnnotatedString {
-                                withStyle(
-                                    style = LocalTextStyle.current
-                                        .copy(
-                                            color = if (showWeight.value == LiftCardYValue.Weight) {
-                                                MaterialTheme.colorScheme.onPrimary
-                                            } else {
-                                                TextFieldDefaults.colors().disabledTextColor
-                                            }
-                                        )
-                                        .toSpanStyle()
-                                ) {
-                                    append(LocalUnitOfMeasure.current.value)
-                                }
-                                append("/")
-                                withStyle(
-                                    style = LocalTextStyle.current
-                                        .copy(
-                                            color = if (showWeight.value == LiftCardYValue.Reps) {
-                                                MaterialTheme.colorScheme.onPrimary
-                                            } else {
-                                                TextFieldDefaults.colors().disabledTextColor
-                                            }
-                                        )
-                                        .toSpanStyle()
-                                ) {
-                                    append(stringResource(Res.string.reps))
-                                }
-                            }
-                        )
-                    }
-                    ChipButton(
-                        onClick = {
-                            onToggleRpe()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.BarChart,
-                            contentDescription = null
-                        )
-                        Text(
-                            text = "rpe",
-                            color = if (showRpe) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                TextFieldDefaults.colors().disabledTextColor
-                            }
-                        )
-                    }
-                    ChipButton(
-                        onClick = {
-                            onToggleTempo()
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.BarChart,
-                            contentDescription = null
-                        )
-                        Text(
-                            text = "tempo",
-                            color = if (showTempo) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                TextFieldDefaults.colors().disabledTextColor
-                            }
-                        )
-                    }
-
-                    Space()
-
-                    var showSortingDialog by remember { mutableStateOf(false) }
-
-                    if (showSortingDialog) {
-                        DashboardSortingDialog(
-                            sortingSettings = sortingSettings,
-                            toggleFavourite = toggleFavourite,
-                            optionSelected = optionSelected,
-                            onDismissRequest = { showSortingDialog = false },
-                        )
-                    }
-
-                    ChipButton(
-                        onClick = {
-                            showSortingDialog = true
-                        }
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Default.Sort,
-                            contentDescription = "Sort"
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 private fun DashboardListItem.gridSize(listSize: Int = 0): Int = when (this) {
     is DashboardListItem.LiftCard -> 1
