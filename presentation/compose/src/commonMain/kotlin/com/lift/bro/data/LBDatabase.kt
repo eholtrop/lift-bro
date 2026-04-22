@@ -11,16 +11,16 @@ import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.toDomain
 import com.lift.bro.db.LiftBroDB
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.calculateMax
 import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.Sorting
+import comliftbrodb.CategoryQueries
 import comliftbrodb.GetAll
 import comliftbrodb.GetAllByVariation
 import comliftbrodb.Goal
-import comliftbrodb.LiftQueries
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
@@ -60,7 +60,7 @@ class LBDatabase(
 
     @Deprecated("use the liftRepository instead")
     val liftDataSource: LiftDataSource = LiftDataSource(
-        database.liftQueries,
+        database.categoryQueries,
         database.setQueries,
         database.variationQueries
     )
@@ -80,7 +80,7 @@ class LBDatabase(
     val workoutDataSource = database.workoutQueries
 
     // Expose queries for DI wiring of SQLDelight-backed datasources
-    val liftQueries get() = database.liftQueries
+    val categoryQueries get() = database.categoryQueries
     val setQueries get() = database.setQueries
     val variationQueries get() = database.variationQueries
     val exerciseQueries get() = database.exerciseQueries
@@ -90,7 +90,7 @@ class LBDatabase(
     val goalQueries get() = database.goalQueries
 
     suspend fun clear() {
-        database.liftQueries.deleteAll()
+        database.categoryQueries.deleteAll()
         database.variationQueries.deleteAll()
         database.setQueries.deleteAll()
         database.exerciseQueries.deleteAll()
@@ -104,7 +104,7 @@ class LBDatabase(
     )
 
     val variantDataSource: VariationDataSource = SqlDelightVariationDataSource(
-        liftQueries = database.liftQueries,
+        categoryQueries = database.categoryQueries,
         setQueries = database.setQueries,
         variationQueries = database.variationQueries
     )
@@ -290,24 +290,24 @@ fun GetAllByVariation.toDomain() = LBSet(
 )
 
 class LiftDataSource(
-    private val liftQueries: LiftQueries,
+    private val categoryQueries: CategoryQueries,
     private val setQueries: SetQueries,
     private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
-    fun get(id: String?): Flow<Lift?> =
-        liftQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
+    fun get(id: String?): Flow<Category?> =
+        categoryQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
 
-    fun listenAll(): Flow<List<Lift>> =
-        liftQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
+    fun listenAll(): Flow<List<Category>> =
+        categoryQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
 
-    fun getAll(): List<Lift> =
-        liftQueries.getAll().executeAsList().map { it.toDomain() }
+    fun getAll(): List<Category> =
+        categoryQueries.getAll().executeAsList().map { it.toDomain() }
 
-    fun save(lift: Lift): Boolean {
+    fun save(lift: Category): Boolean {
         GlobalScope.launch(dispatcher) {
-            liftQueries.save(
+            categoryQueries.save(
                 lift.id,
                 lift.name,
                 lift.color?.toLong(),
@@ -317,15 +317,15 @@ class LiftDataSource(
     }
 
     suspend fun deleteAll() {
-        liftQueries.deleteAll()
+        categoryQueries.deleteAll()
     }
 
     suspend fun delete(liftId: String) {
-        liftQueries.delete(liftId)
+        categoryQueries.delete(liftId)
     }
 }
 
-internal fun comliftbrodb.Lift.toDomain() = Lift(
+internal fun comliftbrodb.Lift.toDomain() = Category(
     id = this.id,
     name = this.name,
     color = this.color?.toULong(),
@@ -334,7 +334,7 @@ internal fun comliftbrodb.Lift.toDomain() = Lift(
 internal fun GetAll.toDomain(): Variation {
     return Variation(
         id = this.id,
-        lift = Lift(
+        lift = Category(
             id = this.lift_id,
             name = this.lift_name,
             color = this.lift_color?.toULong(),
@@ -348,7 +348,7 @@ internal fun GetAll.toDomain(): Variation {
 }
 
 internal fun comliftbrodb.Variation.toDomain(
-    parentLift: Lift?,
+    parentLift: Category?,
     sets: List<LBSet>,
 ) = Variation(
     id = this.id,

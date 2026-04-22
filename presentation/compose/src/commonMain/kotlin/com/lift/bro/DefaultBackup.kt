@@ -1,21 +1,21 @@
 package com.lift.bro
 
 import com.benasher44.uuid.uuid4
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Variation
 
 private val defaultSBDLifts = listOf(
-    Lift(
+    Category(
         id = uuid4().toString(),
         name = "Squat",
         color = null,
     ),
-    Lift(
+    Category(
         id = uuid4().toString(),
         name = "Press",
         color = null
     ),
-    Lift(
+    Category(
         id = uuid4().toString(),
         name = "Deadlift",
         color = null,

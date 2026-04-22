@@ -14,7 +14,7 @@ typealias VariationId = String
 @Serializable
 data class Variation(
     val id: VariationId = uuid4().toString(),
-    val lift: Lift? = null,
+    val lift: Category? = null,
     val name: String? = null,
     val reps: Long = 1,
     val favourite: Boolean = false,

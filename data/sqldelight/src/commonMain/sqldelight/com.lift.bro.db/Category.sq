@@ -1,22 +1,22 @@
-CREATE TABLE Lift (
+CREATE TABLE Category (
     id TEXT NOT NULL PRIMARY KEY,
     name TEXT NOT NULL,
     color INTEGER DEFAULT NULL
 );
 
 get:
-SELECT * FROM Lift WHERE id = ?;
+SELECT * FROM Category WHERE id = ?;
 
 getAll:
-SELECT * FROM Lift;
+SELECT * FROM Category;
 
 save:
 INSERT OR REPLACE
-INTO Lift(id, name, color)
+INTO Category(id, name, color)
 VALUES(?, ?, ?);
 
 delete:
-DELETE FROM Lift WHERE id = ?;
+DELETE FROM Category WHERE id = ?;
 
 deleteAll:
 DELETE FROM Category;

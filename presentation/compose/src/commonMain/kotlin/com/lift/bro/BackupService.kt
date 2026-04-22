@@ -9,7 +9,7 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Variation
 import com.lift.bro.domain.models.Workout
@@ -44,7 +44,7 @@ import kotlin.time.Clock
 
 @Serializable
 data class Backup(
-    val lifts: List<Lift>? = null,
+    val lifts: List<Category>? = null,
     val variations: List<Variation>? = null,
     val sets: List<LBSet>? = null,
     val liftingLogs: List<LiftingLog>? = null,

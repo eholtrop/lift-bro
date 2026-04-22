@@ -9,7 +9,7 @@ class VariationTest {
     fun `Given variation with name and lift When fullName Then returns combined trimmed name`() {
         val variation = Variation(
             name = "Close Grip",
-            lift = Lift(name = "Bench Press")
+            lift = Category(name = "Bench Press")
         )
 
         assertEquals("Close Grip Bench Press", variation.fullName)
@@ -19,7 +19,7 @@ class VariationTest {
     fun `Given variation with null name When fullName Then returns only lift name`() {
         val variation = Variation(
             name = null,
-            lift = Lift(name = "Squat")
+            lift = Category(name = "Squat")
         )
 
         assertEquals("Squat", variation.fullName)
@@ -40,7 +40,7 @@ class VariationTest {
     fun `Given variation with whitespace When fullName Then trims correctly`() {
         val variation = Variation(
             name = "  Narrow  ",
-            lift = Lift(name = "  Pull Up  ")
+            lift = Category(name = "  Pull Up  ")
         )
 
         assertEquals("Narrow Pull Up", variation.fullName)
@@ -61,7 +61,7 @@ class VariationTest {
     fun `Given variation with empty name When fullName Then returns only lift name`() {
         val variation = Variation(
             name = "",
-            lift = Lift(name = "Deadlift")
+            lift = Category(name = "Deadlift")
         )
 
         assertEquals("Deadlift", variation.fullName)
@@ -71,7 +71,7 @@ class VariationTest {
     fun `Given variation with empty lift name When fullName Then returns only variation name`() {
         val variation = Variation(
             name = "Sumo",
-            lift = Lift(name = "")
+            lift = Category(name = "")
         )
 
         assertEquals("Sumo", variation.fullName)
@@ -81,7 +81,7 @@ class VariationTest {
     fun `Given variation with name containing only spaces When fullName Then returns lift name`() {
         val variation = Variation(
             name = "   ",
-            lift = Lift(name = "Press")
+            lift = Category(name = "Press")
         )
 
         assertEquals("Press", variation.fullName)

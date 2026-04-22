@@ -111,7 +111,7 @@ val DependencyContainer.variationRepository: IVariationRepository
         VariationRepository(
             local = if (remoteUrl == null) {
                 SqlDelightVariationDataSource(
-                    liftQueries = database.liftQueries,
+                    categoryQueries = database.categoryQueries,
                     setQueries = database.setQueries,
                     variationQueries = database.variationQueries,
                 )
@@ -125,7 +125,7 @@ val DependencyContainer.localVariationRepository: IVariationRepository
     get() =
         VariationRepository(
             local = SqlDelightVariationDataSource(
-                liftQueries = database.liftQueries,
+                categoryQueries = database.categoryQueries,
                 setQueries = database.setQueries,
                 variationQueries = database.variationQueries,
             )
@@ -141,7 +141,7 @@ val DependencyContainer.liftRepository: ILiftRepository
         LiftRepository(
             local = if (remoteUrl == null) {
                 SqldelightLiftDataSource(
-                    liftQueries = database.liftQueries,
+                    categoryQueries = database.categoryQueries,
                 )
             } else {
                 KtorLiftDataSource(
@@ -153,7 +153,7 @@ val DependencyContainer.liftRepository: ILiftRepository
 val DependencyContainer.localLiftRepository: ILiftRepository
     get() = LiftRepository(
         SqldelightLiftDataSource(
-            liftQueries = database.liftQueries,
+            categoryQueries = database.categoryQueries,
         )
     )
 

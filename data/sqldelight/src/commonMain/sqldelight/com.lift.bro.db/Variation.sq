@@ -9,7 +9,7 @@ CREATE TABLE Variation (
 
 getAllForLift:
 SELECT * FROM Variation
-JOIN Lift ON Lift.id = Variation.liftId
+JOIN Category ON Category.id = Variation.liftId
 WHERE (liftId = :liftId OR :liftId = NULL)
 ;
 
@@ -22,11 +22,11 @@ SELECT
     Variation.notes AS notes,
     Variation.body_weight AS body_weight,
 
-    Lift.id AS lift_id,
-    Lift.color AS lift_color,
-    Lift.name AS lift_name
+    Category.id AS lift_id,
+    Category.color AS lift_color,
+    Category.name AS lift_name
 FROM Variation
-JOIN Lift ON Lift.id = Variation.liftId
+JOIN Category ON Category.id = Variation.liftId
 ;
 
 getAllForWorkout:
@@ -37,11 +37,11 @@ SELECT
     Variation.notes AS notes,
     Variation.body_weight AS body_weight,
 
-    Lift.id AS lift_id,
-    Lift.color AS lift_color,
-    Lift.name AS lift_name
+    Category.id AS lift_id,
+    Category.color AS lift_color,
+    Category.name AS lift_name
 FROM Variation
-JOIN Lift ON Lift.id = Variation.liftId
+JOIN Category ON Category.id = Variation.liftId
 JOIN ExerciseVariation ON ExerciseVariation.varationId = Variation.id
 JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
 WHERE :workoutId IS NULL OR Exercise.workoutId = :workoutId

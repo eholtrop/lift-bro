@@ -47,7 +47,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
-import com.lift.bro.domain.models.Lift
+import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalUnitOfMeasure
@@ -74,7 +74,7 @@ import kotlin.text.Typography.nbsp
 
 @Serializable
 data class LiftCardState(
-    val lift: Lift,
+    val lift: Category,
     val values: List<Pair<LocalDate, LiftCardData>>,
     val maxWeight: Double? = null,
     val maxReps: Double? = null,
@@ -109,7 +109,7 @@ typealias AnimatableFloat = Animatable<Float, AnimationVector1D>
 fun LiftCard(
     modifier: Modifier = Modifier,
     state: LiftCardState,
-    onClick: (Lift) -> Unit,
+    onClick: (Category) -> Unit,
     showRpe: Boolean = true,
     showTempo: Boolean = true,
     yUnit: LiftCardYValue = LiftCardYValue.Weight,
@@ -491,7 +491,7 @@ fun LiftCardEmptyPreview(
     PreviewAppTheme(isDarkMode = darkMode) {
         LiftCard(
             state = LiftCardState(
-                lift = Lift(
+                lift = Category(
                     name = "Bench Press",
                     color = 0xFF4CAF50uL
                 ),
@@ -512,7 +512,7 @@ fun LiftCardWeightPreview(
     PreviewAppTheme(isDarkMode = darkMode) {
         LiftCard(
             state = LiftCardState(
-                lift = Lift(
+                lift = Category(
                     name = "Squat",
                     color = 0xFF2196F3uL
                 ),
@@ -540,7 +540,7 @@ fun LiftCardRepsPreview(
     PreviewAppTheme(isDarkMode = darkMode) {
         LiftCard(
             state = LiftCardState(
-                lift = Lift(
+                lift = Category(
                     name = "Pull Ups",
                     color = 0xFFFF9800uL
                 ),

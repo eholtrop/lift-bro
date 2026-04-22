@@ -649,7 +649,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                 variations = listOf(
                     VariationCardState(
                         variation = Variation(
-                            lift = com.lift.bro.domain.models.Lift(
+                            lift = com.lift.bro.domain.models.Category(
                                 name = "Bench Press",
                                 color = 0xFF4CAF50uL
                             ),
@@ -667,7 +667,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                 variations = listOf(
                     VariationCardState(
                         variation = Variation(
-                            lift = com.lift.bro.domain.models.Lift(
+                            lift = com.lift.bro.domain.models.Category(
                                 name = "Deadlift",
                                 color = 0xFFFF5722uL
                             ),
@@ -695,7 +695,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                     ),
                     VariationCardState(
                         variation = Variation(
-                            lift = com.lift.bro.domain.models.Lift(
+                            lift = com.lift.bro.domain.models.Category(
                                 name = "Deadlift",
                                 color = 0xFFFF5722uL
                             ),
