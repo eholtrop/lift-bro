@@ -3,14 +3,9 @@
 package com.lift.bro.presentation.dashboard
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,22 +15,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Sort
-import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,28 +28,17 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.presentation.LocalLiftCardYValue
-import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
-import com.lift.bro.presentation.set.ChipButton
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.ReleaseNotesRow
-import com.lift.bro.ui.Space
 import com.lift.bro.ui.card.lift.LiftCard
-import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
-import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
 import tv.dpal.compose.padding.vertical.padding
@@ -172,32 +145,6 @@ fun DashboardContent(
                                         .padding(horizontal = MaterialTheme.spacing.half)
                                 )
                             }
-
-                            DashboardListItem.AddLiftButton -> {
-                                Box(
-
-                                    modifier = Modifier.fillMaxSize()
-                                        .then(
-                                            if (item.gridSize(state.items.size) == 1) {
-                                                Modifier.aspectRatio(
-                                                    1f
-                                                )
-                                            } else {
-                                                Modifier
-                                            }
-                                        )
-                                ) {
-                                    Button(
-                                        modifier = Modifier.align(Alignment.Center),
-                                        onClick = {
-                                            interactor(DashboardEvent.AddLiftClicked)
-                                        },
-                                        colors = ButtonDefaults.elevatedButtonColors()
-                                    ) {
-                                        Text("Add Lift")
-                                    }
-                                }
-                            }
                         }
                     }
 
@@ -223,11 +170,9 @@ fun DashboardContent(
     }
 }
 
-
 private fun DashboardListItem.gridSize(listSize: Int = 0): Int = when (this) {
     is DashboardListItem.LiftCard -> 1
     is DashboardListItem.LiftHeader -> 2
     DashboardListItem.ReleaseNotes -> 2
     DashboardListItem.WorkoutCalendar -> 2
-    DashboardListItem.AddLiftButton -> if (listSize % 2 == 0) 2 else 1
 }
