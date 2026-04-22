@@ -6,10 +6,9 @@ import com.lift.bro.config.BuildConfig
 import com.lift.bro.data.analytics.screenName
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.analytics.Analytics
+import com.lift.bro.presentation.category.CategoryDetailsScreen
 import com.lift.bro.presentation.goals.GoalsScreen
 import com.lift.bro.presentation.home.HomeScreen
-import com.lift.bro.presentation.lift.EditLiftScreen
-import com.lift.bro.presentation.lift.LiftDetailsScreen
 import com.lift.bro.presentation.onboarding.OnboardingScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
@@ -62,14 +61,8 @@ fun AppRouter(
 
         is Destination.CreateWorkout -> WorkoutScreen(rememberWorkoutInteractor(route.localDate))
 
-        is Destination.EditLift -> EditLiftScreen(
+        is Destination.CreateLift -> CategoryDetailsScreen(
             liftId = route.liftId,
-            liftSaved = {
-                navCoordinator.onBackPressed(keepStack = false)
-            },
-            liftDeleted = {
-                navCoordinator.popToRoot(false)
-            },
         )
 
         is EditSet ->
@@ -83,7 +76,7 @@ fun AppRouter(
         )
 
         is Destination.LiftDetails ->
-            LiftDetailsScreen(
+            CategoryDetailsScreen(
                 liftId = route.liftId,
             )
 

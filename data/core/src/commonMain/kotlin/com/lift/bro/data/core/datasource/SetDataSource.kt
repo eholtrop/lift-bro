@@ -20,7 +20,7 @@ interface SetDataSource {
     ): Flow<List<LBSet>>
 
     fun listenAllForLift(
-        liftId: String,
+        liftId: String?,
         limit: Long = Long.MAX_VALUE,
         sorting: Sorting = Sorting.date,
     ): Flow<List<LBSet>>

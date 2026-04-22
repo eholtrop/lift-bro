@@ -51,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.presentation.set.components.EditSetVariationSelector
 import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
@@ -62,6 +61,7 @@ import com.lift.bro.ui.calendar.Calendar
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
