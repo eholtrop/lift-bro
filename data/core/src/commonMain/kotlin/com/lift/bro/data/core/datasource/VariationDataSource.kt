@@ -11,7 +11,6 @@ interface VariationDataSource {
     fun listen(id: String): Flow<Movement?>
     fun listenAll(): Flow<List<Movement>>
     fun listenAllForLift(liftId: String?): Flow<List<Movement>>
-
     fun get(id: String): Movement?
     fun getAll(): List<Movement>
 }

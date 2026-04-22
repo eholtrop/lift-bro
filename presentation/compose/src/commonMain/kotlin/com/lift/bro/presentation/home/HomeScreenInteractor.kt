@@ -10,7 +10,7 @@ import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
-import com.lift.bro.ui.navigation.Destination.EditLift
+import com.lift.bro.ui.navigation.Destination.CreateLift
 import com.lift.bro.ui.navigation.Destination.Settings
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.Serializable
@@ -94,7 +94,7 @@ internal fun homeSideEffects(
             HomeEvent.DashboardClicked -> {}
             HomeEvent.CalendarClicked -> {}
             HomeEvent.AddSetClicked -> navCoordinator.present(CreateSet())
-            is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
+            is HomeEvent.AddLiftClicked -> navCoordinator.present(CreateLift())
             HomeEvent.SettingsClicked -> navCoordinator.present(Settings)
             HomeEvent.GoalsClicked -> navCoordinator.present(Destination.Goals)
         }
