@@ -62,7 +62,7 @@ Soreness or pain?</string>
     <string name="edit_lift_screen_lift_name_placeholder">ex: Squat, Bench Press, Deadlift</string>
     <string name="edit_lift_screen_lift_warning_dialog_text">This will delete all variations and sets for this lift, This cannot be undone</string>
     <string name="edit_lift_screen_save_cta_content_description">Save Lift</string>
-    <string name="edit_lift_screen_title">Edit Lift</string>
+    <string name="edit_lift_screen_title">Edit Category</string>
     <string name="edit_lift_screen_variation_delete_cta_content_description">Delete Variation</string>
     <string name="edit_lift_screen_variation_name_placeholder">ex: Back, Front, Incline</string>
     <string name="edit_lift_screen_variation_warning_dialog_text">This will delete all sets for this variation. This cannot be undone</string>

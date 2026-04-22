@@ -59,9 +59,6 @@ sealed class DashboardListItem {
 
     @Serializable
     data object WorkoutCalendar: DashboardListItem()
-
-    @Serializable
-    data object AddLiftButton: DashboardListItem()
 }
 
 @Serializable
@@ -159,7 +156,6 @@ fun rememberDashboardInteractor(
                                     add(0, DashboardListItem.WorkoutCalendar)
                                     add(0, DashboardListItem.ReleaseNotes)
                                 }
-                                add(DashboardListItem.AddLiftButton)
                             },
                             sortingSettings = if (state is Loaded) state.sortingSettings else SortingSettings()
                         )
