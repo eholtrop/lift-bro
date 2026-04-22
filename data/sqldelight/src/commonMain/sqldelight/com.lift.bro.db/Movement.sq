@@ -1,0 +1,62 @@
+CREATE TABLE Movement (
+    id TEXT NOT NULL PRIMARY KEY,
+    categoryId TEXT,
+    name TEXT,
+    notes TEXT,
+    favourite INTEGER NOT NULL DEFAULT 0,
+    body_weight INTEGER DEFAULT NULL
+);
+
+getAllForCategory:
+SELECT * FROM Movement
+JOIN Category ON Category.id = Movement.categoryId
+WHERE (categoryId = :categoryId OR :categoryId = NULL)
+;
+
+
+getAll:
+SELECT
+    Movement.id AS id,
+    Movement.favourite AS favourite,
+    Movement.name AS name,
+    Movement.notes AS notes,
+    Movement.body_weight AS body_weight,
+
+    Category.id AS lift_id,
+    Category.color AS lift_color,
+    Category.name AS lift_name
+FROM Movement
+JOIN Category ON Category.id = Movement.categoryId
+;
+
+getAllForWorkout:
+SELECT
+    Movement.id AS id,
+    Movement.favourite AS favourite,
+    Movement.name AS name,
+    Movement.notes AS notes,
+    Movement.body_weight AS body_weight,
+
+    Category.id AS lift_id,
+    Category.color AS lift_color,
+    Category.name AS lift_name
+FROM Movement
+JOIN Category ON Category.id = Movement.categoryId
+JOIN ExerciseVariation ON ExerciseVariation.movementId = Movement.id
+JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
+WHERE :workoutId IS NULL OR Exercise.workoutId = :workoutId
+;
+
+get:
+SELECT * FROM Movement WHERE id = ?;
+
+save:
+INSERT OR REPLACE
+INTO Movement(id, categoryId, name, notes, favourite, body_weight)
+VALUES(?, ?, ?, ?, ?, ?);
+
+delete:
+DELETE FROM Movement WHERE id = ?;
+
+deleteAll:
+DELETE FROM Movement;

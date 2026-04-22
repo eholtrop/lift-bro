@@ -1,7 +1,7 @@
 package com.lift.bro.domain.usecases
 
 import com.lift.bro.domain.models.CelebrationType
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
@@ -17,13 +17,13 @@ object GetCelebrationTypeUseCase {
     ): Flow<CelebrationType> = variationRepository.listenAll()
         .scan(
             Pair(
-                emptyList<Variation>(),
-                emptyList<Variation>()
+                emptyList<Movement>(),
+                emptyList<Movement>()
 
             )
         ) { old, new -> old.second to new }
         .map { (old, new) ->
-            val variationMap = mutableMapOf<String, Pair<Variation?, Variation?>>()
+            val variationMap = mutableMapOf<String, Pair<Movement?, Movement?>>()
 
             old.forEach {
                 variationMap[it.id] = it to null

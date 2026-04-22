@@ -7,7 +7,7 @@ class VariationTest {
 
     @Test
     fun `Given variation with name and lift When fullName Then returns combined trimmed name`() {
-        val variation = Variation(
+        val variation = Movement(
             name = "Close Grip",
             lift = Category(name = "Bench Press")
         )
@@ -17,7 +17,7 @@ class VariationTest {
 
     @Test
     fun `Given variation with null name When fullName Then returns only lift name`() {
-        val variation = Variation(
+        val variation = Movement(
             name = null,
             lift = Category(name = "Squat")
         )
@@ -27,7 +27,7 @@ class VariationTest {
 
     @Test
     fun `Given variation with null lift When fullName Then returns variation name with null appended`() {
-        val variation = Variation(
+        val variation = Movement(
             name = "Bulgarian Split Squat",
             lift = null
         )
@@ -38,7 +38,7 @@ class VariationTest {
 
     @Test
     fun `Given variation with whitespace When fullName Then trims correctly`() {
-        val variation = Variation(
+        val variation = Movement(
             name = "  Narrow  ",
             lift = Category(name = "  Pull Up  ")
         )
@@ -48,7 +48,7 @@ class VariationTest {
 
     @Test
     fun `Given variation with both null When fullName Then returns null`() {
-        val variation = Variation(
+        val variation = Movement(
             name = null,
             lift = null
         )
@@ -59,7 +59,7 @@ class VariationTest {
 
     @Test
     fun `Given variation with empty name When fullName Then returns only lift name`() {
-        val variation = Variation(
+        val variation = Movement(
             name = "",
             lift = Category(name = "Deadlift")
         )
@@ -69,7 +69,7 @@ class VariationTest {
 
     @Test
     fun `Given variation with empty lift name When fullName Then returns only variation name`() {
-        val variation = Variation(
+        val variation = Movement(
             name = "Sumo",
             lift = Category(name = "")
         )
@@ -79,7 +79,7 @@ class VariationTest {
 
     @Test
     fun `Given variation with name containing only spaces When fullName Then returns lift name`() {
-        val variation = Variation(
+        val variation = Movement(
             name = "   ",
             lift = Category(name = "Press")
         )

@@ -42,7 +42,7 @@ SELECT
     Category.name AS lift_name
 FROM Variation
 JOIN Category ON Category.id = Variation.liftId
-JOIN ExerciseVariation ON ExerciseVariation.varationId = Variation.id
+JOIN ExerciseVariation ON ExerciseVariation.movementId = Variation.id
 JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
 WHERE :workoutId IS NULL OR Exercise.workoutId = :workoutId
 ;

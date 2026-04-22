@@ -12,7 +12,7 @@ typealias VariationId = String
  * @property eMax: the highest max of this variation s.t. the set rep == 1
  */
 @Serializable
-data class Variation(
+data class Movement(
     val id: VariationId = uuid4().toString(),
     val lift: Category? = null,
     val name: String? = null,
@@ -26,4 +26,4 @@ data class Variation(
     val bodyWeight: Boolean? = false,
 )
 
-val Variation.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()
+val Movement.fullName get() = "${name?.trim() ?: ""} ${lift?.name?.trim()}".trim()

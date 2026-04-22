@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.TopBarIconButton
@@ -322,7 +322,7 @@ class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
                 id = "lift1",
                 name = "Bench Press",
                 variations = listOf(
-                    Variation(
+                    Movement(
                         lift = com.lift.bro.domain.models.Category(
                             name = "Bench Press",
                             color = 0xFF4CAF50uL
@@ -337,7 +337,7 @@ class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
                 id = "lift2",
                 name = "Deadlift",
                 variations = listOf(
-                    Variation(
+                    Movement(
                         lift = com.lift.bro.domain.models.Category(
                             name = "Deadlift",
                             color = 0xFFFF5722uL
@@ -345,7 +345,7 @@ class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
                         name = "Conventional",
                         favourite = true
                     ),
-                    Variation(
+                    Movement(
                         lift = com.lift.bro.domain.models.Category(
                             name = "Deadlift",
                             color = 0xFFFF5722uL
@@ -353,7 +353,7 @@ class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
                         name = "Sumo",
                         favourite = false
                     ),
-                    Variation(
+                    Movement(
                         lift = com.lift.bro.domain.models.Category(
                             name = "Deadlift",
                             color = 0xFFFF5722uL

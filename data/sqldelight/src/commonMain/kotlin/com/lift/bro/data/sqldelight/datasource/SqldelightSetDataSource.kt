@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalTime::class)
+
 package com.lift.bro.data.sqldelight.datasource
 
 import app.cash.sqldelight.coroutines.asFlow
@@ -24,6 +26,7 @@ import tv.dpal.ktx.datetime.atStartOfDayIn
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
 import kotlin.math.min
+import kotlin.time.ExperimentalTime
 
 class SqldelightSetDataSource(
     private val setQueries: SetQueries,
@@ -42,7 +45,7 @@ class SqldelightSetDataSource(
         return setQueries.getAllSets(
             startDate = startDate?.atStartOfDayIn(),
             endDate = endDate?.atEndOfDayIn(),
-            variationId = variationId,
+            movementId = variationId,
             limit = limit,
             sortBy = sorting.toString(),
             order = if (order == Order.Descending) 0 else 1,
@@ -52,12 +55,12 @@ class SqldelightSetDataSource(
             .map { sets ->
                 sets
                     .map { set ->
-                        val orm = setQueries.getOneRepMaxForVariation(
-                            variationId = set.variationId,
+                        val orm = setQueries.getOneRepMaxForMovement(
+                            movementId = set.movementId,
                             before = set.date
                         ).executeAsOneOrNull()?.weight
-                        val emax = setQueries.getEMaxForVariation(
-                            variationId = set.variationId,
+                        val emax = setQueries.getEMaxForMovement(
+                            movementId = set.movementId,
                             before = set.date
                         ).executeAsOneOrNull()?.weight
 
@@ -70,7 +73,7 @@ class SqldelightSetDataSource(
 
     override fun listenAllForLift(liftId: String, limit: Long, sorting: Sorting): Flow<List<LBSet>> =
         setQueries.getAllForLift(
-            liftId = liftId,
+            categoryId = liftId,
             startDate = Instant.DISTANT_PAST,
             endDate = Instant.DISTANT_FUTURE,
             limit = limit,
@@ -81,7 +84,7 @@ class SqldelightSetDataSource(
                 it.map {
                     LBSet(
                         id = it.id,
-                        variationId = it.variationId,
+                        variationId = it.movementId,
                         weight = it.weight ?: 0.0,
                         reps = it.reps ?: 1,
                         tempo = Tempo(
@@ -105,7 +108,7 @@ class SqldelightSetDataSource(
         Log.d("LiftBroDb", "saving $lbSet")
         setQueries.save(
             id = lbSet.id,
-            variationId = lbSet.variationId,
+            movementId = lbSet.variationId,
             weight = lbSet.weight,
             reps = lbSet.reps,
             tempoDown = lbSet.tempo.down,
@@ -132,7 +135,7 @@ class SqldelightSetDataSource(
 
 fun GetAllSets.toDomain() = LBSet(
     id = this.id,
-    variationId = this.variationId,
+    variationId = this.movementId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
     tempo = Tempo(
@@ -148,7 +151,7 @@ fun GetAllSets.toDomain() = LBSet(
 
 fun LiftingSet.toDomain() = LBSet(
     id = this.id,
-    variationId = this.variationId,
+    variationId = this.movementId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
     tempo = Tempo(

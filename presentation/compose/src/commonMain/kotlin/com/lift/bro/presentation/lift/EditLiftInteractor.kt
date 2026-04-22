@@ -10,7 +10,7 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import kotlinx.coroutines.flow.combine
@@ -25,7 +25,7 @@ data class EditLiftState(
     val id: String?,
     val name: String,
     val liftColor: LiftColor? = null,
-    val variations: List<Variation> = emptyList(),
+    val variations: List<Movement> = emptyList(),
 ) {
 
     val lift
@@ -50,9 +50,9 @@ val LiftColor.color: Color get() = Color(a, r, g, b)
 
 sealed class EditLiftEvent {
     data class NameChanged(val name: String) : EditLiftEvent()
-    data class VariationNameChanged(val variation: Variation, val name: String) : EditLiftEvent()
+    data class VariationNameChanged(val variation: Movement, val name: String) : EditLiftEvent()
     data object AddVariation : EditLiftEvent()
-    data class VariationRemoved(val variation: Variation) : EditLiftEvent()
+    data class VariationRemoved(val variation: Movement) : EditLiftEvent()
 
     data object DeleteLift : EditLiftEvent()
 }
@@ -71,7 +71,7 @@ val EditLiftReducer = Reducer<EditLiftState?, EditLiftEvent> { state, event ->
         )
 
         EditLiftEvent.AddVariation -> state?.copy(
-            variations = listOf(Variation()) + state.variations
+            variations = listOf(Movement()) + state.variations
         )
 
         is EditLiftEvent.VariationRemoved -> state?.copy(
@@ -100,7 +100,7 @@ fun editLiftSideEffects(
 
         EditLiftEvent.AddVariation -> {
             variationRepository.save(
-                Variation(lift = state?.lift)
+                Movement(lift = state?.lift)
             )
         }
 

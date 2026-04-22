@@ -6,9 +6,9 @@ import com.lift.bro.di.localLiftRepository
 import com.lift.bro.di.localSetRepository
 import com.lift.bro.di.localVariationRepository
 import com.lift.bro.di.workoutRepository
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
@@ -82,7 +82,7 @@ fun Route.configureVariationRoutes(
             .collect()
     }
 
-    post<Variation>("rest/variation") {
+    post<Movement>("rest/variation") {
         Log.d("LiftBroServer", "Received post request to rest/variation")
         variationRepository.save(this.call.receive())
     }

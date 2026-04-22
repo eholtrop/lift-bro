@@ -1,6 +1,6 @@
 package com.lift.bro.presentation.set
 
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import tv.dpal.ktx.datetime.toLocalDate
@@ -127,7 +127,7 @@ class EditSetReducerTest {
     fun `Given state When VariationSelected Then updates variation`() = runTest {
         // Given
         val state = EditSetState(id = "1")
-        val event = EditSetEvent.VariationSelected(Variation("variation-123"))
+        val event = EditSetEvent.VariationSelected(Movement("variation-123"))
 
         // When
         val result = EditSetReducer(state, event)
@@ -170,7 +170,7 @@ class EditSetReducerTest {
     @Test
     fun `Given state with multiple fields When weight changed Then preserves other fields`() = runTest {
         // Given
-        val variation = Variation(id = "v1", name = "Squat")
+        val variation = Movement(id = "v1", name = "Squat")
         val state = EditSetState(
             id = "1",
             variation = SetVariation(variation),

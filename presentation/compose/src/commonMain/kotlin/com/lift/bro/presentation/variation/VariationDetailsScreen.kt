@@ -361,7 +361,7 @@ class VariationDetailsStateProvider: PreviewParameterProvider<VariationDetailsSt
         get() = sequenceOf(
             // Variation with no sets
             VariationDetailsState(
-                variation = com.lift.bro.domain.models.Variation(
+                variation = com.lift.bro.domain.models.Movement(
                     lift = com.lift.bro.domain.models.Category(
                         name = "Squat",
                         color = 0xFF2196F3uL
@@ -373,7 +373,7 @@ class VariationDetailsStateProvider: PreviewParameterProvider<VariationDetailsSt
             ),
             // Variation with sets
             VariationDetailsState(
-                variation = com.lift.bro.domain.models.Variation(
+                variation = com.lift.bro.domain.models.Movement(
                     lift = com.lift.bro.domain.models.Category(
                         name = "Bench Press",
                         color = 0xFF4CAF50uL

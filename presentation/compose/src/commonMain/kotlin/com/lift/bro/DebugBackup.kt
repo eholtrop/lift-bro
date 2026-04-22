@@ -2,9 +2,9 @@ package com.lift.bro
 
 import androidx.compose.ui.graphics.Color
 import com.benasher44.uuid.uuid4
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Movement
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import kotlin.time.Clock
@@ -29,34 +29,34 @@ private val debugLifts = listOf(
 
 private val debugVariations = listOf(
     // squat variations
-    Variation(
+    Movement(
         id = "back squat",
         lift = debugLifts.first { it.id == "1" },
         name = "Back"
     ),
-    Variation(
+    Movement(
         id = "front squat",
         lift = debugLifts.first { it.id == "1" },
         name = "Front"
     ),
     // press variations
-    Variation(
+    Movement(
         id = "military press",
         lift = debugLifts.first { it.id == "2" },
         name = "Military"
     ),
-    Variation(
+    Movement(
         id = "bench press",
         lift = debugLifts.first { it.id == "2" },
         name = "Bench"
     ),
     // deadlift variations
-    Variation(
+    Movement(
         id = "sumo deadlift",
         lift = debugLifts.first { it.id == "3" },
         name = "Sumo"
     ),
-    Variation(
+    Movement(
         id = "regular deadlift",
         lift = debugLifts.first { it.id == "3" },
         name = "Regular"

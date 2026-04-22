@@ -15,8 +15,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Category
+import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.ui.Space
@@ -102,7 +102,7 @@ class WorkoutProvider: PreviewParameterProvider<Workout> {
                         variationSets = listOf(
                             VariationSets(
                                 id = "vs1",
-                                variation = com.lift.bro.domain.models.Variation(
+                                variation = com.lift.bro.domain.models.Movement(
                                     lift = Category(
                                         id = "lift1",
                                         name = "Squat",
@@ -121,7 +121,7 @@ class WorkoutProvider: PreviewParameterProvider<Workout> {
                             ),
                             VariationSets(
                                 id = "vs1",
-                                variation = com.lift.bro.domain.models.Variation(
+                                variation = com.lift.bro.domain.models.Movement(
                                     lift = Category(
                                         id = "lift1",
                                         name = "Squat",

@@ -5,9 +5,9 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
-import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.EditLift
 import com.lift.bro.ui.navigation.Destination.EditSet
@@ -30,16 +30,16 @@ data class LiftDetailsState(
 
 @Serializable
 data class VariationCardState(
-    val variation: Variation,
+    val variation: Movement,
     val sets: List<LBSet>,
 )
 
 sealed interface LiftDetailsEvent {
     data class LiftColorChanged(val color: ULong): LiftDetailsEvent
-    data class VariationClicked(val variation: Variation): LiftDetailsEvent
+    data class VariationClicked(val variation: Movement): LiftDetailsEvent
     data class SetClicked(val lbSet: LBSet): LiftDetailsEvent
 
-    data class ToggleFavourite(val variation: Variation): LiftDetailsEvent
+    data class ToggleFavourite(val variation: Movement): LiftDetailsEvent
 
     data object AddSetClicked: LiftDetailsEvent
 

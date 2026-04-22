@@ -2,7 +2,7 @@ import kotlin.time.Instant;
 
 CREATE TABLE LiftingSet (
     id TEXT NOT NULL PRIMARY KEY,
-    variationId TEXT NOT NULL,
+    movementId TEXT NOT NULL,
     weight REAL,
     reps INTEGER,
     tempoDown INTEGER,
@@ -13,40 +13,40 @@ CREATE TABLE LiftingSet (
     rpe INTEGER
 );
 
-getAllByVariation:
+getAllByMovement:
 SELECT * FROM LiftingSet
-JOIN Variation ON Variation.id = LiftingSet.variationId
-WHERE variationId = ?
+JOIN Movement ON Movement.id = LiftingSet.movementId
+WHERE movementId = ?
 ORDER BY date DESC
 LIMIT :limit;
 
-getOneRepMaxForVariation:
+getOneRepMaxForMovement:
 SELECT * FROM LiftingSet
-WHERE variationId = :variationId AND reps = 1
+WHERE movementId = :movementId AND reps = 1
 AND (date < :before OR :before = NULL)
 ORDER BY weight DESC
 LIMIT 1;
 
-getEMaxForVariation:
+getEMaxForMovement:
 SELECT * FROM LiftingSet
-WHERE variationId = :variationId
+WHERE movementId = :movementId
 AND (date < :before OR :before = NULL)
 ORDER BY weight * reps DESC
 LIMIT 1;
 
-getMaxRepsForVariation:
+getMaxRepsForMovement:
 SELECT * FROM LiftingSet
-WHERE variationId = :variationId
+WHERE movementId = :movementId
 AND date < :before OR :before = NULL
 ORDER BY reps DESC
 LIMIT 1;
 
 getAllSets:
 SELECT * FROM LiftingSet
-JOIN Variation ON Variation.id = LiftingSet.variationId
+JOIN Movement ON Movement.id = LiftingSet.movementId
 WHERE (date >= :startDate OR :startDate = NULL)
 AND (date <= :endDate OR :endDate = NULL)
-AND (variationId = :variationId OR :variationId = NULL)
+AND (movementId = :movementId OR :movementId = NULL)
 AND (:reps = NULL OR reps = :reps)
 ORDER BY
     CASE WHEN :order = 1 AND :sortBy = 'weight' THEN weight END ASC,
@@ -57,8 +57,8 @@ LIMIT :limit;
 
 getAllForLift:
 SELECT * FROM LiftingSet
-JOIN Variation ON Variation.id = LiftingSet.variationId
-WHERE Variation.liftId = :liftId
+JOIN Movement ON Movement.id = LiftingSet.movementId
+WHERE Movement.categoryId = :categoryId
 AND (date >= :startDate OR :startDate = NULL)
 AND (date <= :endDate OR :endDate = NULL)
 ORDER BY
@@ -70,7 +70,7 @@ LIMIT :limit;
 
 getByWorkoutId:
 SELECT * FROM LiftingSet
-JOIN ExerciseVariation ON ExerciseVariation.varationId = LiftingSet.variationId
+JOIN ExerciseVariation ON ExerciseVariation.movementId = LiftingSet.movementId
 JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
 JOIN Workout ON Workout.id = Exercise.workoutId
 WHERE Workout.id = :workoutId
@@ -82,11 +82,11 @@ SELECT * FROM LiftingSet WHERE id = ?;
 
 save:
 INSERT OR REPLACE
-INTO LiftingSet(id, variationId, weight, reps, tempoDown, tempoHold, tempoUp, date, notes, rpe)
+INTO LiftingSet(id, movementId, weight, reps, tempoDown, tempoHold, tempoUp, date, notes, rpe)
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteAllFromVariations:
-DELETE FROM LiftingSet WHERE variationId = ?;
+DELETE FROM LiftingSet WHERE movementId = ?;
 
 delete:
 DELETE FROM LiftingSet WHERE id = ?;

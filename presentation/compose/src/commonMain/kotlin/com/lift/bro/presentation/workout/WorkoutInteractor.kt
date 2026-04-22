@@ -8,7 +8,7 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Variation
+import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.ISetRepository
@@ -61,27 +61,27 @@ sealed interface VariationItem {
 
     val id: String
 
-    val variation: Variation
+    val variation: Movement
 
     @Serializable
     data class WithSets(
         override val id: String,
-        override val variation: Variation,
+        override val variation: Movement,
         val sets: List<LBSet>,
     ): VariationItem
 
     @Serializable
     data class WithoutSets(
         override val id: String,
-        override val variation: Variation,
+        override val variation: Movement,
         val lastSet: LBSet?,
     ): VariationItem
 }
 
 sealed class CreateWorkoutEvent {
     data class UpdateNotes(val notes: String): CreateWorkoutEvent()
-    data class AddExercise(val variation: Variation): CreateWorkoutEvent()
-    data class AddSuperSet(val exercise: ExerciseItem, val variation: Variation):
+    data class AddExercise(val variation: Movement): CreateWorkoutEvent()
+    data class AddSuperSet(val exercise: ExerciseItem, val variation: Movement):
         CreateWorkoutEvent()
 
     data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
