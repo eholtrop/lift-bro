@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.lift
+package com.lift.bro.presentation.category
 
 import com.lift.bro.domain.models.Movement
 import kotlinx.coroutines.test.runTest

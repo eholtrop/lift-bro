@@ -26,7 +26,7 @@ interface ISetRepository {
     ): Flow<List<LBSet>>
 
     fun listenAllForLift(
-        liftId: String,
+        liftId: String?,
         startDate: LocalDate? = null,
         endDate: LocalDate? = null,
         limit: Long = Long.MAX_VALUE,

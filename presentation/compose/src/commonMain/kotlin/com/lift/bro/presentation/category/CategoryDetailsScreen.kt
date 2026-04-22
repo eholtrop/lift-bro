@@ -1,4 +1,6 @@
-package com.lift.bro.presentation.lift
+@file:OptIn(ExperimentalMaterial3Api::class)
+
+package com.lift.bro.presentation.category
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -15,27 +17,26 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.Sort
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.BasicAlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -47,18 +48,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.github.skydoves.colorpicker.compose.HsvColorPicker
-import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.estimateMax
@@ -68,6 +63,8 @@ import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
+import com.lift.bro.presentation.dashboard.DashboardLiftHeader
+import com.lift.bro.presentation.dashboard.SortingSettings
 import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.SetInfoRow
@@ -76,25 +73,14 @@ import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.color_picker_dialog_blue
-import lift_bro.core.generated.resources.color_picker_dialog_green
-import lift_bro.core.generated.resources.color_picker_dialog_red
-import lift_bro.core.generated.resources.color_picker_dialog_title
-import lift_bro.core.generated.resources.color_picker_negative_cta
-import lift_bro.core.generated.resources.color_picker_positive_cta
 import lift_bro.core.generated.resources.lift_details_fab_content_description
-import lift_bro.core.generated.resources.lift_details_screen_edit_content_description
-import lift_bro.core.generated.resources.lift_details_screen_empty_state_text
 import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
-import lift_bro.core.generated.resources.lift_details_screen_sort_by_content_description
-import lift_bro.core.generated.resources.lift_details_screen_sort_name
-import lift_bro.core.generated.resources.lift_details_screen_sort_one_rep_max
-import lift_bro.core.generated.resources.reps
+import lift_bro.core.generated.resources.variation_details_screen_edit_title_content_description
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.compose.listCorners
@@ -104,160 +90,45 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.toLocalDate
 
 @Composable
-fun LiftDetailsScreen(
+fun CategoryDetailsScreen(
     liftId: String,
 ) {
-    LiftDetailsScreen(
-        interactor = rememberLiftDetailsInteractor(liftId = liftId)
+    CategoryDetailsScreen(
+        interactor = rememberCategoryDetailsInteractor(categoryId = liftId)
     )
 }
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun LiftDetailsScreen(
-    interactor: Interactor<LiftDetailsState, LiftDetailsEvent>,
+fun CategoryDetailsScreen(
+    interactor: Interactor<CategoryDetailsState, CategoryDetailsEvent>,
 ) {
     val state by interactor.state.collectAsState()
 
     var showColorPicker by remember { mutableStateOf(false) }
+    var showDeleteWarning by remember { mutableStateOf(false) }
 
     if (showColorPicker) {
-        BasicAlertDialog(
-            onDismissRequest = {
+        ColorPickerDialog(
+            color = state.categoryColor?.toColor() ?: MaterialTheme.colorScheme.primary,
+            onDismissRequest = { showColorPicker = false },
+            onColorSelected = {
+                interactor(CategoryDetailsEvent.CategoryColorChanged(it.value))
                 showColorPicker = false
             }
-        ) {
-            val controller = rememberColorPickerController()
+        )
+    }
 
-            val defaultColor = MaterialTheme.colorScheme.primary
-
-            var color by remember { mutableStateOf(state.liftColor?.toColor() ?: defaultColor) }
-
-            Column(
-                modifier = Modifier.background(
-                    color = MaterialTheme.colorScheme.surface,
-                    shape = MaterialTheme.shapes.large,
-                ).padding(MaterialTheme.spacing.one),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = stringResource(Res.string.color_picker_dialog_title),
-                    style = MaterialTheme.typography.titleLarge
-                )
-
-                Space(MaterialTheme.spacing.one)
-
-                HsvColorPicker(
-                    modifier = Modifier.size(
-                        256.dp,
-                        256.dp
-                    ),
-                    controller = controller,
-                    onColorChanged = {
-                        color = it.color
-                    },
-                    initialColor = color
-                )
-
-                Space(MaterialTheme.spacing.two)
-
-                Box(
-                    modifier = Modifier.background(
-                        color = color,
-                        shape = CircleShape,
-                    )
-                        .border(
-                            1.dp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            shape = CircleShape
-                        )
-                        .size(32.dp),
-                    content = {}
-                )
-
-                Space(MaterialTheme.spacing.two)
-
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
-                ) {
-                    TextField(
-                        modifier = Modifier.weight(1f),
-                        value = (color.red * 255).toInt().toString(),
-                        onValueChange = {
-                            it.toIntOrNull()?.let {
-                                color = color.copy(red = it / 255f)
-                            }
-                        },
-                        label = {
-                            Text(stringResource(Res.string.color_picker_dialog_red))
-                        },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number,
-                        ),
-                    )
-
-                    TextField(
-                        modifier = Modifier.weight(1f),
-                        value = (color.green * 255).toInt().toString(),
-                        onValueChange = {
-                            it.toIntOrNull()?.let {
-                                color = color.copy(green = it / 255f)
-                            }
-                        },
-                        label = {
-                            Text(stringResource(Res.string.color_picker_dialog_green))
-                        },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number,
-                        ),
-                    )
-
-                    TextField(
-                        modifier = Modifier.weight(1f),
-                        value = (color.blue * 255).toInt().toString(),
-                        onValueChange = {
-                            it.toIntOrNull()?.let {
-                                color = color.copy(blue = it / 255f)
-                            }
-                        },
-                        label = {
-                            Text(stringResource(Res.string.color_picker_dialog_blue))
-                        },
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            keyboardType = KeyboardType.Number,
-                        ),
-                    )
-                }
-
-                Space(MaterialTheme.spacing.one)
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
-                ) {
-                    Button(
-                        onClick = {
-                            showColorPicker = false
-                        },
-                        colors = ButtonDefaults.textButtonColors(),
-                    ) {
-                        Text(stringResource(Res.string.color_picker_negative_cta))
-                    }
-
-                    Space(MaterialTheme.spacing.half)
-
-                    Button(
-                        onClick = {
-                            interactor(LiftDetailsEvent.LiftColorChanged(color.value))
-                            showColorPicker = false
-                        },
-                        colors = ButtonDefaults.textButtonColors(),
-                    ) {
-                        Text(stringResource(Res.string.color_picker_positive_cta))
-                    }
-                }
-            }
-        }
+    if (showDeleteWarning) {
+        WarningDialog(
+            title = "Are you sure?",
+            text = "This will delete the Category, All movements will stay!",
+            onConfirm = {
+                interactor(CategoryDetailsEvent.DeleteCategoryClicked)
+                showDeleteWarning = false
+            },
+            onDismiss = { showDeleteWarning = false }
+        )
     }
 
     LiftingScaffold(
@@ -265,136 +136,166 @@ fun LiftDetailsScreen(
             fabIcon = Icons.Default.Add,
             contentDescription = stringResource(Res.string.lift_details_fab_content_description),
             fabClicked = {
-                interactor(LiftDetailsEvent.AddSetClicked)
+                interactor(CategoryDetailsEvent.AddSetClicked)
             },
         ),
-        title = { Text(state.liftName ?: "") },
-        trailingContent = {
-            TopBarButton(
-                onClick = {
-                    showColorPicker = true
-                }
+        title = {
+            var editName by remember { mutableStateOf(state.categoryName != null) }
+            var name by remember(state.categoryName) { mutableStateOf(state.categoryName ?: "") }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Box(
-                    modifier = Modifier.background(
-                        color = state.liftColor?.toColor() ?: MaterialTheme.colorScheme.primary,
-                    ).fillMaxSize()
-                ) { }
+                if (editName) {
+                    TextField(
+                        modifier = Modifier.wrapContentWidth(),
+                        value = name,
+                        textStyle = MaterialTheme.typography.headlineMedium,
+                        onValueChange = {
+                            name = it
+                        },
+                        colors = TextFieldDefaults.transparentColors(),
+                        singleLine = true,
+                        placeholder = {
+                            Text(
+                                "Category Name",
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                        },
+                        supportingText = {
+                            Text("Squats, Leg Day, Back Stuff...")
+                        },
+                        suffix = {
+                            IconButton(
+                                onClick = {
+                                    interactor(CategoryDetailsEvent.NameUpdated(name))
+                                    editName = false
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Save,
+                                    contentDescription = "Save",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                )
+                            }
+                        },
+                        keyboardActions = KeyboardActions(
+                            onAny = {
+                                interactor(CategoryDetailsEvent.NameUpdated(name))
+                                editName = false
+                            }
+                        )
+                    )
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .clip(MaterialTheme.shapes.medium)
+                            .clickable(
+                                onClick = {
+                                    editName = true
+                                },
+                                role = Role.Button
+                            )
+                            .padding(
+                                horizontal = MaterialTheme.spacing.one
+                            ),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
+                    ) {
+                        Text(state.categoryName ?: "Category Name")
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = stringResource(
+                                Res.string.variation_details_screen_edit_title_content_description
+                            ),
+                        )
+                    }
+                }
             }
-            TopBarIconButton(
-                imageVector = Icons.Default.Edit,
-                contentDescription = stringResource(Res.string.lift_details_screen_edit_content_description),
-                onClick = {
-                    interactor(LiftDetailsEvent.EditLiftClicked)
-                },
-            )
+        },
+        trailingContent = {
+            if (state.categoryName != null) {
+                TopBarButton(
+                    onClick = {
+                        showColorPicker = true
+                    }
+                ) {
+                    Box(
+                        modifier = Modifier.background(
+                            color = state.categoryColor?.toColor() ?: MaterialTheme.colorScheme.primary,
+                        ).fillMaxSize()
+                    ) { }
+                }
+                TopBarIconButton(
+                    onClick = {
+                        showDeleteWarning = true
+                    },
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete Category,"
+                )
+            }
         }
     ) { padding ->
 
         var sorting by remember { mutableStateOf(SortingOptions.Name) }
+        var showRpe by remember { mutableStateOf(false) }
 
-        LazyColumn(
-            modifier = Modifier.padding(padding),
-            contentPadding = PaddingValues(MaterialTheme.spacing.one),
-            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Button(
-                        onClick = {
-                            try {
-                                sorting = SortingOptions.values()[sorting.ordinal + 1]
-                            } catch (e: Exception) {
-                                sorting = SortingOptions.values()[0]
-                            }
-                        }
-                    ) {
-                        Icon(
-                            modifier = when (sorting) {
-                                SortingOptions.Name -> Modifier
-                                SortingOptions.NameReversed -> Modifier.graphicsLayer {
-                                    scaleY = -1f
-                                }
-
-                                SortingOptions.MaxSet -> Modifier
-                                SortingOptions.MaxSetReversed -> Modifier.graphicsLayer {
-                                    scaleY = -1f
-                                }
-                            },
-                            imageVector = Icons.AutoMirrored.Rounded.Sort,
-                            contentDescription = stringResource(
-                                Res.string.lift_details_screen_sort_by_content_description
-                            )
-                        )
-                        Space(MaterialTheme.spacing.half)
-                        Text(
-                            text = when (sorting) {
-                                SortingOptions.Name -> stringResource(Res.string.lift_details_screen_sort_name)
-                                SortingOptions.NameReversed -> stringResource(Res.string.lift_details_screen_sort_name)
-                                SortingOptions.MaxSet -> stringResource(Res.string.lift_details_screen_sort_one_rep_max)
-                                SortingOptions.MaxSetReversed -> stringResource(
-                                    Res.string.lift_details_screen_sort_one_rep_max
-                                )
-                            }
-                        )
-                    }
-
-                    Space(MaterialTheme.spacing.half)
-
-                    val yValue = LocalLiftCardYValue.current
-                    Button(
-                        onClick = {
-                            yValue.value =
-                                if (yValue.value == LiftCardYValue.Weight) LiftCardYValue.Reps else LiftCardYValue.Weight
-                        }
-                    ) {
-                        Text(
-                            text = if (yValue.value == LiftCardYValue.Weight) {
-                                LocalUnitOfMeasure.current.value
-                            } else {
-                                stringResource(
-                                    Res.string.reps
-                                )
-                            }
-                        )
-                    }
+        if (state.categoryName != null) {
+            LazyColumn(
+                modifier = Modifier.padding(padding),
+                contentPadding = PaddingValues(MaterialTheme.spacing.one),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
+            ) {
+                item {
+                    DashboardLiftHeader(
+                        v2 = false,
+                        showRpe = showRpe,
+                        title = "Movements",
+                        onToggleTempo = { },
+                        onToggleRpe = { showRpe = !showRpe },
+                        optionSelected = { },
+                        toggleFavourite = { },
+                        onAddClicked = {
+                            interactor(CategoryDetailsEvent.CreateMovementClicked)
+                        },
+                        sortingSettings = SortingSettings(),
+                        showTempo = null,
+                    )
                 }
-            }
 
-            items(
-                state.variations.let {
-                    when (sorting) {
-                        SortingOptions.Name -> it.sortedBy { it.variation.name ?: "" }
-                        SortingOptions.NameReversed -> it.sortedByDescending { it.variation.name ?: "" }
-                        SortingOptions.MaxSet -> it.sortedByDescending {
-                            it.variation.oneRepMax?.oneRepMax ?: it.variation.eMax?.estimateMax ?: 0.0
-                        }
+                items(
+                    state.movements.let {
+                        when (sorting) {
+                            SortingOptions.Name -> it.sortedBy { it.variation.name ?: "" }
+                            SortingOptions.NameReversed -> it.sortedByDescending { it.variation.name ?: "" }
+                            SortingOptions.MaxSet -> it.sortedByDescending {
+                                it.variation.oneRepMax?.oneRepMax ?: it.variation.eMax?.estimateMax ?: 0.0
+                            }
 
-                        SortingOptions.MaxSetReversed -> it.sortedBy {
-                            it.variation.oneRepMax?.oneRepMax ?: it.variation.eMax?.estimateMax ?: 0.0
-                        }
-                    }.sortedByDescending { it.variation.favourite }
-                },
-                key = { it.variation.id },
-            ) { cardState ->
-                VariationCard(
-                    modifier = Modifier.animateItem(),
-                    state = cardState,
-                    onClick = { interactor(LiftDetailsEvent.VariationClicked(it)) },
-                    onSetClicked = {
-                        interactor(LiftDetailsEvent.SetClicked(it))
+                            SortingOptions.MaxSetReversed -> it.sortedBy {
+                                it.variation.oneRepMax?.oneRepMax ?: it.variation.eMax?.estimateMax ?: 0.0
+                            }
+                        }.sortedByDescending { it.variation.favourite }
                     },
-                    favouriteToggled = {
-                        interactor(LiftDetailsEvent.ToggleFavourite(it))
-                    }
-                )
-            }
+                    key = { it.variation.id },
+                ) { cardState ->
+                    VariationCard(
+                        modifier = Modifier.animateItem(),
+                        state = cardState,
+                        onClick = { interactor(CategoryDetailsEvent.MovementClicked(it)) },
+                        onSetClicked = {
+                            interactor(CategoryDetailsEvent.SetClicked(it))
+                        },
+                        showRpe = showRpe,
+                        favouriteToggled = {
+                            interactor(CategoryDetailsEvent.ToggleFavourite(it))
+                        }
+                    )
+                }
 
-            item {
-                Spacer(modifier = Modifier.height(72.dp))
+                item {
+                    Spacer(modifier = Modifier.height(72.dp))
+                }
             }
         }
     }
@@ -403,7 +304,8 @@ fun LiftDetailsScreen(
 @Composable
 private fun VariationCard(
     modifier: Modifier = Modifier,
-    state: VariationCardState,
+    state: MovementCardState,
+    showRpe: Boolean,
     onClick: (Movement) -> Unit,
     onSetClicked: (LBSet) -> Unit,
     favouriteToggled: (Movement) -> Unit,
@@ -512,7 +414,7 @@ private fun VariationCard(
                                 LiftCardYValue.Weight -> topLift.weight.toFloat()
                                 LiftCardYValue.Reps -> topLift.reps.toFloat()
                             },
-                            lineGraphData = topLift.rpe?.toFloat()?.div(10f) ?: 0f
+                            lineGraphData = if (showRpe) topLift.rpe?.toFloat()?.div(10f) ?: 0f else 0f
                         )
                     },
                     state = rememberLazyListState(),
@@ -633,21 +535,23 @@ private enum class SortingOptions(reversed: Boolean) {
     MaxSetReversed(true),
 }
 
-class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
-    override val values: Sequence<LiftDetailsState>
+class LiftDetailsStateProvider: PreviewParameterProvider<CategoryDetailsState> {
+    override val values: Sequence<CategoryDetailsState>
         get() = sequenceOf(
             // Empty lift - no variations
-            LiftDetailsState(
-                liftName = "Squat",
-                liftColor = 0xFF2196F3uL,
-                variations = emptyList()
+            CategoryDetailsState(
+                categoryId = "",
+                categoryName = "Squat",
+                categoryColor = 0xFF2196F3uL,
+                movements = emptyList()
             ),
             // Lift with one variation, no sets
-            LiftDetailsState(
-                liftName = "Bench Press",
-                liftColor = 0xFF4CAF50uL,
-                variations = listOf(
-                    VariationCardState(
+            CategoryDetailsState(
+                categoryId = "",
+                categoryName = "Bench Press",
+                categoryColor = 0xFF4CAF50uL,
+                movements = listOf(
+                    MovementCardState(
                         variation = Movement(
                             lift = com.lift.bro.domain.models.Category(
                                 name = "Bench Press",
@@ -661,11 +565,12 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                 )
             ),
             // Lift with multiple variations and sets
-            LiftDetailsState(
-                liftName = "Deadlift",
-                liftColor = 0xFFFF5722uL,
-                variations = listOf(
-                    VariationCardState(
+            CategoryDetailsState(
+                categoryId = "",
+                categoryName = "Deadlift",
+                categoryColor = 0xFFFF5722uL,
+                movements = listOf(
+                    MovementCardState(
                         variation = Movement(
                             lift = com.lift.bro.domain.models.Category(
                                 name = "Deadlift",
@@ -693,7 +598,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                             )
                         )
                     ),
-                    VariationCardState(
+                    MovementCardState(
                         variation = Movement(
                             lift = com.lift.bro.domain.models.Category(
                                 name = "Deadlift",
@@ -716,80 +621,4 @@ class LiftDetailsStateProvider: PreviewParameterProvider<LiftDetailsState> {
                 )
             )
         )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun LiftDetailsScreenPreview(
-    @PreviewParameter(LiftDetailsStateProvider::class) state: LiftDetailsState,
-) {
-    PreviewAppTheme(isDarkMode = false) {
-        LiftingScaffold(
-            title = { Text(state.liftName ?: "Lift Details") },
-            trailingContent = {
-                TopBarIconButton(
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit",
-                    onClick = {}
-                )
-            },
-            fabProperties = FabProperties(
-                fabIcon = Icons.Default.Add,
-                contentDescription = "Add Set",
-                fabClicked = {}
-            )
-        ) { padding ->
-            LazyColumn(
-                modifier = Modifier.padding(padding),
-                contentPadding = PaddingValues(MaterialTheme.spacing.one),
-                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
-            ) {
-                if (state.variations.isEmpty()) {
-                    item {
-                        Text(
-                            modifier = Modifier.fillMaxWidth().padding(MaterialTheme.spacing.two),
-                            text = stringResource(Res.string.lift_details_screen_empty_state_text),
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
-                    }
-                } else {
-                    items(state.variations) { variationCard ->
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                                .background(
-                                    MaterialTheme.colorScheme.surface,
-                                    MaterialTheme.shapes.medium
-                                )
-                                .padding(MaterialTheme.spacing.one)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    modifier = Modifier.weight(1f),
-                                    text = variationCard.variation.fullName,
-                                    style = MaterialTheme.typography.headlineSmall
-                                )
-                                if (variationCard.variation.favourite) {
-                                    Icon(
-                                        imageVector = Icons.Default.Favorite,
-                                        contentDescription = "Favourite"
-                                    )
-                                }
-                            }
-                            if (variationCard.sets.isNotEmpty()) {
-                                Space(MaterialTheme.spacing.half)
-                                Text(
-                                    text = "${variationCard.sets.size} sets",
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
 }

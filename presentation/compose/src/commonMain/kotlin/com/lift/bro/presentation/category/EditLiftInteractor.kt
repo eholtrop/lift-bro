@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.lift
+package com.lift.bro.presentation.category
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

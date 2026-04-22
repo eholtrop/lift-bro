@@ -158,7 +158,7 @@ class GetTotalWeightMovedUseCaseTest {
         }
 
         override fun listenAllForLift(
-            liftId: String,
+            liftId: String?,
             startDate: LocalDate?,
             endDate: LocalDate?,
             limit: Long,

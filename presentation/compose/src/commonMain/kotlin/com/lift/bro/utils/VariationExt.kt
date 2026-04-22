@@ -8,7 +8,7 @@ import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalTMaxSettings
-import com.lift.bro.presentation.lift.uom
+import com.lift.bro.presentation.category.uom
 import kotlinx.datetime.LocalDate
 import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.math.roundToInt

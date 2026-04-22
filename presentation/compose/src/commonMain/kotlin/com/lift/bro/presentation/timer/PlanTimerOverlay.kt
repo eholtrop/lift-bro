@@ -34,10 +34,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 
 @Composable

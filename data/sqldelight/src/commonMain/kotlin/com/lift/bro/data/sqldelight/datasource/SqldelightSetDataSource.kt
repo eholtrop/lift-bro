@@ -71,7 +71,7 @@ class SqldelightSetDataSource(
             }
     }
 
-    override fun listenAllForLift(liftId: String, limit: Long, sorting: Sorting): Flow<List<LBSet>> =
+    override fun listenAllForLift(liftId: String?, limit: Long, sorting: Sorting): Flow<List<LBSet>> =
         setQueries.getAllForLift(
             categoryId = liftId,
             startDate = Instant.DISTANT_PAST,

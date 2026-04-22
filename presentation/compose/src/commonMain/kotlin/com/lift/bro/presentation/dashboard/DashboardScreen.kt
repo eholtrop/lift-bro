@@ -46,7 +46,6 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
-import tv.dpal.compose.padding.vertical.padding
 
 @Composable
 fun DashboardContent(
@@ -154,13 +153,14 @@ fun DashboardContent(
                                 DashboardLiftHeader(
                                     v2 = item.v3,
                                     showRpe = showRpe,
+                                    title = "Categories",
                                     showTempo = showTempo,
                                     sortingSettings = state.sortingSettings,
                                     onToggleRpe = { showRpe = !showRpe },
                                     onToggleTempo = { showTempo = !showTempo },
                                     toggleFavourite = { interactor(DashboardEvent.FavouritesAtTopToggled) },
                                     optionSelected = { interactor(DashboardEvent.SortingOptionSelected(it)) },
-                                    onAddCategoryClicked = { interactor(DashboardEvent.AddLiftClicked) }
+                                    onAddClicked = { interactor(DashboardEvent.AddLiftClicked) }
                                 )
                             }
 

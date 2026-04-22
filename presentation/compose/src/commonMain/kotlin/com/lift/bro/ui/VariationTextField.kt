@@ -14,6 +14,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,12 +33,23 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.flow.collectLatest
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.edit_lift_screen_variation_name_placeholder
 import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun TextFieldDefaults.transparentColors(): TextFieldColors = TextFieldDefaults.colors(
+    unfocusedContainerColor = Color.Transparent,
+    focusedContainerColor = Color.Transparent,
+    errorContainerColor = Color.Transparent,
+    disabledContainerColor = Color.Transparent,
+    disabledIndicatorColor = Color.Transparent,
+    focusedIndicatorColor = Color.Transparent,
+    errorIndicatorColor = Color.Transparent,
+    unfocusedIndicatorColor = Color.Transparent,
+)
 
 @Composable
 fun VariationTextField(

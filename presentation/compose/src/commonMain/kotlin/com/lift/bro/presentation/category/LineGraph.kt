@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalFoundationApi::class)
 
-package com.lift.bro.presentation.lift
+package com.lift.bro.presentation.category
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateOffsetAsState
@@ -30,7 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.lift.bro.ui.theme.spacing
-import io.ktor.client.request.invoke
 import kotlinx.datetime.LocalDate
 import kotlin.math.max
 import kotlin.math.min

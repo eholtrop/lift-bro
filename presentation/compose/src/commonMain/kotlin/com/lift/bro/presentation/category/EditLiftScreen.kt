@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.lift.bro.presentation.lift
+package com.lift.bro.presentation.category
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -28,7 +28,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -289,18 +288,6 @@ fun WarningDialog(
         text = { Text(text) },
     )
 }
-
-@Composable
-fun TextFieldDefaults.transparentColors(): TextFieldColors = TextFieldDefaults.colors(
-    unfocusedContainerColor = Color.Transparent,
-    focusedContainerColor = Color.Transparent,
-    errorContainerColor = Color.Transparent,
-    disabledContainerColor = Color.Transparent,
-    disabledIndicatorColor = Color.Transparent,
-    focusedIndicatorColor = Color.Transparent,
-    errorIndicatorColor = Color.Transparent,
-    unfocusedIndicatorColor = Color.Transparent,
-)
 
 class EditLiftStateProvider: PreviewParameterProvider<EditLiftState> {
     override val values: Sequence<EditLiftState>

@@ -24,7 +24,7 @@ class SetRepository(
     ): Flow<List<LBSet>> = local.listenAll(startDate, endDate, variationId, limit, reps = reps, sorting, order)
 
     override fun listenAllForLift(
-        liftId: String,
+        liftId: String?,
         startDate: LocalDate?,
         endDate: LocalDate?,
         limit: Long,

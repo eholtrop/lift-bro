@@ -125,7 +125,7 @@ class GetTotalRepsUseCaseTest {
         }
 
         override fun listenAllForLift(
-            liftId: String,
+            liftId: String?,
             startDate: LocalDate?,
             endDate: LocalDate?,
             limit: Long,

@@ -12,6 +12,7 @@ class VariationRepository(
 ) : IVariationRepository {
 
     override fun listenAll(liftId: String?): Flow<List<Movement>> = local.listenAllForLift(liftId)
+
     override fun listenAll(): Flow<List<Movement>> = local.listenAll()
 
     override fun listen(id: String): Flow<Movement?> = local.listen(id)
