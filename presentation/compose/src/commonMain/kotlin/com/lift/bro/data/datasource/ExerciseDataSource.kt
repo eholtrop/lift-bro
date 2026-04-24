@@ -6,11 +6,10 @@ import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.VariationSets
 import comliftbrodb.ExerciseQueries
 import comliftbrodb.SetQueries
-import comliftbrodb.VariationQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -32,9 +31,9 @@ interface ExerciseDataSource {
 
     suspend fun delete(id: String)
 
-    suspend fun addVariation(exerciseId: String, variationId: VariationId)
+    suspend fun addVariation(exerciseId: String, variationId: MovementId)
 
-    suspend fun removeVariation(exerciseId: String, variationId: VariationId)
+    suspend fun removeVariation(exerciseId: String, variationId: MovementId)
 
     suspend fun removeVariaiton(exerciseVariationId: String)
     suspend fun addExercise(workoutId: String, exerciseId: String = uuid4().toString())
@@ -43,7 +42,6 @@ interface ExerciseDataSource {
 class LBExerciseDataSource(
     private val exerciseQueries: ExerciseQueries,
     private val setQueries: SetQueries,
-    private val variationQueries: VariationQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ExerciseDataSource {
 
@@ -173,7 +171,7 @@ class LBExerciseDataSource(
 
     override suspend fun addVariation(
         exerciseId: String,
-        variationId: VariationId,
+        variationId: MovementId,
     ) {
         withContext(dispatcher) {
             exerciseQueries.saveVariation(
@@ -186,7 +184,7 @@ class LBExerciseDataSource(
 
     override suspend fun removeVariation(
         exerciseId: String,
-        variationId: VariationId,
+        variationId: MovementId,
     ) {
         withContext(dispatcher) {
             exerciseQueries.deleteVariationBy(exerciseId, variationId)

@@ -1,11 +1,6 @@
 package com.lift.bro.presentation.category
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import com.benasher44.uuid.uuid4
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
@@ -13,9 +8,10 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
+import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
-import com.lift.bro.ui.navigation.Destination.VariationDetails
+import com.lift.bro.ui.navigation.Destination.MovementDetails
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
@@ -63,15 +59,15 @@ fun rememberCategoryDetailsInteractor(
         ),
         source = { state ->
             combine(
-                dependencies.liftRepository.get(categoryId),
+                dependencies.liftRepository.get(state.categoryId),
                 dependencies.variationRepository.listenAll(categoryId),
                 dependencies.setRepository.listenAllForLift(categoryId)
                     .map { it.groupBy { it.variationId } }
-            ) { lift, variations, sets ->
+            ) { category, variations, sets ->
                 CategoryDetailsState(
                     categoryId = state.categoryId,
-                    categoryName = lift?.name,
-                    categoryColor = lift?.color,
+                    categoryName = category?.name,
+                    categoryColor = category?.color,
                     movements = variations.map {
                         MovementCardState(
                             variation = it,
@@ -86,7 +82,7 @@ fun rememberCategoryDetailsInteractor(
                 when (event) {
                     CategoryDetailsEvent.AddSetClicked -> navCoordinator.present(
                         CreateSet(
-                            liftId = categoryId
+                            categoryId = categoryId
                         )
                     )
 
@@ -109,8 +105,8 @@ fun rememberCategoryDetailsInteractor(
 
                     is CategoryDetailsEvent.MovementClicked ->
                         navCoordinator.present(
-                            VariationDetails(
-                                variationId = event.variation.id
+                            MovementDetails(
+                                movementId = event.variation.id
                             )
                         )
 
@@ -131,7 +127,7 @@ fun rememberCategoryDetailsInteractor(
                     )
 
                     CategoryDetailsEvent.CreateMovementClicked -> navCoordinator.present(
-                        VariationDetails("")
+                        Destination.CreateMovement()
                     )
 
                     CategoryDetailsEvent.DeleteCategoryClicked -> {

@@ -39,7 +39,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calendar.today
@@ -272,7 +272,7 @@ fun ProgressItemView(
 @Composable
 private fun VariationSetWrappedGraph(
     modifier: Modifier = Modifier,
-    id: VariationId,
+    id: MovementId,
     contentColor: Color = MaterialTheme.colorScheme.primary,
     highlightDates: List<LocalDate>
 ) {

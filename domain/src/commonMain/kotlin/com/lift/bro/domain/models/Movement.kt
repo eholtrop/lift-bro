@@ -3,7 +3,7 @@ package com.lift.bro.domain.models
 import com.benasher44.uuid.uuid4
 import kotlinx.serialization.Serializable
 
-typealias VariationId = String
+typealias MovementId = String
 
 /**
  * A domain model to represent the variation class
@@ -13,7 +13,7 @@ typealias VariationId = String
  */
 @Serializable
 data class Movement(
-    val id: VariationId = uuid4().toString(),
+    val id: MovementId = uuid4().toString(),
     val lift: Category? = null,
     val name: String? = null,
     val reps: Long = 1,

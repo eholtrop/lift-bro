@@ -2,7 +2,7 @@ package com.lift.bro.data.core.repository
 
 import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
@@ -35,5 +35,5 @@ class SetRepository(
     override suspend fun save(lbSet: LBSet) = local.save(lbSet)
     override suspend fun delete(lbSet: LBSet) = local.delete(lbSet)
     override suspend fun deleteAll() = local.deleteAll()
-    override suspend fun deleteAll(variationId: VariationId) = local.deleteAll(variationId)
+    override suspend fun deleteAll(variationId: MovementId) = local.deleteAll(variationId)
 }

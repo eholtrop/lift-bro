@@ -5,7 +5,7 @@ import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.ExerciseId
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -78,7 +78,7 @@ class WorkoutRepository(
 
     override suspend fun addVariation(
         exerciseId: ExerciseId,
-        variationId: VariationId,
+        variationId: MovementId,
     ) {
         database.exerciseDataSource.addVariation(
             exerciseId = exerciseId,

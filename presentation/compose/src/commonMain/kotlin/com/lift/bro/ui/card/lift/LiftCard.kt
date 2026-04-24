@@ -186,7 +186,7 @@ fun LiftCard(
                         .clip(MaterialTheme.shapes.medium)
                         .clickable(
                             onClick = {
-                                coordinator.present(Destination.CreateSet(liftId = lift.id))
+                                coordinator.present(Destination.CreateSet(categoryId = lift.id))
                             },
                             role = Role.Button,
                         ),

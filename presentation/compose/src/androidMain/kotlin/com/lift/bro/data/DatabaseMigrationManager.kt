@@ -102,7 +102,6 @@ class DatabaseMigrationManager(
         }
 
         val tables = listOf(
-            "Lift",
             "Variation",
             "LiftingSet",
             "LiftingLog",
@@ -121,6 +120,24 @@ class DatabaseMigrationManager(
             } catch (e: Exception) {
                 Log.w(TAG, "Failed to copy table $table: ${e.message}")
                 throw e
+            }
+        }
+
+        // Migrate Lift table to Category table (Lift was renamed to Category)
+        try {
+            Log.d(TAG, "Copying Lift to Category")
+            val migrateLiftToCategory = "INSERT OR REPLACE INTO Category(id, name, color) SELECT id, name, color FROM source.Lift"
+            targetDriver.execute(null, migrateLiftToCategory, 0, null)
+            Log.d(TAG, "Copied Lift to Category")
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to copy Lift to Category: ${e.message}")
+            // Check if source has Category table instead
+            try {
+                val copyCategory = "INSERT OR REPLACE INTO Category SELECT * FROM source.Category"
+                targetDriver.execute(null, copyCategory, 0, null)
+                Log.d(TAG, "Copied Category from source")
+            } catch (e2: Exception) {
+                Log.w(TAG, "Failed to copy Category from source: ${e2.message}")
             }
         }
 

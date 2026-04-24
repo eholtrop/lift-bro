@@ -7,8 +7,8 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.Tempo
-import com.lift.bro.domain.models.VariationId
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
 import comliftbrodb.GetAllSets
@@ -128,7 +128,7 @@ class SqldelightSetDataSource(
         setQueries.deleteAll()
     }
 
-    override suspend fun deleteAll(variationId: VariationId) {
+    override suspend fun deleteAll(variationId: MovementId) {
         setQueries.deleteAllFromVariations(variationId)
     }
 }

@@ -59,11 +59,11 @@ import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.ApplicationScope
-import com.lift.bro.presentation.variation.render
+import com.lift.bro.presentation.movement.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calendar.Calendar
 import com.lift.bro.ui.calendar.CalendarMonth
@@ -183,10 +183,10 @@ data class DailyWorkoutDetailsState(
 
 sealed interface DailyWorkoutDetailsEvent {
     data object CreateWorkoutClicked: DailyWorkoutDetailsEvent
-    data class OpenWorkoutClicked(val exerciseId: ExerciseId?, val variationId: VariationId?):
+    data class OpenWorkoutClicked(val exerciseId: ExerciseId?, val variationId: MovementId?):
         DailyWorkoutDetailsEvent
 
-    data class AddToWorkout(val variationId: VariationId): DailyWorkoutDetailsEvent
+    data class AddToWorkout(val variationId: MovementId): DailyWorkoutDetailsEvent
 }
 
 @Composable
