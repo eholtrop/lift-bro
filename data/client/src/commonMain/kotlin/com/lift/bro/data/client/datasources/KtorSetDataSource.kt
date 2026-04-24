@@ -4,12 +4,11 @@ import com.lift.bro.data.client.createConnectionFlow
 import com.lift.bro.data.client.createLiftBroClient
 import com.lift.bro.data.core.datasource.SetDataSource
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
 import io.ktor.client.HttpClient
 import io.ktor.client.request.delete
-import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
@@ -45,7 +44,7 @@ class KtorSetDataSource(
         liftId: String?,
         limit: Long,
         sorting: Sorting
-    ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit&liftId=$liftId")
+    ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit${liftId?.let { "&liftId=$it" }}")
 
     override fun listen(id: String): Flow<LBSet?> = createConnectionFlow(httpClient, "api/ws/set?setId=$id")
 
@@ -64,7 +63,7 @@ class KtorSetDataSource(
         httpClient.delete("api/rest/sets")
     }
 
-    override suspend fun deleteAll(variationId: VariationId) {
+    override suspend fun deleteAll(variationId: MovementId) {
         httpClient.delete("api/rest/sets?variationId=$variationId")
     }
 }

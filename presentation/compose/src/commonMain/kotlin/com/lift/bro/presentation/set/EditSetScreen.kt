@@ -93,7 +93,7 @@ fun EditSetScreen(
 ) {
     EditSetScreen(
         interactor = rememberCreateSetInteractor(
-            variationId = variationId,
+            movementId = variationId,
             date = date
         ),
     )

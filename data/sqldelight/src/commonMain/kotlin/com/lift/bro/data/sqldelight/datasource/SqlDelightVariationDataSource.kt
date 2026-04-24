@@ -33,7 +33,7 @@ class SqlDelightVariationDataSource(
     override suspend fun save(variation: Movement) {
         movementQueries.save(
             id = variation.id,
-            categoryId = variation.lift?.id!!,
+            categoryId = variation.lift?.id,
             name = variation.name,
             notes = variation.notes,
             favourite = if (variation.favourite) 1 else 0,
@@ -161,11 +161,6 @@ class SqlDelightVariationDataSource(
     }
 }
 
-private fun comliftbrodb.Lift.toDomain() = Category(
-    id = this.id,
-    name = this.name,
-    color = this.color?.toULong(),
-)
 //
 // private fun comliftbrodb.GetAll.toDomain(): Movement = Movement(
 //    id = this.id,

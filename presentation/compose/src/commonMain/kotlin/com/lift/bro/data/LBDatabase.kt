@@ -22,8 +22,8 @@ import comliftbrodb.GetAllByMovement
 import comliftbrodb.Goal
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
+import comliftbrodb.MovementQueries
 import comliftbrodb.SetQueries
-import comliftbrodb.VariationQueries
 import comliftbrodb.Workout
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +61,7 @@ class LBDatabase(
     val liftDataSource: LiftDataSource = LiftDataSource(
         database.categoryQueries,
         database.setQueries,
-        database.variationQueries
+        database.movementQueries
     )
 
     // Deprecated: repositories are constructed in DI using data:core + data:sqldelight implementations
@@ -70,7 +70,7 @@ class LBDatabase(
     @Deprecated("use the setRepository instead")
     val setDataSource: SetDataSource = SetDataSource(
         setQueries = database.setQueries,
-        variationQueries = database.variationQueries
+        movementQueries = database.movementQueries
     )
 
     val logDataSource = database.liftingLogQueries
@@ -90,7 +90,7 @@ class LBDatabase(
 
     suspend fun clear() {
         database.categoryQueries.deleteAll()
-        database.variationQueries.deleteAll()
+        database.movementQueries.deleteAll()
         database.setQueries.deleteAll()
         database.exerciseQueries.deleteAll()
         database.workoutQueries.deleteAll()
@@ -99,7 +99,6 @@ class LBDatabase(
     val exerciseDataSource = LBExerciseDataSource(
         exerciseQueries = database.exerciseQueries,
         setQueries = database.setQueries,
-        variationQueries = database.variationQueries
     )
 
     val variantDataSource: VariationDataSource = SqlDelightVariationDataSource(
@@ -133,7 +132,7 @@ private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
 
 class SetDataSource(
     private val setQueries: SetQueries,
-    private val variationQueries: VariationQueries,
+    private val movementQueries: MovementQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
@@ -175,13 +174,13 @@ class SetDataSource(
         }
     }
 
-    fun getAllForLift(liftId: String, limit: Long = Long.MAX_VALUE): List<LBSet> =
-        variationQueries.getAllForLift(liftId).executeAsList().map {
+    fun getAllForCategory(categoryId: String, limit: Long = Long.MAX_VALUE): List<LBSet> =
+        movementQueries.getAllForCategory(categoryId).executeAsList().map {
             getAll(variationId = it.id, limit)
         }
             .fold(emptyList()) { list, subList -> list + subList }
 
-    fun listenAllForVariation(
+    fun listenAllForCategory(
         variationId: String,
     ): Flow<List<LBSet>> =
         setQueries.getAllByMovement(variationId, Long.MAX_VALUE).flowToList(dispatcher)
@@ -291,7 +290,7 @@ fun GetAllByMovement.toDomain() = LBSet(
 class LiftDataSource(
     private val categoryQueries: CategoryQueries,
     private val setQueries: SetQueries,
-    private val variationQueries: VariationQueries,
+    private val movementQueries: MovementQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
@@ -324,7 +323,7 @@ class LiftDataSource(
     }
 }
 
-internal fun comliftbrodb.Lift.toDomain() = Category(
+internal fun comliftbrodb.Category.toDomain() = Category(
     id = this.id,
     name = this.name,
     color = this.color?.toULong(),
@@ -346,7 +345,7 @@ internal fun comliftbrodb.Lift.toDomain() = Category(
 //    )
 // }
 
-internal fun comliftbrodb.Variation.toDomain(
+internal fun comliftbrodb.Movement.toDomain(
     parentLift: Category?,
     sets: List<LBSet>,
 ) = Movement(

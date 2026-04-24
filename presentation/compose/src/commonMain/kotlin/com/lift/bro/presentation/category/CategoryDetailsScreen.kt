@@ -17,26 +17,20 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -69,18 +63,17 @@ import com.lift.bro.ui.FabProperties
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
+import com.lift.bro.ui.SubmitTextField
 import com.lift.bro.ui.TopBarButton
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
-import lift_bro.core.generated.resources.variation_details_screen_edit_title_content_description
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.compose.listCorners
@@ -140,77 +133,19 @@ fun CategoryDetailsScreen(
             },
         ),
         title = {
-            var editName by remember { mutableStateOf(state.categoryName != null) }
-            var name by remember(state.categoryName) { mutableStateOf(state.categoryName ?: "") }
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                if (editName) {
-                    TextField(
-                        modifier = Modifier.wrapContentWidth(),
-                        value = name,
-                        textStyle = MaterialTheme.typography.headlineMedium,
-                        onValueChange = {
-                            name = it
-                        },
-                        colors = TextFieldDefaults.transparentColors(),
-                        singleLine = true,
-                        placeholder = {
-                            Text(
-                                "Category Name",
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                        },
-                        supportingText = {
-                            Text("Squats, Leg Day, Back Stuff...")
-                        },
-                        suffix = {
-                            IconButton(
-                                onClick = {
-                                    interactor(CategoryDetailsEvent.NameUpdated(name))
-                                    editName = false
-                                }
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Save,
-                                    contentDescription = "Save",
-                                    tint = MaterialTheme.colorScheme.primary,
-                                )
-                            }
-                        },
-                        keyboardActions = KeyboardActions(
-                            onAny = {
-                                interactor(CategoryDetailsEvent.NameUpdated(name))
-                                editName = false
-                            }
-                        )
-                    )
-                } else {
-                    Row(
-                        modifier = Modifier
-                            .clip(MaterialTheme.shapes.medium)
-                            .clickable(
-                                onClick = {
-                                    editName = true
-                                },
-                                role = Role.Button
-                            )
-                            .padding(
-                                horizontal = MaterialTheme.spacing.one
-                            ),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
-                    ) {
-                        Text(state.categoryName ?: "Category Name")
-                        Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = stringResource(
-                                Res.string.variation_details_screen_edit_title_content_description
-                            ),
-                        )
+                SubmitTextField(
+                    value = state.categoryName ?: "",
+                    onValueSubmitted = {
+                        interactor(CategoryDetailsEvent.NameUpdated(it))
+                    },
+                    placeholder = {
+                        Text("Category")
                     }
-                }
+                )
             }
         },
         trailingContent = {

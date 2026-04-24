@@ -490,7 +490,7 @@ fun VariationItemCard(
                     modifier = Modifier.clickable(
                         onClick = {
                             coordinator.present(
-                                Destination.VariationDetails(
+                                Destination.MovementDetails(
                                     variation.id
                                 )
                             )
@@ -732,7 +732,7 @@ fun VariationItemCard(
                     onClick = {
                         coordinator.present(
                             Destination.CreateSet(
-                                variationId = variation.id,
+                                movementId = variation.id,
                                 date = date.atStartOfDayIn(TimeZone.currentSystemDefault()),
                             )
                         )
