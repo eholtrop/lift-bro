@@ -1,7 +1,7 @@
 package com.lift.bro.data.core.datasource
 
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
 import kotlinx.coroutines.flow.Flow
@@ -29,5 +29,5 @@ interface SetDataSource {
     suspend fun save(lbSet: LBSet)
     suspend fun delete(lbSet: LBSet)
     suspend fun deleteAll()
-    suspend fun deleteAll(variationId: VariationId)
+    suspend fun deleteAll(variationId: MovementId)
 }

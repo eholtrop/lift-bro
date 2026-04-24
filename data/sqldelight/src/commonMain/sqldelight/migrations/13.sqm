@@ -1,0 +1,9 @@
+-- Migrate data from Lift table to Category table
+-- This handles the case where migration 11 ran but Lift table still exists
+-- (e.g., if Category.sq created the table before migration 11 could rename)
+
+INSERT OR REPLACE INTO Category(id, name, color)
+SELECT id, name, color FROM Lift
+WHERE NOT EXISTS (SELECT 1 FROM Category WHERE Category.id = Lift.id);
+
+DROP TABLE IF EXISTS Lift;

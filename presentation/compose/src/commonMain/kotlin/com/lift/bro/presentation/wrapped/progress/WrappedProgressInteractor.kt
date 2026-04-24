@@ -2,7 +2,7 @@ package com.lift.bro.presentation.wrapped.progress
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.wrapped.LocalWrappedYear
 import com.lift.bro.presentation.wrapped.WrappedPageState.ProgressItemWeight
@@ -31,7 +31,7 @@ sealed class WrappedProgressItemState {
         val favourite: Boolean,
         val variationColor: ULong? = null,
         val isBodyWeight: Boolean = false,
-        val variationId: VariationId = "",
+        val variationId: MovementId = "",
     ) : WrappedProgressItemState()
 
     @Serializable

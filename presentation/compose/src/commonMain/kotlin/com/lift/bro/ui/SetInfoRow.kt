@@ -19,7 +19,7 @@ import com.lift.bro.domain.models.UOM
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.presentation.variation.render
+import com.lift.bro.presentation.movement.render
 import com.lift.bro.ui.theme.icons
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider

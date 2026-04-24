@@ -22,8 +22,8 @@ import comliftbrodb.GetAllByMovement
 import comliftbrodb.Goal
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
+import comliftbrodb.MovementQueries
 import comliftbrodb.SetQueries
-import comliftbrodb.VariationQueries
 import comliftbrodb.Workout
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -61,7 +61,7 @@ class LBDatabase(
     val liftDataSource: LiftDataSource = LiftDataSource(
         database.categoryQueries,
         database.setQueries,
-        database.variationQueries
+        database.movementQueries
     )
 
     // Deprecated: repositories are constructed in DI using data:core + data:sqldelight implementations
@@ -70,7 +70,7 @@ class LBDatabase(
     @Deprecated("use the setRepository instead")
     val setDataSource: SetDataSource = SetDataSource(
         setQueries = database.setQueries,
-        variationQueries = database.variationQueries
+        movementQueries = database.movementQueries
     )
 
     val logDataSource = database.liftingLogQueries
@@ -90,7 +90,7 @@ class LBDatabase(
 
     suspend fun clear() {
         database.categoryQueries.deleteAll()
-        database.variationQueries.deleteAll()
+        database.movementQueries.deleteAll()
         database.setQueries.deleteAll()
         database.exerciseQueries.deleteAll()
         database.workoutQueries.deleteAll()
@@ -99,7 +99,6 @@ class LBDatabase(
     val exerciseDataSource = LBExerciseDataSource(
         exerciseQueries = database.exerciseQueries,
         setQueries = database.setQueries,
-        variationQueries = database.variationQueries
     )
 
     val variantDataSource: VariationDataSource = SqlDelightVariationDataSource(
@@ -133,7 +132,7 @@ private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
 
 class SetDataSource(
     private val setQueries: SetQueries,
-    private val variationQueries: VariationQueries,
+    private val movementQueries: MovementQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
@@ -175,28 +174,6 @@ class SetDataSource(
         }
     }
 
-    fun getAllForLift(liftId: String, limit: Long = Long.MAX_VALUE): List<LBSet> =
-        variationQueries.getAllForLift(liftId).executeAsList().map {
-            getAll(variationId = it.id, limit)
-        }
-            .fold(emptyList()) { list, subList -> list + subList }
-
-    fun listenAllForVariation(
-        variationId: String,
-    ): Flow<List<LBSet>> =
-        setQueries.getAllByMovement(variationId, Long.MAX_VALUE).flowToList(dispatcher)
-            .map { sets ->
-                sets.map { set ->
-                    val localMax =
-                        sets.filter { it.movementId == set.movementId }
-                            .filter { it.date.toLocalDate() < set.date.toLocalDate() }
-                            .maxOfOrNull { calculateMax(it.reps, it.weight) }
-                    set.toDomain().copy(
-                        mer = localMax?.let { calculateMer(set.weight, set.reps, localMax) } ?: 0
-                    )
-                }
-            }
-
     fun getAll(
         limit: Long = Long.MAX_VALUE,
         startDate: Instant? = null,
@@ -212,11 +189,6 @@ class SetDataSource(
             sortBy = Sorting.date.toString(),
             order = 0,
         ).executeAsList().map { it.toDomain() }
-
-    fun LocalDate.atStartOfDayIn(): Instant = this.atStartOfDayIn(TimeZone.currentSystemDefault())
-
-    fun LocalDate.atEndOfDayIn(): Instant =
-        this.atTime(23, 59, 59, 999999999).toInstant(TimeZone.currentSystemDefault())
 
     fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
 
@@ -239,14 +211,6 @@ class SetDataSource(
 
     suspend fun delete(lbSet: LBSet) {
         setQueries.delete(lbSet.id)
-    }
-
-    suspend fun deleteAll(variationId: String) {
-        setQueries.deleteAllFromVariations(movementId = variationId)
-    }
-
-    suspend fun deleteAll() {
-        setQueries.deleteAll()
     }
 
     suspend fun delete(setId: String) {
@@ -291,7 +255,7 @@ fun GetAllByMovement.toDomain() = LBSet(
 class LiftDataSource(
     private val categoryQueries: CategoryQueries,
     private val setQueries: SetQueries,
-    private val variationQueries: VariationQueries,
+    private val movementQueries: MovementQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) {
 
@@ -315,50 +279,13 @@ class LiftDataSource(
         return true
     }
 
-    suspend fun deleteAll() {
-        categoryQueries.deleteAll()
-    }
-
     suspend fun delete(liftId: String) {
         categoryQueries.delete(liftId)
     }
 }
 
-internal fun comliftbrodb.Lift.toDomain() = Category(
+internal fun comliftbrodb.Category.toDomain() = Category(
     id = this.id,
     name = this.name,
     color = this.color?.toULong(),
-)
-
-// internal fun GetAll.toDomain(): Movement {
-//    return Movement(
-//        id = this.id,
-//        lift = Category(
-//            id = this.lift_id,
-//            name = this.lift_name,
-//            color = this.lift_color?.toULong(),
-//        ),
-//        name = this.name,
-//        eMax = null,
-//        maxReps = null,
-//        oneRepMax = null,
-//        bodyWeight = this.body_weight?.let { it == 1L },
-//    )
-// }
-
-internal fun comliftbrodb.Variation.toDomain(
-    parentLift: Category?,
-    sets: List<LBSet>,
-) = Movement(
-    id = this.id,
-    lift = parentLift,
-    name = this.name,
-    eMax = sets.filter { it.reps > 1 }.maxByOrNull {
-        estimatedMax(it.reps.toInt(), it.weight)
-    },
-    maxReps = sets.maxByOrNull { it.reps },
-    oneRepMax = sets.filter { it.reps == 1L }.maxByOrNull { it.weight },
-    favourite = this.favourite == 1L,
-    notes = this.notes,
-    bodyWeight = this.body_weight?.let { it == 1L },
 )

@@ -103,8 +103,8 @@ fun rememberDashboardInteractor(
     sideEffects = listOf(
         SideEffect { _, _, event ->
             when (event) {
-                DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.CreateLift())
-                is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
+                DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.CreateCategory())
+                is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.CategoryDetails(event.liftId))
                 DashboardEvent.EnableAnalytics -> {
                     settingsRepository.set(
                         Setting.AnalyticsConsent,

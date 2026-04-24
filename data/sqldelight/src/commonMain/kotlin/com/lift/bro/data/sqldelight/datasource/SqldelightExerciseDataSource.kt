@@ -8,7 +8,7 @@ import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.VariationId
+import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.VariationSets
 import comliftbrodb.ExerciseQueries
 import comliftbrodb.SetQueries
@@ -131,7 +131,7 @@ class SqldelightExerciseDataSource(
         }
     }
 
-    override suspend fun saveVariation(exerciseId: String, variationId: VariationId) {
+    override suspend fun saveVariation(exerciseId: String, variationId: MovementId) {
         withContext(dispatcher) {
             exerciseQueries.saveVariation(
                 id = uuid4().toString(),
@@ -148,7 +148,7 @@ class SqldelightExerciseDataSource(
         }
     }
 
-    override suspend fun deleteVariation(exerciseId: String, variationId: VariationId) {
+    override suspend fun deleteVariation(exerciseId: String, variationId: MovementId) {
         withContext(dispatcher) {
             exerciseQueries.deleteVariationBy(exerciseId, variationId)
         }
