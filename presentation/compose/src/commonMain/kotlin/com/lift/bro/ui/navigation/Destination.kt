@@ -31,13 +31,19 @@ sealed class Destination: tv.dpal.navi.Destination() {
     }
 
     @Serializable
-    data class LiftDetails(val liftId: String): Destination()
+    data class CategoryDetails(val liftId: String): Destination()
 
     @Serializable
-    data class CreateLift(val liftId: String = uuid4().toString()): Destination()
+    data class CreateCategory(val liftId: String = uuid4().toString()): Destination()
 
     @Serializable
-    data class VariationDetails(val variationId: String): Destination()
+    data class MovementDetails(val movementId: String): Destination()
+
+    @Serializable
+    data class CreateMovement(
+        val movementId: String = uuid4().toString(),
+        val categoryId: String? = null
+    ): Destination()
 
     @Serializable
     data class EditSet(

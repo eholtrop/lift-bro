@@ -61,7 +61,7 @@ fun AppRouter(
 
         is Destination.CreateWorkout -> WorkoutScreen(rememberWorkoutInteractor(route.localDate))
 
-        is Destination.CreateLift -> CategoryDetailsScreen(
+        is Destination.CreateCategory -> CategoryDetailsScreen(
             liftId = route.liftId,
         )
 
@@ -75,19 +75,37 @@ fun AppRouter(
             date = route.date,
         )
 
-        is Destination.LiftDetails ->
+        is Destination.CategoryDetails ->
             CategoryDetailsScreen(
                 liftId = route.liftId,
             )
 
         Destination.Settings -> SettingsScreen()
-        is Destination.VariationDetails ->
+        is Destination.MovementDetails ->
             VariationDetailsScreen(
-                variationId = route.variationId,
+                variationId = route.movementId,
                 addSetClicked = {
                     navCoordinator.present(
                         CreateSet(
-                            variationId = route.variationId
+                            variationId = route.movementId
+                        )
+                    )
+                },
+                setClicked = {
+                    navCoordinator.present(
+                        EditSet(
+                            setId = it.id
+                        )
+                    )
+                }
+            )
+        is Destination.CreateMovement ->
+            VariationDetailsScreen(
+                variationId = route.movementId,
+                addSetClicked = {
+                    navCoordinator.present(
+                        CreateSet(
+                            variationId = route.movementId
                         )
                     )
                 },

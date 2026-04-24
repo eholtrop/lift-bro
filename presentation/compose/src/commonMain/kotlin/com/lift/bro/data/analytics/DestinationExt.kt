@@ -8,15 +8,16 @@ val Destination.screenName: String?
         Destination.Onboarding -> AnalyticsEvents.Screens.ONBOARDING
         Destination.Home -> AnalyticsEvents.Screens.HOME_DASHBOARD
         is Destination.Timer -> AnalyticsEvents.Screens.TIMER
-        is Destination.LiftDetails -> AnalyticsEvents.Screens.LIFT_DETAILS
-        is Destination.EditLift -> AnalyticsEvents.Screens.EDIT_LIFT
-        is Destination.VariationDetails -> AnalyticsEvents.Screens.VARIATION_DETAILS
+        is Destination.CreateCategory -> AnalyticsEvents.Screens.CATEGORY_CREATE
+        is Destination.CategoryDetails -> AnalyticsEvents.Screens.CATEGORY_DETAILS
         is Destination.EditSet -> AnalyticsEvents.Screens.EDIT_SET
-        is Destination.CreateSet -> AnalyticsEvents.Screens.EDIT_SET
+        is Destination.CreateSet -> AnalyticsEvents.Screens.CREATE_SET
+        is Destination.MovementDetails -> AnalyticsEvents.Screens.MOVEMENT_DETAILS
+        is Destination.CreateMovement -> AnalyticsEvents.Screens.MOVEMENT_CREATE
         is Destination.EditWorkout -> AnalyticsEvents.Screens.WORKOUT
         is Destination.CreateWorkout -> AnalyticsEvents.Screens.WORKOUT
-        Destination.Settings -> AnalyticsEvents.Screens.SETTINGS
         is Destination.Wrapped -> AnalyticsEvents.Screens.WRAPPED_LANDING
+        Destination.Settings -> AnalyticsEvents.Screens.SETTINGS
         Destination.Goals -> AnalyticsEvents.Screens.GOALS
         is Destination.Unknown -> null
     }
