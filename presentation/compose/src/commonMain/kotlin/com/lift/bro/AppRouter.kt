@@ -67,13 +67,31 @@ fun AppRouter(route: Destination) {
             )
 
         Destination.Settings -> SettingsScreen()
-        is Destination.VariationDetails ->
+        is Destination.MovementDetails ->
             VariationDetailsScreen(
-                variationId = route.variationId,
+                variationId = route.movementId,
                 addSetClicked = {
                     navCoordinator.present(
                         CreateSet(
-                            variationId = route.variationId
+                            variationId = route.movementId
+                        )
+                    )
+                },
+                setClicked = {
+                    navCoordinator.present(
+                        EditSet(
+                            setId = it.id
+                        )
+                    )
+                }
+            )
+        is Destination.CreateMovement ->
+            VariationDetailsScreen(
+                variationId = route.movementId,
+                addSetClicked = {
+                    navCoordinator.present(
+                        CreateSet(
+                            variationId = route.movementId
                         )
                     )
                 },

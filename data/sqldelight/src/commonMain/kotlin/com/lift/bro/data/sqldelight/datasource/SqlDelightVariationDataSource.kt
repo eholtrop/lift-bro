@@ -30,10 +30,11 @@ class SqlDelightVariationDataSource(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): VariationDataSource {
 
-    override suspend fun save(variation: Movement) {
+    override suspend fun save(variation: Movement?) {
+        variation ?: return
         movementQueries.save(
             id = variation.id,
-            categoryId = variation.lift?.id!!,
+            categoryId = variation.lift?.id,
             name = variation.name,
             notes = variation.notes,
             favourite = if (variation.favourite) 1 else 0,

@@ -490,7 +490,7 @@ fun VariationItemCard(
                     modifier = Modifier.clickable(
                         onClick = {
                             coordinator.present(
-                                Destination.VariationDetails(
+                                Destination.MovementDetails(
                                     variation.id
                                 )
                             )

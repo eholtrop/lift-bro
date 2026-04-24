@@ -2,6 +2,7 @@ package com.lift.bro.presentation.variation
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
@@ -17,45 +18,52 @@ import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
 
+typealias MovementDetailsInteractor = Interactor<MovementDetailsState, MovementDetailsEvent>
+
 @Serializable
-data class VariationDetailsState(
-    val variation: Movement,
-    val notes: String? = null,
-    val cards: List<VariationDetailCard> = emptyList(),
+data class MovementDetailsState(
+    val movement: Movement,
+    val cards: List<MovementDetailsCard> = emptyList(),
 )
 
 @Serializable
-data class VariationDetailCard(
+data class MovementDetailsCard(
     val title: String,
     val sets: List<LBSet>,
 )
 
-sealed interface VariationDetailsEvent {
-    data class NotesUpdated(val notes: String): VariationDetailsEvent
-    data class SetClicked(val setId: String): VariationDetailsEvent
-    data object AddSetClicked: VariationDetailsEvent
+sealed interface MovementDetailsEvent {
+    data object AddSetClicked: MovementDetailsEvent
+    data class SetClicked(val setId: String): MovementDetailsEvent
 
-    data class NameUpdated(val name: String): VariationDetailsEvent
-
-    data object ToggleBodyWeight: VariationDetailsEvent
+    sealed interface UpdateMovement: MovementDetailsEvent {
+        data class NameUpdated(val name: String): UpdateMovement
+        data class NotesUpdated(val notes: String): UpdateMovement
+        data object ToggleBodyWeight: UpdateMovement
+    }
 }
 
 @Composable
-fun rememberVariationDetailInteractor(
-    variationId: String,
+fun rememberMovementDetailsInteractor(
+    movementId: String,
+    categoryId: String? = null,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
-): Interactor<VariationDetailsState, VariationDetailsEvent> =
+): MovementDetailsInteractor =
     rememberInteractor(
-        initialState = VariationDetailsState(Movement()),
-        source = {
+        initialState = MovementDetailsState(
+            Movement(
+                id = movementId,
+            )
+        ),
+        source = { state ->
             combine(
-                dependencies.database.variantDataSource.listen(variationId),
-                dependencies.database.setDataSource.listenAllForVariation(variationId)
-            ) { variation, sets ->
-                VariationDetailsState(
-                    variation = variation!!,
+                dependencies.variationRepository.listen(movementId),
+                dependencies.setRepository.listenAll(variationId = movementId)
+            ) { movement, sets ->
+                MovementDetailsState(
+                    movement = movement ?: state.movement,
                     cards = sets.groupBy { it.date }.map {
-                        VariationDetailCard(
+                        MovementDetailsCard(
                             title = it.key.toString("EEEE, MM d"),
                             sets = it.value
                         )
@@ -66,32 +74,41 @@ fun rememberVariationDetailInteractor(
         sideEffects = listOf(
             SideEffect { _, state, event ->
                 when (event) {
-                    VariationDetailsEvent.AddSetClicked -> {
-                        navCoordinator.present(CreateSet())
-                    }
+                    is MovementDetailsEvent.UpdateMovement -> {
+                        when (event) {
+                            is MovementDetailsEvent.UpdateMovement.NameUpdated -> {
+                                state.movement.let { variation ->
+                                    dependencies.variationRepository.save(
+                                        variation.copy(name = event.name)
+                                    )
+                                }
+                            }
 
-                    is VariationDetailsEvent.NotesUpdated -> {
-                        if (event.notes.isNotBlank() && state.variation.notes.isNullOrBlank()) {
-                            dependencies.database.variantDataSource.save(
-                                state.variation.copy(notes = event.notes)
-                            )
+                            is MovementDetailsEvent.UpdateMovement.NotesUpdated -> {
+                                val currentVariation = state.movement
+                                currentVariation.let {
+                                    dependencies.database.variantDataSource.save(
+                                        currentVariation.copy(notes = event.notes)
+                                    )
+                                }
+                            }
+
+                            MovementDetailsEvent.UpdateMovement.ToggleBodyWeight -> {
+                                state.movement.let { variation ->
+                                    dependencies.variationRepository.save(
+                                        variation.copy(bodyWeight = variation.bodyWeight?.not() ?: true)
+                                    )
+                                }
+                            }
                         }
                     }
 
-                    is VariationDetailsEvent.SetClicked -> {
+                    MovementDetailsEvent.AddSetClicked -> {
+                        navCoordinator.present(CreateSet())
+                    }
+
+                    is MovementDetailsEvent.SetClicked -> {
                         navCoordinator.present(EditSet(event.setId))
-                    }
-
-                    is VariationDetailsEvent.NameUpdated -> {
-                        dependencies.variationRepository.save(
-                            state.variation.copy(name = event.name)
-                        )
-                    }
-
-                    VariationDetailsEvent.ToggleBodyWeight -> {
-                        dependencies.variationRepository.save(
-                            state.variation.copy(bodyWeight = state.variation.bodyWeight?.not() ?: true)
-                        )
                     }
                 }
             }
@@ -99,16 +116,21 @@ fun rememberVariationDetailInteractor(
         reducers = listOf(
             Reducer { state, event ->
                 when (event) {
-                    is VariationDetailsEvent.NotesUpdated -> state.copy(
-                        variation = state.variation.copy(
-                            notes = event.notes
-                        )
-                    )
+                    is MovementDetailsEvent.UpdateMovement -> {
+                        when (event) {
+                            is MovementDetailsEvent.UpdateMovement.NameUpdated -> state
+                            MovementDetailsEvent.UpdateMovement.ToggleBodyWeight -> state
+                            is MovementDetailsEvent.UpdateMovement.NotesUpdated -> state.copy(
+                                movement = state.movement.copy(
+                                    notes = event.notes
+                                )
+                            )
+                        }
 
-                    VariationDetailsEvent.AddSetClicked -> state
-                    is VariationDetailsEvent.SetClicked -> state
-                    is VariationDetailsEvent.NameUpdated -> state
-                    VariationDetailsEvent.ToggleBodyWeight -> state
+                    }
+
+                    MovementDetailsEvent.AddSetClicked -> state
+                    is MovementDetailsEvent.SetClicked -> state
                 }
             }
         )
