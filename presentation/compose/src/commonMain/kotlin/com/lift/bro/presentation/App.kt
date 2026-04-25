@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
+import com.lift.bro.AppPurchases
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
@@ -190,7 +191,7 @@ fun App(
         }
 
         Purchases.configure(if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS)
-        Purchases.sharedInstance.getCustomerInfo(
+        AppPurchases.getCustomerInfo(
             onError = { error ->
                 Sentry.captureException(Throwable(message = error.message))
             },
