@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -81,6 +82,7 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.ThemePreviews
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.coroutines.launch
@@ -813,13 +815,12 @@ fun SetOptionsBottomSheet(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 fun WorkoutScreenInternalPreview(
-    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState,
-    @PreviewParameter(DarkModeProvider::class) isDark: Boolean,
+    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState
 ) {
-    PreviewAppTheme(isDarkMode = isDark) {
+    PreviewAppTheme(isDarkMode = isSystemInDarkTheme()) {
         WorkoutScreenInternal(
             state = state,
             eventHandler = {}

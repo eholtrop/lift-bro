@@ -7,6 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.AndroidUiModes.UI_MODE_NIGHT_YES
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import com.example.compose.AppTheme
 import com.lift.bro.domain.models.LiftBro
@@ -76,3 +78,7 @@ class DarkModeProvider : PreviewParameterProvider<Boolean> {
     override val values: Sequence<Boolean>
         get() = sequenceOf(true, false)
 }
+
+@Preview(name="Light", showBackground = true)
+@Preview(name = "Dark", uiMode = UI_MODE_NIGHT_YES, showBackground = true)
+annotation class ThemePreviews;
