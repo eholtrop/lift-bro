@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.lift.bro.AppPurchases
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.LiftBro
@@ -195,7 +196,7 @@ fun SettingsScreen() {
                     // need to refresh payments whenever the paywal changes... hacky but works
                     // should abstract
                     LaunchedEffect(showPaywall) {
-                        Purchases.sharedInstance.getCustomerInfo(
+                        AppPurchases.getCustomerInfo(
                             onError = { error ->
                                 Sentry.captureException(Throwable(message = error.message))
                             },
@@ -345,11 +346,11 @@ fun SettingsScreen() {
                         modifier = Modifier.clickable {
                             coroutineScope.launch {
                                 clipboard.setClipEntry(
-                                    Purchases.sharedInstance.appUserID.toClipEntry()
+                                    AppPurchases.appUserID.toClipEntry()
                                 )
                             }
                         },
-                        text = stringResource(Res.string.settings_user_id_label, Purchases.sharedInstance.appUserID)
+                        text = stringResource(Res.string.settings_user_id_label, AppPurchases.appUserID)
                     )
                 }
             }
