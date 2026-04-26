@@ -95,7 +95,7 @@ kotlin {
 
 //            implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
             implementation("dev.gitlive:firebase-crashlytics:2.1.0")
-            implementation("dev.gitlive:firebase-analytics:2.1.0")
+            implementation(libs.posthog.kmp)
         }
 
         androidMain.dependencies {
@@ -104,6 +104,7 @@ kotlin {
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
             implementation(compose.uiTooling)
+            implementation(libs.posthog.android)
 
             // DataStore + Tink for secure key storage
             implementation(libs.datastore.preferences)

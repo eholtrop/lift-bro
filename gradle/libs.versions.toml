@@ -33,6 +33,8 @@ app-update = "2.1.0"
 appcompat = "1.7.0"
 uuid = "0.8.1"
 firebase-crashlytics-gradle = "3.0.2"
+posthog-kmp = "0.1.0"
+posthog-android = "3.9.1"
 
 lexilabs-basic = "2.6.0"
 media3-exoplayer = "1.9.2"
@@ -79,6 +81,8 @@ app-update-ktx = { module = "com.google.android.play:app-update-ktx", version.re
 app-update = { module = "com.google.android.play:app-update", version.ref = "app-update" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 uuid = { module = "com.benasher44:uuid", version.ref = "uuid" }
+posthog-kmp = { module = "io.github.samuolis:posthog-kmp", version.ref = "posthog-kmp" }
+posthog-android = { module = "com.posthog:posthog-android", version.ref = "posthog-android" }
 screenshot-validation-api = { group = "com.android.tools.screenshot", name = "screenshot-validation-api", version.ref = "screenshot" }
 
 # Ktor server (Multiplatform)
