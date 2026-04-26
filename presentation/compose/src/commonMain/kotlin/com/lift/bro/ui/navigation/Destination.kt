@@ -1,5 +1,6 @@
 package com.lift.bro.ui.navigation
 
+import com.benasher44.uuid.uuid4
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.serializers.InstantSerializer
 import kotlinx.datetime.LocalDate
@@ -33,10 +34,16 @@ sealed class Destination: tv.dpal.navi.Destination() {
     data class LiftDetails(val liftId: String): Destination()
 
     @Serializable
-    data class EditLift(val liftId: String?): Destination()
+    data class CreateLift(val liftId: String = uuid4().toString()): Destination()
 
     @Serializable
-    data class VariationDetails(val variationId: String): Destination()
+    data class MovementDetails(val movementId: String): Destination()
+
+    @Serializable
+    data class CreateMovement(
+        val movementId: String = uuid4().toString(),
+        val categoryId: String? = null
+    ): Destination()
 
     @Serializable
     data class EditSet(

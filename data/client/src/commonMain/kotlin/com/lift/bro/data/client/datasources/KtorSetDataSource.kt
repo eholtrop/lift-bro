@@ -42,7 +42,7 @@ class KtorSetDataSource(
     )
 
     override fun listenAllForLift(
-        liftId: String,
+        liftId: String?,
         limit: Long,
         sorting: Sorting
     ): Flow<List<LBSet>> = createConnectionFlow(httpClient, "api/ws/sets?limit=$limit&liftId=$liftId")

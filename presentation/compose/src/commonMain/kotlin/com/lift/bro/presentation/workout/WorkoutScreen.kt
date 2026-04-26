@@ -70,7 +70,7 @@ import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
-import com.lift.bro.presentation.lift.WarningDialog
+import com.lift.bro.presentation.category.WarningDialog
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.SetInfoRow
@@ -490,7 +490,7 @@ fun VariationItemCard(
                     modifier = Modifier.clickable(
                         onClick = {
                             coordinator.present(
-                                Destination.VariationDetails(
+                                Destination.MovementDetails(
                                     variation.id
                                 )
                             )

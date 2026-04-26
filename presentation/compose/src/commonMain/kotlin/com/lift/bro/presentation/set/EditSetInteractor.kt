@@ -105,7 +105,7 @@ sealed interface EditSetEvent {
 private fun editSetSource(
     setId: String,
     date: Instant? = null,
-    variationId: String? = null,
+    movementId: String? = null,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
     settingsRepository: ISettingsRepository = dependencies.settingsRepository,
@@ -114,26 +114,26 @@ private fun editSetSource(
         it ?: LBSet(
             id = setId,
             date = date ?: Clock.System.now(),
-            variationId = variationId ?: "",
+            variationId = movementId ?: "",
         )
     }
     .flatMapLatest { set ->
         variationRepository.listen(set.variationId)
-            .flatMapLatest { variation ->
+            .flatMapLatest { movement ->
                 combine(
                     setRepository.listenAll(
-                        variationId = variation?.id,
+                        variationId = movement?.id,
                         limit = 1,
                         sorting = Sorting.weight
                     ).map { it.firstOrNull() },
                     setRepository.listenAllForLift(
-                        liftId = variation?.lift?.id ?: "",
+                        liftId = movement?.lift?.id ?: "",
                         limit = 1,
                         sorting = Sorting.weight
                     ).map { it.firstOrNull() }
                 ) { maxVariation, maxLift ->
                     set.toUiState(
-                        variation = variation,
+                        movement = movement,
                         maxVariationSet = maxVariation,
                         maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null,
                         v2 = settingsRepository.get(Setting.EditSetVersion) == 2
@@ -161,17 +161,17 @@ fun rememberEditSetInteractor(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun rememberCreateSetInteractor(
-    variationId: String?,
+    movementId: String?,
     date: Instant?,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> {
-    val id = rememberSaveable(variationId, date) { uuid4().toString() }
+    val id = rememberSaveable(movementId, date) { uuid4().toString() }
     return rememberInteractor(
         initialState = EditSetState(
             id = id
         ),
         source = {
-            editSetSource(id, date, variationId)
+            editSetSource(id, date, movementId)
         },
         sideEffects = listOf(editSetSideEffects()) + listOf(
             SideEffect { _, _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
@@ -232,25 +232,25 @@ fun editSetSideEffects(
 }
 
 internal suspend fun LBSet.toUiState(
-    variation: Movement?,
+    movement: Movement?,
     maxVariationSet: LBSet?,
     maxLiftSet: LBSet?,
     v2: Boolean,
 ) = EditSetState(
     id = this.id,
-    variation = variation?.let {
+    variation = movement?.let {
         SetVariation(
             variation = Movement(id = this.variationId),
             variationMaxPercentage = maxVariationSet?.let {
                 EditSetMaxPercentageState(
                     percentage = ((this.weight / max(maxVariationSet.weight, 1.0)) * 100).toInt(),
-                    variationName = variation.fullName
+                    variationName = movement.fullName
                 )
             },
             liftMaxPercentage = maxLiftSet?.let {
                 EditSetMaxPercentageState(
                     percentage = ((this.weight / max(maxLiftSet.weight, 1.0)) * 100).toInt(),
-                    variationName = dependencies.liftRepository.get(variation.lift?.id).firstOrNull()?.name ?: ""
+                    variationName = dependencies.liftRepository.get(movement.lift?.id).firstOrNull()?.name ?: ""
                 )
             }
         )

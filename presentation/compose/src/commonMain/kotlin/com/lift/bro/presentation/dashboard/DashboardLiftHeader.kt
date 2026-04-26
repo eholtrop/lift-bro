@@ -50,13 +50,14 @@ fun DashboardLiftHeader(
     v2: Boolean,
     sortingSettings: SortingSettings,
     showWeight: MutableState<LiftCardYValue> = LocalLiftCardYValue.current,
-    showTempo: Boolean,
+    showTempo: Boolean?,
     showRpe: Boolean,
+    title: String = "",
     onToggleTempo: () -> Unit,
     onToggleRpe: () -> Unit,
     optionSelected: (SortingOption) -> Unit,
     toggleFavourite: () -> Unit,
-    onAddCategoryClicked: () -> Unit,
+    onAddClicked: () -> Unit,
 ) {
     val thisModifier = if (v2) {
         modifier.padding(
@@ -93,12 +94,12 @@ fun DashboardLiftHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Categories",
+                text = title,
                 style = MaterialTheme.typography.titleLarge
             )
             IconButton(
                 onClick = {
-                    onAddCategoryClicked()
+                    onAddClicked()
                 }
             ) {
                 Icon(
@@ -170,47 +171,49 @@ fun DashboardLiftHeader(
                     }
                 )
             }
-            ChipButton(
-                onClick = {
-                    onToggleTempo()
-                }
-            ) {
-                Icon(
-                    imageVector = Icons.Default.BarChart,
-                    contentDescription = null
-                )
-                Text(
-                    text = "tempo",
-                    color = if (showTempo) {
-                        MaterialTheme.colorScheme.onPrimary
-                    } else {
-                        TextFieldDefaults.colors().disabledTextColor
+            if (showTempo != null) {
+                ChipButton(
+                    onClick = {
+                        onToggleTempo()
                     }
-                )
-            }
-
-            Space()
-
-            var showSortingDialog by remember { mutableStateOf(false) }
-
-            if (showSortingDialog) {
-                DashboardSortingDialog(
-                    sortingSettings = sortingSettings,
-                    toggleFavourite = toggleFavourite,
-                    optionSelected = optionSelected,
-                    onDismissRequest = { showSortingDialog = false },
-                )
-            }
-
-            ChipButton(
-                onClick = {
-                    showSortingDialog = true
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.BarChart,
+                        contentDescription = null
+                    )
+                    Text(
+                        text = "tempo",
+                        color = if (showTempo) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            TextFieldDefaults.colors().disabledTextColor
+                        }
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Default.Sort,
-                    contentDescription = "Sort"
-                )
+
+                Space()
+
+                var showSortingDialog by remember { mutableStateOf(false) }
+
+                if (showSortingDialog) {
+                    DashboardSortingDialog(
+                        sortingSettings = sortingSettings,
+                        toggleFavourite = toggleFavourite,
+                        optionSelected = optionSelected,
+                        onDismissRequest = { showSortingDialog = false },
+                    )
+                }
+
+                ChipButton(
+                    onClick = {
+                        showSortingDialog = true
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.Sort,
+                        contentDescription = "Sort"
+                    )
+                }
             }
         }
     }
@@ -235,7 +238,7 @@ fun DashboardLiftHeaderV2Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Weight, showTempo: true, showRpe: false
             DashboardLiftHeader(
@@ -248,7 +251,7 @@ fun DashboardLiftHeaderV2Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Weight, showTempo: false, showRpe: true
             DashboardLiftHeader(
@@ -261,7 +264,7 @@ fun DashboardLiftHeaderV2Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Weight, showTempo: true, showRpe: true
             DashboardLiftHeader(
@@ -274,7 +277,7 @@ fun DashboardLiftHeaderV2Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Reps, showTempo: false, showRpe: false
             DashboardLiftHeader(
@@ -287,7 +290,7 @@ fun DashboardLiftHeaderV2Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Reps, showTempo: true, showRpe: false
             DashboardLiftHeader(
@@ -300,7 +303,7 @@ fun DashboardLiftHeaderV2Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Reps, showTempo: false, showRpe: true
             DashboardLiftHeader(
@@ -313,7 +316,7 @@ fun DashboardLiftHeaderV2Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Reps, showTempo: true, showRpe: true
             DashboardLiftHeader(
@@ -326,7 +329,7 @@ fun DashboardLiftHeaderV2Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
         }
     }
@@ -351,7 +354,7 @@ fun DashboardLiftHeaderV1Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Weight, showTempo: true, showRpe: false
             DashboardLiftHeader(
@@ -364,7 +367,7 @@ fun DashboardLiftHeaderV1Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Weight, showTempo: false, showRpe: true
             DashboardLiftHeader(
@@ -377,7 +380,7 @@ fun DashboardLiftHeaderV1Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Weight, showTempo: true, showRpe: true
             DashboardLiftHeader(
@@ -390,7 +393,7 @@ fun DashboardLiftHeaderV1Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Reps, showTempo: false, showRpe: false
             DashboardLiftHeader(
@@ -403,7 +406,7 @@ fun DashboardLiftHeaderV1Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Reps, showTempo: true, showRpe: false
             DashboardLiftHeader(
@@ -416,7 +419,7 @@ fun DashboardLiftHeaderV1Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Reps, showTempo: false, showRpe: true
             DashboardLiftHeader(
@@ -429,7 +432,7 @@ fun DashboardLiftHeaderV1Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
             // showWeight: Reps, showTempo: true, showRpe: true
             DashboardLiftHeader(
@@ -442,7 +445,7 @@ fun DashboardLiftHeaderV1Preview(
                 onToggleRpe = {},
                 optionSelected = {},
                 toggleFavourite = {},
-                onAddCategoryClicked = {}
+                onAddClicked = {}
             )
         }
     }
