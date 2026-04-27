@@ -11,8 +11,7 @@ import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.Setting
-import com.revenuecat.purchases.kmp.Purchases
-import com.revenuecat.purchases.kmp.ktx.awaitCustomerInfo
+import com.lift.bro.AppPurchases
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -106,13 +105,13 @@ class SettingsRepository(
             Setting.Consent -> dataSource.getSerializable<Consent>(key, null)
             Setting.DashboardV3 -> dataSource.getBool(key, false)
             Setting.DeviceFtux -> dataSource.getBool(key, false)
-            Setting.EMaxEnabled -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
+            Setting.EMaxEnabled -> dataSource.getBool(key, AppPurchases.isUserPro())
             Setting.EditSetVersion -> dataSource.getInt(key, 1)
             Setting.LatestReadReleaseNotes -> dataSource.getString(key, null)
             Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null)
-                ?: MERSettings(enabled = Purchases.sharedInstance.isUserPro())
-            Setting.ShowTotalWeightMoved -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
-            Setting.TMaxEnabled -> dataSource.getBool(key, Purchases.sharedInstance.isUserPro())
+                ?: MERSettings(enabled = AppPurchases.isUserPro())
+            Setting.ShowTotalWeightMoved -> dataSource.getBool(key, AppPurchases.isUserPro())
+            Setting.TMaxEnabled -> dataSource.getBool(key, AppPurchases.isUserPro())
             Setting.ThemeMode -> dataSource.getString(key, null)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
             Setting.Timer -> dataSource.getBool(key, false)
             Setting.UnitOfMeasure -> Settings.UnitOfWeight(UOM.valueOf(dataSource.getString(key, "POUNDS") ?: "POUNDS"))
@@ -130,5 +129,3 @@ class SettingsRepository(
     }
 }
 
-suspend fun Purchases.isUserPro() =
-    Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.contains("pro")

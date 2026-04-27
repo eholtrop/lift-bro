@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -56,7 +57,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
@@ -79,8 +79,8 @@ import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.ThemePreviews
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.coroutines.launch
@@ -813,13 +813,12 @@ fun SetOptionsBottomSheet(
     }
 }
 
-@Preview
+@ThemePreviews
 @Composable
 fun WorkoutScreenInternalPreview(
-    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState,
-    @PreviewParameter(DarkModeProvider::class) isDark: Boolean,
+    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState
 ) {
-    PreviewAppTheme(isDarkMode = isDark) {
+    PreviewAppTheme(isDarkMode = isSystemInDarkTheme()) {
         WorkoutScreenInternal(
             state = state,
             eventHandler = {}

@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
+import com.lift.bro.AppPurchases
 import com.lift.bro.AppRouter
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
@@ -64,7 +65,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
-import com.revenuecat.purchases.kmp.configure
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import dev.gitlive.firebase.Firebase
@@ -189,8 +189,8 @@ fun App(
             Purchases.logLevel = LogLevel.DEBUG
         }
 
-        Purchases.configure(if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS)
-        Purchases.sharedInstance.getCustomerInfo(
+        AppPurchases.instantiate(isAndroid, subscriptionType)
+        AppPurchases.getCustomerInfo(
             onError = { error ->
                 Sentry.captureException(Throwable(message = error.message))
             },

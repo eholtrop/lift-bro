@@ -87,7 +87,7 @@ class CalculatorInteractorTest {
     }
 
     @Test
-    fun `Given a decimal has been applied to a non zero value when a digit is added then the value is added *after* the decimal`() = runTest {
+    fun `Given a decimal has been applied to a non zero value when a digit is added then the value is added after the decimal`() = runTest {
         with(digitReducer(UOM.POUNDS)) {
             val initialState = CalculatorState(
                 total = "0",

@@ -13,9 +13,9 @@ buildkonfig {
 
     defaultConfigs {
         packageName = "com.lift.bro.core.buildconfig"
-        buildConfigField(FieldSpec.Type.STRING, "SENTRY_DSN", project.findProperty("LIFT_BRO_SENTRY_DSN") as? String ?: System.getenv("LIFT_BRO_SENTRY_DSN"))
-        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY_AND", project.findProperty("revenueCatApiKeyAndroid") as? String ?: System.getenv("REVENUE_CAT_API_KEY"))
-        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY_IOS", project.findProperty("revenueCatApiKeyiOS") as? String ?: System.getenv("REVENUE_CAT_API_KEY"))
+        buildConfigField(FieldSpec.Type.STRING, "SENTRY_DSN", project.findProperty("LIFT_BRO_SENTRY_DSN") as? String ?: System.getenv("LIFT_BRO_SENTRY_DSN") ?: "")
+        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY_AND", project.findProperty("revenueCatApiKeyAndroid") as? String ?: System.getenv("REVENUE_CAT_API_KEY") ?: "")
+        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY_IOS", project.findProperty("revenueCatApiKeyiOS") as? String ?: System.getenv("REVENUE_CAT_API_KEY") ?: "")
         buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", project.versionName())
     }
 }
