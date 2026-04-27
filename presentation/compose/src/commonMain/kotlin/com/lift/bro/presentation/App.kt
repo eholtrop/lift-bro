@@ -65,7 +65,6 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
-import com.revenuecat.purchases.kmp.configure
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import dev.gitlive.firebase.Firebase
