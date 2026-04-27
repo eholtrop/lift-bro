@@ -190,7 +190,7 @@ fun App(
             Purchases.logLevel = LogLevel.DEBUG
         }
 
-        Purchases.configure(if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS)
+        AppPurchases.instantiate(isAndroid, subscriptionType)
         AppPurchases.getCustomerInfo(
             onError = { error ->
                 Sentry.captureException(Throwable(message = error.message))
