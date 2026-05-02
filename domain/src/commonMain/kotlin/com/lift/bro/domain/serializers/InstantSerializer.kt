@@ -10,17 +10,17 @@ import kotlin.time.Instant
 
 object InstantSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor =
-        PrimitiveSerialDescriptor("kotlin.time.Instant", PrimitiveKind.LONG)
+        PrimitiveSerialDescriptor("com.lift.bro.domain.serializers.InstantSerializer", PrimitiveKind.LONG)
 
     override fun serialize(encoder: Encoder, value: Instant) {
         encoder.encodeLong(value.toEpochMilliseconds())
     }
 
     override fun deserialize(decoder: Decoder): Instant {
-        try {
-            return Instant.fromEpochMilliseconds(decoder.decodeLong())
+        return try {
+            Instant.fromEpochMilliseconds(decoder.decodeLong())
         } catch (_: Exception) {
-            return Instant.parse(decoder.decodeString())
+            Instant.parse(decoder.decodeString())
         }
     }
 }
