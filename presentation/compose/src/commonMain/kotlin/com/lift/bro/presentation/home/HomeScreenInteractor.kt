@@ -96,13 +96,11 @@ internal fun homeSideEffects(
     SideEffect { _, _, event ->
         when (event) {
             HomeEvent.DashboardClicked -> {
-                analytics.trackEvent(AnalyticsEvents.Actions.DASHBOARD_BUTTON_CLICKED)
+                analytics.trackScreenView(AnalyticsEvents.Screens.HOME_DASHBOARD)
             }
-
             HomeEvent.CalendarClicked -> {
-                analytics.trackEvent(AnalyticsEvents.Actions.CALENDAR_BUTTON_CLICKED)
+                analytics.trackScreenView(AnalyticsEvents.Screens.HOME_CALENDAR)
             }
-
             HomeEvent.AddSetClicked -> navCoordinator.present(CreateSet())
             is HomeEvent.AddLiftClicked -> navCoordinator.present(EditLift(liftId = null))
             HomeEvent.SettingsClicked -> navCoordinator.present(Settings)

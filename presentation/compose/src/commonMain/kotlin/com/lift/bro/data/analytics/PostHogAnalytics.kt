@@ -1,6 +1,5 @@
 package com.lift.bro.data.analytics
 
-import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.domain.analytics.Analytics
 import io.github.samuolis.posthog.PostHog
 import io.github.samuolis.posthog.PostHogConfig
@@ -12,10 +11,20 @@ class PostHogAnalytics(
 ) : Analytics {
 
     init {
-        PostHog.setup(config, context)
+        PostHog.setup(config.copy(optOut = true), context)
     }
 
-    private val enabled: Boolean = BuildKonfig.POSTHOG_API_KEY.isNotBlank()
+    private val enabled: Boolean get() = !PostHog.isOptedOut()
+
+    override fun setConsent(consented: Boolean) {
+        when (consented) {
+            true -> PostHog.optIn()
+            false -> {
+                PostHog.optOut()
+                PostHog.reset()
+            }
+        }
+    }
 
     override fun trackScreenView(screenName: String, properties: Map<String, Any>) {
         if (!enabled) return
