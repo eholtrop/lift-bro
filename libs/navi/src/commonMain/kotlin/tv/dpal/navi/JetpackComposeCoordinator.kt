@@ -54,32 +54,27 @@ class JetpackComposeCoordinator(
     vararg initialState: Destination,
     currentPage: Destination = initialState.last()
 ): NavCoordinator {
-
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-
     private val mutableStateList = MutableStateFlow(mutableStateListOf(elements = initialState))
     private val currentState = MutableStateFlow(currentPage)
+    private val currentIndex get() = pages.indexOf(currentPage)
 
     override val pages: List<Destination>
         get() = mutableStateList.value
     override val pagesAsFlow: StateFlow<List<Destination>>
         get() = mutableStateList.asStateFlow()
-
     override val currentPage: Destination
         get() = currentState.value
     override val currentPageAsFlow: StateFlow<Destination>
         get() = currentState.asStateFlow()
-
     override val currentPageIndex: Int
         get() = currentIndex
-
-    private val currentIndex get() = pages.indexOf(currentPage)
 
     override fun onBackPressed(keepStack: Boolean): Boolean {
         return if (currentIndex == 0) {
             false
         } else {
-            currentState.value = pages.get(pages.indexOf(currentPage) - 1)
+            currentState.value = pages[pages.indexOf(currentPage) - 1]
             if (!keepStack) {
                 scope.launch {
                     mutableStateList.value.removeAt(mutableStateList.value.lastIndex)

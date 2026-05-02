@@ -34,6 +34,7 @@ sealed interface Setting<T> {
     data object EMaxEnabled: Setting<Boolean>
     data object TMaxEnabled: Setting<Boolean>
     data object ClientUrl: Setting<String?>
+    data object AnalyticsConsent: Setting<com.lift.bro.domain.models.settings.AnalyticsConsent>
 }
 
 interface ISettingsRepository {

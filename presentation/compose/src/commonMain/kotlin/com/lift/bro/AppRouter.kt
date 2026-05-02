@@ -1,7 +1,11 @@
 package com.lift.bro
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.data.analytics.screenName
+import com.lift.bro.di.dependencies
+import com.lift.bro.domain.analytics.Analytics
 import com.lift.bro.presentation.goals.GoalsScreen
 import com.lift.bro.presentation.home.HomeScreen
 import com.lift.bro.presentation.lift.EditLiftScreen
@@ -20,12 +24,22 @@ import com.lift.bro.ui.navigation.Destination.EditSet
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
 import tv.dpal.navi.LocalNavCoordinator
+import tv.dpal.navi.NavCoordinator
 
 @Composable
-fun AppRouter(route: Destination) {
-    val navCoordinator = LocalNavCoordinator.current
+fun AppRouter(
+    route: Destination,
+    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    analytics: Analytics = dependencies.analytics,
+) {
     if (BuildConfig.isDebug) {
         Log.d("App Router Navigation", "route: $route")
+    }
+
+    LaunchedEffect(route) {
+        route.screenName?.let {
+            analytics.trackScreenView(it)
+        }
     }
 
     when (route) {

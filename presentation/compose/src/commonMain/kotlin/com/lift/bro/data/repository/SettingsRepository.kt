@@ -8,6 +8,7 @@ import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.domain.models.settings.AnalyticsConsent
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
@@ -71,6 +72,7 @@ class SettingsRepository(
             Setting.TMaxEnabled -> dataSource.putBool(key, value as Boolean)
             Setting.ThemeMode -> dataSource.putString(key, (value as ThemeMode).toString())
             Setting.Timer -> dataSource.putBool(key, value as Boolean)
+            Setting.AnalyticsConsent -> dataSource.putSerializable(key, value as AnalyticsConsent)
             Setting.UnitOfMeasure -> dataSource.putString(key, (value as Settings.UnitOfWeight).uom.toString())
         }
         keyChanged(key)
@@ -93,6 +95,7 @@ class SettingsRepository(
             Setting.ThemeMode -> "theme_mode"
             Setting.Timer -> "timer_feature_flag"
             Setting.UnitOfMeasure -> "unit_of_measure"
+            Setting.AnalyticsConsent -> "analytics_consent"
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -111,6 +114,13 @@ class SettingsRepository(
             Setting.DeviceFtux -> dataSource.getBool(key, false)
             Setting.EMaxEnabled -> dataSource.getBool(key, AppPurchases.isUserPro())
             Setting.EditSetVersion -> dataSource.getInt(key, 1)
+            Setting.AnalyticsConsent -> dataSource.getSerializable<AnalyticsConsent>(
+                key,
+                AnalyticsConsent(
+                    dashboardBannerDismissed = false,
+                    consented = false
+                )
+            )
             Setting.LatestReadReleaseNotes -> dataSource.getString(key, null)
             Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null)
                 ?: MERSettings(enabled = AppPurchases.isUserPro())

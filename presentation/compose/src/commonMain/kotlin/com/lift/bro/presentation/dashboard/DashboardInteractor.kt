@@ -5,8 +5,11 @@ import com.lift.bro.data.LiftDataSource
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
+import com.lift.bro.domain.models.settings.AnalyticsConsent
 import com.lift.bro.domain.repositories.ISetRepository
+import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.ui.card.lift.LiftCardData
 import com.lift.bro.ui.card.lift.LiftCardState
 import com.lift.bro.ui.navigation.Destination
@@ -45,6 +48,9 @@ sealed class DashboardListItem {
     data class LiftHeader(val v3: Boolean): DashboardListItem()
 
     @Serializable
+    data object AnalyticsBanner: DashboardListItem()
+
+    @Serializable
     sealed class LiftCard: DashboardListItem() {
 
         @Serializable
@@ -78,7 +84,8 @@ data class SortingSettings(
 sealed interface DashboardEvent {
     data object AddLiftClicked: DashboardEvent
     data class LiftClicked(val liftId: String): DashboardEvent
-
+    data object EnableAnalytics: DashboardEvent
+    data object DismissAnalyticsBanner: DashboardEvent
     data class SortingOptionSelected(val sortingOption: SortingOption): DashboardEvent
     data object FavouritesAtTopToggled: DashboardEvent
 }
@@ -89,6 +96,7 @@ fun rememberDashboardInteractor(
     liftRepository: LiftDataSource = dependencies.database.liftDataSource,
     variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: ISetRepository = dependencies.setRepository,
+    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
     navCoordinator: NavCoordinator = LocalNavCoordinator.current,
 ): DashboardInteractor = rememberInteractor<DashboardState, DashboardEvent>(
     initialState = Loading,
@@ -97,6 +105,20 @@ fun rememberDashboardInteractor(
             when (event) {
                 DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.EditLift(null))
                 is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.LiftDetails(event.liftId))
+                DashboardEvent.EnableAnalytics -> {
+                    settingsRepository.set(
+                        Setting.AnalyticsConsent,
+                        AnalyticsConsent(true, true)
+                    )
+                    dependencies.analytics.setConsent(true)
+                }
+                DashboardEvent.DismissAnalyticsBanner -> {
+                    settingsRepository.set(
+                        Setting.AnalyticsConsent,
+                        AnalyticsConsent(true, false)
+                    )
+                    dependencies.analytics.setConsent(false)
+                }
                 else -> {}
             }
         }
@@ -105,9 +127,10 @@ fun rememberDashboardInteractor(
     source = { state ->
         combine(
             liftRepository.listenAll().onStart { emit(emptyList()) },
-            variationRepository.listenAll().onStart { emit(emptyList()) }
-        ) { lifts, variations -> lifts to variations }
-            .flatMapLatest { (lifts, variations) ->
+            variationRepository.listenAll().onStart { emit(emptyList()) },
+            settingsRepository.listen(Setting.AnalyticsConsent),
+        ) { lifts, variations, consent -> Triple(lifts, variations, consent) }
+            .flatMapLatest { (lifts, variations, consent) ->
                 val variationsByLift = variations.groupBy { it.lift?.id }
                 val cards: List<Flow<DashboardListItem?>> = lifts.map { lift ->
                     val liftVariations = variationsByLift[lift.id] ?: emptyList()
@@ -149,12 +172,18 @@ fun rememberDashboardInteractor(
                                 if (!v3) {
                                     // lift header at top if not v3
                                     add(0, DashboardListItem.ReleaseNotes)
+                                    if (!consent.dashboardBannerDismissed) {
+                                        add(0, DashboardListItem.AnalyticsBanner)
+                                    }
                                     add(0, DashboardListItem.LiftHeader(v3))
                                 } else {
                                     // release notes -> workout calendar -> lift header
                                     add(0, DashboardListItem.LiftHeader(v3))
                                     add(0, DashboardListItem.WorkoutCalendar)
                                     add(0, DashboardListItem.ReleaseNotes)
+                                    if (!consent.dashboardBannerDismissed) {
+                                        add(0, DashboardListItem.AnalyticsBanner)
+                                    }
                                 }
                             },
                             sortingSettings = if (state is Loaded) state.sortingSettings else SortingSettings()
