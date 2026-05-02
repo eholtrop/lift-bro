@@ -79,6 +79,6 @@ class DarkModeProvider : PreviewParameterProvider<Boolean> {
         get() = sequenceOf(true, false)
 }
 
-@Preview(name="Light", showBackground = true)
+@Preview(name = "Light", showBackground = true)
 @Preview(name = "Dark", uiMode = UI_MODE_NIGHT_YES, showBackground = true)
 annotation class ThemePreviews

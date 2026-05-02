@@ -21,13 +21,20 @@ import kotlin.time.Clock
 object AppPurchases {
 
     val appUserID: String
-        get() = if (BuildConfig.isDebug || !Purchases.isConfigured) "debug_user"
-                else Purchases.sharedInstance.appUserID
+        get() = if (BuildConfig.isDebug || !Purchases.isConfigured) {
+            "debug_user"
+        } else {
+            Purchases.sharedInstance.appUserID
+        }
 
     suspend fun isUserPro(): Boolean =
-        if (BuildConfig.isDebug) true
-        else if (Purchases.isConfigured) Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.contains("pro")
-        else false
+        if (BuildConfig.isDebug) {
+            true
+        } else if (Purchases.isConfigured) {
+            Purchases.sharedInstance.awaitCustomerInfo().entitlements.active.contains("pro")
+        } else {
+            false
+        }
 
     fun getCustomerInfo(
         onError: (PurchasesError) -> Unit = {},

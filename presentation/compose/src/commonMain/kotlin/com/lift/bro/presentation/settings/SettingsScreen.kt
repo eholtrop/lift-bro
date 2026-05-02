@@ -53,7 +53,6 @@ import com.lift.bro.ui.CheckField
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.ReleaseNotesDialog
 import com.lift.bro.ui.theme.spacing
-import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
 import io.sentry.kotlin.multiplatform.Sentry

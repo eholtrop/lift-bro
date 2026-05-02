@@ -104,7 +104,6 @@ kotlin {
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
             implementation(compose.uiTooling)
-            implementation(libs.posthog.android)
 
             // DataStore + Tink for secure key storage
             implementation(libs.datastore.preferences)
