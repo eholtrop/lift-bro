@@ -1,6 +1,7 @@
 package com.lift.bro.domain.analytics
 
 interface Analytics {
+
     fun trackScreenView(screenName: String, properties: Map<String, Any> = emptyMap())
 
     fun trackEvent(eventName: String, properties: Map<String, Any> = emptyMap())

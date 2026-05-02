@@ -205,7 +205,7 @@ fun App(
     val hasConsent by HasDeviceConsentedUseCase(dependencies.settingsRepository).invoke()
         .collectAsState(null)
 
-    LaunchedEffect("setup_analytics") {
+    LaunchedEffect("setup_analytics", hasConsent) {
         hasConsent?.let { consented ->
             val analytics = dependencies.analytics
             if (consented) {

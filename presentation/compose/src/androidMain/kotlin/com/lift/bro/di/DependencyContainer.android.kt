@@ -1,18 +1,23 @@
 package com.lift.bro.di
 
+import android.app.Application
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.activity.ComponentActivity
 import com.lift.bro.audio.AndroidAudioPlayer
 import com.lift.bro.audio.AudioPlayer
+import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.data.DriverFactory
 import com.lift.bro.data.LBDatabase
+import com.lift.bro.data.analytics.NoOpAnalytics
 import com.lift.bro.data.analytics.PostHogAnalytics
 import com.lift.bro.data.datasource.UserPreferencesDataSource
 import com.lift.bro.data.repository.SettingsRepository
 import com.lift.bro.domain.analytics.Analytics
 import com.lift.bro.domain.repositories.ISettingsRepository
+import io.github.samuolis.posthog.PostHogConfig
+import io.github.samuolis.posthog.PostHogContext
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 
@@ -55,7 +60,14 @@ actual class DependencyContainer {
     }
 
     actual val analytics: Analytics by lazy {
-        PostHogAnalytics(context!!)
+        if (BuildKonfig.POSTHOG_API_KEY.isBlank()) return@lazy NoOpAnalytics()
+        PostHogAnalytics(
+            config = PostHogConfig(
+                apiKey = BuildKonfig.POSTHOG_API_KEY,
+                host = "https://us.i.posthog.com"
+            ),
+            context = PostHogContext(context?.applicationContext as Application)
+        )
     }
 }
 

@@ -1,6 +1,7 @@
 package com.lift.bro.data.repository
 
 import com.benasher44.uuid.uuid4
+import com.lift.bro.AppPurchases
 import com.lift.bro.data.datasource.UserPreferencesDataSource
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
@@ -11,7 +12,6 @@ import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Consent
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.Setting
-import com.lift.bro.AppPurchases
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,7 +23,7 @@ import kotlinx.datetime.LocalDate
 
 class SettingsRepository(
     private val dataSource: UserPreferencesDataSource,
-) : ISettingsRepository {
+): ISettingsRepository {
 
     private val refreshKey by lazy { MutableSharedFlow<String>() }
 
@@ -57,6 +57,7 @@ class SettingsRepository(
                 key,
                 (value as BackupSettings).lastBackupDate.toEpochDays().toInt()
             )
+
             Setting.Bro -> dataSource.putString(key, (value as LiftBro).name)
             Setting.ClientUrl -> dataSource.putString(key, value as String?)
             Setting.Consent -> dataSource.putSerializable(key, value as Consent?)
@@ -75,23 +76,24 @@ class SettingsRepository(
         keyChanged(key)
     }
 
-    private val Setting<*>.key: String get() = when (this) {
-        Setting.BackupSettings -> "last_backup_epoch_days"
-        Setting.Bro -> "bro"
-        Setting.ClientUrl -> "remote_client_url"
-        Setting.Consent -> "consent"
-        Setting.DashboardV3 -> "dashboard_v3"
-        Setting.DeviceFtux -> "ftux"
-        Setting.EMaxEnabled -> "emax_enabled"
-        Setting.EditSetVersion -> "edit_set_screen_version"
-        Setting.LatestReadReleaseNotes -> "latest_read_release_notes"
-        Setting.MerSettings -> "mer_settings"
-        Setting.ShowTotalWeightMoved -> "show_twm"
-        Setting.TMaxEnabled -> "tmax_enabled"
-        Setting.ThemeMode -> "theme_mode"
-        Setting.Timer -> "timer_feature_flag"
-        Setting.UnitOfMeasure -> "unit_of_measure"
-    }
+    private val Setting<*>.key: String
+        get() = when (this) {
+            Setting.BackupSettings -> "last_backup_epoch_days"
+            Setting.Bro -> "bro"
+            Setting.ClientUrl -> "remote_client_url"
+            Setting.Consent -> "consent"
+            Setting.DashboardV3 -> "dashboard_v3"
+            Setting.DeviceFtux -> "ftux"
+            Setting.EMaxEnabled -> "emax_enabled"
+            Setting.EditSetVersion -> "edit_set_screen_version"
+            Setting.LatestReadReleaseNotes -> "latest_read_release_notes"
+            Setting.MerSettings -> "mer_settings"
+            Setting.ShowTotalWeightMoved -> "show_twm"
+            Setting.TMaxEnabled -> "tmax_enabled"
+            Setting.ThemeMode -> "theme_mode"
+            Setting.Timer -> "timer_feature_flag"
+            Setting.UnitOfMeasure -> "unit_of_measure"
+        }
 
     @Suppress("UNCHECKED_CAST")
     private suspend fun <T> Setting<T>.value(): T {
@@ -99,8 +101,10 @@ class SettingsRepository(
             Setting.BackupSettings -> BackupSettings(
                 lastBackupDate = LocalDate.fromEpochDays(dataSource.getInt(key, 0))
             ) as T
+
             Setting.Bro -> dataSource.getString(key, null)?.let { LiftBro.valueOf(it) }
                 ?: LiftBro.entries.toTypedArray().random()
+
             Setting.ClientUrl -> dataSource.getString(key, null)
             Setting.Consent -> dataSource.getSerializable<Consent>(key, null)
             Setting.DashboardV3 -> dataSource.getBool(key, false)
@@ -110,6 +114,7 @@ class SettingsRepository(
             Setting.LatestReadReleaseNotes -> dataSource.getString(key, null)
             Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null)
                 ?: MERSettings(enabled = AppPurchases.isUserPro())
+
             Setting.ShowTotalWeightMoved -> dataSource.getBool(key, AppPurchases.isUserPro())
             Setting.TMaxEnabled -> dataSource.getBool(key, AppPurchases.isUserPro())
             Setting.ThemeMode -> dataSource.getString(key, null)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
@@ -128,4 +133,3 @@ class SettingsRepository(
         return dataSource.getString("remote_client_url", null)
     }
 }
-
