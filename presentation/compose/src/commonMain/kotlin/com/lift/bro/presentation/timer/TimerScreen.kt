@@ -54,11 +54,11 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.LocalShowMERCalcs
 import com.lift.bro.presentation.LocalTwmSettings
-import com.lift.bro.presentation.lift.transparentColors
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus

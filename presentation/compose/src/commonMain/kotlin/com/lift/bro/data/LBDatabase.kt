@@ -181,7 +181,7 @@ class SetDataSource(
         }
             .fold(emptyList()) { list, subList -> list + subList }
 
-    fun listenAllForVariation(
+    fun listenAllForCategory(
         variationId: String,
     ): Flow<List<LBSet>> =
         setQueries.getAllByMovement(variationId, Long.MAX_VALUE).flowToList(dispatcher)

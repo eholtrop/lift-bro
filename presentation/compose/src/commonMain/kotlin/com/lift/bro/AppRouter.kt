@@ -6,10 +6,9 @@ import com.lift.bro.config.BuildConfig
 import com.lift.bro.data.analytics.screenName
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.analytics.Analytics
+import com.lift.bro.presentation.category.CategoryDetailsScreen
 import com.lift.bro.presentation.goals.GoalsScreen
 import com.lift.bro.presentation.home.HomeScreen
-import com.lift.bro.presentation.lift.EditLiftScreen
-import com.lift.bro.presentation.lift.LiftDetailsScreen
 import com.lift.bro.presentation.onboarding.OnboardingScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
@@ -62,14 +61,8 @@ fun AppRouter(
 
         is Destination.CreateWorkout -> WorkoutScreen(rememberWorkoutInteractor(route.localDate))
 
-        is Destination.EditLift -> EditLiftScreen(
+        is Destination.CreateCategory -> CategoryDetailsScreen(
             liftId = route.liftId,
-            liftSaved = {
-                navCoordinator.onBackPressed(keepStack = false)
-            },
-            liftDeleted = {
-                navCoordinator.popToRoot(false)
-            },
         )
 
         is EditSet ->
@@ -82,19 +75,37 @@ fun AppRouter(
             date = route.date,
         )
 
-        is Destination.LiftDetails ->
-            LiftDetailsScreen(
+        is Destination.CategoryDetails ->
+            CategoryDetailsScreen(
                 liftId = route.liftId,
             )
 
         Destination.Settings -> SettingsScreen()
-        is Destination.VariationDetails ->
+        is Destination.MovementDetails ->
             VariationDetailsScreen(
-                variationId = route.variationId,
+                variationId = route.movementId,
                 addSetClicked = {
                     navCoordinator.present(
                         CreateSet(
-                            variationId = route.variationId
+                            variationId = route.movementId
+                        )
+                    )
+                },
+                setClicked = {
+                    navCoordinator.present(
+                        EditSet(
+                            setId = it.id
+                        )
+                    )
+                }
+            )
+        is Destination.CreateMovement ->
+            VariationDetailsScreen(
+                variationId = route.movementId,
+                addSetClicked = {
+                    navCoordinator.present(
+                        CreateSet(
+                            variationId = route.movementId
                         )
                     )
                 },
