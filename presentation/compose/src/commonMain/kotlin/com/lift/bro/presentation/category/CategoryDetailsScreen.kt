@@ -143,7 +143,7 @@ fun CategoryDetailsScreen(
                         interactor(CategoryDetailsEvent.NameUpdated(it))
                     },
                     placeholder = {
-                        Text("Category")
+                        Text("Category Name")
                     }
                 )
             }
@@ -186,6 +186,7 @@ fun CategoryDetailsScreen(
                         v2 = false,
                         showRpe = showRpe,
                         title = "Movements",
+                        contentDescription = "Create Movement",
                         onToggleTempo = { },
                         onToggleRpe = { showRpe = !showRpe },
                         optionSelected = { },

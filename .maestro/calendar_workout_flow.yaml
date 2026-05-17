@@ -1,0 +1,98 @@
+# manual_creation_flow.yaml
+appId: com.lift.bro
+---
+## END-TO-END UI FLOW
+## Onboarding -> Create Categories -> Create Movements -> Create Sets -> Create Workout
+
+## STEP 1: Complete Full Onboarding
+- runFlow:
+    file: flows/onboarding_select_bro.yaml
+- tapOn: "Consent"
+- tapOn: "Continue"
+- tapOn: "🙏 Help me setup some Lifts"
+
+# Select UOM (LBS is default, tap to confirm)
+- tapOn: "LBS"
+
+# Select Squat variations
+- tapOn: "Squat"
+- tapOn: "Back Squat"
+- tapOn: "Front Squat"
+
+# Select Press variations
+- tapOn: "Press"
+- tapOn: "Bench Press"
+
+# Select Deadlift variations (scroll after expand since at bottom)
+- tapOn: "Deadlift"
+- scrollUntilVisible:
+    element:
+      text: "Conventional Deadlift"
+- tapOn: "Conventional Deadlift"
+
+# Continue to Home
+- scrollUntilVisible:
+    element:
+      text: "Continue"
+- tapOn: "Continue"
+
+# Verify setup categories exist
+- assertVisible: "Squat"
+- assertVisible: "Press"
+- assertVisible: "Deadlift"
+
+# Dismiss analytics banner if shown
+- tapOn:
+    text: "No Thanks!"
+    optional: true
+- waitForAnimationToEnd
+
+## Create a Workout from the Calendar
+- tapOn: "Calendar"
+- waitForAnimationToEnd
+
+# Start a new workout for today
+- tapOn: "Start a Workout!"
+
+# Add workout notes
+- tapOn: "Notes"
+- inputText: "Great leg day!"
+
+# Add an exercise (Back Squat) via search dialog
+- tapOn: "Add Exercise"
+
+# Select Back Squat from variation list
+- tapOn: "Back Squat"
+
+# Add a set to Back Squat in the workout
+- tapOn: "Add Set"
+- tapOn:
+    id: "reps"
+- inputText: "10"
+- tapOn:
+    id: "weight"
+- inputText: "135"
+- tapOn: "Back"
+- tapOn: "Back"
+
+- tapOn: "Duplicate Last Set"
+- tapOn:
+    text: "10 x 135 lbs (1350)"
+    index: 1
+
+- longPressOn:
+      id: "reps"
+- inputText: "8"
+- longPressOn:
+      id: "weight"
+- inputText: "185"
+- tapOn:
+      id: "rpe"
+- longPressOn: "9"
+- tapOn: "Back"
+- tapOn: "Back"
+
+- assertVisible: "8 x 185 lbs (1480) at 9rpe"
+
+# Verify the workout screen shows the exercise
+- assertVisible: "Back Squat"

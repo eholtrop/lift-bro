@@ -154,6 +154,7 @@ fun DashboardContent(
                                     v2 = item.v3,
                                     showRpe = showRpe,
                                     title = "Categories",
+                                    contentDescription = "Create Category",
                                     showTempo = showTempo,
                                     sortingSettings = state.sortingSettings,
                                     onToggleRpe = { showRpe = !showRpe },

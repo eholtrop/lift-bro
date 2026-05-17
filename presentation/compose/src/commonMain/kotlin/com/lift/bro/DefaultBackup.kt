@@ -26,45 +26,45 @@ private val debugVariations = listOf(
     // squat variations
     Movement(
         lift = defaultSBDLifts.first { it.name == "Squat" },
-        name = "Back"
+        name = "Back Squat"
     ),
     Movement(
         lift = defaultSBDLifts.first { it.name == "Squat" },
-        name = "Front"
+        name = "Front Squat"
     ),
     Movement(
         lift = defaultSBDLifts.first { it.name == "Squat" },
-        name = "Zercher"
+        name = "Zercher Squat"
     ),
     // press variations
     Movement(
         lift = defaultSBDLifts.first { it.name == "Press" },
-        name = "Bench"
+        name = "Bench Press"
     ),
     Movement(
         lift = defaultSBDLifts.first { it.name == "Press" },
-        name = "Floor"
+        name = "Floor Press"
     ),
     Movement(
         lift = defaultSBDLifts.first { it.name == "Press" },
-        name = "Incline Bench"
+        name = "Incline Bench Press"
     ),
     Movement(
         lift = defaultSBDLifts.first { it.name == "Press" },
-        name = "Military"
+        name = "Military Press"
     ),
     // deadlift variations
     Movement(
         lift = defaultSBDLifts.first { it.name == "Deadlift" },
-        name = "Sumo"
+        name = "Sumo Deadlift"
     ),
     Movement(
         lift = defaultSBDLifts.first { it.name == "Deadlift" },
-        name = "Regular"
+        name = "Conventional Deadlift"
     ),
     Movement(
         lift = defaultSBDLifts.first { it.name == "Deadlift" },
-        name = "Negative"
+        name = "Negative Deadlift"
     ),
 )
 

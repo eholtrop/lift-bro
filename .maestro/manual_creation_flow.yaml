@@ -1,0 +1,124 @@
+# manual_creation_flow.yaml
+appId: com.lift.bro
+---
+## END-TO-END UI FLOW
+## Onboarding -> Create Categories -> Create Movements -> Create Sets -> Create Workout
+
+## STEP 1: Complete Full Onboarding
+- runFlow:
+    file: flows/onboarding_select_bro.yaml
+- tapOn: "Consent"
+- tapOn: "Continue"
+- tapOn: "🙏 Help me setup some Lifts"
+
+# Select UOM (LBS is default, tap to confirm)
+- tapOn: "LBS"
+
+# Select Squat variations
+- tapOn: "Squat"
+- tapOn: "Back Squat"
+- tapOn: "Front Squat"
+
+# Select Press variations
+- tapOn: "Press"
+- tapOn: "Bench Press"
+
+# Select Deadlift variations (scroll after expand since at bottom)
+- tapOn: "Deadlift"
+- scrollUntilVisible:
+    element:
+      text: "Conventional Deadlift"
+- tapOn: "Conventional Deadlift"
+
+# Continue to Home
+- scrollUntilVisible:
+    element:
+      text: "Continue"
+- tapOn: "Continue"
+
+# Verify setup categories exist
+- assertVisible: "Squat"
+- assertVisible: "Press"
+- assertVisible: "Deadlift"
+
+# Dismiss analytics banner if shown
+- tapOn:
+    text: "No Thanks!"
+    optional: true
+- waitForAnimationToEnd
+
+## STEP 2: Create a new Category (Row) with variations
+- tapOn: "Create Category"
+- tapOn: "Edit"
+- inputText: "Row"
+- tapOn: "Save"
+
+# Add first variation
+- tapOn: "Create Movement"
+- tapOn: "Edit"
+- inputText: "Pendlay"
+- tapOn: "Save"
+- tapOn: "Back"
+
+# Add second variation
+- tapOn: "Create Movement"
+- tapOn: "Edit"
+- inputText: "Seated Cable"
+- tapOn: "Save"
+- tapOn: "Back"
+
+# Return to dashboard
+- tapOn: "Back"
+- assertVisible: "Row"
+
+## STEP 3: Navigate to Squat category and existing movements
+- tapOn: "Squat"
+
+# Verify existing movements from onboarding
+- assertVisible: "Back Squat"
+- assertVisible: "Front Squat"
+
+## STEP 4: Create a set in Back Squat
+- tapOn: "Back Squat"
+- tapOn: "Add Set"
+
+# Enter reps
+- tapOn:
+    id: "reps"
+- inputText: "5"
+# Enter weight
+- tapOn:
+    id: "weight"
+- inputText: "185"
+# Enter RPE
+- tapOn:
+    id: "rpe"
+- inputText: "8"
+
+## dismiss keyboard and go back
+- tapOn: "Back"
+- tapOn: "Back"
+
+# Verify set was created
+- assertVisible: "5 x 185 lbs (925) at 8rpe"
+
+## STEP 5: Create another set in Front Squat
+- tapOn: "Back"
+- tapOn: "Front Squat"
+- tapOn: "Add Set"
+
+- tapOn:
+    id: "reps"
+- inputText: "8"
+- tapOn:
+    id: "weight"
+- inputText: "95"
+
+## dismiss keyboard and go back
+- tapOn: "Back"
+- tapOn: "Back"
+- assertVisible: "8 x 95 lbs (760)"
+
+## STEP 6: Navigate back to Home/Dashboard
+- tapOn: "Back"
+- tapOn: "Back"
