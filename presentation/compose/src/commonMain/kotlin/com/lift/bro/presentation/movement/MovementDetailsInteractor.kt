@@ -121,9 +121,11 @@ fun rememberMovementDetailsInteractor(
                     }
 
                     MovementDetailsEvent.AddSetClicked -> {
-                        navCoordinator.present(CreateSet(
-                            movementId = state.movement.id,
-                        ))
+                        navCoordinator.present(
+                            CreateSet(
+                                movementId = state.movement.id,
+                            )
+                        )
                     }
 
                     is MovementDetailsEvent.SetClicked -> {

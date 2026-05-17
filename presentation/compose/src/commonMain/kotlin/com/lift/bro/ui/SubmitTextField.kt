@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun SubmitTextField(
@@ -49,28 +48,27 @@ fun SubmitTextField(
             },
             singleLine = true,
             maxLines = 1,
-            textStyle = MaterialTheme.typography.headlineMedium.copy(
-                textAlign = TextAlign.Center
-            ),
+            textStyle = MaterialTheme.typography.headlineMedium,
             keyboardActions = KeyboardActions(
                 onAny = {
                     onValueSubmitted(currentValue)
+                    editable = false
                 }
             ),
             decorationBox = { inner ->
                 // Rendering Text
-                when {
-                    editable -> inner()
-                    currentValue.isEmpty() -> {
-                        CompositionLocalProvider(
-                            LocalContentColor provides MaterialTheme.colorScheme.onBackground.copy(
-                                alpha = .8f
-                            )
-                        ) {
-                            placeholder()
-                        }
+                when (editable) {
+                    true -> { inner() }
+                    false -> Text(currentValue)
+                }
+                if (currentValue.isEmpty()) {
+                    CompositionLocalProvider(
+                        LocalContentColor provides MaterialTheme.colorScheme.onBackground.copy(
+                            alpha = .8f
+                        )
+                    ) {
+                        placeholder()
                     }
-                    else -> Text(currentValue)
                 }
             }
         )
@@ -100,7 +98,7 @@ fun SubmitTextField(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Name"
+                        contentDescription = "Edit"
                     )
                 }
             }

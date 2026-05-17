@@ -127,7 +127,9 @@ fun rememberCategoryDetailsInteractor(
                     )
 
                     CategoryDetailsEvent.CreateMovementClicked -> navCoordinator.present(
-                        Destination.CreateMovement()
+                        Destination.CreateMovement(
+                            categoryId = state.categoryId
+                        )
                     )
 
                     CategoryDetailsEvent.DeleteCategoryClicked -> {
