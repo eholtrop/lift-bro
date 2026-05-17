@@ -25,6 +25,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.style.TextAlign
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.submit_text_field_edit_name_content_description
+import lift_bro.core.generated.resources.submit_text_field_save_content_description
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SubmitTextField(
@@ -92,7 +96,7 @@ fun SubmitTextField(
             ) {
                 Icon(
                     imageVector = Icons.Default.Save,
-                    contentDescription = "Save"
+                    contentDescription = stringResource(Res.string.submit_text_field_save_content_description)
                 )
             }
 
@@ -105,7 +109,7 @@ fun SubmitTextField(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Edit,
-                        contentDescription = "Edit Name"
+                        contentDescription = stringResource(Res.string.submit_text_field_edit_name_content_description)
                     )
                 }
             }

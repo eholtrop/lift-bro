@@ -39,6 +39,9 @@ import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.ic_calculator
 import lift_bro.core.generated.resources.toolbar_calculator_button_content_description
+import lift_bro.core.generated.resources.toolbar_calculator_content_description
+import lift_bro.core.generated.resources.toolbar_play_content_description
+import lift_bro.core.generated.resources.toolbar_settings_content_description
 import lift_bro.core.generated.resources.toolbar_update_button_content_description
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -169,12 +172,12 @@ fun TopBarIconButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode:
     PreviewAppTheme(isDarkMode = darkMode) {
         TopBarIconButton(
             imageVector = Icons.Default.Settings,
-            contentDescription = "Settings",
+            contentDescription = stringResource(Res.string.toolbar_settings_content_description),
             onClick = {}
         )
         TopBarIconButton(
             painter = painterResource(Res.drawable.ic_calculator),
-            contentDescription = "Calculator",
+            contentDescription = stringResource(Res.string.toolbar_calculator_content_description),
             onClick = {}
         )
     }
@@ -189,7 +192,7 @@ fun TopBarButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode: Boo
         ) {
             Icon(
                 imageVector = Icons.Default.PlayArrow,
-                contentDescription = "Play"
+                contentDescription = stringResource(Res.string.toolbar_play_content_description)
             )
         }
     }

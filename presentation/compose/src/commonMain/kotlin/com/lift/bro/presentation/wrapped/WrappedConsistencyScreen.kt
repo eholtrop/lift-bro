@@ -48,7 +48,10 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_consistency_day_label
 import lift_bro.core.generated.resources.wrapped_consistency_header_title
+import lift_bro.core.generated.resources.wrapped_consistency_lift_label
+import lift_bro.core.generated.resources.wrapped_consistency_month_label
 import lift_bro.core.generated.resources.wrapped_consistency_screen_most_consistent_text
 import lift_bro.core.generated.resources.wrapped_consistency_speech_bubble_title
 import org.jetbrains.compose.resources.stringResource
@@ -164,7 +167,7 @@ fun WrappedConsistencyScreen(
                                 ) {
                                     with(state.mostConsistentMonth) {
                                         Text(
-                                            "Month",
+                                            stringResource(Res.string.wrapped_consistency_month_label),
                                             textAlign = TextAlign.Center,
                                             style = MaterialTheme.typography.titleSmall,
                                         )
@@ -188,7 +191,7 @@ fun WrappedConsistencyScreen(
                                 ) {
                                     with(state.mostConsistentDay) {
                                         Text(
-                                            "Day",
+                                            stringResource(Res.string.wrapped_consistency_day_label),
                                             textAlign = TextAlign.Center,
                                             style = MaterialTheme.typography.titleSmall,
                                         )
@@ -210,7 +213,7 @@ fun WrappedConsistencyScreen(
                                 ) {
                                     with(state.mostConsistentLift) {
                                         Text(
-                                            "Lift",
+                                            stringResource(Res.string.wrapped_consistency_lift_label),
                                             textAlign = TextAlign.Center,
                                             style = MaterialTheme.typography.titleSmall,
                                         )

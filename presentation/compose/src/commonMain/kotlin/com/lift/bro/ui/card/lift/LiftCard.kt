@@ -63,8 +63,10 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.lift_card_body_weight_text
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
+import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.toColor
 import tv.dpal.ext.ktx.datetime.toString
@@ -170,7 +172,7 @@ fun LiftCard(
                     modifier = Modifier.wrapContentWidth(),
                     text = when (yUnit) {
                         LiftCardYValue.Weight -> weightFormat(max)
-                        LiftCardYValue.Reps -> "${max.toInt()}${nbsp}reps"
+                        LiftCardYValue.Reps -> "${max.toInt()}${nbsp}${stringResource(Res.string.reps)}"
                     },
                     style = MaterialTheme.typography.labelMedium,
                     overflow = TextOverflow.MiddleEllipsis,
@@ -443,7 +445,7 @@ fun LiftCard(
                     Text(
                         text = when (yUnit) {
                             LiftCardYValue.Weight -> weightFormat(min)
-                            LiftCardYValue.Reps -> "${min.toInt()} reps"
+                            LiftCardYValue.Reps -> "${min.toInt()} ${stringResource(Res.string.reps)}"
                         },
                         style = MaterialTheme.typography.labelMedium,
                     )
@@ -581,7 +583,7 @@ fun setFormat(
         style = SpanStyle(),
     ) {
         if (bodyWeight) {
-            append("$reps x bw")
+            append("$reps x ${stringResource(Res.string.lift_card_body_weight_text)}")
             if (weight > 0.0) {
                 append(" + ${weightFormat(weight, useGrouping = useGrouping)}")
             }

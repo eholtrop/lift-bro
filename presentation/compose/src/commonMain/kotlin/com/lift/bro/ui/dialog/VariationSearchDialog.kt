@@ -72,6 +72,13 @@ import com.lift.bro.utils.maxText
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.variation_search_dialog_cant_find_text
+import lift_bro.core.generated.resources.variation_search_dialog_close_content_description
+import lift_bro.core.generated.resources.variation_search_dialog_create_variation_cta
+import lift_bro.core.generated.resources.variation_search_dialog_favourite_content_description
+import lift_bro.core.generated.resources.variation_search_dialog_save_and_select_content_description
+import org.jetbrains.compose.resources.stringResource
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
@@ -209,7 +216,12 @@ fun VariationSearchDialog(
                                 onDismissRequest()
                             }
                         ) {
-                            Icon(Icons.Default.Close, contentDescription = "Close")
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = stringResource(
+                                    Res.string.variation_search_dialog_close_content_description
+                                )
+                            )
                         }
                     },
                     placeholder = { Text(state.placeholder) },
@@ -327,7 +339,9 @@ private fun VariationSearchContent(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Save and Select"
+                                    contentDescription = stringResource(
+                                        Res.string.variation_search_dialog_save_and_select_content_description
+                                    )
                                 )
                             }
                         }
@@ -346,12 +360,12 @@ private fun VariationSearchContent(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
-                                "Can't find what you're looking for?",
+                                stringResource(Res.string.variation_search_dialog_cant_find_text),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
 
-                            Text("Create Variation")
+                            Text(stringResource(Res.string.variation_search_dialog_create_variation_cta))
                         }
                     }
                 }
@@ -389,7 +403,9 @@ private fun SearchVariationItem(
                 Icon(
                     modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
                     imageVector = Icons.Default.Star,
-                    contentDescription = "Favourite"
+                    contentDescription = stringResource(
+                        Res.string.variation_search_dialog_favourite_content_description
+                    )
                 )
             }
         }

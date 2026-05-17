@@ -65,6 +65,10 @@ import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.edit_set_screen_variation_selector_v1_text
+import lift_bro.core.generated.resources.edit_set_screen_variation_selector_v2_text
+import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
@@ -154,7 +158,13 @@ fun EditSetScreen(
                 onCheckedChange = { onEvent(EditSetEvent.ToggleV2) },
                 thumbContent = {
                     Text(
-                        if (state.showV2) "V2" else "V1",
+                        if (state.showV2) {
+                            stringResource(
+                                Res.string.edit_set_screen_variation_selector_v2_text
+                            )
+                        } else {
+                            stringResource(Res.string.edit_set_screen_variation_selector_v1_text)
+                        },
                         style = MaterialTheme.typography.titleSmall,
                     )
                 }

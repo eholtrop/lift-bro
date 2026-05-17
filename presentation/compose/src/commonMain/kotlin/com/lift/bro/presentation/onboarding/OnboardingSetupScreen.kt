@@ -55,6 +55,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.onboarding_setup_screen_continue_cta
+import lift_bro.core.generated.resources.onboarding_setup_screen_kg_text
+import lift_bro.core.generated.resources.onboarding_setup_screen_lbs_text
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_lifts_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_uom_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_title
@@ -124,7 +126,7 @@ fun OnboardingSetupScreen(
                         selected = uom == UOM.POUNDS,
                     ) {
                         Text(
-                            "LBS",
+                            stringResource(Res.string.onboarding_setup_screen_lbs_text),
                             style = MaterialTheme.typography.displayLarge
                         )
                     }
@@ -137,7 +139,7 @@ fun OnboardingSetupScreen(
                         selected = uom == UOM.KG,
                     ) {
                         Text(
-                            "KG",
+                            stringResource(Res.string.onboarding_setup_screen_kg_text),
                             style = MaterialTheme.typography.displayLarge
                         )
                     }

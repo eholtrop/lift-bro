@@ -73,6 +73,7 @@ import lift_bro.core.generated.resources.dashboard_footer_leading_button_content
 import lift_bro.core.generated.resources.dashboard_footer_trailing_button_content_description
 import lift_bro.core.generated.resources.dashboard_title
 import lift_bro.core.generated.resources.dashboard_toolbar_leading_button_content_description
+import lift_bro.core.generated.resources.home_screen_loading_title
 import lift_bro.core.generated.resources.ic_calendar
 import lift_bro.core.generated.resources.view_dashboard
 import org.jetbrains.compose.resources.painterResource
@@ -319,7 +320,7 @@ fun HomeScreenContent(
             val navCoordinator = LocalNavCoordinator.current
             LiftingScaffold(
                 title = {
-                    Text("Loading...")
+                    Text(stringResource(Res.string.home_screen_loading_title))
                 },
                 trailingContent = {
                     TopBarIconButton(

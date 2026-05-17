@@ -26,6 +26,7 @@ import com.lift.bro.presentation.set.EditSetStateProvider
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.edit_set_screen_select_variation_text
 import lift_bro.core.generated.resources.weight_selector_chin_title
 import org.jetbrains.compose.resources.stringResource
 
@@ -44,7 +45,7 @@ fun EditSetVariationSelector(
                 }
             ) {
                 Text(
-                    "Select Variation",
+                    stringResource(Res.string.edit_set_screen_select_variation_text),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.error
                 )

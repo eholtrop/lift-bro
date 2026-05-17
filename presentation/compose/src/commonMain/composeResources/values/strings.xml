@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources><string name="app_congrats_text">Congrats!!</string>
+<resources>    <string name="app_congrats_text">Congrats!!</string>
+    <string name="app_screen_new_estimated_max_text">New estimated Max!</string>
+    <string name="app_screen_new_one_rep_max_text">New one rep max!</string>
 
     <string name="backup_dialog_message">Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?</string>
     <string name="backup_dialog_primary_cta">Backup Now</string>
@@ -8,6 +10,14 @@
 
     <string name="calculator_backspace_content_description">Backspace</string>
     <string name="calculator_bigger_bar_message">We're gonna need a bigger bar... 🧔‍♂️</string>
+
+    <string name="category_details_screen_category_placeholder">Category</string>
+    <string name="category_details_screen_delete_cta_content_description">Delete Category</string>
+    <string name="category_details_screen_delete_warning_text">This will delete the Category, All movements will stay!</string>
+    <string name="category_details_screen_delete_warning_title">Are you sure?</string>
+    <string name="category_details_screen_movements_title">Movements</string>
+    <string name="category_details_screen_select_category_placeholder">Select Category</string>
+    <string name="category_drop_down_expand_menu_content_description">Expand Menu</string>
 
     <string name="calendar_next_month_content_description">Next Month</string>
     <string name="calendar_previous_month_content_description">Previous Month</string>
@@ -27,6 +37,14 @@
     <string name="create_lift_screen_title">Create Lift</string>
     <string name="create_set_screen_title">I Crushed</string>
 
+    <string name="dashboard_lift_header_create_category_content_description">Create Category</string>
+    <string name="dashboard_lift_header_sort_content_description">Sort</string>
+    <string name="dashboard_screen_analytics_banner_text">Help Lift Bro improve!</string>
+    <string name="dashboard_screen_analytics_no_thanks_cta">No Thanks!</string>
+    <string name="dashboard_screen_analytics_share_data_cta">Share data</string>
+    <string name="dashboard_screen_categories_title">Categories</string>
+    <string name="dashboard_sorting_dialog_favourites_at_top">Favourites at top</string>
+    <string name="dashboard_sorting_dialog_title">Sorting</string>
     <string name="dashboard_empty_primary_cta_title">Create Lift</string>
     <string name="dashboard_empty_secondary_cta_title">Restore a Backup</string>
     <string name="dashboard_empty_title">Do you even Lift Bro?</string>
@@ -72,6 +90,9 @@ Soreness or pain?</string>
     <string name="edit_lift_variation_heading">Variations</string>
 
     <string name="edit_set_screen_create_lift_cta">Create Lift</string>
+    <string name="edit_set_screen_select_variation_text">Select Variation</string>
+    <string name="edit_set_screen_variation_selector_v1_text">V1</string>
+    <string name="edit_set_screen_variation_selector_v2_text">V2</string>
     <string name="edit_set_screen_delete_acc_label">Delete</string>
     <string name="edit_set_screen_encouragement">You got this!</string>
     <string name="edit_set_screen_extra_notes_label">Extra Notes: (optional)</string>
@@ -84,10 +105,20 @@ Soreness or pain?</string>
     <string name="edit_set_screen_variation_selector_no_variation_max">None</string>
     <string name="edit_set_screen_variation_selector_variation_max">%1$s Max: %2$s</string>
 
+    <string name="goals_screen_achieved_content_description">Achieved</string>
+    <string name="goals_screen_goals_title">Goals</string>
+    <string name="goals_screen_title">2026 Goals</string>
+
+    <string name="home_screen_loading_title">Loading...</string>
+
+    <string name="info_dialog_ok_cta">Okay</string>
+    <string name="info_dialog_info_content_description">Info</string>
+
     <string name="kg">kg</string>
 
     <string name="lbs">lbs</string>
 
+    <string name="lift_card_body_weight_text">bw</string>
     <string name="lift_card_empty_subtitle">Tap to add one</string>
     <string name="lift_card_empty_title">No Sets!</string>
     <string name="lift_details_fab_content_description">Add Set</string>
@@ -99,6 +130,10 @@ Soreness or pain?</string>
     <string name="lift_details_screen_sort_one_rep_max">One Rep Max</string>
 
     <string name="line_item_title_text">Title</string>
+
+    <string name="movement_details_screen_create_movement_placeholder">Create Movement</string>
+    <string name="movement_details_screen_do_you_even_lift_bro_text">Do you even lift bro?</string>
+    <string name="movement_details_screen_empty_state_text">Add a set with + below!</string>
     <string name="number_picker_reps_title">Reps</string>
     <string name="number_picker_weight_title">Weight</string>
 
@@ -111,6 +146,8 @@ Soreness or pain?</string>
     <string name="onboarding_page_one_cta">Continue</string>
     <string name="onboarding_page_one_title">CHOOSE\nYOUR\nLIFT BRO</string>
     <string name="onboarding_setup_screen_continue_cta">Continue</string>
+    <string name="onboarding_setup_screen_kg_text">KG</string>
+    <string name="onboarding_setup_screen_lbs_text">LBS</string>
     <string name="onboarding_setup_screen_select_lifts_title">Select some Lifts! (the fun bit)</string>
     <string name="onboarding_setup_screen_select_uom_title">Select your preferred\nUnit of Measure</string>
     <string name="onboarding_setup_screen_title">LET'S GET STARTED</string>
@@ -170,6 +207,13 @@ Soreness or pain?</string>
     <string name="settings_become_pro_description">Sign up for an Ad free experience and extra premium tracking metrics!</string>
     <string name="settings_become_pro_title">Become Pro!</string>
     <string name="settings_dark_text">Dark</string>
+    <string name="settings_screen_dashboard_v3_description">No more tabs!</string>
+    <string name="settings_screen_dashboard_v3_title">Dashboard V3</string>
+    <string name="settings_screen_experimental_header">Experimental - Expect 🥗</string>
+    <string name="settings_screen_other_goodies_text">Other Goodies (experimental features)</string>
+    <string name="settings_screen_pro_lift_title">Lift Pros Only 😎</string>
+    <string name="settings_screen_timer_description">Enable a timer for counting down sets and rest periods</string>
+    <string name="settings_screen_timer_title">Timer</string>
     <string name="settings_emax_enable_text">Show estimated one rep maxes (eMax) where applicable</string>
     <string name="settings_emax_formula">weight x (1 + reps/30)</string>
     <string name="settings_emax_info_dialog_h1">eMax - Estimated Max</string>
@@ -224,6 +268,9 @@ Soreness or pain?</string>
     <string name="settings_uom_title">Default Unit of Measure</string>
     <string name="settings_user_id_label">User Id: %1$s</string>
 
+    <string name="submit_text_field_edit_name_content_description">Edit Name</string>
+    <string name="submit_text_field_save_content_description">Save</string>
+
     <string name="tempo_selector_con_title">Con (Up)</string>
     <string name="tempo_selector_concentric_examples">• picking up a deadlift\n• coming up from a squat\n• pushing the bar up in a bench press</string>
     <string name="tempo_selector_concentric_subtitle">Muscle Contraction</string>
@@ -244,6 +291,20 @@ Soreness or pain?</string>
     <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="timer_screen_add_tempo_content_description">Add Tempo</string>
+    <string name="timer_screen_con_label">Con</string>
+    <string name="timer_screen_delete_tempo_content_description">Delete Tempo</string>
+    <string name="timer_screen_ecc_label">Ecc</string>
+    <string name="timer_screen_great_job_text">Great job!</string>
+    <string name="timer_screen_hold_label">Hold</string>
+    <string name="timer_screen_mute_sound_content_description">Mute Sound</string>
+    <string name="timer_screen_pause_content_description">Pause</string>
+    <string name="timer_screen_play_sound_content_description">Play Sound</string>
+    <string name="timer_screen_ready_label">Ready</string>
+    <string name="timer_screen_rest_label">Rest</string>
+    <string name="timer_screen_restart_content_description">Restart</string>
+    <string name="timer_screen_resume_content_description">Resume</string>
+    <string name="timer_screen_start_content_description">Start</string>
     <string name="timer_screen_rest_reset_label">Rest/Reset</string>
     <string name="timer_screen_fab_content_description">Start Timer</string>
     <string name="timer_screen_startup_time_buffer_text">Startup Time Buffer</string>
@@ -256,6 +317,10 @@ Soreness or pain?</string>
     <string name="toolbar_play_content_description">Play</string>
     <string name="toolbar_settings_content_description">Settings</string>
     <string name="toolbar_update_button_content_description">Update Lift Bro</string>
+
+    <string name="variation_search_dialog_cant_find_text">Can't find what you're looking for?</string>
+    <string name="variation_search_dialog_create_variation_cta">Create Variation</string>
+    <string name="variation_search_dialog_save_and_select_content_description">Save and Select</string>
 
     <string name="variation_details_add_notes_cta">Add Notes</string>
     <string name="variation_details_notes_label">Notes</string>
@@ -306,9 +371,13 @@ Soreness or pain?</string>
     <string name="workout_warmup_placeholder">High Knees</string>
 
     <string name="wrapped_consistency_best_month">Your most consistent month was %1$s with %2$d days!</string>
+    <string name="wrapped_consistency_day_label">Day</string>
     <string name="wrapped_consistency_header_title">And look at how consistent you were!</string>
+    <string name="wrapped_consistency_lift_label">Lift</string>
+    <string name="wrapped_consistency_month_label">Month</string>
     <string name="wrapped_consistency_screen_most_consistent_text">Your most consistent...</string>
     <string name="wrapped_consistency_speech_bubble_title">Way to go!</string>
+    <string name="wrapped_goals_screen_inspiration_subtitle">Some inspiration!</string>
     <string name="wrapped_goals_add_button_content_description">Add Goal</string>
     <string name="wrapped_goals_delete_button_content_description">Remove Goal</string>
     <string name="wrapped_goals_header_title">Now... How about Goals for next year?</string>

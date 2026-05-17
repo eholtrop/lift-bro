@@ -149,7 +149,7 @@ fun WrappedLandingScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close"
+                        contentDescription = stringResource(Res.string.wrapped_landing_back_button_content_description)
                     )
                 }
             } else {
@@ -194,7 +194,7 @@ fun WrappedLandingScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close"
+                        contentDescription = stringResource(Res.string.wrapped_landing_back_button_content_description)
                     )
                 }
             } else {

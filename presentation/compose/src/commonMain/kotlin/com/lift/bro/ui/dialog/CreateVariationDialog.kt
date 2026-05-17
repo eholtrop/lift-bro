@@ -32,6 +32,10 @@ import com.lift.bro.ui.theme.spacing
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.color_picker_negative_cta
+import lift_bro.core.generated.resources.color_picker_positive_cta
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,7 +105,7 @@ fun VariationDialog(
                         onClick = onDismissRequest,
                         colors = ButtonDefaults.textButtonColors(),
                     ) {
-                        Text("Cancel")
+                        Text(stringResource(Res.string.color_picker_negative_cta))
                     }
                     Space(MaterialTheme.spacing.half)
                     Button(
@@ -116,7 +120,7 @@ fun VariationDialog(
                         },
                         colors = ButtonDefaults.textButtonColors(),
                     ) {
-                        Text("Save")
+                        Text(stringResource(Res.string.color_picker_positive_cta))
                     }
                 }
             }

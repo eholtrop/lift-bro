@@ -44,6 +44,10 @@ import com.lift.bro.ui.card.lift.LiftCard
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
+import lift_bro.core.generated.resources.dashboard_screen_analytics_banner_text
+import lift_bro.core.generated.resources.dashboard_screen_analytics_no_thanks_cta
+import lift_bro.core.generated.resources.dashboard_screen_analytics_share_data_cta
+import lift_bro.core.generated.resources.dashboard_screen_categories_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
 
@@ -104,7 +108,9 @@ fun DashboardContent(
                                                 .padding(start = MaterialTheme.spacing.one),
                                         ) {
                                             Text(
-                                                text = "Help Lift Bro improve!",
+                                                text = stringResource(
+                                                    Res.string.dashboard_screen_analytics_banner_text
+                                                ),
                                                 style = MaterialTheme.typography.titleMedium
                                             )
                                             Text(
@@ -127,14 +133,22 @@ fun DashboardContent(
                                                         interactor(DashboardEvent.DismissAnalyticsBanner)
                                                     }
                                                 ) {
-                                                    Text("No Thanks!")
+                                                    Text(
+                                                        stringResource(
+                                                            Res.string.dashboard_screen_analytics_no_thanks_cta
+                                                        )
+                                                    )
                                                 }
                                                 Button(
                                                     onClick = {
                                                         interactor(DashboardEvent.EnableAnalytics)
                                                     }
                                                 ) {
-                                                    Text("Share data")
+                                                    Text(
+                                                        stringResource(
+                                                            Res.string.dashboard_screen_analytics_share_data_cta
+                                                        )
+                                                    )
                                                 }
                                             }
                                         }
@@ -153,7 +167,7 @@ fun DashboardContent(
                                 DashboardLiftHeader(
                                     v2 = item.v3,
                                     showRpe = showRpe,
-                                    title = "Categories",
+                                    title = stringResource(Res.string.dashboard_screen_categories_title),
                                     showTempo = showTempo,
                                     sortingSettings = state.sortingSettings,
                                     onToggleRpe = { showRpe = !showRpe },

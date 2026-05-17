@@ -54,6 +54,7 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_goals_add_button_content_description
 import lift_bro.core.generated.resources.wrapped_goals_delete_button_content_description
 import lift_bro.core.generated.resources.wrapped_goals_header_title
+import lift_bro.core.generated.resources.wrapped_goals_screen_inspiration_subtitle
 import lift_bro.core.generated.resources.wrapped_goals_section_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
@@ -107,7 +108,7 @@ fun WrappedGoalsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 title = {
                     Text(
-                        "Some inspiration!",
+                        stringResource(Res.string.wrapped_goals_screen_inspiration_subtitle),
                         style = MaterialTheme.typography.headlineSmall
                     )
                 },
