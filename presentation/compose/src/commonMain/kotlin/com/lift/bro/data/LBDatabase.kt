@@ -6,16 +6,13 @@ import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.VariationDataSource
 import com.lift.bro.data.datasource.LBExerciseDataSource
-import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.toDomain
 import com.lift.bro.db.LiftBroDB
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.calculateMax
-import com.lift.bro.domain.models.estimatedMax
 import com.lift.bro.domain.repositories.Sorting
 import comliftbrodb.CategoryQueries
 import comliftbrodb.GetAllByMovement
@@ -34,12 +31,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.atTime
-import kotlinx.datetime.toInstant
 import tv.dpal.ext.flow.mapEach
-import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.math.min
 import kotlin.time.Instant
 
