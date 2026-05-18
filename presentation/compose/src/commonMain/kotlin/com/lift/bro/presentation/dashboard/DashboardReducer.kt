@@ -25,8 +25,6 @@ val dashboardReducer = Reducer<DashboardState, DashboardEvent> { state, event ->
         } else {
             state
         }
-        DashboardEvent.DismissAnalyticsBanner -> state
-        DashboardEvent.EnableAnalytics -> state
     }.let { newState ->
         when (newState) {
             is Loaded -> newState.copy(

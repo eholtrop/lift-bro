@@ -5,9 +5,6 @@ package com.lift.bro.presentation.dashboard
 import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,8 +14,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -32,14 +27,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.presentation.LocalLiftCardYValue
 import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
+import com.lift.bro.presentation.dashboard.carousel.DashboardBannerCarousel
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.ui.Card
-import com.lift.bro.ui.ReleaseNotesRow
 import com.lift.bro.ui.card.lift.LiftCard
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
@@ -78,10 +72,6 @@ fun DashboardContent(
                 val numOddItems by remember { mutableStateOf(state.items.sumOf { it.gridSize(state.items.size) % 2 }) }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(
-                        horizontal = MaterialTheme.spacing.half,
-                        vertical = MaterialTheme.spacing.half
-                    ),
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
                     verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
                 ) {
@@ -90,63 +80,8 @@ fun DashboardContent(
                         span = { index, item -> GridItemSpan(item.gridSize(state.items.size)) }
                     ) { index, item ->
                         when (item) {
-                            is DashboardListItem.AnalyticsBanner -> {
-                                Card(
-                                    modifier = Modifier.padding(
-                                        vertical = MaterialTheme.spacing.one
-                                    )
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.weight(1f)
-                                                .padding(start = MaterialTheme.spacing.one),
-                                        ) {
-                                            Text(
-                                                text = "Help Lift Bro improve!",
-                                                style = MaterialTheme.typography.titleMedium
-                                            )
-                                            Text(
-                                                text = "Share usage info like:\n" +
-                                                    "⦁ Screen Names\n" +
-                                                    "⦁ Button Clicks\n",
-                                                style = MaterialTheme.typography.bodyMedium
-                                            )
-                                            Text(
-                                                text = "NO personal info",
-                                                style = MaterialTheme.typography.bodyMedium,
-                                                fontWeight = FontWeight.Bold,
-                                            )
-                                            Row(
-                                                modifier = Modifier.align(Alignment.End)
-                                            ) {
-                                                Button(
-                                                    colors = ButtonDefaults.textButtonColors(),
-                                                    onClick = {
-                                                        interactor(DashboardEvent.DismissAnalyticsBanner)
-                                                    }
-                                                ) {
-                                                    Text("No Thanks!")
-                                                }
-                                                Button(
-                                                    onClick = {
-                                                        interactor(DashboardEvent.EnableAnalytics)
-                                                    }
-                                                ) {
-                                                    Text("Share data")
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            DashboardListItem.ReleaseNotes -> {
-                                ReleaseNotesRow(
-                                    modifier = Modifier.height(72.dp)
-                                        .padding(horizontal = MaterialTheme.spacing.half)
-                                )
+                            is DashboardListItem.Banner -> {
+                                DashboardBannerCarousel()
                             }
 
                             is DashboardListItem.LiftHeader -> {
@@ -230,7 +165,6 @@ fun DashboardContent(
 private fun DashboardListItem.gridSize(listSize: Int = 0): Int = when (this) {
     is DashboardListItem.LiftCard -> 1
     is DashboardListItem.LiftHeader -> 2
-    DashboardListItem.ReleaseNotes -> 2
     DashboardListItem.WorkoutCalendar -> 2
-    DashboardListItem.AnalyticsBanner -> 2
+    DashboardListItem.Banner -> 2
 }
