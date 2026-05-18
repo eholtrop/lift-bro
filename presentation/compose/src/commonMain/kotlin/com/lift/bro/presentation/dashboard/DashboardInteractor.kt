@@ -48,7 +48,7 @@ sealed class DashboardListItem {
     data class LiftHeader(val v3: Boolean): DashboardListItem()
 
     @Serializable
-    data object AnalyticsBanner: DashboardListItem()
+    data object Banner: DashboardListItem()
 
     @Serializable
     sealed class LiftCard: DashboardListItem() {
@@ -59,9 +59,6 @@ sealed class DashboardListItem {
         @Serializable
         data object Loading: LiftCard()
     }
-
-    @Serializable
-    data object ReleaseNotes: DashboardListItem()
 
     @Serializable
     data object WorkoutCalendar: DashboardListItem()
@@ -84,8 +81,6 @@ data class SortingSettings(
 sealed interface DashboardEvent {
     data object AddLiftClicked: DashboardEvent
     data class LiftClicked(val liftId: String): DashboardEvent
-    data object EnableAnalytics: DashboardEvent
-    data object DismissAnalyticsBanner: DashboardEvent
     data class SortingOptionSelected(val sortingOption: SortingOption): DashboardEvent
     data object FavouritesAtTopToggled: DashboardEvent
 }
@@ -105,20 +100,6 @@ fun rememberDashboardInteractor(
             when (event) {
                 DashboardEvent.AddLiftClicked -> navCoordinator.present(Destination.CreateCategory())
                 is DashboardEvent.LiftClicked -> navCoordinator.present(Destination.CategoryDetails(event.liftId))
-                DashboardEvent.EnableAnalytics -> {
-                    settingsRepository.set(
-                        Setting.AnalyticsConsent,
-                        AnalyticsConsent(true, true)
-                    )
-                    dependencies.analytics.setConsent(true)
-                }
-                DashboardEvent.DismissAnalyticsBanner -> {
-                    settingsRepository.set(
-                        Setting.AnalyticsConsent,
-                        AnalyticsConsent(true, false)
-                    )
-                    dependencies.analytics.setConsent(false)
-                }
                 else -> {}
             }
         }
@@ -128,9 +109,8 @@ fun rememberDashboardInteractor(
         combine(
             liftRepository.listenAll().onStart { emit(emptyList()) },
             variationRepository.listenAll().onStart { emit(emptyList()) },
-            settingsRepository.listen(Setting.AnalyticsConsent),
-        ) { lifts, variations, consent -> Triple(lifts, variations, consent) }
-            .flatMapLatest { (lifts, variations, consent) ->
+        ) { lifts, variations -> lifts to variations }
+            .flatMapLatest { (lifts, variations) ->
                 val variationsByLift = variations.groupBy { it.lift?.id }
                 val cards: List<Flow<DashboardListItem?>> = lifts.map { lift ->
                     val liftVariations = variationsByLift[lift.id] ?: emptyList()
@@ -171,19 +151,13 @@ fun rememberDashboardInteractor(
                             items = items.toMutableList().apply {
                                 if (!v3) {
                                     // lift header at top if not v3
-                                    add(0, DashboardListItem.ReleaseNotes)
-                                    if (!consent.dashboardBannerDismissed) {
-                                        add(0, DashboardListItem.AnalyticsBanner)
-                                    }
+                                    add(0, DashboardListItem.Banner)
                                     add(0, DashboardListItem.LiftHeader(v3))
                                 } else {
                                     // release notes -> workout calendar -> lift header
                                     add(0, DashboardListItem.LiftHeader(v3))
                                     add(0, DashboardListItem.WorkoutCalendar)
-                                    add(0, DashboardListItem.ReleaseNotes)
-                                    if (!consent.dashboardBannerDismissed) {
-                                        add(0, DashboardListItem.AnalyticsBanner)
-                                    }
+                                    add(0, DashboardListItem.Banner)
                                 }
                             },
                             sortingSettings = if (state is Loaded) state.sortingSettings else SortingSettings()
