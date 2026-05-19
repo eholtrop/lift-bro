@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
@@ -189,37 +190,59 @@ fun WorkoutScreenInternal(
                 }
             }
 
-            if (state.exercises.isEmpty() && state.recentWorkouts.isNotEmpty()) {
+            if (state.exercises.isEmpty()) {
+
                 item {
-                    Column(
+                    Card(
                         modifier = Modifier
-                            .animateItem()
-                            .padding(horizontal = MaterialTheme.spacing.one),
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.workout_screen_copy_recent_workout_title),
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                        Text(
-                            text = stringResource(Res.string.workout_screen_copy_recent_workout_subtitle),
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
+                            .padding(horizontal = MaterialTheme.spacing.one).fillMaxWidth(),
+                        contentPadding = PaddingValues(MaterialTheme.spacing.one),
+
+                        ) {
+                        Row {
+                            Icon(
+                                imageVector = Icons.Default.AutoAwesome,
+                                contentDescription = null,
+                            )
+                            Text(
+                                text = "Generate Workout"
+                            )
+                        }
                     }
                 }
 
-                items(
-                    items = state.recentWorkouts,
-                    key = { it.id }
-                ) { workout ->
-                    RecentWorkoutCard(
-                        modifier = Modifier.fillMaxWidth()
-                            .animateItem()
-                            .padding(horizontal = MaterialTheme.spacing.one),
-                        workout = workout,
-                        recentWorkoutClicked = {
-                            eventHandler(CreateWorkoutEvent.CopyWorkout(it))
+                if (state.recentWorkouts.isNotEmpty()) {
+                    item {
+                        Column(
+                            modifier = Modifier
+                                .animateItem()
+                                .padding(horizontal = MaterialTheme.spacing.one),
+                        ) {
+                            Text(
+                                text = stringResource(Res.string.workout_screen_copy_recent_workout_title),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Text(
+                                text = stringResource(Res.string.workout_screen_copy_recent_workout_subtitle),
+                                style = MaterialTheme.typography.bodyMedium,
+                            )
                         }
-                    )
+                    }
+
+                    items(
+                        items = state.recentWorkouts,
+                        key = { it.id }
+                    ) { workout ->
+                        RecentWorkoutCard(
+                            modifier = Modifier.fillMaxWidth()
+                                .animateItem()
+                                .padding(horizontal = MaterialTheme.spacing.one),
+                            workout = workout,
+                            recentWorkoutClicked = {
+                                eventHandler(CreateWorkoutEvent.CopyWorkout(it))
+                            }
+                        )
+                    }
                 }
             }
 
@@ -816,7 +839,7 @@ fun SetOptionsBottomSheet(
 @ThemePreviews
 @Composable
 fun WorkoutScreenInternalPreview(
-    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState
+    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState,
 ) {
     PreviewAppTheme(isDarkMode = isSystemInDarkTheme()) {
         WorkoutScreenInternal(

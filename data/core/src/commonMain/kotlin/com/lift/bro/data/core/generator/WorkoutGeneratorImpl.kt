@@ -14,7 +14,6 @@ import kotlinx.coroutines.withContext
 
 class WorkoutGeneratorImpl(
     private val aiRepository: AIRepository,
-    private val ruleBasedGenerator: RuleBasedGenerator = RuleBasedGenerator(),
 ) : WorkoutGenerator {
 
     override suspend fun generateWorkout(
@@ -22,7 +21,7 @@ class WorkoutGeneratorImpl(
         preferences: WorkoutPreferences
     ): Result<WorkoutTemplate> = withContext(Dispatchers.Default) {
         if (!aiRepository.isModelReady()) {
-            return@withContext ruleBasedGenerator.generateWorkout(history, preferences)
+            return@withContext Result.failure(IllegalStateException("Model is not ready"))
         }
 
         val prompt = PromptTemplates.generateWorkoutPrompt(history, preferences)
@@ -30,9 +29,6 @@ class WorkoutGeneratorImpl(
         aiRepository.generate(prompt)
             .mapCatching { response ->
                 ResponseParser.parseWorkoutResponse(response)
-            }
-            .recoverCatching { error ->
-                ruleBasedGenerator.generateWorkout(history, preferences).getOrThrow()
             }
     }
 
@@ -42,7 +38,7 @@ class WorkoutGeneratorImpl(
         history: ExerciseHistory
     ): Result<SetRecommendation> = withContext(Dispatchers.Default) {
         if (!aiRepository.isModelReady()) {
-            return@withContext ruleBasedGenerator.suggestWeight(variationId, targetReps, history)
+            Result.failure<WorkoutTemplate>(IllegalStateException("Model is not ready"))
         }
 
         val prompt = PromptTemplates.weightSuggestionPrompt(variationId, targetReps, history)
@@ -50,9 +46,6 @@ class WorkoutGeneratorImpl(
         aiRepository.generate(prompt)
             .mapCatching { response ->
                 ResponseParser.parseWeightRecommendation(response, variationId)
-            }
-            .recoverCatching { error ->
-                ruleBasedGenerator.suggestWeight(variationId, targetReps, history).getOrThrow()
             }
     }
 }

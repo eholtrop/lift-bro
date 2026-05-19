@@ -8,7 +8,6 @@ import com.lift.bro.data.client.datasources.KtorGoalRepository
 import com.lift.bro.data.client.datasources.KtorLiftDataSource
 import com.lift.bro.data.client.datasources.KtorSetDataSource
 import com.lift.bro.data.client.datasources.KtorVariationDataSource
-import com.lift.bro.data.core.ai.MLKitAIRepository
 import com.lift.bro.data.core.analyzer.GetWorkoutHistoryUseCase
 import com.lift.bro.data.core.generator.WorkoutGeneratorImpl
 import com.lift.bro.data.core.repository.ExerciseRepository

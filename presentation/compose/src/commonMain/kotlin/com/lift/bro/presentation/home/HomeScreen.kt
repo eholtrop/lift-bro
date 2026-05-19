@@ -213,12 +213,6 @@ fun HomeScreenContent(
                 trailingContent = {
                     Row {
                         TopBarIconButton(
-                            imageVector = Icons.Default.AutoAwesome,
-                            contentDescription = "Generate Workout"
-                        ) {
-                            onEvent(HomeEvent.TestAIClicked)
-                        }
-                        TopBarIconButton(
                             imageVector = Icons.Default.Settings,
                             contentDescription = stringResource(
                                 Res.string.dashboard_toolbar_leading_button_content_description
