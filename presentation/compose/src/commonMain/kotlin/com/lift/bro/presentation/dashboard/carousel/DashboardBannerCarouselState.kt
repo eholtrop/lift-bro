@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DashboardBannerCarouselState(
+    val latestReleaseNote: String? = null,
     val banners: List<DashboardBanner> = emptyList(),
 )
 
@@ -22,5 +23,6 @@ sealed class DashboardBanner {
 sealed interface DashboardBannerEvent {
     data object EnableAnalytics: DashboardBannerEvent
     data object DismissAnalyticsBanner: DashboardBannerEvent
-
+    data object ReleaseNotesSeen: DashboardBannerEvent
+    data object DismissReleaseNotes: DashboardBannerEvent
 }

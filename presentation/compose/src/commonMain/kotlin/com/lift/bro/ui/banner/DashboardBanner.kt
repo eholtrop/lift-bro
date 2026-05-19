@@ -1,6 +1,5 @@
 package com.lift.bro.ui.banner
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
@@ -9,15 +8,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.semantics.Role
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.Space
-import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.release_notes_row_ignore_content_description
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun DashboardBanner(
@@ -49,7 +43,7 @@ fun DashboardBanner(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = stringResource(Res.string.release_notes_row_ignore_content_description)
+                    contentDescription = onClickLabel,
                 )
             }
         }

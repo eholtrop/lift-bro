@@ -38,6 +38,7 @@ import com.lift.bro.ui.card.lift.LiftCard
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
+import lift_bro.core.generated.resources.dashboard_lift_header_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
 
@@ -88,7 +89,7 @@ fun DashboardContent(
                                 DashboardLiftHeader(
                                     v2 = item.v3,
                                     showRpe = showRpe,
-                                    title = "Categories",
+                                    title = stringResource(Res.string.dashboard_lift_header_title),
                                     showTempo = showTempo,
                                     sortingSettings = state.sortingSettings,
                                     onToggleRpe = { showRpe = !showRpe },
