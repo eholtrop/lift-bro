@@ -1,6 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources><string name="app_congrats_text">Congrats!!</string>
 
+    <string name="analytics_consent_banner_action">Enable</string>
+    <string name="analytics_consent_banner_detail">Share usage info (Screen Names, Button Clicks)</string>
+    <string name="analytics_consent_banner_onclick_label">Enable Analytics</string>
+    <string name="analytics_consent_banner_privacy">NO personal info</string>
+    <string name="analytics_consent_banner_title">Help Lift Bro improve!</string>
+
     <string name="backup_dialog_message">Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?</string>
     <string name="backup_dialog_primary_cta">Backup Now</string>
     <string name="backup_dialog_secondary_cta">Ignore</string>
@@ -34,6 +40,7 @@
     <string name="dashboard_footer_leading_button_content_description">Dashboard</string>
     <string name="dashboard_footer_trailing_button_content_description">Calendar</string>
     <string name="dashboard_footer_version">Version: %1$s</string>
+    <string name="dashboard_lift_header_title">Categories</string>
     <string name="dashboard_title">LIFT BRO</string>
     <string name="dashboard_toolbar_leading_button_content_description">Settings</string>
     <string name="dashboard_toolbar_trailing_button_content_description">Add Lift</string>

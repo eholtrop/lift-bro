@@ -6,6 +6,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.lift.bro.ui.theme.spacing
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.analytics_consent_banner_action
+import lift_bro.core.generated.resources.analytics_consent_banner_detail
+import lift_bro.core.generated.resources.analytics_consent_banner_onclick_label
+import lift_bro.core.generated.resources.analytics_consent_banner_privacy
+import lift_bro.core.generated.resources.analytics_consent_banner_title
+import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
 
 @Composable
@@ -18,25 +25,25 @@ fun AnalyticsConsentBanner(
         modifier = modifier,
         onDismiss = onDismiss,
         onClick = onEnable,
-        onClickLabel = "Enable Analytics",
+        onClickLabel = stringResource(Res.string.analytics_consent_banner_onclick_label),
     ) {
         Column(
             modifier = Modifier.padding(start = MaterialTheme.spacing.one),
         ) {
             Text(
-                text = "Help Lift Bro improve!",
+                text = stringResource(Res.string.analytics_consent_banner_title),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Share usage info (Screen Names, Button Clicks)",
+                text = stringResource(Res.string.analytics_consent_banner_detail),
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "NO personal info",
+                text = stringResource(Res.string.analytics_consent_banner_privacy),
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                text = "Enable",
+                text = stringResource(Res.string.analytics_consent_banner_action),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
             )
