@@ -23,22 +23,33 @@ fun rememberBannerCarouselInteractor(
     analytics: Analytics = dependencies.analytics,
 ): DashboardBannerCarouselInteractor = rememberInteractor(
     initialState = DashboardBannerCarouselState(),
-    source = { state ->
+    source = {
         combine(
             settingsRepository.listen(Setting.AnalyticsConsent),
             settingsRepository.listen(Setting.LatestReadReleaseNotes),
-            flow { emit(Json.decodeFromString<List<ReleaseNote>>(Res.readBytes("files/release_notes.json").decodeToString())) }
+            flow {
+                emit(
+                    Json.decodeFromString<List<ReleaseNote>>(Res.readBytes("files/release_notes.json").decodeToString())
+                )
+            }
         ) { consent, lastReadReleaseNotes, releaseNotes ->
             DashboardBannerCarouselState(
+                latestReleaseNote = releaseNotes.maxOfOrNull { it.versionId },
                 banners = listOfNotNull(
-                    if (releaseNotes.maxOfOrNull { it.versionId } != lastReadReleaseNotes) DashboardBanner.ReleaseNotes(releaseNotes) else null,
+                    if (releaseNotes.maxOfOrNull { it.versionId } != lastReadReleaseNotes) {
+                        DashboardBanner.ReleaseNotes(
+                            releaseNotes
+                        )
+                    } else {
+                        null
+                    },
                     if (!consent.dashboardBannerDismissed) DashboardBanner.AnalyticsConsent else null,
                 )
             )
         }
     },
     sideEffects = listOf(
-        SideEffect { _, _, event ->
+        SideEffect { _, state, event ->
             when (event) {
                 DashboardBannerEvent.DismissAnalyticsBanner -> {
                     settingsRepository.set(
@@ -48,13 +59,19 @@ fun rememberBannerCarouselInteractor(
                     analytics.setConsent(false)
                 }
 
+                DashboardBannerEvent.ReleaseNotesSeen, DashboardBannerEvent.DismissReleaseNotes -> {
+                    settingsRepository.set(
+                        Setting.LatestReadReleaseNotes,
+                        state.latestReleaseNote,
+                    )
+                }
+
                 DashboardBannerEvent.EnableAnalytics -> {
                     settingsRepository.set(
                         Setting.AnalyticsConsent,
                         AnalyticsConsent(true, true)
                     )
                     analytics.setConsent(true)
-
                 }
             }
         }

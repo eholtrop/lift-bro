@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.release_notes_release_notes_close_content_description
 import lift_bro.core.generated.resources.release_notes_row_new_update_title
 import lift_bro.core.generated.resources.release_notes_row_tap_subtitle
 import org.jetbrains.compose.resources.stringResource
@@ -48,7 +49,7 @@ fun ReleaseNotesRow(
             showDialog = true
         },
         onDismiss = rowDismissed,
-        onClickLabel = null,
+        onClickLabel = stringResource(Res.string.release_notes_release_notes_close_content_description),
     ) {
         Column(
             modifier = Modifier.padding(start = MaterialTheme.spacing.one),

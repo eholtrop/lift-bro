@@ -19,7 +19,6 @@ import com.lift.bro.ui.theme.spacing
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
-
 @Composable
 fun DashboardBannerCarousel(
     interactor: DashboardBannerCarouselInteractor = rememberBannerCarouselInteractor(),
@@ -37,7 +36,6 @@ fun DashboardBannerCarousel(
     onEvent: (DashboardBannerEvent) -> Unit,
 ) {
     val pagerState = rememberPagerState { state.banners.size }
-
 
     HorizontalPager(
         state = pagerState,
@@ -83,8 +81,8 @@ fun DashboardBannerCarousel(
 
             is DashboardBanner.ReleaseNotes -> ReleaseNotesRow(
                 modifier = animationModifier,
-                dialogSeen = {},
-                rowDismissed = {},
+                dialogSeen = { onEvent(DashboardBannerEvent.ReleaseNotesSeen) },
+                rowDismissed = { onEvent(DashboardBannerEvent.DismissReleaseNotes) },
             )
         }
     }
