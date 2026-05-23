@@ -97,11 +97,19 @@ import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.lift.bro.utils.PreviewAppTheme
+import kotlinx.coroutines.flow.flowOf
+
+val LocalWorkoutCalendarInteractor = staticCompositionLocalOf<Interactor<WorkoutCalendarState, WorkoutCalendarEvent>?> { null }
 
 @Composable
 fun WorkoutCalendarContent(
     modifier: Modifier = Modifier,
-    interactor: Interactor<WorkoutCalendarState, WorkoutCalendarEvent> = rememberWorkoutCalendarInteractor(),
+    interactor: Interactor<WorkoutCalendarState, WorkoutCalendarEvent> = LocalWorkoutCalendarInteractor.current
+        ?: rememberWorkoutCalendarInteractor(),
     strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(),
 ) {
     val state by interactor.state.collectAsState()
@@ -260,13 +268,13 @@ fun rememberDailyWorkoutDetailsInteractor(
         }
     }
 
+val LocalDailyWorkoutDetailsInteractor = staticCompositionLocalOf<Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent>?> { null }
+
 @Composable
 fun DailyWorkoutDetails(
     modifier: Modifier = Modifier,
-    date: LocalDate,
-    interactor: Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> = rememberDailyWorkoutDetailsInteractor(
-        date
-    ),
+    date: LocalDate = today,
+    interactor: Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> = LocalDailyWorkoutDetailsInteractor.current ?: rememberDailyWorkoutDetailsInteractor(date),
     strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(),
 ) {
     val state by interactor.state.collectAsState()
@@ -518,6 +526,50 @@ fun CalendarWorkoutCard(
     }
 }
 
+@Preview
+@Composable
+fun WorkoutCalendarContentPreview(
+    @PreviewParameter(WorkoutCalendarStateProvider::class) state: WorkoutCalendarState,
+) {
+    PreviewAppTheme(isDarkMode = false) {
+        val dailyDetailsState = remember(state) {
+            DailyWorkoutDetailsState(
+                selectedDate = state.selectedDate,
+                log = state.log,
+                selectedWorkout = state.selectedWorkout,
+                potentialExercises = state.potentialExercises,
+            )
+        }
+
+        val monthState = remember(today.year, today.month) {
+            WorkoutMonthState(
+                year = today.year,
+                month = today.month,
+            )
+        }
+
+        CompositionLocalProvider(
+            LocalDailyWorkoutDetailsInteractor provides rememberInteractor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent>(
+                initialState = dailyDetailsState,
+                reducers = emptyList(),
+                sideEffects = emptyList(),
+                source = { flowOf(it) },
+            ),
+            LocalWorkoutMonthInteractor provides rememberInteractor<WorkoutMonthState, WorkoutCalendarEvent>(
+                initialState = monthState,
+                reducers = emptyList(),
+                sideEffects = emptyList(),
+                source = { flowOf(it) },
+            ),
+        ) {
+            WorkoutCalendarContent(
+                state = state,
+                onEvent = {},
+            )
+        }
+    }
+}
+
 private const val GRADIENT_SIZE = 50f
 
 @Composable
@@ -606,15 +658,19 @@ fun VariationSet(
     }
 }
 
+val LocalWorkoutMonthInteractor = staticCompositionLocalOf<Interactor<WorkoutMonthState, WorkoutCalendarEvent>?> { null }
+
 @Composable
 fun WorkoutCalendarMonth(
     modifier: Modifier = Modifier,
     year: Int,
     month: Month,
+    interactor: Interactor<WorkoutMonthState, WorkoutCalendarEvent> = LocalWorkoutMonthInteractor.current
+        ?: rememberWorkoutMonthInteractor(year, month),
     selectedDate: LocalDate? = null,
     dateSelected: (LocalDate) -> Unit,
 ) {
-    val monthState by rememberWorkoutMonthInteractor(year, month).state.collectAsState()
+    val monthState by interactor.state.collectAsState()
 
     CalendarMonth(
         modifier = modifier,

@@ -46,9 +46,20 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import com.lift.bro.presentation.workout.DailyWorkoutDetailsEvent
+import com.lift.bro.presentation.workout.DailyWorkoutDetailsState
+import com.lift.bro.presentation.workout.LocalDailyWorkoutDetailsInteractor
+import com.lift.bro.presentation.workout.LocalWorkoutCalendarInteractor
+import com.lift.bro.presentation.workout.LocalWorkoutMonthInteractor
+import com.lift.bro.presentation.workout.WorkoutCalendarEvent
+import com.lift.bro.presentation.workout.WorkoutCalendarState
+import com.lift.bro.presentation.workout.WorkoutMonthState
+import kotlinx.coroutines.flow.flowOf
+import tv.dpal.flowvi.rememberInteractor
 import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.presentation.LocalLiftBro
@@ -286,13 +297,7 @@ fun HomeScreenContent(
                         Tab.Dashboard -> {
                             DashboardContent(
                                 modifier = Modifier.padding(padding),
-                                interactor = if (state.dashboardV3) {
-                                    rememberDashboardInteractor(
-                                        true
-                                    )
-                                } else {
-                                    rememberDashboardInteractor(false)
-                                },
+                                interactor = rememberDashboardInteractor(state.dashboardV3),
                             )
                         }
 
@@ -384,9 +389,46 @@ fun HomeScreenContentPreview(
     @PreviewParameter(HomeStateProvider::class) state: HomeState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
-        HomeScreenContent(
-            state = state,
-            onEvent = {}
-        )
+        val dailyDetailsState = remember {
+            DailyWorkoutDetailsState(
+                selectedDate = today,
+                log = null,
+                selectedWorkout = null,
+                potentialExercises = emptyList(),
+            )
+        }
+
+        val monthState = remember(today.year, today.month) {
+            WorkoutMonthState(
+                year = today.year,
+                month = today.month,
+            )
+        }
+
+        CompositionLocalProvider(
+            LocalWorkoutCalendarInteractor provides rememberInteractor<WorkoutCalendarState, WorkoutCalendarEvent>(
+                initialState = WorkoutCalendarState(),
+                reducers = emptyList(),
+                sideEffects = emptyList(),
+                source = { flowOf(it) },
+            ),
+            LocalDailyWorkoutDetailsInteractor provides rememberInteractor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent>(
+                initialState = dailyDetailsState,
+                reducers = emptyList(),
+                sideEffects = emptyList(),
+                source = { flowOf(it) },
+            ),
+            LocalWorkoutMonthInteractor provides rememberInteractor<WorkoutMonthState, WorkoutCalendarEvent>(
+                initialState = monthState,
+                reducers = emptyList(),
+                sideEffects = emptyList(),
+                source = { flowOf(it) },
+            ),
+        ) {
+            HomeScreenContent(
+                state = state,
+                onEvent = {}
+            )
+        }
     }
 }
