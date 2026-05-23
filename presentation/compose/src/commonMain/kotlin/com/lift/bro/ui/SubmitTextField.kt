@@ -63,7 +63,7 @@ fun SubmitTextField(
                 }
                 if (currentValue.isEmpty()) {
                     CompositionLocalProvider(
-                        LocalContentColor provides MaterialTheme.colorScheme.onBackground.copy(
+                        LocalContentColor provides LocalContentColor.current.copy(
                             alpha = .8f
                         )
                     ) {
