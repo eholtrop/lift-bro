@@ -19,32 +19,44 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.lift.bro.core.buildconfig.BuildKonfig
 import com.lift.bro.presentation.LocalLiftCardYValue
-import com.lift.bro.presentation.dashboard.DashboardEvent.LiftClicked
 import com.lift.bro.presentation.dashboard.carousel.DashboardBannerCarousel
+import com.lift.bro.presentation.dashboard.carousel.DashboardBannerCarouselState
+import com.lift.bro.presentation.dashboard.carousel.DashboardBannerEvent
+import com.lift.bro.presentation.dashboard.carousel.LocalDashboardBannerCarouselInteractor
 import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.card.lift.LiftCard
 import com.lift.bro.ui.theme.spacing
+import com.lift.bro.utils.PreviewAppTheme
+import kotlinx.coroutines.flow.flowOf
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.dashboard_lift_header_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
+import tv.dpal.flowvi.rememberInteractor
+
+val LocalDashboardInteractor = staticCompositionLocalOf<DashboardInteractor?> { null }
 
 @Composable
 fun DashboardContent(
     modifier: Modifier = Modifier,
-    interactor: DashboardInteractor,
+    interactor: DashboardInteractor = LocalDashboardInteractor.current
+        ?: rememberDashboardInteractor(v3 = false),
 ) {
     val state by interactor.state.collectAsState()
 
@@ -115,7 +127,7 @@ fun DashboardContent(
                                             showRpe = showRpe,
                                             showTempo = showTempo,
                                             state = card.state,
-                                            onClick = { interactor(LiftClicked(card.state.lift.id)) },
+                                            onClick = { interactor(DashboardEvent.LiftClicked(card.state.lift.id)) },
                                             yUnit = showWeight.value
                                         )
                                     }
@@ -157,6 +169,33 @@ fun DashboardContent(
                     }
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun DashboardContentPreview(
+    @PreviewParameter(DashboardStateProvider::class) state: DashboardState,
+) {
+    PreviewAppTheme(isDarkMode = false) {
+        val bannerInteractor = rememberInteractor<DashboardBannerCarouselState, DashboardBannerEvent>(
+            initialState = DashboardBannerCarouselState(),
+            reducers = emptyList(),
+            sideEffects = emptyList(),
+            source = { flowOf(it) },
+        )
+
+        CompositionLocalProvider(
+            LocalDashboardInteractor provides rememberInteractor<DashboardState, DashboardEvent>(
+                initialState = state,
+                reducers = emptyList(),
+                sideEffects = emptyList(),
+                source = { flowOf(it) },
+            ),
+            LocalDashboardBannerCarouselInteractor provides bannerInteractor,
+        ) {
+            DashboardContent()
         }
     }
 }

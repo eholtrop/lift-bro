@@ -33,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,26 +47,29 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import androidx.compose.ui.unit.dp
+import com.lift.bro.config.BuildConfig
+import com.lift.bro.presentation.dashboard.DashboardContent
+import com.lift.bro.presentation.dashboard.DashboardEvent
+import com.lift.bro.presentation.dashboard.DashboardListItem
+import com.lift.bro.presentation.dashboard.DashboardState
+import com.lift.bro.presentation.dashboard.Loaded
+import com.lift.bro.presentation.dashboard.Loading
+import com.lift.bro.presentation.dashboard.LocalDashboardInteractor
+import com.lift.bro.presentation.dashboard.SortingSettings
+import com.lift.bro.presentation.dashboard.rememberDashboardInteractor
 import com.lift.bro.presentation.workout.DailyWorkoutDetailsEvent
 import com.lift.bro.presentation.workout.DailyWorkoutDetailsState
 import com.lift.bro.presentation.workout.LocalDailyWorkoutDetailsInteractor
 import com.lift.bro.presentation.workout.LocalWorkoutCalendarInteractor
 import com.lift.bro.presentation.workout.LocalWorkoutMonthInteractor
+import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.presentation.workout.WorkoutCalendarEvent
 import com.lift.bro.presentation.workout.WorkoutCalendarState
 import com.lift.bro.presentation.workout.WorkoutMonthState
-import kotlinx.coroutines.flow.flowOf
-import tv.dpal.flowvi.rememberInteractor
-import androidx.compose.ui.unit.dp
-import com.lift.bro.config.BuildConfig
-import com.lift.bro.presentation.LocalLiftBro
-import com.lift.bro.presentation.dashboard.DashboardContent
-import com.lift.bro.presentation.dashboard.rememberDashboardInteractor
-import com.lift.bro.presentation.workout.WorkoutCalendarContent
 import com.lift.bro.presentation.wrapped.WrappedDialog
 import com.lift.bro.ui.AnimatedRotatingText
 import com.lift.bro.ui.FabProperties
@@ -77,6 +81,7 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.Month
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
@@ -88,6 +93,7 @@ import lift_bro.core.generated.resources.ic_calendar
 import lift_bro.core.generated.resources.view_dashboard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.navi.LocalNavCoordinator
 
 @Composable
@@ -125,12 +131,10 @@ fun HomeScreenContent(
                             modifier = Modifier.animateContentSize(),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(
-                                modifier = Modifier.size(52.dp),
-                                painter = painterResource(LocalLiftBro.current.iconRes()),
-                                contentDescription = ""
-                            )
-                            Column {
+                            HomeScreenIcon()
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                            ) {
                                 Text(stringResource(Res.string.dashboard_title))
 
                                 val shift = with(LocalDensity.current) { MaterialTheme.spacing.half.toPx() }
@@ -297,7 +301,7 @@ fun HomeScreenContent(
                         Tab.Dashboard -> {
                             DashboardContent(
                                 modifier = Modifier.padding(padding),
-                                interactor = rememberDashboardInteractor(state.dashboardV3),
+                                interactor = LocalDashboardInteractor.current ?: rememberDashboardInteractor(state.dashboardV3),
                             )
                         }
 
@@ -406,6 +410,19 @@ fun HomeScreenContentPreview(
         }
 
         CompositionLocalProvider(
+            LocalDashboardInteractor provides rememberInteractor<DashboardState, DashboardEvent>(
+                initialState = when (state) {
+                    is HomeState.Content -> Loaded(
+                        items = listOf(DashboardListItem.WorkoutCalendar),
+                        sortingSettings = SortingSettings(),
+                    )
+
+                    else -> Loading
+                },
+                reducers = emptyList(),
+                sideEffects = emptyList(),
+                source = { flowOf(it) },
+            ),
             LocalWorkoutCalendarInteractor provides rememberInteractor<WorkoutCalendarState, WorkoutCalendarEvent>(
                 initialState = WorkoutCalendarState(),
                 reducers = emptyList(),
@@ -423,6 +440,15 @@ fun HomeScreenContentPreview(
                 reducers = emptyList(),
                 sideEffects = emptyList(),
                 source = { flowOf(it) },
+            ),
+            LocalWorkoutCalendarInteractor provides rememberInteractor<WorkoutCalendarState, WorkoutCalendarEvent>(
+                initialState = WorkoutCalendarState(),
+            ),
+            LocalDailyWorkoutDetailsInteractor provides rememberInteractor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent>(
+                initialState = dailyDetailsState,
+            ),
+            LocalWorkoutMonthInteractor provides rememberInteractor<WorkoutMonthState, WorkoutCalendarEvent>(
+                initialState = monthState,
             ),
         ) {
             HomeScreenContent(

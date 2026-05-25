@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
@@ -19,14 +20,19 @@ import com.lift.bro.ui.theme.spacing
 import kotlin.math.absoluteValue
 import kotlin.math.sign
 
+val LocalDashboardBannerCarouselInteractor = staticCompositionLocalOf<DashboardBannerCarouselInteractor?> { null }
+
 @Composable
 fun DashboardBannerCarousel(
-    interactor: DashboardBannerCarouselInteractor = rememberBannerCarouselInteractor(),
+    interactor: DashboardBannerCarouselInteractor? = null,
 ) {
-    val state by interactor.state.collectAsState()
+    val resolvedInteractor = interactor
+        ?: LocalDashboardBannerCarouselInteractor.current
+        ?: rememberBannerCarouselInteractor()
+    val state by resolvedInteractor.state.collectAsState()
     DashboardBannerCarousel(
         state = state,
-        onEvent = { interactor(it) }
+        onEvent = { resolvedInteractor(it) }
     )
 }
 
