@@ -11,7 +11,7 @@
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Category) -&gt; Unit, showRpe: Boolean = true, showTempo: Boolean = true, yUnit: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftingScaffold.kt$@Composable fun LiftingScaffold( title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current, fab: @Composable (() -&gt; Unit)? = null, fabProperties: FabProperties? = null, leadingContent: @Composable () -&gt; Unit = { LeadingNavigationButton() }, trailingContent: @Composable () -&gt; Unit = {}, tallMode: Boolean = currentWindowAdaptiveInfo() .windowSizeClass .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND), topAppBarScrollBehavior: TopAppBarScrollBehavior = when (tallMode) { true -&gt; TopAppBarDefaults.exitUntilCollapsedScrollBehavior() false -&gt; TopAppBarDefaults.enterAlwaysScrollBehavior() }, containerColor: Color = MaterialTheme.colorScheme.background, contentColor: Color = contentColorFor(containerColor), content: @Composable (PaddingValues) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:MovementDetailsInteractor.kt$@Composable fun rememberMovementDetailsInteractor( movementId: String, categoryId: String? = null, navCoordinator: NavCoordinator = LocalNavCoordinator.current, ): MovementDetailsInteractor</ID>
-    <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = rememberDailyWorkoutDetailsInteractor( date ), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
+    <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate = today, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = LocalDailyWorkoutDetailsInteractor.current ?: rememberDailyWorkoutDetailsInteractor(date), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedEvents$()</ID>
@@ -51,6 +51,7 @@
     <ID>MaximumLineLength:DatabaseMigrationManager.kt$DatabaseMigrationManager$ </ID>
     <ID>MaximumLineLength:EditSetInteractor.kt$ </ID>
     <ID>MaximumLineLength:EditSetScreen.kt$ </ID>
+    <ID>MaximumLineLength:HomeScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
     <ID>MaximumLineLength:RunningTimerOverlay.kt$ </ID>
@@ -70,7 +71,6 @@
     <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e: Exception</ID>
     <ID>TooGenericExceptionCaught:LBDatabase.kt$DriverFactory$e: Exception</ID>
     <ID>TooManyFunctions:EditSetScreen.kt$com.lift.bro.presentation.set.EditSetScreen.kt</ID>
-    <ID>TooManyFunctions:LBDatabase.kt$SetDataSource</ID>
     <ID>TooManyFunctions:TimerScreen.kt$com.lift.bro.presentation.timer.TimerScreen.kt</ID>
     <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
     <ID>UnusedParameter:Calendar.kt$dateSelected: (LocalDate) -&gt; Unit</ID>

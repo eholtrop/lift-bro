@@ -6,8 +6,11 @@ import com.lift.bro.data.client.LiftBroClientConfig
 import com.lift.bro.data.client.createLiftBroClient
 import com.lift.bro.data.client.datasources.KtorGoalRepository
 import com.lift.bro.data.client.datasources.KtorLiftDataSource
+import com.lift.bro.data.client.datasources.KtorLiveStreamDataSource
 import com.lift.bro.data.client.datasources.KtorSetDataSource
 import com.lift.bro.data.client.datasources.KtorVariationDataSource
+import com.lift.bro.data.core.livestream.LiveStreamRepository
+import com.lift.bro.data.core.livestream.LiveStreamRepositoryImpl
 import com.lift.bro.data.core.repository.ExerciseRepository
 import com.lift.bro.data.core.repository.GoalRepository
 import com.lift.bro.data.core.repository.LiftRepository
@@ -185,6 +188,11 @@ val DependencyContainer.localGoalsRepository: IGoalRepository
         goalDataSource = SqlDelightGoalDataSource(
             goalQueries = database.goalQueries
         )
+    )
+
+val DependencyContainer.liveStreamRepository: LiveStreamRepository
+    get() = LiveStreamRepositoryImpl(
+        dataSource = KtorLiveStreamDataSource()
     )
 
 expect val dependencies: DependencyContainer
