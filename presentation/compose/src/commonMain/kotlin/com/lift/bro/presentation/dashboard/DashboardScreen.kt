@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,7 +69,6 @@ fun DashboardContent(
                 var showRpe by rememberSaveable { mutableStateOf(true) }
                 var showTempo by rememberSaveable { mutableStateOf(true) }
 
-                val numOddItems by remember { mutableStateOf(state.items.sumOf { it.gridSize(state.items.size) % 2 }) }
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half),
@@ -101,16 +99,16 @@ fun DashboardContent(
                             }
 
                             is DashboardListItem.LiftCard -> {
-                                when (val card = item as DashboardListItem.LiftCard) {
+                                when (val card = item) {
                                     is DashboardListItem.LiftCard.Loaded -> {
                                         LiftCard(
                                             modifier = Modifier.padding(
                                                 start = when {
-                                                    (index % 2) != (numOddItems % 2) -> MaterialTheme.spacing.half
+                                                    (index % 2) == 1 -> MaterialTheme.spacing.half
                                                     else -> 0.dp
                                                 },
                                                 end = when {
-                                                    (index % 2) == (numOddItems % 2) -> MaterialTheme.spacing.half
+                                                    (index % 2) == 0 -> MaterialTheme.spacing.half
                                                     else -> 0.dp
                                                 },
                                             ),
