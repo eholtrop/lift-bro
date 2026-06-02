@@ -8,6 +8,8 @@ import com.lift.bro.data.client.datasources.KtorGoalRepository
 import com.lift.bro.data.client.datasources.KtorLiftDataSource
 import com.lift.bro.data.client.datasources.KtorSetDataSource
 import com.lift.bro.data.client.datasources.KtorVariationDataSource
+import com.lift.bro.data.core.analyzer.GetWorkoutHistoryUseCase
+import com.lift.bro.data.core.generator.WorkoutGeneratorImpl
 import com.lift.bro.data.core.repository.ExerciseRepository
 import com.lift.bro.data.core.repository.GoalRepository
 import com.lift.bro.data.core.repository.LiftRepository
@@ -22,6 +24,7 @@ import com.lift.bro.data.sqldelight.datasource.SqldelightSetDataSource
 import com.lift.bro.domain.analytics.Analytics
 import com.lift.bro.domain.filter.Filter
 import com.lift.bro.domain.filter.FilterRepository
+import com.lift.bro.domain.repositories.AIRepository
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
@@ -29,6 +32,7 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import com.lift.bro.domain.repositories.WorkoutGenerator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
@@ -38,6 +42,8 @@ expect class DependencyContainer {
     val database: LBDatabase
 
     val settingsRepository: ISettingsRepository
+
+    val aiRepository: AIRepository
 
     fun launchUrl(url: String)
 
@@ -186,5 +192,17 @@ val DependencyContainer.localGoalsRepository: IGoalRepository
             goalQueries = database.goalQueries
         )
     )
+
+val DependencyContainer.getWorkoutHistoryUseCase: GetWorkoutHistoryUseCase
+    get() = GetWorkoutHistoryUseCase(
+        setRepository = localSetRepository,
+        variationRepository = localVariationRepository,
+    )
+
+val DependencyContainer.workoutGenerator: WorkoutGenerator
+    get() = WorkoutGeneratorImpl(
+        aiRepository = aiRepository,
+    )
+
 
 expect val dependencies: DependencyContainer

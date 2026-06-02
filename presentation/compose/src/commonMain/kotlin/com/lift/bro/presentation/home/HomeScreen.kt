@@ -24,7 +24,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,6 +34,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -98,6 +101,32 @@ fun HomeScreenContent(
 ) {
     when (val currentState = state) {
         is HomeState.Content -> {
+            var showAIResult by remember { mutableStateOf(false) }
+
+            if (showAIResult && currentState.aiWorkoutResult != null) {
+                AlertDialog(
+                    onDismissRequest = { showAIResult = false },
+                    title = { Text("Generated Workout") },
+                    text = {
+                        Text(
+                            text = currentState.aiWorkoutResult,
+                            modifier = Modifier.verticalScroll(rememberScrollState())
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(onClick = { showAIResult = false }) {
+                            Text("Close")
+                        }
+                    }
+                )
+            }
+
+            LaunchedEffect(currentState.aiWorkoutResult) {
+                if (currentState.aiWorkoutResult != null && !currentState.isGeneratingWorkout) {
+                    showAIResult = true
+                }
+            }
+
             LiftingScaffold(
                 title = {
                     Column {
@@ -181,16 +210,16 @@ fun HomeScreenContent(
                         }
                     }
                 },
-                leadingContent = {
-                },
                 trailingContent = {
-                    TopBarIconButton(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = stringResource(
-                            Res.string.dashboard_toolbar_leading_button_content_description
-                        )
-                    ) {
-                        onEvent(HomeEvent.SettingsClicked)
+                    Row {
+                        TopBarIconButton(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = stringResource(
+                                Res.string.dashboard_toolbar_leading_button_content_description
+                            )
+                        ) {
+                            onEvent(HomeEvent.SettingsClicked)
+                        }
                     }
                 },
                 fabProperties = FabProperties(
