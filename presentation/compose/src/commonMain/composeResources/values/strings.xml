@@ -369,4 +369,14 @@ Soreness or pain?</string>
     <string name="wrapped_weight_intro">You moved %1$s this year!</string>
     <string name="wrapped_weight_speech_bubble_message">You moved %1$s in %2$ss Alone!! 😵</string>
     <string name="wrapped_weight_speech_bubble_title">That's HUGE!!!! 💪</string>
+
+    <string name="home_screen_icon_live_dialog_text">The developers of lift bro are live on Twitch, either doing some dev\n\n(Or playing some video games 😏)</string>
+    <string name="home_screen_icon_live_dialog_title">Lift Bro is Live!</string>
+    <string name="home_screen_icon_live_label">LIVE</string>
+    <string name="home_screen_icon_maybe_later_cta">Maybe Later...</string>
+    <string name="home_screen_icon_tune_in_cta">Tune in!</string>
+    <string name="home_screen_loading_title">Loading...</string>
+    <string name="home_screen_wrapped_button_text">🎉 🎁</string>
+    <string name="submit_text_field_edit_content_description">Edit</string>
+    <string name="submit_text_field_save_content_description">Save</string>
 </resources>
