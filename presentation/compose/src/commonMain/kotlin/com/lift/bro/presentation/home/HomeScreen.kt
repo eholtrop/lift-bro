@@ -87,6 +87,8 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_fab_content_description
 import lift_bro.core.generated.resources.dashboard_footer_leading_button_content_description
 import lift_bro.core.generated.resources.dashboard_footer_trailing_button_content_description
+import lift_bro.core.generated.resources.home_screen_loading_title
+import lift_bro.core.generated.resources.home_screen_wrapped_button_text
 import lift_bro.core.generated.resources.dashboard_title
 import lift_bro.core.generated.resources.dashboard_toolbar_leading_button_content_description
 import lift_bro.core.generated.resources.ic_calendar
@@ -184,7 +186,7 @@ fun HomeScreenContent(
                                         },
                                     ) {
                                         Column {
-                                            Text("\uD83C\uDF89 \uD83C\uDF81")
+                                            Text(stringResource(Res.string.home_screen_wrapped_button_text))
                                         }
                                     }
                                 }
@@ -328,7 +330,7 @@ fun HomeScreenContent(
             val navCoordinator = LocalNavCoordinator.current
             LiftingScaffold(
                 title = {
-                    Text("Loading...")
+                    Text(stringResource(Res.string.home_screen_loading_title))
                 },
                 trailingContent = {
                     TopBarIconButton(

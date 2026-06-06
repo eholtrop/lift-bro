@@ -33,7 +33,14 @@ import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.Setting
 import kotlinx.coroutines.flow.combine
 import kotlinx.serialization.Serializable
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.home_screen_icon_live_dialog_text
+import lift_bro.core.generated.resources.home_screen_icon_live_dialog_title
+import lift_bro.core.generated.resources.home_screen_icon_live_label
+import lift_bro.core.generated.resources.home_screen_icon_maybe_later_cta
+import lift_bro.core.generated.resources.home_screen_icon_tune_in_cta
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.rememberInteractor
 
@@ -53,12 +60,12 @@ fun HomeScreenIcon(
             },
             title = {
                Text(
-                   text = "Lift Bro is Live!"
+                   text = stringResource(Res.string.home_screen_icon_live_dialog_title)
                )
             },
             text = {
                Text(
-                   text = "The developers of lift bro are live on Twitch, either doing some dev\n\n(Or playing some video games \uD83D\uDE0F)"
+                   text = stringResource(Res.string.home_screen_icon_live_dialog_text)
                )
             },
             confirmButton = {
@@ -68,7 +75,7 @@ fun HomeScreenIcon(
                         showConfirmationModal = false
                     }
                 ) {
-                    Text("Tune in!")
+                    Text(stringResource(Res.string.home_screen_icon_tune_in_cta))
                 }
             },
             dismissButton = {
@@ -77,7 +84,7 @@ fun HomeScreenIcon(
                         showConfirmationModal = false
                     }
                 ) {
-                    Text("Maybe Later...")
+                    Text(stringResource(Res.string.home_screen_icon_maybe_later_cta))
                 }
             },
         )
@@ -114,13 +121,13 @@ fun HomeScreenIcon(
         ) {
             Box {
                 Text(
-                    text = "LIVE",
+                    text = stringResource(Res.string.home_screen_icon_live_label),
                     style = MaterialTheme.typography.headlineSmall,
                     color = MaterialTheme.colorScheme.secondary,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "LIVE",
+                    text = stringResource(Res.string.home_screen_icon_live_label),
                     style = MaterialTheme.typography.headlineSmall
                         .copy(
                             drawStyle = Stroke(
