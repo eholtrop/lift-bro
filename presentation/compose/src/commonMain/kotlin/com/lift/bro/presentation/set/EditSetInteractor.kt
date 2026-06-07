@@ -61,7 +61,6 @@ data class EditSetState(
     val totalWeightMoved: Double? = null,
     @Serializable(with = InstantSerializer::class) val date: Instant = Clock.System.now(),
     val variation: SetVariation? = null,
-    val showV2: Boolean = false,
     val timerEnabled: Boolean = false,
 ) {
     val saveEnabled: Boolean get() = variation != null && reps != null && tempo != null && weight != null
@@ -97,8 +96,6 @@ sealed interface EditSetEvent {
     data class TempoChanged(val tempo: TempoState): EditSetEvent
 
     data class NotesChanged(val notes: String): EditSetEvent
-
-    data object ToggleV2: EditSetEvent
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -187,7 +184,6 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
         is EditSetEvent.RpeChanged -> state?.copy(rpe = event.rpe)
         is EditSetEvent.TempoChanged -> state?.copy(tempo = event.tempo)
         is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
-        is EditSetEvent.ToggleV2 -> state?.copy(showV2 = !state.showV2)
         is EditSetEvent.VariationSelected -> state!!.copy(
             variation = SetVariation(
                 variation = event.variation,
@@ -215,10 +211,6 @@ fun editSetSideEffects(
             state?.toDomain()?.let {
                 setRepository.delete(it)
             }
-        }
-
-        is EditSetEvent.ToggleV2 -> {
-            settingsRepository.set(Setting.EditSetVersion, if (state?.showV2 == true) 2 else 1)
         }
 
         else -> {
@@ -266,7 +258,6 @@ internal suspend fun LBSet.toUiState(
     notes = this.notes,
     rpe = this.rpe,
     mers = this.mer,
-    showV2 = v2,
     timerEnabled = dependencies.settingsRepository.get(Setting.Timer),
     defaultRpe = null // maxVariationSet?.let { this.weight.div(it.weight).times(10).toInt() },
 
