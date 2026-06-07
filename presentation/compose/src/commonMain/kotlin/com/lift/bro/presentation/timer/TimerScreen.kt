@@ -60,6 +60,21 @@ import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.timer_con_label
+import lift_bro.core.generated.resources.timer_ecc_label
+import lift_bro.core.generated.resources.timer_ended_title
+import lift_bro.core.generated.resources.timer_hold_label
+import lift_bro.core.generated.resources.timer_mer_label
+import lift_bro.core.generated.resources.timer_mute_content_description
+import lift_bro.core.generated.resources.timer_pause_content_description
+import lift_bro.core.generated.resources.timer_play_sound_content_description
+import lift_bro.core.generated.resources.timer_rest_label
+import lift_bro.core.generated.resources.timer_restart_content_description
+import lift_bro.core.generated.resources.timer_resume_content_description
+import lift_bro.core.generated.resources.timer_start_content_description
+import lift_bro.core.generated.resources.timer_twm_label
+import org.jetbrains.compose.resources.stringResource
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import tv.dpal.compose.isOpen
@@ -133,12 +148,12 @@ fun TimerScreen(
                                     if (state.audio) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = "Mute Sound"
+                                            contentDescription = stringResource(Res.string.timer_mute_content_description)
                                         )
                                     } else {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = "Play Sound"
+                                            contentDescription = stringResource(Res.string.timer_play_sound_content_description)
                                         )
                                     }
                                 }
@@ -161,12 +176,12 @@ fun TimerScreen(
                                     if (state.audio) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = "Mute Sound"
+                                            contentDescription = stringResource(Res.string.timer_mute_content_description)
                                         )
                                     } else {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = "Play Sound"
+                                            contentDescription = stringResource(Res.string.timer_play_sound_content_description)
                                         )
                                     }
                                 }
@@ -210,9 +225,9 @@ fun TimerScreen(
                                             is TimerState.Ended -> Icons.Default.Repeat
                                         },
                                         contentDescription = when (state) {
-                                            is TimerState.Ended -> "Restart"
-                                            is TimerState.Plan -> "Start"
-                                            is TimerState.Running -> if (state.paused) "Resume" else "Pause"
+                                            is TimerState.Ended -> stringResource(Res.string.timer_restart_content_description)
+                                            is TimerState.Plan -> stringResource(Res.string.timer_start_content_description)
+                                            is TimerState.Running -> if (state.paused) stringResource(Res.string.timer_resume_content_description) else stringResource(Res.string.timer_pause_content_description)
                                         },
                                     )
                                 }
@@ -263,7 +278,7 @@ fun TimerOverlay(
                 ) {
                     item {
                         Text(
-                            "Great job!",
+                            stringResource(Res.string.timer_ended_title),
                             style = MaterialTheme.typography.displayMedium
                         )
                     }
@@ -287,12 +302,12 @@ fun TimerOverlay(
                                     message = {
                                         if (twmEnabled) {
                                             Text(
-                                                text = "TWM: ${weightFormat(set.totalWeightMoved)}"
+                                                text = stringResource(Res.string.timer_twm_label, weightFormat(set.totalWeightMoved))
                                             )
                                         }
                                         if (merEnabled) {
                                             Text(
-                                                text = "+ ${set.mer} mers"
+                                                text = stringResource(Res.string.timer_mer_label, set.mer)
                                             )
                                         }
                                     },
@@ -338,7 +353,7 @@ fun TimerSetField(
                     onEvent(TimerEvent.Plan.TempoChanged(rep = rep, tempo = state.copy(down = it)))
                 }
             },
-            label = { Text("Ecc") },
+            label = { Text(stringResource(Res.string.timer_ecc_label)) },
             textStyle = style,
         )
         TimerTextField(
@@ -348,7 +363,7 @@ fun TimerSetField(
                     onEvent(TimerEvent.Plan.TempoChanged(rep = rep, tempo = state.copy(hold = it)))
                 }
             },
-            label = { Text("Hold") },
+            label = { Text(stringResource(Res.string.timer_hold_label)) },
             textStyle = style,
         )
         TimerTextField(
@@ -358,7 +373,7 @@ fun TimerSetField(
                     onEvent(TimerEvent.Plan.TempoChanged(rep = rep, tempo = state.copy(up = it)))
                 }
             },
-            label = { Text("Con") },
+            label = { Text(stringResource(Res.string.timer_con_label)) },
             textStyle = style,
         )
         TimerTextField(
@@ -368,7 +383,7 @@ fun TimerSetField(
                     onEvent(TimerEvent.Plan.PerSetRestChanged(it))
                 }
             },
-            label = { Text("Rest") },
+            label = { Text(stringResource(Res.string.timer_rest_label)) },
             textStyle = style,
         )
     }

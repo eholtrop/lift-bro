@@ -12,8 +12,26 @@
     <string name="backup_dialog_secondary_cta">Ignore</string>
     <string name="backup_dialog_title">It's been a while...</string>
 
+    <string name="calculator_45_barbell">45 %1$s</string>
     <string name="calculator_backspace_content_description">Backspace</string>
+
+    <string name="client_settings_apply_cta">Apply</string>
+    <string name="client_settings_db_location_title">Db Location</string>
+    <string name="client_settings_local_description">All data will be stored locally on your device.\nBe sure to backup frequently!</string>
+    <string name="client_settings_local_mode">Local</string>
+    <string name="client_settings_remote_mode">Remote</string>
+    <string name="client_settings_server_url_label">Server Url</string>
+    <string name="client_settings_server_url_placeholder">http://192.168.0.42:8080</string>
+    <string name="client_settings_test_connection_cta">Test Connection</string>
     <string name="calculator_bigger_bar_message">We're gonna need a bigger bar... 🧔‍♂️</string>
+
+    <string name="category_details_category_placeholder">Category</string>
+    <string name="category_details_delete_cta_content_description">Delete Category,</string>
+    <string name="category_details_delete_dialog_text">This will delete the Category, All movements will stay!</string>
+    <string name="category_details_delete_dialog_title">Are you sure?</string>
+    <string name="category_details_movements_title">Movements</string>
+    <string name="category_dropdown_expand_menu_content_description">Expand Menu</string>
+    <string name="category_dropdown_select_text">Select Category</string>
 
     <string name="calendar_next_month_content_description">Next Month</string>
     <string name="calendar_previous_month_content_description">Previous Month</string>
@@ -45,6 +63,13 @@
     <string name="dashboard_toolbar_leading_button_content_description">Settings</string>
     <string name="dashboard_toolbar_trailing_button_content_description">Add Lift</string>
 
+    <string name="dashboard_lift_header_create_category_content_description">Create Category</string>
+    <string name="dashboard_lift_header_rpe_chip">rpe</string>
+    <string name="dashboard_lift_header_sort_content_description">Sort</string>
+    <string name="dashboard_lift_header_tempo_chip">tempo</string>
+    <string name="dashboard_sorting_favourites_at_top">Favourites at top</string>
+    <string name="dashboard_sorting_title">Sorting</string>
+
     <string name="date_selector_dialog_confirm_button_text">Ok</string>
     <string name="date_selector_dialog_dismiss_button_text">Close</string>
     <string name="date_selector_title">On</string>
@@ -54,6 +79,11 @@
 
     <string name="dialog_close_content_description">Close</string>
     <string name="dialog_info_content_description">Info</string>
+
+    <string name="goals_achieved_content_description">Achieved</string>
+    <string name="goals_delete_content_description">Delete</string>
+    <string name="goals_header_title">Goals</string>
+    <string name="goals_screen_title">2026 Goals</string>
 
     <string name="edit_daily_notes_dialog_confirm_cta">Save</string>
     <string name="edit_daily_notes_dialog_dismiss_cta">Cancel</string>
@@ -109,7 +139,12 @@ Soreness or pain?</string>
     <string name="lift_details_screen_sort_name">Name</string>
     <string name="lift_details_screen_sort_one_rep_max">One Rep Max</string>
 
+    <string name="info_dialog_okay_cta">Okay</string>
+
     <string name="line_item_title_text">Title</string>
+    <string name="movement_details_create_movement_placeholder">Create Movement</string>
+    <string name="movement_details_empty_subtitle">Add a set with + below!</string>
+    <string name="movement_details_empty_text">Do you even lift bro?</string>
     <string name="number_picker_reps_title">Reps</string>
     <string name="number_picker_weight_title">Weight</string>
 
@@ -171,6 +206,7 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_times_symbol">x</string>
     <string name="reps">reps</string>
 
+    <string name="server_settings_warning_text">Warning: This will expose read/write access to your lift bro data to anyone on your network. Use with caution ⚠\uFE0F</string>
     <string name="server_settings_row_current_ip">Current IP is %1$s</string>
     <string name="server_settings_row_description">Start a local server on this device.</string>
     <string name="server_settings_row_status_disabled">Server Disabled</string>
@@ -255,11 +291,27 @@ Soreness or pain?</string>
     <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="timer_add_tempo_content_description">Add Tempo</string>
+    <string name="timer_con_label">Con</string>
+    <string name="timer_delete_tempo_content_description">Delete Tempo</string>
+    <string name="timer_ecc_label">Ecc</string>
+    <string name="timer_ended_title">Great job!</string>
+    <string name="timer_hold_label">Hold</string>
+    <string name="timer_mer_label">+ %1$d mers</string>
+    <string name="timer_mute_content_description">Mute Sound</string>
+    <string name="timer_pause_content_description">Pause</string>
+    <string name="timer_play_sound_content_description">Play Sound</string>
+    <string name="timer_ready_label">Ready</string>
+    <string name="timer_rest_label">Rest</string>
+    <string name="timer_restart_content_description">Restart</string>
+    <string name="timer_resume_content_description">Resume</string>
     <string name="timer_screen_rest_reset_label">Rest/Reset</string>
     <string name="timer_screen_fab_content_description">Start Timer</string>
     <string name="timer_screen_startup_time_buffer_text">Startup Time Buffer</string>
     <string name="timer_screen_set_count_cta">x%1$d</string>
     <string name="timer_screen_title">Timer</string>
+    <string name="timer_start_content_description">Start</string>
+    <string name="timer_twm_label">TWM: %1$s</string>
     <string name="toolbar_back_button_content_description">Back</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
     <string name="toolbar_calculator_content_description">Calculator</string>

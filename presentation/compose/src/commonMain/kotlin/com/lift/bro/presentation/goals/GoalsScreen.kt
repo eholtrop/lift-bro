@@ -43,6 +43,12 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.goals_achieved_content_description
+import lift_bro.core.generated.resources.goals_delete_content_description
+import lift_bro.core.generated.resources.goals_header_title
+import lift_bro.core.generated.resources.goals_screen_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun GoalsScreen(
@@ -66,7 +72,7 @@ fun GoalsScreen(
 ) {
     LiftingScaffold(
         title = {
-            Text("2026 Goals")
+            Text(stringResource(Res.string.goals_screen_title))
         },
     ) { padding ->
 
@@ -86,7 +92,7 @@ fun GoalsScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            "Goals",
+                            stringResource(Res.string.goals_header_title),
                             style = MaterialTheme.typography.titleLarge,
                             color = MaterialTheme.colorScheme.onBackground
                         )
@@ -135,7 +141,7 @@ fun GoalsScreen(
                         if (item.achieved) {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,
-                                contentDescription = "Achieved"
+                                contentDescription = stringResource(Res.string.goals_achieved_content_description)
                             )
                         } else {
                             Icon(
@@ -162,7 +168,7 @@ fun GoalsScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete"
+                            contentDescription = stringResource(Res.string.goals_delete_content_description)
                         )
                     }
                 }

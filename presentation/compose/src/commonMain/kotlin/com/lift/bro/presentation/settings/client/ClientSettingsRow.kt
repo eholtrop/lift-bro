@@ -29,6 +29,16 @@ import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.Space
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.client_settings_apply_cta
+import lift_bro.core.generated.resources.client_settings_db_location_title
+import lift_bro.core.generated.resources.client_settings_local_description
+import lift_bro.core.generated.resources.client_settings_local_mode
+import lift_bro.core.generated.resources.client_settings_remote_mode
+import lift_bro.core.generated.resources.client_settings_server_url_label
+import lift_bro.core.generated.resources.client_settings_server_url_placeholder
+import lift_bro.core.generated.resources.client_settings_test_connection_cta
+import org.jetbrains.compose.resources.stringResource
 import kotlinx.coroutines.launch
 
 @Composable
@@ -54,7 +64,7 @@ fun ClientSettingsRowContent(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Db Location")
+                Text(stringResource(Res.string.client_settings_db_location_title))
                 Space()
                 var expanded by remember { mutableStateOf(false) }
                 Box {
@@ -66,8 +76,8 @@ fun ClientSettingsRowContent(
                     ) {
                         Text(
                             when (state.mode) {
-                                ClientMode.Local -> "Local"
-                                is ClientMode.Remote -> "Remote"
+                                ClientMode.Local -> stringResource(Res.string.client_settings_local_mode)
+                                is ClientMode.Remote -> stringResource(Res.string.client_settings_remote_mode)
                             },
                             style = MaterialTheme.typography.headlineSmall
                         )
@@ -102,7 +112,7 @@ fun ClientSettingsRowContent(
             Crossfade(state.mode) { mode ->
                 when (mode) {
                     ClientMode.Local -> {
-                        Text("All data will be stored locally on your device.\nBe sure to backup frequently!")
+                        Text(stringResource(Res.string.client_settings_local_description))
                     }
 
                     is ClientMode.Remote -> {
@@ -118,9 +128,9 @@ fun ClientSettingsRowContent(
                                     onEvent(ClientSettingsEvent.UrlUpdated(it))
                                 },
                                 placeholder = {
-                                    Text("http://192.168.0.42:8080")
+                                    Text(stringResource(Res.string.client_settings_server_url_placeholder))
                                 },
-                                label = { Text("Server Url") }
+                                label = { Text(stringResource(Res.string.client_settings_server_url_label)) }
                             )
 
                             Column(
@@ -136,7 +146,7 @@ fun ClientSettingsRowContent(
                                     },
                                     colors = ButtonDefaults.filledTonalButtonColors()
                                 ) {
-                                    Text("Test Connection")
+                                    Text(stringResource(Res.string.client_settings_test_connection_cta))
                                 }
                             }
                         }
@@ -151,7 +161,7 @@ fun ClientSettingsRowContent(
                 },
                 enabled = connected
             ) {
-                Text("Apply")
+                Text(stringResource(Res.string.client_settings_apply_cta))
             }
         }
     }
