@@ -15,33 +15,6 @@
 
 default_platform(:android)
 
-before_all do |lane|
-    platform :ios do
-        setup_ci
-
-        unless ENV["APPSTORE_KEY_ID"].nil? || ENV["APPSTORE_KEY_ID"].empty?
-          app_store_connect_api_key(
-            key_id: ENV["APPSTORE_KEY_ID"],
-            issuer_id: ENV["APPSTORE_ISSUER_ID"],
-            key_content: ENV["APPSTORE_PRIVATE_KEY"]
-          )
-        end
-
-        # For iOS Match: Decode the SSH private key to access your Match Git repo
-        unless ENV["MATCH_GIT_PRIVATE_KEY"].nil? || ENV["MATCH_GIT_PRIVATE_KEY"].empty?
-          sh "mkdir -p ~/.ssh/"
-          # Using HEREDOC for multi-line key content
-          File.open(File.expand_path("~/.ssh/id_rsa"), "w") do |file|
-            file.puts ENV["MATCH_GIT_PRIVATE_KEY"]
-          end
-          sh "chmod 600 ~/.ssh/id_rsa"
-          # Add your Git host to known_hosts to prevent SSH prompts in CI
-          # Replace github.com with your actual Git host (e.g., gitlab.com, bitbucket.org)
-          sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
-        end
-    end
-end
-
 # Android
 platform :android do
 
@@ -114,15 +87,34 @@ end
 
 # iOS
 platform :ios do
-  # This is often placed in a 'before_all' or specific lane setup
-  # to ensure development profiles are available.
+  before_all do
+    setup_ci
+
+    unless ENV["APPSTORE_KEY_ID"].nil? || ENV["APPSTORE_KEY_ID"].empty?
+      app_store_connect_api_key(
+        key_id: ENV["APPSTORE_KEY_ID"],
+        issuer_id: ENV["APPSTORE_ISSUER_ID"],
+        key_content: ENV["APPSTORE_PRIVATE_KEY"]
+      )
+    end
+
+    unless ENV["MATCH_GIT_PRIVATE_KEY"].nil? || ENV["MATCH_GIT_PRIVATE_KEY"].empty?
+      sh "mkdir -p ~/.ssh/"
+      File.open(File.expand_path("~/.ssh/id_rsa"), "w") do |file|
+        file.puts ENV["MATCH_GIT_PRIVATE_KEY"]
+      end
+      sh "chmod 600 ~/.ssh/id_rsa"
+      sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+    end
+  end
+
   desc "Sync iOS Development Code Signing Identities using match"
   lane :match_development do
     match(
       type: "development",
-      readonly: true, # true for CI, false for local setup if you're updating certs
-      git_url: ENV["MATCH_GIT_URL"], # Set this in GitHub Actions secrets
-      git_branch: "main", # Or your desired branch for Match
+      readonly: true,
+      git_url: ENV["MATCH_GIT_URL"],
+      git_branch: "main",
       keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
       username: ENV["FASTLANE_USER"]
     )

@@ -1,6 +1,8 @@
 name: iOS Build Test
 
 on:
+  schedule:
+    - cron: '0 2 * * *'
   workflow_dispatch:
 
 env:
@@ -33,21 +35,34 @@ jobs:
           ruby-version: 3.3
           bundler-cache: true
 
+      - name: Check for recent commits
+        id: check_changes
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            CHANGES=$(git rev-list --count --since="24 hours ago" HEAD)
+            echo "changes=$CHANGES" >> $GITHUB_OUTPUT
+          else
+            echo "changes=1" >> $GITHUB_OUTPUT
+          fi
+
       - name: Setup SSH Agent for Match
+        if: steps.check_changes.outputs.changes != '0'
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
 
-      - name: Build iOS Debug IPA
+      - name: Build iOS IPA
+        if: steps.check_changes.outputs.changes != '0'
         run: |
           bundle install
           bundle exec fastlane ios build_debug
           bundle exec fastlane ios build_release
 
       - name: Upload IPA Artifact
+        if: steps.check_changes.outputs.changes != '0'
         uses: actions/upload-artifact@v4
         with:
-          name: ios-debug-ipa
-          path: build/artifacts/ios/ios_app_debug.ipa
+          name: ios-ipa
+          path: build/artifacts/ios/
           if-no-files-found: warn
           retention-days: 7
