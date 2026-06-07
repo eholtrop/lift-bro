@@ -46,6 +46,14 @@
     <string name="dashboard_toolbar_leading_button_content_description">Settings</string>
     <string name="dashboard_toolbar_trailing_button_content_description">Add Lift</string>
 
+    <string name="dashboard_lift_header_add_content_description">Create Category</string>
+    <string name="dashboard_lift_header_rpe_text">rpe</string>
+    <string name="dashboard_lift_header_tempo_text">tempo</string>
+    <string name="dashboard_lift_header_sort_content_description">Sort</string>
+
+    <string name="dashboard_sorting_dialog_title">Sorting</string>
+    <string name="dashboard_sorting_favourites_at_top">Favourites at top</string>
+
     <string name="date_selector_dialog_confirm_button_text">Ok</string>
     <string name="date_selector_dialog_dismiss_button_text">Close</string>
     <string name="date_selector_title">On</string>
