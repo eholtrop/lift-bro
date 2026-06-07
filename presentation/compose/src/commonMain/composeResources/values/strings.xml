@@ -90,6 +90,10 @@ Soreness or pain?</string>
     <string name="edit_set_screen_variation_selector_no_lift_max">None</string>
     <string name="edit_set_screen_variation_selector_no_variation_max">None</string>
     <string name="edit_set_screen_variation_selector_variation_max">%1$s Max: %2$s</string>
+    <string name="edit_set_date_month_day">EEEE, MMM d</string>
+    <string name="edit_set_date_year">yyyy</string>
+    <string name="edit_set_date_time">hh:mm</string>
+    <string name="edit_set_date_ampm">aa</string>
 
     <string name="kg">kg</string>
 
