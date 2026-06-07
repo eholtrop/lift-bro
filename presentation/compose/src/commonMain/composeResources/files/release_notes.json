@@ -1,5 +1,15 @@
 [
     {
+        "versionId": "2026.06.06",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Relelase The Edit Set Screen V2!! \uD83C\uDF89"
+            }
+        ]
+    },
+    {
         "versionId": "2026.05.29",
         "notes": [
             {

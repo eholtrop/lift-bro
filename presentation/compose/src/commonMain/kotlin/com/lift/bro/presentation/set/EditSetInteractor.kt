@@ -105,7 +105,6 @@ private fun editSetSource(
     movementId: String? = null,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
-    settingsRepository: ISettingsRepository = dependencies.settingsRepository,
 ) = setRepository.listen(setId)
     .map {
         it ?: LBSet(
@@ -133,7 +132,6 @@ private fun editSetSource(
                         movement = movement,
                         maxVariationSet = maxVariation,
                         maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null,
-                        v2 = settingsRepository.get(Setting.EditSetVersion) == 2
                     )
                 }
             }
@@ -227,7 +225,6 @@ internal suspend fun LBSet.toUiState(
     movement: Movement?,
     maxVariationSet: LBSet?,
     maxLiftSet: LBSet?,
-    v2: Boolean,
 ) = EditSetState(
     id = this.id,
     variation = movement?.let {
