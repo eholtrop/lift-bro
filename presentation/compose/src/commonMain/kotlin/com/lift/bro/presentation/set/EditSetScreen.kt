@@ -149,16 +149,6 @@ fun EditSetScreen(
                 )
             }
 
-            Switch(
-                checked = state.showV2,
-                onCheckedChange = { onEvent(EditSetEvent.ToggleV2) },
-                thumbContent = {
-                    Text(
-                        if (state.showV2) "V2" else "V1",
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                }
-            )
             if (state.timerEnabled) {
                 val navCoordinator = LocalNavCoordinator.current
                 val tempo = state.let {
@@ -191,27 +181,15 @@ fun EditSetScreen(
         },
     ) { padding ->
         state.let { set ->
-            if (set.showV2) {
-                EditSetScreenV2(
-                    modifier = Modifier.padding(padding),
-                    state = set,
-                    sendEvent = { onEvent(it) },
-                    showVariationDialog = {
-                        showVariationDialog = true
-                    },
-                    strings = strings,
-                )
-            } else {
-                EditSetScreen(
-                    modifier = Modifier.padding(padding),
-                    state = set,
-                    sendEvent = { onEvent(it) },
-                    showVariationDialog = {
-                        showVariationDialog = true
-                    },
-                    strings = strings,
-                )
-            }
+            EditSetScreenV2(
+                modifier = Modifier.padding(padding),
+                state = set,
+                sendEvent = { onEvent(it) },
+                showVariationDialog = {
+                    showVariationDialog = true
+                },
+                strings = strings,
+            )
         }
     }
 
@@ -225,176 +203,6 @@ fun EditSetScreen(
                 onEvent(EditSetEvent.VariationSelected(it))
             }
         )
-    }
-}
-
-@Composable
-fun EditSetScreen(
-    modifier: Modifier = Modifier,
-    state: EditSetState,
-    sendEvent: (EditSetEvent) -> Unit,
-    showVariationDialog: () -> Unit,
-    strings: EditSetScreenStrings = EditSetScreenStrings.default(),
-) {
-    LazyColumn(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = PaddingValues(
-            horizontal = MaterialTheme.spacing.half,
-        ),
-        verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
-    ) {
-        item {
-            EditSetVariationSelector(state, showVariationDialog = showVariationDialog)
-        }
-
-        item {
-            RepWeightSelector(
-                modifier = Modifier.fillMaxWidth(),
-                repChanged = { sendEvent(EditSetEvent.RepChanged(it)) },
-                weightChanged = { sendEvent(EditSetEvent.WeightChanged(it)) },
-                rpeChanged = { sendEvent(EditSetEvent.RpeChanged(it)) },
-                weight = state.weight,
-                reps = state.reps,
-                rpe = state.rpe,
-                showRpe = true
-            )
-        }
-
-        item {
-            Column(
-                modifier = Modifier.fillMaxWidth()
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.surface,
-                                Color.Transparent,
-                            )
-                        ),
-                        shape = MaterialTheme.shapes.medium,
-                    ).clip(MaterialTheme.shapes.medium),
-            ) {
-                TempoSelector(
-                    modifier = Modifier.padding(
-                        top = MaterialTheme.spacing.one,
-                        bottom = MaterialTheme.spacing.quarter,
-                        horizontal = MaterialTheme.spacing.quarter
-                    ),
-                    tempo = state.tempo,
-                    tempoChanged = { sendEvent(EditSetEvent.TempoChanged(it)) }
-                )
-            }
-        }
-
-        item {
-            Column(
-                modifier = Modifier.animateContentSize()
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                MaterialTheme.colorScheme.surface,
-                                Color.Transparent
-                            ),
-                        ),
-                        shape = MaterialTheme.shapes.medium
-                    ).clip(MaterialTheme.shapes.medium)
-
-            ) {
-                var showCalendar by remember { mutableStateOf(false) }
-
-                Row {
-                    Column(
-                        modifier = Modifier.weight(1f)
-                            .clickable(
-                                onClick = { showCalendar = !showCalendar }
-                            )
-                            .padding(
-                                vertical = MaterialTheme.spacing.half,
-                                horizontal = MaterialTheme.spacing.one
-                            ),
-                        horizontalAlignment = Alignment.Start
-                    ) {
-                        Text(
-                            text = state.date.toString("EEEE, MMM d"),
-                            color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            text = state.date.toString("yyyy"),
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    }
-                    Column(
-                        modifier = Modifier.weight(1f)
-                            .padding(
-                                vertical = MaterialTheme.spacing.half,
-                                horizontal = MaterialTheme.spacing.one
-                            ),
-                        horizontalAlignment = Alignment.End
-                    ) {
-                        Text(
-                            text = state.date.toString("hh:mm"),
-                            color = MaterialTheme.colorScheme.onBackground,
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                        Text(
-                            text = state.date.toString("aa").lowercase(),
-                            style = MaterialTheme.typography.labelMedium,
-                        )
-                    }
-                }
-
-                AnimatedVisibility(showCalendar) {
-                    var date by remember(state.date) { mutableStateOf(state.date.toLocalDate()) }
-
-                    Calendar(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(
-                                vertical = MaterialTheme.spacing.half,
-                                horizontal = MaterialTheme.spacing.one
-                            ),
-                        selectedDate = date,
-                        dateSelected = {
-                            date = it
-                            sendEvent(EditSetEvent.DateSelected(it))
-                            showCalendar = false
-                        },
-                    )
-                }
-            }
-        }
-
-        item {
-            Column(
-                modifier = Modifier.background(
-                    brush = Brush.linearGradient(
-                        colors = listOf(
-                            MaterialTheme.colorScheme.surface,
-                            Color.Transparent,
-                        )
-                    ),
-                    shape = MaterialTheme.shapes.medium,
-                ).clip(MaterialTheme.shapes.medium),
-            ) {
-                var notes by remember { mutableStateOf(state.notes) }
-                TextField(
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = TextFieldDefaults.transparentColors(),
-                    value = notes,
-                    singleLine = true,
-                    placeholder = {
-                        Text(strings.extraNotesPlaceholder)
-                    },
-                    label = {
-                        Text(strings.extraNotesLabel)
-                    },
-                    onValueChange = {
-                        notes = it
-                        sendEvent(EditSetEvent.NotesChanged(it))
-                    },
-                )
-            }
-        }
     }
 }
 
@@ -628,7 +436,6 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                 reps = null,
                 rpe = 6,
                 date = LocalDate(2025, 10, 20).atStartOfDayIn(),
-                showV2 = false,
             ),
             // New set with variation but no data
             EditSetState(
@@ -650,7 +457,6 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                     iso = 1,
                     con = 1
                 ),
-                showV2 = true,
             ),
             // Partially filled set
             EditSetState(
@@ -674,7 +480,6 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                     con = 1
                 ),
                 date = LocalDate(2025, 10, 20).atStartOfDayIn(),
-                showV2 = true,
             ),
             // Complete set with all data
             EditSetState(
@@ -705,7 +510,6 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                 ),
                 notes = "PR attempt! Felt heavy but moved well.",
                 date = LocalDate(2025, 10, 20).atStartOfDayIn(),
-                showV2 = false
             )
         )
 }
@@ -713,34 +517,6 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
 @Preview
 @Composable
 fun EditSetScreenPreview(
-    @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
-) {
-    PreviewAppTheme(isDarkMode = false) {
-        EditSetScreen(
-            state = state,
-            sendEvent = {},
-            showVariationDialog = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-fun EditSetScreenDarkPreview(
-    @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
-) {
-    PreviewAppTheme(isDarkMode = true) {
-        EditSetScreen(
-            state = state,
-            sendEvent = {},
-            showVariationDialog = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-fun EditSetScreenv2Preview(
     @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
@@ -754,7 +530,7 @@ fun EditSetScreenv2Preview(
 
 @Preview
 @Composable
-fun EditSetScreenv2DarkPreview(
+fun EditSetScreenDarkPreview(
     @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
 ) {
     PreviewAppTheme(isDarkMode = true) {
