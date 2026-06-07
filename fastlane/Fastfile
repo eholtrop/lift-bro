@@ -185,37 +185,39 @@ platform :ios do
   end
 
   lane :test do |options|
+        gradle(task: "test")
+
     # run simulator
-    simulator_name = options[:name] || "iPhone 15 Pro"
-    device_type_id = options[:device_type] || "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro"
-    runtime_id = options[:runtime] || "com.apple.CoreSimulator.SimRuntime.iOS-18-5"
-
-    # Check if simulator already exists
-    simulator_udid = sh("xcrun simctl list devices | grep '#{simulator_name}' | awk -F '[()]' '{print $2}'", log: false).strip
-
-    unless simulator_udid && !simulator_udid.empty?
-      UI.message "Simulator '#{simulator_name}' not found. Creating it..."
-      simulator_udid = sh("xcrun simctl create \"#{simulator_name}\" \"#{device_type_id}\" \"#{runtime_id}\"", log: true).strip
-      UI.success "Created simulator with UDID: #{simulator_udid}"
-    else
-      UI.success "Simulator '#{simulator_name}' already exists with UDID: #{simulator_udid}"
-    end
-
-    # Boot the simulator
-    UI.message "Booting simulator with UDID: #{simulator_udid}\""
-    begin
-      sh("xcrun simctl boot \"#{simulator_udid}\"", log: true)
-      UI.success "Simulator booted successfully!"
-    rescue => e
-      UI.message "Simulator might already be booted or an error occurred: #{e.message}"
-    end
-
-    # build/install app
-    build_debug(build_number: 1)
-
-    app_path = "../build/artifacts/ios/ios_app_debug.ipa"
-    sh "xcrun simctl install #{simulator_udid} \"#{app_path}\""
-    sh "maestro --device #{simulator_udid} test ../.maestro --format junit --output maestro_results.xml"
+#     simulator_name = options[:name] || "iPhone 15 Pro"
+#     device_type_id = options[:device_type] || "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro"
+#     runtime_id = options[:runtime] || "com.apple.CoreSimulator.SimRuntime.iOS-18-5"
+#
+#     # Check if simulator already exists
+#     simulator_udid = sh("xcrun simctl list devices | grep '#{simulator_name}' | awk -F '[()]' '{print $2}'", log: false).strip
+#
+#     unless simulator_udid && !simulator_udid.empty?
+#       UI.message "Simulator '#{simulator_name}' not found. Creating it..."
+#       simulator_udid = sh("xcrun simctl create \"#{simulator_name}\" \"#{device_type_id}\" \"#{runtime_id}\"", log: true).strip
+#       UI.success "Created simulator with UDID: #{simulator_udid}"
+#     else
+#       UI.success "Simulator '#{simulator_name}' already exists with UDID: #{simulator_udid}"
+#     end
+#
+#     # Boot the simulator
+#     UI.message "Booting simulator with UDID: #{simulator_udid}\""
+#     begin
+#       sh("xcrun simctl boot \"#{simulator_udid}\"", log: true)
+#       UI.success "Simulator booted successfully!"
+#     rescue => e
+#       UI.message "Simulator might already be booted or an error occurred: #{e.message}"
+#     end
+#
+#     # build/install app
+#     build_debug(build_number: 1)
+#
+#     app_path = "../build/artifacts/ios/ios_app_debug.ipa"
+#     sh "xcrun simctl install #{simulator_udid} \"#{app_path}\""
+#     sh "maestro --device #{simulator_udid} test ../.maestro --format junit --output maestro_results.xml"
   end
 
   desc "Run Linter for iOS (e.g., SwiftLint)"
