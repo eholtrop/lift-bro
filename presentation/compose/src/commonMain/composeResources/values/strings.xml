@@ -132,6 +132,7 @@ Soreness or pain?</string>
     <string name="radio_field_selected_option_text">Selected option</string>
     <string name="radio_field_unselected_option_text">Unselected option</string>
 
+    <string name="release_notes_dialog_bullet_text">•</string>
     <string name="release_notes_dialog_title">Release Notes</string>
     <string name="release_notes_release_notes_close_content_description">Ignore Release Notes</string>
     <string name="release_notes_row_new_update_title">New Update Downloaded!</string>
