@@ -352,12 +352,12 @@ fun EditSetScreenV2(
                             horizontalAlignment = Alignment.Start
                         ) {
                             Text(
-                                text = state.date.toString("EEEE, MMM d"),
+                                text = state.date.toString(strings.dateMonthDayFormat),
                                 color = if (showCalendar) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.titleMedium,
                             )
                             Text(
-                                text = state.date.toString("yyyy"),
+                                text = state.date.toString(strings.dateYearFormat),
                                 style = MaterialTheme.typography.labelMedium,
                             )
                         }
@@ -370,12 +370,12 @@ fun EditSetScreenV2(
                             horizontalAlignment = Alignment.End
                         ) {
                             Text(
-                                text = state.date.toString("hh:mm"),
+                                text = state.date.toString(strings.dateTimeFormat),
                                 color = MaterialTheme.colorScheme.onBackground,
                                 style = MaterialTheme.typography.titleMedium,
                             )
                             Text(
-                                text = state.date.toString("aa").lowercase(),
+                                text = state.date.toString(strings.dateAmpmFormat).lowercase(),
                                 style = MaterialTheme.typography.labelMedium,
                             )
                         }

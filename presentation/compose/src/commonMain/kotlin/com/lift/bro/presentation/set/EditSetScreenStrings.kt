@@ -8,6 +8,10 @@ import lift_bro.core.generated.resources.edit_set_screen_extra_notes_label
 import lift_bro.core.generated.resources.edit_set_screen_extra_notes_placeholder
 import lift_bro.core.generated.resources.edit_set_screen_title
 import lift_bro.core.generated.resources.edit_set_screen_variation_selector_empty_state_title
+import lift_bro.core.generated.resources.edit_set_date_ampm
+import lift_bro.core.generated.resources.edit_set_date_month_day
+import lift_bro.core.generated.resources.edit_set_date_time
+import lift_bro.core.generated.resources.edit_set_date_year
 import lift_bro.core.generated.resources.tempo_selector_timer_content_description
 import org.jetbrains.compose.resources.stringResource
 
@@ -19,6 +23,10 @@ data class EditSetScreenStrings(
     val extraNotesPlaceholder: String,
     val variationSelectorEmptyState: String,
     val timerContentDescription: String,
+    val dateMonthDayFormat: String,
+    val dateYearFormat: String,
+    val dateTimeFormat: String,
+    val dateAmpmFormat: String,
 ) {
     companion object {
         @Composable
@@ -32,6 +40,10 @@ data class EditSetScreenStrings(
                 Res.string.edit_set_screen_variation_selector_empty_state_title
             ),
             timerContentDescription = stringResource(Res.string.tempo_selector_timer_content_description),
+            dateMonthDayFormat = stringResource(Res.string.edit_set_date_month_day),
+            dateYearFormat = stringResource(Res.string.edit_set_date_year),
+            dateTimeFormat = stringResource(Res.string.edit_set_date_time),
+            dateAmpmFormat = stringResource(Res.string.edit_set_date_ampm),
         )
     }
 }
