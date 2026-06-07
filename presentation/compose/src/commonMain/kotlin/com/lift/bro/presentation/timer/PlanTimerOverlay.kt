@@ -40,9 +40,13 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.timer_add_set_label
 import lift_bro.core.generated.resources.timer_add_tempo_content_description
 import lift_bro.core.generated.resources.timer_delete_tempo_content_description
 import lift_bro.core.generated.resources.timer_ready_label
+import lift_bro.core.generated.resources.timer_remove_set_label
+import lift_bro.core.generated.resources.timer_rest_emoji
+import lift_bro.core.generated.resources.timer_sets_count_label
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -109,7 +113,7 @@ fun PlanTimerOverlay(
                                 onEvent(TimerEvent.Plan.AddTimer)
                             }
                         ) {
-                            Text("+")
+                            Text(stringResource(Res.string.timer_add_set_label))
                         }
                         Button(
                             onClick = {
@@ -127,7 +131,7 @@ fun PlanTimerOverlay(
                             ) {
                                 Text(
                                     modifier = Modifier.padding(bottom = MaterialTheme.spacing.quarter),
-                                    text = "x",
+                                    text = stringResource(Res.string.timer_sets_count_label),
                                     style = MaterialTheme.typography.displaySmall,
                                 )
                                 AnimatedText(
@@ -144,7 +148,7 @@ fun PlanTimerOverlay(
                             },
                             enabled = state.tempo.size > 1
                         ) {
-                            Text("-")
+                            Text(stringResource(Res.string.timer_remove_set_label))
                         }
                     }
                 } else {
@@ -195,7 +199,9 @@ fun PlanTimerOverlay(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(Res.string.timer_delete_tempo_content_description),
+                                    contentDescription = stringResource(
+                                        Res.string.timer_delete_tempo_content_description
+                                    ),
                                 )
                             }
                         }
@@ -232,7 +238,7 @@ fun PlanTimerOverlay(
                 )
                 Space(MaterialTheme.spacing.one)
                 Text(
-                    text = "\uD83D\uDE2E\u200D\uD83D\uDCA8",
+                    text = stringResource(Res.string.timer_rest_emoji),
                     style = MaterialTheme.typography.headlineLarge
                 )
             }

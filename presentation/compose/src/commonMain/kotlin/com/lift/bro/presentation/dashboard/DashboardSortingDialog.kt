@@ -15,6 +15,10 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_sorting_favourites_at_top
+import lift_bro.core.generated.resources.dashboard_sorting_heaviest
+import lift_bro.core.generated.resources.dashboard_sorting_latest
+import lift_bro.core.generated.resources.dashboard_sorting_name
+import lift_bro.core.generated.resources.dashboard_sorting_reps
 import lift_bro.core.generated.resources.dashboard_sorting_title
 import org.jetbrains.compose.resources.stringResource
 
@@ -48,7 +52,12 @@ fun DashboardSortingDialog(
 
                 SortingOption.entries.forEach { option ->
                     RadioField(
-                        text = option.name,
+                        text = when (option) {
+                            SortingOption.Heaviest -> stringResource(Res.string.dashboard_sorting_heaviest)
+                            SortingOption.Reps -> stringResource(Res.string.dashboard_sorting_reps)
+                            SortingOption.Latest -> stringResource(Res.string.dashboard_sorting_latest)
+                            SortingOption.Name -> stringResource(Res.string.dashboard_sorting_name)
+                        },
                         selected = sortingSettings.option == option
                     ) {
                         optionSelected(option)

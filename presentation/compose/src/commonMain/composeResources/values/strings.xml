@@ -69,6 +69,10 @@
     <string name="dashboard_lift_header_tempo_chip">tempo</string>
     <string name="dashboard_sorting_favourites_at_top">Favourites at top</string>
     <string name="dashboard_sorting_title">Sorting</string>
+    <string name="dashboard_sorting_heaviest">Heaviest</string>
+    <string name="dashboard_sorting_reps">Reps</string>
+    <string name="dashboard_sorting_latest">Latest</string>
+    <string name="dashboard_sorting_name">Name</string>
 
     <string name="date_selector_dialog_confirm_button_text">Ok</string>
     <string name="date_selector_dialog_dismiss_button_text">Close</string>
@@ -312,6 +316,11 @@ Soreness or pain?</string>
     <string name="timer_screen_title">Timer</string>
     <string name="timer_start_content_description">Start</string>
     <string name="timer_twm_label">TWM: %1$s</string>
+    <string name="timer_add_set_label">+</string>
+    <string name="timer_remove_set_label">-</string>
+    <string name="timer_sets_count_label">x</string>
+    <string name="timer_ended_completed_text">%1$d x %2$s! 💪</string>
+    <string name="timer_rest_emoji">😮‍💨</string>
     <string name="toolbar_back_button_content_description">Back</string>
     <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
     <string name="toolbar_calculator_content_description">Calculator</string>

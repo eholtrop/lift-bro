@@ -29,6 +29,7 @@ import com.lift.bro.presentation.settings.SettingsRowItem
 import com.lift.bro.ui.Space
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.client_settings_apply_cta
 import lift_bro.core.generated.resources.client_settings_db_location_title
@@ -39,7 +40,6 @@ import lift_bro.core.generated.resources.client_settings_server_url_label
 import lift_bro.core.generated.resources.client_settings_server_url_placeholder
 import lift_bro.core.generated.resources.client_settings_test_connection_cta
 import org.jetbrains.compose.resources.stringResource
-import kotlinx.coroutines.launch
 
 @Composable
 fun ClientSettingsRow(
@@ -91,7 +91,16 @@ fun ClientSettingsRowContent(
                         state.options.forEach { location ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(location.toString())
+                                    Text(
+                                        when (location) {
+                                            ClientModeOptions.Local -> stringResource(
+                                                Res.string.client_settings_local_mode
+                                            )
+                                            ClientModeOptions.Remote -> stringResource(
+                                                Res.string.client_settings_remote_mode
+                                            )
+                                        }
+                                    )
                                 },
                                 onClick = {
                                     onEvent(ClientSettingsEvent.ClientModeSelected(location))
