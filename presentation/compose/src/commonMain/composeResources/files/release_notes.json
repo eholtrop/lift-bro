@@ -1,106 +1,347 @@
 [
     {
-        "versionId": "2026.05.18",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Convert Lifts to Categories, and Variations to Movements"
-        }
+        "versionId": "2026.05.29",
+        "notes": [
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix padding for lift cards when number of items updates"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.05.15",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Update Dashboard Banner with carousel of banners"
+            },
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix submit text field experience"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.04.24",
+        "notes": [
+            {
+                "type": "improvement",
+                "platform": "all",
+                "en": "Update Empty State for Movement Details screen"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.04.17",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Convert Lifts to Categories, and Variations to Movements"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Update Dashboard to reference Categories instead of Lifts"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Convert Lift Details to Category Details"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.04.03",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Update Release Notes to be a Bottom Sheet with dismiss button"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.03.27",
+        "notes": [
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix settings crash and backup file naming"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.03.20",
+        "notes": [
+            {
+                "type": "improvement",
+                "platform": "all",
+                "en": "Move Dashboard V3 toggle to Settings"
+            },
+            {
+                "type": "improvement",
+                "platform": "all",
+                "en": "Update Settings Screen with improved experimental section"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.03.13",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Dashboard V3: Unified dashboard with embedded calendar"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add sorting support on Dashboard V3"
+            },
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix scrolling on Home Page V3"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.02.13",
+        "notes": [
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix blocking bugs on Edit Set Screen timer"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add database encryption and migration support"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.02.06",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Update Timer UI with camera recording"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Implement End Screen for workouts"
+            },
+            {
+                "type": "improvement",
+                "platform": "all",
+                "en": "Fix ticker animation and remove jank"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.01.30",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add Graph Edit to Dashboard Screen"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Show Tempo and RPE on Lift Cards"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Update VariationSearchDialog with Create Variation button"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.01.23",
+        "notes": [
+            {
+                "type": "improvement",
+                "platform": "all",
+                "en": "Update animations and align RPE Info Dialog"
+            },
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix TempoSelector background and padding"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.01.16",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add line graphs to Lift Card and Lift Details"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Edit Set Redesign with improved layout and interactions"
+            },
+            {
+                "type": "improvement",
+                "platform": "all",
+                "en": "Add gradients and backgrounds to Variation Cards"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.01.09",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add Goals Management Screen [LIF-39]"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add LiftBro Client and Server support [LIF-35, LIF-33]"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Foldable and Tablet UI support [LIF-40]"
+            },
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix onboarding screen and navigation state management"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add loading states for Dashboard screen"
+            },
+            {
+                "type": "improvement",
+                "platform": "all",
+                "en": "Extract strings and update translations"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.01.02",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add line graph to WrappedProgress screen"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add gradients to Workout Calendar and Lift Cards"
+            },
+            {
+                "type": "improvement",
+                "platform": "all",
+                "en": "Optimize Wrapped database queries for faster loading"
+            }
+        ]
+    },
+    {
+        "versionId": "2025.12.26",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Lift Bro Wrapped: End of Year Review with progress graphs, consistency tracking, and goals recap"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add Wrapped landing, tenure, reps, progress, consistency, and goals screens"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add goals section to the Home Screen"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Rotating Animated Text component for dynamic headers"
+            }
+        ]
     },
     {
         "versionId": "2025.08.30",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Engineering Refactor!!!"
-        }
-    },
-    {
-        "versionId": "2025.08.30",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Update lift details UI"
-        }
-    },
-    {
-        "versionId": "2025.08.30",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Add \"Today\" button to workout calendar"
-        }
-    },
-    {
-        "versionId": "2025.08.30",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Update Calendar with new Workout Flow"
-        }
-    },
-    {
-        "versionId": "2025.08.30",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Update Set Screen with new Variation Search Dialog"
-        }
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add \"Today\" button to workout calendar"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Update Calendar with new Workout Flow"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Update Set Screen with new Variation Search Dialog"
+            }
+        ]
     },
     {
         "versionId": "2025.08.16",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Add notes per variation, Remember to squeeze that peach!"
-        }
-    },
-    {
-        "versionId": "2025.08.16",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Become a LIFT PRO!!!!!!"
-        }
-    },
-    {
-        "versionId": "2025.08.03",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Add \"favouruite\" variation feature, highlighting your favourite variation of any given lift!"
-        }
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add notes per variation, Remember to squeeze that peach!"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Become a LIFT PRO!!!!!!"
+            }
+        ]
     },
     {
         "versionId": "2025.08.03",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Fix MER Calculations"
-        }
-    },
-    {
-        "versionId": "2025.08.03",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Add sorting to variation details"
-        }
-    },
-    {
-        "versionId": "2025.08.03",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Dashboard UI Improvements (move some buttons around)"
-        }
-    },
-    {
-        "versionId": "2025.08.03",
-        "type": "feature",
-        "platform": "all",
-        "note": {
-            "en": "Add estimated and theoretical maxes for pro users"
-        }
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add \"favouruite\" variation feature, highlighting your favourite variation of any given lift!"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Fix MER Calculations"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add sorting to variation details"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Dashboard UI Improvements (move some buttons around)"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add estimated and theoretical maxes for pro users"
+            }
+        ]
     }
 ]
