@@ -33,6 +33,7 @@
     <string name="create_lift_screen_title">Create Lift</string>
     <string name="create_set_screen_title">I Crushed</string>
 
+    <string name="dashboard_content_label">DashboardContent</string>
     <string name="dashboard_empty_primary_cta_title">Create Category</string>
     <string name="dashboard_empty_secondary_cta_title">Restore a Backup</string>
     <string name="dashboard_empty_title">Do you even Lift Bro?</string>

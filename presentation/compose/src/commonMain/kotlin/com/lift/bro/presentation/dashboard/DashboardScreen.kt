@@ -66,7 +66,7 @@ fun DashboardContent(
     Crossfade(
         modifier = modifier,
         targetState = state,
-        label = "DashboardContent"
+        label = stringResource(Res.string.dashboard_content_label)
     ) { state ->
         when (state) {
             is Loading -> {
