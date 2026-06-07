@@ -111,9 +111,9 @@ platform :ios do
     match(
       type: "development",
       readonly: true,
-      git_url: "git@github.com:eholtrop/lift-bro-match.git",
+      git_url: ENV["MATCH_GIT_URL"],
       git_branch: "main",
-      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
+      keychain_password: ENV["MATCH_PASSWORD"],
       username: ENV["FASTLANE_USER"]
     )
   end
@@ -123,9 +123,9 @@ platform :ios do
     match(
       type: "appstore",
       readonly: true,
-      git_url: "git@github.com:eholtrop/lift-bro-match.git",
+      git_url: ENV["MATCH_GIT_URL"],
       git_branch: "main",
-      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
+      keychain_password: ENV["MATCH_PASSWORD"],
       username: ENV["FASTLANE_USER"]
     )
   end
@@ -243,19 +243,19 @@ platform :ios do
     UI.message("Building and submitting to App Store for iOS...")
     build_release(build_number: options[:build_number])
 
-    deliver(
-      ipa: "build/artifacts/ios/ios_app_release.ipa",
-      # Add your App Store Connect metadata here (e.g., `app_review_information`, `pricing_tier`, etc.)
-      # It's recommended to pull metadata from `fastlane/metadata` using `deliver init`
-      # or specify directly here.
-      # For first submission, you'll need all metadata. For updates, only new/changed items.
-#       force: true, # Use with caution, overwrites existing metadata
-      skip_metadata: true, # Set to true if you don't update metadata via Fastlane
-      skip_screenshots: true, # Set to true if you don't upload screenshots via Fastlane
-      submit_for_review: true, # Automatically submit for review after upload
-      automatic_release: true, # Release immediately after review (or set a date)
-      # release_build_status: "READY_FOR_SALE" # Or other values if managing through App Store Connect
-    )
+#     deliver(
+#       ipa: "build/artifacts/ios/ios_app_release.ipa",
+#       # Add your App Store Connect metadata here (e.g., `app_review_information`, `pricing_tier`, etc.)
+#       # It's recommended to pull metadata from `fastlane/metadata` using `deliver init`
+#       # or specify directly here.
+#       # For first submission, you'll need all metadata. For updates, only new/changed items.
+# #       force: true, # Use with caution, overwrites existing metadata
+#       skip_metadata: true, # Set to true if you don't update metadata via Fastlane
+#       skip_screenshots: true, # Set to true if you don't upload screenshots via Fastlane
+#       submit_for_review: true, # Automatically submit for review after upload
+#       automatic_release: true, # Release immediately after review (or set a date)
+#       # release_build_status: "READY_FOR_SALE" # Or other values if managing through App Store Connect
+#     )
   end
 
 end # End of iOS platform block

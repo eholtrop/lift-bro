@@ -1,17 +1,18 @@
-name: iOS Build Test
+name: iOS Nightly Beta Build
 
 on:
+  push:
+    branches: [ ios-pipeline ]
   schedule:
     - cron: '0 2 * * *'
   workflow_dispatch:
 
 env:
-  # Provide required BuildKonfig environment variables with safe dummy values
   LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
   LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
-  # Match/signing secrets for development certificates
   MATCH_GIT_PRIVATE_KEY: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
-  FASTLANE_MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+  MATCH_GIT_URL: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
+  MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
   FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
 
 jobs:
@@ -50,16 +51,17 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
 
-      - name: Force git to use SSH for github.com
+      - name: Run tests
         if: steps.check_changes.outputs.changes != '0'
-        run: git config --global url."git@github.com:".insteadOf "https://github.com/"
+        run: |
+          bundle install
+          bundle exec fastlane ios test
 
       - name: Build iOS IPA
         if: steps.check_changes.outputs.changes != '0'
         run: |
           bundle install
-          bundle exec fastlane ios build_debug build_number:${{ github.run_number }}
-          bundle exec fastlane ios build_release build_number:${{ github.run_number }}
+          bundle exec fastlane ios deploy build_number:${{ github.run_number }}
 
       - name: Upload IPA Artifact
         if: steps.check_changes.outputs.changes != '0'
