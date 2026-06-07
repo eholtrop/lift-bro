@@ -184,7 +184,10 @@ fun WeightCalculatorBottomSheet(
                             )
                             Text(
                                 modifier = Modifier.padding(start = MaterialTheme.spacing.half),
-                                text = "45 ${LocalUnitOfMeasure.current.value}",
+                                text = stringResource(
+                                    Res.string.calculator_45_barbell,
+                                    LocalUnitOfMeasure.current.value
+                                ),
                                 style = MaterialTheme.typography.titleSmall,
                             )
                             Space(MaterialTheme.spacing.half)

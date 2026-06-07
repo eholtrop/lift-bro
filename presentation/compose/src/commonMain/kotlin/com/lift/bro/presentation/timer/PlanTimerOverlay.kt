@@ -40,6 +40,7 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.rep_weight_selector_times_symbol
 import lift_bro.core.generated.resources.timer_add_tempo_content_description
 import lift_bro.core.generated.resources.timer_delete_tempo_content_description
 import lift_bro.core.generated.resources.timer_ready_label
@@ -127,7 +128,7 @@ fun PlanTimerOverlay(
                             ) {
                                 Text(
                                     modifier = Modifier.padding(bottom = MaterialTheme.spacing.quarter),
-                                    text = "x",
+                                    text = stringResource(Res.string.rep_weight_selector_times_symbol),
                                     style = MaterialTheme.typography.displaySmall,
                                 )
                                 AnimatedText(
@@ -195,7 +196,9 @@ fun PlanTimerOverlay(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = stringResource(Res.string.timer_delete_tempo_content_description),
+                                    contentDescription = stringResource(
+                                        Res.string.timer_delete_tempo_content_description
+                                    ),
                                 )
                             }
                         }

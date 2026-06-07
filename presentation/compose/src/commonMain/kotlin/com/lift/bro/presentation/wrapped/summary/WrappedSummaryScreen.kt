@@ -41,6 +41,7 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.format
 import com.lift.bro.utils.percentageFormat
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_reps_header_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_consistency_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_goals_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_header_title
@@ -158,7 +159,7 @@ fun WrappedSummaryScreen(
                                     textAlign = TextAlign.Center,
                                 )
                                 Text(
-                                    text = "Total Reps",
+                                    text = stringResource(Res.string.wrapped_reps_header_title),
                                     style = MaterialTheme.typography.bodySmall,
                                     textAlign = TextAlign.Center,
                                 )

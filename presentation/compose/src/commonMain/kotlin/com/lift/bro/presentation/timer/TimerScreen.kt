@@ -60,6 +60,8 @@ import com.lift.bro.ui.dialog.InfoSpeechBubble
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.minus
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.timer_con_label
 import lift_bro.core.generated.resources.timer_ecc_label
@@ -75,8 +77,6 @@ import lift_bro.core.generated.resources.timer_resume_content_description
 import lift_bro.core.generated.resources.timer_start_content_description
 import lift_bro.core.generated.resources.timer_twm_label
 import org.jetbrains.compose.resources.stringResource
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.minus
 import tv.dpal.compose.isOpen
 import kotlin.time.Clock
 
@@ -148,12 +148,16 @@ fun TimerScreen(
                                     if (state.audio) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = stringResource(Res.string.timer_mute_content_description)
+                                            contentDescription = stringResource(
+                                                Res.string.timer_mute_content_description
+                                            )
                                         )
                                     } else {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = stringResource(Res.string.timer_play_sound_content_description)
+                                            contentDescription = stringResource(
+                                                Res.string.timer_play_sound_content_description
+                                            )
                                         )
                                     }
                                 }
@@ -176,12 +180,16 @@ fun TimerScreen(
                                     if (state.audio) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = stringResource(Res.string.timer_mute_content_description)
+                                            contentDescription = stringResource(
+                                                Res.string.timer_mute_content_description
+                                            )
                                         )
                                     } else {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = stringResource(Res.string.timer_play_sound_content_description)
+                                            contentDescription = stringResource(
+                                                Res.string.timer_play_sound_content_description
+                                            )
                                         )
                                     }
                                 }
@@ -225,9 +233,19 @@ fun TimerScreen(
                                             is TimerState.Ended -> Icons.Default.Repeat
                                         },
                                         contentDescription = when (state) {
-                                            is TimerState.Ended -> stringResource(Res.string.timer_restart_content_description)
-                                            is TimerState.Plan -> stringResource(Res.string.timer_start_content_description)
-                                            is TimerState.Running -> if (state.paused) stringResource(Res.string.timer_resume_content_description) else stringResource(Res.string.timer_pause_content_description)
+                                            is TimerState.Ended -> stringResource(
+                                                Res.string.timer_restart_content_description
+                                            )
+                                            is TimerState.Plan -> stringResource(
+                                                Res.string.timer_start_content_description
+                                            )
+                                            is TimerState.Running -> if (state.paused) {
+                                                stringResource(
+                                                    Res.string.timer_resume_content_description
+                                                )
+                                            } else {
+                                                stringResource(Res.string.timer_pause_content_description)
+                                            }
                                         },
                                     )
                                 }
@@ -302,7 +320,10 @@ fun TimerOverlay(
                                     message = {
                                         if (twmEnabled) {
                                             Text(
-                                                text = stringResource(Res.string.timer_twm_label, weightFormat(set.totalWeightMoved))
+                                                text = stringResource(
+                                                    Res.string.timer_twm_label,
+                                                    weightFormat(set.totalWeightMoved)
+                                                )
                                             )
                                         }
                                         if (merEnabled) {

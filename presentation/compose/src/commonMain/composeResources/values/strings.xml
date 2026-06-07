@@ -142,6 +142,7 @@ Soreness or pain?</string>
     <string name="info_dialog_okay_cta">Okay</string>
 
     <string name="line_item_title_text">Title</string>
+    <string name="movement_details_body_weight_label">Body Weight 🤸</string>
     <string name="movement_details_create_movement_placeholder">Create Movement</string>
     <string name="movement_details_empty_subtitle">Add a set with + below!</string>
     <string name="movement_details_empty_text">Do you even lift bro?</string>
@@ -204,6 +205,8 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_table_rpe_8">8</string>
     <string name="rep_weight_selector_table_rpe_9">9</string>
     <string name="rep_weight_selector_times_symbol">x</string>
+    <string name="rep_weight_selector_unit_at">%1$s at</string>
+    <string name="rep_weight_selector_equals_twm"> = %1$s</string>
     <string name="reps">reps</string>
 
     <string name="server_settings_warning_text">Warning: This will expose read/write access to your lift bro data to anyone on your network. Use with caution ⚠\uFE0F</string>
@@ -230,7 +233,13 @@ Soreness or pain?</string>
     <string name="settings_experimental_input_password">pizza</string>
     <string name="settings_experimental_input_placeholder">What's the magic word?</string>
     <string name="settings_experimental_message">Features here are experimental, and could break app functionality, use with caution!</string>
-    <string name="settings_experimental_title">Experimental</string>
+    <string name="settings_dashboard_v3_description">No more tabs!</string>
+    <string name="settings_dashboard_v3_title">Dashboard V3</string>
+    <string name="settings_experimental_other_goodies">Other Goodies (experimental features)</string>
+    <string name="settings_experimental_title_expect">Experimental - Expect 🦗</string>
+    <string name="settings_lift_pros_only">Lift Pros Only 😎</string>
+    <string name="settings_timer_description">Enable a timer for counting down sets and rest periods</string>
+
     <string name="settings_kg_text">kg</string>
     <string name="settings_lbs_text">lbs</string>
     <string name="settings_light_text">Light</string>
@@ -330,7 +339,11 @@ Soreness or pain?</string>
     <string name="variation_details_tempo_down_cd">Down</string>
     <string name="variation_details_tempo_up_cd">Up</string>
     <string name="variation_search_dialog_close_content_description">Close</string>
+    <string name="variation_search_dialog_create_cd">Create Variation</string>
+    <string name="variation_search_dialog_create_text">Create Variation</string>
     <string name="variation_search_dialog_favourite_content_description">Favourite</string>
+    <string name="variation_search_dialog_not_found_text">Can\'t find what you\'re looking for?</string>
+    <string name="variation_search_dialog_save_select_cd">Save and Select</string>
 
     <string name="weight_selector_chin_subtitle">%1$d% of %2$s Max</string>
     <string name="weight_selector_chin_title">%1$d% of %2$s Max</string>

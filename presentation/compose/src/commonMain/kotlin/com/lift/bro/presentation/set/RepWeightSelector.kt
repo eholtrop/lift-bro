@@ -55,6 +55,7 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.decimalFormat
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.rep_weight_selector_equals_twm
 import lift_bro.core.generated.resources.rep_weight_selector_info_p1
 import lift_bro.core.generated.resources.rep_weight_selector_info_p2
 import lift_bro.core.generated.resources.rep_weight_selector_info_title
@@ -64,6 +65,7 @@ import lift_bro.core.generated.resources.rep_weight_selector_table_col_rir
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_rpe
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_vibe
 import lift_bro.core.generated.resources.rep_weight_selector_times_symbol
+import lift_bro.core.generated.resources.rep_weight_selector_unit_at
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 
@@ -159,7 +161,7 @@ fun RepWeightSelector(
             Space(MaterialTheme.spacing.half)
 
             Text(
-                text = "${LocalUnitOfMeasure.current.value} at",
+                text = stringResource(Res.string.rep_weight_selector_unit_at, LocalUnitOfMeasure.current.value),
                 style = MaterialTheme.typography.titleLarge,
             )
 
@@ -193,7 +195,7 @@ fun RepWeightSelector(
 //                    exit = slideOutHorizontally { it }
                 ) {
                     Text(
-                        text = " = ${twm.decimalFormat()}",
+                        text = stringResource(Res.string.rep_weight_selector_equals_twm, twm.decimalFormat()),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }

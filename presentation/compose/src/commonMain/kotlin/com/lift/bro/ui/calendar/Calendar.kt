@@ -57,6 +57,11 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.calendar_next_month_content_description
+import lift_bro.core.generated.resources.calendar_previous_month_content_description
+import lift_bro.core.generated.resources.calendar_today_content_description
+import org.jetbrains.compose.resources.stringResource
 import tv.dpal.ext.ktx.datetime.toString
 import kotlin.time.Clock
 
@@ -217,7 +222,7 @@ private fun CalendarTitle(
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = "Today",
+                    contentDescription = stringResource(Res.string.calendar_today_content_description),
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }
@@ -236,7 +241,7 @@ private fun CalendarTitle(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                contentDescription = "Previous Month",
+                contentDescription = stringResource(Res.string.calendar_previous_month_content_description),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }
@@ -254,7 +259,7 @@ private fun CalendarTitle(
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Default.ArrowForward,
-                contentDescription = "Next Month",
+                contentDescription = stringResource(Res.string.calendar_next_month_content_description),
                 tint = MaterialTheme.colorScheme.primary,
             )
         }

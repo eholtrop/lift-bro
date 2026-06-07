@@ -72,6 +72,11 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.category_details_category_placeholder
+import lift_bro.core.generated.resources.category_details_delete_cta_content_description
+import lift_bro.core.generated.resources.category_details_delete_dialog_text
+import lift_bro.core.generated.resources.category_details_delete_dialog_title
+import lift_bro.core.generated.resources.category_details_movements_title
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
 import org.jetbrains.compose.resources.stringResource
@@ -114,8 +119,8 @@ fun CategoryDetailsScreen(
 
     if (showDeleteWarning) {
         WarningDialog(
-            title = "Are you sure?",
-            text = "This will delete the Category, All movements will stay!",
+            title = stringResource(Res.string.category_details_delete_dialog_title),
+            text = stringResource(Res.string.category_details_delete_dialog_text),
             onConfirm = {
                 interactor(CategoryDetailsEvent.DeleteCategoryClicked)
                 showDeleteWarning = false
@@ -143,7 +148,7 @@ fun CategoryDetailsScreen(
                         interactor(CategoryDetailsEvent.NameUpdated(it))
                     },
                     placeholder = {
-                        Text("Category")
+                        Text(stringResource(Res.string.category_details_category_placeholder))
                     }
                 )
             }
@@ -166,7 +171,7 @@ fun CategoryDetailsScreen(
                         showDeleteWarning = true
                     },
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Category,"
+                    contentDescription = stringResource(Res.string.category_details_delete_cta_content_description)
                 )
             }
         }
@@ -185,7 +190,7 @@ fun CategoryDetailsScreen(
                     DashboardLiftHeader(
                         v2 = false,
                         showRpe = showRpe,
-                        title = "Movements",
+                        title = stringResource(Res.string.category_details_movements_title),
                         onToggleTempo = { },
                         onToggleRpe = { showRpe = !showRpe },
                         optionSelected = { },

@@ -52,6 +52,7 @@ import com.lift.bro.utils.percentageFormat
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
 import lift_bro.core.generated.resources.wrapped_progress_header_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
@@ -189,7 +190,9 @@ fun ProgressItemView(
                 Box {
                     Icon(
                         imageVector = MaterialTheme.icons.favourite,
-                        contentDescription = "Favourite",
+                        contentDescription = stringResource(
+                            Res.string.lift_details_screen_favourite_content_description
+                        ),
                         tint = state.variationColor?.toColor() ?: MaterialTheme.colorScheme.primary
                     )
                     Icon(
