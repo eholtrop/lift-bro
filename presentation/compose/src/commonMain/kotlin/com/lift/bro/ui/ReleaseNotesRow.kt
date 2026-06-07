@@ -100,11 +100,13 @@ fun ReleaseNotesDialog(
                         it.key,
                         style = MaterialTheme.typography.titleLarge
                     )
-                    it.value.forEach {
-                        Row {
-                            Text("•")
-                            Space(MaterialTheme.spacing.one)
-                            Text(it.note.en)
+                    it.value.forEach { version ->
+                        version.notes.forEach { note ->
+                            Row {
+                                Text("•")
+                                Space(MaterialTheme.spacing.one)
+                                Text(note.en)
+                            }
                         }
                     }
                 }
@@ -117,12 +119,12 @@ fun ReleaseNotesDialog(
 @Serializable
 data class ReleaseNote(
     val versionId: String,
-    val type: String,
-    val platform: String,
-    val note: Note,
+    val notes: List<Note>,
 )
 
 @Serializable
 data class Note(
+    val type: String,
+    val platform: String,
     val en: String,
 )
