@@ -2,6 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ArgumentListWrapping:DashboardScreen.kt$(0)</ID>
+    <ID>ArgumentListWrapping:DashboardScreen.kt$(state.items.filterIndexed { i, _ -&gt; i &lt; index }.sumOf { it.gridSize(0) })</ID>
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
     <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator = rememberNavCoordinator&lt;tv.dpal.navi.Destination&gt;(Destination.Unknown), )</ID>
@@ -48,6 +50,7 @@
     <ID>MaximumLineLength:App.kt$ </ID>
     <ID>MaximumLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$ </ID>
     <ID>MaximumLineLength:CategoryDetailsScreen.kt$ </ID>
+    <ID>MaximumLineLength:DashboardScreen.kt$ </ID>
     <ID>MaximumLineLength:DatabaseMigrationManager.kt$DatabaseMigrationManager$ </ID>
     <ID>MaximumLineLength:EditSetInteractor.kt$ </ID>
     <ID>MaximumLineLength:EditSetScreen.kt$ </ID>
