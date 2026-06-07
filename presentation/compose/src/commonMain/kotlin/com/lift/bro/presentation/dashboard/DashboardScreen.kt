@@ -23,6 +23,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -113,14 +114,17 @@ fun DashboardContent(
                             is DashboardListItem.LiftCard -> {
                                 when (val card = item) {
                                     is DashboardListItem.LiftCard.Loaded -> {
+                                        val relativeIndex by remember(index, state.items.size) {
+                                            mutableStateOf(state.items.filterIndexed { i, _ -> i < index }.sumOf { it.gridSize(0) })
+                                        }
                                         LiftCard(
                                             modifier = Modifier.padding(
                                                 start = when {
-                                                    (index % 2) == 1 -> MaterialTheme.spacing.half
+                                                    (relativeIndex % 2) == 1 -> MaterialTheme.spacing.half
                                                     else -> 0.dp
                                                 },
                                                 end = when {
-                                                    (index % 2) == 0 -> MaterialTheme.spacing.half
+                                                    (relativeIndex % 2) == 0 -> MaterialTheme.spacing.half
                                                     else -> 0.dp
                                                 },
                                             ),
