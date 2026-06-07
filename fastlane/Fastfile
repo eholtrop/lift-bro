@@ -100,9 +100,7 @@ platform :ios do
 
     unless ENV["MATCH_GIT_PRIVATE_KEY"].nil? || ENV["MATCH_GIT_PRIVATE_KEY"].empty?
       sh "mkdir -p ~/.ssh/"
-      File.open(File.expand_path("~/.ssh/id_rsa"), "w") do |file|
-        file.puts ENV["MATCH_GIT_PRIVATE_KEY"]
-      end
+      File.write(File.expand_path("~/.ssh/id_rsa"), ENV["MATCH_GIT_PRIVATE_KEY"].strip + "\n")
       sh "chmod 600 ~/.ssh/id_rsa"
       sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
     end
@@ -113,22 +111,20 @@ platform :ios do
     match(
       type: "development",
       readonly: true,
-      git_url: ENV["MATCH_GIT_URL"],
+      git_url: "git@github.com:eholtrop/lift-bro-match.git",
       git_branch: "main",
       keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
       username: ENV["FASTLANE_USER"]
     )
   end
 
-  # This is often placed in a 'before_all' or specific lane setup
-  # to ensure App Store profiles are available.
   desc "Sync iOS App Store Code Signing Identities using match"
   lane :match_appstore do
     match(
       type: "appstore",
-      readonly: true, # true for CI, false for local setup
-      git_url: ENV["MATCH_GIT_URL"], # Set this in GitHub Actions secrets
-      git_branch: "main", # Or your desired branch for Match
+      readonly: true,
+      git_url: "git@github.com:eholtrop/lift-bro-match.git",
+      git_branch: "main",
       keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
       username: ENV["FASTLANE_USER"]
     )
@@ -146,6 +142,7 @@ platform :ios do
       output_name: "ios_app_release.ipa",
       clean: true,
       silent: false,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
@@ -161,7 +158,8 @@ platform :ios do
       output_directory: "build/artifacts/ios",
       output_name: "ios_app_debug.ipa",
       clean: true,
-      silent: false
+      silent: false,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
@@ -181,7 +179,8 @@ platform :ios do
       output_directory: "build/artifacts/ios",
       output_name: "ios_app_debug.ipa",
       clean: true,
-      silent: false
+      silent: false,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
