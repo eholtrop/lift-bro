@@ -14,6 +14,7 @@ env:
   MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
   MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
   FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+  FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
 
 jobs:
   ios_build:
