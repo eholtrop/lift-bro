@@ -44,6 +44,7 @@
 		7555FF7B242A565900829871 /* Lift Bro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Lift Bro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7555FF82242A565900829871 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B1D9A2102E585F1A00E189C2 /* iosApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = iosApp.entitlements; sourceTree = "<group>"; };
 		B11618252E0761C900672FF1 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		B18EBA242E4A36FA0047798C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		B1D9A2042E4A3A7E00E189C2 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
@@ -104,6 +105,7 @@
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
 				7555FF8C242A565B00829871 /* Info.plist */,
+				B1D9A2102E585F1A00E189C2 /* iosApp.entitlements */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */,
@@ -380,6 +382,7 @@
 					"-framework",
 					core,
 				);
+				CODE_SIGN_ENTITLEMENTS = "iosApp/iosApp.entitlements";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lift.bro;
 				PRODUCT_NAME = "Lift Bro";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -415,6 +418,7 @@
 					"-framework",
 					core,
 				);
+				CODE_SIGN_ENTITLEMENTS = "iosApp/iosApp.entitlements";
 				PRODUCT_BUNDLE_IDENTIFIER = com.lift.bro;
 				PRODUCT_NAME = "Lift Bro";
 				PROVISIONING_PROFILE_SPECIFIER = "";
