@@ -114,7 +114,8 @@ platform :ios do
       git_url: ENV["MATCH_GIT_URL"],
       git_branch: "main",
       keychain_password: ENV["MATCH_PASSWORD"],
-      username: ENV["FASTLANE_USER"]
+      username: ENV["FASTLANE_USER"],
+      password: ENV["FASTLANE_PASSWORD"]
     )
   end
 
