@@ -36,11 +36,6 @@ jobs:
           ruby-version: 3.3
           bundler-cache: true
 
-      - name: Configure xcodebuild timeout
-        run: |
-          echo "FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT=120" >> $GITHUB_ENV
-          echo "FASTLANE_XCODEBUILD_SETTINGS_RETRIES=3" >> $GITHUB_ENV
-
       - name: Check for recent commits
         id: check_changes
         run: |
@@ -67,7 +62,7 @@ jobs:
         if: steps.check_changes.outputs.changes != '0'
         run: |
           bundle install
-          bundle exec fastlane ios deploy build_number:${{ github.run_number }}
+          bundle exec fastlane ios beta build_number:${{ github.run_number }}
 
       - name: Upload IPA Artifact
         if: steps.check_changes.outputs.changes != '0'
