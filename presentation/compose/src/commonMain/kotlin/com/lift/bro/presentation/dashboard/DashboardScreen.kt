@@ -120,11 +120,11 @@ fun DashboardContent(
                                         LiftCard(
                                             modifier = Modifier.padding(
                                                 start = when {
-                                                    (relativeIndex % 2) == 1 -> MaterialTheme.spacing.half
+                                                    (relativeIndex % 2) == 0 -> MaterialTheme.spacing.half
                                                     else -> 0.dp
                                                 },
                                                 end = when {
-                                                    (relativeIndex % 2) == 0 -> MaterialTheme.spacing.half
+                                                    (relativeIndex % 2) == 1 -> MaterialTheme.spacing.half
                                                     else -> 0.dp
                                                 },
                                             ),
