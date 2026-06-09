@@ -110,7 +110,7 @@ platform :ios do
   lane :match_development do
     match(
       type: "development",
-      readonly: false,
+      readonly: true,
       git_url: ENV["MATCH_GIT_URL"],
       git_branch: "main",
       keychain_password: ENV["MATCH_PASSWORD"],
@@ -123,7 +123,7 @@ platform :ios do
   lane :match_appstore do
     match(
       type: "appstore",
-      readonly: false,
+      readonly: true,
       git_url: ENV["MATCH_GIT_URL"],
       git_branch: "main",
       keychain_password: ENV["MATCH_PASSWORD"],
