@@ -4,6 +4,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -31,13 +32,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.zIndex
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.home.darkIconRes
 import com.lift.bro.presentation.home.iconRes
@@ -119,15 +124,19 @@ fun InfoDialog(
     title: @Composable () -> Unit,
     message: @Composable () -> Unit,
     onDismissRequest: () -> Unit,
+    confirmButtonText: String = "Okay",
+    properties: DialogProperties = DialogProperties(),
 ) {
     Dialog(
         onDismissRequest = onDismissRequest,
+        properties = properties,
     ) {
         InfoSpeechBubble(
             title = title,
             message = message,
             forceDarkIcon = true,
-            onConfirmClicked = onDismissRequest
+            onConfirmClicked = onDismissRequest,
+            confirmButtonText = confirmButtonText,
         )
     }
 }
@@ -139,78 +148,110 @@ fun InfoSpeechBubble(
     message: @Composable () -> Unit,
     forceDarkIcon: Boolean = false,
     onConfirmClicked: (() -> Unit)? = null,
+    confirmButtonText: String = "Okay",
 ) {
     val speechBubbleColor = MaterialTheme.colorScheme.primary
-    Column {
-        Column(
-            modifier = modifier
-                .semantics(
-                    mergeDescendants = true,
-                ) {
-                    liveRegion = LiveRegionMode.Assertive
-                }
-                .background(
-                    speechBubbleColor,
-                    shape = MaterialTheme.shapes.medium
-                )
-                .padding(MaterialTheme.spacing.one),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            CompositionLocalProvider(
-                LocalTextStyle provides MaterialTheme.typography.headlineLarge,
-                LocalContentColor provides MaterialTheme.colorScheme.onPrimary
-            ) {
-                title()
-            }
 
-            Space(MaterialTheme.spacing.half)
-            CompositionLocalProvider(
-                LocalTextStyle provides MaterialTheme.typography.bodyLarge,
-                LocalContentColor provides MaterialTheme.colorScheme.onPrimary
-            ) {
-                message()
-            }
-        }
-        Row {
-            Image(
-                modifier = Modifier
-                    .clickable { onConfirmClicked?.invoke() }
-                    .padding(top = MaterialTheme.spacing.quarter)
-                    .defaultMinSize(72.dp, 72.dp)
-                    .size(72.dp),
-                painter = painterResource(
-                    if (forceDarkIcon) LocalLiftBro.current.darkIconRes() else LocalLiftBro.current.iconRes()
-                ),
-                contentDescription = ""
-            )
-            Canvas(
-                modifier = Modifier.size(72.dp.div(2))
-            ) {
-                drawPath(
-                    Path().apply {
-                        moveTo(20f, 0f)
-                        lineTo(0f, 60f)
-                        lineTo(60f, 0f)
-                        lineTo(0f, 0f)
-                        close()
-                    },
-                    speechBubbleColor
-                )
-            }
-            onConfirmClicked?.let {
-                Space()
-                Button(
-                    onClick = onConfirmClicked,
-                    shape = CircleShape,
-                    colors = ButtonDefaults.textButtonColors(),
-                ) {
-                    Text(
-                        text = "Okay",
-                        style = MaterialTheme.typography.displaySmall,
-                        color = MaterialTheme.colorScheme.tertiary
+    SubcomposeLayout(
+        modifier = Modifier.zIndex(Float.MAX_VALUE)
+    ) { constraints ->
+        val main = subcompose(0) {
+            Column(
+                modifier = modifier
+                    .semantics(
+                        mergeDescendants = true,
+                    ) {
+                        liveRegion = LiveRegionMode.Assertive
+                    }
+                    .background(
+                        speechBubbleColor,
+                        shape = MaterialTheme.shapes.medium
                     )
+                    .padding(MaterialTheme.spacing.one),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CompositionLocalProvider(
+                    LocalTextStyle provides MaterialTheme.typography.headlineLarge,
+                    LocalContentColor provides MaterialTheme.colorScheme.onPrimary
+                ) {
+                    title()
+                }
+
+                Space(MaterialTheme.spacing.half)
+                CompositionLocalProvider(
+                    LocalTextStyle provides MaterialTheme.typography.bodyLarge,
+                    LocalContentColor provides MaterialTheme.colorScheme.onPrimary
+                ) {
+                    message()
                 }
             }
+        }.map { it.measure(constraints = constraints) }
+
+        val maxSize = main.fold(IntSize.Zero) { currentMax, mainPlaceable ->
+            IntSize(
+                width = maxOf(currentMax.width, mainPlaceable.width),
+                height = maxOf(currentMax.height, mainPlaceable.height)
+            )
+        }
+
+        val dependants = subcompose(1) {
+            Row {
+                Row {
+                    Image(
+                        modifier = Modifier
+                            .clickable { onConfirmClicked?.invoke() }
+                            .padding(top = MaterialTheme.spacing.quarter)
+                            .defaultMinSize(72.dp, 72.dp)
+                            .size(72.dp),
+                        painter = painterResource(
+                            if (forceDarkIcon) LocalLiftBro.current.darkIconRes() else LocalLiftBro.current.iconRes()
+                        ),
+                        contentDescription = ""
+                    )
+                    Canvas(
+                        modifier = Modifier.size(72.dp.div(2))
+                    ) {
+                        drawPath(
+                            Path().apply {
+                                moveTo(20f, 0f)
+                                lineTo(0f, 60f)
+                                lineTo(60f, 0f)
+                                lineTo(0f, 0f)
+                                close()
+                            },
+                            speechBubbleColor
+                        )
+                    }
+                }
+            }
+        }.map { it.measure(constraints) }
+
+        val confirm = onConfirmClicked?.let {
+            subcompose(2) {
+                onConfirmClicked?.let {
+                    Button(
+                        onClick = onConfirmClicked,
+                        shape = CircleShape,
+                        colors = ButtonDefaults.textButtonColors(),
+                    ) {
+                        Text(
+                            text = confirmButtonText,
+                            style = MaterialTheme.typography.displaySmall,
+                            color = MaterialTheme.colorScheme.tertiary
+                        )
+                    }
+                }
+            }.map { it.measure(constraints = constraints) }
+        }
+        layout(maxSize.width, maxSize.height + dependants.fold(0) { height, placeable -> height + placeable.height }) {
+            main.forEach { it.placeRelative(0, 0) }
+            dependants.forEach {
+                it.placeRelative(0, main.firstOrNull()?.height ?: 0, Float.MAX_VALUE)
+            }
+            confirm?.first()?.placeRelative(
+                x = main.first().width - confirm.first().width,
+                y = main.first().height,
+            )
         }
     }
 }
@@ -221,7 +262,7 @@ fun InfoDialogButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode:
     PreviewAppTheme(isDarkMode = darkMode) {
         Row(
             modifier = Modifier.padding(MaterialTheme.spacing.one),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(MaterialTheme.spacing.one)
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.one)
         ) {
             InfoDialogButton(
                 dialogTitle = { },
@@ -269,6 +310,13 @@ fun InfoSpeechBubblePreview(@PreviewParameter(DarkModeProvider::class) darkMode:
             InfoSpeechBubble(
                 title = { Text("Pro Tip") },
                 message = { Text("Always warm up before lifting heavy weights!") },
+                forceDarkIcon = true,
+                onConfirmClicked = {},
+            )
+
+            InfoSpeechBubble(
+                title = { Text("Pro Tip") },
+                message = { Text("Always do something") },
                 forceDarkIcon = true,
                 onConfirmClicked = {},
             )
