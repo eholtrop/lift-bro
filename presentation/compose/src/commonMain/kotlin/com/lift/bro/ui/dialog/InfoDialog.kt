@@ -61,7 +61,14 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dialog_info_content_description
+import lift_bro.core.generated.resources.info_dialog_button_test
+import lift_bro.core.generated.resources.info_speech_bubble_alwaysdo
+import lift_bro.core.generated.resources.info_speech_bubble_complex_layouts
 import lift_bro.core.generated.resources.info_speech_bubble_confirm_cta
+import lift_bro.core.generated.resources.info_speech_bubble_informational
+import lift_bro.core.generated.resources.info_speech_bubble_pro_tip
+import lift_bro.core.generated.resources.info_speech_bubble_warm_up
+import lift_bro.core.generated.resources.info_speech_bubble_welcome
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.logging.Log
@@ -295,7 +302,7 @@ fun InfoDialogButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode:
                 dialogTitle = { },
                 dialogMessage = { },
             ) {
-                Text("Test")
+                Text(stringResource(Res.string.info_dialog_button_test))
             }
         }
     }
@@ -310,12 +317,12 @@ fun InfoSpeechBubblePreview(@PreviewParameter(DarkModeProvider::class) darkMode:
             verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(MaterialTheme.spacing.one)
         ) {
             InfoSpeechBubble(
-                title = { Text("Welcome!") },
+                title = { Text(stringResource(Res.string.info_speech_bubble_welcome)) },
                 message = {
                     Column {
-                        Text("This is an informational speech bubble.")
+                        Text(stringResource(Res.string.info_speech_bubble_informational))
                         Space(MaterialTheme.spacing.half)
-                        Text("It can contain multiple lines of text and complex layouts.")
+                        Text(stringResource(Res.string.info_speech_bubble_complex_layouts))
                     }
                 },
                 forceDarkIcon = false,
@@ -323,15 +330,15 @@ fun InfoSpeechBubblePreview(@PreviewParameter(DarkModeProvider::class) darkMode:
             )
 
             InfoSpeechBubble(
-                title = { Text("Pro Tip") },
-                message = { Text("Always warm up before lifting heavy weights!") },
+                title = { Text(stringResource(Res.string.info_speech_bubble_pro_tip)) },
+                message = { Text(stringResource(Res.string.info_speech_bubble_warm_up)) },
                 forceDarkIcon = true,
                 onConfirmClicked = {},
             )
 
             InfoSpeechBubble(
-                title = { Text("Pro Tip") },
-                message = { Text("Alwaysdo something") },
+                title = { Text(stringResource(Res.string.info_speech_bubble_pro_tip)) },
+                message = { Text(stringResource(Res.string.info_speech_bubble_alwaysdo)) },
                 forceDarkIcon = true,
                 onConfirmClicked = {},
             )

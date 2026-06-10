@@ -391,4 +391,12 @@ Soreness or pain?</string>
     <string name="home_screen_wrapped_button_text">🎉 🎁</string>
     <string name="submit_text_field_edit_content_description">Edit</string>
     <string name="submit_text_field_save_content_description">Save</string>
+
+    <string name="info_dialog_button_test">Test</string>
+    <string name="info_speech_bubble_welcome">Welcome!</string>
+    <string name="info_speech_bubble_informational">This is an informational speech bubble.</string>
+    <string name="info_speech_bubble_complex_layouts">It can contain multiple lines of text and complex layouts.</string>
+    <string name="info_speech_bubble_pro_tip">Pro Tip</string>
+    <string name="info_speech_bubble_warm_up">Always warm up before lifting heavy weights!</string>
+    <string name="info_speech_bubble_alwaysdo">Alwaysdo something</string>
 </resources>
