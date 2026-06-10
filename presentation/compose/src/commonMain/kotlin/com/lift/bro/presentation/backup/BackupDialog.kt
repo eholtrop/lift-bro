@@ -31,6 +31,15 @@ import com.lift.bro.ui.dialog.InfoDialog
 import com.lift.bro.ui.theme.md_theme_light_inverseOnSurface
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.backup_progress_categories
+import lift_bro.core.generated.resources.backup_progress_complete_content_description
+import lift_bro.core.generated.resources.backup_progress_daily_notes
+import lift_bro.core.generated.resources.backup_progress_movements
+import lift_bro.core.generated.resources.backup_progress_sets
+import lift_bro.core.generated.resources.backup_progress_title
+import lift_bro.core.generated.resources.backup_progress_workouts
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BackupDialog(
@@ -47,7 +56,7 @@ fun BackupDialog(
         ),
         title = {
             Text(
-                text = "Backing up Lift Bro",
+                text = stringResource(Res.string.backup_progress_title),
                 style = MaterialTheme.typography.headlineLarge
             )
         },
@@ -72,23 +81,23 @@ private fun BackupDialogContent(
         with(state.backup) {
             BackupProgressRow(
                 complete = lifts != null,
-                title = "Categories"
+                title = stringResource(Res.string.backup_progress_categories)
             )
             BackupProgressRow(
                 complete = variations != null,
-                title = "Movements"
+                title = stringResource(Res.string.backup_progress_movements)
             )
             BackupProgressRow(
                 complete = sets != null,
-                title = "Sets"
+                title = stringResource(Res.string.backup_progress_sets)
             )
             BackupProgressRow(
                 complete = workouts != null,
-                title = "Workouts"
+                title = stringResource(Res.string.backup_progress_workouts)
             )
             BackupProgressRow(
                 complete = liftingLogs != null,
-                title = "Daily Notes"
+                title = stringResource(Res.string.backup_progress_daily_notes)
             )
         }
     }
@@ -108,7 +117,7 @@ private fun BackupProgressRow(
             true -> Icon(
                 modifier = Modifier.size(MaterialTheme.spacing.oneAndHalf),
                 imageVector = Icons.Default.Check,
-                contentDescription = "complete",
+                contentDescription = stringResource(Res.string.backup_progress_complete_content_description),
                 tint = MaterialTheme.colorScheme.onPrimary
             )
 

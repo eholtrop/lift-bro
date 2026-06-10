@@ -59,7 +59,11 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.dialog_info_content_description
+import lift_bro.core.generated.resources.info_speech_bubble_confirm_cta
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
 
@@ -87,7 +91,7 @@ fun InfoDialogButton(
     ) {
         Icon(
             imageVector = Icons.Default.Info,
-            contentDescription = "Info",
+            contentDescription = stringResource(Res.string.dialog_info_content_description),
             tint = buttonTint,
         )
     }
@@ -125,7 +129,7 @@ fun InfoDialogButton(
         Icon(
             modifier = Modifier.size(11.dp),
             imageVector = Icons.Default.Info,
-            contentDescription = "Info",
+            contentDescription = stringResource(Res.string.dialog_info_content_description),
         )
     }
 }
@@ -244,7 +248,7 @@ fun InfoSpeechBubble(
                         colors = ButtonDefaults.textButtonColors(),
                     ) {
                         Text(
-                            text = "Okay",
+                            text = stringResource(Res.string.info_speech_bubble_confirm_cta),
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.tertiary
                         )
