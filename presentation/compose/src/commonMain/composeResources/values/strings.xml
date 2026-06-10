@@ -40,6 +40,7 @@
     <string name="dashboard_footer_leading_button_content_description">Dashboard</string>
     <string name="dashboard_footer_trailing_button_content_description">Calendar</string>
     <string name="dashboard_footer_version">Version: %1$s</string>
+    <string name="dashboard_content_label">DashboardContent</string>
     <string name="dashboard_lift_header_title">Categories</string>
     <string name="dashboard_title">LIFT BRO</string>
     <string name="dashboard_toolbar_leading_button_content_description">Settings</string>

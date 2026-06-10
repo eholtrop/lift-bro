@@ -45,6 +45,7 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.flow.flowOf
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.dashboard_content_label
 import lift_bro.core.generated.resources.dashboard_footer_version
 import lift_bro.core.generated.resources.dashboard_lift_header_title
 import org.jetbrains.compose.resources.stringResource
@@ -66,7 +67,7 @@ fun DashboardContent(
     Crossfade(
         modifier = modifier,
         targetState = state,
-        label = "DashboardContent"
+        label = stringResource(Res.string.dashboard_content_label)
     ) { state ->
         when (state) {
             is Loading -> {
