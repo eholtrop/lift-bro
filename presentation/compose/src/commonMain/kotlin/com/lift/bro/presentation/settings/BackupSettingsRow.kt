@@ -6,12 +6,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import com.lift.bro.BackupUseCase
 import com.lift.bro.RestoreUseCase
+import com.lift.bro.presentation.backup.BackupDialog
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
@@ -29,6 +33,13 @@ fun BackupSettingsRow() {
         title = { Text(stringResource(Res.string.settings_backup_restore_title)) }
     ) {
         val scope = rememberCoroutineScope()
+        var showBackupDialog by remember { mutableStateOf(false) }
+
+        if (showBackupDialog) {
+            BackupDialog(
+                onDismissRequest = { showBackupDialog = false }
+            )
+        }
 
         Row(
             modifier = Modifier.selectableGroup(),
@@ -36,9 +47,7 @@ fun BackupSettingsRow() {
             Button(
                 modifier = Modifier.weight(1f),
                 onClick = {
-                    scope.launch {
-                        BackupUseCase().invoke()
-                    }
+                    showBackupDialog = true
                 }
             ) {
                 Text(stringResource(Res.string.settings_backup_cta))
@@ -63,7 +72,7 @@ fun BackupSettingsRow() {
 @Preview
 @Composable
 fun BackupSettingsRowPreview(
-    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
 ) {
     PreviewAppTheme(isDarkMode = darkMode) {
         BackupSettingsRow()

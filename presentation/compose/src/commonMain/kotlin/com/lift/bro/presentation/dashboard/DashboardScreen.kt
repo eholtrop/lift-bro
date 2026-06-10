@@ -115,7 +115,9 @@ fun DashboardContent(
                                 when (val card = item) {
                                     is DashboardListItem.LiftCard.Loaded -> {
                                         val relativeIndex by remember(index, state.items.size) {
-                                            mutableStateOf(state.items.filterIndexed { i, _ -> i < index }.sumOf { it.gridSize(0) })
+                                            mutableStateOf(
+                                                state.items.filterIndexed { i, _ -> i < index }.sumOf { it.gridSize(0) }
+                                            )
                                         }
                                         LiftCard(
                                             modifier = Modifier.padding(

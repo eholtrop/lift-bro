@@ -13,34 +13,24 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
-import com.lift.bro.domain.repositories.Setting
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.createDirectories
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
-import io.github.vinceglb.filekit.dialogs.shareFile
 import io.github.vinceglb.filekit.div
 import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.readString
-import io.github.vinceglb.filekit.writeString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import tv.dpal.ext.ktx.datetime.toString
-import kotlin.time.Clock
 
 @Serializable
 data class Backup(
@@ -51,66 +41,6 @@ data class Backup(
     val workouts: List<Workout>? = null,
     val exercises: List<Exercise>? = null,
 )
-
-/**
- * Does too many things but is WAY better than what was there before
- * (a static object that handled everything and fetched all dependencies)
- */
-class BackupUseCase(
-    private val liftRepository: ILiftRepository = dependencies.liftRepository,
-    private val variationRepository: IVariationRepository = dependencies.variationRepository,
-    private val setRepository: ISetRepository = dependencies.setRepository,
-) {
-    suspend operator fun invoke(backup: Backup? = null): Backup {
-        // either use the provided backup or create one from the current DB
-        return (backup ?: createBackup()).apply {
-            // create required files in the file system
-            val backupDir = FileKit.filesDir / "backups"
-            if (!backupDir.exists()) {
-                backupDir.createDirectories()
-            }
-            val backupFile = backupDir / "${Clock.System.now().toString("yyyy-MM-dd_HH:mm:ss")}.json"
-            backupFile.writeString(Json.encodeToString(this))
-
-            // force user to pick where the backup goes (should probably be somewhere else!)
-            FileKit.shareFile(backupFile)
-
-            // ensure last backup date is updated
-            dependencies.settingsRepository.set(
-                Setting.BackupSettings,
-                BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
-            )
-        }
-    }
-
-    private suspend fun getAllWorkouts(): List<Workout> {
-        return dependencies.workoutRepository.getAll().first()
-    }
-
-    private suspend fun getAllExercises(): List<Exercise> {
-        // Get all exercises by querying all workouts and extracting their exercises
-        val workouts = getAllWorkouts()
-        return workouts.flatMap { it.exercises }
-    }
-
-    private suspend fun createBackup(): Backup {
-        return Backup(
-            lifts = liftRepository.getAll(),
-            variations = variationRepository.getAll(),
-            sets = setRepository.listenAll().first(),
-            liftingLogs = dependencies.database.logDataSource.getAll().executeAsList().map {
-                LiftingLog(
-                    id = it.id,
-                    date = it.date,
-                    notes = it.notes ?: "",
-                    vibe = it.vibe_check?.toInt(),
-                )
-            },
-            workouts = getAllWorkouts(),
-            exercises = getAllExercises(),
-        )
-    }
-}
 
 class RestoreUseCase(
     private val database: LBDatabase = dependencies.database,

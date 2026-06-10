@@ -8,15 +8,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.lift.bro.BackupUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Setting
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import com.lift.bro.presentation.backup.BackupDialog
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.todayIn
@@ -32,7 +29,6 @@ import kotlin.time.Clock
 @Composable
 fun BackupAlertDialog(
     modifier: Modifier = Modifier,
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
 ) {
     var showBackupModal by remember { mutableStateOf(false) }
     LaunchedEffect("force_backup_prompt") {
@@ -53,6 +49,14 @@ fun BackupAlertDialog(
         showBackupModal = comparisonDate.daysUntil(today) >= 7
     }
 
+    var showBackupDialog by remember { mutableStateOf(false) }
+
+    if (showBackupDialog) {
+        BackupDialog(
+            onDismissRequest = { showBackupDialog = false }
+        )
+    }
+
     if (showBackupModal) {
         AlertDialog(
             modifier = modifier,
@@ -64,10 +68,8 @@ fun BackupAlertDialog(
             confirmButton = {
                 Button(
                     onClick = {
-                        coroutineScope.launch {
-                            BackupUseCase().invoke()
-                            showBackupModal = false
-                        }
+                        showBackupModal = false
+                        showBackupDialog = true
                     }
                 ) {
                     Text(stringResource(Res.string.backup_dialog_primary_cta))

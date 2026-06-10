@@ -1,27 +1,22 @@
 [
     {
-        "versionId": "2026.06.06",
+        "versionId": "2026.06.10",
         "notes": [
             {
                 "type": "feature",
                 "platform": "all",
+                "en": "Speed up Backup Experience"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
                 "en": "Relelase The Edit Set Screen V2!! \uD83C\uDF89"
-            }
-        ]
-    },
-    {
-        "versionId": "2026.05.29",
-        "notes": [
+            },
             {
                 "type": "fix",
                 "platform": "all",
                 "en": "Fix padding for lift cards when number of items updates"
-            }
-        ]
-    },
-    {
-        "versionId": "2026.05.15",
-        "notes": [
+            },
             {
                 "type": "feature",
                 "platform": "all",
@@ -31,22 +26,7 @@
                 "type": "fix",
                 "platform": "all",
                 "en": "Fix submit text field experience"
-            }
-        ]
-    },
-    {
-        "versionId": "2026.04.24",
-        "notes": [
-            {
-                "type": "improvement",
-                "platform": "all",
-                "en": "Update Empty State for Movement Details screen"
-            }
-        ]
-    },
-    {
-        "versionId": "2026.04.17",
-        "notes": [
+            },
             {
                 "type": "feature",
                 "platform": "all",
@@ -61,26 +41,11 @@
                 "type": "feature",
                 "platform": "all",
                 "en": "Convert Lift Details to Category Details"
-            }
-        ]
-    },
-    {
-        "versionId": "2026.04.03",
-        "notes": [
+            },
             {
                 "type": "feature",
                 "platform": "all",
                 "en": "Update Release Notes to be a Bottom Sheet with dismiss button"
-            }
-        ]
-    },
-    {
-        "versionId": "2026.03.27",
-        "notes": [
-            {
-                "type": "fix",
-                "platform": "all",
-                "en": "Fix settings crash and backup file naming"
             }
         ]
     },
