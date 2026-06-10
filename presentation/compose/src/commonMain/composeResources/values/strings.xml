@@ -61,7 +61,14 @@
 
     <string name="dialog_close_content_description">Close</string>
     <string name="dialog_info_content_description">Info</string>
+    <string name="info_dialog_button_test">Test</string>
+    <string name="info_speech_bubble_always_do_something">Alwaysdo something</string>
     <string name="info_speech_bubble_confirm_cta">Okay</string>
+    <string name="info_speech_bubble_informational_message">This is an informational speech bubble.</string>
+    <string name="info_speech_bubble_multiple_lines_message">It can contain multiple lines of text and complex layouts.</string>
+    <string name="info_speech_bubble_pro_tip">Pro Tip</string>
+    <string name="info_speech_bubble_warm_up_message">Always warm up before lifting heavy weights!</string>
+    <string name="info_speech_bubble_welcome">Welcome!</string>
 
     <string name="edit_daily_notes_dialog_confirm_cta">Save</string>
     <string name="edit_daily_notes_dialog_dismiss_cta">Cancel</string>
