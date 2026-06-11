@@ -7,10 +7,18 @@
     <string name="analytics_consent_banner_privacy">NO personal info</string>
     <string name="analytics_consent_banner_title">Help Lift Bro improve!</string>
 
+    <string name="backup_dialog_backing_up_title">Backing up Lift Bro</string>
+    <string name="backup_dialog_cancel_cta">Cancel</string>
     <string name="backup_dialog_message">Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?</string>
     <string name="backup_dialog_primary_cta">Backup Now</string>
     <string name="backup_dialog_secondary_cta">Ignore</string>
     <string name="backup_dialog_title">It's been a while...</string>
+    <string name="backup_progress_categories">Categories</string>
+    <string name="backup_progress_complete_description">complete</string>
+    <string name="backup_progress_daily_notes">Daily Notes</string>
+    <string name="backup_progress_movements">Movements</string>
+    <string name="backup_progress_sets">Sets</string>
+    <string name="backup_progress_workouts">Workouts</string>
 
     <string name="calculator_backspace_content_description">Backspace</string>
     <string name="calculator_bigger_bar_message">We're gonna need a bigger bar... 🧔‍♂️</string>
@@ -54,6 +62,15 @@
 
     <string name="dialog_close_content_description">Close</string>
     <string name="dialog_info_content_description">Info</string>
+    <string name="info_dialog_info_description">Info</string>
+    <string name="info_dialog_okay">Okay</string>
+    <string name="info_dialog_preview_test_button">Test</string>
+    <string name="info_speech_bubble_preview_title">Welcome!</string>
+    <string name="info_speech_bubble_preview_message">This is an informational speech bubble.</string>
+    <string name="info_speech_bubble_preview_message_detail">It can contain multiple lines of text and complex layouts.</string>
+    <string name="info_speech_bubble_preview_pro_tip">Pro Tip</string>
+    <string name="info_speech_bubble_preview_warmup_message">Always warm up before lifting heavy weights!</string>
+    <string name="info_speech_bubble_preview_always_do_message">Always do something</string>
 
     <string name="edit_daily_notes_dialog_confirm_cta">Save</string>
     <string name="edit_daily_notes_dialog_dismiss_cta">Cancel</string>
