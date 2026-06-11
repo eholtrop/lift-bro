@@ -46,13 +46,11 @@ import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
-import com.lift.bro.utils.DarkModeProvider
-import com.lift.bro.utils.PreviewAppTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.DayOfWeek
+import kotlin.math.ceil
 import kotlinx.datetime.LocalDate
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.calendar_today_content_description
+import org.jetbrains.compose.resources.stringResource
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -217,7 +215,7 @@ private fun CalendarTitle(
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarToday,
-                    contentDescription = "Today",
+                    contentDescription = stringResource(Res.string.calendar_today_content_description),
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }

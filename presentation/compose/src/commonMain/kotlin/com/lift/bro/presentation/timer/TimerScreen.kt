@@ -64,6 +64,22 @@ import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
 import tv.dpal.compose.isOpen
 import kotlin.time.Clock
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.timer_screen_great_job
+import lift_bro.core.generated.resources.timer_screen_mute_sound
+import lift_bro.core.generated.resources.timer_screen_pause
+import lift_bro.core.generated.resources.timer_screen_play_sound
+import lift_bro.core.generated.resources.timer_screen_restart
+import lift_bro.core.generated.resources.timer_screen_resume
+import lift_bro.core.generated.resources.timer_screen_start
+import lift_bro.core.generated.resources.timer_ended_mer_label
+import lift_bro.core.generated.resources.timer_ended_set_completed
+import lift_bro.core.generated.resources.timer_ended_twm_label
+import lift_bro.core.generated.resources.timer_set_field_con_label
+import lift_bro.core.generated.resources.timer_set_field_ecc_label
+import lift_bro.core.generated.resources.timer_set_field_hold_label
+import lift_bro.core.generated.resources.timer_set_field_rest_label
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun TimerScreen(
@@ -123,7 +139,7 @@ fun TimerScreen(
                                 )
                             }
 
-                            is TimerState.Plan -> {
+                                is TimerState.Plan -> {
                                 IconButton(
                                     modifier = Modifier.align(Alignment.Start),
                                     onClick = {
@@ -133,12 +149,12 @@ fun TimerScreen(
                                     if (state.audio) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = "Mute Sound"
+                                            contentDescription = stringResource(Res.string.timer_screen_mute_sound)
                                         )
                                     } else {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = "Play Sound"
+                                            contentDescription = stringResource(Res.string.timer_screen_play_sound)
                                         )
                                     }
                                 }
@@ -151,7 +167,7 @@ fun TimerScreen(
                                 )
                             }
 
-                            is TimerState.Running -> {
+                                is TimerState.Running -> {
                                 IconButton(
                                     modifier = Modifier.align(Alignment.Start),
                                     onClick = {
@@ -161,12 +177,12 @@ fun TimerScreen(
                                     if (state.audio) {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeUp,
-                                            contentDescription = "Mute Sound"
+                                            contentDescription = stringResource(Res.string.timer_screen_mute_sound)
                                         )
                                     } else {
                                         Icon(
                                             imageVector = Icons.AutoMirrored.Default.VolumeOff,
-                                            contentDescription = "Play Sound"
+                                            contentDescription = stringResource(Res.string.timer_screen_play_sound)
                                         )
                                     }
                                 }
@@ -210,9 +226,9 @@ fun TimerScreen(
                                             is TimerState.Ended -> Icons.Default.Repeat
                                         },
                                         contentDescription = when (state) {
-                                            is TimerState.Ended -> "Restart"
-                                            is TimerState.Plan -> "Start"
-                                            is TimerState.Running -> if (state.paused) "Resume" else "Pause"
+                                            is TimerState.Ended -> stringResource(Res.string.timer_screen_restart)
+                                            is TimerState.Plan -> stringResource(Res.string.timer_screen_start)
+                                            is TimerState.Running -> if (state.paused) stringResource(Res.string.timer_screen_resume) else stringResource(Res.string.timer_screen_pause)
                                         },
                                     )
                                 }
@@ -263,7 +279,7 @@ fun TimerOverlay(
                 ) {
                     item {
                         Text(
-                            "Great job!",
+                            stringResource(Res.string.timer_screen_great_job),
                             style = MaterialTheme.typography.displayMedium
                         )
                     }
@@ -271,7 +287,7 @@ fun TimerOverlay(
                     state.set?.let { set ->
                         item {
                             Text(
-                                "${set.reps} x ${weightFormat(set.weight)}! \uD83D\uDCAA",
+                                stringResource(Res.string.timer_ended_set_completed, set.reps, weightFormat(set.weight)),
                                 style = MaterialTheme.typography.titleLarge
                             )
                         }
@@ -287,12 +303,12 @@ fun TimerOverlay(
                                     message = {
                                         if (twmEnabled) {
                                             Text(
-                                                text = "TWM: ${weightFormat(set.totalWeightMoved)}"
+                                                text = stringResource(Res.string.timer_ended_twm_label, weightFormat(set.totalWeightMoved))
                                             )
                                         }
                                         if (merEnabled) {
                                             Text(
-                                                text = "+ ${set.mer} mers"
+                                                text = stringResource(Res.string.timer_ended_mer_label, set.mer)
                                             )
                                         }
                                     },
@@ -338,7 +354,7 @@ fun TimerSetField(
                     onEvent(TimerEvent.Plan.TempoChanged(rep = rep, tempo = state.copy(down = it)))
                 }
             },
-            label = { Text("Ecc") },
+            label = { Text(stringResource(Res.string.timer_set_field_ecc_label)) },
             textStyle = style,
         )
         TimerTextField(
@@ -348,7 +364,7 @@ fun TimerSetField(
                     onEvent(TimerEvent.Plan.TempoChanged(rep = rep, tempo = state.copy(hold = it)))
                 }
             },
-            label = { Text("Hold") },
+            label = { Text(stringResource(Res.string.timer_set_field_hold_label)) },
             textStyle = style,
         )
         TimerTextField(
@@ -358,7 +374,7 @@ fun TimerSetField(
                     onEvent(TimerEvent.Plan.TempoChanged(rep = rep, tempo = state.copy(up = it)))
                 }
             },
-            label = { Text("Con") },
+            label = { Text(stringResource(Res.string.timer_set_field_con_label)) },
             textStyle = style,
         )
         TimerTextField(
@@ -368,7 +384,7 @@ fun TimerSetField(
                     onEvent(TimerEvent.Plan.PerSetRestChanged(it))
                 }
             },
-            label = { Text("Rest") },
+            label = { Text(stringResource(Res.string.timer_set_field_rest_label)) },
             textStyle = style,
         )
     }

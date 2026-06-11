@@ -68,12 +68,20 @@ import lift_bro.core.generated.resources.settings_other_github_cta
 import lift_bro.core.generated.resources.settings_pro_features_header
 import lift_bro.core.generated.resources.settings_pro_status_text
 import lift_bro.core.generated.resources.settings_pro_thanks_title
+import lift_bro.core.generated.resources.settings_release_notes_content_description
 import lift_bro.core.generated.resources.settings_release_notes_cta
 import lift_bro.core.generated.resources.settings_title
 import lift_bro.core.generated.resources.settings_user_id_label
 import lift_bro.core.generated.resources.terms_and_conditions
 import lift_bro.core.generated.resources.url_privacy_policy
 import lift_bro.core.generated.resources.url_terms_and_conditions
+import lift_bro.core.generated.resources.settings_experimental_dashboard_v3_description
+import lift_bro.core.generated.resources.settings_experimental_dashboard_v3_title
+import lift_bro.core.generated.resources.settings_experimental_section_title
+import lift_bro.core.generated.resources.settings_experimental_timer_description
+import lift_bro.core.generated.resources.settings_experimental_timer_title
+import lift_bro.core.generated.resources.settings_lift_pros_only_section_title
+import lift_bro.core.generated.resources.settings_other_goodies_text
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
@@ -99,7 +107,7 @@ fun SettingsScreen() {
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Default.Notes,
-                    contentDescription = "Release Notes"
+                    contentDescription = stringResource(Res.string.settings_release_notes_content_description)
                 )
             }
         },
@@ -185,7 +193,7 @@ fun SettingsScreen() {
                                 Row {
                                     Text(stringResource(Res.string.settings_become_pro_description))
                                 }
-                                Text("Other Goodies (experimental features)")
+                                Text(stringResource(Res.string.settings_other_goodies_text))
                             }
                         }
 
@@ -214,7 +222,7 @@ fun SettingsScreen() {
 
                 item {
                     SettingsRowItem(
-                        title = { Text("Experimental - Expect \uD83E\uDD97") }
+                        title = { Text(stringResource(Res.string.settings_experimental_section_title)) }
                     ) {
                         Column {
                             var timer by remember {
@@ -225,8 +233,8 @@ fun SettingsScreen() {
                             }
 
                             CheckField(
-                                title = "Timer",
-                                description = "Enable a timer for counting down sets and rest periods",
+                                title = stringResource(Res.string.settings_experimental_timer_title),
+                                description = stringResource(Res.string.settings_experimental_timer_description),
                                 checked = timer,
                                 checkChanged = {
                                     timer = it
@@ -239,8 +247,8 @@ fun SettingsScreen() {
                                 dashboardV3 = dependencies.settingsRepository.get(Setting.DashboardV3)
                             }
                             CheckField(
-                                title = "Dashboard V3",
-                                description = "No more tabs!",
+                                title = stringResource(Res.string.settings_experimental_dashboard_v3_title),
+                                description = stringResource(Res.string.settings_experimental_dashboard_v3_description),
                                 checked = dashboardV3,
                                 checkChanged = {
                                     dashboardV3 = it
@@ -252,7 +260,7 @@ fun SettingsScreen() {
                                 SettingsRowItem(
                                     modifier = Modifier.padding(top = MaterialTheme.spacing.half),
                                     backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
-                                    title = { Text("Lift Pros Only \uD83D\uDE0E") }
+                                    title = { Text(stringResource(Res.string.settings_lift_pros_only_section_title)) }
                                 ) {
                                     ServerSettingsRow(localServer)
                                 }
