@@ -76,6 +76,7 @@ import lift_bro.core.generated.resources.category_details_date_format
 import lift_bro.core.generated.resources.category_details_delete_content_description
 import lift_bro.core.generated.resources.category_details_delete_warning_text
 import lift_bro.core.generated.resources.category_details_delete_warning_title
+import lift_bro.core.generated.resources.category_details_graph_date_format
 import lift_bro.core.generated.resources.category_details_mer_label
 import lift_bro.core.generated.resources.category_details_movements_section
 import lift_bro.core.generated.resources.category_details_name_placeholder
@@ -366,7 +367,7 @@ private fun VariationCard(
                     selectedData = selectedData,
                     xAxis = { epochDays ->
                         Text(
-                            LocalDate.fromEpochDays(epochDays.toInt()).toString("MMM d"),
+                            LocalDate.fromEpochDays(epochDays.toInt()).toString(stringResource(Res.string.category_details_graph_date_format)),
                             style = MaterialTheme.typography.titleSmall,
                             color = if (selectedData?.toEpochDays()
                                     ?.toLong() == epochDays
