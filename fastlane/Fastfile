@@ -120,10 +120,11 @@ platform :ios do
   end
 
   desc "Sync iOS App Store Code Signing Identities using match"
-  lane :match_appstore do
+  lane :match_appstore do |options|
     match(
       type: "appstore",
-      readonly: true,
+      readonly: options[:readonly].nil? ? true : options[:readonly],
+      force: options[:force] || false,
       git_url: ENV["MATCH_GIT_URL"],
       git_branch: "main",
       keychain_password: ENV["MATCH_PASSWORD"],
