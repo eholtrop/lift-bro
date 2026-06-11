@@ -50,7 +50,18 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.info_dialog_info_description
+import lift_bro.core.generated.resources.info_dialog_okay
+import lift_bro.core.generated.resources.info_dialog_preview_test_button
+import lift_bro.core.generated.resources.info_speech_bubble_preview_always_do_message
+import lift_bro.core.generated.resources.info_speech_bubble_preview_message
+import lift_bro.core.generated.resources.info_speech_bubble_preview_message_detail
+import lift_bro.core.generated.resources.info_speech_bubble_preview_pro_tip
+import lift_bro.core.generated.resources.info_speech_bubble_preview_title
+import lift_bro.core.generated.resources.info_speech_bubble_preview_warmup_message
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun InfoDialogButton(
@@ -76,7 +87,7 @@ fun InfoDialogButton(
     ) {
         Icon(
             imageVector = Icons.Default.Info,
-            contentDescription = "Info",
+            contentDescription = stringResource(Res.string.info_dialog_info_description),
             tint = buttonTint,
         )
     }
@@ -114,7 +125,7 @@ fun InfoDialogButton(
         Icon(
             modifier = Modifier.size(11.dp),
             imageVector = Icons.Default.Info,
-            contentDescription = "Info",
+            contentDescription = stringResource(Res.string.info_dialog_info_description),
         )
     }
 }
@@ -124,9 +135,10 @@ fun InfoDialog(
     title: @Composable () -> Unit,
     message: @Composable () -> Unit,
     onDismissRequest: () -> Unit,
-    confirmButtonText: String = "Okay",
+    confirmButtonText: String? = null,
     properties: DialogProperties = DialogProperties(),
 ) {
+    val confirmText = confirmButtonText ?: stringResource(Res.string.info_dialog_okay)
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = properties,
@@ -136,7 +148,7 @@ fun InfoDialog(
             message = message,
             forceDarkIcon = true,
             onConfirmClicked = onDismissRequest,
-            confirmButtonText = confirmButtonText,
+            confirmButtonText = confirmText,
         )
     }
 }
@@ -148,8 +160,9 @@ fun InfoSpeechBubble(
     message: @Composable () -> Unit,
     forceDarkIcon: Boolean = false,
     onConfirmClicked: (() -> Unit)? = null,
-    confirmButtonText: String = "Okay",
+    confirmButtonText: String? = null,
 ) {
+    val confirmText = confirmButtonText ?: stringResource(Res.string.info_dialog_okay)
     val speechBubbleColor = MaterialTheme.colorScheme.primary
 
     SubcomposeLayout(
@@ -235,7 +248,7 @@ fun InfoSpeechBubble(
                         colors = ButtonDefaults.textButtonColors(),
                     ) {
                         Text(
-                            text = confirmButtonText,
+                            text = confirmText,
                             style = MaterialTheme.typography.displaySmall,
                             color = MaterialTheme.colorScheme.tertiary
                         )
@@ -280,7 +293,7 @@ fun InfoDialogButtonPreview(@PreviewParameter(DarkModeProvider::class) darkMode:
                 dialogTitle = { },
                 dialogMessage = { },
             ) {
-                Text("Test")
+                Text(stringResource(Res.string.info_dialog_preview_test_button))
             }
         }
     }
@@ -295,12 +308,12 @@ fun InfoSpeechBubblePreview(@PreviewParameter(DarkModeProvider::class) darkMode:
             verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(MaterialTheme.spacing.one)
         ) {
             InfoSpeechBubble(
-                title = { Text("Welcome!") },
+                title = { Text(stringResource(Res.string.info_speech_bubble_preview_title)) },
                 message = {
                     Column {
-                        Text("This is an informational speech bubble.")
+                        Text(stringResource(Res.string.info_speech_bubble_preview_message))
                         Space(MaterialTheme.spacing.half)
-                        Text("It can contain multiple lines of text and complex layouts.")
+                        Text(stringResource(Res.string.info_speech_bubble_preview_message_detail))
                     }
                 },
                 forceDarkIcon = false,
@@ -308,15 +321,15 @@ fun InfoSpeechBubblePreview(@PreviewParameter(DarkModeProvider::class) darkMode:
             )
 
             InfoSpeechBubble(
-                title = { Text("Pro Tip") },
-                message = { Text("Always warm up before lifting heavy weights!") },
+                title = { Text(stringResource(Res.string.info_speech_bubble_preview_pro_tip)) },
+                message = { Text(stringResource(Res.string.info_speech_bubble_preview_warmup_message)) },
                 forceDarkIcon = true,
                 onConfirmClicked = {},
             )
 
             InfoSpeechBubble(
-                title = { Text("Pro Tip") },
-                message = { Text("Always do something") },
+                title = { Text(stringResource(Res.string.info_speech_bubble_preview_pro_tip)) },
+                message = { Text(stringResource(Res.string.info_speech_bubble_preview_always_do_message)) },
                 forceDarkIcon = true,
                 onConfirmClicked = {},
             )
