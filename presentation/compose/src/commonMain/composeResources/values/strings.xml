@@ -23,6 +23,13 @@
     <string name="calculator_backspace_content_description">Backspace</string>
     <string name="calculator_bigger_bar_message">We're gonna need a bigger bar... 🧔‍♂️</string>
 
+    <string name="calendar_day_heading_mon">mon</string>
+    <string name="calendar_day_heading_tue">tue</string>
+    <string name="calendar_day_heading_wed">wed</string>
+    <string name="calendar_day_heading_thu">thu</string>
+    <string name="calendar_day_heading_fri">fri</string>
+    <string name="calendar_day_heading_sat">sat</string>
+    <string name="calendar_day_heading_sun">sun</string>
     <string name="calendar_next_month_content_description">Next Month</string>
     <string name="calendar_previous_month_content_description">Previous Month</string>
     <string name="calendar_today_content_description">Today</string>
