@@ -39,6 +39,7 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.edit_lift_screen_variation_name_placeholder
 import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
 import lift_bro.core.generated.resources.variation_text_field_select_lift
+import lift_bro.core.generated.resources.variation_text_field_truncated_ellipsis
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -113,7 +114,7 @@ fun VariationTextField(
                     if (liftName?.isNotBlank() == true) {
                         Text(
                             text = if (liftName.length > 12) {
-                                liftName.take(11) + "..."
+                                liftName.take(11) + stringResource(Res.string.variation_text_field_truncated_ellipsis)
                             } else {
                                 liftName
                             },
@@ -149,7 +150,7 @@ fun VariationTextField(
                 liftName?.let {
                     Text(
                         text = if (liftName.length > 12) {
-                            liftName.take(11) + "..."
+                            liftName.take(11) + stringResource(Res.string.variation_text_field_truncated_ellipsis)
                         } else {
                             liftName
                         },

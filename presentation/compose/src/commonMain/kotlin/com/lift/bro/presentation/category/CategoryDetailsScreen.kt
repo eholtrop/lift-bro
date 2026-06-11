@@ -72,15 +72,18 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.category_details_date_format
 import lift_bro.core.generated.resources.category_details_delete_content_description
 import lift_bro.core.generated.resources.category_details_delete_warning_text
 import lift_bro.core.generated.resources.category_details_delete_warning_title
+import lift_bro.core.generated.resources.category_details_mer_label
 import lift_bro.core.generated.resources.category_details_movements_section
 import lift_bro.core.generated.resources.category_details_name_placeholder
 import lift_bro.core.generated.resources.category_details_no_sets
 import lift_bro.core.generated.resources.category_details_reps
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
+import lift_bro.core.generated.resources.uom_format
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.compose.listCorners
@@ -398,7 +401,11 @@ private fun VariationCard(
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(MaterialTheme.typography.titleMedium.toSpanStyle()) {
-                                    append(pair?.first?.toString(pattern = "EEEE MMM, d"))
+                                    append(
+                                        pair?.first?.toString(
+                                            pattern = stringResource(Res.string.category_details_date_format)
+                                        )
+                                    )
                                 }
                                 withStyle(MaterialTheme.typography.bodyMedium.toSpanStyle()) {
                                     if (LocalTwmSettings.current) {
@@ -410,7 +417,7 @@ private fun VariationCard(
 
                                     with(pair?.second?.sumOf { it.mer } ?: 0) {
                                         if (LocalShowMERCalcs.current?.enabled == true && this > 0) {
-                                            append(" (+${this}mer)")
+                                            append(stringResource(Res.string.category_details_mer_label, this))
                                         }
                                     }
                                 }
@@ -468,7 +475,7 @@ private fun VariationCard(
 }
 
 @Composable
-fun String.uom() = "$this ${LocalUnitOfMeasure.current.value}"
+fun String.uom() = stringResource(Res.string.uom_format, this, LocalUnitOfMeasure.current.value)
 
 private enum class SortingOptions(reversed: Boolean) {
     Name(false),

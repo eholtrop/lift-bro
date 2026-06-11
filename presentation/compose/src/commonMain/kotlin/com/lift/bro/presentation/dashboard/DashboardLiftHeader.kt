@@ -44,6 +44,7 @@ import lift_bro.core.generated.resources.dashboard_lift_header_create_category
 import lift_bro.core.generated.resources.dashboard_lift_header_rpe_chip
 import lift_bro.core.generated.resources.dashboard_lift_header_sort
 import lift_bro.core.generated.resources.dashboard_lift_header_tempo_chip
+import lift_bro.core.generated.resources.dashboard_lift_header_weight_reps_separator
 import lift_bro.core.generated.resources.reps
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
@@ -140,7 +141,7 @@ fun DashboardLiftHeader(
                         ) {
                             append(LocalUnitOfMeasure.current.value)
                         }
-                        append("/")
+                        append(stringResource(Res.string.dashboard_lift_header_weight_reps_separator))
                         withStyle(
                             style = LocalTextStyle.current
                                 .copy(
