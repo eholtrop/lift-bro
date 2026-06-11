@@ -3,9 +3,6 @@
 package com.lift.bro.presentation.wrapped
 
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -43,7 +40,6 @@ import com.lift.bro.presentation.wrapped.goals.WrappedGoalsScreen
 import com.lift.bro.presentation.wrapped.goals.rememberWrappedGoalsInteractor
 import com.lift.bro.presentation.wrapped.progress.WrappedProgressScreen
 import com.lift.bro.presentation.wrapped.summary.WrappedSummaryScreen
-import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.coroutines.delay
@@ -51,9 +47,9 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.dialog_close_content_description
 import lift_bro.core.generated.resources.wrapped_landing_back_button_content_description
 import lift_bro.core.generated.resources.wrapped_landing_next_button_content_description
-import lift_bro.core.generated.resources.dialog_close_content_description
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.flowvi.Interactor
 
