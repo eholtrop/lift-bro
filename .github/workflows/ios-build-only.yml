@@ -36,12 +36,11 @@ jobs:
           ruby-version: 3.3
           bundler-cache: true
 
-      - name: Select Xcode 15.4
+      - name: Select Xcode
         run: |
-          XCODE_PATH=$(ls /Applications/Xcode_15.4*.app 2>/dev/null | head -1)
+          XCODE_PATH=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -r | head -1)
           if [ -z "$XCODE_PATH" ]; then
-            echo "Xcode 15.4 not found, checking available versions..."
-            ls /Applications/ | grep Xcode || true
+            echo "No Xcode found at /Applications"
           else
             sudo xcode-select -s "$XCODE_PATH"
             echo "Selected Xcode at $XCODE_PATH"
