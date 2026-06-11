@@ -81,6 +81,7 @@ import lift_bro.core.generated.resources.category_details_mer_label
 import lift_bro.core.generated.resources.category_details_movements_section
 import lift_bro.core.generated.resources.category_details_name_placeholder
 import lift_bro.core.generated.resources.category_details_no_sets
+import lift_bro.core.generated.resources.category_details_info_separator
 import lift_bro.core.generated.resources.category_details_reps
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
@@ -410,7 +411,7 @@ private fun VariationCard(
                                 }
                                 withStyle(MaterialTheme.typography.bodyMedium.toSpanStyle()) {
                                     if (LocalTwmSettings.current) {
-                                        append(" ")
+                                        append(stringResource(Res.string.category_details_info_separator))
                                         append(
                                             pair?.second?.sumOf { it.weight }.decimalFormat().uom()
                                         )
