@@ -67,6 +67,11 @@ import com.lift.bro.ui.VariationTextField
 import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.maxText
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.variation_search_dialog_close_content_description
 import lift_bro.core.generated.resources.variation_search_dialog_create_variation
@@ -74,11 +79,6 @@ import lift_bro.core.generated.resources.variation_search_dialog_favourite_conte
 import lift_bro.core.generated.resources.variation_search_dialog_not_found_text
 import lift_bro.core.generated.resources.variation_search_dialog_save_and_select
 import org.jetbrains.compose.resources.stringResource
-import com.lift.bro.utils.PreviewAppTheme
-import com.lift.bro.utils.maxText
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
@@ -216,7 +216,12 @@ fun VariationSearchDialog(
                                 onDismissRequest()
                             }
                         ) {
-                            Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.variation_search_dialog_close_content_description))
+                            Icon(
+                                Icons.Default.Close,
+                                contentDescription = stringResource(
+                                    Res.string.variation_search_dialog_close_content_description
+                                )
+                            )
                         }
                     },
                     placeholder = { Text(state.placeholder) },
@@ -334,7 +339,9 @@ private fun VariationSearchContent(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = stringResource(Res.string.variation_search_dialog_save_and_select)
+                                    contentDescription = stringResource(
+                                        Res.string.variation_search_dialog_save_and_select
+                                    )
                                 )
                             }
                         }
@@ -396,7 +403,9 @@ private fun SearchVariationItem(
                 Icon(
                     modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
                     imageVector = Icons.Default.Star,
-                    contentDescription = stringResource(Res.string.variation_search_dialog_favourite_content_description)
+                    contentDescription = stringResource(
+                        Res.string.variation_search_dialog_favourite_content_description
+                    )
                 )
             }
         }

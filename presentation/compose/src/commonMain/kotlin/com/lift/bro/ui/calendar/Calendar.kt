@@ -46,8 +46,11 @@ import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
-import kotlin.math.ceil
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.calendar_day_heading_fri
 import lift_bro.core.generated.resources.calendar_day_heading_mon
@@ -58,12 +61,10 @@ import lift_bro.core.generated.resources.calendar_day_heading_tue
 import lift_bro.core.generated.resources.calendar_day_heading_wed
 import lift_bro.core.generated.resources.calendar_next_month_content_description
 import lift_bro.core.generated.resources.calendar_previous_month_content_description
+import lift_bro.core.generated.resources.calendar_title_month_format
+import lift_bro.core.generated.resources.calendar_title_year_format
 import lift_bro.core.generated.resources.calendar_today_content_description
 import org.jetbrains.compose.resources.stringResource
-import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
-import kotlinx.datetime.todayIn
 import tv.dpal.ext.ktx.datetime.toString
 import kotlin.time.Clock
 
@@ -197,12 +198,12 @@ private fun CalendarTitle(
             modifier = Modifier.semantics { heading() }
         ) {
             AnimatedText(
-                text = pagerState.currentMonth.toString("MMMM"),
+                text = pagerState.currentMonth.toString(stringResource(Res.string.calendar_title_month_format)),
                 style = MaterialTheme.typography.titleMedium,
             )
 
             AnimatedText(
-                text = pagerState.currentMonth.toString("yyyy"),
+                text = pagerState.currentMonth.toString(stringResource(Res.string.calendar_title_year_format)),
                 style = MaterialTheme.typography.bodyMedium,
                 transitionForChar = { char, index ->
                     if (char.isDigit()) {

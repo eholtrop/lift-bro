@@ -491,6 +491,10 @@ Soreness or pain?</string>
     <string name="movement_details_date_format">EEEE, MMM d</string>
     <string name="movement_details_tempo_format">%1$s/%2$s/%3$s</string>
     <string name="movement_details_tempo_separator">-</string>
+    <string name="movement_details_weight">%1$s</string>
+
+    <string name="calendar_title_month_format">MMMM</string>
+    <string name="calendar_title_year_format">yyyy</string>
 
     <string name="plan_timer_add_set">+</string>
     <string name="plan_timer_remove_set">-</string>

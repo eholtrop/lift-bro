@@ -199,7 +199,7 @@ fun PlanTimerOverlay(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.plan_timer_delete_tempo),
+                                    contentDescription = stringResource(Res.string.plan_timer_delete_tempo),
                                 )
                             }
                         }
