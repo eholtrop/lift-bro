@@ -145,6 +145,7 @@ Soreness or pain?</string>
     <string name="onboarding_lisa_content_description">Lift Bro With A Ponytail</string>
     <string name="onboarding_page_one_cta">Continue</string>
     <string name="onboarding_page_one_title">CHOOSE\nYOUR\nLIFT BRO</string>
+    <string name="onboarding_setup_variation_comma_separator">, </string>
     <string name="onboarding_setup_screen_continue_cta">Continue</string>
     <string name="onboarding_setup_screen_select_lifts_title">Select some Lifts! (the fun bit)</string>
     <string name="onboarding_setup_screen_select_uom_title">Select your preferred\nUnit of Measure</string>
@@ -415,6 +416,7 @@ Soreness or pain?</string>
     <string name="variation_search_dialog_not_found_text">Can't find what you're looking for?</string>
     <string name="variation_search_dialog_create_variation">Create Variation</string>
 
+    <string name="dashboard_lift_header_weight_reps_separator">/</string>
     <string name="dashboard_lift_header_create_category">Create Category</string>
     <string name="dashboard_lift_header_sort">Sort</string>
     <string name="dashboard_lift_header_rpe_chip">rpe</string>
@@ -448,6 +450,8 @@ Soreness or pain?</string>
     <string name="goals_screen_achieved">Achieved</string>
     <string name="goals_screen_delete">Delete</string>
 
+    <string name="category_details_date_format">EEEE MMM, d</string>
+    <string name="category_details_mer_label"> (+%d mer)</string>
     <string name="category_details_delete_warning_title">Are you sure?</string>
     <string name="category_details_delete_warning_text">This will delete the Category, All movements will stay!</string>
     <string name="category_details_name_placeholder">Category</string>
@@ -505,8 +509,10 @@ Soreness or pain?</string>
 
     <string name="rep_weight_selector_reps_placeholder">0</string>
     <string name="rep_weight_selector_weight_placeholder">0.0</string>
+    <string name="rpe_selector_fallback_text">RPE</string>
     <string name="rep_weight_selector_weight_at_label">%1$s at</string>
     <string name="rep_weight_selector_twm_label"> = %1$s</string>
+    <string name="uom_format">%1$s %2$s</string>
 
     <string name="rpe_selector_fallback_text">RPE</string>
     <string name="rpe_selector_label">RPE %1$d</string>
@@ -519,4 +525,8 @@ Soreness or pain?</string>
     <string name="workout_screen_most_recent_date_format">EEEE, MMM d, yyyy</string>
 
     <string name="wrapped_goals_inspiration_title">Some inspiration!</string>
+    <string name="wrapped_progress_date_format">MMM d</string>
+    <string name="variation_search_dialog_date_format">MMM d</string>
+    <string name="variation_search_dialog_set_format">%1$s: %2$s x %3$d</string>
+    <string name="variation_text_field_truncated_ellipsis">...</string>
 </resources>

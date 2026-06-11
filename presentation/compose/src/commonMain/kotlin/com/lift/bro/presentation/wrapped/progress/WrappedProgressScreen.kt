@@ -52,6 +52,7 @@ import com.lift.bro.utils.percentageFormat
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_progress_date_format
 import lift_bro.core.generated.resources.wrapped_progress_header_title
 import lift_bro.core.generated.resources.wrapped_progress_screen_favourite_content_description
 import org.jetbrains.compose.resources.stringResource
@@ -236,7 +237,7 @@ fun ProgressItemView(
                             horizontalAlignment = Alignment.Start,
                         ) {
                             Text(
-                                text = date.toString("MMM d"),
+                                text = date.toString(stringResource(Res.string.wrapped_progress_date_format)),
                                 style = MaterialTheme.typography.labelMedium,
                             )
                             Text(
@@ -251,7 +252,7 @@ fun ProgressItemView(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
-                                text = date.toString("MMM d"),
+                                text = date.toString(stringResource(Res.string.wrapped_progress_date_format)),
                                 style = MaterialTheme.typography.labelMedium,
                             )
                             Text(

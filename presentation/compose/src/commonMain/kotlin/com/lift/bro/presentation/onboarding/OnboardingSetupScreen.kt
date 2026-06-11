@@ -60,6 +60,7 @@ import lift_bro.core.generated.resources.onboarding_setup_screen_continue_cta
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_lifts_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_uom_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_title
+import lift_bro.core.generated.resources.onboarding_setup_variation_comma_separator
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 
@@ -236,13 +237,16 @@ private fun OnboardingLiftSelector(
                                             )
                                         }
                                     }
+                                    val separator = stringResource(
+                                        Res.string.onboarding_setup_variation_comma_separator
+                                    )
+                                    val variationText = if (index == variations.size - 1) {
+                                        variation.name ?: ""
+                                    } else {
+                                        "${variation.name}$separator"
+                                    }
                                     Text(
-                                        if (index == variations.size - 1) {
-                                            variation.name
-                                                ?: ""
-                                        } else {
-                                            "${variation.name}, "
-                                        },
+                                        text = variationText,
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
                                     )

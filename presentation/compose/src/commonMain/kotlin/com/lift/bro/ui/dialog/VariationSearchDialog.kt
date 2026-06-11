@@ -75,9 +75,11 @@ import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.variation_search_dialog_close_content_description
 import lift_bro.core.generated.resources.variation_search_dialog_create_variation
+import lift_bro.core.generated.resources.variation_search_dialog_date_format
 import lift_bro.core.generated.resources.variation_search_dialog_favourite_content_description
 import lift_bro.core.generated.resources.variation_search_dialog_not_found_text
 import lift_bro.core.generated.resources.variation_search_dialog_save_and_select
+import lift_bro.core.generated.resources.variation_search_dialog_set_format
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
@@ -415,11 +417,14 @@ private fun SearchVariationItem(
         )
         variation.latestSet?.let { latestSet ->
             Text(
-                text = "${
+                text = stringResource(
+                    Res.string.variation_search_dialog_set_format,
                     latestSet.date.toString(
-                        "MMM d"
-                    )
-                }: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
+                        stringResource(Res.string.variation_search_dialog_date_format)
+                    ),
+                    weightFormat(latestSet.weight),
+                    latestSet.reps,
+                ),
                 style = MaterialTheme.typography.bodyMedium
             )
             latestSet.tempo.render()
