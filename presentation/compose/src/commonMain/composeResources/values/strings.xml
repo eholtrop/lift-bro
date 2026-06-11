@@ -458,6 +458,7 @@ Soreness or pain?</string>
     <string name="category_details_delete_content_description">Delete Category,</string>
     <string name="category_details_movements_section">Movements</string>
     <string name="category_details_no_sets">No Sets</string>
+    <string name="category_details_graph_date_format">MMM d</string>
     <string name="category_details_reps">%1$d Reps</string>
 
     <string name="client_settings_row_title">Db Location</string>
