@@ -80,6 +80,8 @@ import lift_bro.core.generated.resources.settings_release_notes_icon_description
 import lift_bro.core.generated.resources.settings_title
 import lift_bro.core.generated.resources.settings_user_id_label
 import lift_bro.core.generated.resources.terms_and_conditions
+import lift_bro.core.generated.resources.url_discord
+import lift_bro.core.generated.resources.url_github
 import lift_bro.core.generated.resources.url_privacy_policy
 import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.painterResource
@@ -291,7 +293,7 @@ fun SettingsScreen() {
                         Button(
                             colors = ButtonDefaults.textButtonColors(),
                             onClick = {
-                                dependencies.launchUrl("https://discord.gg/mgxQK8ma")
+                                dependencies.launchUrl(stringResource(Res.string.url_discord))
                             }
                         ) {
                             Text(stringResource(Res.string.settings_other_discord_cta))
@@ -300,7 +302,7 @@ fun SettingsScreen() {
                         Button(
                             colors = ButtonDefaults.textButtonColors(),
                             onClick = {
-                                dependencies.launchUrl("https://www.github.com/eholtrop/lift-bro")
+                                dependencies.launchUrl(stringResource(Res.string.url_github))
                             }
                         ) {
                             Text(stringResource(Res.string.settings_other_github_cta))
