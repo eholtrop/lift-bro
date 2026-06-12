@@ -20,12 +20,21 @@ import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.settings_language_ai_gen
+import lift_bro.core.generated.resources.settings_language_cancel
+import lift_bro.core.generated.resources.settings_language_english
+import lift_bro.core.generated.resources.settings_language_french
+import lift_bro.core.generated.resources.settings_language_portuguese
+import lift_bro.core.generated.resources.settings_language_save
+import lift_bro.core.generated.resources.settings_language_select_title
+import lift_bro.core.generated.resources.settings_language_spanish
+import lift_bro.core.generated.resources.settings_language_title
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SupportedLanguage.languageName() = when (this) {
     SupportedLanguage.English -> stringResource(Res.string.settings_language_english)
-    SupportedLanguage.Portugease -> stringResource(Res.string.settings_language_portugease)
+    SupportedLanguage.Portugease -> stringResource(Res.string.settings_language_portuguese)
     SupportedLanguage.French -> stringResource(Res.string.settings_language_french)
     SupportedLanguage.Spanish -> stringResource(Res.string.settings_language_spanish)
 }
@@ -111,8 +120,13 @@ fun LanguageSettingsRow() {
                     text = {
                         Column {
                             SupportedLanguage.entries.forEach {
+                                val label = if (it.isAiGen()) {
+                                    " " + stringResource(Res.string.settings_language_ai_gen)
+                                } else {
+                                    ""
+                                }
                                 RadioField(
-                                    text = "${it.languageName()}${if (it.isAiGen()) " ${stringResource(Res.string.settings_language_ai_gen_label)}" else ""}",
+                                    text = "${it.languageName()}$label",
                                     selected = selectedLanguage == it,
                                     fieldSelected = {
                                         selectedLanguage = it
