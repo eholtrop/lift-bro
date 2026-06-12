@@ -1,11 +1,14 @@
 package com.lift.bro.presentation.dashboard.carousel
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.intl.Locale
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.analytics.Analytics
 import com.lift.bro.domain.models.settings.AnalyticsConsent
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.Setting
+import com.lift.bro.presentation.settings.isAiGen
+import com.lift.bro.presentation.settings.supportedLanguage
 import com.lift.bro.ui.ReleaseNote
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
@@ -27,12 +30,14 @@ fun rememberBannerCarouselInteractor(
         combine(
             settingsRepository.listen(Setting.AnalyticsConsent),
             settingsRepository.listen(Setting.LatestReadReleaseNotes),
+            settingsRepository.listen(Setting.AITranslationBannerDismissed),
+            settingsRepository.listen(Setting.LocaleOverride),
             flow {
                 emit(
                     Json.decodeFromString<List<ReleaseNote>>(Res.readBytes("files/release_notes.json").decodeToString())
                 )
             }
-        ) { consent, lastReadReleaseNotes, releaseNotes ->
+        ) { consent, lastReadReleaseNotes, aiTranslationsDismissed, locale, releaseNotes ->
             DashboardBannerCarouselState(
                 latestReleaseNote = releaseNotes.maxOfOrNull { it.versionId },
                 banners = listOfNotNull(
@@ -44,6 +49,14 @@ fun rememberBannerCarouselInteractor(
                         null
                     },
                     if (!consent.dashboardBannerDismissed) DashboardBanner.AnalyticsConsent else null,
+                    if (!aiTranslationsDismissed ||
+                        Locale.current.language.supportedLanguage()?.isAiGen() == true ||
+                        locale != null
+                    ) {
+                        DashboardBanner.AITranslations
+                    } else {
+                        null
+                    },
                 )
             )
         }
@@ -73,6 +86,18 @@ fun rememberBannerCarouselInteractor(
                     )
                     analytics.setConsent(true)
                 }
+
+                DashboardBannerEvent.AllowAITranslations,
+                DashboardBannerEvent.AITranslationBannerDismissed, ->
+                    settingsRepository.set(
+                        Setting.AITranslationBannerDismissed,
+                        true,
+                    )
+
+                DashboardBannerEvent.DisableAITranslations -> settingsRepository.set(
+                    Setting.LocaleOverride,
+                    "en",
+                )
             }
         }
     )
