@@ -43,6 +43,11 @@ fun SupportedLanguage.languageTag(): String = when (this) {
     SupportedLanguage.Spanish -> "es"
 }
 
+fun SupportedLanguage.isAiGen(): Boolean = when (this) {
+    SupportedLanguage.English -> false
+    else -> true
+}
+
 enum class SupportedLanguage {
     English,
     French,
@@ -105,7 +110,7 @@ fun LanguageSettingsRow() {
                         Column {
                             SupportedLanguage.entries.forEach {
                                 RadioField(
-                                    text = it.languageName(),
+                                    text = "${it.languageName()}${if (it.isAiGen()) " (AI Gen)" else ""}",
                                     selected = selectedLanguage == it,
                                     fieldSelected = {
                                         selectedLanguage = it
