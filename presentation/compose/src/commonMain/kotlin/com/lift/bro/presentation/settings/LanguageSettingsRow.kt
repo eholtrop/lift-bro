@@ -20,7 +20,7 @@ import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.settings_language_ai_gen
+import lift_bro.core.generated.resources.settings_language_ai_gen_label
 import lift_bro.core.generated.resources.settings_language_cancel
 import lift_bro.core.generated.resources.settings_language_english
 import lift_bro.core.generated.resources.settings_language_french
@@ -121,7 +121,7 @@ fun LanguageSettingsRow() {
                         Column {
                             SupportedLanguage.entries.forEach {
                                 val label = if (it.isAiGen()) {
-                                    " " + stringResource(Res.string.settings_language_ai_gen)
+                                    stringResource(Res.string.settings_language_ai_gen_label)
                                 } else {
                                     ""
                                 }

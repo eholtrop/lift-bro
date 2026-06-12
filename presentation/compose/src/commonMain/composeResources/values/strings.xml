@@ -215,7 +215,7 @@ Soreness or pain?</string>
     <string name="settings_language_french">French</string>
     <string name="settings_language_portugease">Portugease</string>
     <string name="settings_language_spanish">Spanish</string>
-    <string name="settings_language_ai_gen_label">(AI Gen)</string>
+    <string name="settings_language_ai_gen_label"> (AI Gen)</string>
     <string name="settings_language_save">Save</string>
     <string name="settings_language_cancel">Cancel</string>
     <string name="settings_dark_text">Dark</string>
