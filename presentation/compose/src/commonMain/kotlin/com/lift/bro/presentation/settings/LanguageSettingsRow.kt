@@ -19,13 +19,24 @@ import com.lift.bro.presentation.LocalLocale
 import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.settings_language_ai_gen
+import lift_bro.core.generated.resources.settings_language_cancel
+import lift_bro.core.generated.resources.settings_language_english
+import lift_bro.core.generated.resources.settings_language_french
+import lift_bro.core.generated.resources.settings_language_portuguese
+import lift_bro.core.generated.resources.settings_language_save
+import lift_bro.core.generated.resources.settings_language_select_title
+import lift_bro.core.generated.resources.settings_language_spanish
+import lift_bro.core.generated.resources.settings_language_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SupportedLanguage.languageName() = when (this) {
-    SupportedLanguage.English -> "English"
-    SupportedLanguage.Portugease -> "Portugease"
-    SupportedLanguage.French -> "French"
-    SupportedLanguage.Spanish -> "Spanish"
+    SupportedLanguage.English -> stringResource(Res.string.settings_language_english)
+    SupportedLanguage.Portugease -> stringResource(Res.string.settings_language_portuguese)
+    SupportedLanguage.French -> stringResource(Res.string.settings_language_french)
+    SupportedLanguage.Spanish -> stringResource(Res.string.settings_language_spanish)
 }
 
 fun String.supportedLanguage(): SupportedLanguage? = when (this) {
@@ -59,7 +70,7 @@ enum class SupportedLanguage {
 fun LanguageSettingsRow() {
     SettingsRowItem(
         title = {
-            Text("Language Settings")
+            Text(stringResource(Res.string.settings_language_title))
         },
         content = {
             var showDialog by remember { mutableStateOf(false) }
@@ -91,7 +102,7 @@ fun LanguageSettingsRow() {
                                 showDialog = false
                             }
                         ) {
-                            Text("Save")
+                            Text(stringResource(Res.string.settings_language_save))
                         }
                     },
                     dismissButton = {
@@ -100,17 +111,22 @@ fun LanguageSettingsRow() {
                                 showDialog = false
                             }
                         ) {
-                            Text("Cancel")
+                            Text(stringResource(Res.string.settings_language_cancel))
                         }
                     },
                     title = {
-                        Text("Select a Language")
+                        Text(stringResource(Res.string.settings_language_select_title))
                     },
                     text = {
                         Column {
                             SupportedLanguage.entries.forEach {
+                                val label = if (it.isAiGen()) {
+                                    " " + stringResource(Res.string.settings_language_ai_gen)
+                                } else {
+                                    ""
+                                }
                                 RadioField(
-                                    text = "${it.languageName()}${if (it.isAiGen()) " (AI Gen)" else ""}",
+                                    text = "${it.languageName()}$label",
                                     selected = selectedLanguage == it,
                                     fieldSelected = {
                                         selectedLanguage = it
