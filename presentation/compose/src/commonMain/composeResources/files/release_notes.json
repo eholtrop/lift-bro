@@ -1,5 +1,15 @@
 [
     {
+        "versionId": "2026.06.12",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Allow language switching in settings"
+            }
+        ]
+    },
+    {
         "versionId": "2026.06.10",
         "notes": [
             {
@@ -10,7 +20,7 @@
             {
                 "type": "feature",
                 "platform": "all",
-                "en": "Relelase The Edit Set Screen V2!! \uD83C\uDF89"
+                "en": "Release The Edit Set Screen V2!! \uD83C\uDF89"
             },
             {
                 "type": "fix",
