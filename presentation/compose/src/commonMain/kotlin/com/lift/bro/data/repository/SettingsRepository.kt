@@ -74,6 +74,7 @@ class SettingsRepository(
             Setting.Timer -> dataSource.putBool(key, value as Boolean)
             Setting.AnalyticsConsent -> dataSource.putSerializable(key, value as AnalyticsConsent)
             Setting.UnitOfMeasure -> dataSource.putString(key, (value as Settings.UnitOfWeight).uom.toString())
+            Setting.LocaleOverride -> dataSource.putString(key, value as String?)
         }
         keyChanged(key)
     }
@@ -96,6 +97,7 @@ class SettingsRepository(
             Setting.Timer -> "timer_feature_flag"
             Setting.UnitOfMeasure -> "unit_of_measure"
             Setting.AnalyticsConsent -> "analytics_consent"
+            Setting.LocaleOverride -> "locale_override"
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -130,6 +132,7 @@ class SettingsRepository(
             Setting.ThemeMode -> dataSource.getString(key, null)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
             Setting.Timer -> dataSource.getBool(key, false)
             Setting.UnitOfMeasure -> Settings.UnitOfWeight(UOM.valueOf(dataSource.getString(key, "POUNDS") ?: "POUNDS"))
+            Setting.LocaleOverride -> dataSource.getString(key, null)
         } as T
     }
 
