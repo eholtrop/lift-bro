@@ -25,6 +25,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -143,6 +144,10 @@ val LocalServer = compositionLocalOf<LiftBroServer?> {
     null
 }
 
+// val LocalLocale = compositionLocalOf {
+//    Locale.current
+// }
+
 @OptIn(DelicateCoroutinesApi::class)
 val ApplicationScope = GlobalScope
 
@@ -234,7 +239,10 @@ fun App(
     val showPaywall = remember { mutableStateOf(false) }
     val showCalculator = remember { mutableStateOf(false) }
 
+    val localLocale by dependencies.settingsRepository.listen(Setting.LocaleOverride).collectAsState(null)
+
     CompositionLocalProvider(
+        LocalLocale provides localLocale,
         LocalLiftBro provides (bro ?: if (Random.nextBoolean()) LiftBro.Leo else LiftBro.Lisa),
         LocalUnitOfMeasure provides uom,
         LocalShowMERCalcs provides showMerCalcs,
@@ -273,132 +281,134 @@ fun App(
 
         val themeMode by dependencies.settingsRepository.listen(Setting.ThemeMode).collectAsState(ThemeMode.System)
 
-        AppTheme(
-            theme = themeMode
-        ) {
-            Box(
-                modifier = modifier,
+        key(localLocale) {
+            AppTheme(
+                theme = themeMode
             ) {
-                if (navCoordinator.currentPage != Destination.Onboarding) {
-                    CheckAppConsent()
-                }
-                BackupAlertDialog()
-
-                Column {
-                    SwipeableNavHost<Destination>(
-                        modifier = Modifier.weight(1f),
-                        navCoordinator = navCoordinator,
-                    ) { route ->
-                        AppRouter(route)
-                    }
-                }
-
-                val options = remember {
-                    PaywallOptions(dismissRequest = { showPaywall.value = false }) {
-                        shouldDisplayDismissButton = true
-                    }
-                }
-
-                AnimatedVisibility(
-                    visible = showPaywall.value,
-                    enter = slideInVertically { it },
-                    exit = slideOutVertically { it } + fadeOut()
+                Box(
+                    modifier = modifier,
                 ) {
-                    Paywall(options)
-                }
+                    if (navCoordinator.currentPage != Destination.Onboarding) {
+                        CheckAppConsent()
+                    }
+                    BackupAlertDialog()
 
-                WeightCalculatorBottomSheet()
-
-                // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix
-                var celebration by remember { mutableStateOf<CelebrationType>(CelebrationType.None) }
-
-                LaunchedEffect(Unit) {
-                    GetCelebrationTypeUseCase(
-                        setRepository = dependencies.setRepository,
-                        variationRepository = dependencies.variationRepository
-                    )
-                        .collectLatest {
-                            celebration = it
+                    Column {
+                        SwipeableNavHost<Destination>(
+                            modifier = Modifier.weight(1f),
+                            navCoordinator = navCoordinator,
+                        ) { route ->
+                            AppRouter(route)
                         }
-                }
+                    }
 
-                if (celebration != CelebrationType.None) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
+                    val options = remember {
+                        PaywallOptions(dismissRequest = { showPaywall.value = false }) {
+                            shouldDisplayDismissButton = true
+                        }
+                    }
+
+                    AnimatedVisibility(
+                        visible = showPaywall.value,
+                        enter = slideInVertically { it },
+                        exit = slideOutVertically { it } + fadeOut()
                     ) {
-                        ConfettiExplosion()
+                        Paywall(options)
+                    }
 
-                        var showMessage by remember { mutableStateOf(false) }
-                        AnimatedVisibility(
-                            modifier = Modifier.align(Alignment.Center),
-                            visible = showMessage,
-                            enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
-                            exit = fadeOut(),
+                    WeightCalculatorBottomSheet()
+
+                    // This is all pretty terrible.... but its something I promised a friend id release before they hit PR!... and I got bugs to fix
+                    var celebration by remember { mutableStateOf<CelebrationType>(CelebrationType.None) }
+
+                    LaunchedEffect(Unit) {
+                        GetCelebrationTypeUseCase(
+                            setRepository = dependencies.setRepository,
+                            variationRepository = dependencies.variationRepository
+                        )
+                            .collectLatest {
+                                celebration = it
+                            }
+                    }
+
+                    if (celebration != CelebrationType.None) {
+                        Box(
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            val speechBubbleColor = MaterialTheme.colorScheme.primary
-                            Column {
-                                Column(
-                                    modifier = Modifier
-                                        .semantics(
-                                            mergeDescendants = true,
-                                        ) {
-                                            liveRegion = LiveRegionMode.Assertive
-                                        }
-                                        .background(
-                                            speechBubbleColor,
-                                            shape = MaterialTheme.shapes.medium
-                                        )
-                                        .padding(MaterialTheme.spacing.one),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                ) {
-                                    Text(
-                                        text = stringResource(Res.string.app_congrats_text),
-                                        style = MaterialTheme.typography.headlineLarge,
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                    )
-                                    Space(MaterialTheme.spacing.half)
-                                    Text(
-                                        text = when (val cel = celebration) {
-                                            is CelebrationType.NewEMax -> "New estimated Max!"
-                                            is CelebrationType.NewOneRepMax -> "New one rep max!"
-                                            CelebrationType.None -> ""
-                                        },
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        color = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                }
-                                Row {
-                                    Image(
+                            ConfettiExplosion()
+
+                            var showMessage by remember { mutableStateOf(false) }
+                            AnimatedVisibility(
+                                modifier = Modifier.align(Alignment.Center),
+                                visible = showMessage,
+                                enter = fadeIn() + slideInVertically(initialOffsetY = { it / 2 }),
+                                exit = fadeOut(),
+                            ) {
+                                val speechBubbleColor = MaterialTheme.colorScheme.primary
+                                Column {
+                                    Column(
                                         modifier = Modifier
-                                            .size(72.dp),
-                                        painter = painterResource(LocalLiftBro.current.iconRes()),
-                                        contentDescription = ""
-                                    )
-                                    Canvas(
-                                        modifier = Modifier.size(72.dp.div(2))
+                                            .semantics(
+                                                mergeDescendants = true,
+                                            ) {
+                                                liveRegion = LiveRegionMode.Assertive
+                                            }
+                                            .background(
+                                                speechBubbleColor,
+                                                shape = MaterialTheme.shapes.medium
+                                            )
+                                            .padding(MaterialTheme.spacing.one),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
                                     ) {
-                                        drawPath(
-                                            Path().apply {
-                                                moveTo(20f, 0f)
-                                                lineTo(0f, 60f)
-                                                lineTo(60f, 0f)
-                                                lineTo(0f, 0f)
-                                                close()
-                                            },
-                                            speechBubbleColor
+                                        Text(
+                                            text = stringResource(Res.string.app_congrats_text),
+                                            style = MaterialTheme.typography.headlineLarge,
+                                            color = MaterialTheme.colorScheme.onPrimary,
                                         )
+                                        Space(MaterialTheme.spacing.half)
+                                        Text(
+                                            text = when (val cel = celebration) {
+                                                is CelebrationType.NewEMax -> "New estimated Max!"
+                                                is CelebrationType.NewOneRepMax -> "New one rep max!"
+                                                CelebrationType.None -> ""
+                                            },
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    }
+                                    Row {
+                                        Image(
+                                            modifier = Modifier
+                                                .size(72.dp),
+                                            painter = painterResource(LocalLiftBro.current.iconRes()),
+                                            contentDescription = ""
+                                        )
+                                        Canvas(
+                                            modifier = Modifier.size(72.dp.div(2))
+                                        ) {
+                                            drawPath(
+                                                Path().apply {
+                                                    moveTo(20f, 0f)
+                                                    lineTo(0f, 60f)
+                                                    lineTo(60f, 0f)
+                                                    lineTo(0f, 0f)
+                                                    close()
+                                                },
+                                                speechBubbleColor
+                                            )
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        LaunchedEffect(Unit) {
-                            delay(1000)
-                            showMessage = true
-                            delay(4000)
-                            showMessage = false
-                            delay(2000)
-                            celebration = CelebrationType.None
+                            LaunchedEffect(Unit) {
+                                delay(1000)
+                                showMessage = true
+                                delay(4000)
+                                showMessage = false
+                                delay(2000)
+                                celebration = CelebrationType.None
+                            }
                         }
                     }
                 }

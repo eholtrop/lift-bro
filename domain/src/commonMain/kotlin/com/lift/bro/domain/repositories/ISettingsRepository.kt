@@ -35,6 +35,8 @@ sealed interface Setting<T> {
     data object TMaxEnabled: Setting<Boolean>
     data object ClientUrl: Setting<String?>
     data object AnalyticsConsent: Setting<com.lift.bro.domain.models.settings.AnalyticsConsent>
+    data object LocaleOverride: Setting<String?>
+    data object AITranslationBannerDismissed: Setting<Boolean>
 }
 
 interface ISettingsRepository {
