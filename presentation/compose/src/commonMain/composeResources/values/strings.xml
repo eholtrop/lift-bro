@@ -148,7 +148,19 @@ Soreness or pain?</string>
     <string name="onboarding_skip_screen_subtitle">How would you like to get things started?</string>
     <string name="onboarding_skip_screen_title">LET'S\nGOOOOO!</string>
 
+    <string name="app_celebration_new_estimated_max">New estimated Max!</string>
+    <string name="app_celebration_new_one_rep_max">New one rep max!</string>
+
     <string name="privacy_policy">Privacy Policy</string>
+
+    <string name="ai_translations_title">Lift Bro uses AI Translations</string>
+    <string name="ai_translations_dialog_body">Evan, while a native English speaker, still struggles with it let alone other languages 😅</string>
+    <string name="ai_translations_dialog_warning">So use at your own risk!</string>
+    <string name="ai_translations_dialog_change_settings">This can be changed in settings at any time</string>
+    <string name="ai_translations_enable_option">Enable AI Translations</string>
+    <string name="ai_translations_force_english_option">Force English (Disable AI Translations)</string>
+    <string name="ai_translations_save">Save</string>
+    <string name="ai_translations_banner_subtitle">Tap to Learn More</string>
 
     <string name="radio_field_selected_option_text">Selected option</string>
     <string name="radio_field_unselected_option_text">Unselected option</string>
@@ -197,6 +209,15 @@ Soreness or pain?</string>
     <string name="settings_backup_restore_title">Backup / Restore</string>
     <string name="settings_become_pro_description">Sign up for an Ad free experience and extra premium tracking metrics!</string>
     <string name="settings_become_pro_title">Become Pro!</string>
+    <string name="settings_language_title">Language Settings</string>
+    <string name="settings_language_select_title">Select a Language</string>
+    <string name="settings_language_english">English</string>
+    <string name="settings_language_french">French</string>
+    <string name="settings_language_portugease">Portugease</string>
+    <string name="settings_language_spanish">Spanish</string>
+    <string name="settings_language_ai_gen_label">(AI Gen)</string>
+    <string name="settings_language_save">Save</string>
+    <string name="settings_language_cancel">Cancel</string>
     <string name="settings_dark_text">Dark</string>
     <string name="settings_emax_enable_text">Show estimated one rep maxes (eMax) where applicable</string>
     <string name="settings_emax_formula">weight x (1 + reps/30)</string>
@@ -225,6 +246,15 @@ Soreness or pain?</string>
     <string name="settings_mer_weekly_goal_info_dialog_message">MER's can be used to track your progress in a week! Set yourself a weekly goal and celebrate your successes!</string>
     <string name="settings_mer_weekly_goal_info_dialog_title">Weekly MER Goal</string>
     <string name="settings_mer_weekly_goal_input_title">Weekly MER Goal</string>
+    <string name="settings_experimental_goodies">Other Goodies (experimental features)</string>
+    <string name="settings_experimental_section_title">Experimental - Expect 🥗</string>
+    <string name="settings_experimental_timer">Timer</string>
+    <string name="settings_experimental_timer_description">Enable a timer for counting down sets and rest periods</string>
+    <string name="settings_experimental_dashboard_v3">Dashboard V3</string>
+    <string name="settings_experimental_dashboard_v3_description">No more tabs!</string>
+    <string name="settings_lift_pros_only">Lift Pros Only 😎</string>
+    <string name="settings_release_notes_icon_description">Release Notes</string>
+
     <string name="settings_other_discord_cta">Join the Discord!</string>
     <string name="settings_other_github_cta">Check out the Source Code</string>
     <string name="settings_other_title">Other:</string>
