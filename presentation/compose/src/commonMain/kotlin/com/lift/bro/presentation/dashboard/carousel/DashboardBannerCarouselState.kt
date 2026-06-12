@@ -18,6 +18,9 @@ sealed class DashboardBanner {
 
     @Serializable
     data object AnalyticsConsent: DashboardBanner()
+
+    @Serializable
+    data object AITranslations: DashboardBanner()
 }
 
 sealed interface DashboardBannerEvent {
@@ -25,4 +28,7 @@ sealed interface DashboardBannerEvent {
     data object DismissAnalyticsBanner: DashboardBannerEvent
     data object ReleaseNotesSeen: DashboardBannerEvent
     data object DismissReleaseNotes: DashboardBannerEvent
+    data object AllowAITranslations: DashboardBannerEvent
+    data object AITranslationBannerDismissed: DashboardBannerEvent
+    data object DisableAITranslations: DashboardBannerEvent
 }

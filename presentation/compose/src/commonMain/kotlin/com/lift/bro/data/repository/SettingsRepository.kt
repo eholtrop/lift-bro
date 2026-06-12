@@ -75,6 +75,7 @@ class SettingsRepository(
             Setting.AnalyticsConsent -> dataSource.putSerializable(key, value as AnalyticsConsent)
             Setting.UnitOfMeasure -> dataSource.putString(key, (value as Settings.UnitOfWeight).uom.toString())
             Setting.LocaleOverride -> dataSource.putString(key, value as String?)
+            Setting.AITranslationBannerDismissed -> dataSource.putBool(key, value as Boolean)
         }
         keyChanged(key)
     }
@@ -98,6 +99,7 @@ class SettingsRepository(
             Setting.UnitOfMeasure -> "unit_of_measure"
             Setting.AnalyticsConsent -> "analytics_consent"
             Setting.LocaleOverride -> "locale_override"
+            Setting.AITranslationBannerDismissed -> "ai_translations_banner_dismissed"
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -133,6 +135,7 @@ class SettingsRepository(
             Setting.Timer -> dataSource.getBool(key, false)
             Setting.UnitOfMeasure -> Settings.UnitOfWeight(UOM.valueOf(dataSource.getString(key, "POUNDS") ?: "POUNDS"))
             Setting.LocaleOverride -> dataSource.getString(key, null)
+            Setting.AITranslationBannerDismissed -> dataSource.getBool(key, false)
         } as T
     }
 

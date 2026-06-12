@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
+import com.lift.bro.ui.AITranslationsConsentBanner
 import com.lift.bro.ui.AnalyticsConsentBanner
 import com.lift.bro.ui.ReleaseNotesRow
 import com.lift.bro.ui.theme.spacing
@@ -89,6 +90,19 @@ fun DashboardBannerCarousel(
                 modifier = animationModifier,
                 dialogSeen = { onEvent(DashboardBannerEvent.ReleaseNotesSeen) },
                 rowDismissed = { onEvent(DashboardBannerEvent.DismissReleaseNotes) },
+            )
+
+            DashboardBanner.AITranslations -> AITranslationsConsentBanner(
+                modifier = animationModifier,
+                onEnable = {
+                    onEvent(DashboardBannerEvent.AllowAITranslations)
+                },
+                onDisableAI = {
+                    onEvent(DashboardBannerEvent.DisableAITranslations)
+                },
+                onDismiss = {
+                    onEvent(DashboardBannerEvent.AITranslationBannerDismissed)
+                }
             )
         }
     }

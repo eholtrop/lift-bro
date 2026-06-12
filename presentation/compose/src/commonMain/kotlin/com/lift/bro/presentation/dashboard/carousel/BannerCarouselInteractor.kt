@@ -20,6 +20,7 @@ typealias DashboardBannerCarouselInteractor = Interactor<DashboardBannerCarousel
 @Composable
 fun rememberBannerCarouselInteractor(
     settingsRepository: ISettingsRepository = dependencies.settingsRepository,
+    showLanguageBannerUseCase: ShowLanguageBannerUserCase = ShowLanguageBannerUserCase(),
     analytics: Analytics = dependencies.analytics,
 ): DashboardBannerCarouselInteractor = rememberInteractor(
     initialState = DashboardBannerCarouselState(),
@@ -27,12 +28,13 @@ fun rememberBannerCarouselInteractor(
         combine(
             settingsRepository.listen(Setting.AnalyticsConsent),
             settingsRepository.listen(Setting.LatestReadReleaseNotes),
+            showLanguageBannerUseCase(),
             flow {
                 emit(
                     Json.decodeFromString<List<ReleaseNote>>(Res.readBytes("files/release_notes.json").decodeToString())
                 )
             }
-        ) { consent, lastReadReleaseNotes, releaseNotes ->
+        ) { consent, lastReadReleaseNotes, showLanguageBanner, releaseNotes ->
             DashboardBannerCarouselState(
                 latestReleaseNote = releaseNotes.maxOfOrNull { it.versionId },
                 banners = listOfNotNull(
@@ -44,6 +46,7 @@ fun rememberBannerCarouselInteractor(
                         null
                     },
                     if (!consent.dashboardBannerDismissed) DashboardBanner.AnalyticsConsent else null,
+                    if (showLanguageBanner) DashboardBanner.AITranslations else null,
                 )
             )
         }
@@ -73,6 +76,18 @@ fun rememberBannerCarouselInteractor(
                     )
                     analytics.setConsent(true)
                 }
+
+                DashboardBannerEvent.AllowAITranslations,
+                DashboardBannerEvent.AITranslationBannerDismissed, ->
+                    settingsRepository.set(
+                        Setting.AITranslationBannerDismissed,
+                        true,
+                    )
+
+                DashboardBannerEvent.DisableAITranslations -> settingsRepository.set(
+                    Setting.LocaleOverride,
+                    "en",
+                )
             }
         }
     )

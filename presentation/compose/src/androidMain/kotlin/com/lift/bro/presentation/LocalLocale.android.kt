@@ -7,6 +7,7 @@ import androidx.compose.runtime.ProvidedValue
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.intl.Locale
 import androidx.core.os.LocaleListCompat
+import java.util.Locale as AndroidLocale
 
 actual object LocalLocale {
 
@@ -26,7 +27,10 @@ actual object LocalLocale {
                 AppCompatDelegate.setApplicationLocales(it)
             }
         }
-        java.util.Locale.setDefault(java.util.Locale.forLanguageTag(override))
+
+        LaunchedEffect(override) {
+            AndroidLocale.setDefault(AndroidLocale.forLanguageTag(override))
+        }
 
         return with(LocalConfiguration.current) {
             setLocale(java.util.Locale.forLanguageTag(override))
