@@ -62,6 +62,8 @@ import lift_bro.core.generated.resources.movement_details_create_movement
 import lift_bro.core.generated.resources.movement_details_empty_subtitle
 import lift_bro.core.generated.resources.movement_details_empty_title
 import lift_bro.core.generated.resources.movement_details_reps
+import lift_bro.core.generated.resources.movement_details_tempo_format
+import lift_bro.core.generated.resources.movement_details_tempo_separator
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.listCorners
 import tv.dpal.ext.ktx.datetime.toString
@@ -195,7 +197,7 @@ private fun MovementDetailsScreen(
 
                 Grouping.Tempo -> sets.groupBy { it.tempo }.toList()
                     .sortedByDescending { it.second.maxOf { it.date.toLocalDate() } }
-                    .map { Pair("${it.first.down}/${it.first.hold}/${it.first.up}", it.second) }
+                    .map { Pair(stringResource(Res.string.movement_details_tempo_format, it.first.down, it.first.hold, it.first.up), it.second) }
 
                 Grouping.Weight -> sets.groupBy { it.weight }.toList()
                     .sortedByDescending { it.first }.map { Pair("${it.first}", it.second) }
@@ -275,7 +277,7 @@ fun Tempo.render() {
         )
         Space(MaterialTheme.spacing.quarter)
         Text(
-            text = "-",
+            text = stringResource(Res.string.movement_details_tempo_separator),
             style = MaterialTheme.typography.labelSmall,
         )
         Text(

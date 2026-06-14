@@ -73,6 +73,7 @@ import lift_bro.core.generated.resources.variation_search_dialog_create_variatio
 import lift_bro.core.generated.resources.variation_search_dialog_favourite_content_description
 import lift_bro.core.generated.resources.variation_search_dialog_not_found_text
 import lift_bro.core.generated.resources.variation_search_dialog_save_and_select
+import lift_bro.core.generated.resources.variation_search_dialog_set_summary
 import org.jetbrains.compose.resources.stringResource
 import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.maxText
@@ -406,11 +407,7 @@ private fun SearchVariationItem(
         )
         variation.latestSet?.let { latestSet ->
             Text(
-                text = "${
-                    latestSet.date.toString(
-                        "MMM d"
-                    )
-                }: ${weightFormat(latestSet.weight)} x ${latestSet.reps}",
+                text = stringResource(Res.string.variation_search_dialog_set_summary, latestSet.date.toString("MMM d"), weightFormat(latestSet.weight), latestSet.reps),
                 style = MaterialTheme.typography.bodyMedium
             )
             latestSet.tempo.render()

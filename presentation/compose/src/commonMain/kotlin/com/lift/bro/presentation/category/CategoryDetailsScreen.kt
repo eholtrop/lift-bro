@@ -82,6 +82,7 @@ import lift_bro.core.generated.resources.category_details_name_placeholder
 import lift_bro.core.generated.resources.category_details_mer_suffix
 import lift_bro.core.generated.resources.category_details_no_sets
 import lift_bro.core.generated.resources.category_details_reps
+import lift_bro.core.generated.resources.category_details_uom_format
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.compose.listCorners
@@ -469,7 +470,7 @@ private fun VariationCard(
 }
 
 @Composable
-fun String.uom() = "$this ${LocalUnitOfMeasure.current.value}"
+fun String.uom() = stringResource(Res.string.category_details_uom_format, this, LocalUnitOfMeasure.current.value)
 
 private enum class SortingOptions(reversed: Boolean) {
     Name(false),

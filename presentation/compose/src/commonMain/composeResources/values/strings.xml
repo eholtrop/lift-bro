@@ -509,4 +509,8 @@ Soreness or pain?</string>
     <string name="workout_screen_most_recent_date_format">EEEE, MMM d, yyyy</string>
 
     <string name="wrapped_goals_inspiration_title">Some inspiration!</string>
+
+    <string name="variation_search_dialog_set_summary">%1$s: %2$s x %3$d</string>
+    <string name="category_details_uom_format">%1$s %2$s</string>
+    <string name="variation_text_field_ellipsis">...</string>
 </resources>
