@@ -67,8 +67,6 @@ import com.revenuecat.purchases.kmp.LogLevel
 import com.revenuecat.purchases.kmp.Purchases
 import com.revenuecat.purchases.kmp.ui.revenuecatui.Paywall
 import com.revenuecat.purchases.kmp.ui.revenuecatui.PaywallOptions
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.initialize
 import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
@@ -257,17 +255,12 @@ fun App(
             }
         }
 
-        val context = LocalPlatformContext.current
         LaunchedEffect("initialize_sentry") {
             // keep sentry until we know firebase is working
             if (!BuildConfig.isDebug) {
                 Sentry.init { options ->
                     options.dsn = BuildKonfig.SENTRY_DSN
                 }
-            }
-
-            if (!BuildConfig.isDebug) {
-                Firebase.initialize((context as? Platform.Android)?.context)
             }
         }
 
