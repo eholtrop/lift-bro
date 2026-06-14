@@ -1,4 +1,4 @@
--- Recreate Movement table to drop NOT NULL from categoryId
+-- Recreate Movement table to drop NOT NULL from categoryI(d
 -- SQLite doesn't support ALTER COLUMN
 
 CREATE TABLE _Movement (
