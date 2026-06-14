@@ -49,6 +49,13 @@ import com.lift.bro.ui.theme.spacing
 import kotlin.math.ceil
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.calendar_day_heading_fri
+import lift_bro.core.generated.resources.calendar_day_heading_mon
+import lift_bro.core.generated.resources.calendar_day_heading_sat
+import lift_bro.core.generated.resources.calendar_day_heading_sun
+import lift_bro.core.generated.resources.calendar_day_heading_thu
+import lift_bro.core.generated.resources.calendar_day_heading_tue
+import lift_bro.core.generated.resources.calendar_day_heading_wed
 import lift_bro.core.generated.resources.calendar_next_month_content_description
 import lift_bro.core.generated.resources.calendar_previous_month_content_description
 import lift_bro.core.generated.resources.calendar_today_content_description
@@ -162,6 +169,17 @@ fun Calendar(
 }
 
 val today get() = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+@Composable
+private fun DayOfWeek.dayHeading(): String = when (this) {
+    DayOfWeek.MONDAY -> stringResource(Res.string.calendar_day_heading_mon)
+    DayOfWeek.TUESDAY -> stringResource(Res.string.calendar_day_heading_tue)
+    DayOfWeek.WEDNESDAY -> stringResource(Res.string.calendar_day_heading_wed)
+    DayOfWeek.THURSDAY -> stringResource(Res.string.calendar_day_heading_thu)
+    DayOfWeek.FRIDAY -> stringResource(Res.string.calendar_day_heading_fri)
+    DayOfWeek.SATURDAY -> stringResource(Res.string.calendar_day_heading_sat)
+    DayOfWeek.SUNDAY -> stringResource(Res.string.calendar_day_heading_sun)
+}
 
 @Composable
 private fun CalendarTitle(
@@ -284,7 +302,7 @@ private fun CalendarContent(
             DayOfWeek.values().forEach {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = it.toString().take(3).lowercase(),
+                    text = it.dayHeading(),
                     textAlign = TextAlign.Center,
                 )
             }

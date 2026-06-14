@@ -59,6 +59,7 @@ import lift_bro.core.generated.resources.variation_details_tempo_down_cd
 import lift_bro.core.generated.resources.variation_details_tempo_up_cd
 import lift_bro.core.generated.resources.movement_details_body_weight
 import lift_bro.core.generated.resources.movement_details_create_movement
+import lift_bro.core.generated.resources.movement_details_date_format
 import lift_bro.core.generated.resources.movement_details_empty_subtitle
 import lift_bro.core.generated.resources.movement_details_empty_title
 import lift_bro.core.generated.resources.movement_details_reps
@@ -190,7 +191,7 @@ private fun MovementDetailsScreen(
             val items: List<Pair<String, List<LBSet>>> = when (grouping) {
                 Grouping.Date -> sets.groupBy { it.date.toLocalDate() }.toList()
                     .sortedByDescending { it.first }
-                    .map { Pair(it.first.toString("EEEE, MMM d"), it.second) }
+                    .map { Pair(it.first.toString(stringResource(Res.string.movement_details_date_format)), it.second) }
 
                 Grouping.Reps -> sets.groupBy { it.reps }.toList().sortedByDescending { it.first }
                     .map { Pair(stringResource(Res.string.movement_details_reps, it.first), it.second) }
