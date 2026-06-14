@@ -190,7 +190,9 @@ fun ProgressItemView(
                 Box {
                     Icon(
                         imageVector = MaterialTheme.icons.favourite,
-                        contentDescription = stringResource(Res.string.wrapped_progress_screen_favourite_content_description),
+                        contentDescription = stringResource(
+                            Res.string.wrapped_progress_screen_favourite_content_description
+                        ),
                         tint = state.variationColor?.toColor() ?: MaterialTheme.colorScheme.primary
                     )
                     Icon(

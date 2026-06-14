@@ -16,6 +16,10 @@ import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.dashboard_sorting_dialog_favourites_at_top
 import lift_bro.core.generated.resources.dashboard_sorting_dialog_title
+import lift_bro.core.generated.resources.dashboard_sorting_heaviest
+import lift_bro.core.generated.resources.dashboard_sorting_latest
+import lift_bro.core.generated.resources.dashboard_sorting_name
+import lift_bro.core.generated.resources.dashboard_sorting_reps
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -47,8 +51,14 @@ fun DashboardSortingDialog(
                 HorizontalDivider()
 
                 SortingOption.entries.forEach { option ->
+                    val label = when (option) {
+                        SortingOption.Heaviest -> stringResource(Res.string.dashboard_sorting_heaviest)
+                        SortingOption.Reps -> stringResource(Res.string.dashboard_sorting_reps)
+                        SortingOption.Latest -> stringResource(Res.string.dashboard_sorting_latest)
+                        SortingOption.Name -> stringResource(Res.string.dashboard_sorting_name)
+                    }
                     RadioField(
-                        text = option.name,
+                        text = label,
                         selected = sortingSettings.option == option
                     ) {
                         optionSelected(option)

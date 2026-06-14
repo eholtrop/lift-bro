@@ -54,12 +54,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.onboarding_setup_kg
+import lift_bro.core.generated.resources.onboarding_setup_lbs
 import lift_bro.core.generated.resources.onboarding_setup_screen_continue_cta
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_lifts_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_uom_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_title
-import lift_bro.core.generated.resources.onboarding_setup_kg
-import lift_bro.core.generated.resources.onboarding_setup_lbs
+import lift_bro.core.generated.resources.onboarding_setup_variation_separator
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 
@@ -241,7 +242,9 @@ private fun OnboardingLiftSelector(
                                             variation.name
                                                 ?: ""
                                         } else {
-                                            "${variation.name}, "
+                                            "${variation.name}${stringResource(
+                                                Res.string.onboarding_setup_variation_separator
+                                            )}"
                                         },
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal

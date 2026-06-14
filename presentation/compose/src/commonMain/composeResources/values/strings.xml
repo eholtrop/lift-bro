@@ -513,4 +513,17 @@ Soreness or pain?</string>
     <string name="variation_search_dialog_set_summary">%1$s: %2$s x %3$d</string>
     <string name="category_details_uom_format">%1$s %2$s</string>
     <string name="variation_text_field_ellipsis">...</string>
+
+    <string name="dashboard_lift_header_weight_reps_separator">/</string>
+
+    <string name="category_details_twm_separator"> </string>
+
+    <string name="onboarding_setup_variation_separator">, </string>
+
+    <string name="plan_timer_emoji">😮‍💨</string>
+
+    <string name="dashboard_sorting_heaviest">Heaviest</string>
+    <string name="dashboard_sorting_reps">Reps</string>
+    <string name="dashboard_sorting_latest">Latest</string>
+    <string name="dashboard_sorting_name">Name</string>
 </resources>

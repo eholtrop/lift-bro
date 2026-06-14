@@ -81,7 +81,9 @@ fun VariationTextField(
                 {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = stringResource(Res.string.lift_details_screen_favourite_content_description),
+                        contentDescription = stringResource(
+                            Res.string.lift_details_screen_favourite_content_description
+                        ),
                     )
                 }
             } else {

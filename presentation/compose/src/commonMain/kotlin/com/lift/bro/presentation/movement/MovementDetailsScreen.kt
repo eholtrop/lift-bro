@@ -53,10 +53,6 @@ import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_details_fab_content_description
-import lift_bro.core.generated.resources.variation_details_notes_label
-import lift_bro.core.generated.resources.variation_details_notes_placeholder
-import lift_bro.core.generated.resources.variation_details_tempo_down_cd
-import lift_bro.core.generated.resources.variation_details_tempo_up_cd
 import lift_bro.core.generated.resources.movement_details_body_weight
 import lift_bro.core.generated.resources.movement_details_create_movement
 import lift_bro.core.generated.resources.movement_details_empty_subtitle
@@ -64,6 +60,10 @@ import lift_bro.core.generated.resources.movement_details_empty_title
 import lift_bro.core.generated.resources.movement_details_reps
 import lift_bro.core.generated.resources.movement_details_tempo_format
 import lift_bro.core.generated.resources.movement_details_tempo_separator
+import lift_bro.core.generated.resources.variation_details_notes_label
+import lift_bro.core.generated.resources.variation_details_notes_placeholder
+import lift_bro.core.generated.resources.variation_details_tempo_down_cd
+import lift_bro.core.generated.resources.variation_details_tempo_up_cd
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.listCorners
 import tv.dpal.ext.ktx.datetime.toString
@@ -197,7 +197,17 @@ private fun MovementDetailsScreen(
 
                 Grouping.Tempo -> sets.groupBy { it.tempo }.toList()
                     .sortedByDescending { it.second.maxOf { it.date.toLocalDate() } }
-                    .map { Pair(stringResource(Res.string.movement_details_tempo_format, it.first.down, it.first.hold, it.first.up), it.second) }
+                    .map {
+                        Pair(
+                            stringResource(
+                                Res.string.movement_details_tempo_format,
+                                it.first.down,
+                                it.first.hold,
+                                it.first.up
+                            ),
+                            it.second
+                        )
+                    }
 
                 Grouping.Weight -> sets.groupBy { it.weight }.toList()
                     .sortedByDescending { it.first }.map { Pair("${it.first}", it.second) }

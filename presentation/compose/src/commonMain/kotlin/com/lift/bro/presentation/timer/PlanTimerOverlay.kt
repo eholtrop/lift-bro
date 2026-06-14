@@ -44,6 +44,7 @@ import lift_bro.core.generated.resources.plan_timer_add_set
 import lift_bro.core.generated.resources.plan_timer_add_tempo
 import lift_bro.core.generated.resources.plan_timer_delete_content_description
 import lift_bro.core.generated.resources.plan_timer_delete_tempo
+import lift_bro.core.generated.resources.plan_timer_emoji
 import lift_bro.core.generated.resources.plan_timer_ready_label
 import lift_bro.core.generated.resources.plan_timer_remove_set
 import lift_bro.core.generated.resources.plan_timer_repeat_symbol
@@ -199,7 +200,7 @@ fun PlanTimerOverlay(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.plan_timer_delete_tempo),
+                                    contentDescription = stringResource(Res.string.plan_timer_delete_tempo),
                                 )
                             }
                         }
@@ -236,7 +237,7 @@ fun PlanTimerOverlay(
                 )
                 Space(MaterialTheme.spacing.one)
                 Text(
-                    text = "\uD83D\uDE2E\u200D\uD83D\uDCA8",
+                    text = stringResource(Res.string.plan_timer_emoji),
                     style = MaterialTheme.typography.headlineLarge
                 )
             }
