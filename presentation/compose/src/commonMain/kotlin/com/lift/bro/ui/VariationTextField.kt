@@ -38,8 +38,8 @@ import kotlinx.coroutines.flow.collectLatest
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.edit_lift_screen_variation_name_placeholder
 import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
-import lift_bro.core.generated.resources.variation_text_field_select_lift
 import lift_bro.core.generated.resources.variation_text_field_lift_name_truncated
+import lift_bro.core.generated.resources.variation_text_field_select_lift
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -81,7 +81,9 @@ fun VariationTextField(
                 {
                     Icon(
                         imageVector = Icons.Default.Favorite,
-                        contentDescription = stringResource(Res.string.lift_details_screen_favourite_content_description),
+                        contentDescription = stringResource(
+                            Res.string.lift_details_screen_favourite_content_description
+                        ),
                     )
                 }
             } else {

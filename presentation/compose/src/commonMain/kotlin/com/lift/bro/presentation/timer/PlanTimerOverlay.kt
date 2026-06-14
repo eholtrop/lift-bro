@@ -44,10 +44,10 @@ import lift_bro.core.generated.resources.plan_timer_add_set
 import lift_bro.core.generated.resources.plan_timer_add_tempo
 import lift_bro.core.generated.resources.plan_timer_delete_content_description
 import lift_bro.core.generated.resources.plan_timer_delete_tempo
+import lift_bro.core.generated.resources.plan_timer_overlay_rest_complete_emoji
 import lift_bro.core.generated.resources.plan_timer_ready_label
 import lift_bro.core.generated.resources.plan_timer_remove_set
 import lift_bro.core.generated.resources.plan_timer_repeat_symbol
-import lift_bro.core.generated.resources.plan_timer_overlay_rest_complete_emoji
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -200,7 +200,7 @@ fun PlanTimerOverlay(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                            contentDescription = stringResource(Res.string.plan_timer_delete_tempo),
+                                    contentDescription = stringResource(Res.string.plan_timer_delete_tempo),
                                 )
                             }
                         }

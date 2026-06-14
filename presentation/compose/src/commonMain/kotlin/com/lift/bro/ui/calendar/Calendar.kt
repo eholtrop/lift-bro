@@ -46,17 +46,24 @@ import com.lift.bro.ui.AnimatedText
 import com.lift.bro.ui.AnimatedTextDefaults
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
-import kotlin.math.ceil
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.calendar_next_month_content_description
-import lift_bro.core.generated.resources.calendar_previous_month_content_description
-import lift_bro.core.generated.resources.calendar_today_content_description
-import org.jetbrains.compose.resources.stringResource
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.calendar_day_fri
+import lift_bro.core.generated.resources.calendar_day_mon
+import lift_bro.core.generated.resources.calendar_day_sat
+import lift_bro.core.generated.resources.calendar_day_sun
+import lift_bro.core.generated.resources.calendar_day_thu
+import lift_bro.core.generated.resources.calendar_day_tue
+import lift_bro.core.generated.resources.calendar_day_wed
+import lift_bro.core.generated.resources.calendar_next_month_content_description
+import lift_bro.core.generated.resources.calendar_previous_month_content_description
+import lift_bro.core.generated.resources.calendar_today_content_description
+import org.jetbrains.compose.resources.stringResource
 import tv.dpal.ext.ktx.datetime.toString
 import kotlin.time.Clock
 
@@ -284,7 +291,15 @@ private fun CalendarContent(
             DayOfWeek.values().forEach {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = it.toString().take(3).lowercase(),
+                    text = when (it) {
+                        DayOfWeek.MONDAY -> stringResource(Res.string.calendar_day_mon)
+                        DayOfWeek.TUESDAY -> stringResource(Res.string.calendar_day_tue)
+                        DayOfWeek.WEDNESDAY -> stringResource(Res.string.calendar_day_wed)
+                        DayOfWeek.THURSDAY -> stringResource(Res.string.calendar_day_thu)
+                        DayOfWeek.FRIDAY -> stringResource(Res.string.calendar_day_fri)
+                        DayOfWeek.SATURDAY -> stringResource(Res.string.calendar_day_sat)
+                        DayOfWeek.SUNDAY -> stringResource(Res.string.calendar_day_sun)
+                    },
                     textAlign = TextAlign.Center,
                 )
             }

@@ -54,12 +54,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.onboarding_setup_kg
+import lift_bro.core.generated.resources.onboarding_setup_lbs
 import lift_bro.core.generated.resources.onboarding_setup_screen_continue_cta
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_lifts_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_uom_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_title
-import lift_bro.core.generated.resources.onboarding_setup_kg
-import lift_bro.core.generated.resources.onboarding_setup_lbs
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 
@@ -236,13 +236,14 @@ private fun OnboardingLiftSelector(
                                             )
                                         }
                                     }
+                                    val separator = stringResource(Res.string.onboarding_setup_variation_name_separator)
+                                    val variationLabel = if (index == variations.size - 1) {
+                                        variation.name ?: ""
+                                    } else {
+                                        "${variation.name}$separator"
+                                    }
                                     Text(
-                                        if (index == variations.size - 1) {
-                                            variation.name
-                                                ?: ""
-                                        } else {
-                                            "${variation.name}, "
-                                        },
+                                        text = variationLabel,
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal
                                     )

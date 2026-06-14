@@ -91,7 +91,16 @@ fun ClientSettingsRowContent(
                         state.options.forEach { location ->
                             DropdownMenuItem(
                                 text = {
-                                    Text(location.toString())
+                                    Text(
+                                        when (location) {
+                                            ClientModeOptions.Local -> stringResource(
+                                                Res.string.client_settings_mode_local
+                                            )
+                                            ClientModeOptions.Remote -> stringResource(
+                                                Res.string.client_settings_mode_remote
+                                            )
+                                        }
+                                    )
                                 },
                                 onClick = {
                                     onEvent(ClientSettingsEvent.ClientModeSelected(location))

@@ -72,8 +72,6 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.lift_details_fab_content_description
-import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
 import lift_bro.core.generated.resources.category_details_delete_content_description
 import lift_bro.core.generated.resources.category_details_delete_warning_text
 import lift_bro.core.generated.resources.category_details_delete_warning_title
@@ -82,6 +80,8 @@ import lift_bro.core.generated.resources.category_details_name_placeholder
 import lift_bro.core.generated.resources.category_details_no_sets
 import lift_bro.core.generated.resources.category_details_reps
 import lift_bro.core.generated.resources.category_details_selected_set_weight_separator
+import lift_bro.core.generated.resources.lift_details_fab_content_description
+import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.compose.listCorners
@@ -403,7 +403,9 @@ private fun VariationCard(
                                 }
                                 withStyle(MaterialTheme.typography.bodyMedium.toSpanStyle()) {
                                     if (LocalTwmSettings.current) {
-                                        append(stringResource(Res.string.category_details_selected_set_weight_separator))
+                                        append(
+                                            stringResource(Res.string.category_details_selected_set_weight_separator)
+                                        )
                                         append(
                                             pair?.second?.sumOf { it.weight }.decimalFormat().uom()
                                         )

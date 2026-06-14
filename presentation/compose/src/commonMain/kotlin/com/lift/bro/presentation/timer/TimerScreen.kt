@@ -62,9 +62,10 @@ import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
-import tv.dpal.compose.isOpen
-import kotlin.time.Clock
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.timer_ended_mer_label
+import lift_bro.core.generated.resources.timer_ended_set_completed
+import lift_bro.core.generated.resources.timer_ended_twm_label
 import lift_bro.core.generated.resources.timer_screen_great_job
 import lift_bro.core.generated.resources.timer_screen_mute_sound
 import lift_bro.core.generated.resources.timer_screen_pause
@@ -72,14 +73,13 @@ import lift_bro.core.generated.resources.timer_screen_play_sound
 import lift_bro.core.generated.resources.timer_screen_restart
 import lift_bro.core.generated.resources.timer_screen_resume
 import lift_bro.core.generated.resources.timer_screen_start
-import lift_bro.core.generated.resources.timer_ended_mer_label
-import lift_bro.core.generated.resources.timer_ended_set_completed
-import lift_bro.core.generated.resources.timer_ended_twm_label
 import lift_bro.core.generated.resources.timer_set_field_con_label
 import lift_bro.core.generated.resources.timer_set_field_ecc_label
 import lift_bro.core.generated.resources.timer_set_field_hold_label
 import lift_bro.core.generated.resources.timer_set_field_rest_label
 import org.jetbrains.compose.resources.stringResource
+import tv.dpal.compose.isOpen
+import kotlin.time.Clock
 
 @Composable
 fun TimerScreen(
@@ -139,7 +139,7 @@ fun TimerScreen(
                                 )
                             }
 
-                                is TimerState.Plan -> {
+                            is TimerState.Plan -> {
                                 IconButton(
                                     modifier = Modifier.align(Alignment.Start),
                                     onClick = {
@@ -167,7 +167,7 @@ fun TimerScreen(
                                 )
                             }
 
-                                is TimerState.Running -> {
+                            is TimerState.Running -> {
                                 IconButton(
                                     modifier = Modifier.align(Alignment.Start),
                                     onClick = {
@@ -228,7 +228,9 @@ fun TimerScreen(
                                         contentDescription = when (state) {
                                             is TimerState.Ended -> stringResource(Res.string.timer_screen_restart)
                                             is TimerState.Plan -> stringResource(Res.string.timer_screen_start)
-                                            is TimerState.Running -> if (state.paused) stringResource(Res.string.timer_screen_resume) else stringResource(Res.string.timer_screen_pause)
+                                            is TimerState.Running -> if (state.paused) stringResource(
+                                                Res.string.timer_screen_resume
+                                            ) else stringResource(Res.string.timer_screen_pause)
                                         },
                                     )
                                 }
@@ -287,7 +289,11 @@ fun TimerOverlay(
                     state.set?.let { set ->
                         item {
                             Text(
-                                stringResource(Res.string.timer_ended_set_completed, set.reps, weightFormat(set.weight)),
+                                stringResource(
+                                    Res.string.timer_ended_set_completed,
+                                    set.reps,
+                                    weightFormat(set.weight)
+                                ),
                                 style = MaterialTheme.typography.titleLarge
                             )
                         }
@@ -303,7 +309,10 @@ fun TimerOverlay(
                                     message = {
                                         if (twmEnabled) {
                                             Text(
-                                                text = stringResource(Res.string.timer_ended_twm_label, weightFormat(set.totalWeightMoved))
+                                                text = stringResource(
+                                                    Res.string.timer_ended_twm_label,
+                                                    weightFormat(set.totalWeightMoved)
+                                                )
                                             )
                                         }
                                         if (merEnabled) {

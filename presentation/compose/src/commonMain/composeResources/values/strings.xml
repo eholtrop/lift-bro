@@ -516,4 +516,14 @@ Soreness or pain?</string>
     <string name="plan_timer_overlay_rest_complete_emoji">😮‍💨</string>
 
     <string name="variation_text_field_lift_name_truncated">...</string>
+
+    <string name="onboarding_setup_variation_name_separator">, </string>
+
+    <string name="calendar_day_mon">mon</string>
+    <string name="calendar_day_tue">tue</string>
+    <string name="calendar_day_wed">wed</string>
+    <string name="calendar_day_thu">thu</string>
+    <string name="calendar_day_fri">fri</string>
+    <string name="calendar_day_sat">sat</string>
+    <string name="calendar_day_sun">sun</string>
 </resources>
