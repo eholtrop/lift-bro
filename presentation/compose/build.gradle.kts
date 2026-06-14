@@ -92,9 +92,6 @@ kotlin {
             implementation(libs.revenuecat.datetime)
             implementation(libs.revenuecat.ui)
 
-
-//            implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
-            implementation("dev.gitlive:firebase-crashlytics:2.1.0")
             implementation(libs.posthog.kmp)
         }
 
