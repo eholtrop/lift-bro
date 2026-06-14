@@ -41,6 +41,10 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.reps
+import lift_bro.core.generated.resources.dashboard_lift_header_create_category
+import lift_bro.core.generated.resources.dashboard_lift_header_rpe_chip
+import lift_bro.core.generated.resources.dashboard_lift_header_sort
+import lift_bro.core.generated.resources.dashboard_lift_header_tempo_chip
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
 
@@ -104,7 +108,7 @@ fun DashboardLiftHeader(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Create Category"
+                    contentDescription = stringResource(Res.string.dashboard_lift_header_create_category)
                 )
             }
         }
@@ -163,7 +167,7 @@ fun DashboardLiftHeader(
                     contentDescription = null
                 )
                 Text(
-                    text = "rpe",
+                    text = stringResource(Res.string.dashboard_lift_header_rpe_chip),
                     color = if (showRpe) {
                         MaterialTheme.colorScheme.onPrimary
                     } else {
@@ -182,7 +186,7 @@ fun DashboardLiftHeader(
                         contentDescription = null
                     )
                     Text(
-                        text = "tempo",
+                        text = stringResource(Res.string.dashboard_lift_header_tempo_chip),
                         color = if (showTempo) {
                             MaterialTheme.colorScheme.onPrimary
                         } else {
@@ -211,7 +215,7 @@ fun DashboardLiftHeader(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.Sort,
-                        contentDescription = "Sort"
+                        contentDescription = stringResource(Res.string.dashboard_lift_header_sort)
                     )
                 }
             }

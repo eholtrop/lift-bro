@@ -13,6 +13,10 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.dashboard_sorting_dialog_favourites_at_top
+import lift_bro.core.generated.resources.dashboard_sorting_dialog_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun DashboardSortingDialog(
@@ -25,7 +29,7 @@ fun DashboardSortingDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {},
         dismissButton = {},
-        title = { Text("Sorting") },
+        title = { Text(stringResource(Res.string.dashboard_sorting_dialog_title)) },
         text = {
             Column {
                 Row(
@@ -36,7 +40,7 @@ fun DashboardSortingDialog(
                         onCheckedChange = { toggleFavourite() }
                     )
                     Text(
-                        text = "Favourites at top"
+                        text = stringResource(Res.string.dashboard_sorting_dialog_favourites_at_top)
                     )
                 }
 

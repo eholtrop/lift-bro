@@ -53,6 +53,7 @@ import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.wrapped_landing_back_button_content_description
 import lift_bro.core.generated.resources.wrapped_landing_next_button_content_description
+import lift_bro.core.generated.resources.dialog_close_content_description
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.flowvi.Interactor
 
@@ -149,7 +150,7 @@ fun WrappedLandingScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close"
+                        contentDescription = stringResource(Res.string.dialog_close_content_description)
                     )
                 }
             } else {
@@ -167,34 +168,13 @@ fun WrappedLandingScreen(
                 }
             }
 
-            Row(
-                modifier = Modifier.weight(1f),
-                horizontalArrangement = Arrangement.spacedBy(
-                    MaterialTheme.spacing.quarter,
-                    alignment = Alignment.CenterHorizontally
-                ),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                repeat(pagerState.pageCount) {
-                    Box(
-                        modifier = Modifier.alpha(if (pagerState.currentPage == it) 1f else .5f)
-                            .background(
-                                color = if (pagerState.currentPage == it) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground,
-                                shape = MaterialTheme.shapes.extraSmall
-                            )
-                            .size(if (pagerState.currentPage == it) 12.dp else 8.dp)
-                    ) {
-                    }
-                }
-            }
-
             if (pagerState.currentPage == state.pages.lastIndex) {
                 IconButton(
                     onClick = onClosePressed
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close"
+                        contentDescription = stringResource(Res.string.dialog_close_content_description)
                     )
                 }
             } else {

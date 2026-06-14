@@ -397,7 +397,116 @@ Soreness or pain?</string>
     <string name="home_screen_icon_maybe_later_cta">Maybe Later...</string>
     <string name="home_screen_icon_tune_in_cta">Tune in!</string>
     <string name="home_screen_loading_title">Loading...</string>
+
+    <string name="dashboard_sorting_dialog_title">Sorting</string>
+    <string name="dashboard_sorting_dialog_favourites_at_top">Favourites at top</string>
+
+    <string name="create_variation_dialog_cancel">Cancel</string>
+    <string name="create_variation_dialog_save">Save</string>
+
+    <string name="variation_search_dialog_save_and_select">Save and Select</string>
+    <string name="variation_search_dialog_not_found_text">Can't find what you're looking for?</string>
+    <string name="variation_search_dialog_create_variation">Create Variation</string>
+
+    <string name="dashboard_lift_header_create_category">Create Category</string>
+    <string name="dashboard_lift_header_sort">Sort</string>
+    <string name="dashboard_lift_header_rpe_chip">rpe</string>
+    <string name="dashboard_lift_header_tempo_chip">tempo</string>
+
+    <string name="plan_timer_ready_label">Ready</string>
+    <string name="plan_timer_delete_tempo">Delete Tempo</string>
+    <string name="plan_timer_add_tempo">Add Tempo</string>
+
+    <string name="timer_set_field_ecc_label">Ecc</string>
+    <string name="timer_set_field_hold_label">Hold</string>
+    <string name="timer_set_field_con_label">Con</string>
+    <string name="timer_set_field_rest_label">Rest</string>
+
+    <string name="timer_screen_mute_sound">Mute Sound</string>
+    <string name="timer_screen_play_sound">Play Sound</string>
+    <string name="timer_screen_restart">Restart</string>
+    <string name="timer_screen_start">Start</string>
+    <string name="timer_screen_resume">Resume</string>
+    <string name="timer_screen_pause">Pause</string>
+    <string name="timer_screen_great_job">Great job!</string>
+
+    <string name="movement_details_create_movement">Create Movement</string>
+    <string name="movement_details_body_weight">Body Weight 🏋</string>
+    <string name="movement_details_empty_title">Do you even lift bro?</string>
+    <string name="movement_details_empty_subtitle">Add a set with + below!</string>
+    <string name="movement_details_reps">%1$d Rep(s)</string>
+
+    <string name="goals_screen_title">2026 Goals</string>
+    <string name="goals_screen_goals">Goals</string>
+    <string name="goals_screen_achieved">Achieved</string>
+    <string name="goals_screen_delete">Delete</string>
+
+    <string name="category_details_delete_warning_title">Are you sure?</string>
+    <string name="category_details_delete_warning_text">This will delete the Category, All movements will stay!</string>
+    <string name="category_details_name_placeholder">Category</string>
+    <string name="category_details_delete_content_description">Delete Category,</string>
+    <string name="category_details_movements_section">Movements</string>
+    <string name="category_details_no_sets">No Sets</string>
+    <string name="category_details_reps">%1$d Reps</string>
+    <string name="category_details_mer_suffix"> (+%1$dmer)</string>
+
+    <string name="client_settings_row_title">Db Location</string>
+    <string name="client_settings_mode_local">Local</string>
+    <string name="client_settings_mode_remote">Remote</string>
+    <string name="client_settings_local_description">All data will be stored locally on your device.\nBe sure to backup frequently!</string>
+    <string name="client_settings_server_url_placeholder">http://192.168.0.42:8080</string>
+    <string name="client_settings_server_url_label">Server Url</string>
+    <string name="client_settings_test_connection">Test Connection</string>
+    <string name="client_settings_apply">Apply</string>
+
+    <string name="settings_release_notes_content_description">Release Notes</string>
+    <string name="settings_other_goodies_text">Other Goodies (experimental features)</string>
+    <string name="settings_experimental_section_title">Experimental - Expect 🦗</string>
+    <string name="settings_experimental_timer_title">Timer</string>
+    <string name="settings_experimental_timer_description">Enable a timer for counting down sets and rest periods</string>
+    <string name="settings_experimental_dashboard_v3_title">Dashboard V3</string>
+    <string name="settings_experimental_dashboard_v3_description">No more tabs!</string>
+    <string name="settings_lift_pros_only_section_title">Lift Pros Only 😎</string>
+
+    <string name="variation_text_field_select_lift">Select Lift</string>
+
+    <string name="category_drop_down_select_category">Select Category</string>
+    <string name="category_drop_down_expand_menu">Expand Menu</string>
+
+    <string name="onboarding_setup_lbs">LBS</string>
+    <string name="onboarding_setup_kg">KG</string>
     <string name="home_screen_wrapped_button_text">🎉 🎁</string>
     <string name="submit_text_field_edit_content_description">Edit</string>
     <string name="submit_text_field_save_content_description">Save</string>
+
+    <string name="app_celebration_new_estimated_max">New estimated Max!</string>
+    <string name="app_celebration_new_one_rep_max">New one rep max!</string>
+
+    <string name="movement_details_date_format">EEEE, MMM d</string>
+    <string name="movement_details_tempo_format">%1$s/%2$s/%3$s</string>
+    <string name="movement_details_tempo_separator">-</string>
+
+    <string name="plan_timer_add_set">+</string>
+    <string name="plan_timer_remove_set">-</string>
+    <string name="plan_timer_repeat_symbol">x</string>
+    <string name="plan_timer_delete_content_description">Delete Tempo</string>
+
+    <string name="recent_workout_card_date_format">EEE, MMM d - yyyy</string>
+
+    <string name="rep_weight_selector_reps_placeholder">0</string>
+    <string name="rep_weight_selector_weight_placeholder">0.0</string>
+    <string name="rep_weight_selector_weight_at_label">%1$s at</string>
+    <string name="rep_weight_selector_twm_label"> = %1$s</string>
+
+    <string name="rpe_selector_fallback_text">RPE</string>
+    <string name="rpe_selector_label">RPE %1$d</string>
+
+    <string name="timer_ended_set_completed">%1$d x %2$s! 💪</string>
+    <string name="timer_ended_twm_label">TWM: %1$s</string>
+    <string name="timer_ended_mer_label">+ %1$d mers</string>
+
+    <string name="workout_screen_date_format">EEEE, MMMM d, yyyy</string>
+    <string name="workout_screen_most_recent_date_format">EEEE, MMM d, yyyy</string>
+
+    <string name="wrapped_goals_inspiration_title">Some inspiration!</string>
 </resources>

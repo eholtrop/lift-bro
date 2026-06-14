@@ -39,6 +39,15 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.plan_timer_add_set
+import lift_bro.core.generated.resources.plan_timer_add_tempo
+import lift_bro.core.generated.resources.plan_timer_delete_content_description
+import lift_bro.core.generated.resources.plan_timer_delete_tempo
+import lift_bro.core.generated.resources.plan_timer_ready_label
+import lift_bro.core.generated.resources.plan_timer_remove_set
+import lift_bro.core.generated.resources.plan_timer_repeat_symbol
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PlanTimerOverlay(
@@ -64,7 +73,7 @@ fun PlanTimerOverlay(
                         onEvent(TimerEvent.Plan.StartupTimeChanged(it))
                     }
                 },
-                label = { Text("Ready") },
+                label = { Text(stringResource(Res.string.plan_timer_ready_label)) },
                 textStyle = MaterialTheme.typography.displayMedium.copy(
                     textAlign = TextAlign.Center,
                 ),
@@ -104,7 +113,7 @@ fun PlanTimerOverlay(
                                 onEvent(TimerEvent.Plan.AddTimer)
                             }
                         ) {
-                            Text("+")
+                            Text(stringResource(Res.string.plan_timer_add_set))
                         }
                         Button(
                             onClick = {
@@ -122,7 +131,7 @@ fun PlanTimerOverlay(
                             ) {
                                 Text(
                                     modifier = Modifier.padding(bottom = MaterialTheme.spacing.quarter),
-                                    text = "x",
+                                    text = stringResource(Res.string.plan_timer_repeat_symbol),
                                     style = MaterialTheme.typography.displaySmall,
                                 )
                                 AnimatedText(
@@ -139,7 +148,7 @@ fun PlanTimerOverlay(
                             },
                             enabled = state.tempo.size > 1
                         ) {
-                            Text("-")
+                            Text(stringResource(Res.string.plan_timer_remove_set))
                         }
                     }
                 } else {
@@ -151,7 +160,7 @@ fun PlanTimerOverlay(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete Tempo",
+                            contentDescription = stringResource(Res.string.plan_timer_delete_content_description),
                         )
                     }
                 }
@@ -190,7 +199,7 @@ fun PlanTimerOverlay(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = "Delete Tempo",
+                            contentDescription = stringResource(Res.string.plan_timer_delete_tempo),
                                 )
                             }
                         }
@@ -209,7 +218,7 @@ fun PlanTimerOverlay(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add Tempo"
+                            contentDescription = stringResource(Res.string.plan_timer_add_tempo)
                         )
                     }
                 }

@@ -57,6 +57,11 @@ import lift_bro.core.generated.resources.variation_details_notes_label
 import lift_bro.core.generated.resources.variation_details_notes_placeholder
 import lift_bro.core.generated.resources.variation_details_tempo_down_cd
 import lift_bro.core.generated.resources.variation_details_tempo_up_cd
+import lift_bro.core.generated.resources.movement_details_body_weight
+import lift_bro.core.generated.resources.movement_details_create_movement
+import lift_bro.core.generated.resources.movement_details_empty_subtitle
+import lift_bro.core.generated.resources.movement_details_empty_title
+import lift_bro.core.generated.resources.movement_details_reps
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.listCorners
 import tv.dpal.ext.ktx.datetime.toString
@@ -126,7 +131,7 @@ private fun MovementDetailsScreen(
                         interactor(MovementDetailsEvent.UpdateMovement.NameUpdated(it))
                     },
                     placeholder = {
-                        Text("Create Movement")
+                        Text(stringResource(Res.string.movement_details_create_movement))
                     }
                 )
                 if (state.movement.name != null) {
@@ -165,7 +170,7 @@ private fun MovementDetailsScreen(
                             )
 
                             CheckField(
-                                title = "Body Weight \uD83E\uDD38",
+                                title = stringResource(Res.string.movement_details_body_weight),
                                 checked = state.movement.bodyWeight == true,
                                 checkChanged = {
                                     interactor(
@@ -186,7 +191,7 @@ private fun MovementDetailsScreen(
                     .map { Pair(it.first.toString("EEEE, MMM d"), it.second) }
 
                 Grouping.Reps -> sets.groupBy { it.reps }.toList().sortedByDescending { it.first }
-                    .map { Pair("${it.first} Rep(s)", it.second) }
+                    .map { Pair(stringResource(Res.string.movement_details_reps, it.first), it.second) }
 
                 Grouping.Tempo -> sets.groupBy { it.tempo }.toList()
                     .sortedByDescending { it.second.maxOf { it.date.toLocalDate() } }
@@ -202,8 +207,8 @@ private fun MovementDetailsScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        Text("Do you even lift bro?")
-                        Text("Add a set with + below!")
+                        Text(stringResource(Res.string.movement_details_empty_title))
+                        Text(stringResource(Res.string.movement_details_empty_subtitle))
 
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
