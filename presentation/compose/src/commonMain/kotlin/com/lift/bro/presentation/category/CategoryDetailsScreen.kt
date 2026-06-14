@@ -81,6 +81,7 @@ import lift_bro.core.generated.resources.category_details_movements_section
 import lift_bro.core.generated.resources.category_details_name_placeholder
 import lift_bro.core.generated.resources.category_details_no_sets
 import lift_bro.core.generated.resources.category_details_reps
+import lift_bro.core.generated.resources.category_details_selected_set_weight_separator
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.compose.listCorners
@@ -402,7 +403,7 @@ private fun VariationCard(
                                 }
                                 withStyle(MaterialTheme.typography.bodyMedium.toSpanStyle()) {
                                     if (LocalTwmSettings.current) {
-                                        append(" ")
+                                        append(stringResource(Res.string.category_details_selected_set_weight_separator))
                                         append(
                                             pair?.second?.sumOf { it.weight }.decimalFormat().uom()
                                         )
