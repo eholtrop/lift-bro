@@ -191,7 +191,7 @@ private fun MovementDetailsScreen(
                     .map { Pair(it.first.toString("EEEE, MMM d"), it.second) }
 
                 Grouping.Reps -> sets.groupBy { it.reps }.toList().sortedByDescending { it.first }
-                    .map { Pair("${it.first} Rep(s)", it.second) }
+                    .map { Pair(stringResource(Res.string.movement_details_reps, it.first), it.second) }
 
                 Grouping.Tempo -> sets.groupBy { it.tempo }.toList()
                     .sortedByDescending { it.second.maxOf { it.date.toLocalDate() } }

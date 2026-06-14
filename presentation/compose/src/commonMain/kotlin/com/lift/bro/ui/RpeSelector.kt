@@ -79,7 +79,7 @@ fun RpeSelector(
                 visible = rpe != null
             ) {
                 rpe?.let {
-                    Text("RPE $rpe", style = MaterialTheme.typography.labelSmall)
+                    Text(stringResource(Res.string.rpe_selector_label, rpe), style = MaterialTheme.typography.labelSmall)
                 }
             }
         }
