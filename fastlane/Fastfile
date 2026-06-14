@@ -98,11 +98,14 @@ platform :ios do
       )
     end
 
-    unless ENV["MATCH_GIT_PRIVATE_KEY"].nil? || ENV["MATCH_GIT_PRIVATE_KEY"].empty?
-      sh "mkdir -p ~/.ssh/"
-      File.write(File.expand_path("~/.ssh/id_rsa"), ENV["MATCH_GIT_PRIVATE_KEY"].strip + "\n")
-      sh "chmod 600 ~/.ssh/id_rsa"
-      sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+    if ENV["CI"] == "true"
+      unless ENV["MATCH_GIT_PRIVATE_KEY"].nil? || ENV["MATCH_GIT_PRIVATE_KEY"].empty?
+        sh "mkdir -p ~/.ssh/"
+        File.write(File.expand_path("~/.ssh/id_rsa"), ENV["MATCH_GIT_PRIVATE_KEY"].strip + "\n")
+        sh "chmod 600 ~/.ssh/id_rsa"
+        sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+      end
+
     end
   end
 
@@ -121,15 +124,24 @@ platform :ios do
 
   desc "Sync iOS App Store Code Signing Identities using match"
   lane :match_appstore do |options|
-    match(
+    match_params = {
       type: "appstore",
       readonly: options[:readonly].nil? ? true : options[:readonly],
       force: options[:force] || false,
       git_url: ENV["MATCH_GIT_URL"],
-      git_branch: "main",
-      keychain_password: ENV["MATCH_PASSWORD"],
-      username: ENV["FASTLANE_USER"]
-    )
+      git_branch: "main"
+    }
+
+    if ENV["CI"] != "true"
+      match_params[:keychain_name] = "build.keychain"
+      match_params[:keychain_password] = ENV["MATCH_PASSWORD"]
+    end
+
+    unless ENV["FASTLANE_USER"].nil? || ENV["FASTLANE_USER"].empty?
+      match_params[:username] = ENV["FASTLANE_USER"]
+    end
+
+    match(match_params)
   end
 
   desc "Build the release artifact for iOS"
@@ -235,7 +247,7 @@ platform :ios do
     testflight(
       ipa: "build/artifacts/ios/ios_app_release.ipa",
       changelog: "Updated app to a new beta version from CI. Build: #{options[:build_number]}",
-      # notify_testers: true, # Set to true to automatically notify testers
+      notify_external_testers: true, # Set to true to automatically notify testers
       # groups: ["Internal Testers"] # Optional: specific groups to notify
     )
   end
