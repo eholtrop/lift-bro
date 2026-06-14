@@ -47,6 +47,7 @@ import lift_bro.core.generated.resources.plan_timer_delete_tempo
 import lift_bro.core.generated.resources.plan_timer_ready_label
 import lift_bro.core.generated.resources.plan_timer_remove_set
 import lift_bro.core.generated.resources.plan_timer_repeat_symbol
+import lift_bro.core.generated.resources.plan_timer_overlay_rest_complete_emoji
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -236,7 +237,7 @@ fun PlanTimerOverlay(
                 )
                 Space(MaterialTheme.spacing.one)
                 Text(
-                    text = "\uD83D\uDE2E\u200D\uD83D\uDCA8",
+                    text = stringResource(Res.string.plan_timer_overlay_rest_complete_emoji),
                     style = MaterialTheme.typography.headlineLarge
                 )
             }

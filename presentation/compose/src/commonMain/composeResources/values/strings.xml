@@ -509,4 +509,12 @@ Soreness or pain?</string>
     <string name="workout_screen_most_recent_date_format">EEEE, MMM d, yyyy</string>
 
     <string name="wrapped_goals_inspiration_title">Some inspiration!</string>
+
+    <string name="dashboard_lift_header_weight_reps_separator">/</string>
+
+    <string name="category_details_selected_set_weight_separator"> </string>
+
+    <string name="plan_timer_overlay_rest_complete_emoji">😮‍💨</string>
+
+    <string name="variation_text_field_lift_name_truncated">...</string>
 </resources>
