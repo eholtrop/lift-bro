@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources><string name="app_congrats_text">Congrats!!</string>
+<resources>    <string name="app_congrats_text">Congrats!!</string>
+    <string name="app_celebration_new_estimated_max">New estimated Max!</string>
+    <string name="app_celebration_new_one_rep_max">New one rep max!</string>
 
     <string name="analytics_consent_banner_action">Enable</string>
     <string name="analytics_consent_banner_detail">Share usage info (Screen Names, Button Clicks)</string>

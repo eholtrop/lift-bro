@@ -353,8 +353,8 @@ fun App(
                                     Space(MaterialTheme.spacing.half)
                                     Text(
                                         text = when (val cel = celebration) {
-                                            is CelebrationType.NewEMax -> "New estimated Max!"
-                                            is CelebrationType.NewOneRepMax -> "New one rep max!"
+                                            is CelebrationType.NewEMax -> stringResource(Res.string.app_celebration_new_estimated_max)
+                                            is CelebrationType.NewOneRepMax -> stringResource(Res.string.app_celebration_new_one_rep_max)
                                             CelebrationType.None -> ""
                                         },
                                         style = MaterialTheme.typography.bodyLarge,
