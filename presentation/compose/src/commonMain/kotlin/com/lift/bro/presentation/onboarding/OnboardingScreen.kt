@@ -51,6 +51,8 @@ import com.lift.bro.domain.models.ThemeMode
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
+import com.lift.bro.presentation.LiftBroNavCoordinator
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.ConsentCheckBoxField
 import com.lift.bro.ui.Space
@@ -81,8 +83,6 @@ import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
-import tv.dpal.navi.LocalNavCoordinator
-import tv.dpal.navi.NavCoordinator
 
 @Composable
 internal fun Modifier.onboardingBackground(): Modifier = this
@@ -100,7 +100,7 @@ internal fun Modifier.onboardingBackground(): Modifier = this
 fun OnboardingScreen(
     defaultState: Int = 0,
     settingsRepository: ISettingsRepository? = dependencies.settingsRepository,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current
 ) {
     var onboardingState by remember { mutableStateOf(defaultState) }
 

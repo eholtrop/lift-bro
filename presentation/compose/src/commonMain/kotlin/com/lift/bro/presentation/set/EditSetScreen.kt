@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.set.components.EditSetVariationSelector
 import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
@@ -64,12 +65,10 @@ import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
-import tv.dpal.compose.padding.vertical.padding
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.atStartOfDayIn
 import tv.dpal.ktx.datetime.toLocalDate
-import tv.dpal.navi.LocalNavCoordinator
 
 enum class RPE(
     val rpe: Int,

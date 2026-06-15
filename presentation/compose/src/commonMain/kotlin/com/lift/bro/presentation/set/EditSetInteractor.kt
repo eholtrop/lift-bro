@@ -17,6 +17,8 @@ import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.domain.serializers.InstantSerializer
+import com.lift.bro.presentation.LiftBroNavCoordinator
+import com.lift.bro.presentation.LocalNavCoordinator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
@@ -34,8 +36,6 @@ import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
-import tv.dpal.navi.LocalNavCoordinator
-import tv.dpal.navi.NavCoordinator
 import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -141,7 +141,7 @@ private fun editSetSource(
 @Composable
 fun rememberEditSetInteractor(
     setId: String,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> = rememberInteractor(
     initialState = null,
     source = { editSetSource(setId) },
@@ -158,7 +158,7 @@ fun rememberEditSetInteractor(
 fun rememberCreateSetInteractor(
     movementId: String?,
     date: Instant?,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> {
     val id = rememberSaveable(movementId, date) { uuid4().toString() }
     return rememberInteractor(

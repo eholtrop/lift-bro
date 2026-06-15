@@ -8,6 +8,8 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
+import com.lift.bro.presentation.LiftBroNavCoordinator
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
@@ -18,8 +20,6 @@ import kotlinx.serialization.Serializable
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.navi.LocalNavCoordinator
-import tv.dpal.navi.NavCoordinator
 
 typealias CategoryDetailsInteractor = Interactor<CategoryDetailsState, CategoryDetailsEvent>
 
@@ -51,7 +51,7 @@ sealed interface CategoryDetailsEvent {
 @Composable
 fun rememberCategoryDetailsInteractor(
     categoryId: String,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): CategoryDetailsInteractor {
     return rememberInteractor(
         initialState = CategoryDetailsState(

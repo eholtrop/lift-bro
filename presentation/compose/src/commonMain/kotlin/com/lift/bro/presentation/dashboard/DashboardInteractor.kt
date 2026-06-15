@@ -8,6 +8,8 @@ import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.presentation.LiftBroNavCoordinator
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.ui.card.lift.LiftCardData
 import com.lift.bro.ui.card.lift.LiftCardState
 import com.lift.bro.ui.navigation.Destination
@@ -22,8 +24,6 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.ktx.datetime.toLocalDate
-import tv.dpal.navi.LocalNavCoordinator
-import tv.dpal.navi.NavCoordinator
 
 typealias DashboardInteractor = Interactor<DashboardState, DashboardEvent>
 
@@ -90,7 +90,7 @@ fun rememberDashboardInteractor(
     variationRepository: IVariationRepository = dependencies.variationRepository,
     setRepository: ISetRepository = dependencies.setRepository,
     settingsRepository: ISettingsRepository = dependencies.settingsRepository,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): DashboardInteractor = rememberInteractor<DashboardState, DashboardEvent>(
     initialState = Loading,
     sideEffects = listOf(

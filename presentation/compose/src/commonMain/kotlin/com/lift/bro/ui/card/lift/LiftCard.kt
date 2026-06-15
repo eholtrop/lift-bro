@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.UOM
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.ui.Card
 import com.lift.bro.ui.FloatVectorConverter
@@ -68,7 +69,6 @@ import lift_bro.core.generated.resources.lift_card_empty_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.toColor
 import tv.dpal.ext.ktx.datetime.toString
-import tv.dpal.navi.LocalNavCoordinator
 import kotlin.math.max
 import kotlin.text.Typography.nbsp
 
