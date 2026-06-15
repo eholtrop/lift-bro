@@ -66,6 +66,8 @@ import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.ApplicationScope
+import com.lift.bro.presentation.LiftBroNavCoordinator
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.movement.render
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.calendar.Calendar
@@ -100,8 +102,6 @@ import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.navi.LocalNavCoordinator
-import tv.dpal.navi.NavCoordinator
 
 val LocalWorkoutCalendarInteractor = staticCompositionLocalOf<Interactor<WorkoutCalendarState, WorkoutCalendarEvent>?> {
     null
@@ -202,7 +202,7 @@ sealed interface DailyWorkoutDetailsEvent {
 @Composable
 fun rememberDailyWorkoutDetailsInteractor(
     date: LocalDate,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): Interactor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent> =
     rememberInteractor<DailyWorkoutDetailsState, DailyWorkoutDetailsEvent>(
         initialState = DailyWorkoutDetailsState(

@@ -52,6 +52,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.lift.bro.config.BuildConfig
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.dashboard.DashboardContent
 import com.lift.bro.presentation.dashboard.DashboardEvent
 import com.lift.bro.presentation.dashboard.DashboardListItem
@@ -96,7 +97,6 @@ import lift_bro.core.generated.resources.view_dashboard
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.navi.LocalNavCoordinator
 
 @Composable
 fun HomeScreen(

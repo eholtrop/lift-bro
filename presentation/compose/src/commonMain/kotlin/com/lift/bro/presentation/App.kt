@@ -179,10 +179,16 @@ fun CheckAppConsent() {
     }
 }
 
+typealias LiftBroNavCoordinator = NavCoordinator<Destination>
+
+val LocalNavCoordinator = compositionLocalOf<NavCoordinator<Destination>> {
+    error("NavHostController was not set")
+}
+
 @Composable
 fun App(
     modifier: Modifier = Modifier,
-    navCoordinator: NavCoordinator = rememberNavCoordinator<tv.dpal.navi.Destination>(Destination.Unknown),
+    navCoordinator: NavCoordinator<Destination> = rememberNavCoordinator<Destination>(Destination.Unknown),
 ) {
     val subscriptionType = remember { mutableStateOf(SubscriptionType.None) }
     val isAndroid = LocalPlatformContext.current is Platform.Android
@@ -250,7 +256,8 @@ fun App(
         LocalLiftCardYValue provides mutableStateOf(LiftCardYValue.Weight),
         LocalSubscriptionStatusProvider provides subscriptionType,
         LocalPaywallVisibility provides showPaywall,
-        LocalCalculatorVisibility provides showCalculator
+        LocalCalculatorVisibility provides showCalculator,
+        LocalNavCoordinator provides navCoordinator,
     ) {
         if (navCoordinator.currentPage == Destination.Unknown) {
             LaunchedEffect("landing_selection") {

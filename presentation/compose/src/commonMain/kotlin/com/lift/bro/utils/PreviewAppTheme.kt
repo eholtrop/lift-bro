@@ -21,6 +21,7 @@ import com.lift.bro.presentation.LocalCalculatorVisibility
 import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalLiftBro
 import com.lift.bro.presentation.LocalLiftCardYValue
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.LocalPaywallVisibility
 import com.lift.bro.presentation.LocalPlatformContext
 import com.lift.bro.presentation.LocalServer
@@ -34,7 +35,6 @@ import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import tv.dpal.navi.JetpackComposeCoordinator
-import tv.dpal.navi.LocalNavCoordinator
 
 @Composable
 internal fun PreviewAppTheme(

@@ -24,10 +24,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,14 +46,10 @@ import kotlin.math.absoluteValue
 @Serializable
 open class Destination
 
-val LocalNavCoordinator = compositionLocalOf<NavCoordinator> {
-    error("NavHostController was not set")
-}
-
 @Composable
-inline fun <reified T: Destination> SwipeableNavHost(
+inline fun <reified T> SwipeableNavHost(
     modifier: Modifier = Modifier,
-    navCoordinator: NavCoordinator,
+    navCoordinator: NavCoordinator<T>,
     crossinline key: (T) -> Any = { Json.encodeToString(it).hashCode() },
     crossinline content: @Composable (T) -> Unit,
 ) {
@@ -89,98 +83,90 @@ inline fun <reified T: Destination> SwipeableNavHost(
     }
     val keyboard = LocalSoftwareKeyboardController.current
     LaunchedEffect(savedPagerState.currentPage) {
-        if (tabletMode && savedPagerState.currentPage > 0) {
-            navCoordinator.updateCurrentIndex(savedPagerState.currentPage + 1)
-        } else {
-            navCoordinator.updateCurrentIndex(savedPagerState.currentPage)
-        }
+        navCoordinator.updateCurrentIndex(savedPagerState.currentPage)
         keyboard?.hide()
     }
 
-    CompositionLocalProvider(
-        LocalNavCoordinator provides navCoordinator
+    Row(
+        modifier = modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.Center,
     ) {
-        Row(
-            modifier = modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            homePage?.let {
-                Box(
-                    modifier = Modifier.fillMaxWidth(if (pagerPages.isEmpty()) .666f else .5f)
-                        .fillMaxHeight()
-                        .animateContentSize()
-                ) {
-                    content(it as T)
-                }
-            }
-            AnimatedVisibility(
-                visible = pagerPages.isNotEmpty(),
-                enter = fadeIn() + slideInHorizontally { it },
-                exit = fadeOut()
+        homePage?.let {
+            Box(
+                modifier = Modifier.fillMaxWidth(if (pagerPages.isEmpty()) .666f else .5f)
+                    .fillMaxHeight()
+                    .animateContentSize()
             ) {
-                var pagerSize: Size? by remember { mutableStateOf(null) }
-                Box {
-                    HorizontalPager(
-                        modifier = Modifier.graphicsLayer {
-                            pagerSize = this.size
-                        },
-                        key = {
-                            key(pagerPages[it.hashCode()] as T)
-                        },
-                        state = savedPagerState,
-                    ) { currentPage ->
-                        // Animation to make the pages feel like they are disappearing to the side
-                        val animationModifier = Modifier.graphicsLayer {
-                            val pageOffset =
-                                ((savedPagerState.currentPage - currentPage) + savedPagerState.currentPageOffsetFraction)
+                content(it as T)
+            }
+        }
+        AnimatedVisibility(
+            visible = pagerPages.isNotEmpty(),
+            enter = fadeIn() + slideInHorizontally { it },
+            exit = fadeOut()
+        ) {
+            var pagerSize: Size? by remember { mutableStateOf(null) }
+            Box {
+                HorizontalPager(
+                    modifier = Modifier.graphicsLayer {
+                        pagerSize = this.size
+                    },
+                    key = {
+                        key(pagerPages[it.hashCode()] as T)
+                    },
+                    state = savedPagerState,
+                ) { currentPage ->
+                    // Animation to make the pages feel like they are disappearing to the side
+                    val animationModifier = Modifier.graphicsLayer {
+                        val pageOffset =
+                            ((savedPagerState.currentPage - currentPage) + savedPagerState.currentPageOffsetFraction)
 
-                            // page moving end to start
-                            if (pageOffset <= 1) {
-                                lerp(
-                                    start = 0.85f,
-                                    stop = 1f,
-                                    fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                                ).also { scale ->
-                                    scaleX = scale
-                                    scaleY = scale
-                                }
-
-                                translationX = (pagerSize?.width ?: 0f) * (pageOffset.coerceIn(0f, 1f))
+                        // page moving end to start
+                        if (pageOffset <= 1) {
+                            lerp(
+                                start = 0.85f,
+                                stop = 1f,
+                                fraction = 1f - pageOffset.coerceIn(0f, 1f)
+                            ).also { scale ->
+                                scaleX = scale
+                                scaleY = scale
                             }
 
-                            // animate alpha the same way each time
-                            alpha = lerp(
-                                start = 0.0f,
-                                stop = 1f,
-                                fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
-                            )
+                            translationX = (pagerSize?.width ?: 0f) * (pageOffset.coerceIn(0f, 1f))
                         }
 
-                        Box(
-                            modifier = animationModifier
-                                .fillMaxSize()
-                        ) {
-                            content(pagerPages[currentPage] as T)
-                        }
+                        // animate alpha the same way each time
+                        alpha = lerp(
+                            start = 0.0f,
+                            stop = 1f,
+                            fraction = 1f - pageOffset.absoluteValue.coerceIn(0f, 1f)
+                        )
                     }
-                    if (pagerPages.size > 1) {
-                        Row(
-                            modifier = Modifier.align(Alignment.TopCenter)
-                                .statusBarsPadding()
-                                .padding(top = 4.dp),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            pagerPages.forEachIndexed { index, _ ->
-                                Surface(
-                                    modifier = Modifier.height(8.dp).aspectRatio(1f),
-                                    color = if (index == savedPagerState.currentPage) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.surface
-                                    },
-                                    shape = MaterialTheme.shapes.extraSmall
-                                ) {
-                                }
+
+                    Box(
+                        modifier = animationModifier
+                            .fillMaxSize()
+                    ) {
+                        content(pagerPages[currentPage] as T)
+                    }
+                }
+                if (pagerPages.size > 1) {
+                    Row(
+                        modifier = Modifier.align(Alignment.TopCenter)
+                            .statusBarsPadding()
+                            .padding(top = 4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        pagerPages.forEachIndexed { index, _ ->
+                            Surface(
+                                modifier = Modifier.height(8.dp).aspectRatio(1f),
+                                color = if (index == savedPagerState.currentPage) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.surface
+                                },
+                                shape = MaterialTheme.shapes.extraSmall
+                            ) {
                             }
                         }
                     }

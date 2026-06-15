@@ -2,27 +2,27 @@ package tv.dpal.navi
 
 import kotlinx.coroutines.flow.StateFlow
 
-interface NavCoordinator {
+interface NavCoordinator<T> {
 
-    val pages: List<Destination>
+    val pages: List<T>
 
-    val pagesAsFlow: StateFlow<List<Destination>>
+    val pagesAsFlow: StateFlow<List<T>>
 
-    val currentPage: Destination
+    val currentPage:T
 
     val currentPageIndex: Int
 
-    val currentPageAsFlow: StateFlow<Destination>
+    val currentPageAsFlow: StateFlow<T>
 
     /**
      * Appends the state to the current set of pages and navigates the user to that page
      */
-    fun present(state: Destination, animate: Boolean = true)
+    fun present(state: T, animate: Boolean = true)
 
     /**
      * Navigates the user to the state provided. no-op if the state is not within the current set of pages
      */
-    fun navigateTo(state: Destination)
+    fun navigateTo(state: T)
 
     fun updateCurrentIndex(index: Int)
 
@@ -41,5 +41,5 @@ interface NavCoordinator {
     /**
      * Clears the current set of pages and shows the user the given state
      */
-    fun setRoot(state: Destination)
+    fun setRoot(state: T)
 }

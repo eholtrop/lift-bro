@@ -68,6 +68,7 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.category.WarningDialog
@@ -109,7 +110,6 @@ import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
-import tv.dpal.navi.LocalNavCoordinator
 import kotlin.math.absoluteValue
 
 @Composable

@@ -6,6 +6,7 @@ import com.lift.bro.config.BuildConfig
 import com.lift.bro.data.analytics.screenName
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.analytics.Analytics
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.category.CategoryDetailsScreen
 import com.lift.bro.presentation.goals.GoalsScreen
 import com.lift.bro.presentation.home.HomeScreen
@@ -23,13 +24,12 @@ import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
-import tv.dpal.navi.LocalNavCoordinator
 import tv.dpal.navi.NavCoordinator
 
 @Composable
 fun AppRouter(
     route: Destination,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: NavCoordinator<Destination> = LocalNavCoordinator.current,
     analytics: Analytics = dependencies.analytics,
 ) {
     if (BuildConfig.isDebug) {
