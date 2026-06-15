@@ -10,6 +10,8 @@ import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.Setting
+import com.lift.bro.presentation.LiftBroNavCoordinator
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.navigation.Destination.CreateCategory
 import com.lift.bro.ui.navigation.Destination.CreateSet
@@ -20,8 +22,6 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.navi.LocalNavCoordinator
-import tv.dpal.navi.NavCoordinator
 
 typealias HomeInteractor = Interactor<HomeState, HomeEvent>
 
@@ -65,7 +65,7 @@ fun rememberHomeInteractor(
     goalsRepository: IGoalRepository = dependencies.goalsRepository,
     settingsRepository: ISettingsRepository = dependencies.settingsRepository,
     analytics: Analytics = dependencies.analytics,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): HomeInteractor = rememberInteractor(
     initialState = HomeState.Loading,
     source = { state ->
@@ -90,7 +90,7 @@ fun rememberHomeInteractor(
 )
 
 internal fun homeSideEffects(
-    navCoordinator: NavCoordinator,
+    navCoordinator: LiftBroNavCoordinator,
     analytics: Analytics,
 ) = listOf<SideEffect<HomeState, HomeEvent>>(
     SideEffect { _, _, event ->

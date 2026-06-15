@@ -1,0 +1,3 @@
+[submodule "libs/flowvi"]
+	path = libs/flowvi
+	url = https://github.com/dpaltv/flowvi

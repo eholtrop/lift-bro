@@ -7,6 +7,8 @@ import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
+import com.lift.bro.presentation.LiftBroNavCoordinator
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
 import kotlinx.coroutines.flow.combine
@@ -17,8 +19,6 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.navi.LocalNavCoordinator
-import tv.dpal.navi.NavCoordinator
 
 typealias MovementDetailsInteractor = Interactor<MovementDetailsState, MovementDetailsEvent>
 
@@ -51,7 +51,7 @@ sealed interface MovementDetailsEvent {
 fun rememberMovementDetailsInteractor(
     movementId: String,
     categoryId: String? = null,
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): MovementDetailsInteractor =
     rememberInteractor(
         initialState = MovementDetailsState(

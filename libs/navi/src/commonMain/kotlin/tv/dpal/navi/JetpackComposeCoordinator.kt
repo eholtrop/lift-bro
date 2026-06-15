@@ -17,17 +17,17 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Serializable
-data class NavCoordinatorSaveable(
-    val pages: List<Destination>,
-    val currentPage: Destination,
+data class NavCoordinatorSaveable<T>(
+    val pages: List<T>,
+    val currentPage: T,
 )
 
 @Composable
-fun <T: Destination> rememberNavCoordinator(
+inline fun <reified T> rememberNavCoordinator(
     initialDestination: T,
-): NavCoordinator = rememberSaveable(
-    saver = object: Saver<NavCoordinator, String> {
-        override fun SaverScope.save(value: NavCoordinator): String {
+): NavCoordinator<T> = rememberSaveable(
+    saver = object: Saver<NavCoordinator<T>, String> {
+        override fun SaverScope.save(value: NavCoordinator<T>): String {
             return Json.encodeToString(
                 NavCoordinatorSaveable(
                     pages = value.pages,
@@ -36,8 +36,8 @@ fun <T: Destination> rememberNavCoordinator(
             )
         }
 
-        override fun restore(value: String): NavCoordinator {
-            return with(Json.decodeFromString<NavCoordinatorSaveable>(value)) {
+        override fun restore(value: String): NavCoordinator<T> {
+            return with(Json.decodeFromString<NavCoordinatorSaveable<T>>(value)) {
                 JetpackComposeCoordinator(
                     initialState = pages.toTypedArray(),
                     currentPage = currentPage
@@ -50,22 +50,22 @@ fun <T: Destination> rememberNavCoordinator(
     }
 )
 
-class JetpackComposeCoordinator(
-    vararg initialState: Destination,
-    currentPage: Destination = initialState.last()
-): NavCoordinator {
+class JetpackComposeCoordinator<T>(
+    vararg initialState: T,
+    currentPage: T = initialState.last()
+): NavCoordinator<T> {
     private val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private val mutableStateList = MutableStateFlow(mutableStateListOf(elements = initialState))
     private val currentState = MutableStateFlow(currentPage)
     private val currentIndex get() = pages.indexOf(currentPage)
 
-    override val pages: List<Destination>
+    override val pages: List<T>
         get() = mutableStateList.value
-    override val pagesAsFlow: StateFlow<List<Destination>>
+    override val pagesAsFlow: StateFlow<List<T>>
         get() = mutableStateList.asStateFlow()
-    override val currentPage: Destination
+    override val currentPage:T
         get() = currentState.value
-    override val currentPageAsFlow: StateFlow<Destination>
+    override val currentPageAsFlow: StateFlow<T>
         get() = currentState.asStateFlow()
     override val currentPageIndex: Int
         get() = currentIndex
@@ -93,13 +93,13 @@ class JetpackComposeCoordinator(
         return true
     }
 
-    override fun setRoot(state: Destination) {
+    override fun setRoot(state: T) {
         mutableStateList.value.clear()
         mutableStateList.value.add(state)
         currentState.value = state
     }
 
-    override fun present(state: Destination, animate: Boolean) {
+    override fun present(state: T, animate: Boolean) {
         // if we are not the past page, remove all "future" state and then continue
         if (currentIndex < mutableStateList.value.size - 1) {
             mutableStateList.value.removeRange(currentIndex + 1, mutableStateList.value.size)
@@ -108,7 +108,7 @@ class JetpackComposeCoordinator(
         navigateTo(state)
     }
 
-    override fun navigateTo(state: Destination) {
+    override fun navigateTo(state: T) {
         currentState.value = state
     }
 

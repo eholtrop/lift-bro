@@ -15,6 +15,8 @@ import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.VariationSets
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import com.lift.bro.presentation.LiftBroNavCoordinator
+import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.ui.calendar.today
 import com.lift.bro.ui.navigation.Destination
 import comliftbrodb.LiftingLogQueries
@@ -31,8 +33,6 @@ import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.ktx.datetime.toLocalDate
-import tv.dpal.navi.LocalNavCoordinator
-import tv.dpal.navi.NavCoordinator
 
 @Serializable
 data class WorkoutCalendarState(
@@ -64,7 +64,7 @@ fun rememberWorkoutCalendarInteractor(
 
 @Composable
 private fun navigationSideEffects(
-    navCoordinator: NavCoordinator = LocalNavCoordinator.current,
+    navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): List<SideEffect<WorkoutCalendarState, WorkoutCalendarEvent>> {
     return listOf(
         SideEffect { _, _, event ->
