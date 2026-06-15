@@ -15,10 +15,7 @@
 		B1A23C662E2D66E100525DEF /* PurchasesHybridCommon in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C652E2D66E100525DEF /* PurchasesHybridCommon */; };
 		B1A23C682E2D66E100525DEF /* PurchasesHybridCommonUI in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C672E2D66E100525DEF /* PurchasesHybridCommonUI */; };
 		B1A23C6B2E2D6A1F00525DEF /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = B1A23C6A2E2D6A1F00525DEF /* Sentry */; };
-		B1DD777D2E43840E004C3183 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */; };
-		B1DD77802E438488004C3183 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = B1DD777F2E438488004C3183 /* FirebaseAnalytics */; };
-		B1DD77822E438488004C3183 /* FirebaseAnalyticsCore in Frameworks */ = {isa = PBXBuildFile; productRef = B1DD77812E438488004C3183 /* FirebaseAnalyticsCore */; };
-		B1DD77842E438488004C3183 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = B1DD77832E438488004C3183 /* FirebaseCrashlytics */; };
+
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -46,7 +43,6 @@
 		B18EBA242E4A36FA0047798C /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		B1D9A2042E4A3A7E00E189C2 /* StoreKitTestCertificate.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = StoreKitTestCertificate.cer; sourceTree = "<group>"; };
 		B1D9A2082E4A403D00E189C2 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
-		B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,11 +51,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B17C1AE72E08C81200020BDE /* GoogleMobileAds in Frameworks */,
-				B1DD77822E438488004C3183 /* FirebaseAnalyticsCore in Frameworks */,
 				B1A23C662E2D66E100525DEF /* PurchasesHybridCommon in Frameworks */,
-				B1DD77842E438488004C3183 /* FirebaseCrashlytics in Frameworks */,
 				B1A23C682E2D66E100525DEF /* PurchasesHybridCommonUI in Frameworks */,
-				B1DD77802E438488004C3183 /* FirebaseAnalytics in Frameworks */,
 				B1A23C6B2E2D6A1F00525DEF /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,7 +97,6 @@
 				B1D9A2102E585F1A00E189C2 /* iosApp.entitlements */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
-				B1DD777C2E43840E004C3183 /* GoogleService-Info.plist */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -192,7 +184,6 @@
 			files = (
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
-				B1DD777D2E43840E004C3183 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
