@@ -48,7 +48,6 @@ fun BackupDialog(
             dismissOnBackPress = false,
             dismissOnClickOutside = false,
         ),
-        confirmButtonText = stringResource(Res.string.backup_dialog_cancel_cta),
         title = {
             Text(
                 text = stringResource(Res.string.backup_dialog_title),
@@ -62,7 +61,8 @@ fun BackupDialog(
                 }
             }
             BackupDialogContent(state)
-        }
+        },
+        confirmButtonText = stringResource(Res.string.backup_dialog_cancel_cta),
     )
 }
 

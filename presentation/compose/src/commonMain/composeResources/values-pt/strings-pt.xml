@@ -46,10 +46,11 @@
 
     <string name="toolbar_back_button_content_description">Voltar</string>
 
-    <string name="backup_dialog_title">Faz um tempo...</string>
-    <string name="backup_dialog_message">O Lift Bro é local. Se perder o celular, seus ganhos somem! Quer fazer um backup agora?</string>
-    <string name="backup_dialog_primary_cta">Fazer Backup Agora</string>
-    <string name="backup_dialog_secondary_cta">Ignorar</string>
+    <string name="backup_dialog_title">Fazendo backup do Lift Bro</string>
+    <string name="backup_warning_dialog_message">O Lift Bro é local. Se perder o celular, seus ganhos somem! Quer fazer um backup agora?</string>
+    <string name="backup_warning_dialog_confirm_cta">Fazer Backup Agora</string>
+    <string name="backup_warning_dialog_dismiss_cta">Ignorar</string>
+    <string name="backup_warning_dialog_title">Faz um tempo...</string>
 
     <string name="lift_card_empty_title">Sem Séries!</string>
     <string name="lift_card_empty_subtitle">Toque para adicionar uma</string>

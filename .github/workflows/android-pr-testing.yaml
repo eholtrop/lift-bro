@@ -21,10 +21,10 @@ jobs:
                 uses: actions/setup-java@v4
                 with:
                     distribution: "temurin"
-                    java-version: 17
+                    java-version: 21
 
             -   name: Setup Gradle cache
-                uses: gradle/actions/setup-gradle@v3
+                uses: gradle/actions/setup-gradle@v4
 
             -   name: Set up Ruby
                 uses: ruby/setup-ruby@v1
@@ -52,10 +52,10 @@ jobs:
                 uses: actions/setup-java@v4
                 with:
                     distribution: "temurin"
-                    java-version: 17
+                    java-version: 21
 
             -   name: Setup Gradle cache
-                uses: gradle/actions/setup-gradle@v3
+                uses: gradle/actions/setup-gradle@v4
 
             -   name: Set up Ruby
                 uses: ruby/setup-ruby@v1
@@ -83,10 +83,10 @@ jobs:
                 uses: actions/setup-java@v4
                 with:
                     distribution: "temurin"
-                    java-version: 17
+                    java-version: 21
 
             -   name: Setup Gradle cache
-                uses: gradle/actions/setup-gradle@v3
+                uses: gradle/actions/setup-gradle@v4
 
             -   name: Validate UI Screenshots
                 run: ./gradlew :presentation:compose:validateDebugScreenshotTest -Pandroid.experimental.enableScreenshotTest=true

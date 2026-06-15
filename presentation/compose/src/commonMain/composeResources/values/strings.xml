@@ -7,12 +7,12 @@
     <string name="analytics_consent_banner_privacy">NO personal info</string>
     <string name="analytics_consent_banner_title">Help Lift Bro improve!</string>
 
-    <string name="backup_dialog_backing_up_title">Backing up Lift Bro</string>
+    <string name="backup_dialog_title">Backing up Lift Bro</string>
     <string name="backup_dialog_cancel_cta">Cancel</string>
-    <string name="backup_dialog_message">Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?</string>
-    <string name="backup_dialog_primary_cta">Backup Now</string>
-    <string name="backup_dialog_secondary_cta">Ignore</string>
-    <string name="backup_dialog_title">It's been a while...</string>
+    <string name="backup_warning_dialog_message">Lift Bro is a local only application, If you lose your phone all your data is gone! Would you like to backup now?</string>
+    <string name="backup_warning_dialog_confirm_cta">Backup Now</string>
+    <string name="backup_warning_dialog_dismiss_cta">Ignore</string>
+    <string name="backup_warning_dialog_title">It's been a while...</string>
     <string name="backup_progress_categories">Categories</string>
     <string name="backup_progress_complete_description">complete</string>
     <string name="backup_progress_daily_notes">Daily Notes</string>
