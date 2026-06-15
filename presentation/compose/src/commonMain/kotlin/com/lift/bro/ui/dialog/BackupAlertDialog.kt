@@ -18,10 +18,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.todayIn
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.backup_dialog_message
-import lift_bro.core.generated.resources.backup_dialog_primary_cta
-import lift_bro.core.generated.resources.backup_dialog_secondary_cta
-import lift_bro.core.generated.resources.backup_dialog_title
+import lift_bro.core.generated.resources.backup_warning_dialog_confirm_cta
+import lift_bro.core.generated.resources.backup_warning_dialog_dismiss_cta
+import lift_bro.core.generated.resources.backup_warning_dialog_message
+import lift_bro.core.generated.resources.backup_warning_dialog_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.ktx.datetime.toLocalDate
 import kotlin.time.Clock
@@ -63,8 +63,8 @@ fun BackupAlertDialog(
             onDismissRequest = {
                 showBackupModal = false
             },
-            title = { Text(stringResource(Res.string.backup_dialog_title)) },
-            text = { Text(stringResource(Res.string.backup_dialog_message)) },
+            title = { Text(stringResource(Res.string.backup_warning_dialog_title)) },
+            text = { Text(stringResource(Res.string.backup_warning_dialog_message)) },
             confirmButton = {
                 Button(
                     onClick = {
@@ -72,7 +72,7 @@ fun BackupAlertDialog(
                         showBackupDialog = true
                     }
                 ) {
-                    Text(stringResource(Res.string.backup_dialog_primary_cta))
+                    Text(stringResource(Res.string.backup_warning_dialog_confirm_cta))
                 }
             },
             dismissButton = {
@@ -87,7 +87,7 @@ fun BackupAlertDialog(
                         showBackupModal = false
                     }
                 ) {
-                    Text(stringResource(Res.string.backup_dialog_secondary_cta))
+                    Text(stringResource(Res.string.backup_warning_dialog_dismiss_cta))
                 }
             }
         )
