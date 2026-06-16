@@ -1,10 +1,6 @@
 name: iOS Nightly Beta Build
 
 on:
-  push:
-    branches: [ ios-pipeline ]
-  schedule:
-    - cron: '0 2 * * *'
   workflow_dispatch:
 
 env:
