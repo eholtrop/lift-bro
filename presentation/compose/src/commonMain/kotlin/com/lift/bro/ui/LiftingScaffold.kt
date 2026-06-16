@@ -47,6 +47,7 @@ import com.lift.bro.ui.navigation.LocalSnackbarHostState
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.toolbar_back_button_content_description
+import lift_bro.core.generated.resources.toolbar_close_content_description
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.absoluteValue
 
@@ -194,7 +195,7 @@ private fun LeadingNavigationButton(
             TopBarIconButton(
                 modifier = modifier,
                 imageVector = Icons.Default.Close,
-                contentDescription = "Close",
+                contentDescription = stringResource(Res.string.toolbar_close_content_description),
                 onClick = { navCoordinator.popToRoot(keepStack = false) },
             )
         }

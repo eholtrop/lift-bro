@@ -106,6 +106,7 @@ import lift_bro.core.generated.resources.workout_screen_superset_cta
 import lift_bro.core.generated.resources.workout_screen_title
 import lift_bro.core.generated.resources.workout_set_options_copy_cta
 import lift_bro.core.generated.resources.workout_set_options_delete_cta
+import lift_bro.core.generated.resources.workout_total_weight_moved
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 import tv.dpal.ext.ktx.datetime.toString
@@ -551,12 +552,11 @@ fun VariationItemCard(
 
                     if (LocalTwmSettings.current) {
                         Text(
-                            "Total Weight Moved: ${
-                                "${
-                                    sets.sumOf { it.reps * it.weight }
-                                        .decimalFormat()
-                                } ${LocalUnitOfMeasure.current.value}"
-                            }",
+                            stringResource(
+                                Res.string.workout_total_weight_moved,
+                                sets.sumOf { it.reps * it.weight }.decimalFormat(),
+                                LocalUnitOfMeasure.current.value,
+                            ),
                             style = MaterialTheme.typography.labelLarge,
                         )
                     }

@@ -66,11 +66,14 @@ import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.lift_card_empty_subtitle
 import lift_bro.core.generated.resources.lift_card_empty_title
+import lift_bro.core.generated.resources.lift_card_reps_label
+import lift_bro.core.generated.resources.set_format_bodyweight
+import lift_bro.core.generated.resources.set_format_extra_weight
+import lift_bro.core.generated.resources.set_format_reps_weight
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.toColor
 import tv.dpal.ext.ktx.datetime.toString
 import kotlin.math.max
-import kotlin.text.Typography.nbsp
 
 @Serializable
 data class LiftCardState(
@@ -170,7 +173,7 @@ fun LiftCard(
                     modifier = Modifier.wrapContentWidth(),
                     text = when (yUnit) {
                         LiftCardYValue.Weight -> weightFormat(max)
-                        LiftCardYValue.Reps -> "${max.toInt()}${nbsp}reps"
+                        LiftCardYValue.Reps -> stringResource(Res.string.lift_card_reps_label, max.toInt())
                     },
                     style = MaterialTheme.typography.labelMedium,
                     overflow = TextOverflow.MiddleEllipsis,
@@ -443,7 +446,7 @@ fun LiftCard(
                     Text(
                         text = when (yUnit) {
                             LiftCardYValue.Weight -> weightFormat(min)
-                            LiftCardYValue.Reps -> "${min.toInt()} reps"
+                            LiftCardYValue.Reps -> stringResource(Res.string.lift_card_reps_label, min.toInt())
                         },
                         style = MaterialTheme.typography.labelMedium,
                     )
@@ -581,12 +584,20 @@ fun setFormat(
         style = SpanStyle(),
     ) {
         if (bodyWeight) {
-            append("$reps x bw")
+            append(stringResource(Res.string.set_format_bodyweight, reps.toString()))
             if (weight > 0.0) {
-                append(" + ${weightFormat(weight, useGrouping = useGrouping)}")
+                append(
+                    stringResource(Res.string.set_format_extra_weight, weightFormat(weight, useGrouping = useGrouping))
+                )
             }
         } else {
-            append("$reps x ${weightFormat(weight, useGrouping = useGrouping)}")
+            append(
+                stringResource(
+                    Res.string.set_format_reps_weight,
+                    reps.toString(),
+                    weightFormat(weight, useGrouping = useGrouping)
+                )
+            )
         }
     }
 }
