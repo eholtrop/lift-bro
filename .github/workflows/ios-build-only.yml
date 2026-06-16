@@ -39,7 +39,10 @@ jobs:
 
       - name: Select Xcode
         run: |
-          XCODE_PATH=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -r | head -1)
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -r | head -1)
+          if [ -z "$XCODE_PATH" ]; then
+            XCODE_PATH=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -r | head -1)
+          fi
           if [ -z "$XCODE_PATH" ]; then
             echo "No Xcode found at /Applications"
           else
