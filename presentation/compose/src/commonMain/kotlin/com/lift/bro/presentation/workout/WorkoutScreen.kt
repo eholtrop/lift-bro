@@ -89,8 +89,10 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.set_format_reps_weight
 import lift_bro.core.generated.resources.workout_add_exercise_cta
 import lift_bro.core.generated.resources.workout_notes_placeholder
+import lift_bro.core.generated.resources.workout_variation_letter_title
 import lift_bro.core.generated.resources.workout_screen_add_set_content_description
 import lift_bro.core.generated.resources.workout_screen_again_content_description
 import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_subtitle
@@ -272,7 +274,7 @@ fun WorkoutScreenInternal(
                                         (previous as? VariationItem.WithSets)?.sets?.firstOrNull()
                                             ?.let {
                                                 Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
+                                                    stringResource(Res.string.set_format_reps_weight, it.reps.toString(), weightFormat(it.weight)),
                                                     style = MaterialTheme.typography.labelMedium,
                                                 )
                                             }
@@ -310,13 +312,12 @@ fun WorkoutScreenInternal(
                                             (first as? VariationItem.WithSets)?.sets?.lastOrNull()
                                                 ?.let {
                                                     Text(
-                                                        "${it.reps} x ${weightFormat(it.weight)}",
+                                                        stringResource(Res.string.set_format_reps_weight, it.reps.toString(), weightFormat(it.weight)),
                                                         style = MaterialTheme.typography.labelMedium,
                                                         maxLines = 1,
                                                     )
-                                                }
-                                            Text(
-                                                first.variation.fullName,
+                                                Text(
+                                                    first.variation.fullName,
                                                 style = MaterialTheme.typography.labelSmall,
                                                 textAlign = TextAlign.End
                                             )
@@ -347,12 +348,11 @@ fun WorkoutScreenInternal(
                                             (next as? VariationItem.WithSets)?.sets?.lastOrNull()
                                                 ?.let {
                                                     Text(
-                                                        "${it.reps} x ${weightFormat(it.weight)}",
+                                                        stringResource(Res.string.set_format_reps_weight, it.reps.toString(), weightFormat(it.weight)),
                                                         style = MaterialTheme.typography.labelMedium,
                                                     )
-                                                }
-                                            Text(
-                                                next.variation.fullName,
+                                                Text(
+                                                    next.variation.fullName,
                                                 style = MaterialTheme.typography.labelSmall,
                                                 textAlign = TextAlign.End
                                             )
@@ -505,11 +505,17 @@ fun VariationItemCard(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val prefix = index?.let { 'A'.plus(index).plus(".") } ?: ""
-                        Text(
-                            "$prefix ${variation.fullName}".trim(),
-                            style = MaterialTheme.typography.titleLarge,
-                        )
+                        if (index != null) {
+                            Text(
+                                stringResource(Res.string.workout_variation_letter_title, 'A'.plus(index).toString(), variation.fullName),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                        } else {
+                            Text(
+                                variation.fullName,
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                        }
 
                         Space()
 
