@@ -1,0 +1,54 @@
+name: Promote to Production
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+jobs:
+  android-promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: key.json
+          json: ${{ secrets.FASTLANE_JSON }}
+      - run: bundle exec fastlane android promote_internal_to_prod
+
+  ios-promote:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Compute previous Friday version
+        id: version
+        run: |
+          for i in 1 2 3 4 5 6 7; do
+            if [ "$(date -v -${i}d +%u)" -eq 5 ]; then
+              echo "version=$(date -v -${i}d +%Y.%m.%d)" >> $GITHUB_OUTPUT
+              break
+            fi
+          done
+      - name: Submit for App Store review
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+        run: bundle exec fastlane ios promote app_version:${{ steps.version.outputs.version }}

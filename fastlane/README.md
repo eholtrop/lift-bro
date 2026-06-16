@@ -100,6 +100,14 @@ Build the release artifact for iOS
 
 Build the debug artifact for iOS
 
+### ios build_debug_device
+
+```sh
+[bundle exec] fastlane ios build_debug_device
+```
+
+Build debug artifact for physical iOS device
+
 ### ios test
 
 ```sh

@@ -1,0 +1,49 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+
+env:
+  LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
+  LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
+  REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew detekt --continue
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew test
+
+  screenshot-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew :presentation:compose:validateDebugScreenshotTest -Pandroid.experimental.enableScreenshotTest=true
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshot-diff-report
+          path: presentation/compose/build/reports/screenshotTest/

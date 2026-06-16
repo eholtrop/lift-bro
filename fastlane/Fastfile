@@ -274,6 +274,19 @@ platform :ios do
 #     )
   end
 
+  desc "Submit existing TestFlight build for App Store review"
+  lane :promote do |options|
+    deliver(
+      submit_for_review: true,
+      automatic_release: true,
+      skip_build_upload: true,
+      skip_metadata: true,
+      skip_screenshots: true,
+      force: true,
+      app_version: options[:app_version]
+    )
+  end
+
 end # End of iOS platform block
 
 # --------------------------------------------------
