@@ -1,0 +1,216 @@
+name: Nightly Build
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
+  LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
+  LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
+  REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew detekt --continue
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew test
+
+  screenshot-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - run: ./gradlew :presentation:compose:validateDebugScreenshotTest -Pandroid.experimental.enableScreenshotTest=true
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshot-diff-report
+          path: presentation/compose/build/reports/screenshotTest/
+
+  android-maestro:
+    runs-on: ubuntu-latest
+    needs: [lint, test, screenshot-validation]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - name: Build debug APK
+        run: ./gradlew assembleDebug
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_5
+          emulator-build: stable
+          script: |
+            adb install app-android/build/outputs/apk/debug/*.apk
+            curl -Ls "https://get.maestro.mobile.dev" | bash
+            export PATH="$HOME/.maestro/bin:$PATH"
+            maestro test .maestro --format junit --output maestro_results.xml
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: android-maestro-results
+          path: maestro_results.xml
+
+  ios-maestro:
+    runs-on: macos-latest
+    needs: [lint, test, screenshot-validation]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Select Xcode
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -r | head -1)
+          if [ -z "$XCODE_PATH" ]; then
+            XCODE_PATH=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -r | head -1)
+          fi
+          if [ -z "$XCODE_PATH" ]; then
+            echo "No Xcode found at /Applications"
+          else
+            sudo xcode-select -s "$XCODE_PATH"
+          fi
+          xcode-select -p
+          xcodebuild -version
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
+      - name: Build iOS debug app for simulator
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+        run: bundle exec fastlane ios build_debug build_number:${{ github.run_number }}
+      - name: Boot simulator and run Maestro tests
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes | grep "iOS" | tail -1 | awk '{print $NF}')
+          DEVICE_TYPE="com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro"
+          DEVICE_ID=$(xcrun simctl create maestro-iphone "$DEVICE_TYPE" "$RUNTIME")
+          xcrun simctl boot "$DEVICE_ID"
+          xcrun simctl install "$DEVICE_ID" "$(find build/artifacts/ios -name '*.app' -type d)"
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          export PATH="$HOME/.maestro/bin:$PATH"
+          maestro --device "$DEVICE_ID" test .maestro --format junit --output maestro_results.xml
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ios-maestro-results
+          path: maestro_results.xml
+
+  android-deploy:
+    runs-on: ubuntu-latest
+    needs: [android-maestro]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v3
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Decode keystore
+        uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: release.jks
+          fileDir: app-android
+          encodedString: ${{ secrets.RELEASE_KEYSTORE }}
+      - name: Create Fastlane JSON
+        uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: key.json
+          json: ${{ secrets.FASTLANE_JSON }}
+      - name: Create Google Services JSON
+        uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: google-services.json
+          json: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
+          dir: presentation/compose/src/androidMain
+      - name: Deploy to Google Play beta
+        env:
+          STORE_PASSWORD: ${{ secrets.KEYSTORE_PW }}
+          KEY_ALIAS: ${{ secrets.KEYSTORE_USR }}
+          KEY_PASSWORD: ${{ secrets.KEY_PW }}
+        run: bundle exec fastlane android deploy build_number:${{ github.run_number }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-aab
+          path: app-android/build/outputs/bundle/release/*.aab
+
+  ios-deploy:
+    runs-on: macos-latest
+    needs: [ios-maestro]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Determine if deploy should run
+        id: day-check
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date +%u)" -eq 5 ]; then
+            echo "should_deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "should_deploy=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Setup SSH Agent for Match
+        if: steps.day-check.outputs.should_deploy == 'true'
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
+      - name: Build and Release to TestFlight
+        if: steps.day-check.outputs.should_deploy == 'true'
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+        run: bundle exec fastlane ios beta build_number:${{ github.run_number }}
+      - uses: actions/upload-artifact@v4
+        if: steps.day-check.outputs.should_deploy == 'true'
+        with:
+          name: ios-ipa
+          path: build/artifacts/ios/
+          if-no-files-found: warn
+          retention-days: 7

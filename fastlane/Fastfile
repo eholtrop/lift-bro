@@ -98,13 +98,14 @@ platform :ios do
       )
     end
 
-    unless ENV["MATCH_GIT_PRIVATE_KEY"].nil? || ENV["MATCH_GIT_PRIVATE_KEY"].empty?
-      sh "mkdir -p ~/.ssh/"
-      File.open(File.expand_path("~/.ssh/id_rsa"), "w") do |file|
-        file.puts ENV["MATCH_GIT_PRIVATE_KEY"]
+    if ENV["CI"] == "true"
+      unless ENV["MATCH_GIT_PRIVATE_KEY"].nil? || ENV["MATCH_GIT_PRIVATE_KEY"].empty?
+        sh "mkdir -p ~/.ssh/"
+        File.write(File.expand_path("~/.ssh/id_rsa"), ENV["MATCH_GIT_PRIVATE_KEY"].strip + "\n")
+        sh "chmod 600 ~/.ssh/id_rsa"
+        sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
       end
-      sh "chmod 600 ~/.ssh/id_rsa"
-      sh "ssh-keyscan github.com >> ~/.ssh/known_hosts"
+
     end
   end
 
@@ -115,23 +116,32 @@ platform :ios do
       readonly: true,
       git_url: ENV["MATCH_GIT_URL"],
       git_branch: "main",
-      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
-      username: ENV["FASTLANE_USER"]
+      keychain_password: ENV["MATCH_PASSWORD"],
+      username: ENV["FASTLANE_USER"],
+      password: ENV["FASTLANE_PASSWORD"]
     )
   end
 
-  # This is often placed in a 'before_all' or specific lane setup
-  # to ensure App Store profiles are available.
   desc "Sync iOS App Store Code Signing Identities using match"
-  lane :match_appstore do
-    match(
+  lane :match_appstore do |options|
+    match_params = {
       type: "appstore",
-      readonly: true, # true for CI, false for local setup
-      git_url: ENV["MATCH_GIT_URL"], # Set this in GitHub Actions secrets
-      git_branch: "main", # Or your desired branch for Match
-      keychain_password: ENV["FASTLANE_MATCH_PASSWORD"],
-      username: ENV["FASTLANE_USER"]
-    )
+      readonly: options[:readonly].nil? ? true : options[:readonly],
+      force: options[:force] || false,
+      git_url: ENV["MATCH_GIT_URL"],
+      git_branch: "main"
+    }
+
+    if ENV["CI"] != "true"
+      match_params[:keychain_name] = "build.keychain"
+      match_params[:keychain_password] = ENV["MATCH_PASSWORD"]
+    end
+
+    unless ENV["FASTLANE_USER"].nil? || ENV["FASTLANE_USER"].empty?
+      match_params[:username] = ENV["FASTLANE_USER"]
+    end
+
+    match(match_params)
   end
 
   desc "Build the release artifact for iOS"
@@ -146,6 +156,7 @@ platform :ios do
       output_name: "ios_app_release.ipa",
       clean: true,
       silent: false,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
@@ -161,7 +172,8 @@ platform :ios do
       output_directory: "build/artifacts/ios",
       output_name: "ios_app_debug.ipa",
       clean: true,
-      silent: false
+      silent: false,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
@@ -181,42 +193,45 @@ platform :ios do
       output_directory: "build/artifacts/ios",
       output_name: "ios_app_debug.ipa",
       clean: true,
-      silent: false
+      silent: false,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
   lane :test do |options|
+        gradle(task: "test")
+
     # run simulator
-    simulator_name = options[:name] || "iPhone 15 Pro"
-    device_type_id = options[:device_type] || "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro"
-    runtime_id = options[:runtime] || "com.apple.CoreSimulator.SimRuntime.iOS-18-5"
-
-    # Check if simulator already exists
-    simulator_udid = sh("xcrun simctl list devices | grep '#{simulator_name}' | awk -F '[()]' '{print $2}'", log: false).strip
-
-    unless simulator_udid && !simulator_udid.empty?
-      UI.message "Simulator '#{simulator_name}' not found. Creating it..."
-      simulator_udid = sh("xcrun simctl create \"#{simulator_name}\" \"#{device_type_id}\" \"#{runtime_id}\"", log: true).strip
-      UI.success "Created simulator with UDID: #{simulator_udid}"
-    else
-      UI.success "Simulator '#{simulator_name}' already exists with UDID: #{simulator_udid}"
-    end
-
-    # Boot the simulator
-    UI.message "Booting simulator with UDID: #{simulator_udid}\""
-    begin
-      sh("xcrun simctl boot \"#{simulator_udid}\"", log: true)
-      UI.success "Simulator booted successfully!"
-    rescue => e
-      UI.message "Simulator might already be booted or an error occurred: #{e.message}"
-    end
-
-    # build/install app
-    build_debug(build_number: 1)
-
-    app_path = "../build/artifacts/ios/ios_app_debug.ipa"
-    sh "xcrun simctl install #{simulator_udid} \"#{app_path}\""
-    sh "maestro --device #{simulator_udid} test ../.maestro --format junit --output maestro_results.xml"
+#     simulator_name = options[:name] || "iPhone 15 Pro"
+#     device_type_id = options[:device_type] || "com.apple.CoreSimulator.SimDeviceType.iPhone-15-Pro"
+#     runtime_id = options[:runtime] || "com.apple.CoreSimulator.SimRuntime.iOS-18-5"
+#
+#     # Check if simulator already exists
+#     simulator_udid = sh("xcrun simctl list devices | grep '#{simulator_name}' | awk -F '[()]' '{print $2}'", log: false).strip
+#
+#     unless simulator_udid && !simulator_udid.empty?
+#       UI.message "Simulator '#{simulator_name}' not found. Creating it..."
+#       simulator_udid = sh("xcrun simctl create \"#{simulator_name}\" \"#{device_type_id}\" \"#{runtime_id}\"", log: true).strip
+#       UI.success "Created simulator with UDID: #{simulator_udid}"
+#     else
+#       UI.success "Simulator '#{simulator_name}' already exists with UDID: #{simulator_udid}"
+#     end
+#
+#     # Boot the simulator
+#     UI.message "Booting simulator with UDID: #{simulator_udid}\""
+#     begin
+#       sh("xcrun simctl boot \"#{simulator_udid}\"", log: true)
+#       UI.success "Simulator booted successfully!"
+#     rescue => e
+#       UI.message "Simulator might already be booted or an error occurred: #{e.message}"
+#     end
+#
+#     # build/install app
+#     build_debug(build_number: 1)
+#
+#     app_path = "../build/artifacts/ios/ios_app_debug.ipa"
+#     sh "xcrun simctl install #{simulator_udid} \"#{app_path}\""
+#     sh "maestro --device #{simulator_udid} test ../.maestro --format junit --output maestro_results.xml"
   end
 
   desc "Run Linter for iOS (e.g., SwiftLint)"
@@ -232,7 +247,7 @@ platform :ios do
     testflight(
       ipa: "build/artifacts/ios/ios_app_release.ipa",
       changelog: "Updated app to a new beta version from CI. Build: #{options[:build_number]}",
-      # notify_testers: true, # Set to true to automatically notify testers
+      notify_external_testers: true, # Set to true to automatically notify testers
       # groups: ["Internal Testers"] # Optional: specific groups to notify
     )
   end
@@ -244,18 +259,31 @@ platform :ios do
     UI.message("Building and submitting to App Store for iOS...")
     build_release(build_number: options[:build_number])
 
+#     deliver(
+#       ipa: "build/artifacts/ios/ios_app_release.ipa",
+#       # Add your App Store Connect metadata here (e.g., `app_review_information`, `pricing_tier`, etc.)
+#       # It's recommended to pull metadata from `fastlane/metadata` using `deliver init`
+#       # or specify directly here.
+#       # For first submission, you'll need all metadata. For updates, only new/changed items.
+# #       force: true, # Use with caution, overwrites existing metadata
+#       skip_metadata: true, # Set to true if you don't update metadata via Fastlane
+#       skip_screenshots: true, # Set to true if you don't upload screenshots via Fastlane
+#       submit_for_review: true, # Automatically submit for review after upload
+#       automatic_release: true, # Release immediately after review (or set a date)
+#       # release_build_status: "READY_FOR_SALE" # Or other values if managing through App Store Connect
+#     )
+  end
+
+  desc "Submit existing TestFlight build for App Store review"
+  lane :promote do |options|
     deliver(
-      ipa: "build/artifacts/ios/ios_app_release.ipa",
-      # Add your App Store Connect metadata here (e.g., `app_review_information`, `pricing_tier`, etc.)
-      # It's recommended to pull metadata from `fastlane/metadata` using `deliver init`
-      # or specify directly here.
-      # For first submission, you'll need all metadata. For updates, only new/changed items.
-#       force: true, # Use with caution, overwrites existing metadata
-      skip_metadata: true, # Set to true if you don't update metadata via Fastlane
-      skip_screenshots: true, # Set to true if you don't upload screenshots via Fastlane
-      submit_for_review: true, # Automatically submit for review after upload
-      automatic_release: true, # Release immediately after review (or set a date)
-      # release_build_status: "READY_FOR_SALE" # Or other values if managing through App Store Connect
+      submit_for_review: true,
+      automatic_release: true,
+      skip_build_upload: true,
+      skip_metadata: true,
+      skip_screenshots: true,
+      force: true,
+      app_version: options[:app_version]
     )
   end
 
