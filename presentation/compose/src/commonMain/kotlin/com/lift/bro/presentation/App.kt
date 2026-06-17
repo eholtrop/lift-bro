@@ -198,7 +198,7 @@ fun App(
             Purchases.logLevel = LogLevel.DEBUG
         }
 
-        AppPurchases.instantiate(isAndroid, subscriptionType)
+        AppPurchases.instantiate(subscriptionType)
         AppPurchases.getCustomerInfo(
             onError = { error ->
                 Sentry.captureException(Throwable(message = error.message))
