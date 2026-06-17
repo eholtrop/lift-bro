@@ -77,6 +77,10 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.variation_search_dialog_close_content_description
+import lift_bro.core.generated.resources.variation_search_dialog_favourite_content_description
+import org.jetbrains.compose.resources.stringResource
 
 @Serializable
 data class VariationSearchState(
@@ -209,7 +213,7 @@ fun VariationSearchDialog(
                                 onDismissRequest()
                             }
                         ) {
-                            Icon(Icons.Default.Close, contentDescription = "Close")
+                            Icon(Icons.Default.Close, contentDescription = stringResource(Res.string.variation_search_dialog_close_content_description))
                         }
                     },
                     placeholder = { Text(state.placeholder) },
@@ -327,7 +331,7 @@ private fun VariationSearchContent(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Check,
-                                    contentDescription = "Save and Select"
+                                    contentDescription = stringResource(Res.string.variation_search_dialog_save_select_content_description)
                                 )
                             }
                         }
@@ -346,12 +350,12 @@ private fun VariationSearchContent(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
-                                "Can't find what you're looking for?",
+                                stringResource(Res.string.variation_search_dialog_empty_title),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
 
-                            Text("Create Variation")
+                            Text(stringResource(Res.string.variation_search_dialog_create_variation_cta))
                         }
                     }
                 }
@@ -389,7 +393,7 @@ private fun SearchVariationItem(
                 Icon(
                     modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
                     imageVector = Icons.Default.Star,
-                    contentDescription = "Favourite"
+                    contentDescription = stringResource(Res.string.variation_search_dialog_favourite_content_description)
                 )
             }
         }

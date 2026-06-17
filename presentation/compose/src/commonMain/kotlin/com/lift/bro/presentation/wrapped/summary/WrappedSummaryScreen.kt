@@ -158,7 +158,7 @@ fun WrappedSummaryScreen(
                                     textAlign = TextAlign.Center,
                                 )
                                 Text(
-                                    text = "Total Reps",
+                                    text = stringResource(Res.string.wrapped_reps_header_title),
                                     style = MaterialTheme.typography.bodySmall,
                                     textAlign = TextAlign.Center,
                                 )

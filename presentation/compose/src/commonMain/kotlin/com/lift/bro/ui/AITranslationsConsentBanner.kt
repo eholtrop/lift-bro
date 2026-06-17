@@ -17,6 +17,15 @@ import com.lift.bro.ui.banner.DashboardBanner
 import com.lift.bro.ui.theme.spacing
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.analytics_consent_banner_onclick_label
+import lift_bro.core.generated.resources.ai_translations_banner_subtitle
+import lift_bro.core.generated.resources.ai_translations_banner_title
+import lift_bro.core.generated.resources.ai_translations_dialog_body
+import lift_bro.core.generated.resources.ai_translations_dialog_disable_radio
+import lift_bro.core.generated.resources.ai_translations_dialog_enable_radio
+import lift_bro.core.generated.resources.ai_translations_dialog_risk_title
+import lift_bro.core.generated.resources.ai_translations_dialog_save_cta
+import lift_bro.core.generated.resources.ai_translations_dialog_settings_note
+import lift_bro.core.generated.resources.ai_translations_dialog_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.horizontal.padding
 
@@ -32,12 +41,11 @@ fun AITranslationsConsentBanner(
     if (showDialog) {
         var enableAiTranslations by remember { mutableStateOf<Boolean?>(null) }
         AlertDialog(
-            title = { Text("Lift Bro uses AI Translations") },
+            title = { Text(stringResource(Res.string.ai_translations_dialog_title)) },
             text = {
                 Column {
                     Text(
-                        text = "Evan, while a native English speaker, " +
-                            "still struggles with it let alone other languages \uD83D\uDE05",
+                        text = stringResource(Res.string.ai_translations_dialog_body),
                         style = MaterialTheme.typography.bodyLarge
                     )
 
@@ -45,7 +53,7 @@ fun AITranslationsConsentBanner(
 
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "So use at your own risk!",
+                        text = stringResource(Res.string.ai_translations_dialog_risk_title),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                     )
@@ -53,12 +61,12 @@ fun AITranslationsConsentBanner(
                     Space(MaterialTheme.spacing.half)
 
                     Text(
-                        "This can be changed in settings at any time",
+                        stringResource(Res.string.ai_translations_dialog_settings_note),
                         style = MaterialTheme.typography.labelSmall
                     )
 
                     RadioField(
-                        text = "Enable AI Translations",
+                        text = stringResource(Res.string.ai_translations_dialog_enable_radio),
                         selected = enableAiTranslations == true,
                         fieldSelected = {
                             enableAiTranslations = true
@@ -66,7 +74,7 @@ fun AITranslationsConsentBanner(
                     )
 
                     RadioField(
-                        text = "Force English (Disable AI Translations)",
+                        text = stringResource(Res.string.ai_translations_dialog_disable_radio),
                         selected = enableAiTranslations == false,
                         fieldSelected = {
                             enableAiTranslations = false
@@ -86,7 +94,7 @@ fun AITranslationsConsentBanner(
                     },
                     enabled = enableAiTranslations != null
                 ) {
-                    Text("Save")
+                    Text(stringResource(Res.string.ai_translations_dialog_save_cta))
                 }
             },
             onDismissRequest = onDismiss
@@ -105,11 +113,11 @@ fun AITranslationsConsentBanner(
             modifier = Modifier.padding(start = MaterialTheme.spacing.one),
         ) {
             Text(
-                text = "Lift Bro uses AI Translations",
+                text = stringResource(Res.string.ai_translations_banner_title),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Tap to Learn More",
+                text = stringResource(Res.string.ai_translations_banner_subtitle),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
             )

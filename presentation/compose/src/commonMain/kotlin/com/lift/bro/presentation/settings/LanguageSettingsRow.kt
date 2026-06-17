@@ -19,6 +19,12 @@ import com.lift.bro.presentation.LocalLocale
 import com.lift.bro.ui.RadioField
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.backup_dialog_cancel_cta
+import lift_bro.core.generated.resources.language_settings_dialog_title
+import lift_bro.core.generated.resources.language_settings_save_cta
+import lift_bro.core.generated.resources.language_settings_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SupportedLanguage.languageName() = when (this) {
@@ -59,7 +65,7 @@ enum class SupportedLanguage {
 fun LanguageSettingsRow() {
     SettingsRowItem(
         title = {
-            Text("Language Settings")
+            Text(stringResource(Res.string.language_settings_title))
         },
         content = {
             var showDialog by remember { mutableStateOf(false) }
@@ -91,7 +97,7 @@ fun LanguageSettingsRow() {
                                 showDialog = false
                             }
                         ) {
-                            Text("Save")
+                            Text(stringResource(Res.string.language_settings_save_cta))
                         }
                     },
                     dismissButton = {
@@ -100,11 +106,11 @@ fun LanguageSettingsRow() {
                                 showDialog = false
                             }
                         ) {
-                            Text("Cancel")
+                            Text(stringResource(Res.string.backup_dialog_cancel_cta))
                         }
                     },
                     title = {
-                        Text("Select a Language")
+                        Text(stringResource(Res.string.language_settings_dialog_title))
                     },
                     text = {
                         Column {

@@ -72,6 +72,13 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.datetime.LocalDate
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.category_details_delete_content_description
+import lift_bro.core.generated.resources.category_details_delete_warning_text
+import lift_bro.core.generated.resources.category_details_delete_warning_title
+import lift_bro.core.generated.resources.category_details_movements_title
+import lift_bro.core.generated.resources.category_details_name_placeholder
+import lift_bro.core.generated.resources.category_details_no_sets_text
+import lift_bro.core.generated.resources.category_details_reps_text
 import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.lift_details_screen_favourite_content_description
 import org.jetbrains.compose.resources.stringResource
@@ -114,8 +121,8 @@ fun CategoryDetailsScreen(
 
     if (showDeleteWarning) {
         WarningDialog(
-            title = "Are you sure?",
-            text = "This will delete the Category, All movements will stay!",
+            title = stringResource(Res.string.category_details_delete_warning_title),
+            text = stringResource(Res.string.category_details_delete_warning_text),
             onConfirm = {
                 interactor(CategoryDetailsEvent.DeleteCategoryClicked)
                 showDeleteWarning = false
@@ -143,7 +150,7 @@ fun CategoryDetailsScreen(
                         interactor(CategoryDetailsEvent.NameUpdated(it))
                     },
                     placeholder = {
-                        Text("Category")
+                        Text(stringResource(Res.string.category_details_name_placeholder))
                     }
                 )
             }
@@ -166,7 +173,7 @@ fun CategoryDetailsScreen(
                         showDeleteWarning = true
                     },
                     imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete Category,"
+                    contentDescription = stringResource(Res.string.category_details_delete_content_description)
                 )
             }
         }
@@ -185,7 +192,7 @@ fun CategoryDetailsScreen(
                     DashboardLiftHeader(
                         v2 = false,
                         showRpe = showRpe,
-                        title = "Movements",
+                        title = stringResource(Res.string.category_details_movements_title),
                         onToggleTempo = { },
                         onToggleRpe = { showRpe = !showRpe },
                         optionSelected = { },
@@ -309,8 +316,9 @@ private fun VariationCard(
 
                         LiftCardYValue.Reps -> {
                             Text(
-                                text = sets.maxOfOrNull { it.reps }?.let { "$it Reps" }
-                                    ?: run { "No Sets" },
+                                text = sets.maxOfOrNull { it.reps }?.let {
+                                    stringResource(Res.string.category_details_reps_text, it)
+                                } ?: run { stringResource(Res.string.category_details_no_sets_text) },
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }

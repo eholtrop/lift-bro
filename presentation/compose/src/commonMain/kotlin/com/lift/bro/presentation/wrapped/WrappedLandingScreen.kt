@@ -51,6 +51,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.toolbar_close_content_description
 import lift_bro.core.generated.resources.wrapped_landing_back_button_content_description
 import lift_bro.core.generated.resources.wrapped_landing_next_button_content_description
 import org.jetbrains.compose.resources.stringResource
@@ -149,7 +150,7 @@ fun WrappedLandingScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close"
+                        contentDescription = stringResource(Res.string.toolbar_close_content_description)
                     )
                 }
             } else {
@@ -194,7 +195,7 @@ fun WrappedLandingScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Close"
+                        contentDescription = stringResource(Res.string.toolbar_close_content_description)
                     )
                 }
             } else {

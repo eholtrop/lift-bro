@@ -58,12 +58,14 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.rep_weight_selector_info_p1
 import lift_bro.core.generated.resources.rep_weight_selector_info_p2
 import lift_bro.core.generated.resources.rep_weight_selector_info_title
+import lift_bro.core.generated.resources.rep_weight_selector_reps_placeholder
 import lift_bro.core.generated.resources.rep_weight_selector_rpe_placeholder
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_percent
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_rir
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_rpe
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_vibe
 import lift_bro.core.generated.resources.rep_weight_selector_times_symbol
+import lift_bro.core.generated.resources.rep_weight_selector_weight_placeholder
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 
@@ -132,7 +134,7 @@ fun RepWeightSelector(
                     it.toLongOrNull()?.let(repChanged)
                 }
             },
-            placeholder = { Text("0") },
+            placeholder = { Text(stringResource(Res.string.rep_weight_selector_reps_placeholder)) },
             keyboardType = KeyboardType.Number
         )
 
@@ -151,7 +153,7 @@ fun RepWeightSelector(
             onValueChanged = {
                 weightChanged(it.toDoubleOrNull())
             },
-            placeholder = { Text("0.0") },
+            placeholder = { Text(stringResource(Res.string.rep_weight_selector_weight_placeholder)) },
             keyboardType = KeyboardType.Decimal
         )
 

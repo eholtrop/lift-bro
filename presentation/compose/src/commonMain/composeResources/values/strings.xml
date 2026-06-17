@@ -23,6 +23,14 @@
     <string name="calculator_backspace_content_description">Backspace</string>
     <string name="calculator_bigger_bar_message">We're gonna need a bigger bar... 🧔‍♂️</string>
 
+    <string name="category_details_delete_warning_title">Are you sure?</string>
+    <string name="category_details_delete_warning_text">This will delete the Category, All movements will stay!</string>
+    <string name="category_details_name_placeholder">Category</string>
+    <string name="category_details_delete_content_description">Delete Category,</string>
+    <string name="category_details_movements_title">Movements</string>
+    <string name="category_details_reps_text">%1$d Reps</string>
+    <string name="category_details_no_sets_text">No Sets</string>
+
     <string name="calendar_next_month_content_description">Next Month</string>
     <string name="calendar_previous_month_content_description">Previous Month</string>
     <string name="calendar_today_content_description">Today</string>
@@ -35,11 +43,30 @@
     <string name="color_picker_negative_cta">Cancel</string>
     <string name="color_picker_positive_cta">Save</string>
 
+    <string name="client_settings_db_location_title">Db Location</string>
+    <string name="client_settings_local_mode_text">Local</string>
+    <string name="client_settings_remote_mode_text">Remote</string>
+    <string name="client_settings_local_description">All data will be stored locally on your device.\nBe sure to backup frequently!</string>
+    <string name="client_settings_server_url_placeholder">http://192.168.0.42:8080</string>
+    <string name="client_settings_server_url_label">Server Url</string>
+
     <string name="consent_dialog_cta">I Accept</string>
     <string name="consent_dialog_title">We made some updates</string>
 
+    <string name="create_variation_dialog_cancel_cta">Cancel</string>
+    <string name="create_variation_dialog_save_cta">Save</string>
+
     <string name="create_lift_screen_title">Create Lift</string>
+    <string name="category_drop_down_select_category_text">Select Category</string>
+    <string name="category_drop_down_expand_menu_content_description">Expand Menu</string>
     <string name="create_set_screen_title">I Crushed</string>
+
+    <string name="dashboard_lift_header_add_category_content_description">Create Category</string>
+    <string name="dashboard_lift_header_rpe_chip_text">rpe</string>
+    <string name="dashboard_lift_header_tempo_chip_text">tempo</string>
+    <string name="dashboard_lift_header_sort_content_description">Sort</string>
+    <string name="dashboard_sorting_dialog_title">Sorting</string>
+    <string name="dashboard_sorting_favourites_at_top_text">Favourites at top</string>
 
     <string name="dashboard_empty_primary_cta_title">Create Category</string>
     <string name="dashboard_empty_secondary_cta_title">Restore a Backup</string>
@@ -112,6 +139,16 @@ Soreness or pain?</string>
     <string name="edit_set_date_time">hh:mm</string>
     <string name="edit_set_date_ampm">aa</string>
 
+    <string name="ai_translations_dialog_title">Lift Bro uses AI Translations</string>
+    <string name="ai_translations_dialog_body">Evan, while a native English speaker, still struggles with it let alone other languages 😅</string>
+    <string name="ai_translations_dialog_risk_title">So use at your own risk!</string>
+    <string name="ai_translations_dialog_settings_note">This can be changed in settings at any time</string>
+    <string name="ai_translations_dialog_enable_radio">Enable AI Translations</string>
+    <string name="ai_translations_dialog_disable_radio">Force English (Disable AI Translations)</string>
+    <string name="ai_translations_dialog_save_cta">Save</string>
+    <string name="ai_translations_banner_title">Lift Bro uses AI Translations</string>
+    <string name="ai_translations_banner_subtitle">Tap to Learn More</string>
+
     <string name="kg">kg</string>
 
     <string name="lbs">lbs</string>
@@ -121,6 +158,10 @@ Soreness or pain?</string>
     <string name="lift_details_fab_content_description">Add Set</string>
     <string name="lift_details_screen_edit_content_description">Edit</string>
     <string name="lift_details_screen_empty_state_text">No variations yet. Tap + to add a set.</string>
+    <string name="language_settings_title">Language Settings</string>
+    <string name="language_settings_save_cta">Save</string>
+    <string name="language_settings_dialog_title">Select a Language</string>
+
     <string name="lift_details_screen_favourite_content_description">Favourite</string>
     <string name="lift_details_screen_sort_by_content_description">Sort By</string>
     <string name="lift_details_screen_sort_name">Name</string>
@@ -186,6 +227,8 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_table_rpe_8">8</string>
     <string name="rep_weight_selector_table_rpe_9">9</string>
     <string name="rep_weight_selector_times_symbol">x</string>
+    <string name="rep_weight_selector_reps_placeholder">0</string>
+    <string name="rep_weight_selector_weight_placeholder">0.0</string>
     <string name="reps">reps</string>
 
     <string name="server_settings_row_current_ip">Current IP is %1$s</string>
@@ -193,6 +236,7 @@ Soreness or pain?</string>
     <string name="server_settings_row_status_disabled">Server Disabled</string>
     <string name="server_settings_row_status_enabled">Server Enabled</string>
     <string name="server_settings_row_title">Local Server</string>
+    <string name="server_settings_warning_text">Warning: This will expose read/write access to your lift bro data to anyone on your network. Use with caution ⚠️</string>
     <string name="settings_backup_cta">Backup</string>
     <string name="settings_backup_restore_title">Backup / Restore</string>
     <string name="settings_become_pro_description">Sign up for an Ad free experience and extra premium tracking metrics!</string>
@@ -232,6 +276,14 @@ Soreness or pain?</string>
     <string name="settings_pro_status_text">You are a Lift PRO!!</string>
     <string name="settings_pro_thanks_title">Thank you for the support!</string>
     <string name="settings_release_notes_cta">Release Notes</string>
+    <string name="settings_release_notes_content_description">Release Notes</string>
+    <string name="settings_experimental_goodies_text">Other Goodies (experimental features)</string>
+    <string name="settings_experimental_features_title">Experimental - Expect 🦗</string>
+    <string name="settings_experimental_timer_title">Timer</string>
+    <string name="settings_experimental_timer_description">Enable a timer for counting down sets and rest periods</string>
+    <string name="settings_experimental_dashboard_v3_title">Dashboard V3</string>
+    <string name="settings_experimental_dashboard_v3_description">No more tabs!</string>
+    <string name="settings_pro_server_title">Lift Pros Only 😎</string>
     <string name="settings_restore_cta">Restore</string>
     <string name="settings_row_item_dark_text">Dark</string>
     <string name="settings_row_item_kg_text">kg</string>
@@ -272,6 +324,21 @@ Soreness or pain?</string>
     <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="timer_plan_ready_label">Ready</string>
+    <string name="timer_plan_add_tempo_content_description">Add Tempo</string>
+    <string name="timer_plan_delete_tempo_content_description">Delete Tempo</string>
+    <string name="timer_mute_sound_content_description">Mute Sound</string>
+    <string name="timer_play_sound_content_description">Play Sound</string>
+    <string name="timer_ended_restart_content_description">Restart</string>
+    <string name="timer_plan_start_content_description">Start</string>
+    <string name="timer_running_resume_content_description">Resume</string>
+    <string name="timer_running_pause_content_description">Pause</string>
+    <string name="timer_ended_great_job_text">Great job!</string>
+    <string name="timer_field_con_label">Con</string>
+    <string name="timer_field_ecc_label">Ecc</string>
+    <string name="timer_field_hold_label">Hold</string>
+    <string name="timer_field_rest_label">Rest</string>
+
     <string name="timer_screen_rest_reset_label">Rest/Reset</string>
     <string name="timer_screen_fab_content_description">Start Timer</string>
     <string name="timer_screen_startup_time_buffer_text">Startup Time Buffer</string>
@@ -296,6 +363,13 @@ Soreness or pain?</string>
     <string name="variation_details_tempo_up_cd">Up</string>
     <string name="variation_search_dialog_close_content_description">Close</string>
     <string name="variation_search_dialog_favourite_content_description">Favourite</string>
+    <string name="variation_search_dialog_save_select_content_description">Save and Select</string>
+    <string name="variation_search_dialog_empty_title">Can't find what you're looking for?</string>
+    <string name="variation_search_dialog_create_variation_cta">Create Variation</string>
+
+    <string name="movement_details_create_movement_placeholder">Create Movement</string>
+    <string name="movement_details_empty_state_title">Do you even lift bro?</string>
+    <string name="movement_details_empty_state_text">Add a set with + below!</string>
 
     <string name="weight_selector_chin_subtitle">%1$d% of %2$s Max</string>
     <string name="weight_selector_chin_title">%1$d% of %2$s Max</string>
@@ -390,6 +464,11 @@ Soreness or pain?</string>
     <string name="wrapped_weight_intro">You moved %1$s this year!</string>
     <string name="wrapped_weight_speech_bubble_message">You moved %1$s in %2$ss Alone!! 😵</string>
     <string name="wrapped_weight_speech_bubble_title">That's HUGE!!!! 💪</string>
+
+    <string name="goals_screen_title">2026 Goals</string>
+    <string name="goals_screen_add_goals_cta">Goals</string>
+    <string name="goals_screen_achieved_content_description">Achieved</string>
+    <string name="goals_screen_delete_content_description">Delete</string>
 
     <string name="home_screen_icon_live_dialog_text">The developers of lift bro are live on Twitch, either doing some dev\n\n(Or playing some video games 😏)</string>
     <string name="home_screen_icon_live_dialog_title">Lift Bro is Live!</string>

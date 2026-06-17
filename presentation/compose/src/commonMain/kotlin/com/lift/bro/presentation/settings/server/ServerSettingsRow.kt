@@ -52,8 +52,7 @@ fun ServerSettingsRowContent(
             stringResource(Res.string.server_settings_row_description)
         )
         Text(
-            text = "Warning: This will expose read/write access to your lift bro " +
-                "data to anyone on your network. Use with caution ⚠\uFE0F"
+            text = stringResource(Res.string.server_settings_warning_text)
         )
         RadioField(
             text = if (state.status == ServerStatus.On) {
