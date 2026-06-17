@@ -41,8 +41,14 @@ import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.timer_plan_add_tempo_content_description
+import lift_bro.core.generated.resources.timer_plan_add_text
 import lift_bro.core.generated.resources.timer_plan_delete_tempo_content_description
+import lift_bro.core.generated.resources.timer_plan_emoji
+import lift_bro.core.generated.resources.timer_plan_multiply_symbol
 import lift_bro.core.generated.resources.timer_plan_ready_label
+import lift_bro.core.generated.resources.timer_plan_remove_text
+import lift_bro.core.generated.resources.timer_plan_remove_text
+import lift_bro.core.generated.resources.timer_plan_set_count_prefix
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -109,7 +115,7 @@ fun PlanTimerOverlay(
                                 onEvent(TimerEvent.Plan.AddTimer)
                             }
                         ) {
-                            Text("+")
+                            Text(stringResource(Res.string.timer_plan_add_text))
                         }
                         Button(
                             onClick = {
@@ -124,18 +130,9 @@ fun PlanTimerOverlay(
                         ) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    modifier = Modifier.padding(bottom = MaterialTheme.spacing.quarter),
-                                    text = "x",
-                                    style = MaterialTheme.typography.displaySmall,
-                                )
-                                AnimatedText(
-                                    modifier = Modifier.weight(1f),
-                                    text = state.tempo.size.toString(),
-                                    style = MaterialTheme.typography.displaySmall,
-                                )
-                            }
+                        ) {
+                            Text(stringResource(Res.string.timer_plan_add_text))
+                        }
                         }
                         IconButton(
                             modifier = Modifier.height(MaterialTheme.spacing.two),
@@ -144,7 +141,7 @@ fun PlanTimerOverlay(
                             },
                             enabled = state.tempo.size > 1
                         ) {
-                            Text("-")
+                            Text(stringResource(Res.string.timer_plan_remove_text))
                         }
                     }
                 } else {
@@ -232,7 +229,7 @@ fun PlanTimerOverlay(
                 )
                 Space(MaterialTheme.spacing.one)
                 Text(
-                    text = "\uD83D\uDE2E\u200D\uD83D\uDCA8",
+                    text = stringResource(Res.string.timer_plan_emoji),
                     style = MaterialTheme.typography.headlineLarge
                 )
             }

@@ -41,6 +41,9 @@ import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.format
 import com.lift.bro.utils.percentageFormat
 import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.wrapped_summary_occurrences_format
+import lift_bro.core.generated.resources.wrapped_summary_occurrences_format
+import lift_bro.core.generated.resources.wrapped_summary_plural_format
 import lift_bro.core.generated.resources.wrapped_summary_screen_consistency_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_goals_title
 import lift_bro.core.generated.resources.wrapped_summary_screen_header_title
@@ -132,7 +135,7 @@ fun WrappedSummaryScreen(
                                     textAlign = TextAlign.Center,
                                 )
                                 Text(
-                                    text = "${heavyThing.name}s ${heavyThing.icon}",
+                                    text = stringResource(Res.string.wrapped_summary_plural_format, heavyThing.name, heavyThing.icon),
                                     style = MaterialTheme.typography.bodySmall,
                                     textAlign = TextAlign.Center,
                                 )
@@ -230,10 +233,9 @@ fun WrappedSummaryScreen(
                                 Column(
                                     modifier = Modifier.weight(1f),
                                 ) {
-                                    Text(
-                                        text = it.title,
-                                        style = MaterialTheme.typography.titleMedium
-                                    )
+                                Text(
+                                    text = stringResource(Res.string.wrapped_summary_occurrences_format, it.occurrences)
+                                )
                                     Row(
                                         verticalAlignment = Alignment.CenterVertically,
                                         horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter)
@@ -285,7 +287,7 @@ fun WrappedSummaryScreen(
                                 )
                                 Space(MaterialTheme.spacing.half)
                                 Text(
-                                    text = "${it.occurrences}x"
+                                    text = stringResource(Res.string.wrapped_summary_occurrences_format, it.occurrences)
                                 )
                             }
                         }

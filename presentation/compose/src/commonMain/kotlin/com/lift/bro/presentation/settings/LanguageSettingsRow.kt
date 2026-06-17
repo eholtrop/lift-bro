@@ -21,17 +21,23 @@ import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.backup_dialog_cancel_cta
+import lift_bro.core.generated.resources.language_ai_gen_suffix
+import lift_bro.core.generated.resources.language_english
+import lift_bro.core.generated.resources.language_french
+import lift_bro.core.generated.resources.language_portuguese
+import lift_bro.core.generated.resources.language_settings_ai_gen_suffix
 import lift_bro.core.generated.resources.language_settings_dialog_title
 import lift_bro.core.generated.resources.language_settings_save_cta
 import lift_bro.core.generated.resources.language_settings_title
+import lift_bro.core.generated.resources.language_spanish
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SupportedLanguage.languageName() = when (this) {
-    SupportedLanguage.English -> "English"
-    SupportedLanguage.Portugease -> "Portugease"
-    SupportedLanguage.French -> "French"
-    SupportedLanguage.Spanish -> "Spanish"
+    SupportedLanguage.English -> stringResource(Res.string.language_english)
+    SupportedLanguage.Portugease -> stringResource(Res.string.language_portuguese)
+    SupportedLanguage.French -> stringResource(Res.string.language_french)
+    SupportedLanguage.Spanish -> stringResource(Res.string.language_spanish)
 }
 
 fun String.supportedLanguage(): SupportedLanguage? = when (this) {
@@ -116,7 +122,7 @@ fun LanguageSettingsRow() {
                         Column {
                             SupportedLanguage.entries.forEach {
                                 RadioField(
-                                    text = "${it.languageName()}${if (it.isAiGen()) " (AI Gen)" else ""}",
+                                    text = it.languageName() + if (it.isAiGen()) stringResource(Res.string.language_ai_gen_suffix) else "",
                                     selected = selectedLanguage == it,
                                     fieldSelected = {
                                         selectedLanguage = it

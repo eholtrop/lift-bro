@@ -62,16 +62,22 @@ import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.timer_ended_great_job_text
+import lift_bro.core.generated.resources.timer_ended_mers_format
 import lift_bro.core.generated.resources.timer_ended_restart_content_description
+import lift_bro.core.generated.resources.timer_ended_set_format
+import lift_bro.core.generated.resources.timer_ended_twm_label
 import lift_bro.core.generated.resources.timer_field_con_label
 import lift_bro.core.generated.resources.timer_field_ecc_label
 import lift_bro.core.generated.resources.timer_field_hold_label
 import lift_bro.core.generated.resources.timer_field_rest_label
+import lift_bro.core.generated.resources.timer_mer_format
 import lift_bro.core.generated.resources.timer_mute_sound_content_description
 import lift_bro.core.generated.resources.timer_plan_start_content_description
 import lift_bro.core.generated.resources.timer_play_sound_content_description
 import lift_bro.core.generated.resources.timer_running_pause_content_description
 import lift_bro.core.generated.resources.timer_running_resume_content_description
+import lift_bro.core.generated.resources.timer_set_format
+import lift_bro.core.generated.resources.timer_twm_format
 import org.jetbrains.compose.resources.stringResource
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.minus
@@ -284,7 +290,7 @@ fun TimerOverlay(
                     state.set?.let { set ->
                         item {
                             Text(
-                                "${set.reps} x ${weightFormat(set.weight)}! \uD83D\uDCAA",
+                                stringResource(Res.string.timer_ended_set_format, set.reps, weightFormat(set.weight)),
                                 style = MaterialTheme.typography.titleLarge
                             )
                         }
@@ -300,12 +306,17 @@ fun TimerOverlay(
                                     message = {
                                         if (twmEnabled) {
                                             Text(
-                                                text = "TWM: ${weightFormat(set.totalWeightMoved)}"
+                                                text = stringResource(Res.string.timer_ended_twm_label, weightFormat(set.totalWeightMoved))
                                             )
                                         }
                                         if (merEnabled) {
                                             Text(
-                                                text = "+ ${set.mer} mers"
+                                                text = stringResource(Res.string.timer_ended_mers_format, set.mer)
+                                            )
+                                        }
+                                        if (merEnabled) {
+                                            Text(
+                                                text = stringResource(Res.string.timer_mer_format, set.mer)
                                             )
                                         }
                                     },
