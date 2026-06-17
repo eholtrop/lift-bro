@@ -147,7 +147,7 @@ fun WorkoutScreenInternal(
             ) {
                 Text(stringResource(Res.string.workout_screen_title))
                 Text(
-                    state.date.toString("EEEE, MMMM d, yyyy"),
+                    state.date.toString(stringResource(Res.string.workout_title_date_format)),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -708,7 +708,7 @@ fun VariationItemCard(
                                     text = stringResource(
                                         Res.string.workout_screen_most_recent_set_text,
                                         variationSet.lastSet.date.toString(
-                                            "EEEE, MMM d, yyyy"
+                                            stringResource(Res.string.workout_most_recent_set_date_format)
                                         )
                                     ),
                                     style = MaterialTheme.typography.labelSmall,

@@ -312,6 +312,9 @@ Soreness or pain?</string>
 
     <string name="workout_variation_letter_title">%1$s. %2$s</string>
 
+    <string name="workout_title_date_format">EEEE, MMMM d, yyyy</string>
+    <string name="workout_most_recent_set_date_format">EEEE, MMM d, yyyy</string>
+
     <string name="workout_add_exercise_cta">Add Exercise</string>
     <string name="workout_add_finisher_cta">Add Finisher</string>
     <string name="workout_add_warmup_cta">Add Warmup</string>
