@@ -67,6 +67,12 @@
     <string name="dashboard_lift_header_sort_content_description">Sort</string>
     <string name="dashboard_sorting_dialog_title">Sorting</string>
     <string name="dashboard_sorting_favourites_at_top_text">Favourites at top</string>
+    <string name="dashboard_sorting_option_heaviest">Heaviest</string>
+    <string name="dashboard_sorting_option_latest">Latest</string>
+    <string name="dashboard_sorting_option_name">Name</string>
+    <string name="dashboard_sorting_option_reps">Reps</string>
+
+    <string name="dashboard_lift_header_weight_reps_separator">/</string>
 
     <string name="dashboard_empty_primary_cta_title">Create Category</string>
     <string name="dashboard_empty_secondary_cta_title">Restore a Backup</string>
@@ -161,6 +167,11 @@ Soreness or pain?</string>
     <string name="language_settings_title">Language Settings</string>
     <string name="language_settings_save_cta">Save</string>
     <string name="language_settings_dialog_title">Select a Language</string>
+    <string name="language_english">English</string>
+    <string name="language_french">French</string>
+    <string name="language_portuguese">Portugease</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_ai_gen_suffix"> (AI Gen)</string>
 
     <string name="lift_details_screen_favourite_content_description">Favourite</string>
     <string name="lift_details_screen_sort_by_content_description">Sort By</string>
@@ -229,6 +240,8 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_times_symbol">x</string>
     <string name="rep_weight_selector_reps_placeholder">0</string>
     <string name="rep_weight_selector_weight_placeholder">0.0</string>
+    <string name="rep_weight_selector_uom_at_label">%1$s at</string>
+    <string name="rep_weight_selector_twm_equals_label"> = %1$s</string>
     <string name="reps">reps</string>
 
     <string name="server_settings_row_current_ip">Current IP is %1$s</string>
@@ -334,6 +347,12 @@ Soreness or pain?</string>
     <string name="timer_running_resume_content_description">Resume</string>
     <string name="timer_running_pause_content_description">Pause</string>
     <string name="timer_ended_great_job_text">Great job!</string>
+    <string name="timer_plan_add_text">+</string>
+    <string name="timer_plan_remove_text">-</string>
+    <string name="timer_plan_set_count_prefix">x</string>
+    <string name="timer_set_format">%1$d x %2$s! 💪</string>
+    <string name="timer_twm_format">TWM: %1$s</string>
+    <string name="timer_mer_format">+ %1$d mers</string>
     <string name="timer_field_con_label">Con</string>
     <string name="timer_field_ecc_label">Ecc</string>
     <string name="timer_field_hold_label">Hold</string>
@@ -370,6 +389,7 @@ Soreness or pain?</string>
     <string name="movement_details_create_movement_placeholder">Create Movement</string>
     <string name="movement_details_empty_state_title">Do you even lift bro?</string>
     <string name="movement_details_empty_state_text">Add a set with + below!</string>
+    <string name="movement_details_reps_format">%1$d Rep(s)</string>
 
     <string name="weight_selector_chin_subtitle">%1$d% of %2$s Max</string>
     <string name="weight_selector_chin_title">%1$d% of %2$s Max</string>
@@ -449,6 +469,7 @@ Soreness or pain?</string>
     <string name="wrapped_summary_screen_reps_title">Reps</string>
     <string name="wrapped_summary_screen_to_content_description">To</string>
     <string name="wrapped_summary_screen_total_weight_moved_title">Total Weight Moved</string>
+    <string name="wrapped_summary_occurrences_format">%1$dx</string>
     <string name="wrapped_tenure_first_year_speech_bubble_message">Let's take a look at all the gains! 💪</string>
     <string name="wrapped_tenure_first_year_speech_bubble_title">Thank YOU!!!</string>
     <string name="wrapped_tenure_first_year_subtitle">Whether you started using lift bro this year, or Lift Bro helped you on your lifting journey</string>
@@ -479,4 +500,23 @@ Soreness or pain?</string>
     <string name="home_screen_wrapped_button_text">🎉 🎁</string>
     <string name="submit_text_field_edit_content_description">Edit</string>
     <string name="submit_text_field_save_content_description">Save</string>
+
+    <string name="category_details_mer_format"> (+%1$dmer)</string>
+    <string name="dashboard_lift_header_unit_separator">/</string>
+    <string name="movement_details_reps_group_format">%1$d Rep(s)</string>
+    <string name="movement_details_tempo_separator">-</string>
+    <string name="rep_weight_selector_at_text">at</string>
+    <string name="rep_weight_selector_twm_format">= %1$s</string>
+    <string name="rep_weight_selector_plus_symbol">+</string>
+    <string name="language_settings_ai_gen_suffix"> (AI Gen)</string>
+    <string name="timer_plan_add_text">+</string>
+    <string name="timer_plan_multiply_symbol">x</string>
+    <string name="timer_plan_remove_text">-</string>
+    <string name="timer_plan_emoji">😫‍💨</string>
+    <string name="timer_ended_set_format">%1$d x %2$s! 💪</string>
+    <string name="timer_ended_twm_label">TWM: %1$s</string>
+    <string name="timer_ended_mers_format">+ %1$d mers</string>
+    <string name="wrapped_summary_plural_format">%1$ss %2$s</string>
+    <string name="wrapped_summary_occurrences_format">%1$dx</string>
+    <string name="variation_text_field_ellipsis">...</string>
 </resources>

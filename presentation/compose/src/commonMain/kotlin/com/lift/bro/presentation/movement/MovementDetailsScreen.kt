@@ -56,6 +56,8 @@ import lift_bro.core.generated.resources.lift_details_fab_content_description
 import lift_bro.core.generated.resources.movement_details_create_movement_placeholder
 import lift_bro.core.generated.resources.movement_details_empty_state_text
 import lift_bro.core.generated.resources.movement_details_empty_state_title
+import lift_bro.core.generated.resources.movement_details_reps_group_format
+import lift_bro.core.generated.resources.movement_details_tempo_separator
 import lift_bro.core.generated.resources.variation_details_notes_label
 import lift_bro.core.generated.resources.variation_details_notes_placeholder
 import lift_bro.core.generated.resources.variation_details_screen_body_weight_label
@@ -190,7 +192,7 @@ private fun MovementDetailsScreen(
                     .map { Pair(it.first.toString("EEEE, MMM d"), it.second) }
 
                 Grouping.Reps -> sets.groupBy { it.reps }.toList().sortedByDescending { it.first }
-                    .map { Pair("${it.first} Rep(s)", it.second) }
+                    .map { Pair(stringResource(Res.string.movement_details_reps_format, it.first), it.second) }
 
                 Grouping.Tempo -> sets.groupBy { it.tempo }.toList()
                     .sortedByDescending { it.second.maxOf { it.date.toLocalDate() } }
@@ -274,7 +276,7 @@ fun Tempo.render() {
         )
         Space(MaterialTheme.spacing.quarter)
         Text(
-            text = "-",
+            text = stringResource(Res.string.movement_details_tempo_separator),
             style = MaterialTheme.typography.labelSmall,
         )
         Text(

@@ -75,6 +75,7 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.category_details_delete_content_description
 import lift_bro.core.generated.resources.category_details_delete_warning_text
 import lift_bro.core.generated.resources.category_details_delete_warning_title
+import lift_bro.core.generated.resources.category_details_mer_format
 import lift_bro.core.generated.resources.category_details_movements_title
 import lift_bro.core.generated.resources.category_details_name_placeholder
 import lift_bro.core.generated.resources.category_details_no_sets_text
@@ -411,7 +412,7 @@ private fun VariationCard(
 
                                     with(pair?.second?.sumOf { it.mer } ?: 0) {
                                         if (LocalShowMERCalcs.current?.enabled == true && this > 0) {
-                                            append(" (+${this}mer)")
+                                            append(stringResource(Res.string.category_details_mer_format, this))
                                         }
                                     }
                                 }
