@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.timer
+package com.lift.bro.presentation.recording.timer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

@@ -21,6 +21,9 @@ sealed class Destination: tv.dpal.navi.Destination() {
     data object Home: Destination()
 
     @Serializable
+    data class Recording(val setId: String): Destination()
+
+    @Serializable
     sealed class Timer: Destination() {
 
         @Serializable

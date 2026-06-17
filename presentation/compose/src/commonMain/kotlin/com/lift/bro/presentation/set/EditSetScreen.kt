@@ -24,7 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -58,6 +58,7 @@ import com.lift.bro.presentation.video.VideoPlayer
 import com.lift.bro.ui.Fade
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.RpeSelector
+import com.lift.bro.ui.Space
 import com.lift.bro.ui.TempoSelector
 import com.lift.bro.ui.TopBarIconButton
 import com.lift.bro.ui.calendar.Calendar
@@ -131,13 +132,29 @@ fun EditSetScreen(
     onEvent: (EditSetEvent) -> Unit,
     strings: EditSetScreenStrings = EditSetScreenStrings.default(),
 ) {
+    val navCoordinator = LocalNavCoordinator.current
     var showVariationDialog by remember { mutableStateOf(false) }
 
     LiftingScaffold(
         title = {
-            Text(
-                if (state.id == null) strings.createSetTitle else strings.editSetTitle
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    if (state.id == null) strings.createSetTitle else strings.editSetTitle
+                )
+                Space(MaterialTheme.spacing.half)
+                IconButton(
+                    onClick = {
+                        navCoordinator.present(Destination.Recording(state.id))
+                    }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Videocam,
+                        contentDescription = strings.timerContentDescription
+                    )
+                }
+            }
         },
         trailingContent = {
             Fade(visible = state.saveEnabled) {
@@ -157,30 +174,6 @@ fun EditSetScreen(
                         down = it.tempo.ecc ?: 3,
                         hold = it.tempo.iso ?: 1,
                         up = it.tempo.con ?: 1
-                    )
-                }
-                IconButton(
-                    onClick = {
-                        if (state.saveEnabled) {
-                            navCoordinator.present(
-                                Destination.Timer.From(
-                                    setId = state.id
-                                )
-                            )
-                        } else {
-                            navCoordinator.present(
-                                Destination.Timer.With(
-                                    setId = state.id,
-                                    reps = state.reps?.toInt() ?: 1,
-                                    tempo = tempo
-                                )
-                            )
-                        }
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Timer,
-                        contentDescription = strings.timerContentDescription
                     )
                 }
             }

@@ -14,9 +14,9 @@ import com.lift.bro.data.analytics.NoOpAnalytics
 import com.lift.bro.data.analytics.PostHogAnalytics
 import com.lift.bro.data.datasource.UserPreferencesDataSource
 import com.lift.bro.data.repository.SettingsRepository
-import com.lift.bro.domain.analytics.Analytics
 import com.lift.bro.data.video.LocalVideoStorage
 import com.lift.bro.data.video.VideoStorage
+import com.lift.bro.domain.analytics.Analytics
 import com.lift.bro.domain.repositories.ISettingsRepository
 import io.github.samuolis.posthog.PostHogConfig
 import io.github.samuolis.posthog.PostHogContext

@@ -40,7 +40,6 @@ import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-
 @Serializable
 data class EditSetMaxPercentageState(
     val percentage: Int,

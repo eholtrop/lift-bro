@@ -13,6 +13,7 @@ object AnalyticsEvents {
         const val CREATE_SET = "screen_set_create"
         const val WORKOUT = "screen_workout"
         const val GOALS = "screen_goals"
+        const val RECORD_SET = "screen_record_set"
         const val TIMER = "screen_timer"
         const val WRAPPED_LANDING = "screen_wrapped_landing"
         const val ONBOARDING = "screen_onboarding"

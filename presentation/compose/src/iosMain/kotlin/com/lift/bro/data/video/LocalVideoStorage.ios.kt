@@ -2,8 +2,8 @@ package com.lift.bro.data.video
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
 import platform.Foundation.NSFileManager
+import java.io.File
 
 actual class LocalVideoStorage() : VideoStorage {
 
@@ -18,7 +18,7 @@ actual class LocalVideoStorage() : VideoStorage {
 
     override suspend fun saveVideo(sourceFile: File, setId: String): Result<String> = withContext(Dispatchers.IO) {
         try {
-            val videoFile = File(videosDir, "${setId}.mp4")
+            val videoFile = File(videosDir, "$setId.mp4")
             sourceFile.copyTo(videoFile, overwrite = true)
             Result.success("local://${videoFile.name}")
         } catch (e: Exception) {

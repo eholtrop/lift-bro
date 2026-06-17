@@ -17,6 +17,7 @@ val Destination.screenName: String?
         is Destination.EditWorkout -> AnalyticsEvents.Screens.WORKOUT
         is Destination.CreateWorkout -> AnalyticsEvents.Screens.WORKOUT
         is Destination.Wrapped -> AnalyticsEvents.Screens.WRAPPED_LANDING
+        is Destination.Recording -> AnalyticsEvents.Screens.RECORD_SET
         Destination.Settings -> AnalyticsEvents.Screens.SETTINGS
         Destination.Goals -> AnalyticsEvents.Screens.GOALS
         is Destination.Unknown -> null

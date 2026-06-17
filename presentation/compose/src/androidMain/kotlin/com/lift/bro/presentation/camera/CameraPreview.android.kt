@@ -5,8 +5,8 @@ import android.view.ViewGroup
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.FallbackStrategy
+import androidx.camera.video.FileOutputOptions
 import androidx.camera.video.Quality
 import androidx.camera.video.QualitySelector
 import androidx.camera.video.Recorder
@@ -14,7 +14,6 @@ import androidx.camera.video.Recording
 import androidx.camera.video.VideoCapture
 import androidx.camera.video.VideoRecordEvent
 import androidx.camera.view.PreviewView
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -24,19 +23,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.net.toFile
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.vinceglb.filekit.AndroidFile
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.absolutePath
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.io.File
 
 actual class CameraPermission
 
@@ -88,7 +85,12 @@ class AndroidCameraController(
         previewView: PreviewView,
         lifecycleOwner: LifecycleOwner,
     ) {
-        if (isInitialized) return
+        if (isInitialized && this.lifecycleOwner == lifecycleOwner) return
+
+        cameraProvider?.unbindAll()
+        cameraProvider = null
+        videoCapture = null
+        isInitialized = false
 
         this.previewView = previewView
         this.lifecycleOwner = lifecycleOwner
@@ -108,7 +110,7 @@ class AndroidCameraController(
                     .setQualitySelector(
                         QualitySelector.from(
                             Quality.HD,
-                            FallbackStrategy.higherQualityOrLowerThan(Quality.HD)
+                            FallbackStrategy.higherQualityOrLowerThan(Quality.HD),
                         )
                     )
                     .build()
@@ -170,8 +172,13 @@ class AndroidCameraController(
 
     override fun release() {
         recording?.stop()
+        recording = null
         cameraProvider?.unbindAll()
+        cameraProvider = null
+        videoCapture = null
         isInitialized = false
+        _isRecording.value = false
+        _recordingComplete.value = null
     }
 }
 
@@ -180,14 +187,13 @@ actual fun CameraPreview(
     controller: CameraController,
     modifier: Modifier,
 ) {
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraController = controller as? AndroidCameraController
 
     var previewView by remember { mutableStateOf<PreviewView?>(null) }
 
     LaunchedEffect(cameraController, previewView, lifecycleOwner) {
-        if (cameraController != null && previewView != null && lifecycleOwner != null) {
+        if (cameraController != null && previewView != null) {
             cameraController.setupCamera(previewView!!, lifecycleOwner)
         }
     }
