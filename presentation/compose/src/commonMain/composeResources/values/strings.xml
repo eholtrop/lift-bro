@@ -20,6 +20,9 @@
     <string name="backup_progress_sets">Sets</string>
     <string name="backup_progress_workouts">Workouts</string>
 
+    <string name="celebration_new_estimated_max">New estimated Max!</string>
+    <string name="celebration_new_one_rep_max">New one rep max!</string>
+
     <string name="calculator_backspace_content_description">Backspace</string>
     <string name="calculator_bigger_bar_message">We're gonna need a bigger bar... 🧔‍♂️</string>
 

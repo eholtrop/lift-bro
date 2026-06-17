@@ -76,6 +76,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.app_congrats_text
+import lift_bro.core.generated.resources.celebration_new_estimated_max
+import lift_bro.core.generated.resources.celebration_new_one_rep_max
 import lift_bro.core.generated.resources.consent_dialog_cta
 import lift_bro.core.generated.resources.consent_dialog_title
 import org.jetbrains.compose.resources.painterResource
@@ -368,8 +370,8 @@ fun App(
                                         Space(MaterialTheme.spacing.half)
                                         Text(
                                             text = when (val cel = celebration) {
-                                                is CelebrationType.NewEMax -> "New estimated Max!"
-                                                is CelebrationType.NewOneRepMax -> "New one rep max!"
+                                                is CelebrationType.NewEMax -> stringResource(Res.string.celebration_new_estimated_max)
+                                                is CelebrationType.NewOneRepMax -> stringResource(Res.string.celebration_new_one_rep_max)
                                                 CelebrationType.None -> ""
                                             },
                                             style = MaterialTheme.typography.bodyLarge,
