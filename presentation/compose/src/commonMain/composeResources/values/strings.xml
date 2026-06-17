@@ -509,14 +509,11 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_twm_format">= %1$s</string>
     <string name="rep_weight_selector_plus_symbol">+</string>
     <string name="language_settings_ai_gen_suffix"> (AI Gen)</string>
-    <string name="timer_plan_add_text">+</string>
     <string name="timer_plan_multiply_symbol">x</string>
-    <string name="timer_plan_remove_text">-</string>
     <string name="timer_plan_emoji">😫‍💨</string>
     <string name="timer_ended_set_format">%1$d x %2$s! 💪</string>
     <string name="timer_ended_twm_label">TWM: %1$s</string>
     <string name="timer_ended_mers_format">+ %1$d mers</string>
     <string name="wrapped_summary_plural_format">%1$ss %2$s</string>
-    <string name="wrapped_summary_occurrences_format">%1$dx</string>
     <string name="variation_text_field_ellipsis">...</string>
 </resources>
