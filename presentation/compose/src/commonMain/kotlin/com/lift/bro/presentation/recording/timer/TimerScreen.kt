@@ -1,4 +1,4 @@
-package com.lift.bro.presentation.timer
+package com.lift.bro.presentation.recording.timer
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -94,7 +94,6 @@ fun TimerScreen(
     )
 }
 
-
 @Composable
 fun TimerScreen(
     interactor: TimerInteractor,
@@ -106,7 +105,6 @@ fun TimerScreen(
         onEvent = interactor::invoke,
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -207,11 +205,9 @@ fun TimerScreen(
                                             }
                                         }
 
-                                        if (state.cameraEnabled) {
-                                            LaunchedEffect(state.cameraEnabled) {
-                                                if (state.cameraEnabled) {
-                                                    onEvent(TimerEvent.Plan.CameraLoaded(cameraControllerFactory.create()))
-                                                }
+                                        LaunchedEffect(state.cameraEnabled) {
+                                            if (state.cameraEnabled) {
+                                                onEvent(TimerEvent.Plan.CameraLoaded(cameraControllerFactory.create()))
                                             }
                                         }
 

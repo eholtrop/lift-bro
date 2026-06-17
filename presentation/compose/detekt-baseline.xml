@@ -10,17 +10,23 @@
     <ID>CyclomaticComplexMethod:LiftCard.kt$@Composable fun LiftCard( modifier: Modifier = Modifier, state: LiftCardState, onClick: (Category) -&gt; Unit, showRpe: Boolean = true, showTempo: Boolean = true, yUnit: LiftCardYValue = LiftCardYValue.Weight, )</ID>
     <ID>CyclomaticComplexMethod:LiftingScaffold.kt$@Composable fun LiftingScaffold( title: @Composable () -&gt; Unit, description: @Composable (() -&gt; Unit)? = null, snackbarHostState: SnackbarHostState = LocalSnackbarHostState.current, fab: @Composable (() -&gt; Unit)? = null, fabProperties: FabProperties? = null, leadingContent: @Composable () -&gt; Unit = { LeadingNavigationButton() }, trailingContent: @Composable () -&gt; Unit = {}, tallMode: Boolean = currentWindowAdaptiveInfo() .windowSizeClass .isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND), topAppBarScrollBehavior: TopAppBarScrollBehavior = when (tallMode) { true -&gt; TopAppBarDefaults.exitUntilCollapsedScrollBehavior() false -&gt; TopAppBarDefaults.enterAlwaysScrollBehavior() }, containerColor: Color = MaterialTheme.colorScheme.background, contentColor: Color = contentColorFor(containerColor), content: @Composable (PaddingValues) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:MovementDetailsInteractor.kt$@Composable fun rememberMovementDetailsInteractor( movementId: String, categoryId: String? = null, navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current, ): MovementDetailsInteractor</ID>
+    <ID>CyclomaticComplexMethod:RecordingInteractor.kt$@Composable fun rememberRecordingInteractor( setId: String, cameraControllerFactory: CameraControllerFactory = rememberCameraControllerFactory(), navController: LiftBroNavCoordinator = LocalNavCoordinator.current, setRepository: ISetRepository = dependencies.setRepository, ): RecordingInteractor</ID>
+    <ID>CyclomaticComplexMethod:RecordingScreen.kt$@Composable fun RecordSetScreen( state: RecordSetState, onEvent: (RecordSetEvent) -&gt; Unit, )</ID>
+    <ID>CyclomaticComplexMethod:TimerInteractor.kt$private fun recordingSideEffect( setRepository: ISetRepository? = dependencies.setRepository, videoStorage: VideoStorage = dependencies.videoStorage, ): SideEffect&lt;TimerState, TimerEvent&gt;</ID>
+    <ID>CyclomaticComplexMethod:TimerScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun TimerScreen( state: TimerState, onEvent: (TimerEvent) -&gt; Unit, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate = today, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = LocalDailyWorkoutDetailsInteractor.current ?: rememberDailyWorkoutDetailsInteractor(date), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftLogRepository: LiftingLogQueries = dependencies.database.logDataSource, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun VariationItemCard( modifier: Modifier, variationSet: VariationItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedEvents$()</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedPageState$()</ID>
+    <ID>EmptyFunctionBlock:CameraPreview.ios.kt$IosCameraController${ }</ID>
     <ID>EmptyFunctionBlock:DependencyContainer.native.kt$DependencyContainer${ }</ID>
     <ID>EmptyFunctionBlock:GetTotalRepsUseCaseTest.kt$GetTotalRepsUseCaseTest.FakeSetRepository${}</ID>
     <ID>EmptyFunctionBlock:GetTotalWeightMovedUseCaseTest.kt$GetTotalWeightMovedUseCaseTest.FakeSetRepository${}</ID>
     <ID>EmptyFunctionBlock:StoreManager.native.kt$StoreManager${ }</ID>
     <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
     <ID>Filename:AudioPlayer.native.kt$com.lift.bro.audio.AudioPlayer.native.kt</ID>
+    <ID>Filename:CameraPermission.kt$com.lift.bro.presentation.camera.CameraPermission.kt</ID>
     <ID>Filename:EncryptionKeyProvider.android.kt$com.lift.bro.data.EncryptionKeyProvider.android.kt</ID>
     <ID>Filename:EncryptionKeyProvider.native.kt$com.lift.bro.data.EncryptionKeyProvider.native.kt</ID>
     <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
@@ -53,6 +59,7 @@
     <ID>MaximumLineLength:HomeScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
     <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
+    <ID>MaximumLineLength:RecordingScreen.kt$ </ID>
     <ID>MaximumLineLength:RunningTimerOverlay.kt$ </ID>
     <ID>MaximumLineLength:TimerScreen.kt$ </ID>
     <ID>MaximumLineLength:TimerTicker.kt$ </ID>
@@ -66,10 +73,14 @@
     <ID>NoWildcardImports:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>NoWildcardImports:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
+    <ID>TooGenericExceptionCaught:CameraPreview.android.kt$AndroidCameraController$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e2: Exception</ID>
     <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e: Exception</ID>
     <ID>TooGenericExceptionCaught:LBDatabase.kt$DriverFactory$e: Exception</ID>
-    <ID>TooManyFunctions:TimerScreen.kt$com.lift.bro.presentation.timer.TimerScreen.kt</ID>
+    <ID>TooGenericExceptionCaught:LocalVideoStorage.ios.kt$LocalVideoStorage$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LocalVideoStorage.kt$LocalVideoStorage$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:TimerInteractor.kt$e: Exception</ID>
+    <ID>TooManyFunctions:TimerScreen.kt$com.lift.bro.presentation.recording.timer.TimerScreen.kt</ID>
     <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
     <ID>UnusedParameter:Calendar.kt$dateSelected: (LocalDate) -&gt; Unit</ID>
     <ID>UnusedParameter:Calendar.kt$selection: LocalDate?</ID>
@@ -86,5 +97,6 @@
     <ID>UnusedPrivateProperty:WrappedProgressScreen.kt$val minSet = sets.minOf { it.second }</ID>
     <ID>WildcardImport:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>WildcardImport:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
+    <ID>Wrapping:RecordingInteractor.kt$(</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -228,8 +228,8 @@ fun SettingsScreen() {
                             }
 
                             CheckField(
-                                title = "Timer",
-                                description = "Enable a timer for counting down sets and rest periods",
+                                title = "Video Recording",
+                                description = "Record Videos and attach them to Sets to better understand your form!",
                                 checked = timer,
                                 checkChanged = {
                                     timer = it

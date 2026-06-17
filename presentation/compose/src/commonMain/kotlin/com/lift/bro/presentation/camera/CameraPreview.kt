@@ -1,10 +1,8 @@
 package com.lift.bro.presentation.camera
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import io.github.vinceglb.filekit.PlatformFile
-import java.io.File
 
 expect class CameraPermission
 
@@ -23,8 +21,7 @@ expect class CameraControllerFactory {
 @Composable
 expect fun rememberCameraControllerFactory(): CameraControllerFactory
 
-expect @Composable
-fun CameraPreview(
+@Composable expect fun CameraPreview(
     controller: CameraController,
     modifier: Modifier = Modifier,
 )

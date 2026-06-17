@@ -1,9 +1,8 @@
-package com.lift.bro.presentation.timer
+package com.lift.bro.presentation.recording.timer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.traceEventEnd
 import com.lift.bro.audio.AudioPlayer
 import com.lift.bro.data.video.VideoStorage
 import com.lift.bro.di.dependencies
@@ -13,15 +12,14 @@ import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.serializers.InstantSerializer
 import com.lift.bro.presentation.camera.CameraController
-import com.lift.bro.presentation.timer.TimerState.Ended
-import com.lift.bro.presentation.timer.TimerState.Plan
-import com.lift.bro.presentation.timer.TimerState.Running
+import com.lift.bro.presentation.recording.timer.TimerState.Ended
+import com.lift.bro.presentation.recording.timer.TimerState.Plan
+import com.lift.bro.presentation.recording.timer.TimerState.Running
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.cacheDir
 import io.github.vinceglb.filekit.div
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -36,7 +34,6 @@ import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
-import java.io.File
 import kotlin.math.max
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -147,7 +144,6 @@ sealed interface TimerEvent {
 
     data class SetVideoUri(val uri: String?): TimerEvent
 
-
     sealed interface Plan: TimerEvent {
         data class StartupTimeChanged(val value: Long): Plan
         data class TempoChanged(val rep: Int?, val tempo: Tempo): Plan
@@ -218,8 +214,8 @@ private fun timerReducers() = listOf(
     },
     // end timer reducer
     Reducer { state, event ->
-        if (state !is TimerState.Ended && event !is TimerEvent.Ended) return@Reducer state
-        return@Reducer if (state is TimerState.Ended) {
+        if (state !is Ended && event !is TimerEvent.Ended) return@Reducer state
+        return@Reducer if (state is Ended) {
             when (event) {
                 TimerEvent.Ended.Restart -> Plan(
                     tempo = state.timers.drop(1).chunked(4).map {
@@ -240,7 +236,7 @@ private fun timerReducers() = listOf(
 )
 
 private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { state, event ->
-    if (state !is TimerState.Plan || event !is TimerEvent.Plan) return@Reducer state
+    if (state !is Plan || event !is TimerEvent.Plan) return@Reducer state
     when (event) {
         is TimerEvent.Plan.PerSetRestChanged -> state.copy(perSetRest = event.value)
         is TimerEvent.Plan.StartupTimeChanged -> state.copy(startupTime = event.value)
@@ -274,7 +270,7 @@ private fun planningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { 
 }
 
 private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { state, event ->
-    if (state !is TimerState.Running || event !is TimerEvent.Running) return@Reducer state
+    if (state !is Running || event !is TimerEvent.Running) return@Reducer state
     when (event) {
         TimerEvent.Running.Pause -> state.copy(paused = true)
         TimerEvent.Running.Resume -> state.copy(
@@ -320,7 +316,7 @@ private fun runningTimerReducer(): Reducer<TimerState, TimerEvent> = Reducer { s
 private fun beepSideEffect(
     audioPlayer: AudioPlayer = dependencies.audioPlayer,
 ): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
-    if (state is TimerState.Running && state.beep && state.audio) {
+    if (state is Running && state.beep && state.audio) {
         val timer = state.currentTimer
 
         timer?.let {
@@ -338,7 +334,7 @@ private fun beepSideEffect(
 private fun tickSideEffect(): SideEffect<TimerState, TimerEvent> = SideEffect { disp, state, event ->
     when (event) {
         TimerEvent.Plan.Start, TimerEvent.Running.Resume, TimerEvent.Running.Tick -> {
-            if (state is TimerState.Running) {
+            if (state is Running) {
                 if (state.elapsedTime < state.totalTime) {
                     withContext(Dispatchers.Default) {
                         delay(50)
@@ -364,7 +360,7 @@ private fun recordingSideEffect(
         is Running -> state.controller
     }
     when (state) {
-        is TimerState.Running -> {
+        is Running -> {
             if (state.cameraEnabled && controller?.isRecording?.value == false) {
                 // Start recording when entering Running state
                 try {
@@ -416,47 +412,48 @@ private fun recordingSideEffect(
     }
 }
 
-private fun TimerState.Plan.runningTimer(beep: Boolean = false, cameraEnabled: Boolean = false): TimerState.Running = TimerState.Running(
-    elapsedTime = 0L,
-    paused = !beep,
-    beep = beep,
-    set = set,
-    videoUri = null,
-    cameraEnabled = cameraEnabled,
-    controller = controller,
-    timers = listOf(
-        TimerSegment(
-            name = "Setup",
-            speak = "Get Ready",
-            totalTime = startupTime * 1000L,
-            elapsedTime = 0
-        )
-    ) + tempo.map {
-        listOf(
+private fun Plan.runningTimer(beep: Boolean = false, cameraEnabled: Boolean = false): Running =
+    Running(
+        elapsedTime = 0L,
+        paused = !beep,
+        beep = beep,
+        set = set,
+        videoUri = null,
+        cameraEnabled = cameraEnabled,
+        controller = controller,
+        timers = listOf(
             TimerSegment(
-                name = "Ecc (Down)",
-                speak = "Down",
-                elapsedTime = 0,
-                totalTime = (it.down) * 1000L,
-            ),
-            TimerSegment(
-                name = "Iso (Hold)",
-                speak = "Hold",
-                elapsedTime = 0,
-                totalTime = (it.hold) * 1000L,
-            ),
-            TimerSegment(
-                name = "Con (Up)",
-                speak = "Up",
-                elapsedTime = 0,
-                totalTime = (it.up) * 1000L,
-            ),
-            TimerSegment(
-                name = "Rest",
-                speak = "Rest",
-                totalTime = perSetRest * 1000L,
+                name = "Setup",
+                speak = "Get Ready",
+                totalTime = startupTime * 1000L,
                 elapsedTime = 0
             )
-        )
-    }.flatten(),
-)
+        ) + tempo.map {
+            listOf(
+                TimerSegment(
+                    name = "Ecc (Down)",
+                    speak = "Down",
+                    elapsedTime = 0,
+                    totalTime = (it.down) * 1000L,
+                ),
+                TimerSegment(
+                    name = "Iso (Hold)",
+                    speak = "Hold",
+                    elapsedTime = 0,
+                    totalTime = (it.hold) * 1000L,
+                ),
+                TimerSegment(
+                    name = "Con (Up)",
+                    speak = "Up",
+                    elapsedTime = 0,
+                    totalTime = (it.up) * 1000L,
+                ),
+                TimerSegment(
+                    name = "Rest",
+                    speak = "Rest",
+                    totalTime = perSetRest * 1000L,
+                    elapsedTime = 0
+                )
+            )
+        }.flatten(),
+    )

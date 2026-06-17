@@ -13,9 +13,11 @@ import com.lift.bro.presentation.home.HomeScreen
 import com.lift.bro.presentation.movement.CreateMovementScreen
 import com.lift.bro.presentation.movement.MovementDetailsScreen
 import com.lift.bro.presentation.onboarding.OnboardingScreen
+import com.lift.bro.presentation.recording.RecordSetScreen
+import com.lift.bro.presentation.recording.rememberRecordingInteractor
+import com.lift.bro.presentation.recording.timer.TimerScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
-import com.lift.bro.presentation.timer.TimerScreen
 import com.lift.bro.presentation.workout.WorkoutScreen
 import com.lift.bro.presentation.workout.rememberWorkoutInteractor
 import com.lift.bro.presentation.wrapped.WrappedLandingScreen
@@ -136,5 +138,9 @@ fun AppRouter(
                 )
             }
         }
+
+        is Destination.Recording -> RecordSetScreen(
+            interactor = rememberRecordingInteractor(setId = route.setId)
+        )
     }
 }
