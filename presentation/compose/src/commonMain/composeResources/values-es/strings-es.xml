@@ -1,206 +1,404 @@
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="dashboard_title">LIFT BRO</string>
-    <string name="dashboard_toolbar_trailing_button_content_description">Añadir Lift</string>
-    <string name="dashboard_toolbar_leading_button_content_description">Ajustes</string>
-    <string name="dashboard_fab_content_description">Añadir Serie</string>
-    <string name="lbs">lbs</string>
-    <string name="kg">kg</string>
-    <string name="reps">reps</string>
-    <string name="dashboard_footer_version">Versión: %1$s</string>
+    <string name="app_congrats_text">¡¡Felicidades!!</string>
 
-    <string name="color_picker_dialog_title">Elige un Color</string>
-    <string name="color_picker_dialog_red">rojo</string>
-    <string name="color_picker_dialog_green">verde</string>
+    <string name="analytics_consent_banner_action">Habilitar</string>
+    <string name="analytics_consent_banner_detail">Compartir información de uso (nombres de pantalla, clics)</string>
+    <string name="analytics_consent_banner_onclick_label">Habilitar analíticas</string>
+    <string name="analytics_consent_banner_privacy">SIN información personal</string>
+    <string name="analytics_consent_banner_title">¡Ayuda a mejorar Lift Bro!</string>
+
+    <string name="backup_dialog_title">Copia de seguridad de Lift Bro</string>
+    <string name="backup_dialog_cancel_cta">Cancelar</string>
+    <string name="backup_warning_dialog_message">Lift Bro es una aplicación estrictamente local. Si pierdes tu teléfono, ¡perderás todos tus datos! ¿Quieres hacer una copia de seguridad ahora?</string>
+    <string name="backup_warning_dialog_confirm_cta">Respaldar ahora</string>
+    <string name="backup_warning_dialog_dismiss_cta">Ignorar</string>
+    <string name="backup_warning_dialog_title">Ha pasado un tiempo...</string>
+    <string name="backup_progress_categories">Categorías</string>
+    <string name="backup_progress_complete_description">completado</string>
+    <string name="backup_progress_daily_notes">Notas diarias</string>
+    <string name="backup_progress_movements">Movimientos</string>
+    <string name="backup_progress_sets">Series</string>
+    <string name="backup_progress_workouts">Entrenamientos</string>
+
+    <string name="calculator_backspace_content_description">Retroceso</string>
+    <string name="calculator_bigger_bar_message">Vamos a necesitar una barra más grande... 🧔‍♂️</string>
+
+    <string name="calendar_next_month_content_description">Mes siguiente</string>
+    <string name="calendar_previous_month_content_description">Mes anterior</string>
+    <string name="calendar_today_content_description">Hoy</string>
+    <string name="edit_lift_variation_warning_dialog_text">Esto eliminará todas las series dentro de esta variación, ¿estás seguro?</string>
+
     <string name="color_picker_dialog_blue">azul</string>
-    <string name="color_picker_positive_cta">Guardar</string>
+    <string name="color_picker_dialog_green">verde</string>
+    <string name="color_picker_dialog_red">rojo</string>
+    <string name="color_picker_dialog_title">Seleccionar un color</string>
     <string name="color_picker_negative_cta">Cancelar</string>
+    <string name="color_picker_positive_cta">Guardar</string>
 
-    <string name="lift_details_fab_content_description">Añadir Serie</string>
+    <string name="consent_dialog_cta">Acepto</string>
+    <string name="consent_dialog_title">Hemos hecho algunas actualizaciones</string>
 
+    <string name="create_lift_screen_title">Crear movimiento</string>
+    <string name="create_set_screen_title">Lo destrocé</string>
+
+    <string name="dashboard_empty_primary_cta_title">Crear categoría</string>
+    <string name="dashboard_empty_secondary_cta_title">Restaurar copia de seguridad</string>
+    <string name="dashboard_empty_title">¿Acaso levantas peso, Bro?</string>
+    <string name="dashboard_fab_content_description">Añadir serie</string>
+    <string name="dashboard_footer_leading_button_content_description">Panel de control</string>
     <string name="dashboard_footer_trailing_button_content_description">Calendario</string>
-    <string name="dashboard_footer_leading_button_content_description">Dashboard</string>
-
-    <string name="edit_lift_screen_add_variation_cta_content_description">Añadir Variación</string>
-    <string name="edit_lift_screen_warning_dialog_title">Cuidado</string>
-    <string name="edit_lift_screen_lift_warning_dialog_text">Esto borrará todas las variaciones y series. ¡No hay vuelta atrás!</string>
-    <string name="edit_lift_screen_title">Editar Lift</string>
-    <string name="create_lift_screen_title">Crear Lift</string>
-    <string name="edit_lift_screen_delete_cta_content_description">Borrar</string>
-    <string name="edit_lift_screen_save_cta_content_description">Guardar Lift</string>
-
-    <string name="edit_lift_screen_lift_name_placeholder">ej: Sentadilla, Press de Banca, Peso Muerto</string>
-    <string name="edit_lift_screen_variation_name_placeholder">ej: Trasera, Frontal, Inclinado</string>
-    <string name="edit_lift_screen_variation_delete_cta_content_description">Borrar Variación</string>
-
-    <string name="edit_lift_info_dialog_title">¿Qué es un Lift?</string>
-    <string name="edit_lift_info_dialog_text">Un grupo de <b>Variaciones/Movimientos</b>\n\nej: Una Sentadilla puede tener variaciones como Frontal o Trasera\n\n¡Una vez que nombres tu lift, puedes crear sus variaciones!\nPiensa en ello como el "apellido" del movimiento\n\nPeso Muerto *Rumano*\nSentadilla *Frontal*\nPress de Banca *Inclinado*\n</string>
-    <string name="edit_lift_variation_heading">Variaciones</string>
-    <string name="edit_lift_variation_warning_dialog_text">Esto borrará todas las series de esta variación. ¡Piénsalo bien!</string>
-
-    <string name="edit_lift_screen_warning_dialog_positive_cta">¡Dale!</string>
-    <string name="edit_lift_screen_warning_dialog_negative_cta">Olvídalo</string>
-
-    <string name="dashboard_empty_title">¿A poco sí levantas, Bro?</string>
-    <string name="dashboard_empty_primary_cta_title">Crear Lift</string>
-    <string name="dashboard_empty_secondary_cta_title">Restaurar Copia</string>
-
-    <string name="toolbar_back_button_content_description">Atrás</string>
-
-    <string name="backup_dialog_title">Ha pasado tiempo...</string>
-    <string name="backup_dialog_message">Lift Bro es local. Si pierdes el cel, ¡adiós a tus ganancias! ¿Quieres hacer un respaldo?</string>
-    <string name="backup_dialog_primary_cta">Respaldar Ahora</string>
-    <string name="backup_dialog_secondary_cta">Luego</string>
-
-    <string name="lift_card_empty_title">¡Sin Series!</string>
-    <string name="lift_card_empty_subtitle">Toca para añadir una</string>
-
-    <string name="toolbar_update_button_content_description">Actualizar Lift Bro</string>
-    <string name="toolbar_calculator_button_content_description">Calculadora Lift Bro</string>
-
-    <string name="weight_selector_chin_title">%1$d%% de tu Max (%2$s)</string>
-    <string name="weight_selector_chin_subtitle">%1$d%% de tu Max (%2$s)</string>
+    <string name="dashboard_footer_version">Versión: %1$s</string>
+    <string name="dashboard_lift_header_title">Categorías</string>
+    <string name="dashboard_title">LIFT BRO</string>
+    <string name="dashboard_toolbar_leading_button_content_description">Ajustes</string>
+    <string name="dashboard_toolbar_trailing_button_content_description">Añadir movimiento</string>
 
     <string name="date_selector_dialog_confirm_button_text">Ok</string>
     <string name="date_selector_dialog_dismiss_button_text">Cerrar</string>
-    <string name="date_selector_title">El</string>
+    <string name="date_selector_title">En</string>
 
-    <string name="create_set_screen_title">Lo destrocé</string>
-    <string name="edit_set_screen_title">Lo destrozaste</string>
-    <string name="edit_set_screen_delete_acc_label">Borrar</string>
-    <string name="edit_set_screen_save_cta_content_description">Guardar Serie</string>
-    <string name="edit_set_screen_create_lift_cta">Crear Lift</string>
+    <string name="decimal_picker_empty_title">Vacío</string>
+    <string name="decimal_picker_weight_title">Peso</string>
 
-    <string name="edit_set_screen_variation_selector_empty_state_title">Elegir Lift</string>
+    <string name="dialog_close_content_description">Cerrar</string>
+    <string name="dialog_info_content_description">Info</string>
+    <string name="info_dialog_info_description">Info</string>
+    <string name="info_dialog_okay">Ok</string>
+    <string name="info_dialog_preview_test_button">Prueba</string>
+    <string name="info_speech_bubble_preview_title">¡Bienvenido!</string>
+    <string name="info_speech_bubble_preview_message">Este es un globo de información.</string>
+    <string name="info_speech_bubble_preview_message_detail">Puede contener varias líneas de texto y diseños complejos.</string>
+    <string name="info_speech_bubble_preview_pro_tip">Consejo profesional</string>
+    <string name="info_speech_bubble_preview_warmup_message">¡Calienta siempre antes de levantar pesas!</string>
+    <string name="info_speech_bubble_preview_always_do_message">Haz siempre algo</string>
 
-    <string name="edit_set_screen_variation_selector_lift_max">Max %1$s: %2$s</string>
-    <string name="edit_set_screen_variation_selector_variation_max">Max %1$s: %2$s</string>
-    <string name="edit_set_screen_variation_selector_no_lift_max">Ninguno</string>
-    <string name="edit_set_screen_variation_selector_no_variation_max">Ninguno</string>
-    <string name="edit_set_screen_extra_notes_label">Notas: (opcional)</string>
-    <string name="edit_set_screen_extra_notes_placeholder">¡Hoy me sentí como Hulk!</string>
-
-    <string name="workout_screen_title">Entreno</string>
-    <string name="workout_notes_placeholder">Notas</string>
-    <string name="workout_warmup_label">Calentamiento</string>
-    <string name="workout_warmup_placeholder">Rodillas arriba</string>
-    <string name="workout_add_warmup_cta">Añadir Calentamiento</string>
-    <string name="workout_finisher_label">Remate</string>
-    <string name="workout_finisher_placeholder">Burpees</string>
-    <string name="workout_add_finisher_cta">Añadir Remate</string>
-    <string name="workout_add_exercise_cta">Añadir Ejercicio</string>
-    <string name="workout_variation_card_primary_cta">Duplicar última serie</string>
-    <string name="workout_variation_card_secondary_cta">Añadir serie</string>
-
-    <string name="onboarding_page_one_title">ELIGE\nA TU\nLIFT BRO</string>
-    <string name="onboarding_page_one_cta">Continuar</string>
-    <string name="onboarding_leo_content_description">Lift Bro pelo corto</string>
-    <string name="onboarding_lisa_content_description">Lift Bro con coleta</string>
-
-    <string name="onboarding_consent_screen_title">ANTES DE DARLE</string>
-    <string name="onboarding_consent_screen_subtitle">¿Leíste esto?</string>
-    <string name="onboarding_consent_screen_consent">He leído y acepto los %1$s y la %2$s</string>
-    <string name="onboarding_consent_screen_consent_checkbox_content_description">Consentimiento</string>
-    <string name="terms_and_conditions">Términos y Condiciones</string>
-    <string name="privacy_policy">Política de Privacidad</string>
-
-    <string name="onboarding_skip_screen_title">¡VÁMONOS\nRECIO!</string>
-    <string name="onboarding_skip_screen_subtitle">¿Cómo quieres empezar?</string>
-
-    <string name="workout_calendar_edit_daily_notes_cta">Editar notas diarias</string>
-
-    <string name="settings_title">Ajustes</string>
-    <string name="settings_uom_title">Unidad de Medida por defecto</string>
-    <string name="settings_theme_title">Tema</string>
-    <string name="settings_theme_option_one">Sistema</string>
-    <string name="settings_theme_option_two">Claro</string>
-    <string name="settings_theme_option_three">Oscuro</string>
-
-    <string name="settings_backup_restore_title">Respaldo / Restaurar</string>
-    <string name="settings_backup_cta">Respaldar</string>
-    <string name="settings_restore_cta">Restaurar</string>
-
-    <string name="settings_other_title">Otros:</string>
-    <string name="settings_other_discord_cta">¡Únete al Discord!</string>
-    <string name="settings_other_github_cta">Ver el Código Fuente</string>
-
-    <string name="settings_experimental_title">Experimental</string>
-    <string name="settings_experimental_message">Estas funciones son experimentales y podrían romper la app. ¡Úsalas con cuidado!</string>
-    <string name="settings_experimental_input_placeholder">¿Cuál es la palabra mágica?</string>
-    <string name="settings_experimental_input_password">pizza</string>
-
-    <string name="settings_mer_title">Reps Máximas Efectivas (RME)</string>
-    <string name="settings_mer_enable_text">Mostrar cálculos de RME</string>
-    <string name="settings_mer_fatigue_input_title">Umbral de Fatiga</string>
-    <string name="settings_mer_fatigue_info_dialog_title">Umbral de Fatiga</string>
-    <string name="settings_mer_fatigue_info_dialog_paragraph_one">El %% de fatiga que debes alcanzar respecto a tu max para que una rep cuente como RME (defecto 80%%).</string>
-    <string name="settings_mer_fatigue_info_dialog_paragraph_two">ej: si tu max es 100lbs en Bench y haces una rep con 80lbs. ¡Eso es una RME!</string>
-
-    <string name="settings_twm_title">Peso Total Movido (PTM)</string>
-    <string name="settings_twm_enable_text">Mostrar PTM</string>
-    <string name="settings_twm_fatigue_info_dialog_title">Peso Total Movido</string>
-    <string name="settings_twm_fatigue_info_dialog_paragraph_one">¡Todo el peso que moviste en una serie/ejercicio/entreno!</string>
-
-    <string name="settings_emax_title">Max Estimado/Teórico</string>
-    <string name="settings_emax_enable_text">Mostrar eMax (estimado)</string>
-    <string name="settings_tmax_enable_text">Mostrar tMax (teórico)</string>
-    <string name="settings_emax_info_dialog_title">eMax/tMax</string>
-    <string name="settings_emax_formula">peso x (1 + reps/30)</string>
-    <string name="settings_emax_info_dialog_h1">eMax - Max Estimado</string>
-    <string name="settings_emax_info_dialog_p1">Un estimado de tu 1RM cuando NO tienes un max registrado.</string>
-    <string name="settings_emax_info_dialog_h2">tMax - Max Teórico</string>
-    <string name="settings_emax_info_dialog_p2">Un estimado de lo que podrías levantar hoy, aunque ya tengas un 1RM real.</string>
-
-    <string name="settings_mer_weekly_goal_input_title">Meta Semanal de RME</string>
-    <string name="settings_mer_weekly_goal_info_dialog_title">Meta Semanal de RME</string>
-    <string name="settings_mer_weekly_goal_info_dialog_message">¡Usa las RME para medir tu progreso semanal!</string>
-
-    <string name="consent_dialog_title">Actualizamos cositas</string>
-    <string name="consent_dialog_cta">Acepto</string>
-
-    <string name="edit_daily_notes_dialog_title">Notes del: %1$s</string>
-    <string name="edit_daily_notes_dialog_placeholder">¿Metas para hoy?
-¿Te sientes con todo?
-¿Algún dolor o molestia?</string>
     <string name="edit_daily_notes_dialog_confirm_cta">Guardar</string>
     <string name="edit_daily_notes_dialog_dismiss_cta">Cancelar</string>
+    <string name="edit_daily_notes_dialog_placeholder">¿Objetivos de hoy?
+¿Te sientes especialmente en forma?
+¿Dolor o molestias?</string>
+    <string name="edit_daily_notes_dialog_title">Notas para: %1$s</string>
 
-    <string name="workout_set_options_delete_cta">Borrar</string>
-    <string name="workout_set_options_copy_cta">Copiar</string>
+    <string name="edit_lift_info_dialog_text">Un grupo de <b>Variaciones/Movimientos</b>\n\nej: Una Sentadilla puede tener muchas variaciones como Sentadilla frontal y trasera\n\n¡Una vez que pongas nombre a tu movimiento, puedes empezar a crear variaciones del mismo!\nPiensa en ello como el "sufijo" de un movimiento\n\n*Peso muerto* rumano\n*Sentadilla* frontal\n*Press de banca* inclinado\n</string>
+    <string name="edit_lift_info_dialog_title">¿Qué es un movimiento?</string>
+    <string name="edit_lift_screen_add_variation_cta_content_description">Añadir variación</string>
+    <string name="edit_lift_screen_delete_cta_content_description">Eliminar</string>
+    <string name="edit_lift_screen_lift_name_placeholder">ej: Sentadilla, Press de banca, Peso muerto</string>
+    <string name="edit_lift_screen_lift_warning_dialog_text">Esto eliminará todas las variaciones y series de este movimiento. Esto no se puede deshacer.</string>
+    <string name="edit_lift_screen_save_cta_content_description">Guardar movimiento</string>
+    <string name="edit_lift_screen_title">Editar categoría</string>
+    <string name="edit_lift_screen_variation_delete_cta_content_description">Eliminar variación</string>
+    <string name="edit_lift_screen_variation_name_placeholder">ej: Trasera, Frontal, Inclinado</string>
+    <string name="edit_lift_screen_variation_warning_dialog_text">Esto eliminará todas las series de esta variación. Esto no se puede deshacer.</string>
+    <string name="edit_lift_screen_warning_dialog_negative_cta">Olvídalo</string>
+    <string name="edit_lift_screen_warning_dialog_positive_cta">¡Ok!</string>
+    <string name="edit_lift_screen_warning_dialog_title">Advertencia</string>
+    <string name="edit_lift_variation_heading">Variaciones</string>
 
-    <string name="settings_pro_thanks_title">¡Gracias por el apoyo!</string>
-    <string name="settings_pro_status_text">¡¡Eres un Lift PRO!!</string>
-    <string name="settings_manage_subscription_cta">Gestionar Suscripción</string>
-    <string name="settings_pro_features_header">Funciones Pro</string>
-    <string name="settings_become_pro_title">¡Hazte Pro!</string>
-    <string name="settings_become_pro_description">Suscríbete para quitar anuncios y desbloquear métricas premium.</string>
-    <string name="settings_release_notes_cta">Notas de Versión</string>
-    <string name="settings_user_id_label">ID Usuario: %1$s</string>
-
+    <string name="edit_set_screen_create_lift_cta">Crear movimiento</string>
+    <string name="edit_set_screen_delete_acc_label">Eliminar</string>
     <string name="edit_set_screen_encouragement">¡Tú puedes!</string>
-    <string name="rep_weight_selector_times_symbol">x</string>
+    <string name="edit_set_screen_extra_notes_label">Notas extra: (opcional)</string>
+    <string name="edit_set_screen_extra_notes_placeholder">¡Hoy me he salido!</string>
+    <string name="edit_set_screen_save_cta_content_description">Guardar serie</string>
+    <string name="edit_set_screen_title">Lo destrozaste</string>
+    <string name="edit_set_screen_variation_selector_empty_state_title">Seleccionar movimiento</string>
+    <string name="edit_set_screen_variation_selector_lift_max">Max de %1$s: %2$s</string>
+    <string name="edit_set_screen_variation_selector_no_lift_max">Ninguno</string>
+    <string name="edit_set_screen_variation_selector_no_variation_max">Ninguno</string>
+    <string name="edit_set_screen_variation_selector_variation_max">Max de %1$s: %2$s</string>
+    <string name="edit_set_date_month_day">EEEE, d MMM</string>
+    <string name="edit_set_date_year">yyyy</string>
+    <string name="edit_set_date_time">HH:mm</string>
+    <string name="edit_set_date_ampm"></string>
+
+    <string name="kg">kg</string>
+    <string name="lbs">lbs</string>
+
+    <string name="lift_card_empty_subtitle">Toca para añadir una</string>
+    <string name="lift_card_empty_title">¡Sin series!</string>
+    <string name="lift_details_fab_content_description">Añadir serie</string>
+    <string name="lift_details_screen_edit_content_description">Editar</string>
+    <string name="lift_details_screen_empty_state_text">Aún no hay variaciones. Toca + para añadir una serie.</string>
+    <string name="lift_details_screen_favourite_content_description">Favorito</string>
+    <string name="lift_details_screen_sort_by_content_description">Ordenar por</string>
+    <string name="lift_details_screen_sort_name">Nombre</string>
+    <string name="lift_details_screen_sort_one_rep_max">Máximo a 1 repetición</string>
+
+    <string name="line_item_title_text">Título</string>
+    <string name="number_picker_reps_title">Repeticiones</string>
+    <string name="number_picker_weight_title">Peso</string>
+
+    <string name="onboarding_consent_screen_consent">He leído y acepto los %1$s y %2$s</string>
+    <string name="onboarding_consent_screen_consent_checkbox_content_description">Consentimiento</string>
+    <string name="onboarding_consent_screen_subtitle">¿Los has leído?</string>
+    <string name="onboarding_consent_screen_title">ANTES DE EMPEZAR</string>
+    <string name="onboarding_leo_content_description">Lift Bro con pelo corto</string>
+    <string name="onboarding_lisa_content_description">Lift Bro con coleta</string>
+    <string name="onboarding_page_one_cta">Continuar</string>
+    <string name="onboarding_page_one_title">ELIGE\nTU\nLIFT BRO</string>
+    <string name="onboarding_setup_screen_continue_cta">Continuar</string>
+    <string name="onboarding_setup_screen_select_lifts_title">¡Selecciona algunos movimientos! (la parte divertida)</string>
+    <string name="onboarding_setup_screen_select_uom_title">Selecciona tu unidad\nde medida preferida</string>
+    <string name="onboarding_setup_screen_title">VAMOS A EMPEZAR</string>
+    <string name="onboarding_skip_screen_continue_cta">🧭 ¡Ponme en marcha, entrenador!</string>
+    <string name="onboarding_skip_screen_restore_cta">🛺 Restaurar desde una copia de seguridad</string>
+    <string name="onboarding_skip_screen_setup_cta">🙏 Ayúdame a configurar algunos movimientos</string>
+    <string name="onboarding_skip_screen_subtitle">¿Cómo te gustaría empezar?</string>
+    <string name="onboarding_skip_screen_title">¡VAMOS\nALLÁ!</string>
+
+    <string name="privacy_policy">Política de privacidad</string>
+
+    <string name="radio_field_selected_option_text">Opción seleccionada</string>
+    <string name="radio_field_unselected_option_text">Opción no seleccionada</string>
+
+    <string name="release_notes_dialog_title">Notas de la versión</string>
+    <string name="release_notes_release_notes_close_content_description">Ignorar notas de versión</string>
+    <string name="release_notes_row_new_update_title">¡Nueva actualización descargada!</string>
+    <string name="release_notes_row_tap_subtitle">Toca para ver las notas de la versión</string>
+    <string name="rep_weight_selector_info_p1">Una escala que puede usarse para seguir el esfuerzo utilizado para una serie dada</string>
+    <string name="rep_weight_selector_info_p2">Puede calcularse basándose en las "repeticiones en reserva", % del peso máximo, ¡o vibraciones!</string>
+    <string name="rep_weight_selector_info_title">RPE:\nÍndice de Esfuerzo Percibido</string>
     <string name="rep_weight_selector_rpe_placeholder">RPE</string>
-    <string name="rep_weight_selector_info_title">RPE:\nEscala de Esfuerzo Percibido</string>
-    <string name="rep_weight_selector_table_col_rpe">RPE</string>
+    <string name="rep_weight_selector_table_col_percent">%</string>
     <string name="rep_weight_selector_table_col_rir">RIR</string>
-    <string name="rep_weight_selector_table_col_percent">%%</string>
+    <string name="rep_weight_selector_table_col_rpe">RPE</string>
     <string name="rep_weight_selector_table_col_vibe">Vibe</string>
+    <string name="rep_weight_selector_table_percent_100">100</string>
+    <string name="rep_weight_selector_table_percent_50">50</string>
+    <string name="rep_weight_selector_table_percent_60">60</string>
+    <string name="rep_weight_selector_table_percent_75">75</string>
+    <string name="rep_weight_selector_table_percent_85">85</string>
+    <string name="rep_weight_selector_table_percent_90">90</string>
+    <string name="rep_weight_selector_table_percent_95">95</string>
+    <string name="rep_weight_selector_table_rir_0">0</string>
+    <string name="rep_weight_selector_table_rir_1">1</string>
+    <string name="rep_weight_selector_table_rir_2">2</string>
+    <string name="rep_weight_selector_table_rir_3">3</string>
+    <string name="rep_weight_selector_table_rir_4">4</string>
+    <string name="rep_weight_selector_table_rir_5_6">5-6</string>
+    <string name="rep_weight_selector_table_rir_6_plus">6+</string>
+    <string name="rep_weight_selector_table_rpe_1_4">1-4</string>
+    <string name="rep_weight_selector_table_rpe_5">1-5</string>
+    <string name="rep_weight_selector_table_rpe_6">6</string>
+    <string name="rep_weight_selector_table_rpe_7">7</string>
+    <string name="rep_weight_selector_table_rpe_8">8</string>
+    <string name="rep_weight_selector_table_rpe_9">9</string>
+    <string name="rep_weight_selector_times_symbol">x</string>
+    <string name="reps">reps</string>
 
-    <string name="wrapped_tenure_header_title">¡Bienvenido a tu Lift Bro Wrapped!</string>
-    <string name="wrapped_tenure_first_year_title">%1$d\n¡Tu primer año con Lift Bro! 🎉</string>
-    <string name="wrapped_tenure_first_year_speech_bubble_message">¡Veamos esas ganancias! 💪</string>
-    <string name="wrapped_reps_header_title">Reps Totales</string>
-    <string name="wrapped_reps_total_title">Levantaste %1$d cosas este año 😵</string>
-    <string name="wrapped_reps_total_subtitle">(Y luego las volviste a bajar)</string>
-    <string name="wrapped_weight_speech_bubble_title">¡¡ESTO ES ENORME!! 💪</string>
+    <string name="server_settings_row_current_ip">La IP actual es %1$s</string>
+    <string name="server_settings_row_description">Iniciar un servidor local en este dispositivo.</string>
+    <string name="server_settings_row_status_disabled">Servidor deshabilitado</string>
+    <string name="server_settings_row_status_enabled">Servidor habilitado</string>
+    <string name="server_settings_row_title">Servidor local</string>
+    <string name="settings_backup_cta">Respaldar</string>
+    <string name="settings_backup_restore_title">Copia de seguridad / Restaurar</string>
+    <string name="settings_become_pro_description">¡Regístrate para una experiencia sin anuncios y métricas de seguimiento premium adicionales!</string>
+    <string name="settings_become_pro_title">¡Hazte Pro!</string>
+    <string name="settings_dark_text">Oscuro</string>
+    <string name="settings_emax_enable_text">Mostrar máximos estimados a una repetición (eMax) cuando corresponda</string>
+    <string name="settings_emax_formula">peso x (1 + reps/30)</string>
+    <string name="settings_emax_info_dialog_h1">eMax - Máximo estimado</string>
+    <string name="settings_emax_info_dialog_h2">tMax - Máximo teórico</string>
+    <string name="settings_emax_info_dialog_p1">Una estimación para tu máximo a una repetición para una variación, cuando NO tienes un máximo a una repetición. Cuando se habilita, este valor se mostrará y se utilizará en lugar de un máximo a una repetición "regular"</string>
+    <string name="settings_emax_info_dialog_p1_ex">ej: Mi peso muerto más pesado es 5 x 100 kg, siguiendo la fórmula\neMax = 100 x (1 + 5/30) = ~116 kg!\neste valor se utilizará al calcular el % máximo, mers, ¡o celebraciones!</string>
+    <string name="settings_emax_info_dialog_p2">Una estimación para tu máximo a una repetición para una variación cuando SÍ tienes un máximo a una repetición. Cuando se habilita, este valor se mostrará, pero no se utilizará para los cálculos</string>
+    <string name="settings_emax_info_dialog_p2_ex">ej: Mi peso muerto a una repetición es de 110 kg pero ACABO de hacer una serie de 5 x 100 kg, siguiendo nuestros cálculos anteriores, ¡teóricamente podría estar levantando 116! Esto se mostrará, pero mi ORM real (exitoso) de 110 seguirá usándose para cálculos o celebraciones</string>
+    <string name="settings_emax_info_dialog_title">eMax/tMax</string>
+    <string name="settings_emax_title">Máximo estimado/teórico</string>
+    <string name="settings_experimental_input_password">pizza</string>
+    <string name="settings_experimental_input_placeholder">¿Cuál es la palabra mágica?</string>
+    <string name="settings_experimental_message">Las funciones aquí son experimentales y podrían romper la funcionalidad de la aplicación, ¡úsalas con precaución!</string>
+    <string name="settings_experimental_title">Experimental</string>
+    <string name="settings_kg_text">kg</string>
+    <string name="settings_lbs_text">lbs</string>
+    <string name="settings_light_text">Claro</string>
+    <string name="settings_manage_subscription_cta">Gestionar suscripción</string>
+    <string name="settings_mer_enable_text">Mostrar cálculos de MER</string>
+    <string name="settings_mer_fatigue_info_dialog_paragraph_one">El % de fatiga que debes alcanzar de tu máximo para que una repetición sea considerada una MER (por defecto 80%), esto se puede calcular echando un vistazo a tu máximo</string>
+    <string name="settings_mer_fatigue_info_dialog_paragraph_two">ej: si tienes un máximo de 50 kg en Press de Banca y haces una repetición con 40 kg. ¡Esto está por encima del umbral del 80% y por lo tanto es una MER!</string>
+    <string name="settings_mer_fatigue_info_dialog_title">Umbral de fatiga</string>
+    <string name="settings_mer_fatigue_input_title">Umbral de fatiga</string>
+    <string name="settings_mer_title">Repeticiones Máximamente Efectivas (MERs)</string>
+    <string name="settings_mer_weekly_goal_info_dialog_message">¡Las MERs pueden usarse para seguir tu progreso en una semana! ¡Ponte un objetivo semanal y celebra tus éxitos!</string>
+    <string name="settings_mer_weekly_goal_info_dialog_title">Objetivo semanal de MER</string>
+    <string name="settings_mer_weekly_goal_input_title">Objetivo semanal de MER</string>
+    <string name="settings_other_discord_cta">¡Únete al Discord!</string>
+    <string name="settings_other_github_cta">Echa un vistazo al código fuente</string>
+    <string name="settings_other_title">Otros:</string>
+    <string name="settings_pro_features_header">Funciones Pro</string>
+    <string name="settings_pro_status_text">¡¡Eres un Lift PRO!!</string>
+    <string name="settings_pro_thanks_title">¡Gracias por el apoyo!</string>
+    <string name="settings_release_notes_cta">Notas de la versión</string>
+    <string name="settings_restore_cta">Restaurar</string>
+    <string name="settings_row_item_dark_text">Oscuro</string>
+    <string name="settings_row_item_kg_text">kg</string>
+    <string name="settings_row_item_lbs_text">lbs</string>
+    <string name="settings_row_item_light_text">Claro</string>
+    <string name="settings_row_item_system_text">Sistema</string>
+    <string name="settings_system_text">Sistema</string>
+    <string name="settings_theme_option_one">Sistema</string>
+    <string name="settings_theme_option_three">Oscuro</string>
+    <string name="settings_theme_option_two">Claro</string>
+    <string name="settings_theme_title">Tema</string>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_tmax_enable_text">Mostrar máximos teóricos a una repetición (tMax) cuando corresponda</string>
+    <string name="settings_twm_enable_text">Mostrar cálculos de TWM cuando corresponda</string>
+    <string name="settings_twm_fatigue_info_dialog_paragraph_one">¡Peso total que moviste para una serie/ejercicio/entrenamiento determinado!</string>
+    <string name="settings_twm_fatigue_info_dialog_title">Peso total movido</string>
+    <string name="settings_twm_title">Peso total movido (TWM)</string>
+    <string name="settings_uom_title">Unidad de medida predeterminada</string>
+    <string name="settings_user_id_label">ID de usuario: %1$s</string>
 
-    <string name="wrapped_goals_suggestion_get_swole">Ponerse mamadísimo</string>
-    <string name="wrapped_goals_suggestion_no_grunting">Levantarme del sofá sin quejarme</string>
+    <string name="tempo_selector_con_title">Con (Arriba)</string>
+    <string name="tempo_selector_concentric_examples">• recoger un peso muerto\n• subir de una sentadilla\n• empujar la barra hacia arriba en un press de banca</string>
+    <string name="tempo_selector_concentric_subtitle">Contracción muscular</string>
+    <string name="tempo_selector_concentric_title">Concéntrico - Con</string>
+    <string name="tempo_selector_dialog_ok_cta">Ok</string>
+    <string name="tempo_selector_dialog_title">¿Qué es el tempo?</string>
+    <string name="tempo_selector_dialog_what_mean_title">¿Qué significan estos?</string>
+    <string name="tempo_selector_ecc_examples">• dejar un peso muerto\n• bajar a una sentadilla\n• bajar la barra hacia tu pecho en un press de banca</string>
+    <string name="tempo_selector_ecc_subtitle">Extensión muscular</string>
+    <string name="tempo_selector_ecc_title">Ecc (Abajo)</string>
+    <string name="tempo_selector_eccentric_examples">• dejar un peso muerto\n• bajar a una sentadilla\n• bajar la barra hacia tu pecho en un press de banca</string>
+    <string name="tempo_selector_eccentric_subtitle">Extensión muscular</string>
+    <string name="tempo_selector_eccentric_title">Excéntrico - Ecc</string>
+    <string name="tempo_selector_iso_title">Iso (Mantener)</string>
+    <string name="tempo_selector_isometric_examples">• mantener una sentadilla/press de banca\n• tiempo bajo tensión</string>
+    <string name="tempo_selector_isometric_subtitle">Entre excéntrico y concéntrico</string>
+    <string name="tempo_selector_isometric_title">Isométrico - Iso</string>
+    <string name="tempo_selector_timer_content_description">Temporizador</string>
+    <string name="tempo_selector_with_tempo_text">Con tempo</string>
 
-    <string name="workout_calendar_screen_start_workout_cta">¡Empieza un entreno!</string>
-    <string name="workout_screen_copy_recent_workout_title">O... ¡Copia un entreno reciente!</string>
-    <string name="onboarding_skip_screen_setup_cta">🙏 Ayúdame a configurar mis Lifts</string>
-    <string name="onboarding_skip_screen_continue_cta">🧭 ¡Suéltame ya, Coach!</string>
+    <string name="terms_and_conditions">Términos y condiciones</string>
+    <string name="timer_screen_rest_reset_label">Descanso/Reiniciar</string>
+    <string name="timer_screen_fab_content_description">Iniciar temporizador</string>
+    <string name="timer_screen_startup_time_buffer_text">Búfer de tiempo de inicio</string>
+    <string name="timer_screen_set_count_cta">x%1$d</string>
+    <string name="timer_screen_title">Temporizador</string>
+    <string name="toolbar_back_button_content_description">Atrás</string>
+    <string name="toolbar_calculator_button_content_description">Actualizar Lift Bro</string>
+    <string name="toolbar_calculator_content_description">Calculadora</string>
+    <string name="toolbar_close_content_description">Cerrar</string>
+    <string name="toolbar_play_content_description">Reproducir</string>
+    <string name="toolbar_settings_content_description">Ajustes</string>
+    <string name="toolbar_update_button_content_description">Actualizar Lift Bro</string>
 
-    <string name="calculator_bigger_bar_message">Vamos a ocupar una barra más grande... 🧔‍♂️</string>
-    <string name="app_congrats_text">¡¡Felicidades!!</string>
+    <string name="variation_details_add_notes_cta">Añadir notas</string>
+    <string name="variation_details_notes_label">Notas</string>
+    <string name="variation_details_notes_placeholder">Puntas de los pies hacia afuera, aprieta el core...</string>
+    <string name="variation_details_screen_add_set_content_description">Añadir serie</string>
+    <string name="variation_details_screen_body_weight_label">Peso corporal 🏋</string>
+    <string name="variation_details_screen_edit_title_content_description">Editar título</string>
+    <string name="variation_details_screen_empty_state_text">Aún no hay series. Toca + para añadir una.</string>
+    <string name="variation_details_tempo_down_cd">Abajo</string>
+    <string name="variation_details_tempo_up_cd">Arriba</string>
+    <string name="variation_search_dialog_close_content_description">Cerrar</string>
+    <string name="variation_search_dialog_favourite_content_description">Favorito</string>
+
+    <string name="weight_selector_chin_subtitle">%1$d% del max de %2$s</string>
+    <string name="weight_selector_chin_title">%1$d% del max de %2$s</string>
+
+    <string name="workout_add_exercise_cta">Añadir ejercicio</string>
+    <string name="workout_add_finisher_cta">Añadir finalizador</string>
+    <string name="workout_add_warmup_cta">Añadir calentamiento</string>
+    <string name="workout_calendar_edit_daily_notes_cta">Editar notas diarias</string>
+    <string name="workout_calendar_screen_favourite_content_description">Favorito</string>
+    <string name="workout_calendar_screen_finisher_label">Finalizador:</string>
+    <string name="workout_calendar_screen_other_gains_subtitle">Toca para añadir al entrenamiento</string>
+    <string name="workout_calendar_screen_other_gains_title">¡Otras ganancias!</string>
+    <string name="workout_calendar_screen_start_workout_cta">¡Comenzar un entrenamiento!</string>
+    <string name="workout_calendar_screen_warmup_label">Calentamiento:</string>
+    <string name="workout_finisher_label">Finalizador</string>
+    <string name="workout_finisher_placeholder">Burpees</string>
+    <string name="workout_notes_placeholder">Notas</string>
+    <string name="workout_screen_add_set_content_description">Añadir serie</string>
+    <string name="workout_screen_again_content_description">De nuevo</string>
+    <string name="workout_screen_copy_recent_workout_subtitle">¡Toca uno para empezar las ganancias!</string>
+    <string name="workout_screen_copy_recent_workout_title">O... ¡copia un entrenamiento reciente!</string>
+    <string name="workout_screen_copy_set_content_description">Copiar serie</string>
+    <string name="workout_screen_delete_variation_content_description">Eliminar %1$s</string>
+    <string name="workout_screen_delete_warning_text">Esto eliminará todas las series de este entrenamiento, ¿estás seguro?</string>
+    <string name="workout_screen_duplicate_last_set_content_description">Duplicar última serie</string>
+    <string name="workout_screen_most_recent_set_text">Serie más reciente - %1$s</string>
+    <string name="workout_screen_next_content_description">Siguiente</string>
+    <string name="workout_screen_previous_lift_content_description">Movimiento anterior</string>
+    <string name="workout_screen_superset_cta">Superset con...</string>
+    <string name="workout_screen_title">Entrenamiento</string>
+    <string name="workout_set_options_copy_cta">Copiar</string>
+    <string name="workout_set_options_delete_cta">Eliminar</string>
+    <string name="workout_variation_card_primary_cta">Duplicar última serie</string>
+    <string name="workout_variation_card_secondary_cta">Añadir serie</string>
+    <string name="workout_warmup_label">Calentamiento</string>
+    <string name="workout_warmup_placeholder">Rodillas altas</string>
+
+    <string name="wrapped_consistency_best_month">¡Tu mes más constante fue %1$s con %2$d días!</string>
+    <string name="wrapped_consistency_header_title">¡Y mira lo constante que fuiste!</string>
+    <string name="wrapped_consistency_screen_most_consistent_text">Tu más constante...</string>
+    <string name="wrapped_consistency_speech_bubble_title">¡Bien hecho!</string>
+    <string name="wrapped_goals_add_button_content_description">Añadir objetivo</string>
+    <string name="wrapped_goals_delete_button_content_description">Eliminar objetivo</string>
+    <string name="wrapped_goals_header_title">Ahora... ¿Qué tal unos objetivos para el próximo año?</string>
+    <string name="wrapped_goals_section_title">Objetivos</string>
+    <string name="wrapped_goals_suggestion_arm_wrestle">Ganar a "The Rock" en un pulso</string>
+    <string name="wrapped_goals_suggestion_beach_season">Estar listo para la temporada de playa</string>
+    <string name="wrapped_goals_suggestion_chin_up">Hacer una dominada completa</string>
+    <string name="wrapped_goals_suggestion_exceed_bench">Superar mi máximo en press de banca en un 5%</string>
+    <string name="wrapped_goals_suggestion_get_swole">Ponerse fuerte</string>
+    <string name="wrapped_goals_suggestion_gym_frequency">Ir al gimnasio 8 veces por semana</string>
+    <string name="wrapped_goals_suggestion_no_grunting">Levantarse del sofá sin gruñir</string>
+    <string name="wrapped_goals_suggestion_pushup_no_knees">Hacer una flexión sin usar las rodillas</string>
+    <string name="wrapped_goals_suggestion_pushups_monthly">Hacer 100 flexiones al mes</string>
+    <string name="wrapped_goals_suggestion_stretch">Estiramientos 3 días a la semana</string>
+    <string name="wrapped_landing_back_button_content_description">Atrás</string>
+    <string name="wrapped_landing_next_button_content_description">Siguiente</string>
+    <string name="wrapped_progress_header_title">¡Hiciste un GRAN progreso este año!</string>
+    <string name="wrapped_progress_screen_back_squat_title">Sentadilla trasera</string>
+    <string name="wrapped_progress_screen_bench_press_title">Press de banca</string>
+    <string name="wrapped_progress_screen_dead_lift_title">Peso muerto</string>
+    <string name="wrapped_progress_screen_favourite_content_description">Favorito</string>
+    <string name="wrapped_reps_daily_average">Eso es un promedio de %1$d repeticiones por día</string>
+    <string name="wrapped_reps_header_title">Repeticiones totales</string>
+    <string name="wrapped_reps_most_reps_lift">Incluso hiciste %1$d repeticiones de %2$s 😵</string>
+    <string name="wrapped_reps_speech_bubble_title">GUAU</string>
+    <string name="wrapped_reps_subtitle">(Y luego las dejaste otra vez)</string>
+    <string name="wrapped_reps_total_subtitle">(Y luego las dejaste otra vez)</string>
+    <string name="wrapped_reps_total_title">Recogiste %1$d cosas este año 😵</string>
+    <string name="wrapped_reps_workout_average">¡¡o %1$d por entrenamiento!!</string>
+    <string name="wrapped_summary_screen_consistency_title">Constancia</string>
+    <string name="wrapped_summary_screen_goals_title">Objetivos</string>
+    <string name="wrapped_summary_screen_header_title">¡Qué gran año!</string>
+    <string name="wrapped_summary_screen_onto_next_title">¡¡A por el siguiente!!</string>
+    <string name="wrapped_summary_screen_per_day_text">¡por día!</string>
+    <string name="wrapped_summary_screen_progress_title">Progreso</string>
+    <string name="wrapped_summary_screen_reps_title">Repeticiones</string>
+    <string name="wrapped_summary_screen_to_content_description">A</string>
+    <string name="wrapped_summary_screen_total_weight_moved_title">Peso total movido</string>
+    <string name="wrapped_tenure_first_year_speech_bubble_message">¡Echemos un vistazo a todas las ganancias! 💪</string>
+    <string name="wrapped_tenure_first_year_speech_bubble_title">¡¡¡GRACIAS!!!</string>
+    <string name="wrapped_tenure_first_year_subtitle">Tanto si empezaste a usar Lift Bro este año como si Lift Bro te ayudó en tu viaje</string>
+    <string name="wrapped_tenure_first_year_title">%1$d\n¡Tu primer año usando Lift Bro! 🎉</string>
+    <string name="wrapped_tenure_header_title">¡Bienvenido a Lift Bro Wrapped!</string>
+    <string name="wrapped_tenure_pro_thanks_subtitle">¡Apoyo como el tuyo es lo que mantiene esta aplicación!</string>
+    <string name="wrapped_tenure_pro_thanks_title">¡¡¡Y UN AGRADECIMIENTO MUY ESPECIAL Y EXTRA por ser un Lift PRO!!!</string>
+    <string name="wrapped_tenure_veteran_subtitle">¡¡Felicidades!! Y gracias por el apoyo</string>
+    <string name="wrapped_tenure_veteran_title">¡Has sido un lift bro durante %1$d años!</string>
+    <string name="wrapped_weight_content_item_format">%1$s %2$ss %3$s</string>
+    <string name="wrapped_weight_content_title">Eso es...</string>
+    <string name="wrapped_weight_header_title">Peso total movido</string>
+    <string name="wrapped_weight_intro">¡Moviste %1$s este año!</string>
+    <string name="wrapped_weight_speech_bubble_message">¡¡Moviste %1$s en %2$ss solo!! 😵</string>
+    <string name="wrapped_weight_speech_bubble_title">¡¡¡Eso es ENORME!!!! 💪</string>
+
+    <string name="home_screen_icon_live_dialog_text">Los desarrolladores de Lift Bro están en directo en Twitch, haciendo algo de desarrollo\n\n(O jugando a algunos videojuegos 😏)</string>
+    <string name="home_screen_icon_live_dialog_title">¡Lift Bro está en directo!</string>
+    <string name="home_screen_icon_live_label">EN DIRECTO</string>
+    <string name="home_screen_icon_maybe_later_cta">Quizás más tarde...</string>
+    <string name="home_screen_icon_tune_in_cta">¡Sintoniza!</string>
+    <string name="home_screen_loading_title">Cargando...</string>
+    <string name="home_screen_wrapped_button_text">🎉 🎁</string>
+    <string name="submit_text_field_edit_content_description">Editar</string>
+    <string name="submit_text_field_save_content_description">Guardar</string>
 </resources>
