@@ -10,14 +10,23 @@ plugins {
 
 buildkonfig {
     exposeObjectWithName = "BuildKonfig"
+    packageName = "com.lift.bro.core.buildconfig"
 
     defaultConfigs {
-        packageName = "com.lift.bro.core.buildconfig"
         buildConfigField(FieldSpec.Type.STRING, "SENTRY_DSN", project.findProperty("LIFT_BRO_SENTRY_DSN") as? String ?: System.getenv("LIFT_BRO_SENTRY_DSN") ?: "")
-        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY_AND", project.findProperty("revenueCatApiKeyAndroid") as? String ?: System.getenv("REVENUE_CAT_API_KEY") ?: "")
-        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY_IOS", project.findProperty("revenueCatApiKeyiOS") as? String ?: System.getenv("REVENUE_CAT_API_KEY") ?: "")
         buildConfigField(FieldSpec.Type.STRING, "POSTHOG_API_KEY", project.findProperty("postHogApiKey") as? String ?: System.getenv("POSTHOG_API_KEY") ?: "")
         buildConfigField(FieldSpec.Type.STRING, "VERSION_NAME", project.versionName())
+        buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY", "")
+    }
+
+    targetConfigs {
+        create("android") {
+            buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY", project.findProperty("revenueCatApiKeyAndroid") as? String ?: System.getenv("REVENUE_CAT_API_KEY") ?: "")
+
+        }
+        create("ios") {
+            buildConfigField(FieldSpec.Type.STRING, "REVENUE_CAT_API_KEY", project.findProperty("revenueCatApiKeyiOS") as? String ?: System.getenv("REVENUE_CAT_API_KEY") ?: "")
+        }
     }
 }
 

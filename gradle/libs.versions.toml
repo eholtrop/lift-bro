@@ -126,7 +126,7 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-publish"}
-buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.17.1" }
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.21.2" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.strictly = "0.13.0" }

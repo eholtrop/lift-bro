@@ -47,8 +47,8 @@ object AppPurchases {
         }
     }
 
-    fun instantiate(isAndroid: Boolean, subscriptionType: MutableState<SubscriptionType>) {
-        val apiKey = if (isAndroid) BuildKonfig.REVENUE_CAT_API_KEY_AND else BuildKonfig.REVENUE_CAT_API_KEY_IOS
+    fun instantiate(subscriptionType: MutableState<SubscriptionType>) {
+        val apiKey = BuildKonfig.REVENUE_CAT_API_KEY
         if (apiKey == "") return
         Purchases.configure(apiKey)
         getCustomerInfo(
