@@ -1,5 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
-<resources><string name="app_congrats_text">Congrats!!</string>
+<resources>    <string name="app_congrats_text">Congrats!!</string>
+
+    <string name="ai_translations_consent_banner_title">Lift Bro uses AI Translations</string>
+    <string name="ai_translations_consent_banner_body">Evan, while a native English speaker, still struggles with it let alone other languages 😅</string>
+    <string name="ai_translations_consent_banner_use_at_own_risk">So use at your own risk!</string>
+    <string name="ai_translations_consent_banner_change_settings">This can be changed in settings at any time</string>
+    <string name="ai_translations_consent_banner_enable">Enable AI Translations</string>
+    <string name="ai_translations_consent_banner_force_english">Force English (Disable AI Translations)</string>
+    <string name="ai_translations_consent_banner_tap_to_learn">Tap to Learn More</string>
+    <string name="ai_translations_consent_banner_save_cta">Save</string>
 
     <string name="analytics_consent_banner_action">Enable</string>
     <string name="analytics_consent_banner_detail">Share usage info (Screen Names, Button Clicks)</string>
@@ -38,8 +47,20 @@
     <string name="consent_dialog_cta">I Accept</string>
     <string name="consent_dialog_title">We made some updates</string>
 
+    <string name="goals_screen_title">%1$s Goals</string>
+    <string name="goals_screen_goals_title">Goals</string>
+    <string name="goals_screen_achieved_content_description">Achieved</string>
+    <string name="goals_screen_delete_content_description">Delete</string>
+
     <string name="create_lift_screen_title">Create Lift</string>
     <string name="create_set_screen_title">I Crushed</string>
+
+    <string name="dashboard_sorting_dialog_title">Sorting</string>
+    <string name="dashboard_sorting_favourites_at_top">Favourites at top</string>
+    <string name="dashboard_create_category_content_description">Create Category</string>
+    <string name="dashboard_rpe_label">rpe</string>
+    <string name="dashboard_tempo_label">tempo</string>
+    <string name="dashboard_sort_content_description">Sort</string>
 
     <string name="dashboard_empty_primary_cta_title">Create Category</string>
     <string name="dashboard_empty_secondary_cta_title">Restore a Backup</string>
@@ -107,6 +128,7 @@ Soreness or pain?</string>
     <string name="edit_set_screen_variation_selector_no_lift_max">None</string>
     <string name="edit_set_screen_variation_selector_no_variation_max">None</string>
     <string name="edit_set_screen_variation_selector_variation_max">%1$s Max: %2$s</string>
+    <string name="edit_set_variation_select_text">Select Variation</string>
     <string name="edit_set_date_month_day">EEEE, MMM d</string>
     <string name="edit_set_date_year">yyyy</string>
     <string name="edit_set_date_time">hh:mm</string>
@@ -116,13 +138,27 @@ Soreness or pain?</string>
 
     <string name="lbs">lbs</string>
 
+    <string name="lifting_scaffold_close_content_description">Close</string>
+
     <string name="lift_card_empty_subtitle">Tap to add one</string>
     <string name="lift_card_empty_title">No Sets!</string>
     <string name="lift_details_fab_content_description">Add Set</string>
     <string name="lift_details_screen_edit_content_description">Edit</string>
+    <string name="movement_details_create_placeholder">Create Movement</string>
+    <string name="movement_details_empty_state_text">Do you even lift bro?</string>
+    <string name="movement_details_empty_state_action">Add a set with + below!</string>
+    <string name="movement_category_select_text">Select Category</string>
+    <string name="movement_category_expand_content_description">Expand Menu</string>
+    <string name="movement_body_weight_label">Body Weight 🏋</string>
     <string name="lift_details_screen_empty_state_text">No variations yet. Tap + to add a set.</string>
     <string name="lift_details_screen_favourite_content_description">Favourite</string>
     <string name="lift_details_screen_sort_by_content_description">Sort By</string>
+    <string name="category_details_name_placeholder">Category</string>
+    <string name="category_details_delete_warning_title">Are you sure?</string>
+    <string name="category_details_delete_warning_text">This will delete the Category, All movements will stay!</string>
+    <string name="category_details_delete_content_description">Delete Category,</string>
+    <string name="category_details_movements_title">Movements</string>
+    <string name="category_details_no_sets_text">No Sets</string>
     <string name="lift_details_screen_sort_name">Name</string>
     <string name="lift_details_screen_sort_one_rep_max">One Rep Max</string>
 
@@ -142,6 +178,8 @@ Soreness or pain?</string>
     <string name="onboarding_setup_screen_select_lifts_title">Select some Lifts! (the fun bit)</string>
     <string name="onboarding_setup_screen_select_uom_title">Select your preferred\nUnit of Measure</string>
     <string name="onboarding_setup_screen_title">LET'S GET STARTED</string>
+    <string name="onboarding_uom_kg">KG</string>
+    <string name="onboarding_uom_lbs">LBS</string>
     <string name="onboarding_skip_screen_continue_cta">🧭 Just put me in Coach!</string>
     <string name="onboarding_skip_screen_restore_cta">🛺 Restore from a Backup</string>
     <string name="onboarding_skip_screen_setup_cta">🙏 Help me setup some Lifts</string>
@@ -160,7 +198,12 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_info_p1">A Scale that can be used to track the effort used for a given set</string>
     <string name="rep_weight_selector_info_p2">Can be calculated based on the "Reps in Reserve", % of max weight, or Vibes!</string>
     <string name="rep_weight_selector_info_title">RPE:\nRate of Perceived Exertion</string>
+    <string name="rep_weight_selector_placeholder_reps">0</string>
+    <string name="rep_weight_selector_placeholder_weight">0.0</string>
+    <string name="rep_weight_selector_rir_plus_suffix">+</string>
     <string name="rep_weight_selector_rpe_placeholder">RPE</string>
+    <string name="rep_weight_selector_twm_prefix"> = %1$s</string>
+    <string name="rep_weight_selector_unit_at">%1$s at</string>
     <string name="rep_weight_selector_table_col_percent">%</string>
     <string name="rep_weight_selector_table_col_rir">RIR</string>
     <string name="rep_weight_selector_table_col_rpe">RPE</string>
@@ -188,11 +231,29 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_times_symbol">x</string>
     <string name="reps">reps</string>
 
+    <string name="client_settings_db_location">Db Location</string>
+    <string name="client_settings_mode_local">Local</string>
+    <string name="client_settings_mode_remote">Remote</string>
+    <string name="client_settings_local_description">All data will be stored locally on your device.\nBe sure to backup frequently!</string>
+    <string name="client_settings_server_url_placeholder">http://192.168.0.42:8080</string>
+    <string name="client_settings_server_url_label">Server Url</string>
+    <string name="client_settings_test_connection_cta">Test Connection</string>
+    <string name="client_settings_apply_cta">Apply</string>
+
     <string name="server_settings_row_current_ip">Current IP is %1$s</string>
     <string name="server_settings_row_description">Start a local server on this device.</string>
     <string name="server_settings_row_status_disabled">Server Disabled</string>
     <string name="server_settings_row_status_enabled">Server Enabled</string>
     <string name="server_settings_row_title">Local Server</string>
+    <string name="settings_release_notes_content_description">Release Notes</string>
+    <string name="settings_experimental_features_text">Other Goodies (experimental features)</string>
+    <string name="settings_experimental_title_text">Experimental - Expect 🦗</string>
+    <string name="settings_timer_title">Timer</string>
+    <string name="settings_timer_description">Enable a timer for counting down sets and rest periods</string>
+    <string name="settings_dashboard_v3_title">Dashboard V3</string>
+    <string name="settings_dashboard_v3_description">No more tabs!</string>
+    <string name="settings_lift_pros_title">Lift Pros Only 😎</string>
+
     <string name="settings_backup_cta">Backup</string>
     <string name="settings_backup_restore_title">Backup / Restore</string>
     <string name="settings_become_pro_description">Sign up for an Ad free experience and extra premium tracking metrics!</string>
@@ -250,6 +311,12 @@ Soreness or pain?</string>
     <string name="settings_twm_fatigue_info_dialog_title">Total Weight Moved</string>
     <string name="settings_twm_title">Total Weight Moved (TWM)</string>
     <string name="settings_uom_title">Default Unit of Measure</string>
+    <string name="settings_language_title">Language Settings</string>
+    <string name="settings_language_select_title">Select a Language</string>
+    <string name="settings_language_ai_gen_suffix"> (AI Gen)</string>
+    <string name="settings_language_save_cta">Save</string>
+    <string name="settings_language_cancel_cta">Cancel</string>
+
     <string name="settings_user_id_label">User Id: %1$s</string>
 
     <string name="tempo_selector_con_title">Con (Up)</string>
@@ -272,9 +339,27 @@ Soreness or pain?</string>
     <string name="tempo_selector_timer_content_description">Timer</string><string name="tempo_selector_with_tempo_text">With Tempo</string>
 
     <string name="terms_and_conditions">Terms &amp; Conditions</string>
+    <string name="timer_screen_mute_sound_content_description">Mute Sound</string>
+    <string name="timer_screen_play_sound_content_description">Play Sound</string>
+    <string name="timer_screen_restart_content_description">Restart</string>
+    <string name="timer_screen_start_content_description">Start</string>
+    <string name="timer_screen_resume_content_description">Resume</string>
+    <string name="timer_screen_pause_content_description">Pause</string>
+    <string name="timer_screen_great_job_text">Great job!</string>
+    <string name="timer_screen_twm_text">TWM: %1$s</string>
+    <string name="timer_screen_mers_text">+ %1$s mers</string>
+    <string name="timer_screen_ecc_label">Ecc</string>
+    <string name="timer_screen_hold_label">Hold</string>
+    <string name="timer_screen_con_label">Con</string>
+    <string name="timer_screen_rest_label">Rest</string>
+    <string name="timer_screen_plan_ready_label">Ready</string>
+
     <string name="timer_screen_rest_reset_label">Rest/Reset</string>
     <string name="timer_screen_fab_content_description">Start Timer</string>
     <string name="timer_screen_startup_time_buffer_text">Startup Time Buffer</string>
+    <string name="timer_plan_add_tempo_content_description">Add Tempo</string>
+    <string name="timer_plan_delete_tempo_content_description">Delete Tempo</string>
+
     <string name="timer_screen_set_count_cta">x%1$d</string>
     <string name="timer_screen_title">Timer</string>
     <string name="toolbar_back_button_content_description">Back</string>
@@ -282,8 +367,15 @@ Soreness or pain?</string>
     <string name="toolbar_calculator_content_description">Calculator</string>
     <string name="toolbar_close_content_description">Close</string>
     <string name="toolbar_play_content_description">Play</string>
+    <string name="rpe_selector_placeholder">RPE</string>
+    <string name="rpe_selector_label">RPE %1$d</string>
+    <string name="create_variation_dialog_cancel_cta">Cancel</string>
+    <string name="create_variation_dialog_save_cta">Save</string>
     <string name="toolbar_settings_content_description">Settings</string>
     <string name="toolbar_update_button_content_description">Update Lift Bro</string>
+
+    <string name="variation_text_field_favourite_content_description">Favourite</string>
+    <string name="variation_text_field_select_lift_text">Select Lift</string>
 
     <string name="variation_details_add_notes_cta">Add Notes</string>
     <string name="variation_details_notes_label">Notes</string>
@@ -296,6 +388,9 @@ Soreness or pain?</string>
     <string name="variation_details_tempo_up_cd">Up</string>
     <string name="variation_search_dialog_close_content_description">Close</string>
     <string name="variation_search_dialog_favourite_content_description">Favourite</string>
+    <string name="variation_search_dialog_save_and_select_content_description">Save and Select</string>
+    <string name="variation_search_dialog_cant_find_text">Can\'t find what you\'re looking for?</string>
+    <string name="variation_search_dialog_create_cta">Create Variation</string>
 
     <string name="weight_selector_chin_subtitle">%1$d% of %2$s Max</string>
     <string name="weight_selector_chin_title">%1$d% of %2$s Max</string>

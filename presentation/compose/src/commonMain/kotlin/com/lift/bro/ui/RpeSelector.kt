@@ -40,6 +40,10 @@ import com.lift.bro.ui.theme.orangePeel
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.DarkModeProvider
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.rpe_selector_label
+import lift_bro.core.generated.resources.rpe_selector_placeholder
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun RpeSelector(
@@ -68,14 +72,14 @@ fun RpeSelector(
             verticalArrangement = Arrangement.Center,
         ) {
             Text(
-                text = RPE.entries.firstOrNull { it.rpe == rpe }?.emoji ?: "RPE",
+                text = RPE.entries.firstOrNull { it.rpe == rpe }?.emoji ?: stringResource(Res.string.rpe_selector_placeholder),
                 style = MaterialTheme.typography.headlineSmall,
             )
             AnimatedVisibility(
                 visible = rpe != null
             ) {
                 rpe?.let {
-                    Text("RPE $rpe", style = MaterialTheme.typography.labelSmall)
+                    Text(stringResource(Res.string.rpe_selector_label, rpe), style = MaterialTheme.typography.labelSmall)
                 }
             }
         }

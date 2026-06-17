@@ -32,12 +32,11 @@ fun AITranslationsConsentBanner(
     if (showDialog) {
         var enableAiTranslations by remember { mutableStateOf<Boolean?>(null) }
         AlertDialog(
-            title = { Text("Lift Bro uses AI Translations") },
+            title = { Text(stringResource(Res.string.ai_translations_consent_banner_title)) },
             text = {
                 Column {
                     Text(
-                        text = "Evan, while a native English speaker, " +
-                            "still struggles with it let alone other languages \uD83D\uDE05",
+                        text = stringResource(Res.string.ai_translations_consent_banner_body),
                         style = MaterialTheme.typography.bodyLarge
                     )
 
@@ -45,7 +44,7 @@ fun AITranslationsConsentBanner(
 
                     Text(
                         modifier = Modifier.fillMaxWidth(),
-                        text = "So use at your own risk!",
+                        text = stringResource(Res.string.ai_translations_consent_banner_use_at_own_risk),
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
                     )
@@ -53,12 +52,12 @@ fun AITranslationsConsentBanner(
                     Space(MaterialTheme.spacing.half)
 
                     Text(
-                        "This can be changed in settings at any time",
+                        stringResource(Res.string.ai_translations_consent_banner_change_settings),
                         style = MaterialTheme.typography.labelSmall
                     )
 
                     RadioField(
-                        text = "Enable AI Translations",
+                        text = stringResource(Res.string.ai_translations_consent_banner_enable),
                         selected = enableAiTranslations == true,
                         fieldSelected = {
                             enableAiTranslations = true
@@ -66,7 +65,7 @@ fun AITranslationsConsentBanner(
                     )
 
                     RadioField(
-                        text = "Force English (Disable AI Translations)",
+                        text = stringResource(Res.string.ai_translations_consent_banner_force_english),
                         selected = enableAiTranslations == false,
                         fieldSelected = {
                             enableAiTranslations = false
@@ -86,7 +85,7 @@ fun AITranslationsConsentBanner(
                     },
                     enabled = enableAiTranslations != null
                 ) {
-                    Text("Save")
+                    Text(stringResource(Res.string.ai_translations_consent_banner_save_cta))
                 }
             },
             onDismissRequest = onDismiss
@@ -105,11 +104,11 @@ fun AITranslationsConsentBanner(
             modifier = Modifier.padding(start = MaterialTheme.spacing.one),
         ) {
             Text(
-                text = "Lift Bro uses AI Translations",
+                text = stringResource(Res.string.ai_translations_consent_banner_title),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "Tap to Learn More",
+                text = stringResource(Res.string.ai_translations_consent_banner_tap_to_learn),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.secondary,
             )

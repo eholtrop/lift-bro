@@ -58,12 +58,17 @@ import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.rep_weight_selector_info_p1
 import lift_bro.core.generated.resources.rep_weight_selector_info_p2
 import lift_bro.core.generated.resources.rep_weight_selector_info_title
+import lift_bro.core.generated.resources.rep_weight_selector_placeholder_reps
+import lift_bro.core.generated.resources.rep_weight_selector_placeholder_weight
+import lift_bro.core.generated.resources.rep_weight_selector_rir_plus_suffix
 import lift_bro.core.generated.resources.rep_weight_selector_rpe_placeholder
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_percent
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_rir
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_rpe
 import lift_bro.core.generated.resources.rep_weight_selector_table_col_vibe
 import lift_bro.core.generated.resources.rep_weight_selector_times_symbol
+import lift_bro.core.generated.resources.rep_weight_selector_twm_prefix
+import lift_bro.core.generated.resources.rep_weight_selector_unit_at
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 
@@ -132,7 +137,7 @@ fun RepWeightSelector(
                     it.toLongOrNull()?.let(repChanged)
                 }
             },
-            placeholder = { Text("0") },
+            placeholder = { Text(stringResource(Res.string.rep_weight_selector_placeholder_reps)) },
             keyboardType = KeyboardType.Number
         )
 
@@ -151,7 +156,7 @@ fun RepWeightSelector(
             onValueChanged = {
                 weightChanged(it.toDoubleOrNull())
             },
-            placeholder = { Text("0.0") },
+            placeholder = { Text(stringResource(Res.string.rep_weight_selector_placeholder_weight)) },
             keyboardType = KeyboardType.Decimal
         )
 
@@ -159,7 +164,7 @@ fun RepWeightSelector(
             Space(MaterialTheme.spacing.half)
 
             Text(
-                text = "${LocalUnitOfMeasure.current.value} at",
+                text = stringResource(Res.string.rep_weight_selector_unit_at, LocalUnitOfMeasure.current.value),
                 style = MaterialTheme.typography.titleLarge,
             )
 
@@ -193,7 +198,7 @@ fun RepWeightSelector(
 //                    exit = slideOutHorizontally { it }
                 ) {
                     Text(
-                        text = " = ${twm.decimalFormat()}",
+                        text = stringResource(Res.string.rep_weight_selector_twm_prefix, twm.decimalFormat()),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
@@ -239,7 +244,12 @@ fun RepInfoDialogMessage() {
                     ) {
                         Text(stringResource(Res.string.rep_weight_selector_table_col_rir))
                         sortedRpe.forEachIndexed { index, rpe ->
-                            Text("${rpe.rir}${if (index == RPE.entries.size - 1) "+" else ""}")
+                            val rirText = if (index == RPE.entries.size - 1) {
+                                "${rpe.rir}${stringResource(Res.string.rep_weight_selector_rir_plus_suffix)}"
+                            } else {
+                                rpe.rir.toString()
+                            }
+                            Text(rirText)
                         }
                     }
                     Column(

@@ -194,7 +194,7 @@ private fun LeadingNavigationButton(
             TopBarIconButton(
                 modifier = modifier,
                 imageVector = Icons.Default.Close,
-                contentDescription = "Close",
+                contentDescription = stringResource(Res.string.lifting_scaffold_close_content_description),
                 onClick = { navCoordinator.popToRoot(keepStack = false) },
             )
         }

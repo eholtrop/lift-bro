@@ -39,6 +39,11 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
+import lift_bro.core.generated.resources.Res
+import lift_bro.core.generated.resources.timer_plan_add_tempo_content_description
+import lift_bro.core.generated.resources.timer_plan_delete_tempo_content_description
+import lift_bro.core.generated.resources.timer_screen_plan_ready_label
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PlanTimerOverlay(
@@ -64,7 +69,7 @@ fun PlanTimerOverlay(
                         onEvent(TimerEvent.Plan.StartupTimeChanged(it))
                     }
                 },
-                label = { Text("Ready") },
+                label = { Text(stringResource(Res.string.timer_screen_plan_ready_label)) },
                 textStyle = MaterialTheme.typography.displayMedium.copy(
                     textAlign = TextAlign.Center,
                 ),
@@ -151,7 +156,7 @@ fun PlanTimerOverlay(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete Tempo",
+                            contentDescription = stringResource(Res.string.timer_plan_delete_tempo_content_description),
                         )
                     }
                 }
@@ -190,7 +195,7 @@ fun PlanTimerOverlay(
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.Delete,
-                                    contentDescription = "Delete Tempo",
+                                    contentDescription = stringResource(Res.string.timer_plan_delete_tempo_content_description),
                                 )
                             }
                         }
@@ -209,7 +214,7 @@ fun PlanTimerOverlay(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = "Add Tempo"
+                            contentDescription = stringResource(Res.string.timer_plan_add_tempo_content_description)
                         )
                     }
                 }

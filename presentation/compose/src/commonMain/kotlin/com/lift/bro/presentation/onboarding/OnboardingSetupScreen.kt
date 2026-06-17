@@ -58,6 +58,8 @@ import lift_bro.core.generated.resources.onboarding_setup_screen_continue_cta
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_lifts_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_select_uom_title
 import lift_bro.core.generated.resources.onboarding_setup_screen_title
+import lift_bro.core.generated.resources.onboarding_uom_kg
+import lift_bro.core.generated.resources.onboarding_uom_lbs
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.AccessibilityMinimumSize
 
@@ -124,7 +126,7 @@ fun OnboardingSetupScreen(
                         selected = uom == UOM.POUNDS,
                     ) {
                         Text(
-                            "LBS",
+                            stringResource(Res.string.onboarding_uom_lbs),
                             style = MaterialTheme.typography.displayLarge
                         )
                     }
@@ -137,7 +139,7 @@ fun OnboardingSetupScreen(
                         selected = uom == UOM.KG,
                     ) {
                         Text(
-                            "KG",
+                            stringResource(Res.string.onboarding_uom_kg),
                             style = MaterialTheme.typography.displayLarge
                         )
                     }
