@@ -189,14 +189,14 @@ private fun MovementDetailsScreen(
             val items: List<Pair<String, List<LBSet>>> = when (grouping) {
                 Grouping.Date -> sets.groupBy { it.date.toLocalDate() }.toList()
                     .sortedByDescending { it.first }
-                    .map { Pair(it.first.toString("EEEE, MMM d"), it.second) }
+                    .map { Pair(it.first.toString(stringResource(Res.string.edit_set_date_month_day)), it.second) }
 
                 Grouping.Reps -> sets.groupBy { it.reps }.toList().sortedByDescending { it.first }
                     .map { Pair(stringResource(Res.string.movement_details_reps_format, it.first), it.second) }
 
                 Grouping.Tempo -> sets.groupBy { it.tempo }.toList()
                     .sortedByDescending { it.second.maxOf { it.date.toLocalDate() } }
-                    .map { Pair("${it.first.down}/${it.first.hold}/${it.first.up}", it.second) }
+                    .map { Pair(stringResource(Res.string.movement_details_tempo_group_format, it.first.down, it.first.hold, it.first.up), it.second) }
 
                 Grouping.Weight -> sets.groupBy { it.weight }.toList()
                     .sortedByDescending { it.first }.map { Pair("${it.first}", it.second) }

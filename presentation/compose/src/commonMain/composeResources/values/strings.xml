@@ -386,6 +386,7 @@ Soreness or pain?</string>
     <string name="variation_search_dialog_empty_title">Can't find what you're looking for?</string>
     <string name="variation_search_dialog_create_variation_cta">Create Variation</string>
 
+    <string name="movement_details_tempo_group_format">%1$d/%2$d/%3$d</string>
     <string name="movement_details_create_movement_placeholder">Create Movement</string>
     <string name="movement_details_empty_state_title">Do you even lift bro?</string>
     <string name="movement_details_empty_state_text">Add a set with + below!</string>
@@ -501,6 +502,8 @@ Soreness or pain?</string>
     <string name="submit_text_field_edit_content_description">Edit</string>
     <string name="submit_text_field_save_content_description">Save</string>
 
+    <string name="category_details_date_format_x_axis">MMM d</string>
+    <string name="category_details_date_format_selected">EEEE MMM, d</string>
     <string name="category_details_mer_format"> (+%1$dmer)</string>
     <string name="dashboard_lift_header_unit_separator">/</string>
     <string name="movement_details_reps_group_format">%1$d Rep(s)</string>
@@ -509,14 +512,12 @@ Soreness or pain?</string>
     <string name="rep_weight_selector_twm_format">= %1$s</string>
     <string name="rep_weight_selector_plus_symbol">+</string>
     <string name="language_settings_ai_gen_suffix"> (AI Gen)</string>
-    <string name="timer_plan_add_text">+</string>
     <string name="timer_plan_multiply_symbol">x</string>
-    <string name="timer_plan_remove_text">-</string>
+
     <string name="timer_plan_emoji">😫‍💨</string>
     <string name="timer_ended_set_format">%1$d x %2$s! 💪</string>
     <string name="timer_ended_twm_label">TWM: %1$s</string>
     <string name="timer_ended_mers_format">+ %1$d mers</string>
     <string name="wrapped_summary_plural_format">%1$ss %2$s</string>
-    <string name="wrapped_summary_occurrences_format">%1$dx</string>
     <string name="variation_text_field_ellipsis">...</string>
 </resources>

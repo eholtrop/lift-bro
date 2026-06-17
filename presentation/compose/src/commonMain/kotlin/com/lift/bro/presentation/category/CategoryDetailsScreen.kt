@@ -365,7 +365,7 @@ private fun VariationCard(
                     selectedData = selectedData,
                     xAxis = { epochDays ->
                         Text(
-                            LocalDate.fromEpochDays(epochDays.toInt()).toString("MMM d"),
+                            LocalDate.fromEpochDays(epochDays.toInt()).toString(stringResource(Res.string.category_details_date_format_x_axis)),
                             style = MaterialTheme.typography.titleSmall,
                             color = if (selectedData?.toEpochDays()
                                     ?.toLong() == epochDays
@@ -400,7 +400,7 @@ private fun VariationCard(
                         Text(
                             text = buildAnnotatedString {
                                 withStyle(MaterialTheme.typography.titleMedium.toSpanStyle()) {
-                                    append(pair?.first?.toString(pattern = "EEEE MMM, d"))
+                                    append(pair?.first?.toString(pattern = stringResource(Res.string.category_details_date_format_selected)))
                                 }
                                 withStyle(MaterialTheme.typography.bodyMedium.toSpanStyle()) {
                                     if (LocalTwmSettings.current) {
