@@ -40,36 +40,9 @@ platform :android do
         )
     end
 
-    desc "Run the project tests"
-  desc "Build release artifact for physical iOS device (development signing)"
-  lane :build_release_device do |options|
-    match_development
-    device_udid = options[:device_udid] || ENV["DEVICE_UDID"]
-    UI.user_error!("device_udid is required. Pass via options or DEVICE_UDID env variable.") unless device_udid
-
-    xcodeproj = "iosApp/iosApp.xcodeproj"
-    derived_data = "fastlane/build/DerivedData/ios"
-    app_name = "Lift Bro"
-    app_bundle = "com.lift.bro"
-
-    xcargs = options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : ""
-
-    sh "security unlock-keychain -p #{ENV['MATCH_PASSWORD']} #{Dir.home}/Library/Keychains/login.keychain-db"
-
-    sh "xcodebuild -project '#{xcodeproj}' -scheme iosApp " \
-      "-configuration Release -destination 'platform=iOS,id=#{device_udid}' " \
-      "-derivedDataPath '#{derived_data}' build #{xcargs} " \
-      "PROVISIONING_PROFILE_SPECIFIER='match Development com.lift.bro'"
-
-    app_path = "#{derived_data}/Build/Products/Release-iphoneos/#{app_name}.app"
-
-    sh "xcrun devicectl install device --device #{device_udid} \"#{app_path}\""
-    sh "xcrun devicectl launch process --device #{device_udid} --console #{app_bundle}"
-  end
-
-  lane :test do |options|
+    lane :test do |options|
         gradle(task: "test")
-end
+    end
 
     desc "Run the project Linter"
     lane :lint do
@@ -213,7 +186,7 @@ platform :ios do
     project_root = File.expand_path("..", __dir__)
     derived_data = File.join(project_root, "fastlane/build/DerivedData/ios")
 
-    sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], File.expand_path("~/Library/Keychains/login.keychain-db")
+    sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], File.expand_path("~/Library/Keychains/login.keychain-db"), log: false
 
     xcargs = ["PROVISIONING_PROFILE_SPECIFIER=match Development com.lift.bro", "CODE_SIGN_STYLE=Manual", "DEVELOPMENT_TEAM=VZPX29WT9H"]
     if options[:build_number]
@@ -233,6 +206,42 @@ platform :ios do
     ))
 
     app_path = "#{derived_data}/Build/Products/Debug-iphoneos/Lift Bro.app"
+
+    sh "xcrun", "devicectl", "device", "install", "app", "--device", device_udid, app_path
+    sh "xcrun", "devicectl", "device", "process", "launch", "--device", device_udid, "--console", "com.lift.bro"
+  end
+
+  desc "Build release artifact for physical iOS device (development signing)"
+  lane :build_release_device do |options|
+    match_development
+    device_udid = options[:device_udid] || ENV["DEVICE_UDID"]
+    UI.user_error!("device_udid is required. Pass via options or DEVICE_UDID env variable.") unless device_udid
+
+    project_root = File.expand_path("..", __dir__)
+    derived_data = File.join(project_root, "fastlane/build/DerivedData/ios")
+    keychain_path = File.expand_path("~/Library/Keychains/login.keychain-db")
+
+    sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], keychain_path, log: false
+
+    xcargs = []
+    if options[:build_number]
+      xcargs << "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')}"
+      xcargs << "CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+    end
+
+    xcodeproj_path = File.join(project_root, "iosApp/iosApp.xcodeproj")
+    sh(*(
+      ["xcodebuild",
+      "-project", xcodeproj_path,
+      "-scheme", "iosApp",
+      "-configuration", "Release",
+      "-destination", "platform=iOS,id=#{device_udid}",
+      "-derivedDataPath", derived_data,
+      "build",
+      "PROVISIONING_PROFILE_SPECIFIER=match Development com.lift.bro"] + xcargs
+    ))
+
+    app_path = "#{derived_data}/Build/Products/Release-iphoneos/Lift Bro.app"
 
     sh "xcrun", "devicectl", "device", "install", "app", "--device", device_udid, app_path
     sh "xcrun", "devicectl", "device", "process", "launch", "--device", device_udid, "--console", "com.lift.bro"
