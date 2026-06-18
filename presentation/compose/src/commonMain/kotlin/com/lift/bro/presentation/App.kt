@@ -218,8 +218,7 @@ fun App(
         hasConsent?.let { consented ->
             val analytics = dependencies.analytics
             if (consented) {
-                val appUserId = Purchases.sharedInstance.appUserID
-                analytics.setUserId(appUserId)
+                analytics.setUserId(AppPurchases.appUserID)
                 analytics.setUserProperty(
                     com.lift.bro.domain.analytics.AnalyticsEvents.Properties.PLATFORM,
                     if (isAndroid) "android" else "ios"

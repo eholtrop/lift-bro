@@ -31,13 +31,23 @@ Build the release artifact
 
 Install and run Emulator
 
+### android build_release_device
+
+```sh
+[bundle exec] fastlane android build_release_device
+```
+
+Run the project tests
+
+Build release artifact for physical iOS device (development signing)
+
 ### android test
 
 ```sh
 [bundle exec] fastlane android test
 ```
 
-Run the project tests
+
 
 ### android lint
 
@@ -99,6 +109,14 @@ Build the release artifact for iOS
 ```
 
 Build the debug artifact for iOS
+
+### ios build_debug_device
+
+```sh
+[bundle exec] fastlane ios build_debug_device
+```
+
+Build debug artifact for physical iOS device
 
 ### ios test
 
