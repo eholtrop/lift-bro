@@ -11,8 +11,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldColors
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -23,7 +21,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import com.lift.bro.utils.DarkModeProvider
+import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.submit_text_field_edit_content_description
 import lift_bro.core.generated.resources.submit_text_field_save_content_description
@@ -34,10 +37,10 @@ fun SubmitTextField(
     value: String,
     placeholder: @Composable () -> Unit,
     onValueSubmitted: (String) -> Unit,
-    colors: TextFieldColors = TextFieldDefaults.colors(),
+    editable: Boolean = false,
 ) {
     var currentValue by remember(value) { mutableStateOf(value) }
-    var editable by remember { mutableStateOf(false) }
+    var editable by remember(editable) { mutableStateOf(editable) }
     val focusRequester = remember { FocusRequester() }
 
     Row(
@@ -50,9 +53,11 @@ fun SubmitTextField(
             onValueChange = {
                 currentValue = it
             },
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.onBackground),
             singleLine = true,
             maxLines = 1,
-            textStyle = MaterialTheme.typography.headlineMedium,
+            textStyle = MaterialTheme.typography.headlineMedium
+                .copy(color = MaterialTheme.colorScheme.onBackground),
             keyboardActions = KeyboardActions(
                 onAny = {
                     onValueSubmitted(currentValue)
@@ -60,9 +65,16 @@ fun SubmitTextField(
                 }
             ),
             decorationBox = { inner ->
-                // Rendering Text
                 when (editable) {
-                    true -> { inner() }
+                    true -> {
+                        CompositionLocalProvider(
+                            LocalContentColor provides MaterialTheme.colorScheme.onBackground,
+
+                        ) {
+                            inner()
+                        }
+                    }
+
                     false -> Text(currentValue)
                 }
                 if (currentValue.isEmpty()) {
@@ -107,5 +119,50 @@ fun SubmitTextField(
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun SubmitTextFieldFilledPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        SubmitTextField(
+            value = "Bench Press",
+            placeholder = { Text("Lift name") },
+            onValueSubmitted = {},
+            editable = false,
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SubmitTextFieldEmptyPreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        SubmitTextField(
+            value = "",
+            placeholder = { Text("Lift name") },
+            onValueSubmitted = {},
+            editable = false,
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SubmitTextFieldEditablePreview(
+    @PreviewParameter(DarkModeProvider::class) darkMode: Boolean,
+) {
+    PreviewAppTheme(isDarkMode = darkMode) {
+        SubmitTextField(
+            value = "",
+            placeholder = { Text("Lift name") },
+            onValueSubmitted = {},
+            editable = true,
+        )
     }
 }
