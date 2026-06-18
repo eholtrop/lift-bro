@@ -8,7 +8,6 @@ struct ComposeView: UIViewControllerRepresentable {
         return MainViewControllerKt.MainViewController(
             bannerProvider: {
                 let banner = BannerView()
-                banner.adUnitID = "ca-app-pub-2361666372543198/2292302980"
                 banner.load(Request())
                 return banner
             }
