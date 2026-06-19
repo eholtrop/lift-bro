@@ -188,24 +188,25 @@ platform :ios do
 
     sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], File.expand_path("~/Library/Keychains/build.keychain-db"), log: false
 
-    xcargs = ["PROVISIONING_PROFILE_SPECIFIER=match Development com.lift.bro", "CODE_SIGN_STYLE=Manual", "DEVELOPMENT_TEAM=VZPX29WT9H"]
+    xcargs = "PROVISIONING_PROFILE_SPECIFIER='match Development com.lift.bro' CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=VZPX29WT9H"
     if options[:build_number]
-      xcargs << "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')}"
-      xcargs << "CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+      xcargs += " MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
     end
 
-    xcodeproj_path = File.join(project_root, "iosApp/iosApp.xcodeproj")
-    sh(*(
-      ["xcodebuild",
-      "-project", xcodeproj_path,
-      "-scheme", "iosApp",
-      "-configuration", "Debug",
-      "-destination", "platform=iOS,id=#{device_udid}",
-      "-derivedDataPath", derived_data,
-      "build"] + xcargs
-    ))
+    gym(
+      scheme: "iosApp",
+      project: "iosApp/iosApp.xcodeproj",
+      configuration: "Debug",
+      destination: "platform=iOS,id=#{device_udid}",
+      derived_data_path: "fastlane/build/DerivedData/ios",
+      export_method: "development",
+      skip_archive: true,
+      silent: true,
+      xcargs: xcargs
+    )
 
-    app_path = "#{derived_data}/Build/Products/Debug-iphoneos/Lift Bro.app"
+    project_root = File.expand_path("..", __dir__)
+    app_path = "#{project_root}/fastlane/build/DerivedData/ios/Build/Products/Debug-iphoneos/Lift Bro.app"
 
     sh "xcrun", "devicectl", "device", "install", "app", "--device", device_udid, app_path
     sh "xcrun", "devicectl", "device", "process", "launch", "--device", device_udid, "--console", "com.lift.bro"
