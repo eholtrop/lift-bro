@@ -19,18 +19,20 @@ import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.cacheDir
 import io.github.vinceglb.filekit.createDirectories
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.openFilePicker
 import io.github.vinceglb.filekit.div
 import io.github.vinceglb.filekit.exists
-import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.readString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
 
 @Serializable
 data class Backup(
@@ -52,19 +54,21 @@ class RestoreUseCase(
 ) {
     suspend operator fun invoke(): Boolean {
         // let the user pick a file to restore
-        val backupDir = FileKit.filesDir / "backups"
+        val backupDir = FileKit.cacheDir / "backups"
         if (!backupDir.exists()) {
             backupDir.createDirectories()
         }
         FileKit.openFilePicker(
             type = FileKitType.File("application/json"),
-            directory = backupDir
         )?.apply {
+            Log.d(message = "file received")
             // apply the selected file
             withContext(Dispatchers.IO) {
                 applyBackup(Json.decodeFromString<Backup>(readString()))
             }
             return true
+        } ?: {
+            Log.d(message = "error")
         }
         return false
     }
