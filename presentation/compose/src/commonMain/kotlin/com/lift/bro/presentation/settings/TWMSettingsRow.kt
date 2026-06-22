@@ -36,7 +36,7 @@ fun TWMSettingsRow() {
 
     TWMSettingsRowContent(
         enabled = showTwm,
-        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
+        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
         onToggle = { enabled ->
             dependencies.settingsRepository.set(Setting.ShowTotalWeightMoved, enabled)
         }

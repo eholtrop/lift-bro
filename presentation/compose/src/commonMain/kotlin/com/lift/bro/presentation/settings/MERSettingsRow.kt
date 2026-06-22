@@ -39,7 +39,7 @@ fun MERSettingsRow() {
 
     MERSettingsRowContent(
         enabled = showMerCalcs.enabled,
-        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
+        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
         onToggle = { enabled ->
             dependencies.settingsRepository.set(
                 Setting.MerSettings,
