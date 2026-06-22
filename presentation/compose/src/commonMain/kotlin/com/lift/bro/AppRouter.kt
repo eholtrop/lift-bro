@@ -15,7 +15,6 @@ import com.lift.bro.presentation.movement.MovementDetailsScreen
 import com.lift.bro.presentation.onboarding.OnboardingScreen
 import com.lift.bro.presentation.recording.RecordSetScreen
 import com.lift.bro.presentation.recording.rememberRecordingInteractor
-import com.lift.bro.presentation.recording.timer.TimerScreen
 import com.lift.bro.presentation.set.EditSetScreen
 import com.lift.bro.presentation.settings.SettingsScreen
 import com.lift.bro.presentation.workout.WorkoutScreen
@@ -126,17 +125,6 @@ fun AppRouter(
 
         Destination.Goals -> {
             GoalsScreen()
-        }
-
-        is Destination.Timer -> when (route) {
-            is Destination.Timer.From -> TimerScreen(route.setId)
-            is Destination.Timer.With -> {
-                TimerScreen(
-                    setId = route.setId,
-                    tempo = route.tempo,
-                    reps = route.reps,
-                )
-            }
         }
 
         is Destination.Recording -> RecordSetScreen(
