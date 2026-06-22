@@ -7,7 +7,6 @@ val Destination.screenName: String?
     get() = when (this) {
         Destination.Onboarding -> AnalyticsEvents.Screens.ONBOARDING
         Destination.Home -> AnalyticsEvents.Screens.HOME_DASHBOARD
-        is Destination.Timer -> AnalyticsEvents.Screens.TIMER
         is Destination.CreateCategory -> AnalyticsEvents.Screens.CATEGORY_CREATE
         is Destination.CategoryDetails -> AnalyticsEvents.Screens.CATEGORY_DETAILS
         is Destination.EditSet -> AnalyticsEvents.Screens.EDIT_SET
