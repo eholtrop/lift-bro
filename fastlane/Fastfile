@@ -186,7 +186,7 @@ platform :ios do
     project_root = File.expand_path("..", __dir__)
     derived_data = File.join(project_root, "fastlane/build/DerivedData/ios")
 
-    sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], File.expand_path("~/Library/Keychains/login.keychain-db"), log: false
+    sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], File.expand_path("~/Library/Keychains/build.keychain-db"), log: false
 
     xcargs = ["PROVISIONING_PROFILE_SPECIFIER=match Development com.lift.bro", "CODE_SIGN_STYLE=Manual", "DEVELOPMENT_TEAM=VZPX29WT9H"]
     if options[:build_number]
