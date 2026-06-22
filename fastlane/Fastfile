@@ -220,7 +220,7 @@ platform :ios do
 
     project_root = File.expand_path("..", __dir__)
     derived_data = File.join(project_root, "fastlane/build/DerivedData/ios")
-    keychain_path = File.expand_path("~/Library/Keychains/login.keychain-db")
+    keychain_path = File.expand_path("~/Library/Keychains/build.keychain-db")
 
     sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], keychain_path, log: false
 
