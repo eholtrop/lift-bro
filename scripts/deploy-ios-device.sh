@@ -15,7 +15,7 @@ echo "[1/2] Syncing project to $REMOTE_HOST..."
 rsync -avz \
   --exclude '.git' \
   --exclude '.idea/' \
-  --exclude '.gradle/' \
+  --exclude '.gradle/' \https://www.youtube.com/watch?v=ujx8WcbTRRw&pp=ugUEEgJlbg%3D%3D
   --exclude 'build/' \
   --exclude '*.iml' \
   --exclude 'DerivedData/' \
@@ -29,7 +29,10 @@ echo ""
 echo "[2/2] Building iOS app on remote..."
 
 # Fastlane
-ssh "eholtrop@$REMOTE_HOST" "cd $REMOTE_PATH && ~/.rbenv/shims/bundle exec fastlane ios build_debug_device device_udid:$DEVICE_UDID"
+ssh "eholtrop@$REMOTE_HOST" "
+   cd $REMOTE_PATH &&
+   ~/.rbenv/shims/bundle exec fastlane ios build_debug_device device_udid:$DEVICE_UDID
+"
 
 echo ""
 echo "=== Build complete ==="

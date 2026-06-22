@@ -12,16 +12,19 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Setting
 import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.cacheDir
 import io.github.vinceglb.filekit.createDirectories
 import io.github.vinceglb.filekit.dialogs.shareFile
 import io.github.vinceglb.filekit.div
 import io.github.vinceglb.filekit.exists
-import io.github.vinceglb.filekit.filesDir
+import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.writeString
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
@@ -31,6 +34,8 @@ import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
+import tv.dpal.logging.Log
+import tv.dpal.logging.d
 import kotlin.time.Clock
 
 typealias BackupInteractor = Interactor<BackupState, BackupEvent>
@@ -88,22 +93,25 @@ fun rememberBackupInteractor(
         SideEffect { _, state, event ->
             when (event) {
                 is BackupEvent.BackupFinished -> {
-                    val backupDir = FileKit.filesDir / "backups"
+                    val backupDir = FileKit.cacheDir / "backups"
                     if (!backupDir.exists()) {
                         backupDir.createDirectories()
                     }
                     val backupFile = backupDir / "${Clock.System.now().toString("yyyy-MM-dd_HH:mm:ss")}.json"
                     backupFile.writeString(Json.encodeToString(state.backup))
 
+                    Log.d(message = "Sharing ${backupFile.name}")
                     // force user to pick where the backup goes (should probably be somewhere else!)
-                    FileKit.shareFile(backupFile)
-
-                    // ensure last backup date is updated
-                    dependencies.settingsRepository.set(
-                        Setting.BackupSettings,
-                        BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
-                    )
-                    onDismissRequested()
+                    withContext(Dispatchers.Main) {
+                        FileKit.shareFile(backupFile)
+                        Log.d(message = "Shared ${backupFile.name}")
+                        // ensure last backup date is updated
+                        dependencies.settingsRepository.set(
+                            Setting.BackupSettings,
+                            BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
+                        )
+                        onDismissRequested()
+                    }
                 }
             }
         }
