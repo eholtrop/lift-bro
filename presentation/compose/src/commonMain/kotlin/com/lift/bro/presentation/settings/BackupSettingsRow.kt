@@ -37,7 +37,10 @@ fun BackupSettingsRow() {
 
         if (showBackupDialog) {
             BackupDialog(
-                onDismissRequest = { showBackupDialog = false }
+                onDismissRequest = { launcher, file ->
+                    file?.let { launcher.launch(file) }
+                    showBackupDialog = false
+                }
             )
         }
 
