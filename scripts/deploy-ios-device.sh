@@ -15,7 +15,7 @@ echo "[1/2] Syncing project to $REMOTE_HOST..."
 rsync -avz \
   --exclude '.git' \
   --exclude '.idea/' \
-  --exclude '.gradle/' \https://www.youtube.com/watch?v=ujx8WcbTRRw&pp=ugUEEgJlbg%3D%3D
+  --exclude '.gradle/' \
   --exclude 'build/' \
   --exclude '*.iml' \
   --exclude 'DerivedData/' \
