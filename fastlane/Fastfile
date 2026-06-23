@@ -148,6 +148,9 @@ platform :ios do
   desc "Build the release artifact for iOS"
   lane :build_release do |options|
     match_appstore
+
+    setup_keychain_for_codesign
+
     gym(
       scheme: "iosApp",
       project: "iosApp/iosApp.xcodeproj",
@@ -187,7 +190,7 @@ platform :ios do
     project_root = File.expand_path("..", __dir__)
     derived_data = File.join(project_root, "fastlane/build/DerivedData/ios")
 
-    sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], File.expand_path("~/Library/Keychains/build.keychain-db"), log: false
+    setup_keychain_for_codesign
 
     xcargs = "PROVISIONING_PROFILE_SPECIFIER='match Development com.lift.bro' CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=VZPX29WT9H"
     if options[:build_number]
@@ -220,9 +223,8 @@ platform :ios do
 
     project_root = File.expand_path("..", __dir__)
     derived_data = File.join(project_root, "fastlane/build/DerivedData/ios")
-    keychain_path = File.expand_path("~/Library/Keychains/build.keychain-db")
 
-    sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], keychain_path, log: false
+    setup_keychain_for_codesign
 
     xcargs = "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=VZPX29WT9H"
     if options[:build_number]
@@ -288,6 +290,22 @@ platform :ios do
 #       automatic_release: true, # Release immediately after review (or set a date)
 #       # release_build_status: "READY_FOR_SALE" # Or other values if managing through App Store Connect
 #     )
+  end
+
+  def setup_keychain_for_codesign
+    if ENV["CI"] == "true"
+      keychain_path = `security default-keychain`.strip.tr('"', '')
+    else
+      keychain_path = File.expand_path("~/Library/Keychains/build.keychain-db")
+    end
+
+    if File.exist?(keychain_path.tr('"', ''))
+      password = ENV["MATCH_PASSWORD"] || ""
+      sh "security", "unlock-keychain", "-p", password, keychain_path, log: false
+      sh "security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s", "-k", password, keychain_path, log: false
+    else
+      UI.important("Keychain not found at #{keychain_path}, skipping keychain setup")
+    end
   end
 
 end # End of iOS platform block
