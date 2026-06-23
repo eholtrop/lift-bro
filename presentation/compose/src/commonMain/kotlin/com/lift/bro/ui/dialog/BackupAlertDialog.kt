@@ -53,7 +53,10 @@ fun BackupAlertDialog(
 
     if (showBackupDialog) {
         BackupDialog(
-            onDismissRequest = { showBackupDialog = false }
+            onDismissRequest = { launcher, file ->
+                file?.let { launcher.launch(it) }
+                showBackupDialog = false
+            }
         )
     }
 

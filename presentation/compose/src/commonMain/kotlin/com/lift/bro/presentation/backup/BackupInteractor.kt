@@ -12,30 +12,27 @@ import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Setting
 import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.cacheDir
 import io.github.vinceglb.filekit.createDirectories
-import io.github.vinceglb.filekit.dialogs.shareFile
 import io.github.vinceglb.filekit.div
 import io.github.vinceglb.filekit.exists
-import io.github.vinceglb.filekit.name
 import io.github.vinceglb.filekit.writeString
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
 import tv.dpal.ext.flow.mapEach
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
+import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.logging.Log
-import tv.dpal.logging.d
 import kotlin.time.Clock
 
 typealias BackupInteractor = Interactor<BackupState, BackupEvent>
@@ -44,18 +41,18 @@ typealias BackupInteractor = Interactor<BackupState, BackupEvent>
 data class BackupState(
     val backup: Backup,
     val backupFinished: Boolean = false,
+    @Transient val file: PlatformFile? = null,
 )
 
 sealed interface BackupEvent {
     data object BackupFinished: BackupEvent
+    data class ShareFile(val file: PlatformFile): BackupEvent
 }
 
 fun <T> Flow<T>.nullable(): Flow<T?> = this
 
 @Composable
-fun rememberBackupInteractor(
-    onDismissRequested: () -> Unit,
-): BackupInteractor = rememberInteractor(
+fun rememberBackupInteractor(): BackupInteractor = rememberInteractor(
     initialState = BackupState(Backup()),
     source = {
         combine(
@@ -89,8 +86,16 @@ fun rememberBackupInteractor(
             )
         }
     },
+    reducers = listOf(
+        Reducer { state, event ->
+            when (event) {
+                is BackupEvent.ShareFile -> state.copy(file = event.file)
+                else -> state
+            }
+        }
+    ),
     sideEffects = listOf(
-        SideEffect { _, state, event ->
+        SideEffect { disp, state, event ->
             when (event) {
                 is BackupEvent.BackupFinished -> {
                     val backupDir = FileKit.cacheDir / "backups"
@@ -100,18 +105,14 @@ fun rememberBackupInteractor(
                     val backupFile = backupDir / "${Clock.System.now().toString("yyyy-MM-dd_HH:mm:ss")}.json"
                     backupFile.writeString(Json.encodeToString(state.backup))
 
-                    Log.d(message = "Sharing ${backupFile.name}")
-                    // force user to pick where the backup goes (should probably be somewhere else!)
-                    withContext(Dispatchers.Main) {
-                        FileKit.shareFile(backupFile)
-                        Log.d(message = "Shared ${backupFile.name}")
-                        // ensure last backup date is updated
-                        dependencies.settingsRepository.set(
-                            Setting.BackupSettings,
-                            BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
-                        )
-                        onDismissRequested()
-                    }
+                    disp(BackupEvent.ShareFile(backupFile))
+                }
+
+                is BackupEvent.ShareFile -> {
+                    dependencies.settingsRepository.set(
+                        Setting.BackupSettings,
+                        BackupSettings(lastBackupDate = Clock.System.todayIn(TimeZone.currentSystemDefault()))
+                    )
                 }
             }
         }

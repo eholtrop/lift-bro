@@ -24,6 +24,9 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.dialog.InfoDialog
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.dialogs.compose.ShareResultLauncher
+import io.github.vinceglb.filekit.dialogs.compose.rememberShareFileLauncher
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.backup_dialog_cancel_cta
 import lift_bro.core.generated.resources.backup_dialog_title
@@ -37,13 +40,21 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BackupDialog(
-    onDismissRequest: () -> Unit,
-    interactor: BackupInteractor = rememberBackupInteractor(onDismissRequest),
+    onDismissRequest: (ShareResultLauncher, PlatformFile?) -> Unit,
+    interactor: BackupInteractor = rememberBackupInteractor(),
 ) {
     val state by interactor.state.collectAsState()
 
+    val shareLauncher = rememberShareFileLauncher()
+    LaunchedEffect(state.file) {
+        state.file?.let { file ->
+            shareLauncher.launch(file)
+            onDismissRequest(shareLauncher, file)
+        }
+    }
+
     InfoDialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = { onDismissRequest(shareLauncher, null) },
         properties = DialogProperties(
             dismissOnBackPress = false,
             dismissOnClickOutside = false,
