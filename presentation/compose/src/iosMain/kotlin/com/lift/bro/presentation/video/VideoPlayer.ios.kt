@@ -3,10 +3,11 @@ package com.lift.bro.presentation.video
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import io.github.vinceglb.filekit.PlatformFile
 
 @Composable
 actual fun VideoPlayer(
-    videoFile: java.io.File,
+    videoFile: PlatformFile,
     modifier: Modifier,
     onPlayPause: (() -> Unit)?,
 ) {
