@@ -14,7 +14,7 @@ echo ""
 # Pre-warm Gradle daemon on remote while we sync files
 echo "[1/3] Pre-warming Gradle daemon on $REMOTE_HOST..."
 ssh "eholtrop@$REMOTE_HOST" \
-  "cd $REMOTE_PATH && ./gradlew --stop > /dev/null 2>&1; ./gradlew -q --build-cache :presentation:compose:dependencies > /dev/null 2>&1 &"
+  "cd $REMOTE_PATH && ./gradlew --stop > /dev/null 2>&1; ./gradlew --version > /dev/null 2>&1 &"
 
 echo "[2/3] Syncing project to $REMOTE_HOST..."
 rsync -a --info=progress2 \

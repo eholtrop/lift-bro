@@ -48,7 +48,6 @@ fun BackupDialog(
     val shareLauncher = rememberShareFileLauncher()
     LaunchedEffect(state.file) {
         state.file?.let { file ->
-            shareLauncher.launch(file)
             onDismissRequest(shareLauncher, file)
         }
     }
