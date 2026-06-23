@@ -13,7 +13,8 @@ class LiveStreamRepositoryImpl(
         emit(
             try {
                 dataSource.isLive(channelName)
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                e.printStackTrace()
                 false
             }
         )
