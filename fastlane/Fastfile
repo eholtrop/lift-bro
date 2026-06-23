@@ -117,6 +117,7 @@ platform :ios do
       readonly: true,
       git_url: ENV["MATCH_GIT_URL"],
       git_branch: "main",
+      keychain_name: "build.keychain",
       keychain_password: ENV["MATCH_PASSWORD"],
       username: ENV["FASTLANE_USER"]
     )
@@ -195,18 +196,17 @@ platform :ios do
 
     gym(
       scheme: "iosApp",
-      project: "iosApp/iosApp.xcodeproj",
+      project: File.join(project_root, "iosApp/iosApp.xcodeproj"),
       configuration: "Debug",
       destination: "platform=iOS,id=#{device_udid}",
-      derived_data_path: "fastlane/build/DerivedData/ios",
+      derived_data_path: derived_data,
       export_method: "development",
       skip_archive: true,
       silent: true,
       xcargs: xcargs
     )
 
-    project_root = File.expand_path("..", __dir__)
-    app_path = "#{project_root}/fastlane/build/DerivedData/ios/Build/Products/Debug-iphoneos/Lift Bro.app"
+    app_path = "#{derived_data}/Build/Products/Debug-iphoneos/Lift Bro.app"
 
     sh "xcrun", "devicectl", "device", "install", "app", "--device", device_udid, app_path
     sh "xcrun", "devicectl", "device", "process", "launch", "--device", device_udid, "--console", "com.lift.bro"
@@ -224,23 +224,22 @@ platform :ios do
 
     sh "security", "unlock-keychain", "-p", ENV["MATCH_PASSWORD"], keychain_path, log: false
 
-    xcargs = []
+    xcargs = "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=VZPX29WT9H"
     if options[:build_number]
-      xcargs << "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')}"
-      xcargs << "CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+      xcargs += " MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
     end
 
-    xcodeproj_path = File.join(project_root, "iosApp/iosApp.xcodeproj")
-    sh(*(
-      ["xcodebuild",
-      "-project", xcodeproj_path,
-      "-scheme", "iosApp",
-      "-configuration", "Release",
-      "-destination", "platform=iOS,id=#{device_udid}",
-      "-derivedDataPath", derived_data,
-      "build",
-      "PROVISIONING_PROFILE_SPECIFIER=match Development com.lift.bro"] + xcargs
-    ))
+    gym(
+      scheme: "iosApp",
+      project: File.join(project_root, "iosApp/iosApp.xcodeproj"),
+      configuration: "Release",
+      destination: "platform=iOS,id=#{device_udid}",
+      derived_data_path: derived_data,
+      export_method: "development",
+      skip_archive: true,
+      silent: true,
+      xcargs: xcargs
+    )
 
     app_path = "#{derived_data}/Build/Products/Release-iphoneos/Lift Bro.app"
 
