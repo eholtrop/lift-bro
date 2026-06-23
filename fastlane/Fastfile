@@ -89,7 +89,6 @@ platform :ios do
   before_all do
     if ENV["CI"] == "true"
       setup_ci
-      ENV["CI_KEYCHAIN_PASSWORD"] = lane_context(Actions::SharedValues::MATCH_KEYCHAIN_PASSWORD).to_s
     end
 
     unless ENV["APPSTORE_KEY_ID"].nil? || ENV["APPSTORE_KEY_ID"].empty? || ENV["APPSTORE_PRIVATE_KEY"].nil?
@@ -286,15 +285,14 @@ platform :ios do
 
   def setup_keychain_for_codesign
     if ENV["CI"] == "true"
-      keychain_path = `security default-keychain`.strip.tr('"', '')
-      password = ENV["CI_KEYCHAIN_PASSWORD"] || ""
-    else
-      keychain_path = File.expand_path("~/Library/Keychains/build.keychain-db")
-      password = ENV["MATCH_PASSWORD"] || ""
-      sh "security", "unlock-keychain", "-p", password, keychain_path, log: false
+      # Already handled in before_all after setup_ci
+      return
     end
 
-    if File.exist?(keychain_path.tr('"', ''))
+    keychain_path = File.expand_path("~/Library/Keychains/build.keychain-db")
+    if File.exist?(keychain_path)
+      password = ENV["MATCH_PASSWORD"] || ""
+      sh "security", "unlock-keychain", "-p", password, keychain_path, log: false
       sh "security", "set-key-partition-list", "-S", "apple-tool:,apple:,codesign:", "-s", "-k", password, keychain_path, log: false
     else
       UI.important("Keychain not found at #{keychain_path}, skipping keychain setup")
