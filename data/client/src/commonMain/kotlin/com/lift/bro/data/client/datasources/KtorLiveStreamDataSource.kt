@@ -6,8 +6,7 @@ import com.lift.bro.data.core.datasource.LiveStreamDataSource
 import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
-import tv.dpal.logging.Log
-import tv.dpal.logging.d
+import io.ktor.http.HttpStatusCode
 
 class KtorLiveStreamDataSource(
     private val httpClient: HttpClient = createLiftBroClient(
@@ -15,8 +14,12 @@ class KtorLiveStreamDataSource(
     )
 ) : LiveStreamDataSource {
     override suspend fun isLive(channelName: String): Boolean {
-        val response = httpClient.get("/twitch/uptime/$channelName").bodyAsText()
-        Log.d(message = response)
-        return !response.contains("offline")
+        val response = httpClient.get("/twitch/uptime/$channelName")
+        return when (response.status) {
+            HttpStatusCode.OK -> !response.bodyAsText().contains("offline")
+            else -> {
+                false
+            }
+        }
     }
 }
