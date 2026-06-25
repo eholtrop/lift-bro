@@ -26,7 +26,7 @@ class GetMostConsistentVariationUseCase(
         ),
         variationRepository.listenAll()
     ) { sets, variations ->
-        sets.groupBy { set -> variations.first { it.id == set.variationId } }
+        sets.groupBy { set -> variations.first { it.id == set.movementId } }
             .map {
                 it.key to it.value.map { it.date.toLocalDate() }.toSet().size
             }

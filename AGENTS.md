@@ -70,6 +70,13 @@ Use the simplest test double that satisfies the test's intent:
 - **Spies** are rarely needed; avoid unless testing platform-specific interop.
 - Test doubles are hand-written or use MockK. Place shared doubles in `src/commonTest/kotlin/.../testdoubles/`.
 - Test doubles should be `private class` inside the test file unless shared across multiple test files.
+## Compose Previews
+
+- Place previews at the bottom of the composable's source file.
+- Use `@ThemePreviews` annotation (generates light + dark variants) with `PreviewAppTheme(isDarkMode = isSystemInDarkTheme())` as the theme wrapper.
+- Use a `PreviewParameterProvider<T>` class to supply state variations. Name it `{Thing}Provider` (e.g. `SectionItemProvider`, `WorkoutStateProvider`).
+- Wire each preview into `app-android/src/screenshotTest/.../ScreenshotTests.kt` with `@PreviewTest` for screenshot coverage.
+- Utility classes live in `com.lift.bro.utils`: `PreviewAppTheme`, `DarkModeProvider`, `ThemePreviews`.
 
 ## Localization
 

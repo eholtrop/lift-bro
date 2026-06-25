@@ -5,7 +5,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.VariationDataSource
-import com.lift.bro.data.datasource.LBExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.toDomain
 import com.lift.bro.db.LiftBroDB
@@ -89,14 +88,7 @@ class LBDatabase(
         database.liftingLogQueries.deleteAll()
     }
 
-    val exerciseDataSource = LBExerciseDataSource(
-        exerciseQueries = database.exerciseQueries,
-        setQueries = database.setQueries,
-    )
-
     val variantDataSource: VariationDataSource = SqlDelightVariationDataSource(
-        categoryQueries = database.categoryQueries,
-        setQueries = database.setQueries,
         movementQueries = database.movementQueries
     )
 }
@@ -144,7 +136,7 @@ class SetDataSource(
     }
 
     fun getAll(variationId: String, limit: Long = Long.MAX_VALUE): List<LBSet> {
-        return setQueries.getAllByMovement(variationId, limit).executeAsList().map { set ->
+        return setQueries.getAllByMovement(variationId, null, limit).executeAsList().map { set ->
             val oneRepMax = setQueries.getOneRepMaxForMovement(variationId, before = set.date)
                 .executeAsOneOrNull()
             val eMax =
@@ -189,7 +181,7 @@ class SetDataSource(
         withContext(dispatcher) {
             setQueries.save(
                 id = set.id,
-                movementId = set.variationId,
+                movementId = set.movementId,
                 weight = set.weight,
                 reps = set.reps,
                 tempoDown = set.tempo.down,
@@ -199,6 +191,7 @@ class SetDataSource(
                 notes = set.notes,
                 rpe = set.rpe?.toLong(),
                 videoUri = set.videoUri,
+                exerciseSectionId = set.exerciseSectionId,
             )
         }
     }
@@ -217,7 +210,7 @@ class SetDataSource(
 
 fun LiftingSet.toDomain() = LBSet(
     id = this.id,
-    variationId = this.movementId,
+    movementId = this.movementId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
     tempo = Tempo(
@@ -232,7 +225,7 @@ fun LiftingSet.toDomain() = LBSet(
 
 fun GetAllByMovement.toDomain() = LBSet(
     id = this.id,
-    variationId = this.movementId,
+    movementId = this.movementId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
     tempo = Tempo(

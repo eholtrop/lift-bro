@@ -351,7 +351,7 @@ private fun VariationSearchContent(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
 
-                            Text("Create Variation")
+                            Text("Create New Movement")
                         }
                     }
                 }

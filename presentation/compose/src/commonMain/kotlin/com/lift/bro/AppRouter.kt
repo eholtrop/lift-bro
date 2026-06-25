@@ -80,6 +80,7 @@ fun AppRouter(
         is CreateSet -> EditSetScreen(
             variationId = route.movementId,
             date = route.date,
+            sectionId = route.sectionId
         )
 
         Destination.Settings -> SettingsScreen()

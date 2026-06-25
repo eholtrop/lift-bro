@@ -12,7 +12,6 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 import kotlinx.serialization.Serializable
 import tv.dpal.flowvi.rememberInteractor
-import tv.dpal.ktx.datetime.toLocalDate
 
 @Serializable
 data class WorkoutMonthState(
@@ -42,8 +41,8 @@ fun rememberWorkoutMonthInteractor(
     source = {
         combine(
             dependencies.workoutRepository.getAll(
-                LocalDate(year, month, 1),
-                LocalDate(year, month, 1)
+                startDate = LocalDate(year, month, 1),
+                endDate = LocalDate(year, month, 1)
                     .plus(1, DateTimeUnit.MONTH),
             ),
             FetchVariationSetsForMonth(
@@ -60,19 +59,9 @@ fun rememberWorkoutMonthInteractor(
                 colors = (1..month.daysIn).map {
                     LocalDate(year, month, it)
                 }.associateWith { date ->
-                    (
-                        workoutMap[date]?.exercises
-                            ?: emptyList()
-                        ).map { it.variationSets.map { it.variation.lift?.color } }
-                        .flatten() +
-                        unallocatedSets
-                            .filter { it.second.any { it.date.toLocalDate() == date } }
-                            .filter { vs ->
-                                (workoutMap[date]?.exercises ?: emptyList()).none {
-                                    it.variationSets.any { it.variation.id == vs.first.id }
-                                }
-                            }
-                            .map { it.first.lift?.color }
+                    (workoutMap[date]?.exercises ?: emptyList())
+                        .map { it.sections.map { it.movements.firstOrNull { it.lift?.color != null }?.lift?.color } }
+                        .flatten()
                 },
                 logs = logs.associateBy { it.date },
             )

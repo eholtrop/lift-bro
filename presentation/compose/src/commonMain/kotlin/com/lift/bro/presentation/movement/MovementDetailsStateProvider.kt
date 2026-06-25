@@ -54,7 +54,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                         sets = listOf(
                             LBSet(
                                 id = "set1",
-                                variationId = "single-card",
+                                movementId = "single-card",
                                 weight = 225.0,
                                 reps = 5,
                                 rpe = 8,
@@ -62,7 +62,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                             ),
                             LBSet(
                                 id = "set2",
-                                variationId = "single-card",
+                                movementId = "single-card",
                                 weight = 245.0,
                                 reps = 3,
                                 rpe = 9,
@@ -89,7 +89,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                         sets = listOf(
                             LBSet(
                                 id = "set3",
-                                variationId = "multi-card",
+                                movementId = "multi-card",
                                 weight = 135.0,
                                 reps = 5,
                                 tempo = Tempo(down = 3, hold = 0, up = 1),
@@ -98,7 +98,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                             ),
                             LBSet(
                                 id = "set4",
-                                variationId = "multi-card",
+                                movementId = "multi-card",
                                 weight = 145.0,
                                 reps = 3,
                                 tempo = Tempo(down = 3, hold = 0, up = 1),
@@ -112,7 +112,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                         sets = listOf(
                             LBSet(
                                 id = "set5",
-                                variationId = "multi-card",
+                                movementId = "multi-card",
                                 weight = 95.0,
                                 reps = 8,
                                 tempo = Tempo(down = 2, hold = 1, up = 2),
@@ -122,7 +122,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                             ),
                             LBSet(
                                 id = "set6",
-                                variationId = "multi-card",
+                                movementId = "multi-card",
                                 weight = 115.0,
                                 reps = 6,
                                 tempo = Tempo(down = 2, hold = 1, up = 2),
@@ -131,7 +131,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                             ),
                             LBSet(
                                 id = "set7",
-                                variationId = "multi-card",
+                                movementId = "multi-card",
                                 weight = 135.0,
                                 reps = 4,
                                 tempo = Tempo(down = 3, hold = 0, up = 1),
@@ -160,7 +160,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                         sets = listOf(
                             LBSet(
                                 id = "set8",
-                                variationId = "body-weight",
+                                movementId = "body-weight",
                                 weight = 25.0,
                                 reps = 5,
                                 rpe = 8,
@@ -169,7 +169,7 @@ class MovementDetailsStateProvider: PreviewParameterProvider<MovementDetailsStat
                             ),
                             LBSet(
                                 id = "set9",
-                                variationId = "body-weight",
+                                movementId = "body-weight",
                                 weight = 0.0,
                                 reps = 10,
                                 rpe = 6,

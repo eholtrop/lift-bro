@@ -14,10 +14,10 @@ class GetTotalWeightMovedUseCaseTest {
     fun `Given sets with weight and reps When invoked Then returns sum of weight times reps`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 10), // 1000
-            LBSet(id = "2", variationId = "v1", weight = 50.0, reps = 8), // 400
-            LBSet(id = "3", variationId = "v2", weight = 200.0, reps = 5), // 1000
-            LBSet(id = "4", variationId = "v2", weight = 75.0, reps = 12) // 900
+            LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 10), // 1000
+            LBSet(id = "2", movementId = "v1", weight = 50.0, reps = 8), // 400
+            LBSet(id = "3", movementId = "v2", weight = 200.0, reps = 5), // 1000
+            LBSet(id = "4", movementId = "v2", weight = 75.0, reps = 12) // 900
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalWeightMovedUseCase(repository)
@@ -48,8 +48,8 @@ class GetTotalWeightMovedUseCaseTest {
         val startDate = LocalDate(2024, 1, 1)
         val endDate = LocalDate(2024, 1, 31)
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 10),
-            LBSet(id = "2", variationId = "v1", weight = 50.0, reps = 8)
+            LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 10),
+            LBSet(id = "2", movementId = "v1", weight = 50.0, reps = 8)
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalWeightMovedUseCase(repository)
@@ -67,9 +67,9 @@ class GetTotalWeightMovedUseCaseTest {
     fun `Given mixed weights When invoked Then calculates correctly`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 45.5, reps = 5), // 227.5
-            LBSet(id = "2", variationId = "v1", weight = 102.3, reps = 3), // 306.9
-            LBSet(id = "3", variationId = "v2", weight = 67.8, reps = 10) // 678.0
+            LBSet(id = "1", movementId = "v1", weight = 45.5, reps = 5), // 227.5
+            LBSet(id = "2", movementId = "v1", weight = 102.3, reps = 3), // 306.9
+            LBSet(id = "3", movementId = "v2", weight = 67.8, reps = 10) // 678.0
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalWeightMovedUseCase(repository)
@@ -85,8 +85,8 @@ class GetTotalWeightMovedUseCaseTest {
     fun `Given sets with zero weight When invoked Then returns 0`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 0.0, reps = 10),
-            LBSet(id = "2", variationId = "v1", weight = 0.0, reps = 5)
+            LBSet(id = "1", movementId = "v1", weight = 0.0, reps = 10),
+            LBSet(id = "2", movementId = "v1", weight = 0.0, reps = 5)
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalWeightMovedUseCase(repository)
@@ -102,7 +102,7 @@ class GetTotalWeightMovedUseCaseTest {
     fun `Given single set When invoked Then returns that set's total weight moved`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 225.0, reps = 5)
+            LBSet(id = "1", movementId = "v1", weight = 225.0, reps = 5)
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalWeightMovedUseCase(repository)
@@ -118,9 +118,9 @@ class GetTotalWeightMovedUseCaseTest {
     fun `Given sets with 1 rep each When invoked Then returns sum of weights`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 1),
-            LBSet(id = "2", variationId = "v1", weight = 150.0, reps = 1),
-            LBSet(id = "3", variationId = "v1", weight = 200.0, reps = 1)
+            LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 1),
+            LBSet(id = "2", movementId = "v1", weight = 150.0, reps = 1),
+            LBSet(id = "3", movementId = "v1", weight = 200.0, reps = 1)
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalWeightMovedUseCase(repository)

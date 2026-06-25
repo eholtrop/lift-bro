@@ -46,6 +46,7 @@ sealed class Destination: tv.dpal.navi.Destination() {
     data class CreateSet(
         val categoryId: String? = null,
         val movementId: String? = null,
+        val sectionId: String? = null,
         @Serializable(with = InstantSerializer::class)
         val date: Instant = Clock.System.now(),
     ): Destination()

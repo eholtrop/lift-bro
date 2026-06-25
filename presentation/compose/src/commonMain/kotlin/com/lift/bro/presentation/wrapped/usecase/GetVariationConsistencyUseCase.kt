@@ -28,7 +28,7 @@ class GetVariationConsistencyUseCase(
     ) { sets, variations ->
         sets.groupBy { set -> set.date.toLocalDate() }
             .mapValues { (_, sets) ->
-                variations.filter { variation -> sets.any { it.variationId == variation.id } }
+                variations.filter { variation -> sets.any { it.movementId == variation.id } }
             }
     }
 }

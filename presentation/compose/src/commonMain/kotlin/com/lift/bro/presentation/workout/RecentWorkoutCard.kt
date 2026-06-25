@@ -10,14 +10,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.theme.spacing
@@ -62,13 +60,15 @@ fun RecentWorkoutCard(
             verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.half)
         ) {
             workout.exercises.forEach { exercise ->
-                exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
-                    VariationSet(
-                        index = if (exercise.variationSets.size > 1) index else null,
-                        variation = variation,
-                        sets = sets
-                    )
-                }
+                exercise.sections
+                    .filter { it.movements.isNotEmpty() }
+                    .mapIndexed { index, section ->
+                        WorkoutCalendarMovementCard(
+                            index = if (exercise.sections.size > 1) index else null,
+                            movement = section.primaryMovement,
+                            sets = section.sets
+                        )
+                    }
             }
         }
     }
@@ -99,42 +99,26 @@ class WorkoutProvider: PreviewParameterProvider<Workout> {
                     com.lift.bro.domain.models.Exercise(
                         id = "ex1",
                         workoutId = "w1",
-                        variationSets = listOf(
-                            VariationSets(
+                        sections = listOf(
+                            Section(
                                 id = "vs1",
-                                variation = com.lift.bro.domain.models.Movement(
-                                    lift = Category(
-                                        id = "lift1",
-                                        name = "Squat",
-                                        color = Color.Red.value
-                                    ),
-                                    name = "Deadlift",
-                                    notes = null,
-                                    favourite = true,
-                                ),
+                                exerciseId = "",
+                                primaryMovement = null,
                                 sets = listOf(
                                     LBSet(
                                         id = "set1",
-                                        variationId = "vs1",
+                                        movementId = "vs1",
                                     )
                                 )
                             ),
-                            VariationSets(
+                            Section(
                                 id = "vs1",
-                                variation = com.lift.bro.domain.models.Movement(
-                                    lift = Category(
-                                        id = "lift1",
-                                        name = "Squat",
-                                        color = Color.Blue.value
-                                    ),
-                                    name = "Deadlift",
-                                    notes = null,
-                                    favourite = true,
-                                ),
+                                exerciseId = "",
+                                primaryMovement = null,
                                 sets = listOf(
                                     LBSet(
                                         id = "set1",
-                                        variationId = "vs1",
+                                        movementId = "vs1",
                                     )
                                 )
                             )
@@ -149,7 +133,7 @@ class WorkoutProvider: PreviewParameterProvider<Workout> {
                     com.lift.bro.domain.models.Exercise(
                         id = "ex2",
                         workoutId = "w2",
-                        variationSets = emptyList()
+                        sections = emptyList()
                     )
                 )
             )

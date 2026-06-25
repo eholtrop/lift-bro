@@ -31,7 +31,7 @@ class GetVariationWithMostWeightMovedUseCase(
         ),
         variationRepository.listenAll(),
     ) { sets, variations ->
-        sets.groupBy { set -> variations.first { it.id == set.variationId } }
+        sets.groupBy { set -> variations.first { it.id == set.movementId } }
             .map { entry -> entry.key to entry.value.sumOf { it.weight } }
             .maxBy { it.second }
     }

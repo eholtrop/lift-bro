@@ -66,28 +66,28 @@ private val debugVariations = listOf(
 val debugSets = listOf(
     LBSet(
         id = uuid4().toString(),
-        variationId = "bench press",
+        movementId = "bench press",
         weight = 150.0,
         reps = 1,
         notes = "Hold at 90 degrees"
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 120.0,
         reps = 1,
         notes = ""
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "regular deadlift",
+        movementId = "regular deadlift",
         weight = 140.0,
         reps = 1,
         notes = ""
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 130.0,
         reps = 1,
         date = Clock.System.now().minus(24, DateTimeUnit.HOUR),
@@ -95,7 +95,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 170.0,
         reps = 1,
         date = Clock.System.now().minus(72, DateTimeUnit.HOUR),
@@ -103,7 +103,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 190.0,
         reps = 1,
         date = Clock.System.now().minus(102, DateTimeUnit.HOUR),
@@ -111,7 +111,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 167.0,
         reps = 1,
         date = Clock.System.now().minus(132, DateTimeUnit.HOUR),
@@ -119,7 +119,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 153.0,
         reps = 1,
         date = Clock.System.now().minus(162, DateTimeUnit.HOUR),
@@ -127,7 +127,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 142.0,
         reps = 1,
         date = Clock.System.now().minus(192, DateTimeUnit.HOUR),
@@ -135,7 +135,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 123.0,
         reps = 1,
         date = Clock.System.now().minus(222, DateTimeUnit.HOUR),
@@ -143,7 +143,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "back squat",
+        movementId = "back squat",
         weight = 172.0,
         reps = 1,
         date = Clock.System.now().minus(252, DateTimeUnit.HOUR),
@@ -151,7 +151,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "regular deadlift",
+        movementId = "regular deadlift",
         weight = 170.0,
         reps = 1,
         date = Clock.System.now().minus(102, DateTimeUnit.HOUR),
@@ -159,7 +159,7 @@ val debugSets = listOf(
     ),
     LBSet(
         id = uuid4().toString(),
-        variationId = "bench press",
+        movementId = "bench press",
         weight = 190.0,
         reps = 1,
         date = Clock.System.now().minus(200, DateTimeUnit.HOUR),

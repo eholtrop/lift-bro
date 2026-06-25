@@ -102,7 +102,7 @@ Soreness or pain?</string>
     <string name="edit_set_screen_extra_notes_placeholder">I killed it today!</string>
     <string name="edit_set_screen_save_cta_content_description">Save Set</string>
     <string name="edit_set_screen_title">You Crushed</string>
-    <string name="edit_set_screen_variation_selector_empty_state_title">Select Lift</string>
+    <string name="edit_set_screen_variation_selector_empty_state_title">Whatcha Liftin?</string>
     <string name="edit_set_screen_variation_selector_lift_max">%1$s Max: %2$s</string>
     <string name="edit_set_screen_variation_selector_no_lift_max">None</string>
     <string name="edit_set_screen_variation_selector_no_variation_max">None</string>
@@ -313,14 +313,14 @@ Soreness or pain?</string>
     <string name="workout_finisher_label">Finisher</string>
     <string name="workout_finisher_placeholder">Burpees</string>
     <string name="workout_notes_placeholder">Notes</string>
-    <string name="workout_screen_add_set_content_description">Add Set</string>
+    <string name="workout_section_card_primary_cta">Add Set</string>
     <string name="workout_screen_again_content_description">Again</string>
     <string name="workout_screen_copy_recent_workout_subtitle">Tap one to start the gains!</string>
     <string name="workout_screen_copy_recent_workout_title">Or... Copy a recent workout!</string>
     <string name="workout_screen_copy_set_content_description">Copy Set</string>
-    <string name="workout_screen_delete_variation_content_description">Delete %1$s</string>
-    <string name="workout_screen_delete_warning_text">This will delete all sets in this workout, are you sure?</string>
-    <string name="workout_screen_duplicate_last_set_content_description">Duplicate Last Set</string>
+    <string name="workout_section_card_secondary_cta">Delete %1$s</string>
+    <string name="workout_section_card_warning_dialog_title">This will delete all sets in this workout, are you sure?</string>
+    <string name="workout_section_card_item_cta">Duplicate Last Set</string>
     <string name="workout_screen_most_recent_set_text">Most Recent Set - %1$s</string>
     <string name="workout_screen_next_content_description">Next</string>
     <string name="workout_screen_previous_lift_content_description">Previous Lift</string>

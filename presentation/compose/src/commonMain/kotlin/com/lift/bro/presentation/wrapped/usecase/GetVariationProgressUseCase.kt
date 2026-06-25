@@ -153,7 +153,7 @@ private fun Flow<LBSet?>.getMaxInDay(
         setRepository.listenAll(
             startDate = set.date.toLocalDate(),
             endDate = set.date.toLocalDate(),
-            variationId = set.variationId,
+            variationId = set.movementId,
         ).map {
             if (bodyWeight) {
                 it.maxByOrNull { it.reps }

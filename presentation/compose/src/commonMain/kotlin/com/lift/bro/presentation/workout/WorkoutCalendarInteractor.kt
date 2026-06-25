@@ -12,7 +12,7 @@ import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.ILiftingLogRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
@@ -49,15 +49,7 @@ fun rememberWorkoutCalendarInteractor(
     initialState = WorkoutCalendarState(
         selectedDate = initialDate,
     ),
-    stateResolver = { initial, source ->
-        source.copy(
-            selectedDate = if (initial.selectedDate != source.selectedDate) initial.selectedDate else source.selectedDate,
-            selectedWorkout = if (initial.selectedDate != source.selectedDate) initial.selectedWorkout else source.selectedWorkout,
-            potentialExercises = if (initial.selectedDate != source.selectedDate) initial.potentialExercises else source.potentialExercises,
-            log = if (initial.selectedDate != source.selectedDate) initial.log else source.log,
-        )
-    },
-    source = { workoutCalendarSourceData() },
+    source = { source -> workoutCalendarSourceData(selectedDate = source.selectedDate) },
     reducers = listOf(WorkoutCalendarReducer),
     sideEffects = navigationSideEffects() + dataSideEffects(),
 )
@@ -91,37 +83,41 @@ private fun dataSideEffects(): List<SideEffect<WorkoutCalendarState, WorkoutCale
                 is WorkoutCalendarEvent.AddToWorkout -> {
                     val workout = state.selectedWorkout
                     if (workout != null) {
+                        val exerciseId = uuid4().toString()
                         dependencies.exerciseRepository.save(
                             Exercise(
-                                id = uuid4().toString(),
+                                id = exerciseId,
                                 workoutId = workout.id,
-                                variationSets = listOf(
-                                    VariationSets(
+                                sections = listOf(
+                                    Section(
                                         id = uuid4().toString(),
-                                        variation = event.variation,
+                                        exerciseId = exerciseId,
                                         sets = emptyList(),
+                                        primaryMovement = event.variation,
                                     )
                                 )
                             )
                         )
                     } else {
+                        val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
+                        val exerciseId = uuid4().toString()
                         dependencies.workoutRepository.save(
                             Workout(
-                                id = state.selectedWorkout?.id ?: uuid4().toString(),
+                                id = workoutId,
                                 date = event.date,
-                                exercises = emptyList()
-                            )
-                        )
-                        dependencies.exerciseRepository.save(
-                            Exercise(
-                                id = uuid4().toString(),
-                                workoutId = uuid4().toString(),
-                                variationSets = listOf(
-                                    VariationSets(
-                                        id = uuid4().toString(),
-                                        variation = event.variation,
-                                        sets = emptyList(),
+                                exercises = listOf(
+                                    Exercise(
+                                        id = exerciseId,
+                                        workoutId = uuid4().toString(),
+                                        sections = listOf(
+                                            Section(
+                                                id = uuid4().toString(),
+                                                exerciseId = exerciseId,
+                                                primaryMovement = null,
+                                            )
+                                        )
                                     )
+
                                 )
                             )
                         )
@@ -167,7 +163,7 @@ fun FetchVariationSetsForMonth(
     ),
     dependencies.variationRepository.listenAll().map { it.associateBy { it.id } },
 ) { sets, variations ->
-    sets.groupBy { variations[it.variationId]!! }
+    sets.groupBy { variations[it.movementId]!! }
         .toList()
 }
 
@@ -181,7 +177,7 @@ fun FetchVariationSetsForRange(
     ),
     dependencies.variationRepository.listenAll().map { it.associateBy { it.id } },
 ) { sets, variations ->
-    sets.groupBy { variations[it.variationId]!! }
+    sets.groupBy { variations[it.movementId]!! }
         .toList()
 }
 
@@ -202,23 +198,7 @@ val WorkoutCalendarReducer: Reducer<WorkoutCalendarState, WorkoutCalendarEvent> 
 
             is WorkoutCalendarEvent.AddToWorkout -> state
             is WorkoutCalendarEvent.DateSelected -> {
-                val selectedDate = event.date
-                combine(
-                    dependencies.workoutRepository.get(selectedDate),
-                    dependencies.liftingLogRepository.getByDate(selectedDate),
-                    FetchVariationSetsForMonth(
-                        selectedDate.year,
-                        selectedDate.month
-                    )
-                ) { workout, log, unallocatedSets ->
-                    WorkoutCalendarState(
-                        selectedDate = selectedDate,
-                        selectedWorkout = workout,
-                        log = log,
-                        potentialExercises = unallocatedSets
-                            .filter { it.second.any { it.date.toLocalDate() == selectedDate } },
-                    )
-                }.first()
+                workoutCalendarSourceData(event.date).first()
             }
         }
     }

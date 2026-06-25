@@ -11,6 +11,7 @@ import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
+import comliftbrodb.GetAllByMovement
 import comliftbrodb.GetAllSets
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
@@ -84,7 +85,7 @@ class SqldelightSetDataSource(
                 it.map {
                     LBSet(
                         id = it.id,
-                        variationId = it.movementId,
+                        movementId = it.movementId,
                         weight = it.weight ?: 0.0,
                         reps = it.reps ?: 1,
                         tempo = Tempo(
@@ -109,7 +110,8 @@ class SqldelightSetDataSource(
         Log.d("LiftBroDb", "saving $lbSet")
         setQueries.save(
             id = lbSet.id,
-            movementId = lbSet.variationId,
+            movementId = lbSet.movementId,
+            exerciseSectionId = lbSet.exerciseSectionId,
             weight = lbSet.weight,
             reps = lbSet.reps,
             tempoDown = lbSet.tempo.down,
@@ -137,7 +139,7 @@ class SqldelightSetDataSource(
 
 fun GetAllSets.toDomain() = LBSet(
     id = this.id,
-    variationId = this.movementId,
+    movementId = this.movementId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
     tempo = Tempo(
@@ -150,11 +152,12 @@ fun GetAllSets.toDomain() = LBSet(
     rpe = this.rpe?.toInt(),
     bodyWeightRep = this.body_weight?.let { it == 1L },
     videoUri = this.videoUri,
+    exerciseSectionId = this.exerciseSectionId
 )
 
 fun LiftingSet.toDomain() = LBSet(
     id = this.id,
-    variationId = this.movementId,
+    movementId = this.movementId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
     tempo = Tempo(
@@ -166,6 +169,25 @@ fun LiftingSet.toDomain() = LBSet(
     notes = this.notes,
     rpe = this.rpe?.toInt(),
     videoUri = this.videoUri,
+    exerciseSectionId = this.exerciseSectionId,
+)
+
+fun GetAllByMovement.toDomain() = LBSet(
+    id = this.id,
+    movementId = this.movementId,
+    weight = this.weight ?: 0.0,
+    reps = this.reps ?: 1,
+    tempo = Tempo(
+        down = this.tempoDown ?: 3,
+        hold = this.tempoHold ?: 1,
+        up = this.tempoUp ?: 1,
+    ),
+    date = this.date,
+    notes = this.notes,
+    rpe = this.rpe?.toInt(),
+    bodyWeightRep = this.body_weight?.let { it == 1L },
+    videoUri = this.videoUri,
+    exerciseSectionId = this.exerciseSectionId,
 )
 
 private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {

@@ -27,7 +27,7 @@ class GetVariationWithMostRepsUseCase(
             startDate = startDate,
             endDate = endDate
         ).map { sets ->
-            sets.groupBy { set -> set.variationId }
+            sets.groupBy { set -> set.movementId }
                 .map { entry -> entry.key to entry.value.sumOf { it.reps } }
                 .maxBy { it.second }
         }.flatMapLatest { (variationId, totalReps) ->

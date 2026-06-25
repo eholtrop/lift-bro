@@ -14,10 +14,10 @@ class GetTotalRepsUseCaseTest {
     fun `Given sets with various reps When invoked Then returns sum of all reps`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", reps = 10),
-            LBSet(id = "2", variationId = "v1", reps = 8),
-            LBSet(id = "3", variationId = "v2", reps = 12),
-            LBSet(id = "4", variationId = "v2", reps = 5)
+            LBSet(id = "1", movementId = "v1", reps = 10),
+            LBSet(id = "2", movementId = "v1", reps = 8),
+            LBSet(id = "3", movementId = "v2", reps = 12),
+            LBSet(id = "4", movementId = "v2", reps = 5)
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalRepsUseCase(repository)
@@ -48,9 +48,9 @@ class GetTotalRepsUseCaseTest {
         val startDate = LocalDate(2024, 1, 1)
         val endDate = LocalDate(2024, 1, 31)
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", reps = 10),
-            LBSet(id = "2", variationId = "v1", reps = 8),
-            LBSet(id = "3", variationId = "v2", reps = 12)
+            LBSet(id = "1", movementId = "v1", reps = 10),
+            LBSet(id = "2", movementId = "v1", reps = 8),
+            LBSet(id = "3", movementId = "v2", reps = 12)
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalRepsUseCase(repository)
@@ -68,9 +68,9 @@ class GetTotalRepsUseCaseTest {
     fun `Given sets with 1 rep each When invoked Then returns count of sets`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", reps = 1),
-            LBSet(id = "2", variationId = "v1", reps = 1),
-            LBSet(id = "3", variationId = "v1", reps = 1)
+            LBSet(id = "1", movementId = "v1", reps = 1),
+            LBSet(id = "2", movementId = "v1", reps = 1),
+            LBSet(id = "3", movementId = "v1", reps = 1)
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalRepsUseCase(repository)
@@ -86,7 +86,7 @@ class GetTotalRepsUseCaseTest {
     fun `Given single set When invoked Then returns that set's reps`() = runTest {
         // Given
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", reps = 15)
+            LBSet(id = "1", movementId = "v1", reps = 15)
         )
         val repository = FakeSetRepository(sets)
         val useCase = GetTotalRepsUseCase(repository)
