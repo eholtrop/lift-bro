@@ -517,7 +517,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<CategoryDetailsState> {
                         sets = listOf(
                             LBSet(
                                 id = "set1",
-                                variationId = "var1",
+                                movementId = "var1",
                                 weight = 405.0,
                                 reps = 5,
                                 rpe = 8,
@@ -525,7 +525,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<CategoryDetailsState> {
                             ),
                             LBSet(
                                 id = "set2",
-                                variationId = "var1",
+                                movementId = "var1",
                                 weight = 425.0,
                                 reps = 3,
                                 rpe = 9,
@@ -545,7 +545,7 @@ class LiftDetailsStateProvider: PreviewParameterProvider<CategoryDetailsState> {
                         sets = listOf(
                             LBSet(
                                 id = "set3",
-                                variationId = "var2",
+                                movementId = "var2",
                                 weight = 365.0,
                                 reps = 5,
                                 rpe = 7,

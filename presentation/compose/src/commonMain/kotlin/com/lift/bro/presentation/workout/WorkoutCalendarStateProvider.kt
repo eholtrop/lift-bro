@@ -6,12 +6,12 @@ import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import kotlinx.datetime.LocalDate
 import kotlin.time.Clock
 
-class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarState> {
+class WorkoutCalendarStateProvider: PreviewParameterProvider<WorkoutCalendarState> {
     override val values: Sequence<WorkoutCalendarState>
         get() = sequenceOf(
             // 1. Minimal - no workout, no log, no potential exercises
@@ -54,22 +54,15 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         Exercise(
                             id = "ex1",
                             workoutId = "workout-full",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs1",
-                                    variation = Movement(
-                                        id = "back-squat",
-                                        lift = Category(
-                                            name = "Squat",
-                                            color = 0xFF2196F3uL
-                                        ),
-                                        name = "Back Squat",
-                                        favourite = true,
-                                    ),
+                                    exerciseId = "",
+                                    primaryMovement = null,
                                     sets = listOf(
                                         LBSet(
                                             id = "s1",
-                                            variationId = "back-squat",
+                                            movementId = "back-squat",
                                             weight = 225.0,
                                             reps = 5,
                                             rpe = 8,
@@ -77,7 +70,7 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                                         ),
                                         LBSet(
                                             id = "s2",
-                                            variationId = "back-squat",
+                                            movementId = "back-squat",
                                             weight = 245.0,
                                             reps = 3,
                                             rpe = 9,
@@ -90,21 +83,15 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         Exercise(
                             id = "ex2",
                             workoutId = "workout-full",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs2",
-                                    variation = Movement(
-                                        id = "flat-bench",
-                                        lift = Category(
-                                            name = "Bench Press",
-                                            color = 0xFF4CAF50uL
-                                        ),
-                                        name = "Flat Bench",
-                                    ),
+                                    exerciseId = "",
+                                    primaryMovement = null,
                                     sets = listOf(
                                         LBSet(
                                             id = "s3",
-                                            variationId = "flat-bench",
+                                            movementId = "flat-bench",
                                             weight = 185.0,
                                             reps = 5,
                                             rpe = 8,
@@ -112,7 +99,7 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                                         ),
                                         LBSet(
                                             id = "s4",
-                                            variationId = "flat-bench",
+                                            movementId = "flat-bench",
                                             weight = 205.0,
                                             reps = 3,
                                             rpe = 9,
@@ -144,7 +131,7 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                     ) to listOf(
                         LBSet(
                             id = "s5",
-                            variationId = "deadlift",
+                            movementId = "deadlift",
                             weight = 315.0,
                             reps = 5,
                             rpe = 7,
@@ -152,7 +139,7 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         ),
                         LBSet(
                             id = "s6",
-                            variationId = "deadlift",
+                            movementId = "deadlift",
                             weight = 365.0,
                             reps = 3,
                             rpe = 8,
@@ -170,7 +157,7 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                     ) to listOf(
                         LBSet(
                             id = "s7",
-                            variationId = "ohp",
+                            movementId = "ohp",
                             weight = 135.0,
                             reps = 5,
                             rpe = 8,
@@ -190,22 +177,15 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         Exercise(
                             id = "ex3",
                             workoutId = "workout-full-2",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs3",
-                                    variation = Movement(
-                                        id = "back-squat-2",
-                                        lift = Category(
-                                            name = "Squat",
-                                            color = 0xFF2196F3uL
-                                        ),
-                                        name = "Back Squat",
-                                        favourite = true,
-                                    ),
+                                    primaryMovement = null,
+                                    exerciseId = "",
                                     sets = listOf(
                                         LBSet(
                                             id = "s8",
-                                            variationId = "back-squat-2",
+                                            movementId = "back-squat-2",
                                             weight = 225.0,
                                             reps = 5,
                                             rpe = 8,
@@ -213,7 +193,7 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                                         ),
                                         LBSet(
                                             id = "s9",
-                                            variationId = "back-squat-2",
+                                            movementId = "back-squat-2",
                                             weight = 245.0,
                                             reps = 3,
                                             rpe = 9,
@@ -226,21 +206,15 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         Exercise(
                             id = "ex4",
                             workoutId = "workout-full-2",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs4",
-                                    variation = Movement(
-                                        id = "flat-bench-2",
-                                        lift = Category(
-                                            name = "Bench Press",
-                                            color = 0xFF4CAF50uL
-                                        ),
-                                        name = "Flat Bench",
-                                    ),
+                                    primaryMovement = null,
+                                    exerciseId = "",
                                     sets = listOf(
                                         LBSet(
                                             id = "s10",
-                                            variationId = "flat-bench-2",
+                                            movementId = "flat-bench-2",
                                             weight = 185.0,
                                             reps = 5,
                                             rpe = 8,
@@ -270,7 +244,7 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                     ) to listOf(
                         LBSet(
                             id = "s11",
-                            variationId = "deadlift-2",
+                            movementId = "deadlift-2",
                             weight = 315.0,
                             reps = 5,
                             rpe = 7,

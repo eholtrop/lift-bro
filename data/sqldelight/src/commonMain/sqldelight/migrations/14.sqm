@@ -1,0 +1,53 @@
+ALTER TABLE LiftingSet ADD COLUMN exerciseSectionId TEXT;
+
+UPDATE LiftingSet
+SET exerciseSectionId = (
+    SELECT ev.id
+    FROM ExerciseVariation ev
+    JOIN Exercise e ON e.id = ev.exerciseId
+    JOIN Workout w ON w.id = e.workoutId
+    WHERE ev.movementId = LiftingSet.movementId
+      AND date(LiftingSet.date / 1000, 'unixepoch') = date(w.date * 86400, 'unixepoch')
+    LIMIT 1
+);
+
+ALTER TABLE ExerciseVariation RENAME TO ExerciseSection;
+
+ALTER TABLE ExerciseSection ADD COLUMN name TEXT;
+ALTER TABLE ExerciseSection ADD COLUMN sort_order INTEGER DEFAULT 0;
+ALTER TABLE ExerciseSection ADD COLUMN referenceSectionId TEXT DEFAULT NULL;
+ALTER TABLE ExerciseSection RENAME COLUMN movementId TO primaryMovementId;
+ALTER TABLE ExerciseSection MODIFY primaryMovementId TYPE NULL;
+
+CREATE VIEW IF NOT EXISTS KeyMovementSetsView AS
+SELECT
+    id,
+    movementId,
+    weight,
+    reps,
+    tempoDown,
+    tempoHold,
+    tempoUp,
+    date,
+    notes,
+    rpe,
+    videoUri,
+    exerciseSectionId,
+    (weight * (1 + reps / 30.0)) AS eMax,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY CASE WHEN reps = 1 THEN weight ELSE -1 END DESC, id DESC
+    ) AS rn_orm,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY date DESC, id DESC
+    ) AS rn_latest,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY (weight * (1 + reps / 30.0)) DESC, id DESC
+    ) AS rn_emax,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY reps DESC, id DESC
+    ) AS rn_maxreps
+FROM LiftingSet;

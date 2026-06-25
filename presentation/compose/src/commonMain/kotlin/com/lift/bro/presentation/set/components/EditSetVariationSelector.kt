@@ -34,7 +34,7 @@ fun EditSetVariationSelector(
     state: EditSetState?,
     showVariationDialog: () -> Unit,
 ) {
-    val variation = state?.variation
+    val variation = state?.movement
     when {
         variation == null -> {
             Button(

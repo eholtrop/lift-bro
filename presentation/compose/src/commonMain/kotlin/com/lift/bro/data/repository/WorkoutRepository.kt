@@ -1,11 +1,10 @@
 package com.lift.bro.data.repository
 
 import com.lift.bro.data.LBDatabase
+import com.lift.bro.data.core.datasource.ExerciseDataSource
 import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
-import com.lift.bro.domain.models.ExerciseId
-import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -21,6 +20,7 @@ import kotlinx.datetime.LocalDate
 
 class WorkoutRepository(
     private val database: LBDatabase = dependencies.database,
+    private val exerciseDataSource: ExerciseDataSource,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : IWorkoutRepository {
 
@@ -36,7 +36,7 @@ class WorkoutRepository(
 
                 combine(
                     *workouts.map { workout ->
-                        database.exerciseDataSource.listen(workout.id).map {
+                        exerciseDataSource.listenAll(workout.id).map {
                             Workout(
                                 id = workout.id,
                                 date = workout.date,
@@ -52,7 +52,7 @@ class WorkoutRepository(
     override fun get(date: LocalDate): Flow<Workout?> =
         database.workoutDataSource.getByDate(date = date).flowToOneOrNull()
             .flatMapLatest { workout ->
-                database.exerciseDataSource.listen(workout?.id ?: "").map { exercises ->
+                exerciseDataSource.listenAll(workout?.id ?: "").map { exercises ->
                     workout?.let {
                         Workout(
                             id = workout.id,
@@ -73,40 +73,20 @@ class WorkoutRepository(
                 warmup = workout.warmup,
                 date = workout.date,
             )
+            workout.exercises.forEach { exercise ->
+                exerciseDataSource.save(exercise)
+                exercise.sections.forEach { section ->
+                    exerciseDataSource.save(section)
+                }
+            }
         }
-    }
-
-    override suspend fun addVariation(
-        exerciseId: ExerciseId,
-        variationId: MovementId,
-    ) {
-        database.exerciseDataSource.addVariation(
-            exerciseId = exerciseId,
-            variationId = variationId,
-        )
-    }
-
-    override suspend fun removeVariation(exerciseVariationId: String) {
-        database.exerciseDataSource.removeVariaiton(exerciseVariationId)
-    }
-
-    override suspend fun deleteExercise(exerciseId: String) {
-        database.exerciseDataSource.delete(exerciseId)
-    }
-
-    override suspend fun addExercise(workoutId: String, exerciseId: String) {
-        database.exerciseDataSource.addExercise(
-            workoutId = workoutId,
-            exerciseId = exerciseId,
-        )
     }
 
     override suspend fun delete(workout: Workout) {
         withContext(dispatcher) {
             database.workoutDataSource.delete(workout.id)
             workout.exercises.forEach {
-                database.exerciseDataSource.delete(it.id)
-                database.exerciseDataSource.delete(it.id)
+                exerciseDataSource.delete(it.id)
             }
         }
     }

@@ -7,7 +7,7 @@ import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import kotlinx.datetime.LocalDate
 import kotlin.time.Clock
@@ -40,7 +40,7 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                     sets = listOf(
                         LBSet(
                             id = "set1",
-                            variationId = "back-squat",
+                            movementId = "back-squat",
                             weight = 315.0,
                             reps = 5,
                             rpe = 8,
@@ -48,7 +48,7 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                         ),
                         LBSet(
                             id = "set2",
-                            variationId = "back-squat",
+                            movementId = "back-squat",
                             weight = 335.0,
                             reps = 3,
                             rpe = 9,
@@ -56,7 +56,7 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                         ),
                         LBSet(
                             id = "set3",
-                            variationId = "flat-bench",
+                            movementId = "flat-bench",
                             weight = 225.0,
                             reps = 5,
                             rpe = 8,
@@ -64,7 +64,7 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                         ),
                         LBSet(
                             id = "set4",
-                            variationId = "flat-bench",
+                            movementId = "flat-bench",
                             weight = 245.0,
                             reps = 3,
                             rpe = 9,
@@ -80,18 +80,15 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                 Exercise(
                                     id = "exercise1",
                                     workoutId = "workout1",
-                                    variationSets = listOf(
-                                        VariationSets(
+                                    sections = listOf(
+                                        Section(
                                             id = "vs1",
-                                            variation = Movement(
-                                                id = "back-squat",
-                                                lift = Category(name = "Squat", color = 0xFF2196F3uL),
-                                                name = "Back Squat",
-                                            ),
+                                            exerciseId = "",
+                                            primaryMovement = null,
                                             sets = listOf(
                                                 LBSet(
                                                     id = "set1",
-                                                    variationId = "back-squat",
+                                                    movementId = "back-squat",
                                                     weight = 315.0,
                                                     reps = 5,
                                                     rpe = 8,
@@ -99,7 +96,7 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                                 ),
                                                 LBSet(
                                                     id = "set2",
-                                                    variationId = "back-squat",
+                                                    movementId = "back-squat",
                                                     weight = 335.0,
                                                     reps = 3,
                                                     rpe = 9,
@@ -107,17 +104,14 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                                 ),
                                             ),
                                         ),
-                                        VariationSets(
+                                        Section(
                                             id = "vs2",
-                                            variation = Movement(
-                                                id = "flat-bench",
-                                                lift = Category(name = "Bench Press", color = 0xFF4CAF50uL),
-                                                name = "Flat Bench",
-                                            ),
+                                            exerciseId = "",
+                                            primaryMovement = null,
                                             sets = listOf(
                                                 LBSet(
                                                     id = "set3",
-                                                    variationId = "flat-bench",
+                                                    movementId = "flat-bench",
                                                     weight = 225.0,
                                                     reps = 5,
                                                     rpe = 8,
@@ -125,7 +119,7 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                                 ),
                                                 LBSet(
                                                     id = "set4",
-                                                    variationId = "flat-bench",
+                                                    movementId = "flat-bench",
                                                     weight = 245.0,
                                                     reps = 3,
                                                     rpe = 9,
@@ -143,18 +137,15 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                         Exercise(
                             id = "exercise1",
                             workoutId = "workout1",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs1",
-                                    variation = Movement(
-                                        id = "back-squat",
-                                        lift = Category(name = "Squat", color = 0xFF2196F3uL),
-                                        name = "Back Squat",
-                                    ),
+                                    exerciseId = "",
+                                    primaryMovement = null,
                                     sets = listOf(
                                         LBSet(
                                             id = "set1",
-                                            variationId = "back-squat",
+                                            movementId = "back-squat",
                                             weight = 315.0,
                                             reps = 5,
                                             rpe = 8,
@@ -162,7 +153,7 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                         ),
                                         LBSet(
                                             id = "set2",
-                                            variationId = "back-squat",
+                                            movementId = "back-squat",
                                             weight = 335.0,
                                             reps = 3,
                                             rpe = 9,
@@ -170,17 +161,14 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                         ),
                                     ),
                                 ),
-                                VariationSets(
+                                Section(
                                     id = "vs2",
-                                    variation = Movement(
-                                        id = "flat-bench",
-                                        lift = Category(name = "Bench Press", color = 0xFF4CAF50uL),
-                                        name = "Flat Bench",
-                                    ),
+                                    primaryMovement = null,
+                                    exerciseId = "",
                                     sets = listOf(
                                         LBSet(
                                             id = "set3",
-                                            variationId = "flat-bench",
+                                            movementId = "flat-bench",
                                             weight = 225.0,
                                             reps = 5,
                                             rpe = 8,
@@ -188,7 +176,7 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                         ),
                                         LBSet(
                                             id = "set4",
-                                            variationId = "flat-bench",
+                                            movementId = "flat-bench",
                                             weight = 245.0,
                                             reps = 3,
                                             rpe = 9,

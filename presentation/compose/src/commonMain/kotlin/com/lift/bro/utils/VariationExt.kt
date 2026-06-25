@@ -22,7 +22,7 @@ fun Movement.maxText(): AnnotatedString {
                 append(" reps")
             }
             // and show tmax enabled
-            eMax?.estimateMax != null && oneRepMax?.estimateMax != null && LocalTMaxSettings.current ->
+            eMax?.estimateMax != null && oneRepMax?.oneRepMax != null && LocalTMaxSettings.current ->
                 append(
                     "${
                         oneRepMax?.weight.decimalFormat().uom()

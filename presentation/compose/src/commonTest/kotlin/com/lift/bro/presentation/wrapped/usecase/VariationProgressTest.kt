@@ -9,8 +9,8 @@ class VariationProgressTest {
     @Test
     fun `Given weighted variation When progress calculated Then uses weight difference`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 150.0, reps = 5)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 150.0, reps = 5)
         val progress = VariationProgress(minSet, maxSet)
 
         // When
@@ -23,8 +23,8 @@ class VariationProgressTest {
     @Test
     fun `Given bodyweight variation When progress calculated Then uses rep difference`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 0.0, reps = 5)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 0.0, reps = 10)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 0.0, reps = 5)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 0.0, reps = 10)
         val progress = VariationProgress(minSet, maxSet)
 
         // When
@@ -37,8 +37,8 @@ class VariationProgressTest {
     @Test
     fun `Given no progress in weight When progress calculated Then returns 0`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 100.0, reps = 5)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 100.0, reps = 5)
         val progress = VariationProgress(minSet, maxSet)
 
         // When
@@ -51,8 +51,8 @@ class VariationProgressTest {
     @Test
     fun `Given no progress in reps When progress calculated Then returns 0`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 0.0, reps = 10)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 0.0, reps = 10)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 0.0, reps = 10)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 0.0, reps = 10)
         val progress = VariationProgress(minSet, maxSet)
 
         // When
@@ -65,8 +65,8 @@ class VariationProgressTest {
     @Test
     fun `Given weight increase from 50 to 75 When progress calculated Then returns 0 point 5`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 50.0, reps = 8)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 75.0, reps = 8)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 50.0, reps = 8)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 75.0, reps = 8)
         val progress = VariationProgress(minSet, maxSet)
 
         // When
@@ -79,8 +79,8 @@ class VariationProgressTest {
     @Test
     fun `Given reps increase from 10 to 15 When progress calculated Then returns 0 point 5`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 0.0, reps = 10)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 0.0, reps = 15)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 0.0, reps = 10)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 0.0, reps = 15)
         val progress = VariationProgress(minSet, maxSet)
 
         // When
@@ -93,8 +93,8 @@ class VariationProgressTest {
     @Test
     fun `Given small weight increase When progress calculated Then returns fractional progress`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 105.0, reps = 5)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 105.0, reps = 5)
         val progress = VariationProgress(minSet, maxSet)
 
         // When
@@ -107,8 +107,8 @@ class VariationProgressTest {
     @Test
     fun `Given reps increase from 1 to 2 When progress calculated Then returns 1 point 0`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 0.0, reps = 1)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 0.0, reps = 2)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 0.0, reps = 1)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 0.0, reps = 2)
         val progress = VariationProgress(minSet, maxSet)
 
         // When
@@ -121,8 +121,8 @@ class VariationProgressTest {
     @Test
     fun `Given large weight increase When progress calculated Then returns correct ratio`() {
         // Given
-        val minSet = LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
-        val maxSet = LBSet(id = "2", variationId = "v1", weight = 300.0, reps = 5)
+        val minSet = LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
+        val maxSet = LBSet(id = "2", movementId = "v1", weight = 300.0, reps = 5)
         val progress = VariationProgress(minSet, maxSet)
 
         // When

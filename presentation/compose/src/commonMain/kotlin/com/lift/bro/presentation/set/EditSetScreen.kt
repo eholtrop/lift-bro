@@ -13,6 +13,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -26,14 +28,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,13 +51,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import com.lift.bro.di.dependencies
 import com.lift.bro.domain.models.Category
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.Movement
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.set.components.EditSetVariationSelector
@@ -67,12 +77,12 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.atStartOfDayIn
 import tv.dpal.ktx.datetime.toLocalDate
+import kotlin.time.Instant
 
 enum class RPE(
     val rpe: Int,
@@ -92,11 +102,13 @@ enum class RPE(
 fun EditSetScreen(
     variationId: String?,
     date: Instant?,
+    sectionId: String?,
 ) {
     EditSetScreen(
         interactor = rememberCreateSetInteractor(
             movementId = variationId,
-            date = date
+            date = date,
+            sectionId = sectionId,
         ),
     )
 }
@@ -180,7 +192,7 @@ fun EditSetScreen(
         },
     ) { padding ->
         state.let { set ->
-            EditSetScreenV2(
+            EditSetScreen(
                 modifier = Modifier.padding(padding),
                 state = set,
                 sendEvent = { onEvent(it) },
@@ -192,22 +204,26 @@ fun EditSetScreen(
         }
     }
 
-    if (showVariationDialog) {
-        VariationSearchDialog(
-            visible = showVariationDialog,
-            textFieldPlaceholder = strings.variationSelectorEmptyState,
-            onDismissRequest = { showVariationDialog = false },
-            onVariationSelected = {
-                showVariationDialog = false
-                onEvent(EditSetEvent.VariationSelected(it))
-            }
-        )
+    LaunchedEffect(state.id) {
+        if (state.movement == null) {
+            showVariationDialog = true
+        }
     }
+
+    VariationSearchDialog(
+        visible = showVariationDialog,
+        textFieldPlaceholder = strings.variationSelectorEmptyState,
+        onDismissRequest = { showVariationDialog = false },
+        onVariationSelected = {
+            showVariationDialog = false
+            onEvent(EditSetEvent.VariationSelected(it))
+        }
+    )
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun EditSetScreenV2(
+fun EditSetScreen(
     modifier: Modifier = Modifier,
     state: EditSetState,
     sendEvent: (EditSetEvent) -> Unit,
@@ -333,8 +349,8 @@ fun EditSetScreenV2(
                                 ),
                             ),
                             shape = MaterialTheme.shapes.medium
-                        ).clip(MaterialTheme.shapes.medium)
-
+                        ).clip(MaterialTheme.shapes.medium),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     var showCalendar by remember { mutableStateOf(false) }
 
@@ -397,6 +413,53 @@ fun EditSetScreenV2(
                             },
                         )
                     }
+                    AnimatedVisibility(!showCalendar) {
+                        when (val workout = state.workout) {
+                            null -> {
+                                Button(
+                                    onClick = {
+                                    },
+                                    colors = ButtonDefaults.elevatedButtonColors()
+                                ) {
+                                    Text("Start a workout!")
+                                }
+                            }
+
+                            else -> {
+                                var selectedSectionId by remember { mutableStateOf(state.sectionId) }
+
+                                Column(
+                                    modifier = Modifier.padding(
+                                        horizontal = MaterialTheme.spacing.one,
+                                    )
+                                ) {
+                                    workout.exercises.forEachIndexed { index, exercise ->
+                                        ExerciseCard(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .padding(
+                                                    vertical = MaterialTheme.spacing.quarter
+                                                ),
+                                            title = index.let { 'A'.plus(index).plus(".") },
+                                            exercise = exercise,
+                                            selectedSectionId = state.sectionId,
+                                            onSectionSelected = {
+                                                selectedSectionId = it.id
+                                                sendEvent(
+                                                    EditSetEvent.SectionSelected(it)
+                                                )
+                                            },
+                                        )
+                                        if (index != workout.exercises.lastIndex) {
+                                            HorizontalDivider(
+                                                color = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
+                                    Space(MaterialTheme.spacing.half)
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -415,10 +478,66 @@ fun EditSetScreenV2(
     }
 }
 
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+fun ExerciseCard(
+    modifier: Modifier = Modifier,
+    exercise: Exercise,
+    title: String,
+    selectedSectionId: String?,
+    onSectionSelected: (Section) -> Unit,
+) {
+    Row(
+        modifier = modifier,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxHeight(),
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+        )
+        Space(MaterialTheme.spacing.half)
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
+            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.quarter),
+        ) {
+            exercise.sections.forEachIndexed { index, section ->
+                SectionChip(
+                    section = section,
+                    selected = section.id == selectedSectionId,
+                    onClick = {
+                        onSectionSelected(section)
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SectionChip(
+    modifier: Modifier = Modifier,
+    selected: Boolean,
+    section: Section,
+    onClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier,
+    ) {
+        ChipButton(
+            onClick = onClick,
+            colors = if (selected) ButtonDefaults.buttonColors() else ButtonDefaults.outlinedButtonColors(),
+        ) {
+            Text(section.primaryMovement?.name ?: "")
+        }
+    }
+}
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun ChipButton(
     onClick: () -> Unit,
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
     visible: Boolean = true,
     content: @Composable RowScope.() -> Unit,
 ) {
@@ -426,10 +545,11 @@ fun ChipButton(
         visible,
         exit = fadeOut(),
     ) {
-        Button(
+        OutlinedButton(
             modifier = Modifier.height(24.dp),
             onClick = onClick,
             content = content,
+            colors = colors,
             contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.quarter),
             shape = MaterialTheme.shapes.small,
         )
@@ -442,7 +562,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             // New set - no variation selected yet
             EditSetState(
                 id = "",
-                variation = null,
+                movement = null,
                 weight = null,
                 reps = null,
                 rpe = 6,
@@ -451,7 +571,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             // New set with variation but no data
             EditSetState(
                 id = "",
-                variation = SetVariation(
+                movement = SetVariation(
                     Movement(
                         lift = Category(
                             name = "Squat",
@@ -472,7 +592,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             // Partially filled set
             EditSetState(
                 id = "set1",
-                variation = SetVariation(
+                movement = SetVariation(
                     Movement(
                         lift = Category(
                             name = "Bench Press",
@@ -495,7 +615,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             // Complete set with all data
             EditSetState(
                 id = "set2",
-                variation = SetVariation(
+                movement = SetVariation(
                     Movement(
                         lift = Category(
                             name = "Deadlift",
@@ -531,7 +651,7 @@ fun EditSetScreenPreview(
     @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
-        EditSetScreenV2(
+        EditSetScreen(
             state = state,
             sendEvent = {},
             showVariationDialog = {}
@@ -545,7 +665,7 @@ fun EditSetScreenDarkPreview(
     @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
 ) {
     PreviewAppTheme(isDarkMode = true) {
-        EditSetScreenV2(
+        EditSetScreen(
             state = state,
             sendEvent = {},
             showVariationDialog = {}

@@ -84,7 +84,7 @@ class LBSetTest {
     fun `Given LBSet with 1 rep When oneRepMax Then returns weight`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             weight = 225.0,
             reps = 1
         )
@@ -96,7 +96,7 @@ class LBSetTest {
     fun `Given LBSet with reps greater than 1 When oneRepMax Then returns null`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             weight = 200.0,
             reps = 5
         )
@@ -108,7 +108,7 @@ class LBSetTest {
     fun `Given LBSet When estimateMax Then calculates correctly`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             weight = 200.0,
             reps = 5
         )
@@ -123,7 +123,7 @@ class LBSetTest {
     fun `Given LBSet with 1 rep When estimateMax Then applies formula`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             weight = 225.0,
             reps = 1
         )
@@ -139,7 +139,7 @@ class LBSetTest {
     fun `Given LBSet When totalWeightMoved Then returns weight times reps`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             weight = 50.0,
             reps = 10
         )
@@ -151,7 +151,7 @@ class LBSetTest {
     fun `Given LBSet with zero weight When totalWeightMoved Then returns 0`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             weight = 0.0,
             reps = 10
         )
@@ -165,7 +165,7 @@ class LBSetTest {
     fun `Given LBSet When formattedMax Then returns correct format`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             weight = 100.0,
             reps = 5,
             tempo = Tempo(down = 3, hold = 1, up = 1)
@@ -178,7 +178,7 @@ class LBSetTest {
     fun `Given LBSet When formattedTempo Then returns correct format`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             tempo = Tempo(down = 4, hold = 2, up = 1)
         )
 
@@ -189,7 +189,7 @@ class LBSetTest {
     fun `Given LBSet When formattedReps Then returns correct format`() {
         val set = LBSet(
             id = "test",
-            variationId = "var1",
+            movementId = "var1",
             reps = 8,
             tempo = Tempo(down = 3, hold = 1, up = 1)
         )

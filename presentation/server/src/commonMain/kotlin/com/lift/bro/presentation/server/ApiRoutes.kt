@@ -28,7 +28,6 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.LocalDate
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 fun Route.configureLiftRoutes(
@@ -142,7 +141,7 @@ fun Route.configureSetRoutes(
             setId != null -> setRepository.delete(
                 LBSet(
                     id = call.request.queryParameters["id"] ?: "",
-                    variationId = "",
+                    movementId = "",
                 )
             )
 

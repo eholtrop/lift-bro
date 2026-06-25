@@ -93,7 +93,7 @@ fun SetInfoRowPreview(
                 date = Clock.System.now(),
                 tempo = Tempo(),
                 notes = "Felt strong today!",
-                variationId = "var-1"
+                movementId = "var-1"
             ),
             enableTwm = false,
             enableMers = false,
@@ -110,7 +110,7 @@ fun SetInfoRowPreview(
                 date = Clock.System.now(),
                 tempo = Tempo(),
                 notes = "multiline\nnotes",
-                variationId = "var-1"
+                movementId = "var-1"
             ),
             enableTwm = true,
             enableMers = false,
@@ -127,7 +127,7 @@ fun SetInfoRowPreview(
                 tempo = Tempo(),
                 notes = "",
                 mer = 4,
-                variationId = "var-1"
+                movementId = "var-1"
             ),
             enableTwm = true,
             enableMers = true,
@@ -142,7 +142,7 @@ fun SetInfoRowPreview(
                 rpe = 7,
                 date = Clock.System.now(),
                 tempo = Tempo(),
-                variationId = "var-2",
+                movementId = "var-2",
                 bodyWeightRep = true
             ),
             enableTwm = false,

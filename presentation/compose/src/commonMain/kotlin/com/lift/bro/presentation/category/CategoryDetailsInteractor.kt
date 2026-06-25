@@ -62,7 +62,7 @@ fun rememberCategoryDetailsInteractor(
                 dependencies.liftRepository.get(state.categoryId),
                 dependencies.variationRepository.listenAll(categoryId),
                 dependencies.setRepository.listenAllForLift(categoryId)
-                    .map { it.groupBy { it.variationId } }
+                    .map { it.groupBy { it.movementId } }
             ) { category, variations, sets ->
                 CategoryDetailsState(
                     categoryId = state.categoryId,
