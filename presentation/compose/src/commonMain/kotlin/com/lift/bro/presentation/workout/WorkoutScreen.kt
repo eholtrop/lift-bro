@@ -52,22 +52,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
-import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
-import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.LocalNavCoordinator
 import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
@@ -95,11 +90,9 @@ import lift_bro.core.generated.resources.workout_screen_add_set_content_descript
 import lift_bro.core.generated.resources.workout_screen_again_content_description
 import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_subtitle
 import lift_bro.core.generated.resources.workout_screen_copy_recent_workout_title
-import lift_bro.core.generated.resources.workout_screen_copy_set_content_description
 import lift_bro.core.generated.resources.workout_screen_delete_variation_content_description
 import lift_bro.core.generated.resources.workout_screen_delete_warning_text
 import lift_bro.core.generated.resources.workout_screen_duplicate_last_set_content_description
-import lift_bro.core.generated.resources.workout_screen_most_recent_set_text
 import lift_bro.core.generated.resources.workout_screen_next_content_description
 import lift_bro.core.generated.resources.workout_screen_previous_lift_content_description
 import lift_bro.core.generated.resources.workout_screen_superset_cta
@@ -227,7 +220,7 @@ fun WorkoutScreenInternal(
                 items = state.exercises,
                 key = { _, it -> it.id },
             ) { index, exercise ->
-                val pagerState = rememberPagerState(pageCount = { exercise.variations.size })
+                val pagerState = rememberPagerState(pageCount = { exercise.sections.size })
                 val coroutineScope = rememberCoroutineScope()
                 HorizontalPager(
                     modifier = Modifier.animateItem(),
@@ -235,13 +228,13 @@ fun WorkoutScreenInternal(
                     contentPadding = PaddingValues(horizontal = MaterialTheme.spacing.one),
                     pageSpacing = MaterialTheme.spacing.two.times(-2),
                 ) { page ->
-                    val vSets = exercise.variations[page]
+                    val vSets = exercise.sections[page]
 
-                    VariationItemCard(
+                    WorkoutSectionCard(
                         modifier = Modifier
                             .animateItem()
                             .variationCardAnimation(pagerState, page),
-                        variationSet = vSets,
+                        section = vSets,
                         eventHandler = eventHandler,
                         index = if (pagerState.pageCount > 1) page else null,
                         date = state.date
@@ -249,7 +242,7 @@ fun WorkoutScreenInternal(
                         Row(
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            exercise.variations.getOrNull(page - 1)?.let { previous ->
+                            exercise.sections.getOrNull(page - 1)?.let { previous ->
                                 FooterButton(
                                     onClick = {
                                         coroutineScope.launch {
@@ -268,17 +261,12 @@ fun WorkoutScreenInternal(
                                     Column(
                                         horizontalAlignment = Alignment.Start,
                                     ) {
-                                        (previous as? VariationItem.WithSets)?.sets?.firstOrNull()
-                                            ?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                )
-                                            }
-                                        Text(
-                                            previous.variation.fullName,
-                                            style = MaterialTheme.typography.labelSmall,
-                                        )
+                                        previous.sets.firstOrNull()?.set?.let {
+                                            Text(
+                                                "${it.reps} x ${weightFormat(it.weight)}",
+                                                style = MaterialTheme.typography.labelMedium,
+                                            )
+                                        }
                                     }
                                 }
                             }
@@ -301,30 +289,24 @@ fun WorkoutScreenInternal(
                                             )
                                         }
                                     ) {
-                                        val first = exercise.variations.first()
+                                        val first = exercise.sections.first()
                                         Column(
                                             modifier = Modifier.weight(1f),
                                             horizontalAlignment = Alignment.End,
                                         ) {
-                                            (first as? VariationItem.WithSets)?.sets?.lastOrNull()
-                                                ?.let {
-                                                    Text(
-                                                        "${it.reps} x ${weightFormat(it.weight)}",
-                                                        style = MaterialTheme.typography.labelMedium,
-                                                        maxLines = 1,
-                                                    )
-                                                }
-                                            Text(
-                                                first.variation.fullName,
-                                                style = MaterialTheme.typography.labelSmall,
-                                                textAlign = TextAlign.End
-                                            )
+                                            first.sets.lastOrNull()?.set?.let {
+                                                Text(
+                                                    "${it.reps} x ${weightFormat(it.weight)}",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                    maxLines = 1,
+                                                )
+                                            }
                                         }
                                     }
                                 }
 
-                                exercise.variations.getOrNull(page + 1) != null -> {
-                                    val next = exercise.variations[page + 1]
+                                exercise.sections.getOrNull(page + 1) != null -> {
+                                    val next = exercise.sections[page + 1]
                                     FooterButton(
                                         onClick = {
                                             coroutineScope.launch {
@@ -343,18 +325,13 @@ fun WorkoutScreenInternal(
                                         Column(
                                             horizontalAlignment = Alignment.End,
                                         ) {
-                                            (next as? VariationItem.WithSets)?.sets?.lastOrNull()
-                                                ?.let {
-                                                    Text(
-                                                        "${it.reps} x ${weightFormat(it.weight)}",
-                                                        style = MaterialTheme.typography.labelMedium,
-                                                    )
-                                                }
-                                            Text(
-                                                next.variation.fullName,
-                                                style = MaterialTheme.typography.labelSmall,
-                                                textAlign = TextAlign.End
-                                            )
+                                            next.sets.lastOrNull()?.set?.let {
+                                                Text(
+                                                    "${it.reps} x ${weightFormat(it.weight)}",
+                                                    style = MaterialTheme.typography.labelMedium,
+                                                )
+                                            }
+
                                         }
                                     }
                                 }
@@ -467,16 +444,17 @@ private fun Modifier.variationCardAnimation(pagerState: PagerState, page: Int) =
     }
 
 @Composable
-fun VariationItemCard(
+fun WorkoutSectionCard(
     modifier: Modifier,
-    variationSet: VariationItem,
+    section: ExerciseSectionItem,
     eventHandler: (CreateWorkoutEvent) -> Unit,
     date: LocalDate,
     index: Int? = null,
     footer: @Composable () -> Unit = {},
 ) {
-    val variation = variationSet.variation
-    val sets = (variationSet as? VariationItem.WithSets)?.sets ?: emptyList()
+    val sectionSets = section.sets
+    val movements = sectionSets.map { it.movement }
+    val movementNames = movements.distinctBy { it.name }.joinToString(", ") { it.name ?: "" }
 
     Card(
         modifier = modifier,
@@ -487,15 +465,7 @@ fun VariationItemCard(
             ) {
                 val coordinator = LocalNavCoordinator.current
                 Column(
-                    modifier = Modifier.clickable(
-                        onClick = {
-                            coordinator.present(
-                                Destination.MovementDetails(
-                                    variation.id
-                                )
-                            )
-                        }
-                    )
+                    modifier = Modifier
                         .padding(
                             top = MaterialTheme.spacing.threeQuarters,
                             start = MaterialTheme.spacing.one,
@@ -506,7 +476,7 @@ fun VariationItemCard(
                     ) {
                         val prefix = index?.let { 'A'.plus(index).plus(".") } ?: ""
                         Text(
-                            "$prefix ${variation.fullName}".trim(),
+                            "$prefix $movementNames".trim(),
                             style = MaterialTheme.typography.titleLarge,
                         )
 
@@ -520,8 +490,8 @@ fun VariationItemCard(
                                 onDismiss = { showWarning = false },
                                 onConfirm = {
                                     eventHandler(
-                                        CreateWorkoutEvent.DeleteVariation(
-                                            variationSet
+                                        CreateWorkoutEvent.DeleteExerciseSection(
+                                            section
                                         )
                                     )
                                     showWarning = false
@@ -538,202 +508,130 @@ fun VariationItemCard(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription = stringResource(
                                     Res.string.workout_screen_delete_variation_content_description,
-                                    variation.fullName
+                                    movementNames,
                                 )
                             )
                         }
                     }
 
-                    Text(
-                        variation.maxText(),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
+                    sectionSets.maxByOrNull { it.set.weight }?.movement?.let {
+                        Text(
+                            it.maxText(),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
 
                     if (LocalTwmSettings.current) {
                         Text(
                             "Total Weight Moved: ${
                                 "${
-                                    sets.sumOf { it.reps * it.weight }
+                                    sectionSets.map { it.set }.sumOf { it.reps * it.weight }
                                         .decimalFormat()
                                 } ${LocalUnitOfMeasure.current.value}"
                             }",
                             style = MaterialTheme.typography.labelLarge,
                         )
                     }
-
-                    variation.notes?.let {
-                        if (it.isNotBlank()) {
-                            Text(
-                                text = it,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
-                    }
                 }
             }
 
-            when (variationSet) {
-                is VariationItem.WithSets -> {
-                    Space(MaterialTheme.spacing.half)
-                    Column(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(
-                                horizontal = MaterialTheme.spacing.half
-                            )
-                            .background(
-                                color = MaterialTheme.colorScheme.surfaceContainer,
-                                shape = MaterialTheme.shapes.small
-                            )
-                            .clip(MaterialTheme.shapes.small),
+            val copyIndex = remember(section.sets) { section.sets.indexOfLast { !it.recommended } }
+            Column(
+                modifier = Modifier.background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = MaterialTheme.shapes.small,
+                )
+            ) {
+                section.sets.forEachIndexed { index, sectionSet ->
+                    val set = sectionSet.set
+                    var showOptionsDialog by remember { mutableStateOf(false) }
+                    var visibility by remember { mutableStateOf<Boolean?>(null) }
+
+                    if (showOptionsDialog) {
+                        SetOptionsBottomSheet(
+                            onDeleteRequest = {
+                                visibility = false
+                                showOptionsDialog = false
+                            },
+                            onDuplicateRequest = {
+                                eventHandler(CreateWorkoutEvent.DuplicateSet(set))
+                                showOptionsDialog = false
+                            },
+                            onDismissRequest = {
+                                showOptionsDialog = false
+                            }
+                        )
+                    }
+
+                    val coordinator = LocalNavCoordinator.current
+                    AnimatedVisibility(
+                        visible = visibility ?: false
                     ) {
-                        variationSet.sets.forEachIndexed { index, set ->
-
-                            var showOptionsDialog by remember { mutableStateOf(false) }
-                            var visibility by remember { mutableStateOf<Boolean?>(null) }
-
-                            if (showOptionsDialog) {
-                                SetOptionsBottomSheet(
-                                    onDeleteRequest = {
-                                        visibility = false
-                                        showOptionsDialog = false
-                                    },
-                                    onDuplicateRequest = {
-                                        eventHandler(CreateWorkoutEvent.DuplicateSet(set))
-                                        showOptionsDialog = false
-                                    },
-                                    onDismissRequest = {
-                                        showOptionsDialog = false
-                                    }
-                                )
-                            }
-
-                            val coordinator = LocalNavCoordinator.current
-
-                            AnimatedVisibility(
-                                visible = visibility ?: false
-                            ) {
-                                SetInfoRow(
-                                    modifier = Modifier
-                                        .defaultMinSize(minHeight = 52.dp)
-                                        .combinedClickable(
-                                            onClick = {
-                                                coordinator.present(
-                                                    Destination.EditSet(
-                                                        setId = set.id
-                                                    )
-                                                )
-                                            },
-                                            onLongClick = {
-                                                showOptionsDialog = true
-                                            },
-                                            role = Role.Button
-                                        )
-                                        .border(
-                                            color = if (set == sets.last()) {
-                                                MaterialTheme.colorScheme.onSurface
-                                            } else {
-                                                MaterialTheme.colorScheme.surfaceContainer
-                                            },
-                                            width = 1.dp,
-                                            shape = MaterialTheme.shapes.small.copy(
-                                                topStart = if (sets.size == 1) {
-                                                    MaterialTheme.shapes.small.topStart
-                                                } else {
-                                                    CornerSize(
-                                                        0.dp
-                                                    )
-                                                },
-                                                topEnd = if (sets.size == 1) {
-                                                    MaterialTheme.shapes.small.topStart
-                                                } else {
-                                                    CornerSize(
-                                                        0.dp
-                                                    )
-                                                }
+                        SetInfoRow(
+                            modifier = Modifier
+                                .defaultMinSize(minHeight = 52.dp)
+                                .combinedClickable(
+                                    onClick = {
+                                        if (sectionSet.recommended) {
+                                            coordinator.present(
+                                                Destination.EditSet(setId = set.id)
                                             )
-                                        )
-                                        .padding(
-                                            horizontal = MaterialTheme.spacing.one,
-                                            vertical = MaterialTheme.spacing.half
-                                        ),
-                                    set = set
+                                        } else {
+                                            eventHandler(CreateWorkoutEvent.DuplicateSet(set, true))
+                                        }
+                                    },
+                                    onLongClick = {
+                                        showOptionsDialog = true
+                                    },
+                                    role = Role.Button
                                 )
-                            }
-
-                            LaunchedEffect(visibility) {
-                                if (visibility == false) {
-                                    eventHandler(CreateWorkoutEvent.DeleteSet(set))
-                                } else if (visibility == null) {
-                                    visibility = true
-                                }
-                            }
-                        }
-                    }
-                }
-
-                is VariationItem.WithoutSets -> {
-                    if (variationSet.lastSet != null) {
-                        CompositionLocalProvider(
-                            LocalContentColor provides MaterialTheme.colorScheme.onSurface,
-                        ) {
-                            Column(
-                                modifier = Modifier
-                                    .padding(horizontal = MaterialTheme.spacing.half)
-                                    .clickable(
-                                        onClick = {
-                                            eventHandler(
-                                                CreateWorkoutEvent.DuplicateSet(variationSet.lastSet, forceToday = true)
-                                            )
+                                .border(
+                                    color = when {
+                                        index == copyIndex -> MaterialTheme.colorScheme.onSurface
+                                        sectionSet.recommended -> MaterialTheme.colorScheme.secondary
+                                        else -> MaterialTheme.colorScheme.surfaceContainer
+                                    },
+                                    width = 1.dp,
+                                    shape = MaterialTheme.shapes.small.copy(
+                                        topStart = if (index == 0) {
+                                            MaterialTheme.shapes.small.topStart
+                                        } else {
+                                            CornerSize(0.dp)
                                         },
-                                        role = Role.Button
+                                        topEnd = if (index == 0) {
+                                            MaterialTheme.shapes.small.topStart
+                                        } else {
+                                            CornerSize(0.dp)
+                                        }
                                     )
-                                    .border(
-                                        width = 2.dp,
-                                        color = MaterialTheme.colorScheme.tertiary,
-                                        shape = MaterialTheme.shapes.small,
-                                    )
-                                    .clip(MaterialTheme.shapes.small)
-                                    .padding(
-                                        horizontal = MaterialTheme.spacing.half,
-                                        vertical = MaterialTheme.spacing.half
-                                    ),
-                            ) {
-                                Text(
-                                    text = stringResource(
-                                        Res.string.workout_screen_most_recent_set_text,
-                                        variationSet.lastSet.date.toString(
-                                            "EEEE, MMM d, yyyy"
-                                        )
-                                    ),
-                                    style = MaterialTheme.typography.labelSmall,
                                 )
-                                SetInfoRow(
-                                    set = variationSet.lastSet,
-                                    trailing = {
-                                        Icon(
-                                            imageVector = Icons.Default.ContentCopy,
-                                            contentDescription = stringResource(
-                                                Res.string.workout_screen_copy_set_content_description
-                                            ),
-                                            tint = MaterialTheme.colorScheme.tertiary,
-                                        )
-                                    }
-                                )
-                            }
+                                .padding(
+                                    horizontal = MaterialTheme.spacing.one,
+                                    vertical = MaterialTheme.spacing.half
+                                ),
+                            set = set
+                        )
+                    }
+
+                    LaunchedEffect(visibility) {
+                        if (visibility == false) {
+                            eventHandler(CreateWorkoutEvent.DeleteSet(set))
+                        } else if (visibility == null) {
+                            visibility = true
                         }
                     }
                 }
             }
 
-            if (sets.isEmpty()) {
+            if (section.sets.isEmpty()) {
                 val coordinator = LocalNavCoordinator.current
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     onClick = {
                         coordinator.present(
                             Destination.CreateSet(
-                                movementId = variation.id,
                                 date = date.atStartOfDayIn(TimeZone.currentSystemDefault()),
+                                sectionId = section.id
                             )
                         )
                     }
@@ -744,18 +642,20 @@ fun VariationItemCard(
                     )
                 }
             } else {
-                IconButton(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = {
-                        eventHandler(CreateWorkoutEvent.DuplicateSet(sets.last()))
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.ContentCopy,
-                        contentDescription = stringResource(
-                            Res.string.workout_screen_duplicate_last_set_content_description
+                if (copyIndex != -1) {
+                    IconButton(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        onClick = {
+                            eventHandler(CreateWorkoutEvent.DuplicateSet(section.sets[copyIndex].set))
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.ContentCopy,
+                            contentDescription = stringResource(
+                                Res.string.workout_screen_duplicate_last_set_content_description
+                            )
                         )
-                    )
+                    }
                 }
             }
             footer()
@@ -816,7 +716,7 @@ fun SetOptionsBottomSheet(
 @ThemePreviews
 @Composable
 fun WorkoutScreenInternalPreview(
-    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState
+    @PreviewParameter(WorkoutStateProvider::class) state: CreateWorkoutState,
 ) {
     PreviewAppTheme(isDarkMode = isSystemInDarkTheme()) {
         WorkoutScreenInternal(
@@ -860,19 +760,11 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                             com.lift.bro.domain.models.Exercise(
                                 id = "ex1",
                                 workoutId = "w1",
-                                variationSets = listOf(
-                                    VariationSets(
+                                sections = listOf(
+                                    Section(
                                         id = "vs1",
-                                        variation = com.lift.bro.domain.models.Movement(
-                                            lift = Category(
-                                                id = "lift1",
-                                                name = "Squat",
-                                                color = Color.Red.value
-                                            ),
-                                            name = "Deadlift",
-                                            notes = null,
-                                            favourite = true,
-                                        ),
+                                        exerciseId = "",
+                                        recommendedSets = emptyList(),
                                         sets = listOf(
                                             LBSet(
                                                 id = "set1",
@@ -880,18 +772,10 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                                             )
                                         )
                                     ),
-                                    VariationSets(
+                                    Section(
                                         id = "vs1",
-                                        variation = com.lift.bro.domain.models.Movement(
-                                            lift = Category(
-                                                id = "lift1",
-                                                name = "Squat",
-                                                color = Color.Blue.value
-                                            ),
-                                            name = "Deadlift",
-                                            notes = null,
-                                            favourite = true,
-                                        ),
+                                        exerciseId = "",
+                                        recommendedSets = emptyList(),
                                         sets = listOf(
                                             LBSet(
                                                 id = "set1",
@@ -910,7 +794,7 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                             com.lift.bro.domain.models.Exercise(
                                 id = "ex2",
                                 workoutId = "w2",
-                                variationSets = emptyList()
+                                sections = emptyList()
                             )
                         )
                     )
@@ -924,33 +808,46 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                 exercises = listOf(
                     ExerciseItem(
                         id = "ex1",
-                        variations = listOf(
-                            VariationItem.WithSets(
+                        sections = listOf(
+                            ExerciseSectionItem(
                                 id = "var1",
-                                variation = com.lift.bro.domain.models.Movement(
-                                    lift = com.lift.bro.domain.models.Category(
-                                        name = "Squat",
-                                        color = 0xFF2196F3uL
-                                    ),
-                                    name = "Back Squat"
-                                ),
                                 sets = listOf(
-                                    com.lift.bro.domain.models.LBSet(
-                                        id = "set1",
-                                        variationId = "var1",
-                                        weight = 225.0,
-                                        reps = 5,
-                                        rpe = 7,
-                                        date = kotlin.time.Clock.System.now()
+                                    ExerciseSectionSet(
+                                        movement = com.lift.bro.domain.models.Movement(
+                                            lift = com.lift.bro.domain.models.Category(
+                                                name = "Squat",
+                                                color = 0xFF2196F3uL
+                                            ),
+                                            name = "Back Squat"
+                                        ),
+                                        set = LBSet(
+                                            id = "set1",
+                                            variationId = "var1",
+                                            weight = 225.0,
+                                            reps = 5,
+                                            rpe = 7,
+                                            date = kotlin.time.Clock.System.now()
+                                        ),
+                                        recommended = false,
                                     ),
-                                    com.lift.bro.domain.models.LBSet(
-                                        id = "set2",
-                                        variationId = "var1",
-                                        weight = 245.0,
-                                        reps = 3,
-                                        rpe = 8,
-                                        date = kotlin.time.Clock.System.now()
-                                    )
+                                    ExerciseSectionSet(
+                                        movement = com.lift.bro.domain.models.Movement(
+                                            lift = com.lift.bro.domain.models.Category(
+                                                name = "Squat",
+                                                color = 0xFF2196F3uL
+                                            ),
+                                            name = "Back Squat"
+                                        ),
+                                        set = LBSet(
+                                            id = "set1",
+                                            variationId = "var1",
+                                            weight = 225.0,
+                                            reps = 5,
+                                            rpe = 7,
+                                            date = kotlin.time.Clock.System.now()
+                                        ),
+                                        recommended = false,
+                                    ),
                                 )
                             )
                         )

@@ -10,6 +10,7 @@ sqldelight {
         create("LiftBroDB") {
             packageName.set("com.lift.bro.db")
             generateAsync.set(false)
+            dialect("app.cash.sqldelight:sqlite-3-38-dialect:${libs.versions.sqldelight.get()}")
         }
     }
 }

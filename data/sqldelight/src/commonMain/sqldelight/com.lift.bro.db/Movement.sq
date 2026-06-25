@@ -7,6 +7,39 @@ CREATE TABLE Movement (
     body_weight INTEGER DEFAULT NULL
 );
 
+CREATE VIEW IF NOT EXISTS KeyMovementSetsView AS
+SELECT
+    id,
+    movementId,
+    weight,
+    reps,
+    tempoDown,
+    tempoHold,
+    tempoUp,
+    date,
+    notes,
+    rpe,
+    videoUri,
+    exerciseSectionId,
+    (weight * (1 + reps / 30.0)) AS eMax,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY CASE WHEN reps = 1 THEN weight ELSE -1 END DESC, id DESC
+    ) AS rn_orm,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY date DESC, id DESC
+    ) AS rn_latest,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY (weight * (1 + reps / 30.0)) DESC, id DESC
+    ) AS rn_emax,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY reps DESC, id DESC
+    ) AS rn_maxreps
+FROM LiftingSet;
+
 getAllForCategory:
 SELECT
     Movement.id AS id,
@@ -17,9 +50,66 @@ SELECT
 
     Category.id AS category_id,
     Category.color AS category_color,
-    Category.name AS category_name
+    Category.name AS category_name,
+
+    orm.id AS orm_id,
+    orm.movementId AS orm_movementId,
+    orm.weight AS orm_weight,
+    orm.reps AS orm_reps,
+    orm.tempoDown AS orm_tempoDown,
+    orm.tempoHold AS orm_tempoHold,
+    orm.tempoUp AS orm_tempoUp,
+    orm.date AS orm_date,
+    orm.notes AS orm_notes,
+    orm.rpe AS orm_rpe,
+    orm.videoUri AS orm_videoUri,
+    orm.exerciseSectionId AS orm_exerciseSectionId,
+
+    latest.id AS latest_id,
+    latest.movementId AS latest_movementId,
+    latest.weight AS latest_weight,
+    latest.reps AS latest_reps,
+    latest.tempoDown AS latest_tempoDown,
+    latest.tempoHold AS latest_tempoHold,
+    latest.tempoUp AS latest_tempoUp,
+    latest.date AS latest_date,
+    latest.notes AS latest_notes,
+    latest.rpe AS latest_rpe,
+    latest.videoUri AS latest_videoUri,
+    latest.exerciseSectionId AS latest_exerciseSectionId,
+
+    emax.id AS emax_id,
+    emax.movementId AS emax_movementId,
+    emax.weight AS emax_weight,
+    emax.reps AS emax_reps,
+    emax.tempoDown AS emax_tempoDown,
+    emax.tempoHold AS emax_tempoHold,
+    emax.tempoUp AS emax_tempoUp,
+    emax.date AS emax_date,
+    emax.notes AS emax_notes,
+    emax.rpe AS emax_rpe,
+    emax.videoUri AS emax_videoUri,
+    emax.exerciseSectionId AS emax_exerciseSectionId,
+    emax.eMax AS emax_emax,
+
+    maxreps.id AS maxreps_id,
+    maxreps.movementId AS maxreps_movementId,
+    maxreps.weight AS maxreps_weight,
+    maxreps.reps AS maxreps_reps,
+    maxreps.tempoDown AS maxreps_tempoDown,
+    maxreps.tempoHold AS maxreps_tempoHold,
+    maxreps.tempoUp AS maxreps_tempoUp,
+    maxreps.date AS maxreps_date,
+    maxreps.notes AS maxreps_notes,
+    maxreps.rpe AS maxreps_rpe,
+    maxreps.videoUri AS maxreps_videoUri,
+    maxreps.exerciseSectionId AS maxreps_exerciseSectionId
 FROM Movement
 JOIN Category ON Category.id = Movement.categoryId
+LEFT JOIN KeyMovementSetsView orm ON orm.movementId = Movement.id AND orm.rn_orm = 1
+LEFT JOIN KeyMovementSetsView latest ON latest.movementId = Movement.id AND latest.rn_latest = 1
+LEFT JOIN KeyMovementSetsView emax ON emax.movementId = Movement.id AND emax.rn_emax = 1
+LEFT JOIN KeyMovementSetsView maxreps ON maxreps.movementId = Movement.id AND maxreps.rn_maxreps = 1
 WHERE categoryId = :categoryId
 ;
 
@@ -34,13 +124,70 @@ SELECT
 
     Category.id AS category_id,
     Category.color AS category_color,
-    Category.name AS category_name
+    Category.name AS category_name,
+
+    orm.id AS orm_id,
+    orm.movementId AS orm_movementId,
+    orm.weight AS orm_weight,
+    orm.reps AS orm_reps,
+    orm.tempoDown AS orm_tempoDown,
+    orm.tempoHold AS orm_tempoHold,
+    orm.tempoUp AS orm_tempoUp,
+    orm.date AS orm_date,
+    orm.notes AS orm_notes,
+    orm.rpe AS orm_rpe,
+    orm.videoUri AS orm_videoUri,
+    orm.exerciseSectionId AS orm_exerciseSectionId,
+
+    latest.id AS latest_id,
+    latest.movementId AS latest_movementId,
+    latest.weight AS latest_weight,
+    latest.reps AS latest_reps,
+    latest.tempoDown AS latest_tempoDown,
+    latest.tempoHold AS latest_tempoHold,
+    latest.tempoUp AS latest_tempoUp,
+    latest.date AS latest_date,
+    latest.notes AS latest_notes,
+    latest.rpe AS latest_rpe,
+    latest.videoUri AS latest_videoUri,
+    latest.exerciseSectionId AS latest_exerciseSectionId,
+
+    emax.id AS emax_id,
+    emax.movementId AS emax_movementId,
+    emax.weight AS emax_weight,
+    emax.reps AS emax_reps,
+    emax.tempoDown AS emax_tempoDown,
+    emax.tempoHold AS emax_tempoHold,
+    emax.tempoUp AS emax_tempoUp,
+    emax.date AS emax_date,
+    emax.notes AS emax_notes,
+    emax.rpe AS emax_rpe,
+    emax.videoUri AS emax_videoUri,
+    emax.exerciseSectionId AS emax_exerciseSectionId,
+    emax.eMax AS emax_emax,
+
+    maxreps.id AS maxreps_id,
+    maxreps.movementId AS maxreps_movementId,
+    maxreps.weight AS maxreps_weight,
+    maxreps.reps AS maxreps_reps,
+    maxreps.tempoDown AS maxreps_tempoDown,
+    maxreps.tempoHold AS maxreps_tempoHold,
+    maxreps.tempoUp AS maxreps_tempoUp,
+    maxreps.date AS maxreps_date,
+    maxreps.notes AS maxreps_notes,
+    maxreps.rpe AS maxreps_rpe,
+    maxreps.videoUri AS maxreps_videoUri,
+    maxreps.exerciseSectionId AS maxreps_exerciseSectionId
 FROM Movement
 JOIN Category ON Category.id = Movement.categoryId
+LEFT JOIN KeyMovementSetsView orm ON orm.movementId = Movement.id AND orm.rn_orm = 1
+LEFT JOIN KeyMovementSetsView latest ON latest.movementId = Movement.id AND latest.rn_latest = 1
+LEFT JOIN KeyMovementSetsView emax ON emax.movementId = Movement.id AND emax.rn_emax = 1
+LEFT JOIN KeyMovementSetsView maxreps ON maxreps.movementId = Movement.id AND maxreps.rn_maxreps = 1
 ;
 
 getAllForWorkout:
-SELECT
+SELECT DISTINCT
     Movement.id AS id,
     Movement.favourite AS favourite,
     Movement.name AS name,
@@ -49,16 +196,148 @@ SELECT
 
     Category.id AS lift_id,
     Category.color AS lift_color,
-    Category.name AS lift_name
+    Category.name AS lift_name,
+
+    orm.id AS orm_id,
+    orm.movementId AS orm_movementId,
+    orm.weight AS orm_weight,
+    orm.reps AS orm_reps,
+    orm.tempoDown AS orm_tempoDown,
+    orm.tempoHold AS orm_tempoHold,
+    orm.tempoUp AS orm_tempoUp,
+    orm.date AS orm_date,
+    orm.notes AS orm_notes,
+    orm.rpe AS orm_rpe,
+    orm.videoUri AS orm_videoUri,
+    orm.exerciseSectionId AS orm_exerciseSectionId,
+
+    latest.id AS latest_id,
+    latest.movementId AS latest_movementId,
+    latest.weight AS latest_weight,
+    latest.reps AS latest_reps,
+    latest.tempoDown AS latest_tempoDown,
+    latest.tempoHold AS latest_tempoHold,
+    latest.tempoUp AS latest_tempoUp,
+    latest.date AS latest_date,
+    latest.notes AS latest_notes,
+    latest.rpe AS latest_rpe,
+    latest.videoUri AS latest_videoUri,
+    latest.exerciseSectionId AS latest_exerciseSectionId,
+
+    emax.id AS emax_id,
+    emax.movementId AS emax_movementId,
+    emax.weight AS emax_weight,
+    emax.reps AS emax_reps,
+    emax.tempoDown AS emax_tempoDown,
+    emax.tempoHold AS emax_tempoHold,
+    emax.tempoUp AS emax_tempoUp,
+    emax.date AS emax_date,
+    emax.notes AS emax_notes,
+    emax.rpe AS emax_rpe,
+    emax.videoUri AS emax_videoUri,
+    emax.exerciseSectionId AS emax_exerciseSectionId,
+    emax.eMax AS emax_emax,
+
+    maxreps.id AS maxreps_id,
+    maxreps.movementId AS maxreps_movementId,
+    maxreps.weight AS maxreps_weight,
+    maxreps.reps AS maxreps_reps,
+    maxreps.tempoDown AS maxreps_tempoDown,
+    maxreps.tempoHold AS maxreps_tempoHold,
+    maxreps.tempoUp AS maxreps_tempoUp,
+    maxreps.date AS maxreps_date,
+    maxreps.notes AS maxreps_notes,
+    maxreps.rpe AS maxreps_rpe,
+    maxreps.videoUri AS maxreps_videoUri,
+    maxreps.exerciseSectionId AS maxreps_exerciseSectionId
 FROM Movement
 JOIN Category ON Category.id = Movement.categoryId
-JOIN ExerciseVariation ON ExerciseVariation.movementId = Movement.id
-JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
-WHERE :workoutId IS NULL OR Exercise.workoutId = :workoutId
+JOIN LiftingSet ON LiftingSet.movementId = Movement.id
+JOIN ExerciseSection ON ExerciseSection.id = LiftingSet.exerciseSectionId
+JOIN Exercise ON Exercise.id = ExerciseSection.exerciseId
+LEFT JOIN KeyMovementSetsView orm ON orm.movementId = Movement.id AND orm.rn_orm = 1
+LEFT JOIN KeyMovementSetsView latest ON latest.movementId = Movement.id AND latest.rn_latest = 1
+LEFT JOIN KeyMovementSetsView emax ON emax.movementId = Movement.id AND emax.rn_emax = 1
+LEFT JOIN KeyMovementSetsView maxreps ON maxreps.movementId = Movement.id AND maxreps.rn_maxreps = 1
+WHERE (:workoutId IS NULL OR Exercise.workoutId = :workoutId)
 ;
 
 get:
 SELECT * FROM Movement WHERE id = ?;
+
+getWithKeySets:
+SELECT
+    Movement.id AS id,
+    Movement.favourite AS favourite,
+    Movement.name AS name,
+    Movement.notes AS notes,
+    Movement.body_weight AS body_weight,
+    Movement.categoryId AS category_id,
+
+    Category.id AS lift_id,
+    Category.color AS lift_color,
+    Category.name AS lift_name,
+
+    orm.id AS orm_id,
+    orm.movementId AS orm_movementId,
+    orm.weight AS orm_weight,
+    orm.reps AS orm_reps,
+    orm.tempoDown AS orm_tempoDown,
+    orm.tempoHold AS orm_tempoHold,
+    orm.tempoUp AS orm_tempoUp,
+    orm.date AS orm_date,
+    orm.notes AS orm_notes,
+    orm.rpe AS orm_rpe,
+    orm.videoUri AS orm_videoUri,
+    orm.exerciseSectionId AS orm_exerciseSectionId,
+
+    latest.id AS latest_id,
+    latest.movementId AS latest_movementId,
+    latest.weight AS latest_weight,
+    latest.reps AS latest_reps,
+    latest.tempoDown AS latest_tempoDown,
+    latest.tempoHold AS latest_tempoHold,
+    latest.tempoUp AS latest_tempoUp,
+    latest.date AS latest_date,
+    latest.notes AS latest_notes,
+    latest.rpe AS latest_rpe,
+    latest.videoUri AS latest_videoUri,
+    latest.exerciseSectionId AS latest_exerciseSectionId,
+
+    emax.id AS emax_id,
+    emax.movementId AS emax_movementId,
+    emax.weight AS emax_weight,
+    emax.reps AS emax_reps,
+    emax.tempoDown AS emax_tempoDown,
+    emax.tempoHold AS emax_tempoHold,
+    emax.tempoUp AS emax_tempoUp,
+    emax.date AS emax_date,
+    emax.notes AS emax_notes,
+    emax.rpe AS emax_rpe,
+    emax.videoUri AS emax_videoUri,
+    emax.exerciseSectionId AS emax_exerciseSectionId,
+    emax.eMax AS emax_emax,
+
+    maxreps.id AS maxreps_id,
+    maxreps.movementId AS maxreps_movementId,
+    maxreps.weight AS maxreps_weight,
+    maxreps.reps AS maxreps_reps,
+    maxreps.tempoDown AS maxreps_tempoDown,
+    maxreps.tempoHold AS maxreps_tempoHold,
+    maxreps.tempoUp AS maxreps_tempoUp,
+    maxreps.date AS maxreps_date,
+    maxreps.notes AS maxreps_notes,
+    maxreps.rpe AS maxreps_rpe,
+    maxreps.videoUri AS maxreps_videoUri,
+    maxreps.exerciseSectionId AS maxreps_exerciseSectionId
+FROM Movement
+JOIN Category ON Category.id = Movement.categoryId
+LEFT JOIN KeyMovementSetsView orm ON orm.movementId = Movement.id AND orm.rn_orm = 1
+LEFT JOIN KeyMovementSetsView latest ON latest.movementId = Movement.id AND latest.rn_latest = 1
+LEFT JOIN KeyMovementSetsView emax ON emax.movementId = Movement.id AND emax.rn_emax = 1
+LEFT JOIN KeyMovementSetsView maxreps ON maxreps.movementId = Movement.id AND maxreps.rn_maxreps = 1
+WHERE Movement.id = ?
+;
 
 save:
 INSERT OR REPLACE

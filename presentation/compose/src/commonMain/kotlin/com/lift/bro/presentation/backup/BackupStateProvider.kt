@@ -7,7 +7,7 @@ import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import kotlinx.datetime.LocalDate
 import kotlin.time.Clock
@@ -80,14 +80,11 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                 Exercise(
                                     id = "exercise1",
                                     workoutId = "workout1",
-                                    variationSets = listOf(
-                                        VariationSets(
+                                    sections = listOf(
+                                        Section(
                                             id = "vs1",
-                                            variation = Movement(
-                                                id = "back-squat",
-                                                lift = Category(name = "Squat", color = 0xFF2196F3uL),
-                                                name = "Back Squat",
-                                            ),
+                                            exerciseId = "",
+                                            recommendedSets = emptyList(),
                                             sets = listOf(
                                                 LBSet(
                                                     id = "set1",
@@ -107,13 +104,10 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                                 ),
                                             ),
                                         ),
-                                        VariationSets(
+                                        Section(
                                             id = "vs2",
-                                            variation = Movement(
-                                                id = "flat-bench",
-                                                lift = Category(name = "Bench Press", color = 0xFF4CAF50uL),
-                                                name = "Flat Bench",
-                                            ),
+                                            exerciseId = "",
+                                            recommendedSets = emptyList(),
                                             sets = listOf(
                                                 LBSet(
                                                     id = "set3",
@@ -143,14 +137,11 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                         Exercise(
                             id = "exercise1",
                             workoutId = "workout1",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs1",
-                                    variation = Movement(
-                                        id = "back-squat",
-                                        lift = Category(name = "Squat", color = 0xFF2196F3uL),
-                                        name = "Back Squat",
-                                    ),
+                                    exerciseId = "",
+                                    recommendedSets = emptyList(),
                                     sets = listOf(
                                         LBSet(
                                             id = "set1",
@@ -170,13 +161,10 @@ class BackupStateProvider : PreviewParameterProvider<BackupState> {
                                         ),
                                     ),
                                 ),
-                                VariationSets(
+                                Section(
                                     id = "vs2",
-                                    variation = Movement(
-                                        id = "flat-bench",
-                                        lift = Category(name = "Bench Press", color = 0xFF4CAF50uL),
-                                        name = "Flat Bench",
-                                    ),
+                                    exerciseId = "",
+                                    recommendedSets = emptyList(),
                                     sets = listOf(
                                         LBSet(
                                             id = "set3",

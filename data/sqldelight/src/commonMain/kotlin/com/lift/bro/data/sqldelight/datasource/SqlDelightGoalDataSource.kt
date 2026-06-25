@@ -32,7 +32,9 @@ class SqlDelightGoalDataSource(
         )
     }
 
-    override suspend fun delete(goal: Goal) = goalQueries.delete(goal.id)
+    override suspend fun delete(goal: Goal) {
+        goalQueries.delete(goal.id)
+    }
 }
 
 fun GoalEntity.toDomain() = Goal(

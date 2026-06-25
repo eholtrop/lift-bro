@@ -6,12 +6,12 @@ import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import kotlinx.datetime.LocalDate
 import kotlin.time.Clock
 
-class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarState> {
+class WorkoutCalendarStateProvider: PreviewParameterProvider<WorkoutCalendarState> {
     override val values: Sequence<WorkoutCalendarState>
         get() = sequenceOf(
             // 1. Minimal - no workout, no log, no potential exercises
@@ -54,18 +54,11 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         Exercise(
                             id = "ex1",
                             workoutId = "workout-full",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs1",
-                                    variation = Movement(
-                                        id = "back-squat",
-                                        lift = Category(
-                                            name = "Squat",
-                                            color = 0xFF2196F3uL
-                                        ),
-                                        name = "Back Squat",
-                                        favourite = true,
-                                    ),
+                                    exerciseId = "",
+                                    recommendedSets = emptyList(),
                                     sets = listOf(
                                         LBSet(
                                             id = "s1",
@@ -90,17 +83,11 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         Exercise(
                             id = "ex2",
                             workoutId = "workout-full",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs2",
-                                    variation = Movement(
-                                        id = "flat-bench",
-                                        lift = Category(
-                                            name = "Bench Press",
-                                            color = 0xFF4CAF50uL
-                                        ),
-                                        name = "Flat Bench",
-                                    ),
+                                    exerciseId = "",
+                                    recommendedSets = emptyList(),
                                     sets = listOf(
                                         LBSet(
                                             id = "s3",
@@ -190,18 +177,11 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         Exercise(
                             id = "ex3",
                             workoutId = "workout-full-2",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
                                     id = "vs3",
-                                    variation = Movement(
-                                        id = "back-squat-2",
-                                        lift = Category(
-                                            name = "Squat",
-                                            color = 0xFF2196F3uL
-                                        ),
-                                        name = "Back Squat",
-                                        favourite = true,
-                                    ),
+                                    recommendedSets = emptyList(),
+                                    exerciseId = "",
                                     sets = listOf(
                                         LBSet(
                                             id = "s8",
@@ -226,17 +206,11 @@ class WorkoutCalendarStateProvider : PreviewParameterProvider<WorkoutCalendarSta
                         Exercise(
                             id = "ex4",
                             workoutId = "workout-full-2",
-                            variationSets = listOf(
-                                VariationSets(
+                            sections = listOf(
+                                Section(
+                                    recommendedSets = emptyList(),
                                     id = "vs4",
-                                    variation = Movement(
-                                        id = "flat-bench-2",
-                                        lift = Category(
-                                            name = "Bench Press",
-                                            color = 0xFF4CAF50uL
-                                        ),
-                                        name = "Flat Bench",
-                                    ),
+                                    exerciseId = "",
                                     sets = listOf(
                                         LBSet(
                                             id = "s10",

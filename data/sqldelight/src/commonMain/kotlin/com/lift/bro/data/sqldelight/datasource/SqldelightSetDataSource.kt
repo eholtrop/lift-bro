@@ -110,6 +110,7 @@ class SqldelightSetDataSource(
         setQueries.save(
             id = lbSet.id,
             movementId = lbSet.variationId,
+            exerciseSectionId = lbSet.exerciseSectionId,
             weight = lbSet.weight,
             reps = lbSet.reps,
             tempoDown = lbSet.tempo.down,
@@ -150,6 +151,7 @@ fun GetAllSets.toDomain() = LBSet(
     rpe = this.rpe?.toInt(),
     bodyWeightRep = this.body_weight?.let { it == 1L },
     videoUri = this.videoUri,
+    exerciseSectionId = this.exerciseSectionId
 )
 
 fun LiftingSet.toDomain() = LBSet(
@@ -166,6 +168,7 @@ fun LiftingSet.toDomain() = LBSet(
     notes = this.notes,
     rpe = this.rpe?.toInt(),
     videoUri = this.videoUri,
+    exerciseSectionId = this.exerciseSectionId,
 )
 
 private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {

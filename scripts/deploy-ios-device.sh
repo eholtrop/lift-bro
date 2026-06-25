@@ -42,6 +42,7 @@ echo "[3/3] Building iOS app on remote..."
 
 ssh "eholtrop@$REMOTE_HOST" "
    cd $REMOTE_PATH &&
+   ./gradlew --stop > /dev/null 2>&1 &&
    ~/.rbenv/shims/bundle exec fastlane ios build_debug_device device_udid:$DEVICE_UDID
 "
 

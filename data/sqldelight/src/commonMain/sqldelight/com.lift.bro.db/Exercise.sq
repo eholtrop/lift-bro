@@ -3,10 +3,12 @@ CREATE TABLE Exercise (
     workoutId TEXT NOT NULL
 );
 
-CREATE TABLE ExerciseVariation (
+CREATE TABLE ExerciseSection (
     id TEXT NOT NULL PRIMARY KEY,
     exerciseId TEXT NOT NULL,
-    movementId TEXT NOT NULL
+    referenceSectionId TEXT,
+    name TEXT,
+    sort_order INTEGER NOT NULL DEFAULT 0
 );
 
 get:
@@ -30,54 +32,39 @@ DELETE FROM Exercise WHERE id = :id;
 
 deleteAll:
 DELETE FROM Exercise;
-DELETE FROM ExerciseVariation;
+DELETE FROM ExerciseSection;
 
-deleteVariationsById:
-DELETE FROM ExerciseVariation WHERE id = :id;
+deleteSectionsById:
+DELETE FROM ExerciseSection WHERE id = :id;
 
-deleteVariationsByExercise:
-DELETE FROM ExerciseVariation WHERE exerciseId = :exerciseId;
+deleteSectionsByExercise:
+DELETE FROM ExerciseSection WHERE exerciseId = :exerciseId;
 
-deleteVariationBy:
-DELETE FROM ExerciseVariation WHERE exerciseId = :exerciseId AND movementId = :movementId;
-
-getExercizeVariationsByDate:
-SELECT * FROM ExerciseVariation
-JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
+getExerciseSectionsByDate:
+SELECT * FROM ExerciseSection
+JOIN Exercise ON Exercise.id = ExerciseSection.exerciseId
 JOIN Workout ON Workout.id = Exercise.workoutId
 WHERE Workout.date < :endDate AND date > :startDate;
 
-getExerciseVariations:
-SELECT * FROM ExerciseVariation WHERE exerciseId = :exerciseId;
+getExerciseSections:
+SELECT * FROM ExerciseSection WHERE exerciseId = :exerciseId;
 
-getExerciseVariationsByWorkoutId:
+getExerciseSectionsByWorkoutId:
 SELECT
-    ExerciseVariation.id AS exercise_variation_id,
-    ExerciseVariation.movementId AS movement_id,
-    ExerciseVariation.exerciseId AS exercise_id,
-
-    Movement.name AS movement_name,
-    Movement.categoryId AS category_id,
-    Movement.body_weight AS movement_is_body_weight,
-    Movement.notes AS movement_notes,
-    Movement.favourite AS movement_is_favourite,
-
-    Exercise.workoutId AS workout_id,
-
-    Category.id AS lift_id,
-    Category.name AS lift_name,
-    Category.color AS lift_color
- FROM ExerciseVariation
-JOIN Movement ON Movement.id = ExerciseVariation.movementId
-JOIN Category ON Category.id = Movement.categoryId
-JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
-WHERE Exercise.workoutId = :workoutId
+    ExerciseSection.id AS exercise_section_id,
+    ExerciseSection.exerciseId AS exercise_id,
+    ExerciseSection.name AS exercise_section_name,
+    ExerciseSection.sort_order AS exercise_section_sort_order
+FROM ExerciseSection
+WHERE ExerciseSection.exerciseId IN (
+    SELECT id FROM Exercise WHERE workoutId = :workoutId
+)
 ;
 
-getAllExerciseVariations:
-SELECT * FROM ExerciseVariation;
+getAllExerciseSections:
+SELECT * FROM ExerciseSection;
 
-saveVariation:
+saveSection:
 INSERT OR REPLACE
-INTO ExerciseVariation(id, exerciseId, movementId)
-VALUES(?, ?, ?);
+INTO ExerciseSection(id, exerciseId, referenceSectionId, name, sort_order)
+VALUES(?, ?, ?, ?, ?);

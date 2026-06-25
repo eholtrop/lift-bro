@@ -2,118 +2,89 @@
 
 package com.lift.bro.data.sqldelight.datasource
 
-import com.benasher44.uuid.uuid4
 import com.lift.bro.data.core.datasource.ExerciseDataSource
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Exercise
+import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.MovementId
-import com.lift.bro.domain.models.VariationSets
+import com.lift.bro.domain.models.Section
+import com.lift.bro.domain.models.Tempo
 import comliftbrodb.ExerciseQueries
+import comliftbrodb.GetAllForWorkout
+import comliftbrodb.MovementQueries
 import comliftbrodb.SetQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
-import tv.dpal.ktx.datetime.toLocalDate
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 class SqldelightExerciseDataSource(
     private val exerciseQueries: ExerciseQueries,
     private val setQueries: SetQueries,
+    private val movementQueries: MovementQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : ExerciseDataSource {
+): ExerciseDataSource {
 
-    override fun get(workoutId: String): Flow<List<Exercise>> = combine(
-        exerciseQueries.getByWorkoutId(workoutId).asFlowList(dispatcher),
-        exerciseQueries.getExerciseVariationsByWorkoutId(workoutId).asFlowList(dispatcher)
-            .flatMapLatest { variationSets ->
-                if (variationSets.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
-                combine(
-                    *variationSets.map { exercise ->
-                        combine(
-                            setQueries.getOneRepMaxForMovement(
-                                exercise.movement_id,
-                                Instant.DISTANT_FUTURE
-                            ).asFlowOneOrNull(dispatcher),
-                            setQueries.getEMaxForMovement(
-                                exercise.movement_id,
-                                Instant.DISTANT_FUTURE
-                            ).asFlowOneOrNull(dispatcher),
-                            setQueries.getMaxRepsForMovement(
-                                exercise.movement_id,
-                                Instant.DISTANT_FUTURE
-                            ).asFlowOneOrNull(dispatcher),
-                        ) { orm, volume, reps ->
-                            Triple(
-                                exercise.exercise_variation_id,
-                                exercise.exercise_id,
-                                Movement(
-                                    id = exercise.movement_id,
-                                    name = exercise.movement_name,
-                                    notes = exercise.movement_notes,
-                                    favourite = exercise.movement_is_favourite == 1L,
-                                    lift = Category(
-                                        id = exercise.lift_id,
-                                        color = exercise.lift_color?.toULong(),
-                                        name = exercise.lift_name,
-                                    ),
-                                    oneRepMax = orm?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
-                                    eMax = volume?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
-                                    maxReps = reps?.toDomain()
-                                        ?.copy(bodyWeightRep = exercise.movement_is_body_weight?.let { it == 1L }),
-                                    bodyWeight = exercise.movement_is_body_weight == 1L,
-                                )
-                            )
-                        }
-                    }.toTypedArray()
-                ) { it.toList() }
-            },
-        setQueries.getByWorkoutId(workoutId = workoutId, limit = Long.MAX_VALUE)
+    override fun listenAll(workoutId: String?): Flow<List<Exercise>> = combine(
+        exerciseQueries.getByWorkoutId(workoutId ?: "").asFlowList(dispatcher),
+        setQueries.getByWorkoutId(workoutId = workoutId ?: "", limit = Long.MAX_VALUE)
             .asFlowList(dispatcher),
-    ) { exercises, exerciseVariations, sets ->
-        exercises.map { exercise ->
-            Exercise(
-                id = exercise.id,
-                workoutId = workoutId,
-                variationSets = exerciseVariations
-                    .filter { it.second == exercise.id }
-                    .map { (id, eId, variation) ->
-                        VariationSets(
-                            id = id,
-                            variation = variation,
-                            sets = sets.filter { it.movementId == variation.id }
-                                .filter { it.date.toLocalDate() == it.date_ }
-                                .map {
-                                    LBSet(
-                                        id = it.id,
-                                        variationId = it.movementId,
-                                        weight = it.weight ?: 0.0,
-                                        reps = it.reps ?: 1,
-                                        date = it.date,
-                                        notes = it.notes,
-                                        rpe = it.rpe?.toInt(),
-                                        tempo = com.lift.bro.domain.models.Tempo(
-                                            down = it.tempoDown ?: 3,
-                                            hold = it.tempoHold ?: 1,
-                                            up = it.tempoUp ?: 1,
-                                        ),
-                                        bodyWeightRep = variation.bodyWeight
+        movementQueries.getAllForWorkout(workoutId).asFlowList(),
+    ) { exercises, sets, movements -> Triple(exercises, sets, movements) }
+        .flatMapLatest { (exercises, sets, movements) ->
+            if (exercises.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
+            combine(
+                exercises.map { exercise ->
+                    exerciseQueries.getExerciseSections(exercise.id).asFlowList()
+                        .map { sections ->
+                            Exercise(
+                                id = exercise.id,
+                                workoutId = workoutId ?: "",
+                                sections = sections.map { section ->
+                                    val sectionSets = sets.filter { it.exerciseSectionId == section.id }
+                                    val sectionMovementIds = sectionSets.map { it.movementId }.toSet()
+                                    val recommendedSets = setQueries.getBySectionId(section.id).asFlowList().first()
+                                    Section(
+                                        id = section.id,
+                                        exerciseId = exercise.id,
+                                        movements = movements.filter { it.id in sectionMovementIds }
+                                            .map { it.toDomain() },
+                                        recommendedSets = recommendedSets.map { it.toDomain() },
+                                        sets = sectionSets
+                                            .map {
+                                                LBSet(
+                                                    id = it.id,
+                                                    variationId = it.movementId,
+                                                    exerciseSectionId = it.exerciseSectionId,
+                                                    weight = it.weight ?: 0.0,
+                                                    reps = it.reps ?: 1,
+                                                    date = it.date,
+                                                    notes = it.notes,
+                                                    rpe = it.rpe?.toInt(),
+                                                    tempo = Tempo(
+                                                        down = it.tempoDown ?: 3,
+                                                        hold = it.tempoHold ?: 1,
+                                                        up = it.tempoUp ?: 1,
+                                                    ),
+                                                    bodyWeightRep = it.body_weight?.let { it == 1L }
+                                                )
+                                            }
                                     )
                                 }
-                        )
-                    }
-            )
+                            )
+                        }
+                }
+            ) { it.toList() }
         }
-    }
 
     override suspend fun save(exercise: Exercise) {
         withContext(dispatcher) {
@@ -121,51 +92,132 @@ class SqldelightExerciseDataSource(
                 id = exercise.id,
                 workoutId = exercise.workoutId,
             )
-            exercise.variationSets.forEach { vSet ->
-                exerciseQueries.saveVariation(
-                    id = vSet.id,
-                    exerciseId = exercise.id,
-                    movementId = vSet.variation.id,
-                )
+        }
+    }
+
+    override suspend fun delete(id: ExerciseId) {
+        exerciseQueries.delete(id)
+        exerciseQueries.deleteSectionsByExercise(exerciseId = id)
+    }
+
+    override suspend fun save(section: Section) {
+        exerciseQueries.saveSection(
+            id = section.id,
+            exerciseId = section.exerciseId,
+            name = null,
+            sort_order = 0L,
+            referenceSectionId = with(section.recommendedSets.map { it.exerciseSectionId }.distinct()) {
+                if (size == 1) first() else null
             }
-        }
+        )
     }
 
-    override suspend fun saveVariation(exerciseId: String, variationId: MovementId) {
-        withContext(dispatcher) {
-            exerciseQueries.saveVariation(
-                id = uuid4().toString(),
-                exerciseId = exerciseId,
-                movementId = variationId,
-            )
+    override suspend fun delete(section: Section, cascading: Boolean) {
+        exerciseQueries.deleteSectionsById(section.id)
+        if (cascading) {
+            setQueries.deleteAllForSections(section.id)
         }
     }
+}
 
-    override suspend fun delete(id: String) {
-        withContext(dispatcher) {
-            exerciseQueries.delete(id)
-            exerciseQueries.deleteVariationsByExercise(id)
-        }
-    }
+private fun GetAllForWorkout.toDomain(): Movement = Movement(
+    id = id,
+    lift = Category(
+        id = lift_id,
+        color = lift_color?.toULong(),
+        name = lift_name,
+    ),
+    name = name,
+    notes = notes,
+    favourite = favourite == 1L,
+    bodyWeight = body_weight?.let { it == 1L },
+    oneRepMax = asLBSet(
+        id = orm_id,
+        movementId = orm_movementId,
+        weight = orm_weight,
+        reps = orm_reps,
+        tempoDown = orm_tempoDown,
+        tempoHold = orm_tempoHold,
+        tempoUp = orm_tempoUp,
+        date = orm_date,
+        notes = orm_notes,
+        rpe = orm_rpe,
+        videoUri = orm_videoUri,
+        exerciseSectionId = orm_exerciseSectionId,
+    ),
+    latestSet = asLBSet(
+        id = latest_id,
+        movementId = latest_movementId,
+        weight = latest_weight,
+        reps = latest_reps,
+        tempoDown = latest_tempoDown,
+        tempoHold = latest_tempoHold,
+        tempoUp = latest_tempoUp,
+        date = latest_date,
+        notes = latest_notes,
+        rpe = latest_rpe,
+        videoUri = latest_videoUri,
+        exerciseSectionId = latest_exerciseSectionId,
+    ),
+    eMax = asLBSet(
+        id = emax_id,
+        movementId = emax_movementId,
+        weight = emax_weight,
+        reps = emax_reps,
+        tempoDown = emax_tempoDown,
+        tempoHold = emax_tempoHold,
+        tempoUp = emax_tempoUp,
+        date = emax_date,
+        notes = emax_notes,
+        rpe = emax_rpe,
+        videoUri = emax_videoUri,
+        exerciseSectionId = emax_exerciseSectionId,
+    ),
+    maxReps = asLBSet(
+        id = maxreps_id,
+        movementId = maxreps_movementId,
+        weight = maxreps_weight,
+        reps = maxreps_reps,
+        tempoDown = maxreps_tempoDown,
+        tempoHold = maxreps_tempoHold,
+        tempoUp = maxreps_tempoUp,
+        date = maxreps_date,
+        notes = maxreps_notes,
+        rpe = maxreps_rpe,
+        videoUri = maxreps_videoUri,
+        exerciseSectionId = maxreps_exerciseSectionId,
+    ),
+)
 
-    override suspend fun deleteVariation(exerciseId: String, variationId: MovementId) {
-        withContext(dispatcher) {
-            exerciseQueries.deleteVariationBy(exerciseId, variationId)
-        }
-    }
-
-    override suspend fun deleteVariationSets(variationSetId: String) {
-        withContext(dispatcher) {
-            exerciseQueries.deleteVariationsById(variationSetId)
-        }
-    }
-
-    override suspend fun addExercise(workoutId: String, exerciseId: String) {
-        withContext(dispatcher) {
-            exerciseQueries.save(
-                id = exerciseId,
-                workoutId = workoutId,
-            )
-        }
-    }
+@Suppress("LongParameterList")
+private fun asLBSet(
+    id: String?,
+    movementId: String?,
+    weight: Double?,
+    reps: Long?,
+    tempoDown: Long?,
+    tempoHold: Long?,
+    tempoUp: Long?,
+    date: kotlin.time.Instant?,
+    notes: String?,
+    rpe: Long?,
+    videoUri: String?,
+    exerciseSectionId: String?,
+): LBSet? = id?.let {
+    LBSet(
+        id = it,
+        variationId = movementId ?: "",
+        weight = weight ?: 0.0,
+        reps = reps ?: 1,
+        tempo = Tempo(
+            down = tempoDown ?: 3,
+            hold = tempoHold ?: 1,
+            up = tempoUp ?: 1,
+        ),
+        date = date ?: Clock.System.now(),
+        notes = notes ?: "",
+        rpe = rpe?.toInt(),
+        videoUri = videoUri,
+        exerciseSectionId = exerciseSectionId,
+    )
 }

@@ -9,6 +9,7 @@ import kotlin.time.Instant
 data class LBSet(
     val id: String,
     val variationId: String,
+    val exerciseSectionId: ExerciseSectionId? = null,
     val weight: Double = 0.0,
     val reps: Long = 1,
     val tempo: Tempo = Tempo(),

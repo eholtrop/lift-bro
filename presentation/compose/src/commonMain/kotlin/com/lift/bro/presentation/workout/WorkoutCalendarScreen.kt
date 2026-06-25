@@ -57,12 +57,15 @@ import androidx.compose.ui.unit.dp
 import com.benasher44.uuid.uuid4
 import com.lift.bro.data.datasource.flowToOneOrNull
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
 import com.lift.bro.di.workoutRepository
+import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.MovementId
+import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.ApplicationScope
@@ -196,7 +199,7 @@ sealed interface DailyWorkoutDetailsEvent {
     data class OpenWorkoutClicked(val exerciseId: ExerciseId?, val variationId: MovementId?):
         DailyWorkoutDetailsEvent
 
-    data class AddToWorkout(val variationId: MovementId): DailyWorkoutDetailsEvent
+    data class AddToWorkout(val sets: List<LBSet>): DailyWorkoutDetailsEvent
 }
 
 @Composable
@@ -227,17 +230,37 @@ fun rememberDailyWorkoutDetailsInteractor(
                     is DailyWorkoutDetailsEvent.AddToWorkout -> {
                         ApplicationScope.launch {
                             val exerciseId = uuid4().toString()
+                            val sectionId = uuid4().toString()
                             val workoutId = state.selectedWorkout?.id ?: uuid4().toString()
                             with(dependencies.workoutRepository) {
-                                addVariation(exerciseId, event.variationId)
-                                addExercise(workoutId, exerciseId)
-
                                 save(
                                     Workout(
                                         workoutId,
-                                        date = state.selectedDate
+                                        date = state.selectedDate,
+                                        exercises = listOf(
+                                            Exercise(
+                                                id = exerciseId,
+                                                workoutId = workoutId,
+                                                sections = listOf(
+                                                    Section(
+                                                        id = sectionId,
+                                                        exerciseId = exerciseId,
+                                                        recommendedSets = emptyList(),
+                                                    )
+                                                )
+                                            )
+                                        )
                                     )
                                 )
+                            }
+                            with(dependencies.setRepository) {
+                                event.sets.forEach {
+                                    save(
+                                        it.copy(
+                                            exerciseSectionId = sectionId
+                                        )
+                                    )
+                                }
                             }
                         }
                     }
@@ -265,7 +288,8 @@ fun rememberDailyWorkoutDetailsInteractor(
                     )
                 },
                 potentialExercises = sets
-                    .filter { vs -> (workout?.exercises ?: emptyList()).none { it.variationSets.any { it.variation.id == vs.first.id } } }
+                    .map { vs -> vs.first to vs.second.filter { it.exerciseSectionId == null } }
+                    .filter { it.second.isNotEmpty() }
             )
         }
     }
@@ -437,12 +461,12 @@ fun DailyWorkoutDetails(
         ) {
             state.potentialExercises
                 .forEach {
-                    VariationSet(
+                    WorkoutCalendarMovementCard(
                         modifier = Modifier.clickable(
                             onClick = {
                                 interactor(
                                     DailyWorkoutDetailsEvent.AddToWorkout(
-                                        variationId = it.first.id,
+                                        sets = it.second,
                                     )
                                 )
                             },
@@ -451,7 +475,7 @@ fun DailyWorkoutDetails(
                             horizontal = MaterialTheme.spacing.one,
                             vertical = MaterialTheme.spacing.half,
                         ),
-                        variation = it.first,
+                        movement = it.first,
                         sets = it.second,
                     )
                 }
@@ -516,13 +540,15 @@ fun CalendarWorkoutCard(
                         .clip(MaterialTheme.shapes.small)
                 ) {
                     Row {
-                        exercise.variationSets.forEachIndexed { index, (_, variation, sets) ->
-                            VariationSet(
-                                modifier = Modifier.weight(1f),
-                                index = if (exercise.variationSets.size > 1) index else null,
-                                variation = variation,
-                                sets = sets
-                            )
+                        exercise.sections.forEachIndexed { index, (_, _, sets, movements) ->
+                            if (movements.isNotEmpty()) {
+                                WorkoutCalendarMovementCard(
+                                    modifier = Modifier.weight(1f),
+                                    index = if (exercise.sections.size > 1) index else null,
+                                    movement = movements.first(),
+                                    sets = sets
+                                )
+                            }
                         }
                     }
                 }
@@ -578,9 +604,9 @@ fun WorkoutCalendarContentPreview(
 private const val GRADIENT_SIZE = 50f
 
 @Composable
-fun VariationSet(
+fun WorkoutCalendarMovementCard(
     modifier: Modifier = Modifier,
-    variation: Movement,
+    movement: Movement,
     index: Int? = null,
     sets: List<LBSet>,
 ) {
@@ -590,7 +616,7 @@ fun VariationSet(
             .background(
                 brush = Brush.linearGradient(
                     colors = listOf(
-                        variation.lift?.color?.toColor() ?: Color.Transparent,
+                        movement.lift?.color?.toColor() ?: Color.Transparent,
                         Color.Transparent,
                     ),
                     start = when (index) {
@@ -619,11 +645,10 @@ fun VariationSet(
                 val prefix = index?.let { 'A'.plus(index).plus(".") } ?: ""
 
                 Text(
-                    "$prefix ${variation.fullName}".trim(),
-
+                    "$prefix ${movement.fullName}".trim(),
                     style = MaterialTheme.typography.titleMedium
                 )
-                if (variation.favourite) {
+                if (movement.favourite) {
                     Space(MaterialTheme.spacing.half)
                     Icon(
                         modifier = Modifier.size(MaterialTheme.typography.titleMedium.fontSize.value.dp),
@@ -636,11 +661,11 @@ fun VariationSet(
             }
 
             Text(
-                "${variation.maxText()} - ${variation.maxDate?.toString("MMM - d")}",
+                "${movement.maxText()} - ${movement.maxDate?.toString("MMM - d")}",
                 style = MaterialTheme.typography.labelMedium
             )
 
-            val keySet = if (variation.bodyWeight == true) {
+            val keySet = if (movement.bodyWeight == true) {
                 sets.maxByOrNull { it.weight }
             } else {
                 sets.maxByOrNull { it.reps }

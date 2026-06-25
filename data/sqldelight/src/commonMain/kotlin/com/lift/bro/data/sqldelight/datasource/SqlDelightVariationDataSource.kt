@@ -7,28 +7,25 @@ import com.lift.bro.data.core.datasource.VariationDataSource
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.repositories.Sorting
-import comliftbrodb.CategoryQueries
+import com.lift.bro.domain.models.Tempo
+import comliftbrodb.GetAll
 import comliftbrodb.GetAllForCategory
+import comliftbrodb.GetWithKeySets
 import comliftbrodb.MovementQueries
-import comliftbrodb.SetQueries
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.datetime.Instant
+import kotlinx.coroutines.flow.map
+import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
 class SqlDelightVariationDataSource(
-    private val categoryQueries: CategoryQueries,
-    private val setQueries: SetQueries,
     private val movementQueries: MovementQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-): VariationDataSource {
+) : VariationDataSource {
 
     override suspend fun save(variation: Movement) {
         movementQueries.save(
@@ -50,175 +47,263 @@ class SqlDelightVariationDataSource(
     }
 
     override fun listen(id: String): Flow<Movement?> =
-        combine(
-            movementQueries.get(id).asFlow().mapToOneOrNull(dispatcher),
-            setQueries.getAllByMovement(id, Long.MAX_VALUE).asFlow().mapToList(dispatcher),
-        ) { variation, sets ->
-            val lift = categoryQueries.get(variation?.categoryId ?: "").executeAsOneOrNull()
-            variation?.toDomain(
-                parentLift = lift?.toDomain(),
-                sets = sets.map { it.toDomain() }
-            )
-        }.flowOn(dispatcher)
+        movementQueries.getWithKeySets(id).asFlow().mapToOneOrNull(dispatcher)
+            .map { it?.toDomain() }
+            .flowOn(dispatcher)
 
     override fun listenAll(): Flow<List<Movement>> =
-        movementQueries.getAll().asFlow().mapToList(dispatcher).flatMapLatest { variations ->
-            combine(
-                *variations.map { variation ->
-                    combine(
-                        setQueries.getOneRepMaxForMovement(variation.id, Instant.DISTANT_FUTURE)
-                            .asFlow().mapToOneOrNull(dispatcher),
-                        setQueries.getEMaxForMovement(variation.id, Instant.DISTANT_FUTURE)
-                            .asFlow().mapToOneOrNull(dispatcher),
-                        setQueries.getMaxRepsForMovement(variation.id, Instant.DISTANT_FUTURE)
-                            .asFlow().mapToOneOrNull(dispatcher),
-                    ) { orm, volume, reps ->
-                        Movement(
-                            id = variation.id,
-                            name = variation.name,
-                            notes = variation.notes,
-                            bodyWeight = variation.body_weight == 1L,
-                            favourite = variation.favourite == 1L,
-                            lift = Category(
-                                id = variation.category_id,
-                                color = variation.category_color?.toULong(),
-                                name = variation.category_name,
-                            ),
-                            oneRepMax = orm?.let { it.toDomain() },
-                            eMax = volume?.let { it.toDomain() },
-                            maxReps = reps?.let { it.toDomain() },
-                        )
-                    }
-                }.toTypedArray()
-            ) { it.toList() }
-        }.flowOn(dispatcher)
+        movementQueries.getAll().asFlow().mapToList(dispatcher)
+            .map { it.map { row -> row.toDomain() } }
+            .flowOn(dispatcher)
 
     override fun listenAllForLift(liftId: String?): Flow<List<Movement>> =
-        combine(
-            movementQueries.getAllForCategory(liftId).asFlowList(),
-            setQueries.getAllSets(
-                limit = Long.MAX_VALUE,
-                startDate = Instant.DISTANT_PAST,
-                endDate = Instant.DISTANT_FUTURE,
-                movementId = null,
-                reps = null,
-                sortBy = Sorting.date.toString(),
-                order = 0,
-            ).asFlowList(),
-        ) { movements, sets ->
-            movements.map { movement ->
-                movement.toDomain(
-                    parentLift = Category(
-                        id = movement.category_id,
-                        color = movement.category_color?.toULong(),
-                        name = movement.category_name,
-                    ),
-                    sets = sets.filter { it.categoryId == movement.category_id }.map { it.toDomain() }
-                )
-            }
-        }.flowOn(dispatcher)
+        movementQueries.getAllForCategory(liftId).asFlowList()
+            .map { it.map { row -> row.toDomain() } }
+            .flowOn(dispatcher)
 
-    override fun get(id: String): Movement? {
-        val variation = movementQueries.get(id).executeAsOneOrNull()
-        val lift = categoryQueries.get(variation?.categoryId ?: "").executeAsOneOrNull()
-        val sets = setQueries.getAllByMovement(id, Long.MAX_VALUE).executeAsList()
-        return variation?.toDomain(
-            parentLift = lift?.toDomain(),
-            sets = sets.map { it.toDomain() }
-        )
-    }
+    override fun get(id: String): Movement? =
+        movementQueries.getWithKeySets(id).executeAsOneOrNull()?.toDomain()
 
-    override fun getAll(): List<Movement> {
-        val sets = setQueries.getAllSets(
-            limit = Long.MAX_VALUE,
-            startDate = Instant.DISTANT_PAST,
-            endDate = Instant.DISTANT_FUTURE,
-            movementId = null,
-            sortBy = Sorting.date.toString(),
-            order = 0,
-            reps = null,
-        ).executeAsList().map { it.toDomain() }
-        return movementQueries.getAll().executeAsList().map { variation ->
-            Movement(
-                id = variation.id,
-                name = variation.name,
-                notes = variation.notes,
-                favourite = variation.favourite == 1L,
-                lift = Category(
-                    id = variation.category_id,
-                    color = variation.category_color?.toULong(),
-                    name = variation.category_name,
-                ),
-                oneRepMax = sets.filter { it.variationId == variation.id && it.reps == 1L }
-                    .maxByOrNull { it.weight },
-                eMax = sets.filter { it.variationId == variation.id && it.reps > 1 }
-                    .maxByOrNull { it.weight * it.reps.toDouble() },
-                maxReps = sets.filter { it.variationId == variation.id }
-                    .maxByOrNull { it.reps },
-                bodyWeight = variation.body_weight == 1L,
-            )
-        }
-    }
+    override fun getAll(): List<Movement> =
+        movementQueries.getAll().executeAsList().map { it.toDomain() }
 }
 
-//
-// private fun comliftbrodb.GetAll.toDomain(): Movement = Movement(
-//    id = this.id,
-//    lift = Category(
-//        id = this.lift_id,
-//        name = this.lift_name,
-//        color = this.lift_color?.toULong(),
-//    ),
-//    name = this.name,
-//    eMax = null,
-//    maxReps = null,
-//    oneRepMax = null,
-//    bodyWeight = this.body_weight?.let { it == 1L },
-// )
-
-private fun comliftbrodb.Movement.toDomain(
-    parentLift: Category?,
-    sets: List<LBSet>,
-): Movement = Movement(
-    id = this.id,
-    lift = parentLift,
-    name = this.name,
-    eMax = sets.filter { it.reps > 1 }.maxByOrNull { it.reps * it.weight },
-    maxReps = sets.maxByOrNull { it.reps },
-    oneRepMax = sets.filter { it.reps == 1L }.maxByOrNull { it.weight },
-    latestSet = sets.maxByOrNull { it.date },
-    favourite = this.favourite == 1L,
-    notes = this.notes,
-    bodyWeight = this.body_weight?.let { it == 1L },
-)
-
-private fun GetAllForCategory.toDomain(
-    parentLift: Category?,
-    sets: List<LBSet>,
-): Movement = Movement(
-    id = this.id,
-    lift = parentLift,
-    name = this.name,
-    eMax = sets.filter { (it.reps ?: 1) > 1 }.maxByOrNull { (it.reps ?: 1) * it.weight },
-    maxReps = sets.maxByOrNull { it.reps ?: 1 },
-    oneRepMax = sets.filter { (it.reps ?: 1) == 1L }.maxByOrNull { it.weight },
-    favourite = this.favourite == 1L,
-    notes = this.notes,
-    bodyWeight = this.body_weight?.let { it == 1L },
-)
-
-private fun comliftbrodb.GetAllByMovement.toDomain(): LBSet = LBSet(
-    id = this.id,
-    variationId = this.movementId,
-    weight = this.weight ?: 0.0,
-    reps = this.reps ?: 1,
-    tempo = com.lift.bro.domain.models.Tempo(
-        down = this.tempoDown ?: 3,
-        hold = this.tempoHold ?: 1,
-        up = this.tempoUp ?: 1,
+private fun GetAll.toDomain(): Movement = Movement(
+    id = id,
+    lift = Category(
+        id = category_id,
+        color = category_color?.toULong(),
+        name = category_name,
     ),
-    date = this.date,
-    notes = this.notes ?: "",
-    rpe = this.rpe?.toInt(),
-    bodyWeightRep = this.body_weight?.let { it == 1L },
+    name = name,
+    notes = notes,
+    favourite = favourite == 1L,
+    bodyWeight = body_weight?.let { it == 1L },
+    oneRepMax = asLBSet(
+        id = orm_id,
+        movementId = orm_movementId,
+        weight = orm_weight,
+        reps = orm_reps,
+        tempoDown = orm_tempoDown,
+        tempoHold = orm_tempoHold,
+        tempoUp = orm_tempoUp,
+        date = orm_date,
+        notes = orm_notes,
+        rpe = orm_rpe,
+        videoUri = orm_videoUri,
+        exerciseSectionId = orm_exerciseSectionId,
+    ),
+    latestSet = asLBSet(
+        id = latest_id,
+        movementId = latest_movementId,
+        weight = latest_weight,
+        reps = latest_reps,
+        tempoDown = latest_tempoDown,
+        tempoHold = latest_tempoHold,
+        tempoUp = latest_tempoUp,
+        date = latest_date,
+        notes = latest_notes,
+        rpe = latest_rpe,
+        videoUri = latest_videoUri,
+        exerciseSectionId = latest_exerciseSectionId,
+    ),
+    eMax = asLBSet(
+        id = emax_id,
+        movementId = emax_movementId,
+        weight = emax_weight,
+        reps = emax_reps,
+        tempoDown = emax_tempoDown,
+        tempoHold = emax_tempoHold,
+        tempoUp = emax_tempoUp,
+        date = emax_date,
+        notes = emax_notes,
+        rpe = emax_rpe,
+        videoUri = emax_videoUri,
+        exerciseSectionId = emax_exerciseSectionId,
+    ),
+    maxReps = asLBSet(
+        id = maxreps_id,
+        movementId = maxreps_movementId,
+        weight = maxreps_weight,
+        reps = maxreps_reps,
+        tempoDown = maxreps_tempoDown,
+        tempoHold = maxreps_tempoHold,
+        tempoUp = maxreps_tempoUp,
+        date = maxreps_date,
+        notes = maxreps_notes,
+        rpe = maxreps_rpe,
+        videoUri = maxreps_videoUri,
+        exerciseSectionId = maxreps_exerciseSectionId,
+    ),
 )
+
+private fun GetAllForCategory.toDomain(): Movement = Movement(
+    id = id,
+    lift = Category(
+        id = category_id,
+        color = category_color?.toULong(),
+        name = category_name,
+    ),
+    name = name,
+    notes = notes,
+    favourite = favourite == 1L,
+    bodyWeight = body_weight?.let { it == 1L },
+    oneRepMax = asLBSet(
+        id = orm_id,
+        movementId = orm_movementId,
+        weight = orm_weight,
+        reps = orm_reps,
+        tempoDown = orm_tempoDown,
+        tempoHold = orm_tempoHold,
+        tempoUp = orm_tempoUp,
+        date = orm_date,
+        notes = orm_notes,
+        rpe = orm_rpe,
+        videoUri = orm_videoUri,
+        exerciseSectionId = orm_exerciseSectionId,
+    ),
+    latestSet = asLBSet(
+        id = latest_id,
+        movementId = latest_movementId,
+        weight = latest_weight,
+        reps = latest_reps,
+        tempoDown = latest_tempoDown,
+        tempoHold = latest_tempoHold,
+        tempoUp = latest_tempoUp,
+        date = latest_date,
+        notes = latest_notes,
+        rpe = latest_rpe,
+        videoUri = latest_videoUri,
+        exerciseSectionId = latest_exerciseSectionId,
+    ),
+    eMax = asLBSet(
+        id = emax_id,
+        movementId = emax_movementId,
+        weight = emax_weight,
+        reps = emax_reps,
+        tempoDown = emax_tempoDown,
+        tempoHold = emax_tempoHold,
+        tempoUp = emax_tempoUp,
+        date = emax_date,
+        notes = emax_notes,
+        rpe = emax_rpe,
+        videoUri = emax_videoUri,
+        exerciseSectionId = emax_exerciseSectionId,
+    ),
+    maxReps = asLBSet(
+        id = maxreps_id,
+        movementId = maxreps_movementId,
+        weight = maxreps_weight,
+        reps = maxreps_reps,
+        tempoDown = maxreps_tempoDown,
+        tempoHold = maxreps_tempoHold,
+        tempoUp = maxreps_tempoUp,
+        date = maxreps_date,
+        notes = maxreps_notes,
+        rpe = maxreps_rpe,
+        videoUri = maxreps_videoUri,
+        exerciseSectionId = maxreps_exerciseSectionId,
+    ),
+)
+
+private fun GetWithKeySets.toDomain(): Movement = Movement(
+    id = id,
+    lift = Category(
+        id = lift_id,
+        color = lift_color?.toULong(),
+        name = lift_name,
+    ),
+    name = name,
+    notes = notes,
+    favourite = favourite == 1L,
+    bodyWeight = body_weight?.let { it == 1L },
+    oneRepMax = asLBSet(
+        id = orm_id,
+        movementId = orm_movementId,
+        weight = orm_weight,
+        reps = orm_reps,
+        tempoDown = orm_tempoDown,
+        tempoHold = orm_tempoHold,
+        tempoUp = orm_tempoUp,
+        date = orm_date,
+        notes = orm_notes,
+        rpe = orm_rpe,
+        videoUri = orm_videoUri,
+        exerciseSectionId = orm_exerciseSectionId,
+    ),
+    latestSet = asLBSet(
+        id = latest_id,
+        movementId = latest_movementId,
+        weight = latest_weight,
+        reps = latest_reps,
+        tempoDown = latest_tempoDown,
+        tempoHold = latest_tempoHold,
+        tempoUp = latest_tempoUp,
+        date = latest_date,
+        notes = latest_notes,
+        rpe = latest_rpe,
+        videoUri = latest_videoUri,
+        exerciseSectionId = latest_exerciseSectionId,
+    ),
+    eMax = asLBSet(
+        id = emax_id,
+        movementId = emax_movementId,
+        weight = emax_weight,
+        reps = emax_reps,
+        tempoDown = emax_tempoDown,
+        tempoHold = emax_tempoHold,
+        tempoUp = emax_tempoUp,
+        date = emax_date,
+        notes = emax_notes,
+        rpe = emax_rpe,
+        videoUri = emax_videoUri,
+        exerciseSectionId = emax_exerciseSectionId,
+    ),
+    maxReps = asLBSet(
+        id = maxreps_id,
+        movementId = maxreps_movementId,
+        weight = maxreps_weight,
+        reps = maxreps_reps,
+        tempoDown = maxreps_tempoDown,
+        tempoHold = maxreps_tempoHold,
+        tempoUp = maxreps_tempoUp,
+        date = maxreps_date,
+        notes = maxreps_notes,
+        rpe = maxreps_rpe,
+        videoUri = maxreps_videoUri,
+        exerciseSectionId = maxreps_exerciseSectionId,
+    ),
+)
+
+@Suppress("LongParameterList")
+private fun asLBSet(
+    id: String?,
+    movementId: String?,
+    weight: Double?,
+    reps: Long?,
+    tempoDown: Long?,
+    tempoHold: Long?,
+    tempoUp: Long?,
+    date: kotlin.time.Instant?,
+    notes: String?,
+    rpe: Long?,
+    videoUri: String?,
+    exerciseSectionId: String?,
+): LBSet? = id?.let {
+    LBSet(
+        id = it,
+        variationId = movementId ?: "",
+        weight = weight ?: 0.0,
+        reps = reps ?: 1,
+        tempo = Tempo(
+            down = tempoDown ?: 3,
+            hold = tempoHold ?: 1,
+            up = tempoUp ?: 1,
+        ),
+        date = date ?: Clock.System.now(),
+        notes = notes ?: "",
+        rpe = rpe?.toInt(),
+        videoUri = videoUri,
+        exerciseSectionId = exerciseSectionId,
+    )
+}

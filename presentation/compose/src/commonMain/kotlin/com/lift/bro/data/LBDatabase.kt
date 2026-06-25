@@ -5,7 +5,6 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.VariationDataSource
-import com.lift.bro.data.datasource.LBExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.toDomain
 import com.lift.bro.db.LiftBroDB
@@ -88,14 +87,7 @@ class LBDatabase(
         database.workoutQueries.deleteAll()
     }
 
-    val exerciseDataSource = LBExerciseDataSource(
-        exerciseQueries = database.exerciseQueries,
-        setQueries = database.setQueries,
-    )
-
     val variantDataSource: VariationDataSource = SqlDelightVariationDataSource(
-        categoryQueries = database.categoryQueries,
-        setQueries = database.setQueries,
         movementQueries = database.movementQueries
     )
 }
@@ -198,6 +190,7 @@ class SetDataSource(
                 notes = set.notes,
                 rpe = set.rpe?.toLong(),
                 videoUri = set.videoUri,
+                exerciseSectionId = set.exerciseSectionId,
             )
         }
     }

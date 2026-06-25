@@ -26,6 +26,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,12 +69,12 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.ktx.datetime.atStartOfDayIn
 import tv.dpal.ktx.datetime.toLocalDate
+import kotlin.time.Instant
 
 enum class RPE(
     val rpe: Int,
@@ -92,11 +94,13 @@ enum class RPE(
 fun EditSetScreen(
     variationId: String?,
     date: Instant?,
+    sectionId: String?,
 ) {
     EditSetScreen(
         interactor = rememberCreateSetInteractor(
             movementId = variationId,
-            date = date
+            date = date,
+            sectionId = sectionId,
         ),
     )
 }
@@ -180,7 +184,7 @@ fun EditSetScreen(
         },
     ) { padding ->
         state.let { set ->
-            EditSetScreenV2(
+            EditSetScreen(
                 modifier = Modifier.padding(padding),
                 state = set,
                 sendEvent = { onEvent(it) },
@@ -207,7 +211,7 @@ fun EditSetScreen(
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun EditSetScreenV2(
+fun EditSetScreen(
     modifier: Modifier = Modifier,
     state: EditSetState,
     sendEvent: (EditSetEvent) -> Unit,
@@ -333,8 +337,8 @@ fun EditSetScreenV2(
                                 ),
                             ),
                             shape = MaterialTheme.shapes.medium
-                        ).clip(MaterialTheme.shapes.medium)
-
+                        ).clip(MaterialTheme.shapes.medium),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     var showCalendar by remember { mutableStateOf(false) }
 
@@ -396,6 +400,35 @@ fun EditSetScreenV2(
                                 showCalendar = false
                             },
                         )
+                    }
+                    AnimatedVisibility(!showCalendar) {
+                        when (val workout = state.workout) {
+                            null -> {
+                                Button(
+                                    onClick = {
+                                    },
+                                    colors = ButtonDefaults.elevatedButtonColors()
+                                ) {
+                                    Text("Start a workout!")
+                                }
+                            }
+
+                            else -> {
+                                Column {
+                                    workout.exercises.forEach { exercise ->
+                                        Row {
+                                            exercise.sections.forEach {
+                                                Card(
+                                                    onClick = {
+                                                    }
+                                                ) {
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -531,7 +564,7 @@ fun EditSetScreenPreview(
     @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
 ) {
     PreviewAppTheme(isDarkMode = false) {
-        EditSetScreenV2(
+        EditSetScreen(
             state = state,
             sendEvent = {},
             showVariationDialog = {}
@@ -545,7 +578,7 @@ fun EditSetScreenDarkPreview(
     @PreviewParameter(EditSetStateProvider::class) state: EditSetState,
 ) {
     PreviewAppTheme(isDarkMode = true) {
-        EditSetScreenV2(
+        EditSetScreen(
             state = state,
             sendEvent = {},
             showVariationDialog = {}

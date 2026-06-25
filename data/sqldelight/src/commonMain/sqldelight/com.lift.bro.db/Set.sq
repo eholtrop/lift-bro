@@ -11,7 +11,8 @@ CREATE TABLE LiftingSet (
     date INTEGER AS Instant NOT NULL,
     notes TEXT NOT NULL,
     rpe INTEGER,
-    videoUri TEXT
+    videoUri TEXT,
+    exerciseSectionId TEXT
 );
 
 getAllByMovement:
@@ -32,13 +33,13 @@ getEMaxForMovement:
 SELECT * FROM LiftingSet
 WHERE movementId = :movementId
 AND (date < :before OR :before = NULL)
-ORDER BY weight * reps DESC
+ORDER BY weight * (1 + reps / 30.0) DESC
 LIMIT 1;
 
 getMaxRepsForMovement:
 SELECT * FROM LiftingSet
 WHERE movementId = :movementId
-AND date < :before OR :before = NULL
+AND (date < :before OR :before = NULL)
 ORDER BY reps DESC
 LIMIT 1;
 
@@ -69,11 +70,16 @@ ORDER BY
     END DESC
 LIMIT :limit;
 
+getBySectionId:
+SELECT * FROM LiftingSet
+WHERE LiftingSet.exerciseSectionId = :sectionId;
+
 getByWorkoutId:
 SELECT * FROM LiftingSet
-JOIN ExerciseVariation ON ExerciseVariation.movementId = LiftingSet.movementId
-JOIN Exercise ON Exercise.id = ExerciseVariation.exerciseId
+JOIN ExerciseSection ON ExerciseSection.id = LiftingSet.exerciseSectionId
+JOIN Exercise ON Exercise.id = ExerciseSection.exerciseId
 JOIN Workout ON Workout.id = Exercise.workoutId
+JOIN Movement ON Movement.id = LiftingSet.movementId
 WHERE Workout.id = :workoutId
 ORDER BY LiftingSet.date DESC
 LIMIT :limit;
@@ -83,11 +89,14 @@ SELECT * FROM LiftingSet WHERE id = ?;
 
 save:
 INSERT OR REPLACE
-INTO LiftingSet(id, movementId, weight, reps, tempoDown, tempoHold, tempoUp, date, notes, rpe, videoUri)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INTO LiftingSet(id, movementId, weight, reps, tempoDown, tempoHold, tempoUp, date, notes, rpe, videoUri, exerciseSectionId)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteAllFromVariations:
-DELETE FROM LiftingSet WHERE movementId = ?;
+DELETE FROM LiftingSet WHERE movementId = :movementId;
+
+deleteAllForSections:
+DELETE FROM LiftingSet WHERE exerciseSectionId = :sectionId;
 
 delete:
 DELETE FROM LiftingSet WHERE id = ?;

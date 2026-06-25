@@ -9,6 +9,7 @@ import com.lift.bro.data.client.datasources.KtorLiftDataSource
 import com.lift.bro.data.client.datasources.KtorLiveStreamDataSource
 import com.lift.bro.data.client.datasources.KtorSetDataSource
 import com.lift.bro.data.client.datasources.KtorVariationDataSource
+import com.lift.bro.data.core.datasource.ExerciseDataSource
 import com.lift.bro.data.core.livestream.LiveStreamRepository
 import com.lift.bro.data.core.livestream.LiveStreamRepositoryImpl
 import com.lift.bro.data.core.repository.ExerciseRepository
@@ -119,8 +120,6 @@ val DependencyContainer.variationRepository: IVariationRepository
         VariationRepository(
             local = if (remoteUrl == null) {
                 SqlDelightVariationDataSource(
-                    categoryQueries = database.categoryQueries,
-                    setQueries = database.setQueries,
                     movementQueries = database.movementQueries,
                 )
             } else {
@@ -133,8 +132,6 @@ val DependencyContainer.localVariationRepository: IVariationRepository
     get() =
         VariationRepository(
             local = SqlDelightVariationDataSource(
-                categoryQueries = database.categoryQueries,
-                setQueries = database.setQueries,
                 movementQueries = database.movementQueries,
             )
         )
@@ -142,6 +139,7 @@ val DependencyContainer.localVariationRepository: IVariationRepository
 val DependencyContainer.workoutRepository: IWorkoutRepository
     get() = WorkoutRepository(
         database = database,
+        exerciseDataSource = exerciseDataSource
     )
 
 val DependencyContainer.liftRepository: ILiftRepository
@@ -168,11 +166,15 @@ val DependencyContainer.localLiftRepository: ILiftRepository
 val DependencyContainer.exerciseRepository: IExerciseRepository
     get() =
         ExerciseRepository(
-            local = SqldelightExerciseDataSource(
-                exerciseQueries = database.exerciseQueries,
-                setQueries = database.setQueries,
-            )
+            local = exerciseDataSource
         )
+
+private val DependencyContainer.exerciseDataSource: ExerciseDataSource get() =
+    SqldelightExerciseDataSource(
+        exerciseQueries = database.exerciseQueries,
+        setQueries = database.setQueries,
+        movementQueries = database.movementQueries,
+    )
 
 val DependencyContainer.goalsRepository: IGoalRepository
     get() = if (remoteUrl == null) {

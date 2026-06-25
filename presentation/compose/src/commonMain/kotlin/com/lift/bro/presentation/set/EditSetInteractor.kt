@@ -7,13 +7,16 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
+import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Tempo
+import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
+import com.lift.bro.domain.repositories.IWorkoutRepository
 import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.domain.repositories.Sorting
 import com.lift.bro.domain.serializers.InstantSerializer
@@ -34,6 +37,7 @@ import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
 import tv.dpal.flowvi.SideEffect
 import tv.dpal.flowvi.rememberInteractor
+import tv.dpal.ktx.datetime.toLocalDate
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
 import kotlin.math.max
@@ -63,6 +67,8 @@ data class EditSetState(
     val variation: SetVariation? = null,
     val videoUri: String? = null,
     val timerEnabled: Boolean = false,
+    val sectionId: String? = null,
+    val workout: Workout? = null,
 ) {
     val saveEnabled: Boolean get() = variation != null && reps != null && weight != null
 }
@@ -104,20 +110,26 @@ private fun editSetSource(
     setId: String,
     date: Instant? = null,
     movementId: String? = null,
+    sectionId: String? = null,
     setRepository: ISetRepository = dependencies.setRepository,
     variationRepository: IVariationRepository = dependencies.variationRepository,
     settingsRepository: ISettingsRepository = dependencies.settingsRepository,
+    workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
 ) = setRepository.listen(setId)
     .map {
         it ?: LBSet(
             id = setId,
             date = date ?: Clock.System.now(),
             variationId = movementId ?: "",
+            exerciseSectionId = sectionId,
         )
     }
     .flatMapLatest { set ->
-        variationRepository.listen(set.variationId)
-            .flatMapLatest { movement ->
+        combine(
+            variationRepository.listen(set.variationId),
+            workoutRepository.get(set.date.toLocalDate()),
+        ) { movement, workout -> movement to workout }
+            .flatMapLatest { (movement, workout) ->
                 combine(
                     setRepository.listenAll(
                         variationId = movement?.id,
@@ -134,6 +146,7 @@ private fun editSetSource(
                         movement = movement,
                         maxVariationSet = maxVariation,
                         maxLiftSet = if (maxLift?.variationId != maxVariation?.variationId) maxLift else null,
+                        workout = workout,
                     ).copy(
                         timerEnabled = settingsRepository.get(Setting.Timer)
                     )
@@ -162,15 +175,21 @@ fun rememberEditSetInteractor(
 fun rememberCreateSetInteractor(
     movementId: String?,
     date: Instant?,
+    sectionId: String?,
     navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current,
 ): Interactor<EditSetState?, EditSetEvent> {
     val id = rememberSaveable(movementId, date) { uuid4().toString() }
     return rememberInteractor(
         initialState = EditSetState(
-            id = id
+            id = id,
         ),
-        source = {
-            editSetSource(id, date, movementId)
+        source = { state ->
+            editSetSource(
+                setId = id,
+                date = state?.date ?: date,
+                movementId = state?.variation?.variation?.id ?: movementId,
+                sectionId = state?.sectionId ?: sectionId,
+            )
         },
         sideEffects = listOf(editSetSideEffects()) + listOf(
             SideEffect { _, _, event -> if (event is EditSetEvent.DeleteSetClicked) navCoordinator.onBackPressed() }
@@ -229,6 +248,7 @@ internal suspend fun LBSet.toUiState(
     movement: Movement?,
     maxVariationSet: LBSet?,
     maxLiftSet: LBSet?,
+    workout: Workout?,
 ) = EditSetState(
     id = this.id,
     variation = movement?.let {
@@ -256,6 +276,8 @@ internal suspend fun LBSet.toUiState(
         con = this.tempo.up
     ),
     date = this.date,
+    sectionId = this.exerciseSectionId,
+    workout = workout,
     notes = this.notes,
     rpe = this.rpe,
     mers = this.mer,
@@ -279,6 +301,7 @@ internal fun EditSetState.toDomain(): LBSet? =
             date = this.date,
             notes = this.notes,
             rpe = this.rpe,
+            exerciseSectionId = this.sectionId,
         )
     } else {
         null
