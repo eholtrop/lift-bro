@@ -34,7 +34,7 @@ kotlin {
     androidTarget()
     jvm()
     iosX64()
-    iosArm64()
+    iosArm64("ios")
     iosSimulatorArm64()
 
     sourceSets {
