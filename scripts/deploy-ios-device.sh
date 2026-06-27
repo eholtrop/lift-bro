@@ -14,7 +14,7 @@ echo ""
 # Pre-warm Gradle daemon on remote while we sync files
 echo "[1/3] Pre-warming Gradle daemon on $REMOTE_HOST..."
 ssh "eholtrop@$REMOTE_HOST" \
-  "cd $REMOTE_PATH && ./gradlew --stop > /dev/null 2>&1; ./gradlew -q --build-cache :presentation:compose:dependencies > /dev/null 2>&1 &"
+  "cd $REMOTE_PATH && ./gradlew --stop > /dev/null 2>&1; ./gradlew --version > /dev/null 2>&1 &"
 
 echo "[2/3] Syncing project to $REMOTE_HOST..."
 rsync -a --info=progress2 \
@@ -35,6 +35,8 @@ rsync -a --info=progress2 \
   --exclude 'iosApp/iosApp/GoogleService-Info.plist' \
   --exclude 'iosApp/Configuration.storekit' \
   --exclude 'iosApp/StoreKitTestCertificate.cer' \
+  --exclude 'local.properties' \
+  --exclude 'xcuserdata/' \
   . "eholtrop@$REMOTE_HOST:$REMOTE_PATH/"
 
 echo ""
@@ -42,6 +44,7 @@ echo "[3/3] Building iOS app on remote..."
 
 ssh "eholtrop@$REMOTE_HOST" "
    cd $REMOTE_PATH &&
+   ./gradlew --stop > /dev/null 2>&1 &&
    ~/.rbenv/shims/bundle exec fastlane ios build_debug_device device_udid:$DEVICE_UDID
 "
 
