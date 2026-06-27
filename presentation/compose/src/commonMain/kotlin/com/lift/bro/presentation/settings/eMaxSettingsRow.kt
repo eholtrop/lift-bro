@@ -47,7 +47,7 @@ fun eMaxSettingsRow() {
     eMaxSettingsRowContent(
         eMaxEnabled = emaxEnabled,
         tMaxEnabled = tmaxEnabled,
-        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro || BuildConfig.isDebug,
+        isPro = LocalSubscriptionStatusProvider.current.value == SubscriptionType.Pro,
         onEMaxToggle = { dependencies.settingsRepository.set(Setting.EMaxEnabled, it) },
         onTMaxToggle = { dependencies.settingsRepository.set(Setting.TMaxEnabled, it) }
     )

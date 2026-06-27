@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
 import androidx.compose.material3.Button
@@ -21,10 +23,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +43,13 @@ import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withAnnotation
+import androidx.compose.ui.text.withLink
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.lift.bro.AppPurchases
 import com.lift.bro.core.buildconfig.BuildKonfig
@@ -77,9 +91,16 @@ import lift_bro.core.generated.resources.url_terms_and_conditions
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
+enum class SettingsTab {
+    Profile, Application
+}
+
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun SettingsScreen() {
+fun SettingsScreen(
+    interactor: SettingsInteractor = rememberSettingsInteractor(),
+) {
+    val state by interactor.state.collectAsState()
     var showPaywall by remember { mutableStateOf(false) }
 
     LiftingScaffold(
@@ -103,7 +124,6 @@ fun SettingsScreen() {
             }
         },
         content = { padding ->
-
             var subscriptionType by LocalSubscriptionStatusProvider.current
             val localServer = LocalServer.current
 
@@ -152,20 +172,67 @@ fun SettingsScreen() {
                             ) {
                                 Text(stringResource(Res.string.settings_manage_subscription_cta))
                             }
+                        } else {
+                            Row {
+                                Text(
+                                    text = buildAnnotatedString {
+                                        append("Become a ")
+                                        withLink(
+                                            LinkAnnotation.Clickable(
+                                                tag = "Lift Pro",
+                                                styles = TextLinkStyles(
+                                                    style = LocalTextStyle.current.copy(
+                                                        fontWeight = FontWeight.Bold,
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                    ).toSpanStyle()
+                                                )
+                                            ) {
+                                                showPaywall = true
+
+                                            }
+                                        ) {
+                                            append("Lift Pro >")
+                                        }
+                                    })
+                            }
+                            CompositionLocalProvider(
+                                LocalTextStyle provides MaterialTheme.typography.labelSmall
+                            ) {
+                                Text("* Advanced Tracking Metrics")
+                                Text("* Experimental Features")
+                                Text("* Support Development")
+                            }
                         }
                     }
                 }
 
-                item {
-                    BackupSettingsRow()
+                stickyHeader {
+                    state.selectedTab.let { tab ->
+                        PrimaryTabRow(
+                            containerColor = MaterialTheme.colorScheme.background,
+                            selectedTabIndex = tab.ordinal
+                        ) {
+                            Tab(
+                                selected = tab == SettingsTab.Profile,
+                                onClick = {
+                                    interactor(SettingsEvent.ProfileTabSelected)
+                                },
+                                text = { Text("Profile") }
+                            )
+                            Tab(
+                                selected = tab == SettingsTab.Application,
+                                onClick = {
+                                    interactor(SettingsEvent.ApplicationTabSelected)
+                                },
+                                text = { Text("Application") }
+                            )
+                        }
+                    }
+
                 }
 
-                item {
-                    LanguageSettingsRow()
-                }
-
-                item {
-                    ThemeSettingsRow()
+                items(state.settings) { item ->
+                    SettingsRowLoader(item)
                 }
 
                 item {
@@ -176,6 +243,28 @@ fun SettingsScreen() {
                         text = stringResource(Res.string.settings_pro_features_header),
                         style = MaterialTheme.typography.headlineMedium,
                     )
+                }
+
+                items(state.proSettings) { item ->
+                    SettingsRowLoader(item)
+                }
+
+                if (state.experimentalSettings.isNotEmpty()) {
+                    item {
+                        SettingsRowItem(
+                            title = { Text("Experimental - Expect \uD83E\uDD97") }
+                        ) {
+                            Column {
+                                state.experimentalSettings.forEach {
+                                    SettingsRowLoader(it)
+                                }
+
+                                if (localServer != null) {
+                                    ServerSettingsRow(localServer)
+                                }
+                            }
+                        }
+                    }
                 }
 
                 item {
@@ -195,87 +284,6 @@ fun SettingsScreen() {
                         else -> {}
                     }
 
-                    // need to refresh payments whenever the paywal changes... hacky but works
-                    // should abstract
-                    LaunchedEffect(showPaywall) {
-                        AppPurchases.getCustomerInfo(
-                            onError = { error ->
-                                Sentry.captureException(Throwable(message = error.message))
-                            },
-                            onSuccess = { success ->
-                                if (success.entitlements.active.containsKey("pro")) {
-                                    subscriptionType = SubscriptionType.Pro
-                                }
-                            }
-                        )
-                    }
-                }
-
-                item {
-                    ClientSettingsRow()
-                }
-
-                item {
-                    SettingsRowItem(
-                        title = { Text("Experimental - Expect \uD83E\uDD97") }
-                    ) {
-                        Column {
-                            var timer by remember {
-                                mutableStateOf(false)
-                            }
-                            LaunchedEffect(Unit) {
-                                timer = dependencies.settingsRepository.get(Setting.Timer)
-                            }
-
-                            CheckField(
-                                title = "Video Recording",
-                                description = "Record Videos and attach them to Sets to better understand your form!",
-                                checked = timer,
-                                checkChanged = {
-                                    timer = it
-                                    dependencies.settingsRepository.set(Setting.Timer, it)
-                                }
-                            )
-
-                            var dashboardV3 by remember { mutableStateOf(false) }
-                            LaunchedEffect(Unit) {
-                                dashboardV3 = dependencies.settingsRepository.get(Setting.DashboardV3)
-                            }
-                            CheckField(
-                                title = "Dashboard V3",
-                                description = "No more tabs!",
-                                checked = dashboardV3,
-                                checkChanged = {
-                                    dashboardV3 = it
-                                    dependencies.settingsRepository.set(Setting.DashboardV3, it)
-                                }
-                            )
-
-                            if (subscriptionType == SubscriptionType.Pro && localServer != null) {
-                                SettingsRowItem(
-                                    modifier = Modifier.padding(top = MaterialTheme.spacing.half),
-                                    backgroundColor = MaterialTheme.colorScheme.surfaceContainer,
-                                    title = { Text("Lift Pros Only \uD83D\uDE0E") }
-                                ) {
-                                    ServerSettingsRow(localServer)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (subscriptionType == SubscriptionType.Pro) {
-                    item {
-                        MERSettingsRow()
-                    }
-
-                    item {
-                        TWMSettingsRow()
-                    }
-
-                    item {
-                        eMaxSettingsRow()
-                    }
                 }
 
                 item {
@@ -356,6 +364,21 @@ fun SettingsScreen() {
                     )
                 }
             }
+
+            // need to refresh payments whenever the paywal changes... hacky but works
+            // should abstract
+            LaunchedEffect(showPaywall) {
+                AppPurchases.getCustomerInfo(
+                    onError = { error ->
+                        Sentry.captureException(Throwable(message = error.message))
+                    },
+                    onSuccess = { success ->
+                        if (success.entitlements.active.containsKey("pro")) {
+                            subscriptionType = SubscriptionType.Pro
+                        }
+                    }
+                )
+            }
         }
     )
 
@@ -371,6 +394,65 @@ fun SettingsScreen() {
         exit = slideOutVertically { it } + fadeOut()
     ) {
         Paywall(options)
+    }
+}
+
+@Composable
+fun SettingsRowLoader(
+    setting: Setting<*>,
+) {
+    when (setting) {
+        Setting.AITranslationBannerDismissed -> TODO()
+        Setting.AnalyticsConsent -> TODO()
+        Setting.BackupSettings -> BackupSettingsRow()
+        Setting.Bro -> TODO()
+        Setting.ClientUrl -> ClientSettingsRow()
+        Setting.Consent -> TODO()
+        Setting.DashboardV3 -> {
+            var dashboardV3 by remember { mutableStateOf(false) }
+            LaunchedEffect(Unit) {
+                dashboardV3 = dependencies.settingsRepository.get(Setting.DashboardV3)
+            }
+            CheckField(
+                title = "Dashboard V3",
+                description = "No more tabs!",
+                checked = dashboardV3,
+                checkChanged = {
+                    dashboardV3 = it
+                    dependencies.settingsRepository.set(Setting.DashboardV3, it)
+                }
+            )
+        }
+
+        Setting.DeviceFtux -> TODO()
+        Setting.EMaxEnabled -> eMaxSettingsRow()
+        Setting.EditSetVersion -> TODO()
+        Setting.LatestReadReleaseNotes -> TODO()
+        Setting.LocaleOverride -> LanguageSettingsRow()
+        Setting.MerSettings -> MERSettingsRow()
+        Setting.ShowTotalWeightMoved -> TWMSettingsRow()
+        Setting.TMaxEnabled -> eMaxSettingsRow()
+        Setting.ThemeMode -> ThemeSettingsRow()
+        Setting.Timer -> {
+            var timer by remember {
+                mutableStateOf(false)
+            }
+            LaunchedEffect(Unit) {
+                timer = dependencies.settingsRepository.get(Setting.Timer)
+            }
+
+            CheckField(
+                title = "Video Recording",
+                description = "Record Videos and attach them to Sets to better understand your form!",
+                checked = timer,
+                checkChanged = {
+                    timer = it
+                    dependencies.settingsRepository.set(Setting.Timer, it)
+                }
+            )
+        }
+
+        Setting.UnitOfMeasure -> TODO()
     }
 }
 
