@@ -1,5 +1,30 @@
 [
     {
+        "versionId": "2026.06.26",
+        "notes": [
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix backup flow for Android and iOS"
+            }
+        ]
+    },
+    {
+        "versionId": "2026.06.19",
+        "notes": [
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Add AI Translation Consent"
+            },
+            {
+                "type": "fix",
+                "platform": "all",
+                "en": "Fix rotation crash"
+            }
+        ]
+    },
+    {
         "versionId": "2026.06.12",
         "notes": [
             {
