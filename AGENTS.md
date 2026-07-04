@@ -1,195 +1,63 @@
-# AGENTS.md - Lift Bro Development Guide
+# Lift Bro
 
-## Project Overview
+Kotlin Multiplatform app (Android + iOS) using Jetpack Compose Multiplatform. Tracks gym workouts. Custom MVI (flowvi), no ViewModels, no Dagger.
 
-Lift Bro is a Kotlin Multiplatform app using Jetpack Compose for Android and iOS. It tracks gym workouts with a custom MVI architecture (no ViewModels) and custom dependency injection.
+## Modules
 
-## Build Commands
+From `settings.gradle.kts`:
+- `:app-android` — Android app entry point
+- `:presentation:compose` — UI composables + interactors
+- `:presentation:server` — embedded Ktor server (depends on presentation:compose)
+- `:domain` — dependency-free domain models and repository interfaces
+- `:data:client` — Ktor client + remote datasources
+- `:data:sqldelight` — SQLDelight database
+- `:data:core` — repository implementations combining local/remote
+- `:libs:flowvi` — MVI library (also published as `tv.dpal:flowvi-*`)
+- `:libs:navi` — custom navigation library
+- `:libs:logging`, `:libs:ext:*`, `:libs:screenshot-processor`
 
-### Common Tasks
+Test files mirror source at `src/commonTest/kotlin/`.
+
+## Key Commands
+
 ```bash
-# Build all modules
-./gradlew build
-
-# Build debug APK only
-./gradlew assembleDebug
-
-# Clean build
-./gradlew clean
-```
-
-### Testing
-```bash
-# Run all tests
-./gradlew test
-
-# Run tests for a specific module
-./gradlew :domain:test
-./gradlew :presentation:compose:test
-
-# Run a single test class
-./gradlew :domain:test --tests "com.lift.bro.domain.models.LBSetTest"
-
-# Run a single test method
-./gradlew :domain:test --tests "com.lift.bro.domain.models.LBSetTest.calculateMax tests"
-
-# Run screenshot tests (validation)
-./gradlew validateScreenshotTests
-
-# Update screenshot tests
-./gradlew updateScreenshotTests
-```
-
-### Linting & Formatting
-```bash
-# Run detekt lint (fail on issues)
-./gradlew detekt
-
-# Auto-fix lint issues
-./gradlew detektFormat
-
-# Run detekt on specific module
-./gradlew :domain:detekt
-./gradlew :presentation:compose:detektFormat
+./gradlew :domain:test                                # single module tests
+./gradlew :domain:test --tests "com.lift.bro.domain.models.LBSetTest"  # single class
+./gradlew :domain:test --tests "com.lift.bro.domain.models.LBSetTest.calculateMax tests"  # method
+./gradlew validateScreenshotTests                     # validate
+./gradlew updateScreenshotTests                       # update
+./gradlew detekt                                       # lint all (fails on issues)
+./gradlew detektFormat                                 # auto-fix all modules
+./gradlew detektFormat --continue                      # fix what you can, report rest
+./gradlew generateArchDiagram                          # update README.md mermaid diagram
+./gradlew :app-android:assembleDebug                   # debug APK
+./gradlew clean                                         # full clean
 ```
 
 ## Architecture
 
-### Module Structure
-- **app-android**: Android app entry point
-- **domain**: Domain models and repository interfaces (dependency-free)
-- **data**: Repository implementations, SQLDelight database, Ktor client
-- **presentation**: UI Composables, MVI interactors (flowvi)
-- **libs**: Shared libraries (logging, navi, ext)
+- **flowvi MVI**: `Interactor<State, Event>` + `rememberInteractor()` + `SideEffect`. State is `@Serializable`. Events are sealed interfaces or classes. Reducer functions are pure and testable independently.
+- **Reducer testing pattern**: Extract pure reducer functions (e.g. `homeReducer`, `digitReducer`) and test state transitions directly. See `HomeReducerTest`, `EditLiftReducerTest`, `CalculatorInteractorTest`.
+- **DI**: `expect/actual class DependencyContainer` with extension properties for JIT repository construction. Platform `actual` in `androidMain`/`nativeMain`. Accessed via `dependencies` property.
+- **Repository dual-mode**: Each repository checks `settingsRepository.getClientUrl()` to choose local (SQLDelight) or remote (Ktor) datasource. `local*Repository` variants force local.
+- **Navigation**: Custom lib (`:libs:navi`) through `LiftBroNavCoordinator` / `LocalNavCoordinator`.
+- **BuildKonfig**: Environment variables (`LIFT_BRO_ADMOB_APP_ID`, `LIFT_BRO_SENTRY_DSN`, etc.) injected at build time via `com.codingfeline.buildkonfig`.
 
-### MVI Pattern (flowvi)
-- State: Immutable data classes with `@Serializable` for persistence
-- Events: Sealed interfaces for user actions
-- Interactors: `Interactor<State, Event>` with `rememberInteractor()`
-- SideEffects: Handle navigation and async operations
+## Testing
 
-Example structure:
-```kotlin
-@Serializable
-data class MyState(val value: String = "")
+- Framework: `kotlin.test` + `kotlinx.coroutines.test` (`runTest`) + `turbine` (Flow) + `mockk`
+- Screenshot tests in `app-android/src/screenshotTest/` using `@PreviewTest` annotation
+- Maestro UI tests in `.maestro/` (8 flow files) and `maestro_tests/`
 
-sealed interface MyEvent {
-    data class ValueChanged(val value: String): MyEvent
-    data object SubmitClicked: MyEvent
-}
+## Localization
 
-@Composable
-fun rememberMyInteractor(): Interactor<MyState, MyEvent> = rememberInteractor(
-    initialState = MyState(),
-    sideEffects = listOf(
-        SideEffect { state, event -> /* handle events */ }
-    )
-)
-```
+Strings in `presentation/compose/src/commonMain/composeResources/values/strings.xml`. Reference via `stringResource(Res.string.{name})`. Name semantically by usage location — e.g. `dashboard_toolbar_title`, not `welcome`. Every new string must also be added to all three translation files: `values-es/strings-es.xml` (Spanish), `values-fr/strings-fr.xml` (French), `values-pt/strings-pt.xml` (Portuguese). Suffix conventions: `_cta`, `_title`, `_subtitle`, `_label`, `_placeholder`, `_content_description`, `_text`, `_dialog_title`, `_paragraph_*`.
 
-### Dependency Injection
-Custom static injection via `DependencyContainer`:
-```kotlin
-object DependencyContainer {
-    // Lazy singletons
-    val liftRepository: ILiftRepository by lazy { LiftRepository(...) }
-    
-    // JIT via get()
-    fun createSetRepository(db: LBDatabase) = SetRepository(db)
-}
-```
+## Quirks & Gotchas
 
-## Code Style Guidelines
-
-### Naming Conventions
-- **Classes/Interfaces**: `PascalCase` (e.g., `LiftDetailsInteractor`)
-- **Functions/Properties**: `camelCase` (e.g., `calculateMax`)
-- **Constants**: `UPPER_SNAKE_CASE` (e.g., `MER_DENOMINATOR`)
-- **Packages**: lowercase (e.g., `com.lift.bro.domain.models`)
-
-### File Organization
-- One class/interface per file (filename matches class name)
-- Group related files in packages by feature
-- Test files in `src/commonTest/kotlin/` mirror main source structure
-
-### Imports
-- Explicit imports required (no wildcard except `java.util.*`)
-- Group: standard library → external → internal
-- Sort alphabetically within groups
-
-### Formatting (detekt enforced)
-- **Max line length**: 120 characters
-- **Indent**: 4 spaces (no tabs)
-- **No trailing whitespace**
-- **Newline at end of file**
-
-### Complexity Limits (detekt)
-- Max functions per class/interface/object: 11
-- Max cyclomatic complexity: 15
-- Max nested block depth: 4
-- Max parameters: 6 (ignore default, data classes)
-- Max return statements: 2
-
-### Error Handling
-- Use specific exception types (no generic `Exception`, `RuntimeException`, `Throwable`)
-- Never swallow exceptions silently (use `ignoredExceptionTypes` pattern)
-- Provide meaningful messages in exceptions
-
-### Type Safety
-- Avoid `!!` operator (prefer safe calls or `requireNotNull`)
-- Use `?` for nullable types
-- Prefer `val` over `var`
-- Use data classes for immutable models
-
-### Kotlin Specific
-- Use extension functions for domain-specific behavior
-- Use `@Composable` annotation for all Compose UI
-- Mark state classes as `@Serializable` for persistence
-- Use `when` expressions exhaustively
-
-## Testing Conventions
-
-### Test Structure
-```kotlin
-class MyClassTest {
-    @Test
-    fun `Given condition When action Then result`() {
-        // Arrange
-        val input = ...
-        
-        // Act
-        val result = functionUnderTest(input)
-        
-        // Assert
-        assertEquals(expected, result)
-    }
-}
-```
-
-### Test Dependencies
-- `kotlin.test` - testing framework
-- `kotlinx.coroutines.test` - coroutine testing
-- `turbine` - Flow testing
-
-## Detekt Configuration
-
-Key rules in `config/detekt/detekt.yml`:
-- `WildcardImport`: active (excludes `java.util.*`)
-- `ForbiddenComment`: blocks `TODO:`, `FIXME:`, `STOPSHIP:`
-- `MagicNumber`: allows -1, 0, 1, 2
-- `ReturnCount`: max 2
-- `ThrowsCount`: max 2
-- `TooManyFunctions`: 11 per file/class/interface
-
-## Common Issues
-
-- **Detekt failures**: Run `./gradlew detektFormat` to auto-fix
-- **Missing tests**: Add tests in `src/commonTest/kotlin/`
-- **Multiplatform issues**: Platform-specific code goes in `androidMain`, `nativeMain`, etc.
-
-## Environment Variables (Build/Release)
-- `LIFT_BRO_ADMOB_APP_ID`
-- `LIFT_BRO_AD_UNIT_ID`
-- `LIFT_BRO_SENTRY_DSN`
-- `REVENUE_CAT_API_KEY`
-- `STORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` (Android signing)
+- **flowvi composite build**: To use local `libs/flowvi` source instead of published artifact, run `./gradlew enableLocalFlowvi` (creates `libs/flowvi/enablecompositebuilds`). `./gradlew disableLocalFlowvi` to revert.
+- **detekt**: Each module has its own `detekt-baseline.xml`. Aggregated root tasks run on all subprojects. `buildUponDefaultConfig = true` in root `build.gradle.kts`.
+- **Pre-commit hook** (`hooks/pre-commit`): Runs `generateArchDiagram` then `detektFormat --continue`. Uses SDKMAN to select Java 21.
+- **iOS**: Native targets disabled on non-macOS (`kotlin.native.ignoreDisabledTargets=true`). CI uses Xcode 26 via fastlane.
+- **JVM target validation**: Explicitly set to `IGNORE` in `gradle.properties`.
+- **Gradle**: Configuration cache + parallel + 8G heap. Compose screenshot support enabled via `android.experimental.enableScreenshotTest=true`.
