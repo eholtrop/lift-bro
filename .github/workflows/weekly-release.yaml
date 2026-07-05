@@ -1,0 +1,150 @@
+name: Weekly Release
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
+
+env:
+  LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
+  LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
+  LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
+  REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY }}
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew detekt --continue
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew test
+
+  screenshot-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - run: ./gradlew :presentation:compose:validateDebugScreenshotTest -Pandroid.experimental.enableScreenshotTest=true
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: screenshot-diff-report
+          path: presentation/compose/build/reports/screenshotTest/
+
+  android-promote:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: key.json
+          json: ${{ secrets.FASTLANE_JSON }}
+      - run: bundle exec fastlane android promote_internal_to_prod
+
+  ios-promote:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Select Xcode
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -r | head -1)
+          if [ -z "$XCODE_PATH" ]; then
+            XCODE_PATH=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -r | head -1)
+          fi
+          if [ -z "$XCODE_PATH" ]; then
+            echo "No Xcode found at /Applications"
+          else
+            sudo xcode-select -s "$XCODE_PATH"
+          fi
+          xcode-select -p
+          xcodebuild -version
+      - name: Compute last Monday version
+        id: version
+        run: echo "version=$(date -v-7d +%Y.%m.%d)" >> $GITHUB_OUTPUT
+      - name: Submit for App Store review
+        env:
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+        run: bundle exec fastlane ios promote app_version:${{ steps.version.outputs.version }}
+
+  ios-beta-build:
+    runs-on: macos-latest
+    needs: [lint, test, screenshot-validation]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Select Xcode
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -r | head -1)
+          if [ -z "$XCODE_PATH" ]; then
+            XCODE_PATH=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -r | head -1)
+          fi
+          if [ -z "$XCODE_PATH" ]; then
+            echo "No Xcode found at /Applications"
+          else
+            sudo xcode-select -s "$XCODE_PATH"
+          fi
+          xcode-select -p
+          xcodebuild -version
+      - uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
+      - name: Build and Release to TestFlight
+        env:
+          MATCH_GIT_URL: ${{ secrets.MATCH_GIT_URL }}
+          MATCH_PASSWORD: ${{ secrets.FASTLANE_MATCH_PASSWORD }}
+          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
+          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }}
+          APPSTORE_PRIVATE_KEY: ${{ secrets.APPSTORE_PRIVATE_KEY }}
+          REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY_IOS }}
+        run: bundle exec fastlane ios beta build_number:${{ github.run_number }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ios-ipa
+          path: build/artifacts/ios/
+          if-no-files-found: warn
+          retention-days: 7
