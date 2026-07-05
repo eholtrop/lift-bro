@@ -283,6 +283,19 @@ platform :ios do
 #     )
   end
 
+  desc "Submit existing TestFlight build for App Store review"
+  lane :promote do |options|
+    deliver(
+      submit_for_review: true,
+      automatic_release: true,
+      skip_build_upload: true,
+      skip_metadata: true,
+      skip_screenshots: true,
+      force: true,
+      app_version: options[:app_version]
+    )
+  end
+
   def setup_keychain_for_codesign
     if ENV["CI"] == "true"
       # Already handled in before_all after setup_ci
