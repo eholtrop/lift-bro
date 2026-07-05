@@ -151,7 +151,7 @@ platform :ios do
       output_name: "ios_app_release.ipa",
       clean: true,
       silent: false,
-      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
@@ -168,7 +168,7 @@ platform :ios do
       output_name: "ios_app_debug.ipa",
       clean: true,
       silent: false,
-      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
@@ -185,7 +185,7 @@ platform :ios do
 
     xcargs = "PROVISIONING_PROFILE_SPECIFIER='match Development com.lift.bro' CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=VZPX29WT9H"
     if options[:build_number]
-      xcargs += " MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+      xcargs += " MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
     end
 
     gym(
@@ -219,7 +219,7 @@ platform :ios do
 
     xcargs = "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=VZPX29WT9H"
     if options[:build_number]
-      xcargs += " MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+      xcargs += " MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
     end
 
     gym(
