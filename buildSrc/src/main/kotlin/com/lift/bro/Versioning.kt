@@ -11,9 +11,6 @@ fun Project.versionCode(): Int {
 }
 
 fun Project.versionName(): String {
-    return if (project.hasProperty("versionName")) {
-        property("versionName").toString()
-    } else {
-        "local-build"
-    }
+    return System.getenv("LIFT_BRO_COMMIT_DATE")
+        ?: SimpleDateFormat("yyyy.MM.dd").format(Date())
 }
