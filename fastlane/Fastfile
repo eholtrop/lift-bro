@@ -283,6 +283,22 @@ platform :ios do
 #     )
   end
 
+  desc "Get the latest TestFlight build version"
+  lane :latest_testflight_version do
+    require 'spaceship'
+
+    builds = Spaceship::ConnectAPI::Build.all(
+      filter: { processingState: "VALID" },
+      sort: "-uploadedDate",
+      limit: 1
+    )
+
+    version = builds.first&.app_version
+    UI.user_error!("No valid TestFlight builds found - run ios-beta-build first") unless version
+
+    puts "VERSION:#{version}"
+  end
+
   desc "Submit existing TestFlight build for App Store review"
   lane :promote do |options|
     deliver(
