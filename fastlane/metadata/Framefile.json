@@ -1,0 +1,50 @@
+{
+  "device_frame_version": "latest",
+  "default": {
+    "keyword": {
+      "font": "./fonts/DMSans-Bold.ttf",
+      "color": "#FFFFFF",
+      "font_size": 48
+    },
+    "title": {
+      "font": "./fonts/provicali.otf",
+      "color": "#FFFFFF",
+      "font_size": 128
+    },
+    "padding": 50,
+    "show_complete_frame": true,
+    "use_platform": "ANDROID"
+  },
+  "data": [
+    {
+      "filter": "01_onboarding",
+      "title": { "text": "Start Your Journey" },
+      "keyword": { "text": "Easy Setup" }
+    },
+    {
+      "filter": "02_dashboard",
+      "title": { "text": "Track Your Progress" },
+      "keyword": { "text": "All Your Lifts" }
+    },
+    {
+      "filter": "03_workout",
+      "title": { "text": "Log Every Set" },
+      "keyword": { "text": "Quick Entry" }
+    },
+    {
+      "filter": "04_calendar",
+      "title": { "text": "Stay Consistent" },
+      "keyword": { "text": "Workout History" }
+    },
+    {
+      "filter": "05_movement",
+      "title": { "text": "Detailed Analytics" },
+      "keyword": { "text": "Track Progress" }
+    },
+    {
+      "filter": "07_rpe_dialog",
+      "title": { "text": "Advanced Tracking Metrics" },
+      "keyword": { "text": "RPE, MER, TWM, eMax" }
+    }
+  ]
+}

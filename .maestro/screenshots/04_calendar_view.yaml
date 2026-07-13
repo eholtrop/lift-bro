@@ -1,0 +1,13 @@
+# 04_calendar_view.yaml
+# Captures the calendar view with workout markers
+appId: com.lift.bro
+
+---
+- runFlow:
+    file: ../flows/skip_onboarding_with_backup.yaml
+- tapOn: "Calendar"
+- tapOn: "Previous Month"
+- waitForAnimationToEnd:
+      timeout: 1000
+- takeScreenshot:
+    path: "./build/generated/store-screenshots/04_calendar_view"

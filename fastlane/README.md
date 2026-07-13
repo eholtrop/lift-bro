@@ -13,6 +13,17 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### generate_backup_data
+
+```sh
+[bundle exec] fastlane generate_backup_data
+```
+
+Generate fresh backup data for screenshots
+
+----
+
+
 ## Android
 
 ### android build_release
@@ -30,16 +41,6 @@ Build the release artifact
 ```
 
 Install and run Emulator
-
-### android build_release_device
-
-```sh
-[bundle exec] fastlane android build_release_device
-```
-
-Run the project tests
-
-Build release artifact for physical iOS device (development signing)
 
 ### android test
 
@@ -64,6 +65,30 @@ Run the project Linter
 ```
 
 Deploy a new version to the Google Play
+
+### android push_backup_to_device
+
+```sh
+[bundle exec] fastlane android push_backup_to_device
+```
+
+Push test backup file to Android device/emulator
+
+### android generate_backup_data
+
+```sh
+[bundle exec] fastlane android generate_backup_data
+```
+
+Generate fresh backup data for screenshots
+
+### android generate_play_store_screenshots
+
+```sh
+[bundle exec] fastlane android generate_play_store_screenshots
+```
+
+Generate Play Store screenshots locally
 
 ### android promote_internal_to_prod
 
@@ -118,6 +143,14 @@ Build the debug artifact for iOS
 
 Build debug artifact for physical iOS device
 
+### ios build_release_device
+
+```sh
+[bundle exec] fastlane ios build_release_device
+```
+
+Build release artifact for physical iOS device (development signing)
+
 ### ios test
 
 ```sh
@@ -142,6 +175,22 @@ Run Linter for iOS (e.g., SwiftLint)
 
 Deploy a new beta version to TestFlight for iOS
 
+### ios push_backup_to_simulator
+
+```sh
+[bundle exec] fastlane ios push_backup_to_simulator
+```
+
+Push test backup file to iOS simulator
+
+### ios generate_app_store_screenshots
+
+```sh
+[bundle exec] fastlane ios generate_app_store_screenshots
+```
+
+Generate App Store screenshots locally
+
 ### ios deploy
 
 ```sh
@@ -149,6 +198,22 @@ Deploy a new beta version to TestFlight for iOS
 ```
 
 Submit a new version to the App Store for iOS
+
+### ios latest_testflight_version
+
+```sh
+[bundle exec] fastlane ios latest_testflight_version
+```
+
+Get the latest TestFlight build version
+
+### ios promote
+
+```sh
+[bundle exec] fastlane ios promote
+```
+
+Submit existing TestFlight build for App Store review
 
 ----
 

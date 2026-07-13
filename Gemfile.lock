@@ -126,7 +126,6 @@ GEM
     fastlane-plugin-android_sdk_update (2.0.0)
       fastlane-plugin-brew (~> 0.1.1)
       java-properties (~> 0.3.0)
-    fastlane-plugin-automated_test_emulator_run (1.6.0)
     fastlane-plugin-brew (0.1.1)
     fastlane-sirp (1.1.0)
     gh_inspector (1.1.3)
@@ -245,7 +244,6 @@ DEPENDENCIES
   fastlane
   fastlane-plugin-android_emulator
   fastlane-plugin-android_sdk_update (= 2.0.0)
-  fastlane-plugin-automated_test_emulator_run
   multi_json
 
 CHECKSUMS
@@ -292,7 +290,6 @@ CHECKSUMS
   fastlane (2.235.0) sha256=7de12cf4c4e242b68836aef859ba8e6b25bb1db7f6c8e2d705b024fb16a2ed65
   fastlane-plugin-android_emulator (1.2.1) sha256=51b68fac15b22150e92b41d95ffc978a0eef8ce1409ee0148d5d37fe969ccca7
   fastlane-plugin-android_sdk_update (2.0.0) sha256=6d0f4ad42561efe23984babe6c0309927693d360f1c8b455fb81b81c94678a46
-  fastlane-plugin-automated_test_emulator_run (1.6.0) sha256=95b7bf8b8da01dbc05b7ff0c9e82ef606f90bcbaef75c077838be6fe76655203
   fastlane-plugin-brew (0.1.1) sha256=c2d1c98ead82f78818621b5b1eb123e0bf9da7e1a7b3efeaac77a776725a7fbf
   fastlane-sirp (1.1.0) sha256=10bc94f9682efd8e1badfb31452a76dd8981f1f3a33717c765fde6d75b54d847
   gh_inspector (1.1.3) sha256=04cca7171b87164e053aa43147971d3b7f500fcb58177698886b48a9fc4a1939
