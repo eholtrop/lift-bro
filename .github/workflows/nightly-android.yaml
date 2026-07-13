@@ -1,5 +1,11 @@
 name: Nightly Android Build
 
+env:
+    LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
+    LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
+    LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
+    REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY_ANDROID }}
+
 on:
   schedule:
     - cron: '0 3 * * *'
@@ -8,11 +14,6 @@ on:
 permissions:
   contents: read
 
-env:
-  LIFT_BRO_ADMOB_APP_ID: ${{ secrets.LIFT_BRO_ADMOB_APP_ID }}
-  LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
-  LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
-  REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY_ANDROID }}
 
 jobs:
   check-changes:
@@ -50,8 +51,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
-      - name: Set commit date
-        run: echo "LIFT_BRO_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y.%m.%d)" >> $GITHUB_ENV
+      - uses: ./.github/actions/set-commit-date
       - run: ./gradlew detekt --continue
 
   test:
@@ -67,8 +67,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
-      - name: Set commit date
-        run: echo "LIFT_BRO_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y.%m.%d)" >> $GITHUB_ENV
+      - uses: ./.github/actions/set-commit-date
       - run: ./gradlew test
 
   screenshot-validation:
@@ -84,8 +83,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
-      - name: Set commit date
-        run: echo "LIFT_BRO_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y.%m.%d)" >> $GITHUB_ENV
+      - uses: ./.github/actions/set-commit-date
       - run: ./gradlew :presentation:compose:validateDebugScreenshotTest -Pandroid.experimental.enableScreenshotTest=true
       - uses: actions/upload-artifact@v4
         if: failure()
@@ -93,7 +91,7 @@ jobs:
           name: screenshot-diff-report
           path: presentation/compose/build/reports/screenshotTest/
 
-  deploy:
+  generate-screenshots:
     needs: [check-changes, lint, test, screenshot-validation]
     if: needs.check-changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
@@ -106,8 +104,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
-      - name: Set commit date
-        run: echo "LIFT_BRO_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y.%m.%d)" >> $GITHUB_ENV
+      - uses: ./.github/actions/set-commit-date
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.3
@@ -119,14 +116,67 @@ jobs:
           encodedString: ${{ secrets.RELEASE_KEYSTORE }}
       - uses: jsdaniell/create-json@v1.2.3
         with:
-          name: key.json
-          json: ${{ secrets.FASTLANE_JSON }}
+          name: google-services.json
+          json: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
+          dir: presentation/compose/src/androidMain
+      - name: Enable KVM group perms
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install ImageMagick
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: "-no-window -no-audio -gpu swiftshader_indirect -no-snapshot -no-boot-anim"
+          disable-animations: true
+          script: bundle exec fastlane android generate_play_store_screenshots
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: play-store-screenshots
+          path: fastlane/metadata/android/en-US/images/phoneScreenshots/
+          retention-days: 1
+
+  build-release:
+    needs: [check-changes, lint, test, screenshot-validation]
+    if: needs.check-changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - uses: ./.github/actions/set-commit-date
+      - uses: timheuer/base64-to-file@v1.2
+        with:
+          fileName: release.jks
+          fileDir: app-android
+          encodedString: ${{ secrets.RELEASE_KEYSTORE }}
       - uses: jsdaniell/create-json@v1.2.3
         with:
           name: google-services.json
           json: ${{ secrets.ANDROID_GOOGLE_SERVICES_JSON }}
           dir: presentation/compose/src/androidMain
-      - name: Deploy with Fastlane
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Build release AAB
         env:
           STORE_PASSWORD: ${{ secrets.KEYSTORE_PW }}
           KEY_ALIAS: ${{ secrets.KEYSTORE_USR }}
@@ -139,3 +189,56 @@ jobs:
         with:
           name: android-aab
           path: app-android/build/outputs/bundle/release/*.aab
+          retention-days: 1
+
+  generate-changelog:
+    needs: [check-changes]
+    if: needs.check-changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - name: Generate changelog
+        run: bundle exec fastlane android generate_changelog build_number:${{ github.run_number }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: fastlane/metadata/android/en-US/changelogs/
+          retention-days: 1
+
+  deploy:
+    needs: [check-changes, generate-screenshots, build-release, generate-changelog]
+    if: needs.check-changes.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.3
+          bundler-cache: true
+      - uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: key.json
+          dir: .
+          json: ${{ secrets.FASTLANE_JSON }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: play-store-screenshots
+          path: fastlane/metadata/android/en-US/images/phoneScreenshots/
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-aab
+          path: app-android/build/outputs/bundle/release/
+      - uses: actions/download-artifact@v4
+        with:
+          name: changelog
+          path: fastlane/metadata/android/en-US/changelogs/
+      - name: Deploy to Google Play beta
+        run: bundle exec fastlane android upload_to_playstore build_number:${{ github.run_number }}

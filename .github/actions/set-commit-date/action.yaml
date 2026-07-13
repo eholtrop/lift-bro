@@ -1,0 +1,7 @@
+name: Set commit date
+description: Sets LIFT_BRO_COMMIT_DATE from the latest commit date (used as Android/iOS version name)
+runs:
+  using: composite
+  steps:
+    - run: echo "LIFT_BRO_COMMIT_DATE=$(git log -1 --format=%cd --date=format:%Y.%m.%d)" >> "$GITHUB_ENV"
+      shell: bash

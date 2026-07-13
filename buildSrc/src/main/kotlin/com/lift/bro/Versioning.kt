@@ -11,6 +11,5 @@ fun Project.versionCode(): Int {
 }
 
 fun Project.versionName(): String {
-    return System.getenv("LIFT_BRO_COMMIT_DATE")
-        ?: SimpleDateFormat("yyyy.MM.dd").format(Date())
+    return System.getenv("LIFT_BRO_COMMIT_DATE") ?: "0000.00.00"
 }
