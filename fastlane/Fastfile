@@ -18,6 +18,13 @@ default_platform(:android)
 before_all do
   ENV["VERSION_NAME"] = `git log -1 --format=%cd --date=format:"%Y.%m.%d"`.strip
 end
+    desc "Generate fresh backup data for screenshots"
+    lane :generate_backup_data do
+      project_root = File.expand_path("..", __dir__)
+      output_path = File.join(project_root, "build/generated/test-data/screenshot_test_backup.json")
+      sh "python3", File.join(project_root, "scripts/generate_screenshot_backup.py"), output_path
+    end
+
 
 # Android
 platform :android do
@@ -29,14 +36,6 @@ platform :android do
 
     desc "Install and run Emulator"
     lane :run_android_emulator do
-#          android_sdk_update(
-#             compile_sdk_version:"36",
-#             build_tools_version:"36.0.0",
-#             additional_packages: [
-#                 "system-images;android-36;google_apis;x86_64",
-#                 "emulator"
-#             ]
-#         )
         android_emulator(
             name: "maestro_test_emulator",
             package: "system-images;android-36;google_apis;x86_64",
@@ -53,10 +52,115 @@ platform :android do
        gradle(task: "detekt --continue")
     end
 
-    desc "Deploy a new version to the Google Play"
+    desc "Push test backup file to Android device/emulator"
+    lane :push_backup_to_device do
+      project_root = File.expand_path("..", __dir__)
+      sh File.join(project_root, "scripts/push-test-backup.sh"), "android"
+    end
+
+    desc "Generate Play Store screenshots locally"
+    lane :generate_play_store_screenshots do
+      project_root = File.expand_path("..", __dir__)
+
+      # 1. Generate fresh backup data
+      generate_backup_data
+
+      # 2. Push backup file to device
+      push_backup_to_device
+
+      # 3. Build and install debug APK
+      gradle(task: ":app-android:installDebug")
+
+      # 4. Run Maestro screenshot flows
+      Dir.chdir(project_root) do
+        sh "maestro", "test", File.join(project_root, ".maestro/screenshots/")
+      end
+
+
+      Dir.glob(File.join(project_root, "build/generated/store-screenshots/*.png")).each do |png|
+        sh "convert", png, "-resize", "1080x2340!", png
+      end
+
+      # 6. Run frameit to add device frames
+      Dir.chdir(File.join(project_root, "build/generated/store-screenshots")) do
+        sh "fastlane", "frameit"
+      end
+
+      # 5. Copy screenshots to frameit directory and resize to Pixel 5 dimensions
+      sh "mkdir", "-p", File.join(project_root, "fastlane/metadata/android/en-US/images/phoneScreenshots")
+      Dir.glob(File.join(project_root, "build/generated/store-screenshots/*_framed.png")).each do |png|
+        sh "cp", png, File.join(project_root, "fastlane/metadata/android/en-US/images/phoneScreenshots/")
+      end
+
+      UI.success "Framed screenshots ready in fastlane/metadata/android/en-US/images/phoneScreenshots/"
+    end
+
+    desc "Build release AAB"
+    lane :build_release_aab do |options|
+      build_number = options[:build_number]
+      UI.user_error!("build_number is required") unless build_number
+      gradle(task: "bundleRelease", flags: "-PbuildNumber=#{build_number}")
+    end
+
+    desc "Generate changelog from release_notes.json"
+    lane :generate_changelog do |options|
+      build_number = options[:build_number]
+      UI.user_error!("build_number is required") unless build_number
+
+      project_root = File.expand_path("..", __dir__)
+      version_code = build_number.to_i + 156
+      changelog_dir = File.join(project_root, "fastlane/metadata/android/en-US/changelogs")
+      sh "mkdir", "-p", changelog_dir
+
+      release_notes_path = File.join(project_root,
+        "presentation/compose/src/commonMain/composeResources/files/release_notes.json")
+      release_notes = JSON.parse(File.read(release_notes_path))
+
+      android_notes = release_notes.select { |entry|
+        entry["notes"].any? { |n| n["platform"] == "all" || n["platform"] == "android" }
+      }.last(3).reverse
+
+      lines = []
+      android_notes.each do |ver|
+        lines << "<b>Version #{ver["versionId"]}</b>"
+        ver["notes"].each do |note|
+          next unless note["platform"] == "all" || note["platform"] == "android"
+          lines << "<li>#{note["en"]}</li>"
+        end
+        lines << ""
+      end
+
+      File.write(File.join(changelog_dir, "#{version_code}.txt"), lines.join("\n").strip)
+      UI.success "Changelog written for versionCode #{version_code}"
+    end
+
+    desc "Upload AAB + metadata to Google Play Store"
+    lane :upload_to_playstore do |options|
+      build_number = options[:build_number]
+      project_root = File.expand_path("..", __dir__)
+
+      UI.user_error!("build_number is required") unless build_number
+
+      supply(
+        track: "beta",
+        version_code: build_number,
+        release_status: "completed",
+        json_key: File.join(project_root, "key.json"),
+        metadata_path: File.join(project_root, "fastlane/metadata/android"),
+      )
+    end
+
+    desc "Deploy a new version to Google Play beta (sequential, for local use)"
     lane :deploy do |options|
       gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]} -PversionName=#{ENV['VERSION_NAME']}")
       supply(track: "beta")
+      build_number = options[:build_number]
+      UI.user_error!("build_number is required") unless build_number
+
+      generate_play_store_screenshots
+      build_release_aab(build_number: build_number)
+      generate_changelog(build_number: build_number)
+      upload_to_playstore(build_number: build_number)
     end
 
     desc "Promote internal build to prod on Google Play"
@@ -162,17 +266,21 @@ platform :ios do
   desc "Build the debug artifact for iOS"
   lane :build_debug do |options|
     match_development
+
+    xcargs = options[:build_number] ? "MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil
+
     gym(
       scheme: "iosApp",
       project: "iosApp/iosApp.xcodeproj",
       configuration: "Debug",
       sdk: "iphonesimulator",
-      export_method: "development",
-      output_directory: "build/artifacts/ios",
-      output_name: "ios_app_debug.ipa",
+      destination: "generic/platform=iOS Simulator",
+      derived_data_path: options[:derived_data_path],
       clean: true,
       silent: false,
-      xcargs: options[:build_number] ? "MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
+      skip_package_ipa: true,
+      skip_archive: true,
+      xcargs: xcargs,
     )
   end
 
@@ -263,6 +371,65 @@ platform :ios do
       notify_external_testers: true, # Set to true to automatically notify testers
       # groups: ["Internal Testers"] # Optional: specific groups to notify
     )
+  end
+
+  desc "Push test backup file to iOS simulator"
+  lane :push_backup_to_simulator do
+    project_root = File.expand_path("..", __dir__)
+    sh File.join(project_root, "scripts/push-test-backup.sh"), "ios"
+  end
+
+  desc "Generate App Store screenshots locally"
+  lane :generate_app_store_screenshots do
+    project_root = File.expand_path("..", __dir__)
+    device_type = "iPhone 17 Pro"
+
+    # 1. Boot simulator
+    booted = `xcrun simctl list devices booted`.include?(device_type)
+    unless booted
+      sh "xcrun", "simctl", "boot", device_type
+    end
+    simulator_udid = `xcrun simctl list devices available`.match(/#{device_type} \(([A-F0-9-]+)\)/)[1]
+    UI.message "Simulator booted: #{device_type} (#{simulator_udid})"
+
+    begin
+      # 2. Generate fresh backup data
+      generate_backup_data
+
+      # 3. Build debug IPA for simulator
+      derived_data = File.join(project_root, "build/generated/derived-data/ios")
+      build_debug(derived_data_path: derived_data)
+
+      # 4. Install app on simulator
+      app_path = File.join(derived_data, "Build/Products/Debug-iphonesimulator/Lift Bro.app")
+      UI.user_error!("Built app not found at #{app_path}") unless File.exist?(app_path)
+      sh "xcrun", "simctl", "install", simulator_udid, app_path
+
+      # 5. Push backup file to simulator
+      push_backup_to_simulator
+
+      # 6. Run Maestro screenshot flows
+      Dir.chdir(project_root) do
+        sh "maestro", "test", File.join(project_root, ".maestro/screenshots/")
+      end
+
+      # 7. Copy screenshots to frameit directory
+      sh "mkdir", "-p", File.join(project_root, "fastlane/screenshots/en-US/images/phoneScreenshots")
+      Dir.glob(File.join(project_root, "build/generated/store-screenshots/*.png")).each do |png|
+        sh "cp", png, File.join(project_root, "fastlane/screenshots/en-US/images/phoneScreenshots/")
+      end
+
+      # 8. Run frameit to add device frames
+      Dir.chdir(File.join(project_root, "fastlane/screenshots")) do
+        sh "fastlane", "frameit", "ios"
+      end
+
+      UI.success "Framed screenshots ready in fastlane/screenshots/en-US/images/phoneScreenshots/"
+    ensure
+      # Shut down simulator
+      sh "xcrun", "simctl", "shutdown", simulator_udid rescue nil
+      UI.message "Simulator shut down."
+    end
   end
 
   desc "Submit a new version to the App Store for iOS"

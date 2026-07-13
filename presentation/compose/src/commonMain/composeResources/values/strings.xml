@@ -142,9 +142,9 @@ Soreness or pain?</string>
     <string name="onboarding_setup_screen_select_lifts_title">Select some Lifts! (the fun bit)</string>
     <string name="onboarding_setup_screen_select_uom_title">Select your preferred\nUnit of Measure</string>
     <string name="onboarding_setup_screen_title">LET'S GET STARTED</string>
-    <string name="onboarding_skip_screen_continue_cta">🧭 Just put me in Coach!</string>
-    <string name="onboarding_skip_screen_restore_cta">🛺 Restore from a Backup</string>
-    <string name="onboarding_skip_screen_setup_cta">🙏 Help me setup some Lifts</string>
+    <string name="onboarding_skip_screen_continue_cta">🫡 Just put me in Coach!</string>
+    <string name="onboarding_skip_screen_restore_cta">🦺 Restore from a Backup</string>
+    <string name="onboarding_skip_screen_setup_cta">🙏 Help me setup things up!</string>
     <string name="onboarding_skip_screen_subtitle">How would you like to get things started?</string>
     <string name="onboarding_skip_screen_title">LET'S\nGOOOOO!</string>
 

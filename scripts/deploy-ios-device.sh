@@ -19,6 +19,7 @@ ssh "eholtrop@$REMOTE_HOST" \
 echo "[2/3] Syncing project to $REMOTE_HOST..."
 rsync -a --info=progress2 \
   --delete \
+  --exclude '.bundle/config' \
   --exclude '.git' \
   --exclude '.idea/' \
   --exclude '.gradle/' \
@@ -29,7 +30,6 @@ rsync -a --info=progress2 \
   --exclude 'iosApp/build/' \
   --exclude 'node_modules/' \
   --exclude 'marketing-website/' \
-  --exclude '.maestro/' \
   --exclude 'maestro_tests/' \
   --exclude 'hooks/' \
   --exclude 'iosApp/iosApp/GoogleService-Info.plist' \
@@ -45,6 +45,7 @@ echo "[3/3] Building iOS app on remote..."
 ssh "eholtrop@$REMOTE_HOST" "
    cd $REMOTE_PATH &&
    ./gradlew --stop > /dev/null 2>&1 &&
+   ~/.rbenv/shims/bundle install &&
    ~/.rbenv/shims/bundle exec fastlane ios build_debug_device device_udid:$DEVICE_UDID
 "
 
