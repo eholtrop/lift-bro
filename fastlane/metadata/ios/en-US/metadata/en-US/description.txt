@@ -1,0 +1,12 @@
+Lift Bro is a workout tracking app designed for lifters who want to track their progress and improve their strength.
+
+Features:
+- Track all your lifts with detailed set/rep/weight logging
+- Monitor your progress over time with charts and analytics
+- Calendar view to see your workout history
+- Backup and restore your data
+- Support for multiple exercise variations
+- Track RPE (Rate of Perceived Exertion) for each set
+- Customizable settings to match your preferences
+
+Whether you're a beginner or an experienced lifter, Lift Bro helps you stay consistent and track your gains.
