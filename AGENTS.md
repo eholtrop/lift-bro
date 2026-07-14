@@ -32,6 +32,8 @@ Test files mirror source at `src/commonTest/kotlin/`.
 ./gradlew generateArchDiagram                          # update README.md mermaid diagram
 ./gradlew :app-android:assembleDebug                   # debug APK
 ./gradlew clean                                         # full clean
+./gradlew koverHtmlReport                               # HTML coverage report
+./gradlew koverXmlReport                                # JaCoCo XML for CI
 ```
 
 ## Architecture
@@ -46,8 +48,28 @@ Test files mirror source at `src/commonTest/kotlin/`.
 ## Testing
 
 - Framework: `kotlin.test` + `kotlinx.coroutines.test` (`runTest`) + `turbine` (Flow) + `mockk`
+- Coverage: `kotlinx-kover` (`./gradlew koverHtmlReport`)
 - Screenshot tests in `app-android/src/screenshotTest/` using `@PreviewTest` annotation
 - Maestro UI tests in `.maestro/` (8 flow files) and `maestro_tests/`
+
+### Test Doubles
+
+Use the simplest test double that satisfies the test's intent:
+
+| Double | When to Use | Example |
+|--------|-------------|---------|
+| **Stub** | Test needs a fixed return value; behavior never changes across tests | `FakeSetRepository` returning `flowOf(emptyList())` |
+| **Fake** | Test needs real(ish) in-memory implementation that retains state across calls | `FakeSetDataSource` storing sets in a `MutableList` |
+| **Mock** | Test needs to verify an interaction — method called with specific arguments | Verifying `analytics.trackScreenView("DASHBOARD")` on `AddLiftClicked` |
+| **Spy** | Rare: wraps a real object to observe calls without replacing it | Android Intent verification (avoid in KMP) |
+
+**Rules:**
+- Prefer **Fakes** over Mocks. Fakes test behavior end-to-end; Mocks test interaction in isolation.
+- Use **Mocks** only when verifying side effects (analytics, navigation, logging) where the return value is irrelevant.
+- **Stubs** are acceptable for simple delegation tests where the return value is all that matters.
+- **Spies** are rarely needed; avoid unless testing platform-specific interop.
+- Test doubles are hand-written or use MockK. Place shared doubles in `src/commonTest/kotlin/.../testdoubles/`.
+- Test doubles should be `private class` inside the test file unless shared across multiple test files.
 
 ## Localization
 

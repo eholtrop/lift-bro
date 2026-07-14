@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.sentry)
     alias(libs.plugins.ksp)
     alias(libs.plugins.screenshot)
+    alias(libs.plugins.kover)
 }
 
 compose.resources {

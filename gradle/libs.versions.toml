@@ -43,6 +43,7 @@ camera-video = "1.3.4"
 datastore = "1.1.1"
 tink = "1.12.0"
 
+kover = "0.9.8"
 ksp = "2.1.21-2.0.1"
 kotlinpoet = "1.18.1"
 auto-service = "1.1.1"
@@ -135,6 +136,7 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 vanniktech-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-publish"}
 buildkonfig = { id = "com.codingfeline.buildkonfig", version.strictly = "0.21.2" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 sentry = { id = "io.sentry.kotlin.multiplatform.gradle", version.strictly = "0.13.0" }
