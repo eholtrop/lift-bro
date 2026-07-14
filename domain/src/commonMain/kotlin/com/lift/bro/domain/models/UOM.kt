@@ -9,8 +9,8 @@ fun UOM.convert(value: Double, convertTo: UOM): Double {
     if (this == convertTo) return value
 
     return when (this) {
-        UOM.KG -> value * LBS_TO_KG_COEFFICIENT
-        UOM.POUNDS -> value * KG_TO_LBS_COEFFICIENT
+        UOM.KG -> value * KG_TO_LBS_COEFFICIENT
+        UOM.POUNDS -> value * LBS_TO_KG_COEFFICIENT
     }
 }
 
