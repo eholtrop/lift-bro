@@ -23,8 +23,8 @@ data class VariationProgress(
     val maxSet: LBSet,
 ) {
     fun progress(bodyWeight: Boolean): Double = when (bodyWeight) {
-        true -> ((maxSet.reps - minSet.reps) / minSet.reps).toDouble()
-        else -> ((maxSet.weight - minSet.weight) / minSet.weight).toDouble()
+        true -> (maxSet.reps - minSet.reps).toDouble() / minSet.reps.toDouble()
+        else -> (maxSet.weight - minSet.weight) / minSet.weight
     }
 }
 

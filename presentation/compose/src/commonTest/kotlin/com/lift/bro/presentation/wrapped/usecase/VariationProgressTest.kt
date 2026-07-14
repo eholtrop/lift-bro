@@ -77,7 +77,7 @@ class VariationProgressTest {
     }
 
     @Test
-    fun `Given reps increase from 10 to 15 When progress calculated Then returns 0 point 0 due to integer division`() {
+    fun `Given reps increase from 10 to 15 When progress calculated Then returns 0 point 5`() {
         // Given
         val minSet = LBSet(id = "1", variationId = "v1", weight = 0.0, reps = 10)
         val maxSet = LBSet(id = "2", variationId = "v1", weight = 0.0, reps = 15)
@@ -86,9 +86,8 @@ class VariationProgressTest {
         // When
         val result = progress.progress(bodyWeight = true)
 
-        // Then - Integer division: (15 - 10) / 10 = 0 (Long), then converted to 0.0 (Double)
-        // This is a bug in the implementation but we test the actual behavior
-        assertEquals(0.0, result, 0.001)
+        // Then - (15 - 10) / 10 = 0.5 (50% increase)
+        assertEquals(0.5, result, 0.001)
     }
 
     @Test

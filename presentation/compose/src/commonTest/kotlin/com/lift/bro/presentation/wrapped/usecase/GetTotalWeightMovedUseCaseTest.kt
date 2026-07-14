@@ -1,12 +1,8 @@
 package com.lift.bro.presentation.wrapped.usecase
 
 import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.repositories.ISetRepository
-import com.lift.bro.domain.repositories.Order
-import com.lift.bro.domain.repositories.Sorting
-import kotlinx.coroutines.flow.Flow
+import com.lift.bro.testdoubles.FakeSetRepository
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.LocalDate
 import kotlin.test.Test
@@ -134,41 +130,5 @@ class GetTotalWeightMovedUseCaseTest {
 
         // Then - 100 + 150 + 200 = 450
         assertEquals(450.0, result)
-    }
-
-    // Fake repository for testing
-    private class FakeSetRepository(
-        private val sets: List<LBSet>
-    ) : ISetRepository {
-        var lastStartDate: LocalDate? = null
-        var lastEndDate: LocalDate? = null
-
-        override fun listenAll(
-            startDate: LocalDate?,
-            endDate: LocalDate?,
-            variationId: String?,
-            reps: Long?,
-            limit: Long,
-            sorting: Sorting,
-            order: Order
-        ): Flow<List<LBSet>> {
-            lastStartDate = startDate
-            lastEndDate = endDate
-            return flowOf(sets)
-        }
-
-        override fun listenAllForLift(
-            liftId: String?,
-            startDate: LocalDate?,
-            endDate: LocalDate?,
-            limit: Long,
-            sorting: Sorting
-        ): Flow<List<LBSet>> = flowOf(sets)
-
-        override fun listen(id: String): Flow<LBSet?> = flowOf(null)
-        override suspend fun save(lbSet: LBSet) {}
-        override suspend fun delete(lbSet: LBSet) {}
-        override suspend fun deleteAll() {}
-        override suspend fun deleteAll(variationId: String) {}
     }
 }
