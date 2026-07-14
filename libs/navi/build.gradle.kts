@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.vanniktech.publish)
+    alias(libs.plugins.kover)
 }
 
 kotlin {

@@ -17,6 +17,47 @@ plugins {
 
     alias(libs.plugins.buildkonfig) apply false
     alias(libs.plugins.detekt) apply false
+    alias(libs.plugins.kover)
+}
+
+kover {
+    reports {
+        total {
+            html {
+                title.set("Lift Bro Coverage")
+            }
+            xml {
+                onCheck.set(true)
+            }
+            filters {
+                excludes {
+                    classes(
+                        "*.sq.*",
+                        "*.SQ*",
+                        "*BuildKonfig*",
+                        "*Factory*",
+                        "*_Module*",
+                        "*.di.*",
+                    )
+                }
+            }
+        }
+    }
+}
+
+dependencies {
+    kover(project(":domain"))
+    kover(project(":data:core"))
+    kover(project(":data:sqldelight"))
+    kover(project(":data:client"))
+    kover(project(":presentation:compose"))
+    kover(project(":presentation:server"))
+    kover(project(":libs:logging"))
+    kover(project(":libs:ext:flow"))
+    kover(project(":libs:ext:ktx-datetime"))
+    kover(project(":libs:ext:compose"))
+    kover(project(":libs:navi"))
+    kover(project(":app-android"))
 }
 
 subprojects {
