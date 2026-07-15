@@ -88,6 +88,89 @@ Responsible for fetching the data from the source as well as map from the Data m
 
 Any extra libraries that could be used across all layers. Or things that I may be looking to extract and provide via maven
 
+## Database Schema
+
+Diagram generated using `./gradlew :data:sqldelight:generateErDiagram`
+<!-- er-diagram-start -->
+```mermaid
+erDiagram
+    LiftingLog {
+        TEXT id PK
+        INTEGER date
+        TEXT notes
+        INTEGER vibe_check
+    }
+    Workout {
+        TEXT id PK
+        TEXT finisher
+        TEXT warmup
+        INTEGER date
+    }
+    Filter {
+        TEXT id PK
+        TEXT name
+    }
+    FilterCondition {
+        TEXT id PK
+        TEXT filterId FK
+        TEXT fieldType
+        TEXT operator
+        TEXT value
+    }
+    Goal {
+        TEXT id PK
+        TEXT name
+        INTEGER achieved
+        INTEGER created_at
+        INTEGER updated_at
+    }
+    Category {
+        TEXT id PK
+        TEXT name
+        INTEGER color
+    }
+    Exercise {
+        TEXT id PK
+        TEXT workoutId FK
+    }
+    ExerciseVariation {
+        TEXT id PK
+        TEXT exerciseId FK
+        TEXT movementId FK
+    }
+    Movement {
+        TEXT id PK
+        TEXT categoryId FK
+        TEXT name
+        TEXT notes
+        INTEGER favourite
+        INTEGER body_weight
+    }
+    LiftingSet {
+        TEXT id PK
+        TEXT movementId FK
+        REAL weight
+        INTEGER reps
+        INTEGER tempoDown
+        INTEGER tempoHold
+        INTEGER tempoUp
+        INTEGER date
+        TEXT notes
+        INTEGER rpe
+        TEXT videoUri
+    }
+
+    Filter ||--o{ FilterCondition : ""
+    Workout ||--o{ Exercise : ""
+    Exercise ||--o{ ExerciseVariation : ""
+    Movement ||--o{ ExerciseVariation : ""
+    Category ||--o{ Movement : ""
+    Movement ||--o{ LiftingSet : ""
+```
+<!-- er-diagram-end -->
+
+Full schema reference: [docs/database-er-diagram.md](docs/database-er-diagram.md)
+
 ## Dependencies!
 Lift Bro started out as a side project where I also wanted to tinker with replacing some of the "standard" libraries for android development
 
