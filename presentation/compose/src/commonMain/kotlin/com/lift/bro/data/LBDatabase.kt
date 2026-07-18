@@ -86,6 +86,7 @@ class LBDatabase(
         database.setQueries.deleteAll()
         database.exerciseQueries.deleteAll()
         database.workoutQueries.deleteAll()
+        database.liftingLogQueries.deleteAll()
     }
 
     val exerciseDataSource = LBExerciseDataSource(
