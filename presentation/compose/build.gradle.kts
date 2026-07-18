@@ -53,6 +53,7 @@ kotlin {
             implementation(project(":data:sqldelight"))
             implementation(project(":data:client"))
             implementation(project(":data:core"))
+            implementation(project(":data:settings"))
             implementation(project(":libs:ext:flow"))
             implementation(project(":libs:logging"))
             implementation(project(":libs:ext:ktx-datetime"))
