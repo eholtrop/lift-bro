@@ -13,12 +13,14 @@ graph TD
   subgraph data
     data:client
     data:core
+    data:settings
     data:sqldelight
   end
   subgraph libs
     libs:ext
     libs:logging
     libs:navi
+    libs:screenshot-processor
     libs:compose
     libs:flow
     libs:ktx-datetime
@@ -31,10 +33,12 @@ graph TD
  app-android -.-> presentation:compose
  app-android -.-> presentation:server
  app-android -.-> domain
+ app-android -.-> presentation:compose
  data:client -.-> domain
  data:client -.-> data:core
  data:client -.-> libs:logging
  data:core -.-> domain
+ data:settings -.-> domain
  data:sqldelight -.-> libs:ktx-datetime
  data:sqldelight -.-> domain
  data:sqldelight -.-> data:core
@@ -43,6 +47,7 @@ graph TD
  presentation:compose -.-> data:sqldelight
  presentation:compose -.-> data:client
  presentation:compose -.-> data:core
+ presentation:compose -.-> data:settings
  presentation:compose -.-> libs:flow
  presentation:compose -.-> libs:logging
  presentation:compose -.-> libs:ktx-datetime
@@ -227,4 +232,3 @@ Environment variables used at build/runtime (via BuildKonfig or Gradle propertie
 Android release signing (for release builds):
 - STORE_PASSWORD
 - KEY_ALIAS
-- KEY_PASSWORD

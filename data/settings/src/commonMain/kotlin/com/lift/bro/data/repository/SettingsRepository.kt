@@ -1,7 +1,6 @@
 package com.lift.bro.data.repository
 
 import com.benasher44.uuid.uuid4
-import com.lift.bro.AppPurchases
 import com.lift.bro.data.datasource.UserPreferencesDataSource
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
@@ -116,7 +115,7 @@ class SettingsRepository(
             Setting.Consent -> dataSource.getSerializable<Consent>(key, null)
             Setting.DashboardV3 -> dataSource.getBool(key, false)
             Setting.DeviceFtux -> dataSource.getBool(key, false)
-            Setting.EMaxEnabled -> dataSource.getBool(key, AppPurchases.isUserPro())
+            Setting.EMaxEnabled -> dataSource.getBool(key, false)
             Setting.EditSetVersion -> dataSource.getInt(key, 1)
             Setting.AnalyticsConsent -> dataSource.getSerializable<AnalyticsConsent>(
                 key,
@@ -127,10 +126,9 @@ class SettingsRepository(
             )
             Setting.LatestReadReleaseNotes -> dataSource.getString(key, null)
             Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null)
-                ?: MERSettings(enabled = AppPurchases.isUserPro())
 
-            Setting.ShowTotalWeightMoved -> dataSource.getBool(key, AppPurchases.isUserPro())
-            Setting.TMaxEnabled -> dataSource.getBool(key, AppPurchases.isUserPro())
+            Setting.ShowTotalWeightMoved -> dataSource.getBool(key, false)
+            Setting.TMaxEnabled -> dataSource.getBool(key, false)
             Setting.ThemeMode -> dataSource.getString(key, null)?.let { ThemeMode.valueOf(it) } ?: ThemeMode.System
             Setting.Timer -> dataSource.getBool(key, false)
             Setting.UnitOfMeasure -> Settings.UnitOfWeight(UOM.valueOf(dataSource.getString(key, "POUNDS") ?: "POUNDS"))
