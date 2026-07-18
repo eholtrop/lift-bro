@@ -65,8 +65,6 @@ class LBDatabase(
         movementQueries = database.movementQueries
     )
 
-    val logDataSource = database.liftingLogQueries
-
     @Deprecated("use the workoutRepository instead")
     val workoutDataSource = database.workoutQueries
 
@@ -77,6 +75,8 @@ class LBDatabase(
     val exerciseQueries get() = database.exerciseQueries
 
     val workoutQueries get() = database.workoutQueries
+
+    val liftingLogQueries get() = database.liftingLogQueries
 
     val goalQueries get() = database.goalQueries
 

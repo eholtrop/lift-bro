@@ -2,13 +2,12 @@ package com.lift.bro.presentation.backup
 
 import androidx.compose.runtime.Composable
 import com.lift.bro.Backup
-import com.lift.bro.data.datasource.flowToList
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.liftRepository
+import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
-import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Setting
 import io.github.vinceglb.filekit.FileKit
@@ -27,7 +26,6 @@ import kotlinx.datetime.todayIn
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.json.Json
-import tv.dpal.ext.flow.mapEach
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
 import tv.dpal.flowvi.Reducer
@@ -60,14 +58,7 @@ fun rememberBackupInteractor(): BackupInteractor = rememberInteractor(
             dependencies.variationRepository.listenAll().nullable().take(1).onStart { emit(null) },
             dependencies.setRepository.listenAll().nullable().take(1).onStart { emit(null) },
             dependencies.workoutRepository.getAll().nullable().take(1).onStart { emit(null) },
-            dependencies.database.logDataSource.getAll().flowToList().take(1).mapEach {
-                LiftingLog(
-                    id = it.id,
-                    date = it.date,
-                    notes = it.notes ?: "",
-                    vibe = it.vibe_check?.toInt(),
-                )
-            }.nullable().onStart { emit(null) },
+            dependencies.liftingLogRepository.getAll().take(1).nullable().onStart { emit(null) },
         ) { categories, movements, sets, workouts, logs ->
             BackupState(
                 Backup(
