@@ -12,6 +12,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
 class SqlDelightLiftingLogRepository(
@@ -34,12 +35,14 @@ class SqlDelightLiftingLogRepository(
             .flowOn(dispatcher)
 
     override suspend fun save(log: LiftingLog) {
-        liftingLogQueries.save(
-            id = log.id,
-            date = log.date,
-            notes = log.notes,
-            vibe_check = log.vibe?.toLong(),
-        )
+        withContext(dispatcher) {
+            liftingLogQueries.save(
+                id = log.id,
+                date = log.date,
+                notes = log.notes,
+                vibe_check = log.vibe?.toLong(),
+            )
+        }
     }
 }
 
