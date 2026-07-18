@@ -4,6 +4,7 @@ import com.lift.bro.data.LBDatabase
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.exerciseRepository
 import com.lift.bro.di.liftRepository
+import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
@@ -90,12 +91,7 @@ class RestoreUseCase(
         }
 
         backup.liftingLogs?.forEach {
-            dependencies.database.logDataSource.save(
-                id = it.id,
-                notes = it.notes,
-                date = it.date,
-                vibe_check = it.vibe?.toLong(),
-            )
+            dependencies.liftingLogRepository.save(it)
         }
 
         // Restore workouts

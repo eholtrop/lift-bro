@@ -18,6 +18,7 @@ import com.lift.bro.data.core.repository.SetRepository
 import com.lift.bro.data.core.repository.VariationRepository
 import com.lift.bro.data.repository.WorkoutRepository
 import com.lift.bro.data.sqldelight.datasource.SqlDelightGoalDataSource
+import com.lift.bro.data.sqldelight.datasource.SqlDelightLiftingLogRepository
 import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightExerciseDataSource
 import com.lift.bro.data.sqldelight.datasource.SqldelightLiftDataSource
@@ -29,6 +30,7 @@ import com.lift.bro.domain.filter.FilterRepository
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.IGoalRepository
 import com.lift.bro.domain.repositories.ILiftRepository
+import com.lift.bro.domain.repositories.ILiftingLogRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.ISettingsRepository
 import com.lift.bro.domain.repositories.IVariationRepository
@@ -142,6 +144,11 @@ val DependencyContainer.localVariationRepository: IVariationRepository
 val DependencyContainer.workoutRepository: IWorkoutRepository
     get() = WorkoutRepository(
         database = database,
+    )
+
+val DependencyContainer.liftingLogRepository: ILiftingLogRepository
+    get() = SqlDelightLiftingLogRepository(
+        liftingLogQueries = database.liftingLogQueries,
     )
 
 val DependencyContainer.liftRepository: ILiftRepository
