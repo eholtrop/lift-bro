@@ -2,8 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>NoWildcardImports:JvmLiftBroServer.kt$import io.ktor.server.cio.*</ID>
-    <ID>NoWildcardImports:JvmLiftBroServer.kt$import io.ktor.server.engine.*</ID>
     <ID>TooGenericExceptionCaught:AndroidLiftBroServer.kt$AndroidLiftBroServer$e: Exception</ID>
     <ID>TooGenericExceptionCaught:LiftBroServerApp.kt$e: Exception</ID>
     <ID>WildcardImport:JvmLiftBroServer.kt$import io.ktor.server.cio.*</ID>

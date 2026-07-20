@@ -1,8 +1,25 @@
 #!/bin/sh
 #
-# Pre-commit hook that runs generateArchDiagram before each commit
+# Pre-commit hook: ktlint format on staged .kt files + generateArchDiagram
 #
 
+# --- ktlint on staged Kotlin files ---
+STAGED_KT_FILES=$(git diff --cached --name-only --diff-filter=ACM -- '*.kt')
+
+if [ -n "$STAGED_KT_FILES" ]; then
+    echo "Running ktlint on staged Kotlin files..."
+    echo "$STAGED_KT_FILES" | xargs ktlint --format
+    if [ $? -ne 0 ]; then
+        echo "Error: ktlint formatting failed. Commit aborted."
+        exit 1
+    fi
+    echo "$STAGED_KT_FILES" | xargs git add
+    echo "ktlint formatting complete."
+else
+    echo "No staged .kt files. Skipping ktlint."
+fi
+
+# --- generateArchDiagram ---
 echo "Running architecture diagram generation..."
 
 export SDKMAN_DIR="$HOME/.sdkman"
@@ -10,15 +27,11 @@ export SDKMAN_DIR="$HOME/.sdkman"
 [ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ] && . "$SDKMAN_DIR/bin/sdkman-init.sh"
 sdk use java 21.0.9-jbr
 
-# Run the gradle task
 ./gradlew generateArchDiagram
-./gradlew detektFormat --continue
-
-# Check the exit code
 if [ $? -ne 0 ]; then
     echo "Error: generateArchDiagram failed. Commit aborted."
     exit 3
 fi
 
-echo "Architecture diagram generated successfully."
+echo "All checks passed."
 exit 0

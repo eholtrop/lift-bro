@@ -50,12 +50,6 @@ output-reports:
   # - 'MdOutputReport'
   # - 'SarifOutputReport'
 
-formatting:
-  active: true
-  autoCorrect: true
-  SpacingAroundColon:
-    active: false
-
 comments:
   active: true
   AbsentOrWrongFileLicense:

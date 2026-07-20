@@ -3,7 +3,6 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>MatchingDeclarationName:LiftBroClient.kt$LiftBroClientConfig</ID>
-    <ID>NoWildcardImports:JvmLiftBroClient.kt$import io.ktor.client.engine.cio.*</ID>
     <ID>TooGenericExceptionCaught:KtorLiftBroClient.kt$e: Exception</ID>
     <ID>WildcardImport:JvmLiftBroClient.kt$import io.ktor.client.engine.cio.*</ID>
   </CurrentIssues>

@@ -12,6 +12,22 @@ indent_size = 4
 indent_size = 4
 max_line_length = off
 
+# ktlint configuration
+ktlint_code_style = intellij_idea
+ij_kotlin_name_count_to_use_star_import = 2147483647
+ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
+ij_kotlin_packages_to_use_import_on_demand = java.util.*
+# Rules disabled to match existing project style (detekt-formatting defaults)
+ktlint_standard_colon-spacing = disabled
+ktlint_standard_trailing-comma-on-call-site = disabled
+ktlint_standard_trailing-comma-on-declaration-site = disabled
+ktlint_standard_function-naming = disabled
+ktlint_standard_blank-line-between-when-conditions = disabled
+ktlint_standard_function-expression-body = disabled
+ktlint_standard_function-signature = disabled
+ktlint_standard_class-signature = disabled
+ktlint_standard_enum-wrapping = disabled
+
 [*.gradle.kts]
 indent_size = 4
 

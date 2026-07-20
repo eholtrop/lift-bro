@@ -2,7 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
     <ID>ComplexCondition:EditSetInteractor.kt$this.id != null &amp;&amp; variation != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator&lt;Destination&gt; = rememberNavCoordinator&lt;Destination&gt;(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:CategoryDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun CategoryDetailsScreen( interactor: Interactor&lt;CategoryDetailsState, CategoryDetailsEvent&gt;, )</ID>
@@ -25,13 +24,6 @@
     <ID>EmptyFunctionBlock:GetTotalWeightMovedUseCaseTest.kt$GetTotalWeightMovedUseCaseTest.FakeSetRepository${}</ID>
     <ID>EmptyFunctionBlock:StoreManager.native.kt$StoreManager${ }</ID>
     <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
-    <ID>Filename:AudioPlayer.native.kt$com.lift.bro.audio.AudioPlayer.native.kt</ID>
-    <ID>Filename:CameraPermission.kt$com.lift.bro.presentation.camera.CameraPermission.kt</ID>
-    <ID>Filename:EncryptionKeyProvider.android.kt$com.lift.bro.data.EncryptionKeyProvider.android.kt</ID>
-    <ID>Filename:EncryptionKeyProvider.native.kt$com.lift.bro.data.EncryptionKeyProvider.native.kt</ID>
-    <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
-    <ID>Filename:LBDatabase.native.kt$com.lift.bro.data.LBDatabase.native.kt</ID>
-    <ID>Filename:eMaxSettingsRow.kt$com.lift.bro.presentation.settings.eMaxSettingsRow.kt</ID>
     <ID>ForbiddenComment:AudioPlayer.native.kt$AudioPlayerImpl$// TODO: Implement native audio</ID>
     <ID>ForbiddenComment:EmptyHomeScreen.kt$// TODO: need to setup back handling in onboarding</ID>
     <ID>ForbiddenComment:RepWeightSelector.kt$// TODO: figure out the accessibility here</ID>
@@ -50,28 +42,7 @@
     <ID>MatchingDeclarationName:WrappedConsistencyScreen.kt$WrappedConsistencyState</ID>
     <ID>MatchingDeclarationName:WrappedRepScreen.kt$WrappedRepState</ID>
     <ID>MatchingDeclarationName:WrappedWeightScreen.kt$WrappedWeightState</ID>
-    <ID>MaximumLineLength:App.kt$ </ID>
-    <ID>MaximumLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$ </ID>
-    <ID>MaximumLineLength:CategoryDetailsScreen.kt$ </ID>
-    <ID>MaximumLineLength:DatabaseMigrationManager.kt$DatabaseMigrationManager$ </ID>
-    <ID>MaximumLineLength:EditSetInteractor.kt$ </ID>
-    <ID>MaximumLineLength:EditSetScreen.kt$ </ID>
-    <ID>MaximumLineLength:HomeScreen.kt$ </ID>
-    <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
-    <ID>MaximumLineLength:OnboardingSetupScreen.kt$ </ID>
-    <ID>MaximumLineLength:RecordingScreen.kt$ </ID>
-    <ID>MaximumLineLength:RunningTimerOverlay.kt$ </ID>
-    <ID>MaximumLineLength:TimerScreen.kt$ </ID>
-    <ID>MaximumLineLength:TimerTicker.kt$ </ID>
-    <ID>MaximumLineLength:Toolbar.kt$ </ID>
-    <ID>MaximumLineLength:WorkoutCalendarInteractor.kt$ </ID>
-    <ID>MaximumLineLength:WorkoutCalendarScreen.kt$ </ID>
-    <ID>MaximumLineLength:WrappedLandingScreen.kt$ </ID>
-    <ID>MaximumLineLength:WrappedProgressInteractor.kt$ </ID>
-    <ID>MaximumLineLength:WrappedProgressScreen.kt$ </ID>
     <ID>NestedBlockDepth:ServerSettingsRow.android.kt$actual fun getLocalIPAdderess(): String?</ID>
-    <ID>NoWildcardImports:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
-    <ID>NoWildcardImports:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
     <ID>TooGenericExceptionCaught:CameraPreview.android.kt$AndroidCameraController$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e2: Exception</ID>
@@ -97,6 +68,5 @@
     <ID>UnusedPrivateProperty:WrappedProgressScreen.kt$val minSet = sets.minOf { it.second }</ID>
     <ID>WildcardImport:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>WildcardImport:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
-    <ID>Wrapping:RecordingInteractor.kt$(</ID>
   </CurrentIssues>
 </SmellBaseline>
