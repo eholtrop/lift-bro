@@ -19,8 +19,6 @@ ij_kotlin_name_count_to_use_star_import_for_members = 2147483647
 ij_kotlin_packages_to_use_import_on_demand = java.util.*
 # Rules disabled to match existing project style (detekt-formatting defaults)
 ktlint_standard_colon-spacing = disabled
-ktlint_standard_trailing-comma-on-call-site = disabled
-ktlint_standard_trailing-comma-on-declaration-site = disabled
 ktlint_standard_function-naming = disabled
 ktlint_standard_blank-line-between-when-conditions = disabled
 ktlint_standard_function-expression-body = disabled
