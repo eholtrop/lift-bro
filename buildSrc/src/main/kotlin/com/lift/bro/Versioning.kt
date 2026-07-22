@@ -6,7 +6,7 @@ import java.util.Date
 
 fun Project.versionCode(): Int {
     return if (project.hasProperty("buildNumber")) {
-        property("buildNumber").toString().toInt() + 156
+        property("buildNumber").toString().toInt()
     } else {
         1
     }
