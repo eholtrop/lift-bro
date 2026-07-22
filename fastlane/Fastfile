@@ -15,12 +15,16 @@
 
 default_platform(:android)
 
+before_all do
+  ENV["VERSION_NAME"] = `git log -1 --format=%cd --date=format:"%Y.%m.%d"`.strip
+end
+
 # Android
 platform :android do
 
     desc "Build the release artifact"
     lane :build_release do
-        gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
+        gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]} -PversionName=#{ENV['VERSION_NAME']}")
     end
 
     desc "Install and run Emulator"
@@ -51,7 +55,7 @@ platform :android do
 
     desc "Deploy a new version to the Google Play"
     lane :deploy do |options|
-      gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]}")
+      gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]} -PversionName=#{ENV['VERSION_NAME']}")
       supply(track: "beta")
     end
 
@@ -151,7 +155,7 @@ platform :ios do
       output_name: "ios_app_release.ipa",
       clean: true,
       silent: false,
-      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{ENV['VERSION_NAME']} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
@@ -168,7 +172,7 @@ platform :ios do
       output_name: "ios_app_debug.ipa",
       clean: true,
       silent: false,
-      xcargs: options[:build_number] ? "MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
+      xcargs: options[:build_number] ? "MARKETING_VERSION=#{ENV['VERSION_NAME']} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil,
     )
   end
 
@@ -185,7 +189,7 @@ platform :ios do
 
     xcargs = "PROVISIONING_PROFILE_SPECIFIER='match Development com.lift.bro' CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM=VZPX29WT9H"
     if options[:build_number]
-      xcargs += " MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+      xcargs += " MARKETING_VERSION=#{ENV['VERSION_NAME']} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
     end
 
     gym(
@@ -219,7 +223,7 @@ platform :ios do
 
     xcargs = "CODE_SIGN_STYLE=Automatic DEVELOPMENT_TEAM=VZPX29WT9H"
     if options[:build_number]
-      xcargs += " MARKETING_VERSION=#{Time.now.strftime('%Y.%m.%d')} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+      xcargs += " MARKETING_VERSION=#{ENV['VERSION_NAME']} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
     end
 
     gym(
