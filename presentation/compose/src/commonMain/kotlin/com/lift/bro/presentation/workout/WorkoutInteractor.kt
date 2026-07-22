@@ -85,7 +85,11 @@ sealed class CreateWorkoutEvent {
 
     data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
     data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
-    data class DuplicateSet(val set: LBSet, val forceToday: Boolean = false): CreateWorkoutEvent()
+    data class DuplicateSet(
+        val set: LBSet,
+        val forceToday: Boolean = false,
+        val sectionId: String? = null
+    ): CreateWorkoutEvent()
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteExercise(val exercise: ExerciseItem): CreateWorkoutEvent()
 
@@ -255,6 +259,7 @@ fun workoutSideEffects(
                             Clock.System
                                 .now()
                         },
+                        exerciseSectionId = event.sectionId ?: event.set.exerciseSectionId
                     )
                 )
             }

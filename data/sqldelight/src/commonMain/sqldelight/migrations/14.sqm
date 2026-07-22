@@ -11,13 +11,29 @@ SET exerciseSectionId = (
     LIMIT 1
 );
 
-ALTER TABLE ExerciseVariation RENAME TO ExerciseSection;
+CREATE TABLE ExerciseSection (
+    id TEXT NOT NULL PRIMARY KEY,
+    exerciseId TEXT NOT NULL,
+    referenceSectionId TEXT,
+    primaryMovementId TEXT,
+    name TEXT,
+    sort_order INTEGER NOT NULL DEFAULT 0
+);
 
-ALTER TABLE ExerciseSection ADD COLUMN name TEXT;
-ALTER TABLE ExerciseSection ADD COLUMN sort_order INTEGER DEFAULT 0;
-ALTER TABLE ExerciseSection ADD COLUMN referenceSectionId TEXT DEFAULT NULL;
-ALTER TABLE ExerciseSection RENAME COLUMN movementId TO primaryMovementId;
-ALTER TABLE ExerciseSection MODIFY primaryMovementId TYPE NULL;
+INSERT INTO ExerciseSection (id, exerciseId, referenceSectionId, primaryMovementId, name, sort_order)
+SELECT
+    id,
+    exerciseId,
+    NULL AS referenceSectionId,
+    movementId AS primaryMovementId,
+    NULL AS name,
+    (ROW_NUMBER() OVER (
+        PARTITION BY exerciseId
+        ORDER BY rowid
+    ) - 1) AS sort_order
+FROM ExerciseVariation;
+
+DROP TABLE ExerciseVariation;
 
 CREATE VIEW IF NOT EXISTS KeyMovementSetsView AS
 SELECT
@@ -34,10 +50,12 @@ SELECT
     videoUri,
     exerciseSectionId,
     (weight * (1 + reps / 30.0)) AS eMax,
-    ROW_NUMBER() OVER (
-        PARTITION BY movementId
-        ORDER BY CASE WHEN reps = 1 THEN weight ELSE -1 END DESC, id DESC
-    ) AS rn_orm,
+    CASE WHEN reps = 1 THEN
+        ROW_NUMBER() OVER (
+            PARTITION BY movementId, reps
+            ORDER BY weight DESC, id DESC
+        )
+     END AS rn_orm,
     ROW_NUMBER() OVER (
         PARTITION BY movementId
         ORDER BY date DESC, id DESC

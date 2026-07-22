@@ -70,6 +70,7 @@ Use the simplest test double that satisfies the test's intent:
 - **Spies** are rarely needed; avoid unless testing platform-specific interop.
 - Test doubles are hand-written or use MockK. Place shared doubles in `src/commonTest/kotlin/.../testdoubles/`.
 - Test doubles should be `private class` inside the test file unless shared across multiple test files.
+
 ## Compose Previews
 
 - Place previews at the bottom of the composable's source file.

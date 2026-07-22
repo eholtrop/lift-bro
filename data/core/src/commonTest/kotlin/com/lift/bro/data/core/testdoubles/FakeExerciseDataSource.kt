@@ -2,7 +2,8 @@ package com.lift.bro.data.core.testdoubles
 
 import com.lift.bro.data.core.datasource.ExerciseDataSource
 import com.lift.bro.domain.models.Exercise
-import com.lift.bro.domain.models.MovementId
+import com.lift.bro.domain.models.ExerciseId
+import com.lift.bro.domain.models.Section
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -13,16 +14,16 @@ class FakeExerciseDataSource(
         private set
     var savedExercise: Exercise? = null
         private set
-    var lastExerciseId: String? = null
-        private set
-    var lastVariationId: MovementId? = null
-        private set
     var deletedId: String? = null
         private set
-    var deletedVariationSetId: String? = null
+    var savedSection: Section? = null
+        private set
+    var lastDeletedSection: Section? = null
+        private set
+    var lastDeletedSectionCascading: Boolean? = null
         private set
 
-    override fun get(workoutId: String): Flow<List<Exercise>> {
+    override fun listenAll(workoutId: String?): Flow<List<Exercise>> {
         lastWorkoutId = workoutId
         return flowOf(exercises)
     }
@@ -31,27 +32,17 @@ class FakeExerciseDataSource(
         savedExercise = exercise
     }
 
-    override suspend fun saveVariation(exerciseId: String, variationId: MovementId) {
-        lastExerciseId = exerciseId
-        lastVariationId = variationId
-    }
-
-    override suspend fun delete(id: String) {
+    override suspend fun delete(id: ExerciseId) {
         deletedId = id
     }
 
-    override suspend fun deleteVariation(exerciseId: String, variationId: MovementId) {
-        lastExerciseId = exerciseId
-        lastVariationId = variationId
+    override suspend fun save(section: Section) {
+        savedSection = section
     }
 
-    override suspend fun deleteVariationSets(variationSetId: String) {
-        deletedVariationSetId = variationSetId
-    }
-
-    override suspend fun addExercise(workoutId: String, exerciseId: String) {
-        lastWorkoutId = workoutId
-        lastExerciseId = exerciseId
+    override suspend fun delete(section: Section, cascading: Boolean) {
+        lastDeletedSection = section
+        lastDeletedSectionCascading = cascading
     }
 }
 

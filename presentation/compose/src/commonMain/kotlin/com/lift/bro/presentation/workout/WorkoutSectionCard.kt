@@ -3,6 +3,7 @@ package com.lift.bro.presentation.workout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
@@ -18,9 +19,11 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +31,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
@@ -59,6 +67,8 @@ import lift_bro.core.generated.resources.workout_section_card_secondary_cta
 import lift_bro.core.generated.resources.workout_section_card_warning_dialog_title
 import org.jetbrains.compose.resources.stringResource
 import tv.dpal.compose.padding.vertical.padding
+import tv.dpal.ext.ktx.datetime.toString
+import kotlin.time.Instant
 
 @Composable
 fun WorkoutSectionCard(
@@ -69,6 +79,7 @@ fun WorkoutSectionCard(
     index: Int? = null,
     footer: @Composable () -> Unit = {},
 ) {
+    val coordinator = LocalNavCoordinator.current
     val sectionSets = section.sets
 
     Card(
@@ -80,11 +91,11 @@ fun WorkoutSectionCard(
             ) {
                 Column(
                     modifier =
-                        Modifier
-                            .padding(
-                                top = MaterialTheme.spacing.threeQuarters,
-                                start = MaterialTheme.spacing.one,
-                            ),
+                    Modifier
+                        .padding(
+                            top = MaterialTheme.spacing.threeQuarters,
+                            start = MaterialTheme.spacing.one,
+                        ),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -122,10 +133,10 @@ fun WorkoutSectionCard(
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription =
-                                    stringResource(
-                                        Res.string.workout_section_card_secondary_cta,
-                                        "$prefix Section ${section.primaryMovement?.name}".trim(),
-                                    ),
+                                stringResource(
+                                    Res.string.workout_section_card_secondary_cta,
+                                    "$prefix Section ${section.primaryMovement?.name}".trim(),
+                                ),
                             )
                         }
                     }
@@ -152,40 +163,136 @@ fun WorkoutSectionCard(
             }
 
             val copyIndex = remember(section.sets) { section.sets.indexOfLast { !it.recommended } }
+            val previousSetColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .6f)
             Column(
-                modifier =
-                    Modifier
-                        .padding(
-                            horizontal = MaterialTheme.spacing.quarter,
-                            top = MaterialTheme.spacing.half,
-                        ).background(
-                            color = MaterialTheme.colorScheme.surfaceContainer,
-                            shape = MaterialTheme.shapes.small,
-                        ),
+                modifier = Modifier.padding(
+                    horizontal = MaterialTheme.spacing.quarter,
+                    top = MaterialTheme.spacing.half,
+                ).background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = MaterialTheme.shapes.small,
+                ).border(
+                    color = previousSetColor,
+                    width = 2.dp,
+                    shape = MaterialTheme.shapes.small,
+                ).clip(MaterialTheme.shapes.small),
             ) {
                 when (section.sets.isEmpty()) {
                     true -> {
                         section.primaryMovement?.let { pm ->
-                            pm.latestSet?.let {
-                                SetInfoRow(
-                                    modifier =
-                                        Modifier.padding(
-                                            horizontal = MaterialTheme.spacing.one,
-                                            vertical = MaterialTheme.spacing.half,
-                                        ),
-                                    set = it,
+                            val title: @Composable (String, Instant) -> AnnotatedString = { title, date ->
+                                buildAnnotatedString {
+                                    append(title)
+
+                                    withStyle(
+                                        MaterialTheme.typography.labelSmall.copy(
+                                            fontWeight = FontWeight.Bold
+                                        ).toSpanStyle(),
+                                    ) {
+                                        append(" (${date.toString("MMM d")})")
+                                    }
+                                }
+                            }
+
+                            val modifier: (LBSet) -> Modifier = { set ->
+                                Modifier.clickable(
+                                    onClick = {
+                                        coordinator.present(
+                                            Destination.EditSet(setId = set.id)
+                                        )
+                                    },
+                                    onClickLabel = "Open"
+                                ).border(
+                                    color = previousSetColor,
+                                    width = 2.dp,
+                                ).padding(
+                                    horizontal = MaterialTheme.spacing.one,
+                                    vertical = MaterialTheme.spacing.one,
                                 )
                             }
-                            pm.maxReps?.let {
-                                SetInfoRow(
-                                    set = it,
+
+                            CompositionLocalProvider(
+                                value = LocalContentColor provides MaterialTheme.colorScheme.onSurface.copy(
+                                    alpha = .6f
                                 )
-                            }
-                            if (LocalEMaxSettings.current) {
-                                pm.eMax?.let {
+                            ) {
+                                pm.latestSet?.let {
                                     SetInfoRow(
+                                        modifier = modifier(it),
+                                        label = {
+                                            Text(title("Latest Set", it.date))
+                                        },
                                         set = it,
-                                    )
+                                    ) {
+                                        IconButton(
+                                            onClick = {
+                                                eventHandler(
+                                                    CreateWorkoutEvent.DuplicateSet(it, true, sectionId = section.id)
+                                                )
+                                            }
+                                        ) {
+                                            Icon(
+                                                imageVector = Icons.Default.ContentCopy,
+                                                contentDescription = "Copy"
+                                            )
+                                        }
+                                    }
+                                }
+                                if (LocalEMaxSettings.current) {
+                                    pm.eMax?.let {
+                                        SetInfoRow(
+                                            modifier = modifier(it),
+                                            label = {
+                                                Text(title("eMax Rep", it.date))
+                                            },
+                                            set = it,
+                                        ) {
+                                            IconButton(
+                                                onClick = {
+                                                    eventHandler(
+                                                        CreateWorkoutEvent.DuplicateSet(
+                                                            it,
+                                                            true,
+                                                            sectionId = section.id
+                                                        )
+                                                    )
+                                                }
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.ContentCopy,
+                                                    contentDescription = "Copy"
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                                if (LocalTwmSettings.current) {
+                                    pm.eMax?.let {
+                                        SetInfoRow(
+                                            modifier = modifier(it),
+                                            label = {
+                                                Text(title("Most Weight Moved", it.date))
+                                            },
+                                            set = it,
+                                        ) {
+                                            IconButton(
+                                                onClick = {
+                                                    eventHandler(
+                                                        CreateWorkoutEvent.DuplicateSet(
+                                                            it,
+                                                            true,
+                                                            sectionId = section.id
+                                                        )
+                                                    )
+                                                }
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.ContentCopy,
+                                                    contentDescription = "Copy"
+                                                )
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -194,7 +301,7 @@ fun WorkoutSectionCard(
                     false -> {
                         section.sets.forEachIndexed { index, sectionSet ->
                             val set = sectionSet.set
-                            var showOptionsDialog by remember { mutableStateOf(false) }
+                            var showOptionsDialog by remember(set.id) { mutableStateOf(false) }
                             var visibility by remember { mutableStateOf<Boolean?>(null) }
 
                             if (showOptionsDialog) {
@@ -213,52 +320,53 @@ fun WorkoutSectionCard(
                                 )
                             }
 
-                            val coordinator = LocalNavCoordinator.current
                             AnimatedVisibility(
                                 visible = visibility ?: false,
                             ) {
                                 SetInfoRow(
                                     modifier =
-                                        Modifier
-                                            .defaultMinSize(minHeight = 52.dp)
-                                            .combinedClickable(
-                                                onClick = {
-                                                    when (sectionSet.recommended) {
-                                                        true -> eventHandler(CreateWorkoutEvent.DuplicateSet(set, true))
-                                                        false -> coordinator.present(Destination.EditSet(setId = set.id))
-                                                    }
+                                    Modifier
+                                        .defaultMinSize(minHeight = 52.dp)
+                                        .combinedClickable(
+                                            onClick = {
+                                                when (sectionSet.recommended) {
+                                                    true -> eventHandler(CreateWorkoutEvent.DuplicateSet(set, true))
+                                                    false -> coordinator.present(
+                                                        Destination.EditSet(setId = set.id)
+                                                    )
+                                                }
+                                            },
+                                            onLongClick = {
+                                                showOptionsDialog = true
+                                            },
+                                            role = Role.Button,
+                                        ).border(
+                                            color =
+                                            when {
+                                                index == copyIndex -> MaterialTheme.colorScheme.onSurface
+                                                sectionSet.recommended -> MaterialTheme.colorScheme.secondary
+                                                else -> MaterialTheme.colorScheme.surfaceContainer
+                                            },
+                                            width = 1.dp,
+                                            shape =
+                                            MaterialTheme.shapes.small.copy(
+                                                topStart =
+                                                if (index == 0) {
+                                                    MaterialTheme.shapes.small.topStart
+                                                } else {
+                                                    CornerSize(0.dp)
                                                 },
-                                                onLongClick = {
-                                                    showOptionsDialog = true
+                                                topEnd =
+                                                if (index == 0) {
+                                                    MaterialTheme.shapes.small.topStart
+                                                } else {
+                                                    CornerSize(0.dp)
                                                 },
-                                                role = Role.Button,
-                                            ).border(
-                                                color =
-                                                    when {
-                                                        index == copyIndex -> MaterialTheme.colorScheme.onSurface
-                                                        sectionSet.recommended -> MaterialTheme.colorScheme.secondary
-                                                        else -> MaterialTheme.colorScheme.surfaceContainer
-                                                    },
-                                                width = 1.dp,
-                                                shape =
-                                                    MaterialTheme.shapes.small.copy(
-                                                        topStart =
-                                                            if (index == 0) {
-                                                                MaterialTheme.shapes.small.topStart
-                                                            } else {
-                                                                CornerSize(0.dp)
-                                                            },
-                                                        topEnd =
-                                                            if (index == 0) {
-                                                                MaterialTheme.shapes.small.topStart
-                                                            } else {
-                                                                CornerSize(0.dp)
-                                                            },
-                                                    ),
-                                            ).padding(
-                                                horizontal = MaterialTheme.spacing.one,
-                                                vertical = MaterialTheme.spacing.half,
                                             ),
+                                        ).padding(
+                                            horizontal = MaterialTheme.spacing.one,
+                                            vertical = MaterialTheme.spacing.half,
+                                        ),
                                     set = set,
                                 )
                             }
@@ -305,9 +413,9 @@ fun WorkoutSectionCard(
                         Icon(
                             imageVector = Icons.Default.ContentCopy,
                             contentDescription =
-                                stringResource(
-                                    Res.string.workout_section_card_item_cta,
-                                ),
+                            stringResource(
+                                Res.string.workout_section_card_item_cta,
+                            ),
                         )
                     }
                 }
@@ -332,121 +440,121 @@ fun WorkoutSectionCardPreview(
     }
 }
 
-class SectionItemProvider : PreviewParameterProvider<ExerciseSectionItem> {
+class SectionItemProvider: PreviewParameterProvider<ExerciseSectionItem> {
     override val values: Sequence<ExerciseSectionItem>
         get() =
             sequenceOf(
                 ExerciseSectionItem(
                     id = "section1",
                     primaryMovement =
-                        Movement(
-                            id = "mov1",
-                            name = "Bench Press",
-                            latestSet =
-                                LBSet(
-                                    id = "latest1",
-                                    movementId = "mov1",
-                                    weight = 185.0,
-                                    reps = 8,
-                                ),
-                            eMax =
-                                LBSet(
-                                    id = "emax1",
-                                    movementId = "mov1",
-                                    weight = 175.0,
-                                    reps = 10,
-                                ),
-                            maxReps =
-                                LBSet(
-                                    id = "maxreps1",
-                                    movementId = "mov1",
-                                    weight = 135.0,
-                                    reps = 20,
-                                ),
+                    Movement(
+                        id = "mov1",
+                        name = "Bench Press",
+                        latestSet =
+                        LBSet(
+                            id = "latest1",
+                            movementId = "mov1",
+                            weight = 185.0,
+                            reps = 8,
                         ),
+                        eMax =
+                        LBSet(
+                            id = "emax1",
+                            movementId = "mov1",
+                            weight = 175.0,
+                            reps = 10,
+                        ),
+                        maxReps =
+                        LBSet(
+                            id = "maxreps1",
+                            movementId = "mov1",
+                            weight = 135.0,
+                            reps = 20,
+                        ),
+                    ),
                     sets =
-                        listOf(
-                            ExerciseSectionSet(
-                                set =
-                                    LBSet(
-                                        id = "set1",
-                                        movementId = "mov1",
-                                        weight = 225.0,
-                                        reps = 5,
-                                        rpe = 7,
-                                        tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    ),
-                                movement = Movement(id = "mov1", name = "Bench Press"),
-                                recommended = false,
+                    listOf(
+                        ExerciseSectionSet(
+                            set =
+                            LBSet(
+                                id = "set1",
+                                movementId = "mov1",
+                                weight = 225.0,
+                                reps = 5,
+                                rpe = 7,
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
                             ),
-                            ExerciseSectionSet(
-                                set =
-                                    LBSet(
-                                        id = "set2",
-                                        movementId = "mov1",
-                                        weight = 205.0,
-                                        reps = 8,
-                                        rpe = 8,
-                                        tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    ),
-                                movement = Movement(id = "mov1", name = "Bench Press"),
-                                recommended = false,
-                            ),
-                            ExerciseSectionSet(
-                                set =
-                                    LBSet(
-                                        id = "set3",
-                                        movementId = "mov1",
-                                        weight = 185.0,
-                                        reps = 10,
-                                        rpe = 9,
-                                        tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    ),
-                                movement = Movement(id = "mov1", name = "Bench Press"),
-                                recommended = false,
-                            ),
-                            ExerciseSectionSet(
-                                set =
-                                    LBSet(
-                                        id = "rec1",
-                                        movementId = "mov1",
-                                        weight = 205.0,
-                                        reps = 8,
-                                        tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    ),
-                                movement = Movement(id = "mov1", name = "Bench Press"),
-                                recommended = true,
-                            ),
+                            movement = Movement(id = "mov1", name = "Bench Press"),
+                            recommended = false,
                         ),
+                        ExerciseSectionSet(
+                            set =
+                            LBSet(
+                                id = "set2",
+                                movementId = "mov1",
+                                weight = 205.0,
+                                reps = 8,
+                                rpe = 8,
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
+                            ),
+                            movement = Movement(id = "mov1", name = "Bench Press"),
+                            recommended = false,
+                        ),
+                        ExerciseSectionSet(
+                            set =
+                            LBSet(
+                                id = "set3",
+                                movementId = "mov1",
+                                weight = 185.0,
+                                reps = 10,
+                                rpe = 9,
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
+                            ),
+                            movement = Movement(id = "mov1", name = "Bench Press"),
+                            recommended = false,
+                        ),
+                        ExerciseSectionSet(
+                            set =
+                            LBSet(
+                                id = "rec1",
+                                movementId = "mov1",
+                                weight = 205.0,
+                                reps = 8,
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
+                            ),
+                            movement = Movement(id = "mov1", name = "Bench Press"),
+                            recommended = true,
+                        ),
+                    ),
                 ),
                 ExerciseSectionItem(
                     id = "section2",
                     primaryMovement =
-                        Movement(
-                            id = "mov2",
-                            name = "Squat",
-                            latestSet =
-                                LBSet(
-                                    id = "latest2",
-                                    movementId = "mov2",
-                                    weight = 315.0,
-                                    reps = 3,
-                                ),
-                            eMax =
-                                LBSet(
-                                    id = "emax2",
-                                    movementId = "mov2",
-                                    weight = 275.0,
-                                    reps = 10,
-                                ),
-                            maxReps =
-                                LBSet(
-                                    id = "maxreps2",
-                                    movementId = "mov2",
-                                    weight = 225.0,
-                                    reps = 15,
-                                ),
+                    Movement(
+                        id = "mov2",
+                        name = "Squat",
+                        latestSet =
+                        LBSet(
+                            id = "latest2",
+                            movementId = "mov2",
+                            weight = 315.0,
+                            reps = 3,
                         ),
+                        eMax =
+                        LBSet(
+                            id = "emax2",
+                            movementId = "mov2",
+                            weight = 275.0,
+                            reps = 10,
+                        ),
+                        maxReps =
+                        LBSet(
+                            id = "maxreps2",
+                            movementId = "mov2",
+                            weight = 225.0,
+                            reps = 15,
+                        ),
+                    ),
                     sets = emptyList(),
                 ),
             )

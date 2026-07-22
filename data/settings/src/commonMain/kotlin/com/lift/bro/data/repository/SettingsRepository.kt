@@ -125,7 +125,7 @@ class SettingsRepository(
                 )
             )
             Setting.LatestReadReleaseNotes -> dataSource.getString(key, null)
-            Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, null)
+            Setting.MerSettings -> dataSource.getSerializable<MERSettings>(key, MERSettings())
 
             Setting.ShowTotalWeightMoved -> dataSource.getBool(key, false)
             Setting.TMaxEnabled -> dataSource.getBool(key, false)

@@ -13,13 +13,12 @@
     <ID>CyclomaticComplexMethod:RecordingInteractor.kt$@Composable fun rememberRecordingInteractor( setId: String, cameraControllerFactory: CameraControllerFactory = rememberCameraControllerFactory(), navController: LiftBroNavCoordinator = LocalNavCoordinator.current, setRepository: ISetRepository = dependencies.setRepository, ): RecordingInteractor</ID>
     <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate = today, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = LocalDailyWorkoutDetailsInteractor.current ?: rememberDailyWorkoutDetailsInteractor(date), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftingLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
-    <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@Composable fun WorkoutSectionCard( modifier: Modifier, section: ExerciseSectionItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
+    <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
+    <ID>CyclomaticComplexMethod:WorkoutSectionCard.kt$@Composable fun WorkoutSectionCard( modifier: Modifier, section: ExerciseSectionItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedEvents$()</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedPageState$()</ID>
     <ID>EmptyFunctionBlock:CameraPreview.ios.kt$IosCameraController${ }</ID>
     <ID>EmptyFunctionBlock:DependencyContainer.native.kt$DependencyContainer${ }</ID>
-    <ID>EmptyFunctionBlock:GetTotalRepsUseCaseTest.kt$GetTotalRepsUseCaseTest.FakeSetRepository${}</ID>
-    <ID>EmptyFunctionBlock:GetTotalWeightMovedUseCaseTest.kt$GetTotalWeightMovedUseCaseTest.FakeSetRepository${}</ID>
     <ID>EmptyFunctionBlock:StoreManager.native.kt$StoreManager${ }</ID>
     <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
     <ID>Filename:AudioPlayer.native.kt$com.lift.bro.audio.AudioPlayer.native.kt</ID>

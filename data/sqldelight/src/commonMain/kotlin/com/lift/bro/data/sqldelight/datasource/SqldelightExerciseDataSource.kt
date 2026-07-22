@@ -44,13 +44,15 @@ class SqldelightExerciseDataSource(
             Exercise(
                 id = exercise.id,
                 workoutId = workoutId ?: "",
-                sections = sections.map { section ->
-                    section.toDomain(
-                        sets = sets,
-                        movements = movements,
-                        sections = sections,
-                    )
-                }
+                sections = sections
+                    .filter { it.exercise_id == exercise.id }
+                    .map { section ->
+                        section.toDomain(
+                            sets = sets,
+                            movements = movements,
+                            sections = sections,
+                        )
+                    }
             )
         }
     }
@@ -67,6 +69,7 @@ class SqldelightExerciseDataSource(
     override suspend fun delete(id: ExerciseId) {
         exerciseQueries.delete(id)
         exerciseQueries.deleteSectionsByExercise(exerciseId = id)
+        setQueries.deleteAllForExercise(exerciseId = id)
     }
 
     override suspend fun save(section: Section) {
@@ -119,6 +122,8 @@ private fun GetExerciseSectionsByWorkoutId.toDomain(
                 rpe = it.rpe?.toInt(),
                 tempo = Tempo(
                     down = it.tempoDown ?: 3,
+                    up = it.tempoUp ?: 1,
+                    hold = it.tempoHold ?: 1,
                 ),
                 bodyWeightRep = it.body_weight?.let { it == 1L }
             )

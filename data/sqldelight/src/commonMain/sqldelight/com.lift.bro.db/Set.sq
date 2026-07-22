@@ -93,6 +93,14 @@ INSERT OR REPLACE
 INTO LiftingSet(id, movementId, weight, reps, tempoDown, tempoHold, tempoUp, date, notes, rpe, videoUri, exerciseSectionId)
 VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
+deleteAllForExercise:
+DELETE FROM LiftingSet
+WHERE exerciseSectionId IN (
+    SELECT id
+    FROM ExerciseSection
+    WHERE exerciseId = :exerciseId
+);
+
 deleteAllFromVariations:
 DELETE FROM LiftingSet WHERE movementId = :movementId;
 

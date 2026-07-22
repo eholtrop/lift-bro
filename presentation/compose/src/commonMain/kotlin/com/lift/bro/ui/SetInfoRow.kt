@@ -4,10 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,16 +39,23 @@ fun SetInfoRow(
     uom: UOM = LocalUnitOfMeasure.current,
     enableTwm: Boolean = LocalTwmSettings.current,
     enableMers: Boolean = LocalShowMERCalcs.current?.enabled == true,
+    label: @Composable () -> Unit = {},
     trailing: @Composable () -> Unit = {},
 ) {
-    Column(
+    Row(
         modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.Start
         ) {
+            CompositionLocalProvider(
+                value = LocalTextStyle provides MaterialTheme.typography.labelSmall
+            ) {
+                label()
+            }
             Text(
-                modifier = Modifier.weight(1f),
                 text = set.prettyPrintSet(
                     uom = uom,
                     enableTwm = enableTwm,
@@ -52,26 +64,26 @@ fun SetInfoRow(
                 style = MaterialTheme.typography.titleMedium,
             )
 
-            trailing()
-        }
-        set.tempo.render()
-        if (set.notes.isNotBlank()) {
-            Row(
-                modifier = Modifier.padding(top = MaterialTheme.spacing.quarter),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Icon(
-                    modifier = Modifier.size(MaterialTheme.typography.labelSmall.fontSize.value.dp),
-                    imageVector = MaterialTheme.icons.notes,
-                    contentDescription = null,
-                )
-                Space(MaterialTheme.spacing.quarter)
-                Text(
-                    text = set.notes,
-                    style = MaterialTheme.typography.labelSmall,
-                )
+            set.tempo.render()
+            if (set.notes.isNotBlank()) {
+                Row(
+                    modifier = Modifier.padding(top = MaterialTheme.spacing.quarter),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(MaterialTheme.typography.labelSmall.fontSize.value.dp),
+                        imageVector = MaterialTheme.icons.notes,
+                        contentDescription = null,
+                    )
+                    Space(MaterialTheme.spacing.quarter)
+                    Text(
+                        text = set.notes,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
             }
         }
+        trailing()
     }
 }
 
@@ -95,9 +107,19 @@ fun SetInfoRowPreview(
                 notes = "Felt strong today!",
                 movementId = "var-1"
             ),
+            label = { Text("Latest Set") },
             enableTwm = false,
             enableMers = false,
-        )
+        ) {
+            IconButton(
+                onClick = {}
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "",
+                )
+            }
+        }
 
         // Set without notes and twm
         SetInfoRow(
