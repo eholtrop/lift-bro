@@ -14,12 +14,14 @@ import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Section
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IExerciseRepository
 import com.lift.bro.domain.repositories.ILiftRepository
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import com.lift.bro.domain.repositories.IWorkoutRepository
+import com.lift.bro.domain.serializers.InstantSerializer
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.cacheDir
 import io.github.vinceglb.filekit.createDirectories
@@ -32,10 +34,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import tv.dpal.logging.Log
 import tv.dpal.logging.d
+import kotlin.String
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Serializable
 data class Backup(
@@ -48,33 +55,30 @@ data class Backup(
 )
 
 @Serializable
+@JsonIgnoreUnknownKeys
+@OptIn(ExperimentalSerializationApi::class)
 data class LegacyVariation(
     val id: String,
-    val lift: String? = null,
+    val lift: Category? = null,
     val name: String? = null,
     val reps: Long = 1,
     val favourite: Boolean = false,
     val notes: String? = null,
-    val eMax: LBSet? = null,
-    val oneRepMax: LBSet? = null,
-    val maxReps: LBSet? = null,
-    val latestSet: LBSet? = null,
     val bodyWeight: Boolean? = false,
 )
 
 @Serializable
 data class LegacyVariationSet(
     val id: String,
-    val exerciseId: String,
-    val sets: List<String> = emptyList(),
-    val movements: List<String> = emptyList(),
+    val sets: List<LegacySet> = emptyList(),
+    val variation: LegacyVariation,
 )
 
 @Serializable
 data class LegacyExercise(
     val id: String,
     val workoutId: String,
-    val sections: List<LegacyVariationSet> = emptyList(),
+    val variationSets: List<LegacyVariationSet> = emptyList(),
 )
 
 @Serializable
@@ -90,10 +94,28 @@ data class LegacyWorkout(
 data class LegacyBackup(
     val lifts: List<Category>? = null,
     val variations: List<LegacyVariation>? = null,
-    val sets: List<LBSet>? = null,
+    val sets: List<LegacySet>? = null,
     val liftingLogs: List<LiftingLog>? = null,
     val workouts: List<LegacyWorkout>? = null,
+    val exercises: List<LegacyExercise>? = null,
 )
+
+@Serializable
+data class LegacySet(
+    val id: String,
+    val variationId: String,
+    val weight: Double = 0.0,
+    val reps: Long = 1,
+    val tempo: Tempo = Tempo(),
+    @Serializable(with = InstantSerializer::class) val date: Instant = Clock.System.now(),
+    val notes: String = "",
+    val rpe: Int? = null,
+    val mer: Int = 0,
+    val bodyWeightRep: Boolean? = null,
+    val videoUri: String? = null,
+) {
+    val totalWeightMoved = weight * reps
+}
 
 class RestoreUseCase(
     private val database: LBDatabase = dependencies.database,
@@ -130,48 +152,54 @@ class RestoreUseCase(
     }
 
     private fun migrateLegacy(legacy: LegacyBackup): Backup {
-        val liftsById = legacy.lifts?.associateBy { it.id } ?: emptyMap()
-
         val variations = legacy.variations?.map { legacyVariation ->
             Movement(
                 id = legacyVariation.id,
-                lift = legacyVariation.lift?.let { liftsById[it] },
+                lift = legacyVariation.lift,
                 name = legacyVariation.name,
                 reps = legacyVariation.reps,
                 favourite = legacyVariation.favourite,
                 notes = legacyVariation.notes,
-                eMax = legacyVariation.eMax,
-                oneRepMax = legacyVariation.oneRepMax,
-                maxReps = legacyVariation.maxReps,
-                latestSet = legacyVariation.latestSet,
                 bodyWeight = legacyVariation.bodyWeight,
             )
         }
 
+        val sets = legacy.sets?.map { lSet ->
+            LBSet(
+                id = lSet.id,
+                movementId = lSet.variationId,
+                weight = lSet.weight,
+                reps = lSet.reps,
+                tempo = lSet.tempo,
+                date = lSet.date,
+                notes = lSet.notes,
+                rpe = lSet.rpe,
+                mer = lSet.mer,
+                bodyWeightRep = lSet.bodyWeightRep,
+                videoUri = lSet.videoUri,
+            )
+        }
+
         val movementsById = variations?.associateBy { it.id } ?: emptyMap()
-        val setsById = legacy.sets.orEmpty().associateBy { it.id }.toMutableMap()
+        val setsById = sets.orEmpty().associateBy { it.id }.toMutableMap()
 
         val workouts = legacy.workouts?.map { legacyWorkout ->
             val exercises = legacyWorkout.exercises.map { legacyExercise ->
-                val sections = legacyExercise.sections.map { legacyVariationSet ->
-                    val resolvedSets = legacyVariationSet.sets.mapNotNull { setId ->
-                        setsById[setId]?.copy(exerciseSectionId = legacyVariationSet.id)
+                val sections = legacyExercise.variationSets.map { legacyVariationSet ->
+                    val resolvedSets = legacyVariationSet.sets.mapNotNull { set ->
+                        setsById[set.id]?.copy(exerciseSectionId = legacyVariationSet.id)
                     }
                     resolvedSets.forEach { setsById[it.id] = it }
 
                     Section(
                         id = legacyVariationSet.id,
-                        exerciseId = legacyVariationSet.exerciseId,
-                        sets = resolvedSets,
-                        movements = legacyVariationSet.movements.mapNotNull { movId ->
-                            movementsById[movId]
-                        },
-                        primaryMovement = variations?.firstOrNull { legacyVariationSet.movements.contains(it.id) },
+                        exerciseId = legacyExercise.id,
+                        primaryMovement = movementsById[legacyVariationSet.variation.id],
                     )
                 }
                 Exercise(
                     id = legacyExercise.id,
-                    workoutId = legacyExercise.workoutId,
+                    workoutId = legacyWorkout.id,
                     sections = sections,
                 )
             }

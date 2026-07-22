@@ -7,15 +7,15 @@ class ExerciseTest {
 
     @Test
     fun `Given exercise with one variation When total weight moved Then sums all sets`() {
-        val set1 = LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
-        val set2 = LBSet(id = "2", variationId = "v1", weight = 100.0, reps = 5)
-        val set3 = LBSet(id = "3", variationId = "v1", weight = 100.0, reps = 5)
+        val set1 = LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
+        val set2 = LBSet(id = "2", movementId = "v1", weight = 100.0, reps = 5)
+        val set3 = LBSet(id = "3", movementId = "v1", weight = 100.0, reps = 5)
         val variation = Movement(id = "v1")
         val exercise = Exercise(
             id = "e1",
             workoutId = "w1",
-            variationSets = listOf(
-                VariationSets(id = "vs1", variation = variation, sets = listOf(set1, set2, set3))
+            sections = listOf(
+                Section(id = "vs1", exerciseId = "e1", movements = listOf(variation), sets = listOf(set1, set2, set3))
             )
         )
 
@@ -30,19 +30,21 @@ class ExerciseTest {
         val exercise = Exercise(
             id = "e1",
             workoutId = "w1",
-            variationSets = listOf(
-                VariationSets(
+            sections = listOf(
+                Section(
                     id = "vs1",
-                    variation = variation1,
+                    exerciseId = "e1",
+                    movements = listOf(variation1),
                     sets = listOf(
-                        LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
+                        LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
                     )
                 ),
-                VariationSets(
+                Section(
                     id = "vs2",
-                    variation = variation2,
+                    exerciseId = "e1",
+                    movements = listOf(variation2),
                     sets = listOf(
-                        LBSet(id = "2", variationId = "v2", weight = 80.0, reps = 8)
+                        LBSet(id = "2", movementId = "v2", weight = 80.0, reps = 8)
                     )
                 )
             )
@@ -57,7 +59,7 @@ class ExerciseTest {
         val exercise = Exercise(
             id = "e1",
             workoutId = "w1",
-            variationSets = emptyList()
+            sections = emptyList()
         )
 
         assertEquals(0.0, exercise.totalWeightMoved, 0.001)
@@ -69,8 +71,8 @@ class ExerciseTest {
         val exercise = Exercise(
             id = "e1",
             workoutId = "w1",
-            variationSets = listOf(
-                VariationSets(id = "vs1", variation = variation, sets = emptyList())
+            sections = listOf(
+                Section(id = "vs1", exerciseId = "e1", movements = listOf(variation), sets = emptyList())
             )
         )
 
@@ -83,12 +85,13 @@ class ExerciseTest {
         val exercise = Exercise(
             id = "e1",
             workoutId = "w1",
-            variationSets = listOf(
-                VariationSets(
+            sections = listOf(
+                Section(
                     id = "vs1",
-                    variation = variation,
+                    exerciseId = "e1",
+                    movements = listOf(variation),
                     sets = listOf(
-                        LBSet(id = "1", variationId = "v1", weight = 0.0, reps = 10)
+                        LBSet(id = "1", movementId = "v1", weight = 0.0, reps = 10)
                     )
                 )
             )

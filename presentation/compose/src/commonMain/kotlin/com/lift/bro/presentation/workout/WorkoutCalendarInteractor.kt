@@ -163,8 +163,9 @@ fun FetchVariationSetsForMonth(
     ),
     dependencies.variationRepository.listenAll().map { it.associateBy { it.id } },
 ) { sets, variations ->
-    sets.groupBy { variations[it.movementId]!! }
-        .toList()
+    sets.groupBy { variations[it.movementId] }
+        .filter { it.key != null }
+        .map { it.key!! to it.value }
 }
 
 fun FetchVariationSetsForRange(

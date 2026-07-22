@@ -15,7 +15,7 @@ class SetRepositoryTest {
     @Test
     fun `listenAll delegates to data source with parameters`() = runTest {
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
+            LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
         )
         val dataSource = fakeSetDataSource(sets = sets)
         val repository = SetRepository(dataSource)
@@ -45,7 +45,7 @@ class SetRepositoryTest {
     @Test
     fun `listenAllForLift delegates to data source`() = runTest {
         val sets = listOf(
-            LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
+            LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
         )
         val dataSource = fakeSetDataSource(sets = sets)
         val repository = SetRepository(dataSource)
@@ -66,7 +66,7 @@ class SetRepositoryTest {
 
     @Test
     fun `listen delegates to data source`() = runTest {
-        val set = LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
+        val set = LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
         val dataSource = fakeSetDataSource(sets = listOf(set))
         val repository = SetRepository(dataSource)
 
@@ -78,7 +78,7 @@ class SetRepositoryTest {
 
     @Test
     fun `save delegates to data source`() = runTest {
-        val set = LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
+        val set = LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
         val dataSource = fakeSetDataSource()
         val repository = SetRepository(dataSource)
 
@@ -89,7 +89,7 @@ class SetRepositoryTest {
 
     @Test
     fun `delete delegates to data source`() = runTest {
-        val set = LBSet(id = "1", variationId = "v1", weight = 100.0, reps = 5)
+        val set = LBSet(id = "1", movementId = "v1", weight = 100.0, reps = 5)
         val dataSource = fakeSetDataSource()
         val repository = SetRepository(dataSource)
 

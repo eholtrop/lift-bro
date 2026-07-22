@@ -51,7 +51,8 @@ getExerciseSection:
 SELECT * FROM ExerciseSection WHERE id = :sectionId LIMIT 1;
 
 getExerciseSections:
-SELECT * FROM ExerciseSection WHERE exerciseId = :exerciseId;
+SELECT * FROM ExerciseSection WHERE exerciseId = :exerciseId
+ORDER BY sort_order;
 
 getExerciseSectionsByWorkoutId:
 SELECT

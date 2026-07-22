@@ -237,6 +237,8 @@ fun rememberDailyWorkoutDetailsInteractor(
                                     Workout(
                                         workoutId,
                                         date = state.selectedDate,
+                                        warmup = state.selectedWorkout?.warmup,
+                                        finisher = state.selectedWorkout?.finisher,
                                         exercises = listOf(
                                             Exercise(
                                                 id = exerciseId,

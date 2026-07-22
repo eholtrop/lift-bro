@@ -22,10 +22,12 @@ SELECT
     videoUri,
     exerciseSectionId,
     (weight * (1 + reps / 30.0)) AS eMax,
-    ROW_NUMBER() OVER (
-        PARTITION BY movementId
-        ORDER BY CASE WHEN reps = 1 THEN weight ELSE -1 END DESC, id DESC
-    ) AS rn_orm,
+    CASE WHEN reps = 1 THEN
+        ROW_NUMBER() OVER (
+            PARTITION BY movementId, reps
+            ORDER BY weight DESC, id DESC
+        )
+     END AS rn_orm,
     ROW_NUMBER() OVER (
         PARTITION BY movementId
         ORDER BY date DESC, id DESC
