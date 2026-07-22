@@ -125,7 +125,8 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PW }}
         run: |
           bundle install
-          bundle exec fastlane android deploy build_number:${{ github.run_number }}
+          BUILD_NUMBER=$(( ${{ github.run_number }} + 366 ))
+          bundle exec fastlane android deploy build_number:$BUILD_NUMBER
       - uses: actions/upload-artifact@v4
         with:
           name: android-aab
