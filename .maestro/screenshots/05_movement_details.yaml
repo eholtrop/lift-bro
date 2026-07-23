@@ -1,0 +1,12 @@
+# 05_movement_details.yaml
+# Captures the movement/variation details screen with history
+appId: com.lift.bro
+
+---
+- runFlow:
+    file: ../flows/skip_onboarding_with_backup.yaml
+- tapOn: "Deadlift"
+- waitForAnimationToEnd:
+    timeout: 5000
+- takeScreenshot:
+    path: "./build/generated/store-screenshots/05_movement_details"

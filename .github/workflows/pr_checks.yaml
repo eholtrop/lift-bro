@@ -24,6 +24,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      - uses: ./.github/actions/set-commit-date
       - run: ./gradlew detekt --continue
 
   test:
@@ -37,6 +38,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      - uses: ./.github/actions/set-commit-date
       - run: ./gradlew test
 
   screenshot-validation:
@@ -50,6 +52,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      - uses: ./.github/actions/set-commit-date
       - run: ./gradlew :presentation:compose:validateDebugScreenshotTest -Pandroid.experimental.enableScreenshotTest=true
       - uses: actions/upload-artifact@v4
         if: failure()

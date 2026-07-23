@@ -1,0 +1,12 @@
+# 01_onboarding_welcome.yaml
+# Captures the initial onboarding screen with lift selection
+appId: com.lift.bro
+
+---
+- clearState
+- launchApp
+- extendedWaitUntil:
+      timeout: 30000
+      visible: "Lift Bro With A Ponytail"
+- takeScreenshot:
+    path: "./build/generated/store-screenshots/01_onboarding"

@@ -1,0 +1,33 @@
+# 03_workout_set_entry.yaml
+# Captures the workout set entry screen with sample data
+appId: com.lift.bro
+
+---
+-   runFlow:
+        file: ../flows/skip_onboarding_with_backup.yaml
+-   tapOn: "Deadlift"
+-   tapOn: "Conventional Deadlift"
+-   tapOn: "Add Set"
+# Fill in sample data for a realistic screenshot
+-   tapOn:
+        id: "reps"
+-   inputText: "5"
+-   tapOn:
+        id: "weight"
+-   inputText: "315"
+-   tapOn:
+        id: "notes"
+-   inputText: "Lower back tightness"
+    # currently broken since RPE is a list of radio  buttons
+    # need to fix the ids (/content description) of these radio fields then update this
+#- tapOn:
+#    id: "rpe"
+#- inputText: "8"
+- hideKeyboard
+-   waitForAnimationToEnd:
+        timeout: 5000
+-   takeScreenshot:
+        path: "./build/generated/store-screenshots/03_workout_set_entry"
+-   tapOn: "RPE"
+-   takeScreenshot:
+        path: "./build/generated/store-screenshots/07_rpe_dialog"

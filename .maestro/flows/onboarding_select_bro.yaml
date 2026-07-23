@@ -3,6 +3,9 @@ appId: com.lift.bro
 ---
 - clearState
 - launchApp
+- extendedWaitUntil:
+      timeout: 30000
+      visible: "Lift Bro With A Ponytail"
 - tapOn: "Lift Bro With A Ponytail"
 - scrollUntilVisible:
     element:

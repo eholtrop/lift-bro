@@ -57,7 +57,8 @@ fun RpeSelector(
                 role = Role.Button,
                 onClick = {
                     showInfoDialog = true
-                }
+                },
+                onClickLabel = "RPE",
             )
                 .defaultMinSize(minHeight = 48.dp, minWidth = 52.dp)
                 .padding(
