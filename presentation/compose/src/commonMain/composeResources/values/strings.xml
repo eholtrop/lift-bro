@@ -278,8 +278,7 @@ Soreness or pain?</string>
     <string name="timer_screen_set_count_cta">x%1$d</string>
     <string name="timer_screen_title">Timer</string>
     <string name="toolbar_back_button_content_description">Back</string>
-    <string name="toolbar_calculator_button_content_description">Update Lift Bro</string>
-    <string name="toolbar_calculator_content_description">Calculator</string>
+    <string name="toolbar_calculator_button_content_description">Calculator</string>
     <string name="toolbar_close_content_description">Close</string>
     <string name="toolbar_play_content_description">Play</string>
     <string name="toolbar_settings_content_description">Settings</string>

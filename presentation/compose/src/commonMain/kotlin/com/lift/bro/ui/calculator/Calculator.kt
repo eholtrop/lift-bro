@@ -58,6 +58,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextLinkStyles
@@ -576,7 +579,7 @@ fun CalculatorButton(
     Button(
         modifier = modifier,
         onClick = onClick,
-        colors = ButtonDefaults.elevatedButtonColors()
+        colors = ButtonDefaults.elevatedButtonColors(),
     ) {
         Text(
             text,
