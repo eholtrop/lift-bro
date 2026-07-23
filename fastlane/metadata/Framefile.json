@@ -11,6 +11,8 @@
       "color": "#FFFFFF",
       "font_size": 128
     },
+    "background": "./backgrounds/lift_bro_background.png",
+    "stack_title": true,
     "padding": 50,
     "show_complete_frame": true,
     "use_platform": "ANDROID"
@@ -41,6 +43,11 @@
       "title": { "text": "Detailed Analytics" },
       "keyword": { "text": "Track Progress" }
     },
+      {
+          "filter": "06_plate_calculator",
+          "title": { "text": "Plate Calculator" },
+          "keyword": { "text": "Never question the bar again" }
+      },
     {
       "filter": "07_rpe_dialog",
       "title": { "text": "Advanced Tracking Metrics" },

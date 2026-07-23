@@ -71,24 +71,52 @@ platform :android do
       # 3. Build and install debug APK
       gradle(task: ":app-android:installDebug")
 
+      # 3a. Wait for package manager and verify app launches
+      sh "adb", "wait-for-device"
+      sleep 5
+
+      # 3b. Launch app to verify it's alive
+      sh "adb", "shell", "am", "start", "-n", "com.lift.bro/.android.MainActivity"
+      sleep 10
+
+      # 3c. Capture diagnostic logcat (app crashes and errors)
+      sh "adb", "logcat", "-d", "-t", "200", "-s", "AndroidRuntime:E", "System.err:W"
+
+      # 3d. Verify the backup file was pushed
+      sh "adb", "shell", "ls", "-la", "/sdcard/Download/screenshot_test_backup.json"
+
       # 4. Run Maestro screenshot flows
       Dir.chdir(project_root) do
         sh "maestro", "test", File.join(project_root, ".maestro/screenshots/")
       end
 
+      # Maestro writes each screenshot under <session>/<flow>/takeScreenshot/*.png
+      # (plus stray step-*.png captures elsewhere in the bundle). Stage only the
+      # intended takeScreenshot outputs into a flat folder for frameit.
+      screenshots_root = File.join(project_root, "build/generated/screenshot-tests")
+      files_root = File.join(screenshots_root, "files")
+      sh "rm", "-rf", files_root
+      sh "mkdir", "-p", files_root
+      Dir.glob(File.join(screenshots_root, "**/takeScreenshot/*.png")).each do |png|
+        sh "cp", png, files_root
+      end
 
-      Dir.glob(File.join(project_root, "build/generated/store-screenshots/*.png")).each do |png|
+      # 5. Resize captured screenshots to Pixel 5 dimensions
+      Dir.glob(File.join(files_root, "*.png")).each do |png|
         sh "convert", png, "-resize", "1080x2340!", png
       end
 
-      # 6. Run frameit to add device frames
-      Dir.chdir(File.join(project_root, "build/generated/store-screenshots")) do
+      # 6. Run frameit to add device frames (reads Framefile.json + ./fonts + ./backgrounds)
+      FileUtils.cp(File.join(project_root, "fastlane/metadata/Framefile.json"), File.join(files_root, "Framefile.json"))
+      FileUtils.cp_r(File.join(project_root, "fastlane/metadata/fonts"), File.join(files_root, "fonts"))
+      FileUtils.cp_r(File.join(project_root, "fastlane/metadata/backgrounds"), File.join(files_root, "backgrounds"))
+      Dir.chdir(files_root) do
         sh "fastlane", "frameit"
       end
 
-      # 5. Copy screenshots to frameit directory and resize to Pixel 5 dimensions
+      # 7. Copy framed screenshots to the Play Store metadata directory
       sh "mkdir", "-p", File.join(project_root, "fastlane/metadata/android/en-US/images/phoneScreenshots")
-      Dir.glob(File.join(project_root, "build/generated/store-screenshots/*_framed.png")).each do |png|
+      Dir.glob(File.join(files_root, "*_framed.png")).each do |png|
         sh "cp", png, File.join(project_root, "fastlane/metadata/android/en-US/images/phoneScreenshots/")
       end
 
@@ -413,10 +441,14 @@ platform :ios do
         sh "maestro", "test", File.join(project_root, ".maestro/screenshots/")
       end
 
-      # 7. Copy screenshots to frameit directory
-      sh "mkdir", "-p", File.join(project_root, "fastlane/screenshots/en-US/images/phoneScreenshots")
-      Dir.glob(File.join(project_root, "build/generated/store-screenshots/*.png")).each do |png|
-        sh "cp", png, File.join(project_root, "fastlane/screenshots/en-US/images/phoneScreenshots/")
+      # 7. Copy screenshots to frameit directory. Maestro nests each screenshot
+      #    under <session>/<flow>/takeScreenshot/*.png (plus stray step-*.png
+      #    captures elsewhere), so only grab the intended takeScreenshot outputs.
+      phone_screenshots = File.join(project_root, "fastlane/screenshots/en-US/images/phoneScreenshots")
+      sh "rm", "-rf", phone_screenshots
+      sh "mkdir", "-p", phone_screenshots
+      Dir.glob(File.join(project_root, "build/generated/screenshot-tests/**/takeScreenshot/*.png")).each do |png|
+        sh "cp", png, phone_screenshots
       end
 
       # 8. Run frameit to add device frames

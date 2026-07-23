@@ -5,8 +5,15 @@ appId: com.lift.bro
 ---
 - runFlow:
     file: ../flows/skip_onboarding_with_backup.yaml
-- tapOn: "Deadlift"
+- tapOn: "Calculator"
 - waitForAnimationToEnd:
     timeout: 5000
+- tapOn: "2"
+- tapOn: "6"
+- tapOn: "0"
+- tapOn: "x"
+- tapOn: '\.'
+- tapOn: "7"
+- tapOn: "5"
 - takeScreenshot:
-    path: "05_movement_details"
+    path: "06_plate_calculator"

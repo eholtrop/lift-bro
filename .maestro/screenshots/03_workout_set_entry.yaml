@@ -9,6 +9,7 @@ appId: com.lift.bro
 -   tapOn: "Conventional Deadlift"
 -   tapOn: "Add Set"
 # Fill in sample data for a realistic screenshot
+-   tapOn: "Back Squat"
 -   tapOn:
         id: "reps"
 -   inputText: "5"
@@ -25,9 +26,9 @@ appId: com.lift.bro
 #- inputText: "8"
 - hideKeyboard
 -   waitForAnimationToEnd:
-        timeout: 1000
--   takeScreenshot:
-        path: "./build/generated/store-screenshots/03_workout_set_entry"
+        timeout: 5000
+- takeScreenshot:
+        path: "03_workout_set_entry"
 -   tapOn: "RPE"
 -   takeScreenshot:
-        path: "./build/generated/store-screenshots/07_rpe_dialog"
+        path: "07_rpe_dialog"

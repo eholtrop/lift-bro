@@ -279,8 +279,7 @@ Alguma dor ou desconforto?</string>
     <string name="timer_screen_set_count_cta">x%1$d</string>
     <string name="timer_screen_title">Temporizador</string>
     <string name="toolbar_back_button_content_description">Voltar</string>
-    <string name="toolbar_calculator_button_content_description">Atualizar Lift Bro</string>
-    <string name="toolbar_calculator_content_description">Calculadora</string>
+    <string name="toolbar_calculator_button_content_description">Calculadora</string>
     <string name="toolbar_close_content_description">Fechar</string>
     <string name="toolbar_play_content_description">Reproduzir</string>
     <string name="toolbar_settings_content_description">Configurações</string>
