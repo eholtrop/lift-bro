@@ -1,1 +1,1 @@
-Track weightlifting progress like a Lift Pro!!
+Local-first workout tracker. Categorize movements & track workout your way!

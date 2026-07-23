@@ -58,14 +58,6 @@ Install and run Emulator
 
 Run the project Linter
 
-### android deploy
-
-```sh
-[bundle exec] fastlane android deploy
-```
-
-Deploy a new version to the Google Play
-
 ### android push_backup_to_device
 
 ```sh
@@ -74,14 +66,6 @@ Deploy a new version to the Google Play
 
 Push test backup file to Android device/emulator
 
-### android generate_backup_data
-
-```sh
-[bundle exec] fastlane android generate_backup_data
-```
-
-Generate fresh backup data for screenshots
-
 ### android generate_play_store_screenshots
 
 ```sh
@@ -89,6 +73,38 @@ Generate fresh backup data for screenshots
 ```
 
 Generate Play Store screenshots locally
+
+### android build_release_aab
+
+```sh
+[bundle exec] fastlane android build_release_aab
+```
+
+Build release AAB
+
+### android generate_changelog
+
+```sh
+[bundle exec] fastlane android generate_changelog
+```
+
+Generate changelog from release_notes.json
+
+### android upload_to_playstore
+
+```sh
+[bundle exec] fastlane android upload_to_playstore
+```
+
+Upload AAB + metadata to Google Play Store
+
+### android deploy
+
+```sh
+[bundle exec] fastlane android deploy
+```
+
+Deploy a new version to Google Play beta (sequential, for local use)
 
 ### android promote_internal_to_prod
 

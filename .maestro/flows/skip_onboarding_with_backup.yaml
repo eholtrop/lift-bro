@@ -7,7 +7,7 @@ appId: com.lift.bro
 - tapOn: "Continue"
 - tapOn: "🦺 Restore from a Backup"
 - waitForAnimationToEnd:
-    timeout: 1000
+    timeout: 5000
 # Android
 - tapOn:
     text: "screenshot_test_backup.json"

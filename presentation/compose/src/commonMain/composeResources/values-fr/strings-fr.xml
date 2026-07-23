@@ -279,8 +279,7 @@ Douleurs ou courbatures ?</string>
     <string name="timer_screen_set_count_cta">x%1$d</string>
     <string name="timer_screen_title">Minuteur</string>
     <string name="toolbar_back_button_content_description">Retour</string>
-    <string name="toolbar_calculator_button_content_description">Mettre à jour Lift Bro</string>
-    <string name="toolbar_calculator_content_description">Calculatrice</string>
+    <string name="toolbar_calculator_button_content_description">Calculatrice</string>
     <string name="toolbar_close_content_description">Fermer</string>
     <string name="toolbar_play_content_description">Jouer</string>
     <string name="toolbar_settings_content_description">Paramètres</string>
