@@ -6,7 +6,7 @@ appId: com.lift.bro
 - clearState
 - launchApp
 - extendedWaitUntil:
-      timeout: 10000
+      timeout: 30000
       visible: "Lift Bro With A Ponytail"
 - takeScreenshot:
     path: "./build/generated/store-screenshots/01_onboarding"

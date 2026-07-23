@@ -71,6 +71,20 @@ platform :android do
       # 3. Build and install debug APK
       gradle(task: ":app-android:installDebug")
 
+      # 3a. Wait for package manager and verify app launches
+      sh "adb", "shell", "pm", "wait-for-device"
+      sleep 5
+
+      # 3b. Launch app to verify it's alive
+      sh "adb", "shell", "am", "start", "-n", "com.lift.bro/.android.MainActivity"
+      sleep 10
+
+      # 3c. Capture diagnostic logcat (app crashes and errors)
+      sh "adb", "logcat", "-d", "-t", "200", "-s", "AndroidRuntime:E", "System.err:W"
+
+      # 3d. Verify the backup file was pushed
+      sh "adb", "shell", "ls", "-la", "/sdcard/Download/screenshot_test_backup.json"
+
       # 4. Run Maestro screenshot flows
       Dir.chdir(project_root) do
         sh "maestro", "test", File.join(project_root, ".maestro/screenshots/")

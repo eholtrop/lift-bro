@@ -134,13 +134,20 @@ jobs:
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
       - uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: 36
           target: google_apis
           arch: x86_64
           profile: pixel_6
           emulator-options: "-no-window -no-audio -gpu swiftshader_indirect -no-snapshot -no-boot-anim"
           disable-animations: true
+          emulator-boot-timeout: 900
           script: bundle exec fastlane android generate_play_store_screenshots
+      - name: Capture logcat on failure
+        if: failure()
+        run: |
+          adb logcat -d > /tmp/logcat.txt
+          echo "## Logcat (last 500 lines)" >> $GITHUB_STEP_SUMMARY
+          tail -500 /tmp/logcat.txt >> $GITHUB_STEP_SUMMARY
       - uses: actions/upload-artifact@v4
         if: always()
         with:

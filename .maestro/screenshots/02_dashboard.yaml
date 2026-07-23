@@ -6,6 +6,6 @@ appId: com.lift.bro
 - runFlow:
     file: ../flows/skip_onboarding_with_backup.yaml
 - waitForAnimationToEnd:
-    timeout: 1000
+    timeout: 5000
 - takeScreenshot:
     path: "./build/generated/store-screenshots/02_dashboard"
