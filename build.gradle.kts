@@ -118,62 +118,48 @@ tasks.register("detektFormat") {
     dependsOn(subprojects.mapNotNull { it.tasks.findByName("detektFormat") })
 }
 
-tasks.register("generateArchDiagram") {
+val archBuildFiles: List<File> = subprojects.map { it.buildFile }
+val archOutputFile = File(rootProject.projectDir, "README.md")
+val archSettingsFile = File(rootProject.projectDir, "settings.gradle.kts")
+val archVersionCatalog = File(rootProject.projectDir, "gradle/libs.versions.toml")
+
+val generateArchTask = tasks.register<com.lift.bro.GenerateArchDiagramTask>("generateArchDiagram") {
     group = "documentation"
     description = "Generates a Mermaid.js diagram of the project's module dependencies."
 
-    doLast {
-        val outputFile = file("README.md")
-        val content = StringBuilder("graph TD\n")
+    inputs.file(archSettingsFile)
+    inputs.files(archBuildFiles)
+    inputs.file(archVersionCatalog).optional()
+    outputFile.set(archOutputFile)
+}
 
-        val groups = subprojects.groupBy {
-            it.group.toString().dropPrefix("Lift_Bro").dropPrefix(".").removeSuffix(".ext")
-        }
+gradle.projectsEvaluated {
+    val groups = subprojects.groupBy {
+        it.group.toString().dropPrefix("Lift_Bro").dropPrefix(".").removeSuffix(".ext")
+    }.mapValues { (_, projects) -> projects.map { it.name } }
 
-        groups.forEach { (key, value) ->
-
-            if (key.isNotBlank()) {
-                content.append("  subgraph $key\n")
-                value.forEach {
-                    content.append("    ${key}:${it.name}\n")
+    val edges = subprojects.flatMap { proj ->
+        val id = proj.group.toString().dropPrefix("Lift_Bro").dropPrefix(".").removeSuffix(".ext")
+        val moduleName = (if (id.isNotBlank()) "$id:" else "") + proj.name
+        proj.configurations.flatMap { config ->
+            if (config.name.contains("implementation", ignoreCase = true)) {
+                config.dependencies.filterIsInstance<ProjectDependency>().map { dep ->
+                    val group = dep.group?.dropPrefix("Lift_Bro")?.dropPrefix(".")?.removeSuffix(".ext") ?: ""
+                    " $moduleName -.-> ${if (group.isNotBlank()) "$group:" else ""}${dep.name}"
                 }
-                content.append("  end\n")
-            }
+            } else emptyList()
         }
+    }
 
-        content.append("\n")
+    generateArchTask.configure {
+        this.groups.set(groups)
+        this.edges.set(edges)
+    }
 
-        // Loop through all modules
-        subprojects.forEach { proj ->
-            val id = proj.group.toString().dropPrefix("Lift_Bro").dropPrefix(".").removeSuffix(".ext")
-
-            val moduleName = (if (id.isNotBlank()) "$id:" else "") + proj.name
-            // Find dependencies in 'implementation' or 'commonMainImplementation'
-            proj.configurations.forEach { config ->
-                if (config.name.contains("implementation", ignoreCase = true)) {
-                    config.dependencies.forEach { dep ->
-                        if (dep is ProjectDependency) {
-                            val group = dep.group?.dropPrefix("Lift_Bro")?.dropPrefix(".")?.removeSuffix(".ext") ?: ""
-                            content.append(" $moduleName -.-> ${if (group.isNotBlank()) "$group:" else ""}${dep.name}\n")
-                        }
-                    }
-                }
-            }
+    subprojects.forEach { proj ->
+        proj.tasks.matching { it.name == "assemble" }.configureEach {
+            finalizedBy(generateArchTask)
         }
-
-        val readmeContent = outputFile.readText()
-
-        val lines = readmeContent.split("\n")
-        val mermaidStart = lines.indexOf("```mermaid")
-        val mermaidEnd = lines.indexOf("```")
-
-
-        outputFile.writeText(
-            (lines.subList(0, mermaidStart + 1) +
-                content.toString().split("\n") +
-                lines.subList(mermaidEnd, lines.lastIndex)).reduce
-            { x, y -> x + "\n" + y }
-        )
     }
 }
 
