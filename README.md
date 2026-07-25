@@ -7,7 +7,8 @@ It is built using Kotlin Multiplatform and Jetpack Compose Multiplatform to allo
 
 # Architecture
 
-Diagram generated using `./gradlew generateArchDiagrams`
+Diagram generated using `./gradlew generateArchDiagram`
+<!-- arch-diagram-start -->
 ```mermaid
 graph TD
   subgraph data
@@ -40,6 +41,7 @@ graph TD
  data:core -.-> domain
  data:settings -.-> domain
  data:sqldelight -.-> libs:ktx-datetime
+ data:sqldelight -.-> libs:flow
  data:sqldelight -.-> domain
  data:sqldelight -.-> data:core
  data:sqldelight -.-> libs:logging
@@ -56,8 +58,8 @@ graph TD
  presentation:server -.-> domain
  presentation:server -.-> libs:logging
  libs:flow -.-> libs:logging
-
 ```
+<!-- arch-diagram-end -->
 
 - app-*
 - presentation

@@ -1,9 +1,9 @@
 #!/bin/sh
 #
-# Pre-commit hook that runs generateArchDiagram before each commit
+# Pre-commit hook that runs detektFormat before each commit
 #
 
-echo "Running architecture diagram generation..."
+echo "Running detekt formatting..."
 
 export SDKMAN_DIR="$HOME/.sdkman"
 # shellcheck source=/dev/null
@@ -11,14 +11,13 @@ export SDKMAN_DIR="$HOME/.sdkman"
 sdk use java 21.0.9-jbr
 
 # Run the gradle task
-./gradlew generateArchDiagram
 ./gradlew detektFormat --continue
 
 # Check the exit code
 if [ $? -ne 0 ]; then
-    echo "Error: generateArchDiagram failed. Commit aborted."
+    echo "Error: detektFormat failed. Commit aborted."
     exit 3
 fi
 
-echo "Architecture diagram generated successfully."
+echo "Formatting complete."
 exit 0

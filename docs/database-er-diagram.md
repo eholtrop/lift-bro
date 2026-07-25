@@ -43,10 +43,13 @@ erDiagram
         TEXT id PK
         TEXT workoutId FK
     }
-    ExerciseVariation {
+    ExerciseSection {
         TEXT id PK
         TEXT exerciseId FK
-        TEXT movementId FK
+        TEXT referenceSectionId
+        TEXT primaryMovementId
+        TEXT name
+        INTEGER sort_order
     }
     Movement {
         TEXT id PK
@@ -68,13 +71,14 @@ erDiagram
         TEXT notes
         INTEGER rpe
         TEXT videoUri
+        TEXT exerciseSectionId FK
     }
 
     Filter ||--o{ FilterCondition : ""
     Workout ||--o{ Exercise : ""
-    Exercise ||--o{ ExerciseVariation : ""
-    Movement ||--o{ ExerciseVariation : ""
+    Exercise ||--o{ ExerciseSection : ""
     Category ||--o{ Movement : ""
     Movement ||--o{ LiftingSet : ""
+    ExerciseSection ||--o{ LiftingSet : ""
 ```
 
