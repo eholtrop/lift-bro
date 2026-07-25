@@ -78,7 +78,6 @@ kotlin {
 
             implementation(libs.kotlinx.datetime)
             implementation(libs.uuid)
-            implementation(libs.sqldelight.coroutines)
             implementation(libs.kotlinx.serialization)
             implementation(libs.kotlin.reflect)
 
@@ -98,15 +97,9 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(libs.sqldelight.android.driver)
-            implementation(libs.android.database.sqlcipher)
             implementation(libs.app.update)
             implementation(libs.app.update.ktx)
             implementation(compose.uiTooling)
-
-            // DataStore + Tink for secure key storage
-            implementation(libs.datastore.preferences)
-            implementation(libs.tink.android)
 
             // exoplayer
             implementation(libs.media3.exoplayer)
@@ -121,7 +114,6 @@ kotlin {
         }
 
         iosMain.dependencies {
-            implementation(libs.sqldelight.native.driver)
         }
 
         commonTest.dependencies {

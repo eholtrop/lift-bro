@@ -25,6 +25,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(project(":libs:ext:ktx-datetime"))
+            implementation(project(":libs:ext:flow"))
             implementation(project(":domain"))
             implementation(project(":data:core"))
             implementation(project(":libs:logging"))
@@ -37,6 +38,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.sqldelight.android.driver)
             implementation(libs.android.database.sqlcipher)
+            implementation(libs.datastore.preferences)
+            implementation(libs.tink.android)
+            implementation("androidx.core:core-ktx:1.15.0")
         }
         iosMain.dependencies {
             implementation(libs.sqldelight.native.driver)

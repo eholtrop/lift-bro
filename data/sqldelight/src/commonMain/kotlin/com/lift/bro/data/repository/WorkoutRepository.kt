@@ -2,9 +2,8 @@ package com.lift.bro.data.repository
 
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.core.datasource.ExerciseDataSource
-import com.lift.bro.data.datasource.flowToList
-import com.lift.bro.data.datasource.flowToOneOrNull
-import com.lift.bro.di.dependencies
+import com.lift.bro.data.sqldelight.datasource.asFlowList
+import com.lift.bro.data.sqldelight.datasource.asFlowOneOrNull
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.IWorkoutRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -19,7 +18,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
 class WorkoutRepository(
-    private val database: LBDatabase = dependencies.database,
+    private val database: LBDatabase,
     private val exerciseDataSource: ExerciseDataSource,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : IWorkoutRepository {
@@ -30,7 +29,7 @@ class WorkoutRepository(
         limit: Long,
     ): Flow<List<Workout>> =
         database.workoutDataSource.getAll(startDate = startDate, endDate = endDate, limit = limit)
-            .flowToList(dispatcher)
+            .asFlowList(dispatcher)
             .flatMapLatest { workouts ->
                 if (workouts.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
 
@@ -50,7 +49,7 @@ class WorkoutRepository(
             }
 
     override fun get(date: LocalDate): Flow<Workout?> =
-        database.workoutDataSource.getByDate(date = date).flowToOneOrNull()
+        database.workoutDataSource.getByDate(date = date).asFlowOneOrNull()
             .flatMapLatest { workout ->
                 exerciseDataSource.listenAll(workout?.id ?: "").map { exercises ->
                     workout?.let {
