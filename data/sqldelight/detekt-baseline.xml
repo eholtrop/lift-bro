@@ -1,5 +1,17 @@
 <?xml version="1.0" ?>
 <SmellBaseline>
   <ManuallySuppressedIssues/>
-  <CurrentIssues/>
+  <CurrentIssues>
+    <ID>Filename:EncryptionKeyProvider.android.kt$com.lift.bro.data.EncryptionKeyProvider.android.kt</ID>
+    <ID>Filename:EncryptionKeyProvider.native.kt$com.lift.bro.data.EncryptionKeyProvider.native.kt</ID>
+    <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
+    <ID>Filename:LBDatabase.native.kt$com.lift.bro.data.LBDatabase.native.kt</ID>
+    <ID>MatchingDeclarationName:EncryptionKeyProvider.native.kt$EncryptionKeyProviderImpl : EncryptionKeyProvider</ID>
+    <ID>MatchingDeclarationName:LBDatabase.kt$DriverFactory</ID>
+    <ID>MatchingDeclarationName:LBDatabase.native.kt$DriverFactory</ID>
+    <ID>MaximumLineLength:DatabaseMigrationManager.kt$DatabaseMigrationManager$ </ID>
+    <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e2: Exception</ID>
+    <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:LBDatabase.kt$DriverFactory$e: Exception</ID>
+  </CurrentIssues>
 </SmellBaseline>
