@@ -6,13 +6,16 @@ import com.lift.bro.di.dependencies
 import com.lift.bro.di.exerciseRepository
 import com.lift.bro.di.liftingLogRepository
 import com.lift.bro.di.setRepository
-import com.lift.bro.di.variationRepository
 import com.lift.bro.di.workoutRepository
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.LiftingLog
 import com.lift.bro.domain.models.Movement
+import com.lift.bro.domain.models.RecommendedSet
 import com.lift.bro.domain.models.Section
+import com.lift.bro.domain.models.SectionSet
+import com.lift.bro.domain.models.SetTarget
+import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.domain.repositories.ILiftingLogRepository
 import com.lift.bro.domain.repositories.ISetRepository
@@ -63,19 +66,42 @@ data class ExerciseItem(
 )
 
 @Serializable
-data class ExerciseSectionItem(
-    val id: String,
-    val sets: List<ExerciseSectionSet> = emptyList(),
-    val recommendedSection: Section? = null,
-    val primaryMovement: Movement? = null,
-)
+sealed class WorkoutSet {
+    @Serializable
+    data class Performed(
+        val set: LBSet,
+        val movement: Movement,
+    ): WorkoutSet()
+
+    @Serializable
+    data class Current(
+        val reps: Long,
+        val weight: Double,
+        val rpe: Int?,
+        val notes: String?,
+        val movement: Movement,
+        val tempo: Tempo,
+    ): WorkoutSet()
+
+    @Serializable
+    data class Recommended(val recommendedSet: RecommendedSet): WorkoutSet()
+}
 
 @Serializable
-data class ExerciseSectionSet(
-    val set: LBSet,
-    val movement: Movement?,
-    val recommended: Boolean,
-)
+data class ExerciseSectionItem(
+    val id: String,
+    val recommendedSection: Section? = null,
+    val sets: List<WorkoutSet> = emptyList(),
+    val primaryMovement: Movement? = null,
+) {
+    val twm = sets.sumOf {
+        when (it) {
+            is WorkoutSet.Performed -> it.set.totalWeightMoved
+            is WorkoutSet.Current -> 0.0
+            is WorkoutSet.Recommended -> 0.0
+        }
+    }
+}
 
 sealed class CreateWorkoutEvent {
     data class UpdateNotes(val notes: String): CreateWorkoutEvent()
@@ -85,11 +111,18 @@ sealed class CreateWorkoutEvent {
 
     data class UpdateFinisher(val finisher: String): CreateWorkoutEvent()
     data class UpdateWarmup(val warmup: String): CreateWorkoutEvent()
+
     data class DuplicateSet(
         val set: LBSet,
         val forceToday: Boolean = false,
-        val sectionId: String? = null
+        val sectionId: String? = null,
     ): CreateWorkoutEvent()
+
+    data class PerformSet(
+        val set: WorkoutSet.Current,
+        val sectionId: String? = null,
+    ): CreateWorkoutEvent()
+
     data class DeleteSet(val set: LBSet): CreateWorkoutEvent()
     data class DeleteExercise(val exercise: ExerciseItem): CreateWorkoutEvent()
 
@@ -117,8 +150,7 @@ fun rememberWorkoutInteractor(
                     },
                 dependencies.workoutRepository.getAll(limit = 10),
                 dependencies.liftingLogRepository.getByDate(date),
-                dependencies.variationRepository.listenAll(),
-            ) { workout, workouts, log, movements ->
+            ) { workout, workouts, log ->
                 CreateWorkoutState(
                     id = workout.id,
                     date = workout.date,
@@ -130,9 +162,31 @@ fun rememberWorkoutInteractor(
                                 ExerciseSectionItem(
                                     id = section.id,
                                     primaryMovement = section.primaryMovement,
-                                    sets = section.movementSets
-                                        .sortedBy { it.second.date }
-                                        .map { it.toItem(false) }
+                                    sets = section.sets.map { set ->
+                                        WorkoutSet.Performed(set, section.movements.first { it.id == set.movementId })
+                                    } +
+                                        with(section.recommendedSets.drop(section.sets.size)) {
+                                            listOfNotNull(firstOrNull()).map { set ->
+                                                WorkoutSet.Current(
+                                                    reps = when (val target = set.target) {
+                                                        is SetTarget.PercentageMax -> target.reps
+                                                        is SetTarget.Reps -> target.reps
+                                                        is SetTarget.Weight -> target.reps
+                                                    },
+                                                    weight = when (val target = set.target) {
+                                                        is SetTarget.PercentageMax -> target.percentage * target.max
+                                                        is SetTarget.Reps -> target.addedWeight
+                                                        is SetTarget.Weight -> target.weight
+                                                    },
+                                                    rpe = null,
+                                                    notes = null,
+                                                    movement = set.movement,
+                                                    tempo = set.tempo,
+                                                )
+                                            } + drop(1).map { set ->
+                                                WorkoutSet.Recommended(set)
+                                            }
+                                        }
                                 )
                             }
                         )
@@ -146,12 +200,6 @@ fun rememberWorkoutInteractor(
         reducers = listOf(WorkoutReducer),
         sideEffects = listOf(workoutSideEffects())
     )
-
-private fun Pair<Movement?, LBSet>.toItem(recommended: Boolean): ExerciseSectionSet = ExerciseSectionSet(
-    set = this.second,
-    movement = this.first,
-    recommended = recommended
-)
 
 val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { state, event ->
     when (event) {
@@ -180,6 +228,7 @@ val WorkoutReducer: Reducer<CreateWorkoutState, CreateWorkoutEvent> = Reducer { 
         }
 
         is DuplicateSet -> state
+        is CreateWorkoutEvent.PerformSet -> state
         is DeleteSet -> state
         is DeleteExercise -> state.copy(exercises = state.exercises - event.exercise)
         is AddSuperSet -> state
@@ -238,6 +287,7 @@ fun workoutSideEffects(
                                         it.copy(
                                             id = uuid4().toString(),
                                             exerciseId = exerciseId,
+                                            referenceSection = it,
                                         )
                                     }
                                 )
@@ -246,6 +296,22 @@ fun workoutSideEffects(
                     )
                 }
             }
+        }
+
+        is CreateWorkoutEvent.PerformSet -> {
+            setRepository.save(
+                lbSet = event.set.let { currentSet ->
+                    LBSet(
+                        movementId = currentSet.movement.id,
+                        tempo = currentSet.tempo,
+                        exerciseSectionId = event.sectionId,
+                        weight = currentSet.weight,
+                        reps = currentSet.reps,
+                        bodyWeightRep = currentSet.movement.bodyWeight,
+                        id = uuid4().toString()
+                    )
+                }
+            )
         }
 
         is DuplicateSet -> {
@@ -322,8 +388,8 @@ private fun CreateWorkoutState.toWorkout(): Workout = Workout(
                 Section(
                     id = section.id,
                     exerciseId = exercise.id,
-                    sets = section.sets.map { it.set },
-                    movements = section.sets.mapNotNull { it.movement },
+                    sets = section.sets.filterIsInstance<SectionSet.Performed>().map { it.set },
+                    movements = section.sets.filterIsInstance<SectionSet.Performed>().mapNotNull { it.movement },
                     primaryMovement = section.primaryMovement,
                     referenceSection = section.recommendedSection,
                 )

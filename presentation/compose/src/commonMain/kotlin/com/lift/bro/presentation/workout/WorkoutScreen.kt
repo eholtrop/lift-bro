@@ -56,7 +56,6 @@ import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
@@ -94,11 +93,11 @@ fun WorkoutScreen(
 }
 
 sealed class VariationDialogReason {
-    object AddExercise : VariationDialogReason()
+    object AddExercise: VariationDialogReason()
 
     data class Superset(
         val exercise: ExerciseItem,
-    ) : VariationDialogReason()
+    ): VariationDialogReason()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -131,9 +130,9 @@ fun WorkoutScreenInternal(
 
                 TextField(
                     modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = MaterialTheme.spacing.one),
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = MaterialTheme.spacing.one),
                     value = notes,
                     placeholder = { Text(stringResource(Res.string.workout_notes_placeholder)) },
                     onValueChange = {
@@ -167,9 +166,9 @@ fun WorkoutScreenInternal(
                 item {
                     Column(
                         modifier =
-                        Modifier
-                            .animateItem()
-                            .padding(horizontal = MaterialTheme.spacing.one),
+                            Modifier
+                                .animateItem()
+                                .padding(horizontal = MaterialTheme.spacing.one),
                     ) {
                         Text(
                             text = stringResource(Res.string.workout_screen_copy_recent_workout_title),
@@ -188,10 +187,10 @@ fun WorkoutScreenInternal(
                 ) { workout ->
                     RecentWorkoutCard(
                         modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .animateItem()
-                            .padding(horizontal = MaterialTheme.spacing.one),
+                            Modifier
+                                .fillMaxWidth()
+                                .animateItem()
+                                .padding(horizontal = MaterialTheme.spacing.one),
                         workout = workout,
                         recentWorkoutClicked = {
                             eventHandler(CreateWorkoutEvent.CopyWorkout(it))
@@ -215,8 +214,7 @@ fun WorkoutScreenInternal(
                     val vSets = exercise.sections[page]
 
                     WorkoutSectionCard(
-                        modifier =
-                        Modifier
+                        modifier = Modifier
                             .animateItem()
                             .variationCardAnimation(pagerState, page),
                         section = vSets,
@@ -238,22 +236,12 @@ fun WorkoutScreenInternal(
                                         Icon(
                                             imageVector = Icons.Default.ChevronLeft,
                                             contentDescription =
-                                            stringResource(
-                                                Res.string.workout_screen_previous_lift_content_description,
-                                            ),
+                                                stringResource(
+                                                    Res.string.workout_screen_previous_lift_content_description,
+                                                ),
                                         )
                                     },
                                 ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.Start,
-                                    ) {
-                                        previous.sets.firstOrNull()?.set?.let {
-                                            Text(
-                                                "${it.reps} x ${weightFormat(it.weight)}",
-                                                style = MaterialTheme.typography.labelMedium,
-                                            )
-                                        }
-                                    }
                                 }
                             }
                             Space()
@@ -270,25 +258,12 @@ fun WorkoutScreenInternal(
                                             Icon(
                                                 imageVector = Icons.Default.Refresh,
                                                 contentDescription =
-                                                stringResource(
-                                                    Res.string.workout_screen_again_content_description,
-                                                ),
+                                                    stringResource(
+                                                        Res.string.workout_screen_again_content_description,
+                                                    ),
                                             )
                                         },
                                     ) {
-                                        val first = exercise.sections.first()
-                                        Column(
-                                            modifier = Modifier.weight(1f),
-                                            horizontalAlignment = Alignment.End,
-                                        ) {
-                                            first.sets.lastOrNull()?.set?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                    maxLines = 1,
-                                                )
-                                            }
-                                        }
                                     }
                                 }
 
@@ -304,22 +279,12 @@ fun WorkoutScreenInternal(
                                             Icon(
                                                 imageVector = Icons.Default.ChevronRight,
                                                 contentDescription =
-                                                stringResource(
-                                                    Res.string.workout_screen_next_content_description,
-                                                ),
+                                                    stringResource(
+                                                        Res.string.workout_screen_next_content_description,
+                                                    ),
                                             )
                                         },
                                     ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.End,
-                                        ) {
-                                            next.sets.lastOrNull()?.set?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                )
-                                            }
-                                        }
                                     }
                                 }
                             }
@@ -452,14 +417,14 @@ fun SetOptionsBottomSheet(
         Column {
             Row(
                 modifier =
-                Modifier
-                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                    .clickable(
-                        onClick = onDeleteRequest,
-                        role = Role.Button,
-                    ).padding(
-                        horizontal = MaterialTheme.spacing.one,
-                    ),
+                    Modifier
+                        .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                        .clickable(
+                            onClick = onDeleteRequest,
+                            role = Role.Button,
+                        ).padding(
+                            horizontal = MaterialTheme.spacing.one,
+                        ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -471,14 +436,14 @@ fun SetOptionsBottomSheet(
             }
             Row(
                 modifier =
-                Modifier
-                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                    .clickable(
-                        onClick = onDuplicateRequest,
-                        role = Role.Button,
-                    ).padding(
-                        horizontal = MaterialTheme.spacing.one,
-                    ),
+                    Modifier
+                        .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                        .clickable(
+                            onClick = onDuplicateRequest,
+                            role = Role.Button,
+                        ).padding(
+                            horizontal = MaterialTheme.spacing.one,
+                        ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -505,7 +470,7 @@ fun WorkoutScreenInternalPreview(
     }
 }
 
-class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
+class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
     override val values: Sequence<CreateWorkoutState>
         get() =
             sequenceOf(
@@ -533,58 +498,58 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                     notes = "",
                     exercises = emptyList(),
                     recentWorkouts =
-                    listOf(
-                        Workout(
-                            id = "w1",
-                            date = LocalDate(2024, 1, 12),
-                            exercises =
-                            listOf(
-                                com.lift.bro.domain.models.Exercise(
-                                    id = "ex1",
-                                    workoutId = "w1",
-                                    sections =
+                        listOf(
+                            Workout(
+                                id = "w1",
+                                date = LocalDate(2024, 1, 12),
+                                exercises =
                                     listOf(
-                                        Section(
-                                            id = "vs1",
-                                            exerciseId = "",
-                                            primaryMovement = null,
-                                            sets =
-                                            listOf(
-                                                LBSet(
-                                                    id = "set1",
-                                                    movementId = "vs1",
+                                        com.lift.bro.domain.models.Exercise(
+                                            id = "ex1",
+                                            workoutId = "w1",
+                                            sections =
+                                                listOf(
+                                                    Section(
+                                                        id = "vs1",
+                                                        exerciseId = "",
+                                                        primaryMovement = null,
+                                                        sets =
+                                                            listOf(
+                                                                LBSet(
+                                                                    id = "set1",
+                                                                    movementId = "vs1",
+                                                                ),
+                                                            ),
+                                                    ),
+                                                    Section(
+                                                        id = "vs1",
+                                                        exerciseId = "",
+                                                        primaryMovement = null,
+                                                        sets =
+                                                            listOf(
+                                                                LBSet(
+                                                                    id = "set1",
+                                                                    movementId = "vs1",
+                                                                ),
+                                                            ),
+                                                    ),
                                                 ),
-                                            ),
-                                        ),
-                                        Section(
-                                            id = "vs1",
-                                            exerciseId = "",
-                                            primaryMovement = null,
-                                            sets =
-                                            listOf(
-                                                LBSet(
-                                                    id = "set1",
-                                                    movementId = "vs1",
-                                                ),
-                                            ),
                                         ),
                                     ),
-                                ),
+                            ),
+                            Workout(
+                                id = "w2",
+                                date = LocalDate(2024, 1, 10),
+                                exercises =
+                                    listOf(
+                                        com.lift.bro.domain.models.Exercise(
+                                            id = "ex2",
+                                            workoutId = "w2",
+                                            sections = emptyList(),
+                                        ),
+                                    ),
                             ),
                         ),
-                        Workout(
-                            id = "w2",
-                            date = LocalDate(2024, 1, 10),
-                            exercises =
-                            listOf(
-                                com.lift.bro.domain.models.Exercise(
-                                    id = "ex2",
-                                    workoutId = "w2",
-                                    sections = emptyList(),
-                                ),
-                            ),
-                        ),
-                    ),
                 ),
                 // Workout with exercises and sets
                 CreateWorkoutState(
@@ -592,67 +557,64 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                     notes = "Heavy squat day",
                     warmup = "10 min warmup",
                     exercises =
-                    listOf(
-                        ExerciseItem(
-                            id = "ex1",
-                            sections =
-                            listOf(
-                                ExerciseSectionItem(
-                                    id = "var1",
-                                    sets =
+                        listOf(
+                            ExerciseItem(
+                                id = "ex1",
+                                sections =
                                     listOf(
-                                        ExerciseSectionSet(
-                                            movement =
-                                            Movement(
-                                                lift =
-                                                com.lift.bro.domain.models.Category(
-                                                    name = "Squat",
-                                                    color = 0xFF2196F3uL,
+                                        ExerciseSectionItem(
+                                            id = "var1",
+                                            sets =
+                                                listOf(
+                                                    WorkoutSet.Performed(
+                                                        movement =
+                                                            Movement(
+                                                                lift =
+                                                                    com.lift.bro.domain.models.Category(
+                                                                        name = "Squat",
+                                                                        color = 0xFF2196F3uL,
+                                                                    ),
+                                                                name = "Back Squat",
+                                                            ),
+                                                        set = LBSet(
+                                                                id = "set1",
+                                                                movementId = "var1",
+                                                                weight = 225.0,
+                                                                reps = 5,
+                                                                rpe = 7,
+                                                                date =
+                                                                    kotlin.time.Clock.System
+                                                                        .now(),
+                                                            ),
+                                                    ),
+                                                    WorkoutSet.Performed(
+                                                        movement =
+                                                            Movement(
+                                                                lift =
+                                                                    com.lift.bro.domain.models.Category(
+                                                                        name = "Squat",
+                                                                        color = 0xFF2196F3uL,
+                                                                    ),
+                                                                name = "Back Squat",
+                                                            ),
+                                                        set =
+                                                            LBSet(
+                                                                id = "set1",
+                                                                movementId = "var1",
+                                                                weight = 225.0,
+                                                                reps = 5,
+                                                                rpe = 7,
+                                                                date =
+                                                                    kotlin.time.Clock.System
+                                                                        .now(),
+                                                            ),
+                                                    ),
                                                 ),
-                                                name = "Back Squat",
-                                            ),
-                                            set =
-                                            LBSet(
-                                                id = "set1",
-                                                movementId = "var1",
-                                                weight = 225.0,
-                                                reps = 5,
-                                                rpe = 7,
-                                                date =
-                                                kotlin.time.Clock.System
-                                                    .now(),
-                                            ),
-                                            recommended = false,
-                                        ),
-                                        ExerciseSectionSet(
-                                            movement =
-                                            Movement(
-                                                lift =
-                                                com.lift.bro.domain.models.Category(
-                                                    name = "Squat",
-                                                    color = 0xFF2196F3uL,
-                                                ),
-                                                name = "Back Squat",
-                                            ),
-                                            set =
-                                            LBSet(
-                                                id = "set1",
-                                                movementId = "var1",
-                                                weight = 225.0,
-                                                reps = 5,
-                                                rpe = 7,
-                                                date =
-                                                kotlin.time.Clock.System
-                                                    .now(),
-                                            ),
-                                            recommended = false,
+                                            primaryMovement = Movement(),
                                         ),
                                     ),
-                                    primaryMovement = Movement(),
-                                ),
                             ),
                         ),
-                    ),
                     recentWorkouts = emptyList(),
                 ),
             )
