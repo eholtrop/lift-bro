@@ -10,6 +10,7 @@ typealias WorkoutId = String
 data class Workout(
     val id: WorkoutId = uuid4().toString(),
     val date: LocalDate,
+    val referenceWorkout: WorkoutId? = null,
     val warmup: String? = null,
     val exercises: List<Exercise> = emptyList(),
     val finisher: String? = null,
