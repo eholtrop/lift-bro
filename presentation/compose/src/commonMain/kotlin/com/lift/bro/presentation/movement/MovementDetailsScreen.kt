@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -255,7 +256,9 @@ private fun MovementDetailsScreen(
 }
 
 @Composable
-fun Tempo.render() {
+fun Tempo.render(
+    style: TextStyle = MaterialTheme.typography.labelSmall,
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -266,16 +269,16 @@ fun Tempo.render() {
         )
         Text(
             text = down.toString(),
-            style = MaterialTheme.typography.labelSmall,
+            style = style,
         )
         Space(MaterialTheme.spacing.quarter)
         Text(
             text = "-",
-            style = MaterialTheme.typography.labelSmall,
+            style = style,
         )
         Text(
             text = hold.toString(),
-            style = MaterialTheme.typography.labelSmall,
+            style = style,
         )
         Icon(
             modifier = Modifier.size(12.dp),
@@ -284,7 +287,7 @@ fun Tempo.render() {
         )
         Text(
             text = up.toString(),
-            style = MaterialTheme.typography.labelSmall,
+            style = style,
         )
     }
 }

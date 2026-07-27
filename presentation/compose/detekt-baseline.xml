@@ -2,6 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ArgumentListWrapping:WorkoutSectionCard.kt$(DuplicateSet(set = (section.sets[copyIndex] as WorkoutSet.Performed).set))</ID>
+    <ID>ArgumentListWrapping:WorkoutSectionCard.kt$(set = (section.sets[copyIndex] as WorkoutSet.Performed).set)</ID>
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
     <ID>ComplexCondition:EditSetInteractor.kt$movement != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null &amp;&amp; failureRep != 0L &amp;&amp; reps &gt;= (failureRep ?: 0)</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator&lt;Destination&gt; = rememberNavCoordinator&lt;Destination&gt;(Destination.Unknown), )</ID>
@@ -13,7 +15,6 @@
     <ID>CyclomaticComplexMethod:RecordingInteractor.kt$@Composable fun rememberRecordingInteractor( setId: String, cameraControllerFactory: CameraControllerFactory = rememberCameraControllerFactory(), navController: LiftBroNavCoordinator = LocalNavCoordinator.current, setRepository: ISetRepository = dependencies.setRepository, ): RecordingInteractor</ID>
     <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate = today, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = LocalDailyWorkoutDetailsInteractor.current ?: rememberDailyWorkoutDetailsInteractor(date), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
     <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftingLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
-    <ID>CyclomaticComplexMethod:WorkoutScreen.kt$@OptIn(ExperimentalMaterial3Api::class) @Composable fun WorkoutScreenInternal( state: CreateWorkoutState, eventHandler: (CreateWorkoutEvent) -&gt; Unit = {}, )</ID>
     <ID>CyclomaticComplexMethod:WorkoutSectionCard.kt$@Composable fun WorkoutSectionCard( modifier: Modifier, section: ExerciseSectionItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedEvents$()</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedPageState$()</ID>
@@ -30,6 +31,10 @@
     <ID>FunctionNaming:MainViewController.kt$fun MainViewController( bannerProvider: () -&gt; UIView )</ID>
     <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForMonth( year: Int, month: Month, ): Flow&lt;List&lt;Pair&lt;Movement, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
     <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForRange( startDate: LocalDate, endDate: LocalDate, ): Flow&lt;List&lt;Pair&lt;Movement, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
+    <ID>Indentation:WorkoutScreen.kt$ </ID>
+    <ID>Indentation:WorkoutScreen.kt$WorkoutStateProvider$ </ID>
+    <ID>Indentation:WorkoutSectionCard.kt$ </ID>
+    <ID>Indentation:WorkoutSectionCard.kt$SectionItemProvider$ </ID>
     <ID>InvalidPackageDeclaration:ServerSettingsRow.android.kt$package com.lift.bro.presentation.settings.server</ID>
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
     <ID>LongParameterList:LiftCard.kt$( color: Color, height: Float, targetHeight: Float, width: Float, topLeft: Float, alpha: Float, )</ID>
@@ -49,10 +54,12 @@
     <ID>MaximumLineLength:RecordingScreen.kt$ </ID>
     <ID>MaximumLineLength:Toolbar.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarScreen.kt$ </ID>
+    <ID>MaximumLineLength:WorkoutSectionCard.kt$ </ID>
     <ID>MaximumLineLength:WrappedLandingScreen.kt$ </ID>
     <ID>MaximumLineLength:WrappedProgressInteractor.kt$ </ID>
     <ID>MaximumLineLength:WrappedProgressScreen.kt$ </ID>
     <ID>NestedBlockDepth:ServerSettingsRow.android.kt$actual fun getLocalIPAdderess(): String?</ID>
+    <ID>NoUnusedImports:WorkoutSectionCard.kt$com.lift.bro.presentation.workout.WorkoutSectionCard.kt</ID>
     <ID>NoWildcardImports:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>NoWildcardImports:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
@@ -72,6 +79,7 @@
     <ID>UnusedPrivateProperty:App.kt$val cel = celebration</ID>
     <ID>UnusedPrivateProperty:Calculator.kt$Digit$digit: Int</ID>
     <ID>UnusedPrivateProperty:CategoryDetailsScreen.kt$SortingOptions$reversed: Boolean</ID>
+    <ID>UnusedPrivateProperty:WorkoutScreen.kt$val next = exercise.sections[page + 1]</ID>
     <ID>UnusedPrivateProperty:WrappedProgressScreen.kt$val minSet = sets.minOf { it.second }</ID>
     <ID>WildcardImport:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>WildcardImport:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
