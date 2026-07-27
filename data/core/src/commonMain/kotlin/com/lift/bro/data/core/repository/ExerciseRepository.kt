@@ -20,4 +20,6 @@ class ExerciseRepository(
 
     override suspend fun delete(section: Section, cascading: Boolean) =
         local.delete(section = section, cascading = cascading)
+
+    override suspend fun deleteAll() = local.deleteAll()
 }

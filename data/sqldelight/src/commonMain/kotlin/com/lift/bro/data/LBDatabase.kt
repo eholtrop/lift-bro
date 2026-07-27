@@ -79,15 +79,6 @@ class LBDatabase(
 
     val goalQueries get() = database.goalQueries
 
-    suspend fun clear() {
-        database.categoryQueries.deleteAll()
-        database.movementQueries.deleteAll()
-        database.setQueries.deleteAll()
-        database.exerciseQueries.deleteAll()
-        database.workoutQueries.deleteAll()
-        database.liftingLogQueries.deleteAll()
-    }
-
     val variantDataSource: VariationDataSource = SqlDelightVariationDataSource(
         movementQueries = database.movementQueries
     )

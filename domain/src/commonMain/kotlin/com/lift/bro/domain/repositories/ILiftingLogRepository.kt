@@ -8,4 +8,5 @@ interface ILiftingLogRepository {
     fun getByDate(date: LocalDate): Flow<LiftingLog?>
     fun getAll(): Flow<List<LiftingLog>>
     suspend fun save(log: LiftingLog)
+    suspend fun deleteAll()
 }

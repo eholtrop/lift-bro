@@ -21,7 +21,7 @@ class WorkoutRepository(
     private val database: LBDatabase,
     private val exerciseDataSource: ExerciseDataSource,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : IWorkoutRepository {
+): IWorkoutRepository {
 
     override fun getAll(
         startDate: LocalDate?,
@@ -49,7 +49,8 @@ class WorkoutRepository(
             }
 
     override fun get(date: LocalDate): Flow<Workout?> =
-        database.workoutDataSource.getByDate(date = date).asFlowOneOrNull()
+        database.workoutDataSource.getByDate(date = date)
+            .asFlowOneOrNull(dispatcher = dispatcher)
             .flatMapLatest { workout ->
                 exerciseDataSource.listenAll(workout?.id ?: "").map { exercises ->
                     workout?.let {
@@ -87,6 +88,12 @@ class WorkoutRepository(
             workout.exercises.forEach {
                 exerciseDataSource.delete(it.id)
             }
+        }
+    }
+
+    override suspend fun deleteAll() {
+        withContext(dispatcher) {
+            database.workoutDataSource.deleteAll()
         }
     }
 }

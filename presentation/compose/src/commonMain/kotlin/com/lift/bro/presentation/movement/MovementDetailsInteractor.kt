@@ -98,7 +98,7 @@ fun rememberMovementDetailsInteractor(
                             is MovementDetailsEvent.UpdateMovement.NotesUpdated -> {
                                 val currentVariation = state.movement
                                 currentVariation.let {
-                                    dependencies.database.variantDataSource.save(
+                                    dependencies.variationRepository.save(
                                         currentVariation.copy(notes = event.notes)
                                     )
                                 }

@@ -18,7 +18,7 @@ import kotlinx.datetime.LocalDate
 class SqlDelightLiftingLogRepository(
     private val liftingLogQueries: LiftingLogQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : ILiftingLogRepository {
+): ILiftingLogRepository {
 
     override fun getByDate(date: LocalDate): Flow<LiftingLog?> =
         liftingLogQueries.getByDate(date)
@@ -42,6 +42,12 @@ class SqlDelightLiftingLogRepository(
                 notes = log.notes,
                 vibe_check = log.vibe?.toLong(),
             )
+        }
+    }
+
+    override suspend fun deleteAll() {
+        withContext(dispatcher) {
+            liftingLogQueries.deleteAll()
         }
     }
 }

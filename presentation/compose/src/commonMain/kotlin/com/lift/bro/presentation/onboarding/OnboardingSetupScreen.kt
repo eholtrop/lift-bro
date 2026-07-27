@@ -42,6 +42,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lift.bro.defaultSbdLifts
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.liftRepository
+import com.lift.bro.di.variationRepository
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.Settings
 import com.lift.bro.domain.models.UOM
@@ -162,11 +164,11 @@ fun OnboardingSetupScreen(
 
                             GlobalScope.launch {
                                 selectedVariations.toList().forEach {
-                                    dependencies.database.variantDataSource.save(it)
+                                    dependencies.variationRepository.save(it)
                                 }
                                 selectedVariations.toList().map { it.lift }.filterNotNull()
                                     .forEach {
-                                        dependencies.database.liftDataSource.save(it)
+                                        dependencies.liftRepository.save(it)
                                     }
                                 delay(100)
                                 formSubmitted()

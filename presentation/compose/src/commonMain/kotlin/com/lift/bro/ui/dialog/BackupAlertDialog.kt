@@ -11,9 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.lift.bro.di.dependencies
+import com.lift.bro.di.setRepository
 import com.lift.bro.domain.repositories.BackupSettings
 import com.lift.bro.domain.repositories.Setting
 import com.lift.bro.presentation.backup.BackupDialog
+import kotlinx.coroutines.flow.first
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.daysUntil
 import kotlinx.datetime.todayIn
@@ -37,7 +39,7 @@ fun BackupAlertDialog(
 
         // if the user has not backed up before
         val comparisonDate = if (lastBackupDate.toEpochDays() == 0L) {
-            val sets = dependencies.database.setDataSource.getAll()
+            val sets = dependencies.setRepository.listenAll().first()
             // use the earliest set as the reference date, if there are none just use the current day
             sets.minOfOrNull { it.date }?.toLocalDate() ?: today
         } else {
