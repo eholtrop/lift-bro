@@ -1,5 +1,6 @@
 package com.lift.bro.di
 
+import com.lift.bro.ClearUserDataUseCase
 import com.lift.bro.audio.AudioPlayer
 import com.lift.bro.data.LBDatabase
 import com.lift.bro.data.client.LiftBroClientConfig
@@ -204,6 +205,16 @@ val DependencyContainer.localGoalsRepository: IGoalRepository
 val DependencyContainer.liveStreamRepository: LiveStreamRepository
     get() = LiveStreamRepositoryImpl(
         dataSource = KtorLiveStreamDataSource()
+    )
+
+val DependencyContainer.clearUserDataUseCase: ClearUserDataUseCase
+    get() = ClearUserDataUseCase(
+        liftRepository = liftRepository,
+        variationRepository = variationRepository,
+        setRepository = setRepository,
+        liftingLogRepository = liftingLogRepository,
+        workoutRepository = workoutRepository,
+        exerciseRepository = exerciseRepository,
     )
 
 expect val dependencies: DependencyContainer

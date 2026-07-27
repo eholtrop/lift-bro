@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 class FakeExerciseDataSource(
-    private val exercises: List<Exercise> = emptyList()
+    private var exercises: List<Exercise> = emptyList()
 ) : ExerciseDataSource {
     var lastWorkoutId: String? = null
         private set
@@ -43,6 +43,10 @@ class FakeExerciseDataSource(
     override suspend fun delete(section: Section, cascading: Boolean) {
         lastDeletedSection = section
         lastDeletedSectionCascading = cascading
+    }
+
+    override suspend fun deleteAll() {
+        exercises = emptyList()
     }
 }
 

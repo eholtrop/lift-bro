@@ -1,6 +1,6 @@
 package com.lift.bro
 
-import com.lift.bro.data.LBDatabase
+import com.lift.bro.di.clearUserDataUseCase
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.exerciseRepository
 import com.lift.bro.di.liftRepository
@@ -118,7 +118,7 @@ data class LegacySet(
 }
 
 class RestoreUseCase(
-    private val database: LBDatabase = dependencies.database,
+    private val clearUserData: ClearUserDataUseCase = dependencies.clearUserDataUseCase,
     private val liftRepository: ILiftRepository = dependencies.liftRepository,
     private val variationRepository: IVariationRepository = dependencies.variationRepository,
     private val setRepository: ISetRepository = dependencies.setRepository,
@@ -224,7 +224,7 @@ class RestoreUseCase(
 
     private suspend fun applyBackup(backup: Backup) {
         // Delete existing data first
-        database.clear()
+        clearUserData()
 
         backup.sets?.forEach {
             setRepository.save(it)

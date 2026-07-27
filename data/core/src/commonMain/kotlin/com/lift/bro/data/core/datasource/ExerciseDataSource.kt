@@ -12,4 +12,5 @@ interface ExerciseDataSource {
 
     suspend fun save(section: Section)
     suspend fun delete(section: Section, cascading: Boolean)
+    suspend fun deleteAll()
 }

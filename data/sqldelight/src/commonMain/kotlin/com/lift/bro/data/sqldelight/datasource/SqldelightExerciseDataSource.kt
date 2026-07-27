@@ -89,6 +89,12 @@ class SqldelightExerciseDataSource(
             setQueries.deleteAllForSections(section.id)
         }
     }
+
+    override suspend fun deleteAll() {
+        withContext(dispatcher) {
+            exerciseQueries.deleteAll()
+        }
+    }
 }
 
 private fun GetExerciseSectionsByWorkoutId.toDomain(

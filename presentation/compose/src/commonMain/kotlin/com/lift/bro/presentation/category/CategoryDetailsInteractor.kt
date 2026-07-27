@@ -111,7 +111,7 @@ fun rememberCategoryDetailsInteractor(
                         )
 
                     is CategoryDetailsEvent.ToggleFavourite -> {
-                        dependencies.database.variantDataSource.save(
+                        dependencies.variationRepository.save(
                             event.variation.copy(
                                 favourite = !event.variation.favourite
                             )

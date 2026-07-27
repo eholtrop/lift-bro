@@ -17,4 +17,6 @@ interface IWorkoutRepository {
     suspend fun save(workout: Workout)
 
     suspend fun delete(workout: Workout)
+
+    suspend fun deleteAll()
 }
