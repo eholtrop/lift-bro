@@ -293,22 +293,35 @@ platform :ios do
 
   desc "Build the debug artifact for iOS"
   lane :build_debug do |options|
-    match_development
+    # Simulator builds don't require code signing identities, so skip `match_development`
+    # (which can fail on expired dev certificates and isn't needed for the simulator).
+    base_xcargs = "CODE_SIGNING_ALLOWED=NO"
+    if options[:build_number]
+      base_xcargs += " MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+    end
 
-    xcargs = options[:build_number] ? "MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil
+    # Target a specific simulator device (arm64-only) when a UDID is given, instead of
+    # "generic/platform=iOS Simulator". Generic builds BOTH x86_64 and arm64 slices, and the
+    # x86_64 slice (e.g. via SPM fat-binary frameworks like Sentry) fails on Apple Silicon.
+    destination = if options[:simulator_udid]
+                    base_xcargs += " ONLY_ACTIVE_ARCH=YES ARCHS=arm64"
+                    "platform=iOS Simulator,id=#{options[:simulator_udid]}"
+                  else
+                    "generic/platform=iOS Simulator"
+                  end
 
     gym(
       scheme: "iosApp",
       project: "iosApp/iosApp.xcodeproj",
       configuration: "Debug",
       sdk: "iphonesimulator",
-      destination: "generic/platform=iOS Simulator",
+      destination: destination,
       derived_data_path: options[:derived_data_path],
       clean: true,
       silent: false,
       skip_package_ipa: true,
       skip_archive: true,
-      xcargs: xcargs,
+      xcargs: base_xcargs,
     )
   end
 
@@ -426,7 +439,7 @@ platform :ios do
 
       # 3. Build debug IPA for simulator
       derived_data = File.join(project_root, "build/generated/derived-data/ios")
-      build_debug(derived_data_path: derived_data)
+      build_debug(derived_data_path: derived_data, simulator_udid: simulator_udid)
 
       # 4. Install app on simulator
       app_path = File.join(derived_data, "Build/Products/Debug-iphonesimulator/Lift Bro.app")

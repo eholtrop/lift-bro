@@ -1,5 +1,6 @@
 package com.lift.bro.android
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -11,6 +12,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import com.lift.bro.di.DependencyContainer
 import com.lift.bro.presentation.App
+import com.lift.bro.presentation.DeepLinkState
 import com.lift.bro.presentation.LocalPlatformContext
 import com.lift.bro.presentation.LocalServer
 import com.lift.bro.presentation.Platform
@@ -29,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        handleDeepLink(intent)
         setContent {
             val coordinator = rememberNavCoordinator<Destination>(Destination.Unknown)
             CompositionLocalProvider(
@@ -47,6 +50,19 @@ class MainActivity : ComponentActivity() {
                 if (!coordinator.onBackPressed()) {
                     finish()
                 }
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        handleDeepLink(intent)
+    }
+
+    private fun handleDeepLink(intent: Intent?) {
+        intent?.data?.let { uri ->
+            if (uri.scheme == "liftbro" && uri.host == "restore") {
+                DeepLinkState.url.value = uri.toString()
             }
         }
     }

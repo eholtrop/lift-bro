@@ -14,6 +14,10 @@
     <string name="backup_warning_dialog_confirm_cta">Respaldar ahora</string>
     <string name="backup_warning_dialog_dismiss_cta">Ignorar</string>
     <string name="backup_warning_dialog_title">Ha pasado un tiempo...</string>
+    <string name="restore_confirm_dialog_title">¿Estás seguro?</string>
+    <string name="restore_confirm_dialog_message">¡Esto borrará todo tu historial de entrenamiento!</string>
+    <string name="restore_confirm_dialog_confirm_cta">Restaurar</string>
+    <string name="restore_confirm_dialog_dismiss_cta">Cancelar</string>
     <string name="backup_progress_categories">Categorías</string>
     <string name="backup_progress_complete_description">completado</string>
     <string name="backup_progress_daily_notes">Notas diarias</string>

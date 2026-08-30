@@ -13,6 +13,10 @@
     <string name="backup_warning_dialog_confirm_cta">Backup Now</string>
     <string name="backup_warning_dialog_dismiss_cta">Ignore</string>
     <string name="backup_warning_dialog_title">It's been a while...</string>
+    <string name="restore_confirm_dialog_title">Are you sure?</string>
+    <string name="restore_confirm_dialog_message">This will wipe all workout history!</string>
+    <string name="restore_confirm_dialog_confirm_cta">Restore</string>
+    <string name="restore_confirm_dialog_dismiss_cta">Cancel</string>
     <string name="backup_progress_categories">Categories</string>
     <string name="backup_progress_complete_description">complete</string>
     <string name="backup_progress_daily_notes">Daily Notes</string>

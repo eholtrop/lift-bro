@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,8 +40,10 @@ import androidx.compose.ui.unit.dp
 import com.example.compose.AppTheme
 import com.lift.bro.AppPurchases
 import com.lift.bro.AppRouter
+import com.lift.bro.RestoreUseCase
 import com.lift.bro.config.BuildConfig
 import com.lift.bro.core.buildconfig.BuildKonfig
+import com.lift.bro.decodeBase64
 import com.lift.bro.di.dependencies
 import com.lift.bro.di.setRepository
 import com.lift.bro.di.variationRepository
@@ -55,6 +58,7 @@ import com.lift.bro.domain.server.LiftBroServer
 import com.lift.bro.domain.usecases.ConsentDeviceUseCase
 import com.lift.bro.domain.usecases.GetCelebrationTypeUseCase
 import com.lift.bro.domain.usecases.HasDeviceConsentedUseCase
+import com.lift.bro.parseBackup
 import com.lift.bro.presentation.home.iconRes
 import com.lift.bro.ui.ConfettiExplosion
 import com.lift.bro.ui.ConsentCheckBoxField
@@ -62,6 +66,7 @@ import com.lift.bro.ui.Space
 import com.lift.bro.ui.calculator.WeightCalculatorBottomSheet
 import com.lift.bro.ui.card.lift.LiftCardYValue
 import com.lift.bro.ui.dialog.BackupAlertDialog
+import com.lift.bro.ui.dialog.RestoreConfirmDialog
 import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.revenuecat.purchases.kmp.LogLevel
@@ -72,6 +77,7 @@ import io.sentry.kotlin.multiplatform.Sentry
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import lift_bro.core.generated.resources.Res
@@ -281,6 +287,8 @@ fun App(
         val themeMode by dependencies.settingsRepository.listen(Setting.ThemeMode).collectAsState(ThemeMode.System)
 
         key(localLocale) {
+            val coroutineScope = rememberCoroutineScope()
+
             AppTheme(
                 theme = themeMode
             ) {
@@ -291,6 +299,34 @@ fun App(
                         CheckAppConsent()
                     }
                     BackupAlertDialog()
+
+                    val deepLinkUrl by DeepLinkState.url.collectAsState()
+                    var pendingDeepLinkBackup by remember { mutableStateOf<com.lift.bro.Backup?>(null) }
+
+                    LaunchedEffect(deepLinkUrl) {
+                        deepLinkUrl?.let { url ->
+                            DeepLinkState.url.value = null
+                            try {
+                                val data = url.substringAfter("data=").substringBefore("&")
+                                val json = decodeBase64(data).decodeToString()
+                                pendingDeepLinkBackup = parseBackup(json)
+                            } catch (_: Exception) {
+                                // Invalid deep link data
+                            }
+                        }
+                    }
+
+                    pendingDeepLinkBackup?.let { backup ->
+                        RestoreConfirmDialog(
+                            onConfirm = {
+                                pendingDeepLinkBackup = null
+                                coroutineScope.launch {
+                                    RestoreUseCase().invoke(backup)
+                                }
+                            },
+                            onDismiss = { pendingDeepLinkBackup = null }
+                        )
+                    }
 
                     Column {
                         SwipeableNavHost<Destination>(

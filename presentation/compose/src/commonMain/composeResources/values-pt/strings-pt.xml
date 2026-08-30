@@ -14,6 +14,10 @@
     <string name="backup_warning_dialog_confirm_cta">Fazer backup agora</string>
     <string name="backup_warning_dialog_dismiss_cta">Ignorar</string>
     <string name="backup_warning_dialog_title">Já faz um tempo...</string>
+    <string name="restore_confirm_dialog_title">Tem certeza?</string>
+    <string name="restore_confirm_dialog_message">Isso apagará todo o histórico de treinos!</string>
+    <string name="restore_confirm_dialog_confirm_cta">Restaurar</string>
+    <string name="restore_confirm_dialog_dismiss_cta">Cancelar</string>
     <string name="backup_progress_categories">Categorias</string>
     <string name="backup_progress_complete_description">concluído</string>
     <string name="backup_progress_daily_notes">Notas diárias</string>

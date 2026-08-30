@@ -4,7 +4,12 @@ import UIKit
 import core
 
 struct ComposeView: UIViewControllerRepresentable {
+    var deepLinkUrl: String?
+
     func makeUIViewController(context: Context) -> UIViewController {
+        if let url = deepLinkUrl {
+            DeepLinkState.shared.url.value = url
+        }
         return MainViewControllerKt.MainViewController(
             bannerProvider: {
                 let banner = BannerView()
@@ -14,13 +19,18 @@ struct ComposeView: UIViewControllerRepresentable {
         )
     }
 
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        if let url = deepLinkUrl {
+            DeepLinkState.shared.url.value = url
+        }
+    }
 }
 
 struct ContentView: View {
+    var deepLinkUrl: String?
+
     var body: some View {
-        ComposeView()
+        ComposeView(deepLinkUrl: deepLinkUrl)
             .ignoresSafeArea()
-//            .ignoresSafeArea(.keyboard)  // Compose has own keyboard handler
     }
 }

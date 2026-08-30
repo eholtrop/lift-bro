@@ -117,6 +117,85 @@ data class LegacySet(
     val totalWeightMoved = weight * reps
 }
 
+fun parseBackup(json: String): Backup {
+    return try {
+        Json.decodeFromString<Backup>(json)
+    } catch (_: Exception) {
+        Json.decodeFromString<LegacyBackup>(json).let { migrateLegacy(it) }
+    }
+}
+
+private fun migrateLegacy(legacy: LegacyBackup): Backup {
+    val variations = legacy.variations?.map { legacyVariation ->
+        Movement(
+            id = legacyVariation.id,
+            lift = legacyVariation.lift,
+            name = legacyVariation.name,
+            reps = legacyVariation.reps,
+            favourite = legacyVariation.favourite,
+            notes = legacyVariation.notes,
+            bodyWeight = legacyVariation.bodyWeight,
+        )
+    }
+
+    val sets = legacy.sets?.map { lSet ->
+        LBSet(
+            id = lSet.id,
+            movementId = lSet.variationId,
+            weight = lSet.weight,
+            reps = lSet.reps,
+            tempo = lSet.tempo,
+            date = lSet.date,
+            notes = lSet.notes,
+            rpe = lSet.rpe,
+            mer = lSet.mer,
+            bodyWeightRep = lSet.bodyWeightRep,
+            videoUri = lSet.videoUri,
+        )
+    }
+
+    val movementsById = variations?.associateBy { it.id } ?: emptyMap()
+    val setsById = sets.orEmpty().associateBy { it.id }.toMutableMap()
+
+    val workouts = legacy.workouts?.map { legacyWorkout ->
+        val exercises = legacyWorkout.exercises.map { legacyExercise ->
+            val sections = legacyExercise.variationSets.map { legacyVariationSet ->
+                val resolvedSets = legacyVariationSet.sets.mapNotNull { set ->
+                    setsById[set.id]?.copy(exerciseSectionId = legacyVariationSet.id)
+                }
+                resolvedSets.forEach { setsById[it.id] = it }
+
+                Section(
+                    id = legacyVariationSet.id,
+                    exerciseId = legacyExercise.id,
+                    primaryMovement = movementsById[legacyVariationSet.variation.id],
+                )
+            }
+            Exercise(
+                id = legacyExercise.id,
+                workoutId = legacyWorkout.id,
+                sections = sections,
+            )
+        }
+        Workout(
+            id = legacyWorkout.id,
+            date = legacyWorkout.date,
+            warmup = legacyWorkout.warmup,
+            exercises = exercises,
+            finisher = legacyWorkout.finisher,
+        )
+    }
+
+    return Backup(
+        lifts = legacy.lifts,
+        variations = variations,
+        sets = setsById.values.toList(),
+        liftingLogs = legacy.liftingLogs,
+        workouts = workouts,
+        exercises = null,
+    )
+}
+
 class RestoreUseCase(
     private val database: LBDatabase = dependencies.database,
     private val liftRepository: ILiftRepository = dependencies.liftRepository,
@@ -125,7 +204,12 @@ class RestoreUseCase(
     private val workoutRepository: IWorkoutRepository = dependencies.workoutRepository,
     private val exerciseRepository: IExerciseRepository = dependencies.exerciseRepository,
 ) {
-    suspend operator fun invoke(): Boolean {
+    suspend operator fun invoke(backup: Backup? = null): Boolean {
+        if (backup != null) {
+            applyBackup(backup)
+            return true
+        }
+
         // let the user pick a file to restore
         val backupDir = FileKit.cacheDir / "backups"
         if (!backupDir.exists()) {
@@ -137,89 +221,14 @@ class RestoreUseCase(
             Log.d(message = "file received")
             withContext(Dispatchers.IO) {
                 val raw = readString()
-                val backup = try {
-                    Json.decodeFromString<Backup>(raw)
-                } catch (_: Exception) {
-                    Json.decodeFromString<LegacyBackup>(raw).let { migrateLegacy(it) }
-                }
-                applyBackup(backup)
+                val parsed = parseBackup(raw)
+                applyBackup(parsed)
             }
             return true
         } ?: {
             Log.d(message = "error")
         }
         return false
-    }
-
-    private fun migrateLegacy(legacy: LegacyBackup): Backup {
-        val variations = legacy.variations?.map { legacyVariation ->
-            Movement(
-                id = legacyVariation.id,
-                lift = legacyVariation.lift,
-                name = legacyVariation.name,
-                reps = legacyVariation.reps,
-                favourite = legacyVariation.favourite,
-                notes = legacyVariation.notes,
-                bodyWeight = legacyVariation.bodyWeight,
-            )
-        }
-
-        val sets = legacy.sets?.map { lSet ->
-            LBSet(
-                id = lSet.id,
-                movementId = lSet.variationId,
-                weight = lSet.weight,
-                reps = lSet.reps,
-                tempo = lSet.tempo,
-                date = lSet.date,
-                notes = lSet.notes,
-                rpe = lSet.rpe,
-                mer = lSet.mer,
-                bodyWeightRep = lSet.bodyWeightRep,
-                videoUri = lSet.videoUri,
-            )
-        }
-
-        val movementsById = variations?.associateBy { it.id } ?: emptyMap()
-        val setsById = sets.orEmpty().associateBy { it.id }.toMutableMap()
-
-        val workouts = legacy.workouts?.map { legacyWorkout ->
-            val exercises = legacyWorkout.exercises.map { legacyExercise ->
-                val sections = legacyExercise.variationSets.map { legacyVariationSet ->
-                    val resolvedSets = legacyVariationSet.sets.mapNotNull { set ->
-                        setsById[set.id]?.copy(exerciseSectionId = legacyVariationSet.id)
-                    }
-                    resolvedSets.forEach { setsById[it.id] = it }
-
-                    Section(
-                        id = legacyVariationSet.id,
-                        exerciseId = legacyExercise.id,
-                        primaryMovement = movementsById[legacyVariationSet.variation.id],
-                    )
-                }
-                Exercise(
-                    id = legacyExercise.id,
-                    workoutId = legacyWorkout.id,
-                    sections = sections,
-                )
-            }
-            Workout(
-                id = legacyWorkout.id,
-                date = legacyWorkout.date,
-                warmup = legacyWorkout.warmup,
-                exercises = exercises,
-                finisher = legacyWorkout.finisher,
-            )
-        }
-
-        return Backup(
-            lifts = legacy.lifts,
-            variations = variations,
-            sets = setsById.values.toList(),
-            liftingLogs = legacy.liftingLogs,
-            workouts = workouts,
-            exercises = null,
-        )
     }
 
     private suspend fun applyBackup(backup: Backup) {

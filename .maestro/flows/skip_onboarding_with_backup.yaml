@@ -5,14 +5,14 @@ appId: com.lift.bro
     file: onboarding_select_bro.yaml
 - tapOn: "Consent"
 - tapOn: "Continue"
-- tapOn: "🦺 Restore from a Backup"
-- waitForAnimationToEnd:
-    timeout: 5000
-# Android
+# Build the deep link URL from the generated backup JSON
+- runScript:
+    file: scripts/encode_backup.js
+# Open the deep link to restore the backup
+- openLink: ${output.restoreUrl}
+# Dismiss the backup reminder dialog if it appears
 - tapOn:
-    text: "screenshot_test_backup.json"
+    text: "Ignore"
     optional: true
-# iOS
-- tapOn:
-    id: "screenshot_test_backup.json, json"
-    optional: true
+# Confirm the restore dialog
+- tapOn: "Restore"
