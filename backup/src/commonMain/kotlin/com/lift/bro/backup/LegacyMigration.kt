@@ -32,6 +32,7 @@ fun LegacyBackup.toBackup(): Backup {
             mer = lSet.mer,
             bodyWeightRep = lSet.bodyWeightRep,
             videoUri = lSet.videoUri,
+            failureRep = null,
         )
     }
 

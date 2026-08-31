@@ -34,6 +34,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -52,7 +53,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -78,6 +86,7 @@ import com.lift.bro.ui.navigation.Destination
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.ui.transparentColors
 import com.lift.bro.utils.PreviewAppTheme
+import com.lift.bro.utils.underlineRange
 import kotlinx.datetime.LocalDate
 import tv.dpal.ext.ktx.datetime.toString
 import tv.dpal.flowvi.Interactor
@@ -153,8 +162,27 @@ fun EditSetScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                var textLayoutResult by remember(state.failureRep) { mutableStateOf<TextLayoutResult?>(null) }
+                val titleCta by remember(
+                    state.failureRep
+                ) { mutableStateOf(if (state.failureRep != null) "Attempted" else "Crushed") }
+                val title = buildEditSetScreenTitle(
+                    titleCta,
+                    onClick = {
+                        onEvent(EditSetEvent.ToggleSetFailed)
+                    }
+                )
+                val lineColor = MaterialTheme.colorScheme.primary
+
                 Text(
-                    if (state.id == null) strings.createSetTitle else strings.editSetTitle
+                    modifier = Modifier.underlineRange(
+                        textLayoutResult = textLayoutResult,
+                        start = 2,
+                        end = title.length,
+                        lineColor = lineColor,
+                    ),
+                    onTextLayout = { textLayoutResult = it },
+                    text = title,
                 )
                 Space(MaterialTheme.spacing.half)
                 IconButton(
@@ -192,17 +220,15 @@ fun EditSetScreen(
             }
         },
     ) { padding ->
-        state.let { set ->
-            EditSetScreen(
-                modifier = Modifier.padding(padding),
-                state = set,
-                sendEvent = { onEvent(it) },
-                showVariationDialog = {
-                    showVariationDialog = true
-                },
-                strings = strings,
-            )
-        }
+        EditSetScreen(
+            modifier = Modifier.padding(padding),
+            state = state,
+            sendEvent = { onEvent(it) },
+            showVariationDialog = {
+                showVariationDialog = true
+            },
+            strings = strings,
+        )
     }
 
     LaunchedEffect(state.id) {
@@ -220,6 +246,29 @@ fun EditSetScreen(
             onEvent(EditSetEvent.VariationSelected(it))
         }
     )
+}
+
+@Composable
+private fun buildEditSetScreenTitle(
+    titleCta: String,
+    onClick: () -> Unit,
+): AnnotatedString = buildAnnotatedString {
+    append("I ")
+    withLink(
+        LinkAnnotation.Clickable(
+            tag = "Toggle Failure",
+            styles = TextLinkStyles(
+                style = LocalTextStyle.current.toSpanStyle()
+            ),
+            linkInteractionListener = {
+                onClick()
+            }
+        )
+    ) {
+        append(
+            titleCta
+        )
+    }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -269,6 +318,46 @@ fun EditSetScreen(
                             rpe = state.rpe,
                             showRpe = false
                         )
+
+                        AnimatedVisibility(
+                            visible = state.failureRep != null
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                            ) {
+                                Column {
+                                    Text(
+                                        text = "But I failed on Rep",
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+
+                                    AnimatedVisibility(
+                                        visible = state.showFailedRepsOutOfBoundsError
+                                    ) {
+                                        Text(
+                                            text = "Cannot be 0 or greater than ${state.reps}",
+                                            style = MaterialTheme.typography.labelMedium,
+                                            color = MaterialTheme.colorScheme.error,
+                                        )
+                                    }
+                                }
+
+                                Space(MaterialTheme.spacing.half)
+
+                                RepWeightTextField(
+                                    value = state.failureRep.toString(),
+                                    onValueChanged = {
+                                        it.toLongOrNull()?.let {
+                                            sendEvent(EditSetEvent.FailureRepChanged(rep = it))
+                                        }
+                                    },
+                                    error = state.showFailedRepsOutOfBoundsError,
+                                    keyboardType = KeyboardType.Number,
+                                )
+                            }
+                        }
 
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
@@ -560,15 +649,6 @@ fun ChipButton(
 class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
     override val values: Sequence<EditSetState>
         get() = sequenceOf(
-            // New set - no variation selected yet
-            EditSetState(
-                id = "",
-                movement = null,
-                weight = null,
-                reps = null,
-                rpe = 6,
-                date = LocalDate(2025, 10, 20).atStartOfDayIn(),
-            ),
             // New set with variation but no data
             EditSetState(
                 id = "",
@@ -604,6 +684,7 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
                 ),
                 weight = 225.0,
                 reps = 5,
+                failureRep = 3,
                 rpe = null,
                 notes = "",
                 tempo = TempoState(

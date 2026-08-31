@@ -20,5 +20,5 @@ class GetTotalWeightMovedUseCase(
     ): Flow<Double> = setRepository.listenAll(
         startDate = startDate,
         endDate = endDate
-    ).map { sets -> sets.sumOf { it.weight * it.reps } }
+    ).map { sets -> sets.sumOf { it.totalWeightMoved } }
 }

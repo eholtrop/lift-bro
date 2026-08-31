@@ -5,6 +5,7 @@ CREATE TABLE LiftingSet (
     movementId TEXT NOT NULL,
     weight REAL,
     reps INTEGER,
+    failureRep INTEGER,
     tempoDown INTEGER,
     tempoHold INTEGER,
     tempoUp INTEGER,
@@ -90,8 +91,8 @@ SELECT * FROM LiftingSet WHERE id = ?;
 
 save:
 INSERT OR REPLACE
-INTO LiftingSet(id, movementId, weight, reps, tempoDown, tempoHold, tempoUp, date, notes, rpe, videoUri, exerciseSectionId)
-VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+INTO LiftingSet(id, movementId, weight, reps, failureRep, tempoDown, tempoHold, tempoUp, date, notes, rpe, videoUri, exerciseSectionId)
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 deleteAllForExercise:
 DELETE FROM LiftingSet
