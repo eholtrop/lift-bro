@@ -1,6 +1,7 @@
 package com.lift.bro
 
 import com.benasher44.uuid.uuid4
+import com.lift.bro.backup.Backup
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Movement
 

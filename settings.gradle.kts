@@ -39,6 +39,7 @@ include(":presentation:server")
 include(":data:sqldelight")
 include(":data:core")
 include(":data:settings")
+include(":backup")
 
 include(":libs:logging")
 include(":libs:ext:flow")

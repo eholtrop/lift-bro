@@ -1,7 +1,7 @@
 package com.lift.bro.presentation.backup
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import com.lift.bro.Backup
+import com.lift.bro.backup.Backup
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.LBSet

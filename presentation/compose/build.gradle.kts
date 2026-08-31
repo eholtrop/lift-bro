@@ -59,6 +59,7 @@ kotlin {
             implementation(project(":libs:logging"))
             implementation(project(":libs:ext:ktx-datetime"))
             implementation(project(":libs:ext:compose"))
+            implementation(project(":backup"))
             api(project(":libs:navi"))
 
             // flowvi

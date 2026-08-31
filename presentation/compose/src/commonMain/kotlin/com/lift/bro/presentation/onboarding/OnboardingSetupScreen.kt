@@ -237,7 +237,7 @@ private fun OnboardingLiftSelector(
                                         }
                                     }
                                     Text(
-                                        if (index == variations.size - 1) {
+                                        if (index == liftVariations.size - 1) {
                                             variation.name
                                                 ?: ""
                                         } else {
