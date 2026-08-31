@@ -12,6 +12,7 @@ data class LBSet(
     val exerciseSectionId: ExerciseSectionId? = null,
     val weight: Double = 0.0,
     val reps: Long = 1,
+    val failureRep: Long? = null,
     val tempo: Tempo = Tempo(),
     @Serializable(with = InstantSerializer::class) val date: Instant = Clock.System.now(),
     val notes: String = "",
@@ -20,7 +21,9 @@ data class LBSet(
     val bodyWeightRep: Boolean? = null,
     val videoUri: String? = null,
 ) {
-    val totalWeightMoved = weight * reps
+    val successfulReps = failureRep?.let { failureRep - 1 } ?: reps
+
+    val totalWeightMoved = weight * successfulReps
 }
 
 fun calculateMax(reps: Long?, weight: Double?) = calculateMax(reps?.toInt() ?: 0, weight ?: 0.0)

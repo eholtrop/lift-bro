@@ -1,0 +1,39 @@
+ALTER TABLE LiftingSet ADD COLUMN failureRep INTEGER;
+
+DROP VIEW KeyMovementSetsView;
+
+CREATE VIEW KeyMovementSetsView AS
+SELECT
+    id,
+    movementId,
+    weight,
+    reps,
+    failureRep,
+    tempoDown,
+    tempoHold,
+    tempoUp,
+    date,
+    notes,
+    rpe,
+    videoUri,
+    exerciseSectionId,
+    (weight * (1 + reps / 30.0)) AS eMax,
+    CASE WHEN reps = 1 THEN
+        ROW_NUMBER() OVER (
+            PARTITION BY movementId, reps
+            ORDER BY weight DESC, id DESC
+        )
+     END AS rn_orm,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY date DESC, id DESC
+    ) AS rn_latest,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY (weight * (1 + reps / 30.0)) DESC, id DESC
+    ) AS rn_emax,
+    ROW_NUMBER() OVER (
+        PARTITION BY movementId
+        ORDER BY reps DESC, id DESC
+    ) AS rn_maxreps
+FROM LiftingSet;

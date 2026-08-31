@@ -183,6 +183,7 @@ class SetDataSource(
                 rpe = set.rpe?.toLong(),
                 videoUri = set.videoUri,
                 exerciseSectionId = set.exerciseSectionId,
+                failureRep = set.failureRep,
             )
         }
     }
@@ -212,6 +213,7 @@ fun LiftingSet.toDomain() = LBSet(
     date = this.date,
     notes = this.notes,
     rpe = this.rpe?.toInt(),
+    failureRep = this.failureRep
 )
 
 fun GetAllByMovement.toDomain() = LBSet(
@@ -228,6 +230,7 @@ fun GetAllByMovement.toDomain() = LBSet(
     notes = this.notes,
     rpe = this.rpe?.toInt(),
     bodyWeightRep = this.body_weight?.let { it == 1L },
+    failureRep = this.failureRep
 )
 
 class LiftDataSource(

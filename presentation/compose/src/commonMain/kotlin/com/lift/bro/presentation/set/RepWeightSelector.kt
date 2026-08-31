@@ -301,7 +301,7 @@ fun TextFieldDefaults.repWeightColorDefaults() = RepWeightColorDefaults(
 )
 
 @Composable
-private fun RepWeightTextField(
+fun RepWeightTextField(
     modifier: Modifier = Modifier,
     value: String?,
     error: Boolean = false,

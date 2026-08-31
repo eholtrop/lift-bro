@@ -397,7 +397,7 @@ private fun VariationCard(
                                     if (LocalTwmSettings.current) {
                                         append(" ")
                                         append(
-                                            pair?.second?.sumOf { it.weight }.decimalFormat().uom()
+                                            pair?.second?.sumOf { it.totalWeightMoved }.decimalFormat().uom()
                                         )
                                     }
 

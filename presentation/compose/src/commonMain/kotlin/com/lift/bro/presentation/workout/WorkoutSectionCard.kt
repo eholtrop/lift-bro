@@ -152,7 +152,7 @@ fun WorkoutSectionCard(
                         Text(
                             "Total Weight Moved: ${
                                 "${
-                                    sectionSets.map { it.set }.sumOf { it.reps * it.weight }
+                                    sectionSets.map { it.set }.sumOf { it.totalWeightMoved }
                                         .decimalFormat()
                                 } ${LocalUnitOfMeasure.current.value}"
                             }",

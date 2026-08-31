@@ -56,6 +56,7 @@ data class EditSetState(
     val id: String,
     val weight: Double? = null,
     val reps: Long? = null,
+    val failureRep: Long? = null,
     val rpe: Int? = null,
     val defaultRpe: Int? = null,
     val tempo: TempoState = TempoState(),
@@ -73,6 +74,8 @@ data class EditSetState(
     val workout: Workout? = null,
 ) {
     val saveEnabled: Boolean get() = movement != null && reps != null && weight != null
+
+    val showFailedRepsOutOfBoundsError: Boolean = failureRep == 0L || (reps ?: 0L) < (failureRep ?: 0L)
 }
 
 @Serializable
@@ -105,6 +108,10 @@ sealed interface EditSetEvent {
     data class TempoChanged(val tempo: TempoState): EditSetEvent
 
     data class NotesChanged(val notes: String): EditSetEvent
+
+    data object ToggleSetFailed: EditSetEvent
+
+    data class FailureRepChanged(val rep: Long): EditSetEvent
 
     data class SectionSelected(val section: Section): EditSetEvent
 }
@@ -227,6 +234,8 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
 
         EditSetEvent.DeleteSetClicked -> state
         is EditSetEvent.SectionSelected -> state?.copy(sectionId = event.section.id)
+        EditSetEvent.ToggleSetFailed -> state?.copy(failureRep = if (state.failureRep != null) null else 1L)
+        is EditSetEvent.FailureRepChanged -> state?.copy(failureRep = event.rep)
     }
 }
 
@@ -276,6 +285,8 @@ internal suspend fun LBSet.toUiState(
     },
     weight = this.weight,
     reps = this.reps,
+    failureRep = this.failureRep,
+    totalWeightMoved = this.totalWeightMoved,
     tempo = TempoState(
         ecc = this.tempo.down,
         iso = this.tempo.hold,
@@ -293,12 +304,21 @@ internal suspend fun LBSet.toUiState(
 )
 
 internal fun EditSetState.toDomain(): LBSet? =
-    if (movement != null && reps != null && tempo.ecc != null && tempo.iso != null && tempo.con != null && weight != null) {
+    if (movement != null &&
+        reps != null &&
+        tempo.ecc != null &&
+        tempo.iso != null &&
+        tempo.con != null &&
+        weight != null &&
+        failureRep != 0L &&
+        reps >= (failureRep ?: 0)
+    ) {
         LBSet(
             id = this.id,
             movementId = this.movement.variation.id,
             weight = this.weight,
             reps = this.reps,
+            failureRep = this.failureRep,
             tempo = Tempo(
                 down = this.tempo.ecc,
                 hold = this.tempo.iso,

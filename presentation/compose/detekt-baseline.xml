@@ -3,7 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
-    <ID>ComplexCondition:EditSetInteractor.kt$movement != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null</ID>
+    <ID>ComplexCondition:EditSetInteractor.kt$movement != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null &amp;&amp; failureRep != 0L &amp;&amp; reps &gt;= (failureRep ?: 0)</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator&lt;Destination&gt; = rememberNavCoordinator&lt;Destination&gt;(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:CategoryDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun CategoryDetailsScreen( interactor: Interactor&lt;CategoryDetailsState, CategoryDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:CategoryDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: MovementCardState, showRpe: Boolean, onClick: (Movement) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Movement) -&gt; Unit, )</ID>
@@ -23,10 +23,6 @@
     <ID>ExplicitItLambdaParameter:WorkoutScreen.kt${ _, it -&gt; it.id }</ID>
     <ID>Filename:AudioPlayer.native.kt$com.lift.bro.audio.AudioPlayer.native.kt</ID>
     <ID>Filename:CameraPermission.kt$com.lift.bro.presentation.camera.CameraPermission.kt</ID>
-    <ID>Filename:EncryptionKeyProvider.android.kt$com.lift.bro.data.EncryptionKeyProvider.android.kt</ID>
-    <ID>Filename:EncryptionKeyProvider.native.kt$com.lift.bro.data.EncryptionKeyProvider.native.kt</ID>
-    <ID>Filename:LBDatabase.kt$com.lift.bro.data.LBDatabase.kt</ID>
-    <ID>Filename:LBDatabase.native.kt$com.lift.bro.data.LBDatabase.native.kt</ID>
     <ID>Filename:eMaxSettingsRow.kt$com.lift.bro.presentation.settings.eMaxSettingsRow.kt</ID>
     <ID>ForbiddenComment:AudioPlayer.native.kt$AudioPlayerImpl$// TODO: Implement native audio</ID>
     <ID>ForbiddenComment:EmptyHomeScreen.kt$// TODO: need to setup back handling in onboarding</ID>
@@ -39,9 +35,6 @@
     <ID>LongParameterList:LiftCard.kt$( color: Color, height: Float, targetHeight: Float, width: Float, topLeft: Float, alpha: Float, )</ID>
     <ID>MatchingDeclarationName:AnimatedText.kt$AnimatedTextDefaults</ID>
     <ID>MatchingDeclarationName:AudioPlayer.native.kt$AudioPlayerImpl : AudioPlayer</ID>
-    <ID>MatchingDeclarationName:EncryptionKeyProvider.native.kt$EncryptionKeyProviderImpl : EncryptionKeyProvider</ID>
-    <ID>MatchingDeclarationName:LBDatabase.kt$DriverFactory</ID>
-    <ID>MatchingDeclarationName:LBDatabase.native.kt$DriverFactory</ID>
     <ID>MatchingDeclarationName:LiftingScaffold.kt$FabProperties</ID>
     <ID>MatchingDeclarationName:WrappedConsistencyScreen.kt$WrappedConsistencyState</ID>
     <ID>MatchingDeclarationName:WrappedRepScreen.kt$WrappedRepState</ID>
@@ -49,8 +42,6 @@
     <ID>MaximumLineLength:App.kt$ </ID>
     <ID>MaximumLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$ </ID>
     <ID>MaximumLineLength:CategoryDetailsScreen.kt$ </ID>
-    <ID>MaximumLineLength:DatabaseMigrationManager.kt$DatabaseMigrationManager$ </ID>
-    <ID>MaximumLineLength:EditSetInteractor.kt$ </ID>
     <ID>MaximumLineLength:EditSetScreen.kt$ </ID>
     <ID>MaximumLineLength:HomeScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
@@ -66,10 +57,8 @@
     <ID>NoWildcardImports:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
     <ID>TooGenericExceptionCaught:CameraPreview.android.kt$AndroidCameraController$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e2: Exception</ID>
-    <ID>TooGenericExceptionCaught:DatabaseMigrationManager.kt$DatabaseMigrationManager$e: Exception</ID>
-    <ID>TooGenericExceptionCaught:LBDatabase.kt$DriverFactory$e: Exception</ID>
     <ID>TooGenericExceptionCaught:LocalVideoStorage.kt$LocalVideoStorage$e: Exception</ID>
+    <ID>TooManyFunctions:EditSetScreen.kt$com.lift.bro.presentation.set.EditSetScreen.kt</ID>
     <ID>TopLevelPropertyNaming:WrappedLandingScreen.kt$internal const val FadeInDelayPerIndex = 100L</ID>
     <ID>UnusedParameter:Calendar.kt$dateSelected: (LocalDate) -&gt; Unit</ID>
     <ID>UnusedParameter:Calendar.kt$selection: LocalDate?</ID>

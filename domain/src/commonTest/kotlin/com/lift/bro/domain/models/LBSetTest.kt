@@ -148,6 +148,19 @@ class LBSetTest {
     }
 
     @Test
+    fun `Given LBSet has a failureRep Then TWM move respects it`() {
+        val set = LBSet(
+            id = "test",
+            reps = 3,
+            failureRep = 3,
+            weight = 2.0,
+            movementId = "",
+        )
+
+        assertEquals(4.0, set.totalWeightMoved)
+    }
+
+    @Test
     fun `Given LBSet with zero weight When totalWeightMoved Then returns 0`() {
         val set = LBSet(
             id = "test",

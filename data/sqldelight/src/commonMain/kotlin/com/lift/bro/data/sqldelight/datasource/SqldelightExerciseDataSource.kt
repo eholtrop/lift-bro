@@ -131,7 +131,8 @@ private fun GetExerciseSectionsByWorkoutId.toDomain(
                     up = it.tempoUp ?: 1,
                     hold = it.tempoHold ?: 1,
                 ),
-                bodyWeightRep = it.body_weight?.let { it == 1L }
+                bodyWeightRep = it.body_weight?.let { it == 1L },
+                failureRep = it.failureRep,
             )
         }
 )
@@ -160,6 +161,7 @@ private fun GetAllForWorkout.toDomain(): Movement = Movement(
         rpe = orm_rpe,
         videoUri = orm_videoUri,
         exerciseSectionId = orm_exerciseSectionId,
+        failureRep = orm_failureRep,
     ),
     latestSet = asLBSet(
         id = latest_id,
@@ -174,6 +176,7 @@ private fun GetAllForWorkout.toDomain(): Movement = Movement(
         rpe = latest_rpe,
         videoUri = latest_videoUri,
         exerciseSectionId = latest_exerciseSectionId,
+        failureRep = latest_failureRep
     ),
     eMax = asLBSet(
         id = emax_id,
@@ -188,6 +191,7 @@ private fun GetAllForWorkout.toDomain(): Movement = Movement(
         rpe = emax_rpe,
         videoUri = emax_videoUri,
         exerciseSectionId = emax_exerciseSectionId,
+        failureRep = emax_failureRep,
     ),
     maxReps = asLBSet(
         id = maxreps_id,
@@ -202,6 +206,7 @@ private fun GetAllForWorkout.toDomain(): Movement = Movement(
         rpe = maxreps_rpe,
         videoUri = maxreps_videoUri,
         exerciseSectionId = maxreps_exerciseSectionId,
+        failureRep = maxreps_failureRep,
     ),
 )
 
@@ -211,6 +216,7 @@ private fun asLBSet(
     movementId: String?,
     weight: Double?,
     reps: Long?,
+    failureRep: Long?,
     tempoDown: Long?,
     tempoHold: Long?,
     tempoUp: Long?,
@@ -235,5 +241,6 @@ private fun asLBSet(
         rpe = rpe?.toInt(),
         videoUri = videoUri,
         exerciseSectionId = exerciseSectionId,
+        failureRep = failureRep
     )
 }

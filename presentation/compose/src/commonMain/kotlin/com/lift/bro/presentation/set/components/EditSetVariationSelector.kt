@@ -21,8 +21,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.domain.models.fullName
+import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.set.EditSetState
 import com.lift.bro.presentation.set.EditSetStateProvider
+import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
 import lift_bro.core.generated.resources.Res
@@ -109,15 +111,14 @@ fun EditSetVariationSelector(
                                     }
                                 }
 
-//                                if (LocalTwmSettings.current) {
-//                                    appendLine()
-//                                    withStyle(
-//                                        MaterialTheme.typography.titleSmall.toSpanStyle(),
-//                                    ) {
-//                                        append("+${state.mers ?: 0} MER(s)")
-// //                                        append("TWM: ${weightFormat((state.weight ?: 0.0) * (state.reps ?: 0))}")
-//                                    }
-//                                }
+                                if (LocalTwmSettings.current && state.totalWeightMoved != null) {
+                                    appendLine()
+                                    withStyle(
+                                        MaterialTheme.typography.titleSmall.toSpanStyle(),
+                                    ) {
+                                        append("TWM: ${weightFormat(state.totalWeightMoved)}")
+                                    }
+                                }
 
 //                                if (LocalShowMERCalcs.current?.enabled == true) {
 //                                    appendLine()
