@@ -111,7 +111,7 @@ platform :android do
       FileUtils.cp_r(File.join(project_root, "fastlane/metadata/fonts"), File.join(files_root, "fonts"))
       FileUtils.cp_r(File.join(project_root, "fastlane/metadata/backgrounds"), File.join(files_root, "backgrounds"))
       Dir.chdir(files_root) do
-        sh "fastlane", "frameit"
+        sh "fastlane", "frameit", "android"
       end
 
       # 7. Copy framed screenshots to the Play Store metadata directory

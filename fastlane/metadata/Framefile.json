@@ -14,34 +14,34 @@
     "background": "./backgrounds/lift_bro_background.png",
     "stack_title": true,
     "padding": 50,
-    "show_complete_frame": true,
+    "show_complete_frame": true
+  },
+  "android": {
     "use_platform": "ANDROID"
+  },
+  "ios": {
+    "use_platform": "IOS"
   },
   "data": [
     {
-      "filter": "01_onboarding",
-      "title": { "text": "Start Your Journey" },
-      "keyword": { "text": "Easy Setup" }
-    },
-    {
       "filter": "02_dashboard",
-      "title": { "text": "Track Your Progress" },
-      "keyword": { "text": "All Your Lifts" }
+      "title": { "text": "Track Your Way" },
+      "keyword": { "text": "Custom Categories" }
     },
     {
       "filter": "03_workout",
-      "title": { "text": "Log Every Set" },
-      "keyword": { "text": "Quick Entry" }
+      "title": { "text": "Log Every Gain" },
+      "keyword": { "text": "Quick Set Entry" }
     },
     {
       "filter": "04_calendar",
-      "title": { "text": "Stay Consistent" },
-      "keyword": { "text": "Workout History" }
+      "title": { "text": "Workout History" },
+      "keyword": { "text": "Track your progress" }
     },
     {
       "filter": "05_movement",
-      "title": { "text": "Detailed Analytics" },
-      "keyword": { "text": "Track Progress" }
+      "title": { "text": "Detailed Data" },
+      "keyword": { "text": "For the lifting \uD83E\uDD13" }
     },
       {
           "filter": "06_plate_calculator",
