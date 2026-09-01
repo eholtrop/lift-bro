@@ -180,4 +180,4 @@ jobs:
           name: changelog
           path: fastlane/metadata/android/en-US/changelogs/
       - name: Deploy to Google Play beta
-        run: bundle exec fastlane android upload_to_playstore build_number:${{ github.run_number }}
+        run: bundle exec fastlane android upload_to_playstore build_number:${{ github.run_number + 366 }}
