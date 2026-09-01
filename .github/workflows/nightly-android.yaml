@@ -160,7 +160,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: changelog
-          path: fastlane/metadata/android/en-US/changelogs/
+          path: fastlane/metadata/android/en-CA/changelogs/
           retention-days: 1
 
   deploy:
@@ -187,7 +187,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: changelog
-          path: fastlane/metadata/android/en-US/changelogs/
+          path: fastlane/metadata/android/en-CA/changelogs/
       - name: Deploy to Google Play beta
         run: |
             bundle install
