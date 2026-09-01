@@ -180,8 +180,6 @@ platform :android do
 
     desc "Deploy a new version to Google Play beta (sequential, for local use)"
     lane :deploy do |options|
-      gradle(task: "clean bundleRelease", flags: "-PbuildNumber=#{options[:build_number]} -PversionName=#{ENV['VERSION_NAME']}")
-      supply(track: "beta")
       build_number = options[:build_number]
       UI.user_error!("build_number is required") unless build_number
 

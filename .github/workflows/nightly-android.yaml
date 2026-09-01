@@ -127,7 +127,7 @@ jobs:
         run: |
           bundle install
           BUILD_NUMBER=$(( ${{ github.run_number }} + 366 ))
-          bundle exec fastlane android deploy build_number:$BUILD_NUMBER
+          bundle exec fastlane android build_release_aab build_number:$BUILD_NUMBER
       - uses: actions/upload-artifact@v4
         with:
           name: android-aab
