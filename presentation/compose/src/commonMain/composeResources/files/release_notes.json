@@ -1,11 +1,16 @@
 [
     {
-        "versionId": "2026.06.26",
+        "versionId": "2026.09.01",
         "notes": [
             {
-                "type": "fix",
+                "type": "feature",
                 "platform": "all",
-                "en": "Fix backup flow for Android and iOS"
+                "en": "Add partial sets"
+            },
+            {
+                "type": "feature",
+                "platform": "all",
+                "en": "Refactor workouts sections to allow for multiple movement types"
             }
         ]
     },

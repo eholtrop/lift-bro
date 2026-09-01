@@ -1,9 +1,7 @@
 Track your lifting, your way. Lift Bro is a flexible, privacy-focused workout tracker designed for lifters who want total control over their training data without corporate lock-in or subscription paywalls for basic logging.
 <br/>
-<br/>
 🔒 100% LOCAL & PRIVATE
 Your lifting history belongs to you. Lift Bro operates entirely on-device with zero external servers hosting your personal workout logs. Fast, reliable, offline-ready, and completely secure.
-<br/>
 <br/>
 🏋️ FLEXIBLE MOVEMENT CATEGORIZATION
 Organize your exercises exactly how your brain works:
@@ -12,16 +10,13 @@ Organize your exercises exactly how your brain works:
 • Group by muscle group (Legs, Chest, Back)
 • Color-code every category for effortless scanning in your logs and calendar.
 <br/>
-<br/>
 📋 CUSTOM WORKOUT STRUCTURES
 Build workouts broken down into customizable sections and exercises. From standard straight sets to complex supersets and circuit blocks, structure every session to match your program.
-<br/>
 <br/>
 📅 VISUAL CALENDAR & PROGRESS LOGS
 • Instantly review what you lifted today compared to last week or your previous session.
 • Track long-term progression for any exercise variation (Front Squat, Sumo Deadlift, Incline Press, and more).
 • Celebrate personal records with custom PR milestones!
-<br/>
 <br/>
 ⚡ LIFT PRO (Optional Upgrade)
 Take your programming further with advanced training analytics and multi-device connectivity:
@@ -30,8 +25,6 @@ Take your programming further with advanced training analytics and multi-device 
 • Estimated / Theoretical 1RM Calculations
 • Local Server Hosting: Run a local server right from your device to connect other instances of Lift Bro on your local network—no cloud required!
 <br/>
-<br/>
 No bloat. No forced accounts. Just a powerful, local workout tracker built for real progression.
-
-
+<br/>
 Download Lift Bro today and own your lifting data!

@@ -5,7 +5,6 @@ env:
     LIFT_BRO_AD_UNIT_ID: ${{ secrets.LIFT_BRO_AD_UNIT_ID }}
     LIFT_BRO_SENTRY_DSN: ${{ secrets.LIFT_BRO_SENTRY_DSN }}
     REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY_ANDROID }}
-    BUILD_NUMBER: ${{ github.run_number + 366 }}
 
 on:
   schedule:
@@ -17,6 +16,14 @@ permissions:
 
 
 jobs:
+  compute-build-number:
+    runs-on: ubuntu-latest
+    outputs:
+      build_number: ${{ steps.compute.outputs.build_number }}
+    steps:
+      - id: compute
+        run: echo "build_number=$(( ${{ github.run_number }} + 360 ))" >> "$GITHUB_OUTPUT"
+
   check-changes:
     runs-on: ubuntu-latest
     outputs:
@@ -93,7 +100,7 @@ jobs:
           path: presentation/compose/build/reports/screenshotTest/
 
   build-release:
-    needs: [check-changes, lint, test]
+    needs: [check-changes, compute-build-number, lint, test]
     if: needs.check-changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -127,7 +134,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PW }}
         run: |
           bundle install
-          bundle exec fastlane android build_release_aab build_number:${{ env.BUILD_NUMBER }}
+          bundle exec fastlane android build_release_aab build_number:${{ needs.compute-build-number.outputs.build_number }}
       - uses: actions/upload-artifact@v4
         with:
           name: android-aab
@@ -135,7 +142,7 @@ jobs:
           retention-days: 1
 
   generate-changelog:
-    needs: [check-changes]
+    needs: [check-changes, compute-build-number]
     if: needs.check-changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -149,7 +156,7 @@ jobs:
       - name: Generate changelog
         run: |
           bundle install
-          bundle exec fastlane android generate_changelog build_number:${{ env.BUILD_NUMBER }}
+          bundle exec fastlane android generate_changelog build_number:${{ needs.compute-build-number.outputs.build_number }}
       - uses: actions/upload-artifact@v4
         with:
           name: changelog
@@ -157,7 +164,7 @@ jobs:
           retention-days: 1
 
   deploy:
-    needs: [check-changes, build-release, generate-changelog]
+    needs: [check-changes, compute-build-number, build-release, generate-changelog]
     if: needs.check-changes.outputs.has_changes == 'true'
     runs-on: ubuntu-latest
     steps:
@@ -184,4 +191,4 @@ jobs:
       - name: Deploy to Google Play beta
         run: |
             bundle install
-            bundle exec fastlane android upload_to_playstore build_number:${{ env.BUILD_NUMBER }}
+            bundle exec fastlane android upload_to_playstore build_number:${{ needs.compute-build-number.outputs.build_number }}

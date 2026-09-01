@@ -146,7 +146,7 @@ platform :android do
 
       android_notes = release_notes.select { |entry|
         entry["notes"].any? { |n| n["platform"] == "all" || n["platform"] == "android" }
-      }.last(3).reverse
+      }.first(2)
 
       lines = []
       android_notes.each do |ver|
@@ -169,12 +169,24 @@ platform :android do
 
       UI.user_error!("build_number is required") unless build_number
 
+      aab_dir = File.join(project_root, "app-android/build/outputs/bundle/release")
+      aab_files = Dir.glob(File.join(aab_dir, "*.aab"))
+
+      if aab_files.empty?
+        UI.user_error!("No .aab file found in #{aab_dir}")
+      elsif aab_files.length > 1
+        UI.user_error!("Multiple .aab files found in #{aab_dir}: #{aab_files.join(', ')}")
+      end
+
+      aab_path = aab_files.first
+
       supply(
         track: "beta",
         version_code: build_number,
         release_status: "completed",
         json_key: File.join(project_root, "key.json"),
         metadata_path: File.join(project_root, "fastlane/metadata/android"),
+        aab: aab_path,
       )
     end
 
