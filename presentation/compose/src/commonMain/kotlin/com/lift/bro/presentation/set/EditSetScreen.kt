@@ -5,6 +5,7 @@ package com.lift.bro.presentation.set
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.animateBounds
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -52,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -60,6 +62,7 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -159,41 +162,47 @@ fun EditSetScreen(
 
     LiftingScaffold(
         title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                var textLayoutResult by remember(state.failureRep) { mutableStateOf<TextLayoutResult?>(null) }
-                val titleCta by remember(
-                    state.failureRep
-                ) { mutableStateOf(if (state.failureRep != null) "Attempted" else "Crushed") }
-                val title = buildEditSetScreenTitle(
-                    titleCta,
-                    onClick = {
-                        onEvent(EditSetEvent.ToggleSetFailed)
-                    }
-                )
-                val lineColor = MaterialTheme.colorScheme.primary
-
-                Text(
-                    modifier = Modifier.underlineRange(
-                        textLayoutResult = textLayoutResult,
-                        start = 2,
-                        end = title.length,
-                        lineColor = lineColor,
-                    ),
-                    onTextLayout = { textLayoutResult = it },
-                    text = title,
-                )
-                Space(MaterialTheme.spacing.half)
-                IconButton(
-                    onClick = {
-                        navCoordinator.present(Destination.Recording(state.id))
-                    }
+            LookaheadScope {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Videocam,
-                        contentDescription = strings.timerContentDescription
+                    var textLayoutResult by remember(state.failureRep) { mutableStateOf<TextLayoutResult?>(null) }
+                    val titleCta by remember(
+                        state.failureRep
+                    ) { mutableStateOf(if (state.failureRep != null) "Attempted" else "Crushed") }
+                    val title = buildEditSetScreenTitle(
+                        titleCta,
+                        onClick = {
+                            onEvent(EditSetEvent.ToggleSetFailed)
+                        }
                     )
+                    val lineColor = MaterialTheme.colorScheme.primary
+
+                    Text(
+                        modifier = Modifier
+                            .animateBounds(lookaheadScope = this@LookaheadScope)
+                            .underlineRange(
+                                textLayoutResult = textLayoutResult,
+                                start = 2,
+                                end = title.length,
+                                lineColor = lineColor,
+                            ),
+                        onTextLayout = { textLayoutResult = it },
+                        text = title,
+                        softWrap = false,
+                        overflow = TextOverflow.Visible,
+                    )
+                    Space(MaterialTheme.spacing.half)
+                    IconButton(
+                        onClick = {
+                            navCoordinator.present(Destination.Recording(state.id))
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Videocam,
+                            contentDescription = strings.timerContentDescription
+                        )
+                    }
                 }
             }
         },
