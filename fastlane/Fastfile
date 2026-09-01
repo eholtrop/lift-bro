@@ -115,12 +115,12 @@ platform :android do
       end
 
       # 7. Copy framed screenshots to the Play Store metadata directory
-      sh "mkdir", "-p", File.join(project_root, "fastlane/metadata/android/en-US/images/phoneScreenshots")
+      sh "mkdir", "-p", File.join(project_root, "fastlane/metadata/android/en-CA/images/phoneScreenshots")
       Dir.glob(File.join(files_root, "*_framed.png")).each do |png|
-        sh "cp", png, File.join(project_root, "fastlane/metadata/android/en-US/images/phoneScreenshots/")
+        sh "cp", png, File.join(project_root, "fastlane/metadata/android/en-CA/images/phoneScreenshots/")
       end
 
-      UI.success "Framed screenshots ready in fastlane/metadata/android/en-US/images/phoneScreenshots/"
+      UI.success "Framed screenshots ready in fastlane/metadata/android/en-CA/images/phoneScreenshots/"
     end
 
     desc "Build release AAB"
@@ -137,7 +137,7 @@ platform :android do
 
       project_root = File.expand_path("..", __dir__)
       version_code = build_number.to_i
-      changelog_dir = File.join(project_root, "fastlane/metadata/android/en-US/changelogs")
+      changelog_dir = File.join(project_root, "fastlane/metadata/android/en-CA/changelogs")
       sh "mkdir", "-p", changelog_dir
 
       release_notes_path = File.join(project_root,
@@ -454,7 +454,7 @@ platform :ios do
       # 7. Copy screenshots to frameit directory. Maestro nests each screenshot
       #    under <session>/<flow>/takeScreenshot/*.png (plus stray step-*.png
       #    captures elsewhere), so only grab the intended takeScreenshot outputs.
-      phone_screenshots = File.join(project_root, "fastlane/screenshots/en-US/images/phoneScreenshots")
+      phone_screenshots = File.join(project_root, "fastlane/screenshots/en-CA/images/phoneScreenshots")
       sh "rm", "-rf", phone_screenshots
       sh "mkdir", "-p", phone_screenshots
       Dir.glob(File.join(project_root, "build/generated/screenshot-tests/**/takeScreenshot/*.png")).each do |png|
@@ -466,7 +466,7 @@ platform :ios do
         sh "fastlane", "frameit", "ios"
       end
 
-      UI.success "Framed screenshots ready in fastlane/screenshots/en-US/images/phoneScreenshots/"
+      UI.success "Framed screenshots ready in fastlane/screenshots/en-CA/images/phoneScreenshots/"
     ensure
       # Shut down simulator
       sh "xcrun", "simctl", "shutdown", simulator_udid rescue nil
