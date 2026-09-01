@@ -136,7 +136,7 @@ platform :android do
       UI.user_error!("build_number is required") unless build_number
 
       project_root = File.expand_path("..", __dir__)
-      version_code = build_number.to_i + 156
+      version_code = build_number.to_i
       changelog_dir = File.join(project_root, "fastlane/metadata/android/en-US/changelogs")
       sh "mkdir", "-p", changelog_dir
 
