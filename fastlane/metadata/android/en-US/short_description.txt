@@ -1,1 +1,1 @@
-Local-first workout tracker. Categorize movements & track workout your way!
+Categorize and track your workouts your way!
