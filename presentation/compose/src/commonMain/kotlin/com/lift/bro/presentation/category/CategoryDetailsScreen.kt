@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.LocalLiftCardYValue

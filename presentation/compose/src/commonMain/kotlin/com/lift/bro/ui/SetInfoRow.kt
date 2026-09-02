@@ -72,7 +72,6 @@ fun SetInfoRow(
                 )
             }
 
-
             set.tempo.render()
             if (set.notes.isNotBlank()) {
                 Row(

@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.buildAnnotatedString
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.models.oneRepMax
 import com.lift.bro.presentation.LocalEMaxSettings
 import com.lift.bro.presentation.LocalTMaxSettings
