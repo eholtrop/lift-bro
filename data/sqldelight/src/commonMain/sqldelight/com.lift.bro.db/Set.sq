@@ -35,7 +35,7 @@ getEMaxForMovement:
 SELECT * FROM LiftingSet
 WHERE movementId = :movementId
 AND (date < :before OR :before = NULL)
-ORDER BY weight * (1 + reps / 30.0) DESC
+ORDER BY weight * (1 + (reps - (reps + failureRep)) / 30.0) DESC
 LIMIT 1;
 
 getMaxRepsForMovement:

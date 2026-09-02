@@ -11,10 +11,12 @@ data class LBSet(
     val movementId: String,
     val exerciseSectionId: ExerciseSectionId? = null,
     val weight: Double = 0.0,
+    val percentagePreviousMax: Float? = null,
     val reps: Long = 1,
     val failureRep: Long? = null,
     val tempo: Tempo = Tempo(),
-    @Serializable(with = InstantSerializer::class) val date: Instant = Clock.System.now(),
+    @Serializable(with = InstantSerializer::class)
+    val date: Instant = Clock.System.now(),
     val notes: String = "",
     val rpe: Int? = null,
     val mer: Int = 0,
@@ -24,6 +26,8 @@ data class LBSet(
     val successfulReps = failureRep?.let { failureRep - 1 } ?: reps
 
     val totalWeightMoved = weight * successfulReps
+
+    val estimateMax: Double = weight * (1 + (successfulReps) / 30.0)
 }
 
 fun calculateMax(reps: Long?, weight: Double?) = calculateMax(reps?.toInt() ?: 0, weight ?: 0.0)
@@ -54,9 +58,4 @@ val LBSet.formattedTempo: String get() = "${this.tempo.down}/${this.tempo.hold}/
 
 val LBSet.formattedReps: String get() = "${this.formattedTempo} x ${this.reps}"
 
-val LBSet.oneRepMax: Double? get() = if (this.reps == 1L) weight else null
-
-val LBSet.estimateMax: Double? get() = estimatedMax(
-    this.reps.toInt(),
-    this.weight
-)
+val LBSet.oneRepMax: Double? get() = if (this.reps == 1L && this.failureRep == null) weight else null

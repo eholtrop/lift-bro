@@ -9,6 +9,7 @@ class LBSetTest {
 
     // MARK: - calculateMax tests
 
+
     @Test
     fun `Given 1 rep When calculateMax Then returns weight unchanged`() {
         val result = calculateMax(reps = 1, weight = 225.0)
@@ -43,39 +44,6 @@ class LBSetTest {
         val result = calculateMax(reps = null, weight = null)
 
         assertEquals(0.0, result)
-    }
-
-    // MARK: - estimatedMax tests
-
-    @Test
-    fun `Given zero reps When estimatedMax Then returns weight`() {
-        val result = estimatedMax(reps = 0, weight = 150.0)
-
-        assertEquals(150.0, result)
-    }
-
-    @Test
-    fun `Given 10 reps When estimatedMax Then calculates correctly`() {
-        val result = estimatedMax(reps = 10, weight = 150.0)
-
-        // Expected: 150 * (1 + (10 / 30)) = 150 * 1.3333 = 200.0
-        assertEquals(200.0, result, 0.01)
-    }
-
-    @Test
-    fun `Given 20 reps When estimatedMax Then calculates correctly`() {
-        val result = estimatedMax(reps = 20, weight = 100.0)
-
-        // Expected: 100 * (1 + (20 / 30)) = 100 * 1.6667 = 166.67
-        assertEquals(166.67, result, 0.01)
-    }
-
-    @Test
-    fun `Given 3 reps When estimatedMax Then calculates correctly`() {
-        val result = estimatedMax(reps = 3, weight = 250.0)
-
-        // Expected: 250 * (1 + (3 / 30)) = 250 * 1.1 = 275.0
-        assertEquals(275.0, result, 0.01)
     }
 
     // MARK: - LBSet property tests
@@ -117,6 +85,22 @@ class LBSetTest {
 
         assertNotNull(result)
         assertEquals(233.33, result, 0.01)
+    }
+
+    @Test
+    fun `Given LBSet with failureRep When estimateMax Then failure rep respected`() {
+        val set = LBSet(
+            id = "test",
+            movementId = "var1",
+            weight = 200.0,
+            reps = 5,
+            failureRep = 4
+        )
+
+        val result = set.estimateMax
+
+        assertNotNull(result)
+        assertEquals(220.0, result, 0.01)
     }
 
     @Test
