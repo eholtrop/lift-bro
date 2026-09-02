@@ -1,37 +1,12 @@
 package com.lift.bro.data
 
 import app.cash.sqldelight.ColumnAdapter
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import com.lift.bro.data.core.datasource.VariationDataSource
-import com.lift.bro.data.sqldelight.datasource.SqlDelightVariationDataSource
-import com.lift.bro.data.sqldelight.datasource.toDomain
 import com.lift.bro.db.LiftBroDB
-import com.lift.bro.domain.models.Category
-import com.lift.bro.domain.models.LBSet
-import com.lift.bro.domain.models.Tempo
-import com.lift.bro.domain.models.calculateMax
-import com.lift.bro.domain.repositories.Sorting
-import comliftbrodb.CategoryQueries
-import comliftbrodb.GetAllByMovement
 import comliftbrodb.Goal
 import comliftbrodb.LiftingLog
 import comliftbrodb.LiftingSet
-import comliftbrodb.MovementQueries
-import comliftbrodb.SetQueries
 import comliftbrodb.Workout
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
-import tv.dpal.ext.flow.mapEach
-import kotlin.math.min
 import kotlin.time.Instant
 
 class LBDatabase(

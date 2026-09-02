@@ -9,7 +9,6 @@ class LBSetTest {
 
     // MARK: - calculateMax tests
 
-
     @Test
     fun `Given 1 rep When calculateMax Then returns weight unchanged`() {
         val result = calculateMax(reps = 1, weight = 225.0)

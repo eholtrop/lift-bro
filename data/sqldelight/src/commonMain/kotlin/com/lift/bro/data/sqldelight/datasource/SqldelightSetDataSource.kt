@@ -6,12 +6,14 @@ import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
 import app.cash.sqldelight.coroutines.mapToOneOrNull
 import com.lift.bro.data.core.datasource.SetDataSource
+import com.lift.bro.domain.models.ExerciseSectionId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.MovementId
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.domain.repositories.Order
 import com.lift.bro.domain.repositories.Sorting
 import comliftbrodb.GetAllByMovement
+import comliftbrodb.GetAllForLift
 import comliftbrodb.GetAllSets
 import comliftbrodb.LiftingSet
 import comliftbrodb.SetQueries
@@ -28,8 +30,6 @@ import tv.dpal.logging.d
 import kotlin.math.min
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
-
-private fun successfulReps(reps: Long?, failureRep: Long?) = failureRep ?: reps
 
 class SqldelightSetDataSource(
     private val setQueries: SetQueries,
@@ -56,22 +56,9 @@ class SqldelightSetDataSource(
         )
             .asFlow().mapToList(dispatcher)
             .map { sets ->
-                sets
-                    .map { set ->
-                        val orm = setQueries.getOneRepMaxForMovement(
-                            movementId = set.movementId,
-                            before = set.date
-                        ).executeAsOneOrNull()?.weight
-                        val emax = setQueries.getEMaxForMovement(
-                            movementId = set.movementId,
-                            before = set.date
-                        ).executeAsOneOrNull()?.weight
-
-                        set.toDomain().copy(
-                            percentagePreviousMax = (orm ?: emax)?.let { set.weight?.div(it) }?.toFloat(),
-                            mer = (orm ?: emax)?.let { calculateMer(set.weight, successfulReps(set.reps, set.failureRep), it) } ?: 0,
-                        )
-                    }
+                sets.map { set ->
+                    set.toDomain(setQueries.previousMaxFor(set.movementId, set.date))
+                }
             }
     }
 
@@ -86,55 +73,16 @@ class SqldelightSetDataSource(
             .asFlow().mapToList(dispatcher)
             .map { sets ->
                 sets.map { set ->
-                    val orm = setQueries.getOneRepMaxForMovement(
-                        movementId = set.movementId,
-                        before = set.date
-                    ).executeAsOneOrNull()?.weight
-                    val emax = setQueries.getEMaxForMovement(
-                        movementId = set.movementId,
-                        before = set.date
-                    ).executeAsOneOrNull()?.weight
-                    LBSet(
-                        id = set.id,
-                        movementId = set.movementId,
-                        weight = set.weight ?: 0.0,
-                        reps = set.reps ?: 1,
-                        tempo = Tempo(
-                            down = set.tempoDown ?: 3,
-                            hold = set.tempoHold ?: 1,
-                            up = set.tempoUp ?: 1,
-                        ),
-                        percentagePreviousMax = (orm ?: emax)?.let { set.weight?.div(it) }?.toFloat(),
-                        mer = (orm ?: emax)?.let { calculateMer(set.weight, successfulReps(set.reps, set.failureRep), it) } ?: 0,
-                        date = set.date,
-                        notes = set.notes,
-                        rpe = set.rpe?.toInt(),
-                        bodyWeightRep = set.body_weight?.let { it == 1L },
-                        videoUri = set.videoUri,
-                        failureRep = set.failureRep,
-                    )
+                    set.toDomain(setQueries.previousMaxFor(set.movementId, set.date))
                 }
             }
 
     override fun listen(id: String): Flow<LBSet?> =
         setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { set ->
             set?.let {
-                val orm = setQueries.getOneRepMaxForMovement(
-                    movementId = set.movementId,
-                    before = set.date
-                ).executeAsOneOrNull()?.weight
-                val emax = setQueries.getEMaxForMovement(
-                    movementId = set.movementId,
-                    before = set.date
-                ).executeAsOneOrNull()?.weight
-
-                set.toDomain().copy(
-                    percentagePreviousMax = (orm ?: emax)?.let { set.weight?.div(it) }?.toFloat(),
-                    mer = (orm ?: emax)?.let { calculateMer(set.weight, successfulReps(set.reps, set.failureRep), it) } ?: 0,
-                )
+                it.toDomain(setQueries.previousMaxFor(it.movementId, it.date))
             }
         }
-
 
     override suspend fun save(lbSet: LBSet) {
         Log.d("LiftBroDb", "saving $lbSet")
@@ -168,11 +116,26 @@ class SqldelightSetDataSource(
     }
 }
 
-fun GetAllSets.toDomain() = LBSet(
+private fun SetQueries.previousMaxFor(movementId: String, before: Instant?): Double? {
+    val orm = getOneRepMaxForMovement(
+        movementId = movementId,
+        before = before
+    ).executeAsOneOrNull()?.weight
+    val emax = getEMaxForMovement(
+        movementId = movementId,
+        before = before
+    ).executeAsOneOrNull()?.weight
+    return orm ?: emax
+}
+
+fun GetAllSets.toDomain(previousMax: Double? = null): LBSet = toDomainSet(
+    previousMax = previousMax,
     id = this.id,
     movementId = this.movementId,
+    exerciseSectionId = this.exerciseSectionId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
+    failureRep = this.failureRep,
     tempo = Tempo(
         down = this.tempoDown ?: 3,
         hold = this.tempoHold ?: 1,
@@ -183,15 +146,16 @@ fun GetAllSets.toDomain() = LBSet(
     rpe = this.rpe?.toInt(),
     bodyWeightRep = this.body_weight?.let { it == 1L },
     videoUri = this.videoUri,
-    exerciseSectionId = this.exerciseSectionId,
-    failureRep = this.failureRep,
 )
 
-fun LiftingSet.toDomain() = LBSet(
+fun LiftingSet.toDomain(previousMax: Double? = null): LBSet = toDomainSet(
+    previousMax = previousMax,
     id = this.id,
     movementId = this.movementId,
+    exerciseSectionId = this.exerciseSectionId,
     weight = this.weight ?: 0.0,
     reps = this.reps ?: 1,
+    failureRep = this.failureRep,
     tempo = Tempo(
         down = this.tempoDown ?: 3,
         hold = this.tempoHold ?: 1,
@@ -201,11 +165,84 @@ fun LiftingSet.toDomain() = LBSet(
     notes = this.notes,
     rpe = this.rpe?.toInt(),
     videoUri = this.videoUri,
-    exerciseSectionId = this.exerciseSectionId,
-    failureRep = this.failureRep,
 )
 
-private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {
+fun GetAllByMovement.toDomain(previousMax: Double? = null): LBSet = toDomainSet(
+    previousMax = previousMax,
+    id = this.id,
+    movementId = this.movementId,
+    exerciseSectionId = this.exerciseSectionId,
+    weight = this.weight ?: 0.0,
+    reps = this.reps ?: 1,
+    failureRep = this.failureRep,
+    tempo = Tempo(
+        down = this.tempoDown ?: 3,
+        hold = this.tempoHold ?: 1,
+        up = this.tempoUp ?: 1,
+    ),
+    date = this.date,
+    notes = this.notes,
+    rpe = this.rpe?.toInt(),
+    bodyWeightRep = this.body_weight?.let { it == 1L },
+    videoUri = this.videoUri,
+)
+
+fun GetAllForLift.toDomain(previousMax: Double? = null): LBSet = toDomainSet(
+    previousMax = previousMax,
+    id = this.id,
+    movementId = this.movementId,
+    exerciseSectionId = this.exerciseSectionId,
+    weight = this.weight ?: 0.0,
+    reps = this.reps ?: 1,
+    failureRep = this.failureRep,
+    tempo = Tempo(
+        down = this.tempoDown ?: 3,
+        hold = this.tempoHold ?: 1,
+        up = this.tempoUp ?: 1,
+    ),
+    date = this.date,
+    notes = this.notes,
+    rpe = this.rpe?.toInt(),
+    bodyWeightRep = this.body_weight?.let { it == 1L },
+    videoUri = this.videoUri,
+)
+
+internal fun toDomainSet(
+    previousMax: Double?,
+    id: String,
+    movementId: String,
+    exerciseSectionId: ExerciseSectionId? = null,
+    weight: Double = 0.0,
+    reps: Long = 1,
+    failureRep: Long? = null,
+    tempo: Tempo = Tempo(),
+    date: Instant,
+    notes: String = "",
+    rpe: Int? = null,
+    bodyWeightRep: Boolean? = null,
+    videoUri: String? = null,
+): LBSet {
+    val previousMaxWeight = previousMax?.takeIf { it > 0.0 }
+    val merReps = failureRep?.minus(1)?.coerceIn(0, reps) ?: reps
+    return LBSet(
+        id = id,
+        movementId = movementId,
+        exerciseSectionId = exerciseSectionId,
+        weight = weight,
+        percentagePreviousMax = previousMaxWeight?.let { (weight / it).toFloat() },
+        reps = reps,
+        failureRep = failureRep,
+        tempo = tempo,
+        date = date,
+        notes = notes,
+        rpe = rpe,
+        mer = previousMaxWeight?.let { calculateMer(weight, merReps, it) } ?: 0,
+        bodyWeightRep = bodyWeightRep,
+        videoUri = videoUri,
+    )
+}
+
+internal fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {
     if (maxWeight <= 0.0) return 0
     val repFatigueCost = 4
 
