@@ -48,25 +48,6 @@ class LBDatabase(
         )
     }
 
-    @Deprecated("use the liftRepository instead")
-    val liftDataSource: LiftDataSource = LiftDataSource(
-        database.categoryQueries,
-        database.setQueries,
-        database.movementQueries
-    )
-
-    // Deprecated: repositories are constructed in DI using data:core + data:sqldelight implementations
-    // Keeping LBDatabase focused on providing access to queries/datasources and helpers.
-
-    @Deprecated("use the setRepository instead")
-    val setDataSource: SetDataSource = SetDataSource(
-        setQueries = database.setQueries,
-        movementQueries = database.movementQueries
-    )
-
-    @Deprecated("use the workoutRepository instead")
-    val workoutDataSource = database.workoutQueries
-
     // Expose queries for DI wiring of SQLDelight-backed datasources
     val categoryQueries get() = database.categoryQueries
     val setQueries get() = database.setQueries
@@ -74,14 +55,9 @@ class LBDatabase(
     val exerciseQueries get() = database.exerciseQueries
 
     val workoutQueries get() = database.workoutQueries
-
     val liftingLogQueries get() = database.liftingLogQueries
 
     val goalQueries get() = database.goalQueries
-
-    val variantDataSource: VariationDataSource = SqlDelightVariationDataSource(
-        movementQueries = database.movementQueries
-    )
 }
 
 private val instantAdapter = object : ColumnAdapter<Instant, Long> {
@@ -105,168 +81,3 @@ private val dateAdapter = object : ColumnAdapter<LocalDate, Long> {
         return value.toEpochDays()
     }
 }
-
-class SetDataSource(
-    private val setQueries: SetQueries,
-    private val movementQueries: MovementQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) {
-
-    private fun calculateMer(setWeight: Double?, setReps: Long?, maxWeight: Double): Int {
-        if (maxWeight <= 0.0) return 0
-        val repFatigueCost = 4
-
-        val weight = setWeight ?: 0.0
-        val reps = setReps ?: 0
-
-        val merFatigueThreshold = 80.0
-
-        val setFatigue = ((weight / maxWeight) * 100.0) + (reps * repFatigueCost)
-
-        return min(reps.toInt(), ((setFatigue - merFatigueThreshold) / 4.0).toInt())
-    }
-
-    fun getAll(variationId: String, limit: Long = Long.MAX_VALUE): List<LBSet> {
-        return setQueries.getAllByMovement(variationId, null, limit).executeAsList().map { set ->
-            val oneRepMax = setQueries.getOneRepMaxForMovement(variationId, before = set.date)
-                .executeAsOneOrNull()
-            val eMax =
-                setQueries.getEMaxForMovement(variationId, before = set.date).executeAsOneOrNull()
-
-            val localMax =
-                listOf(oneRepMax, eMax).maxOfOrNull { calculateMax(it?.reps, it?.weight) }
-
-            localMax?.let {
-                set.toDomain().copy(
-                    mer = calculateMer(
-                        setWeight = set.weight,
-                        setReps = set.reps,
-                        maxWeight = localMax
-                    )
-                )
-            } ?: run {
-                set.toDomain()
-            }
-        }
-    }
-
-    fun getAll(
-        limit: Long = Long.MAX_VALUE,
-        startDate: Instant? = null,
-        endDate: Instant? = null,
-        variationId: String? = null,
-    ): List<LBSet> =
-        setQueries.getAllSets(
-            limit = limit,
-            reps = null,
-            startDate = startDate,
-            endDate = endDate,
-            movementId = variationId,
-            sortBy = Sorting.date.toString(),
-            order = 0,
-        ).executeAsList().map { it.toDomain() }
-
-    fun get(setId: String?): LBSet? = setQueries.get(setId ?: "").executeAsOneOrNull()?.toDomain()
-
-    suspend fun save(set: LBSet) {
-        withContext(dispatcher) {
-            setQueries.save(
-                id = set.id,
-                movementId = set.movementId,
-                weight = set.weight,
-                reps = set.reps,
-                tempoDown = set.tempo.down,
-                tempoHold = set.tempo.hold,
-                tempoUp = set.tempo.up,
-                date = set.date,
-                notes = set.notes,
-                rpe = set.rpe?.toLong(),
-                videoUri = set.videoUri,
-                exerciseSectionId = set.exerciseSectionId,
-                failureRep = set.failureRep,
-            )
-        }
-    }
-
-    suspend fun delete(lbSet: LBSet) {
-        setQueries.delete(lbSet.id)
-    }
-
-    suspend fun delete(setId: String) {
-        setQueries.delete(setId)
-    }
-
-    fun listen(id: String): Flow<LBSet?> =
-        setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
-}
-
-fun LiftingSet.toDomain() = LBSet(
-    id = this.id,
-    movementId = this.movementId,
-    weight = this.weight ?: 0.0,
-    reps = this.reps ?: 1,
-    tempo = Tempo(
-        down = this.tempoDown ?: 3,
-        hold = this.tempoHold ?: 1,
-        up = this.tempoUp ?: 1,
-    ),
-    date = this.date,
-    notes = this.notes,
-    rpe = this.rpe?.toInt(),
-    failureRep = this.failureRep
-)
-
-fun GetAllByMovement.toDomain() = LBSet(
-    id = this.id,
-    movementId = this.movementId,
-    weight = this.weight ?: 0.0,
-    reps = this.reps ?: 1,
-    tempo = Tempo(
-        down = this.tempoDown ?: 3,
-        hold = this.tempoHold ?: 1,
-        up = this.tempoUp ?: 1,
-    ),
-    date = this.date,
-    notes = this.notes,
-    rpe = this.rpe?.toInt(),
-    bodyWeightRep = this.body_weight?.let { it == 1L },
-    failureRep = this.failureRep
-)
-
-class LiftDataSource(
-    private val categoryQueries: CategoryQueries,
-    private val setQueries: SetQueries,
-    private val movementQueries: MovementQueries,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) {
-
-    fun get(id: String?): Flow<Category?> =
-        categoryQueries.get(id ?: "").asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
-
-    fun listenAll(): Flow<List<Category>> =
-        categoryQueries.getAll().asFlow().mapToList(dispatcher).mapEach { it.toDomain() }
-
-    fun getAll(): List<Category> =
-        categoryQueries.getAll().executeAsList().map { it.toDomain() }
-
-    fun save(lift: Category): Boolean {
-        GlobalScope.launch(dispatcher) {
-            categoryQueries.save(
-                lift.id,
-                lift.name,
-                lift.color?.toLong(),
-            )
-        }
-        return true
-    }
-
-    suspend fun delete(liftId: String) {
-        categoryQueries.delete(liftId)
-    }
-}
-
-internal fun comliftbrodb.Category.toDomain() = Category(
-    id = this.id,
-    name = this.name,
-    color = this.color?.toULong(),
-)

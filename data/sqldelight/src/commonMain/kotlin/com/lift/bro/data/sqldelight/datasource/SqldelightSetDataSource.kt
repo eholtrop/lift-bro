@@ -117,7 +117,24 @@ class SqldelightSetDataSource(
             }
 
     override fun listen(id: String): Flow<LBSet?> =
-        setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { it?.toDomain() }
+        setQueries.get(id).asFlow().mapToOneOrNull(dispatcher).map { set ->
+            set?.let {
+                val orm = setQueries.getOneRepMaxForMovement(
+                    movementId = set.movementId,
+                    before = set.date
+                ).executeAsOneOrNull()?.weight
+                val emax = setQueries.getEMaxForMovement(
+                    movementId = set.movementId,
+                    before = set.date
+                ).executeAsOneOrNull()?.weight
+
+                set.toDomain().copy(
+                    percentagePreviousMax = (orm ?: emax)?.let { set.weight?.div(it) }?.toFloat(),
+                    mer = (orm ?: emax)?.let { calculateMer(set.weight, successfulReps(set.reps, set.failureRep), it) } ?: 0,
+                )
+            }
+        }
+
 
     override suspend fun save(lbSet: LBSet) {
         Log.d("LiftBroDb", "saving $lbSet")
@@ -183,25 +200,6 @@ fun LiftingSet.toDomain() = LBSet(
     date = this.date,
     notes = this.notes,
     rpe = this.rpe?.toInt(),
-    videoUri = this.videoUri,
-    exerciseSectionId = this.exerciseSectionId,
-    failureRep = this.failureRep,
-)
-
-fun GetAllByMovement.toDomain() = LBSet(
-    id = this.id,
-    movementId = this.movementId,
-    weight = this.weight ?: 0.0,
-    reps = this.reps ?: 1,
-    tempo = Tempo(
-        down = this.tempoDown ?: 3,
-        hold = this.tempoHold ?: 1,
-        up = this.tempoUp ?: 1,
-    ),
-    date = this.date,
-    notes = this.notes,
-    rpe = this.rpe?.toInt(),
-    bodyWeightRep = this.body_weight?.let { it == 1L },
     videoUri = this.videoUri,
     exerciseSectionId = this.exerciseSectionId,
     failureRep = this.failureRep,
