@@ -2,7 +2,6 @@ package com.lift.bro.domain.usecases
 
 import com.lift.bro.domain.models.CelebrationType
 import com.lift.bro.domain.models.Movement
-import com.lift.bro.domain.models.estimateMax
 import com.lift.bro.domain.repositories.ISetRepository
 import com.lift.bro.domain.repositories.IVariationRepository
 import kotlinx.coroutines.flow.Flow

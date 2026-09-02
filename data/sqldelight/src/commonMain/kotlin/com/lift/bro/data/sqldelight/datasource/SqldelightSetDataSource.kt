@@ -20,7 +20,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import tv.dpal.ktx.datetime.atEndOfDayIn
 import tv.dpal.ktx.datetime.atStartOfDayIn
@@ -28,11 +27,14 @@ import tv.dpal.logging.Log
 import tv.dpal.logging.d
 import kotlin.math.min
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
+
+private fun successfulReps(reps: Long?, failureRep: Long?) = failureRep ?: reps
 
 class SqldelightSetDataSource(
     private val setQueries: SetQueries,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
-) : SetDataSource {
+): SetDataSource {
 
     override fun listenAll(
         startDate: LocalDate?,
@@ -66,7 +68,8 @@ class SqldelightSetDataSource(
                         ).executeAsOneOrNull()?.weight
 
                         set.toDomain().copy(
-                            mer = (orm ?: emax)?.let { calculateMer(set.weight, set.reps, it) } ?: 0,
+                            percentagePreviousMax = (orm ?: emax)?.let { set.weight?.div(it) }?.toFloat(),
+                            mer = (orm ?: emax)?.let { calculateMer(set.weight, successfulReps(set.reps, set.failureRep), it) } ?: 0,
                         )
                     }
             }
@@ -81,25 +84,34 @@ class SqldelightSetDataSource(
             sortBy = sorting.toString()
         )
             .asFlow().mapToList(dispatcher)
-            .map {
-                it.map {
+            .map { sets ->
+                sets.map { set ->
+                    val orm = setQueries.getOneRepMaxForMovement(
+                        movementId = set.movementId,
+                        before = set.date
+                    ).executeAsOneOrNull()?.weight
+                    val emax = setQueries.getEMaxForMovement(
+                        movementId = set.movementId,
+                        before = set.date
+                    ).executeAsOneOrNull()?.weight
                     LBSet(
-                        id = it.id,
-                        movementId = it.movementId,
-                        weight = it.weight ?: 0.0,
-                        reps = it.reps ?: 1,
+                        id = set.id,
+                        movementId = set.movementId,
+                        weight = set.weight ?: 0.0,
+                        reps = set.reps ?: 1,
                         tempo = Tempo(
-                            down = it.tempoDown ?: 3,
-                            hold = it.tempoHold ?: 1,
-                            up = it.tempoUp ?: 1,
+                            down = set.tempoDown ?: 3,
+                            hold = set.tempoHold ?: 1,
+                            up = set.tempoUp ?: 1,
                         ),
-                        date = it.date,
-                        notes = it.notes,
-                        rpe = it.rpe?.toInt(),
-                        mer = 0,
-                        bodyWeightRep = it.body_weight?.let { it == 1L },
-                        videoUri = it.videoUri,
-                        failureRep = it.failureRep,
+                        percentagePreviousMax = (orm ?: emax)?.let { set.weight?.div(it) }?.toFloat(),
+                        mer = (orm ?: emax)?.let { calculateMer(set.weight, successfulReps(set.reps, set.failureRep), it) } ?: 0,
+                        date = set.date,
+                        notes = set.notes,
+                        rpe = set.rpe?.toInt(),
+                        bodyWeightRep = set.body_weight?.let { it == 1L },
+                        videoUri = set.videoUri,
+                        failureRep = set.failureRep,
                     )
                 }
             }

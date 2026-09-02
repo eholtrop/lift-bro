@@ -64,6 +64,15 @@ fun SetInfoRow(
                 style = MaterialTheme.typography.titleMedium,
             )
 
+            set.failureRep?.let {
+                Text(
+                    text = "Failed on rep $it",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+
+
             set.tempo.render()
             if (set.notes.isNotBlank()) {
                 Row(
