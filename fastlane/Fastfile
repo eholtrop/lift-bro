@@ -303,9 +303,13 @@ platform :ios do
 
   desc "Build the debug artifact for iOS"
   lane :build_debug do |options|
-    match_development
-
-    xcargs = options[:build_number] ? "MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}" : nil
+    # Simulator builds don't require a development certificate or provisioning
+    # profile, so disable code signing. Routeing this lane through match would
+    # fail when a development cert expires, blocking local screenshot runs.
+    xcargs = "CODE_SIGNING_ALLOWED=NO"
+    if options[:build_number]
+      xcargs += " MARKETING_VERSION=#{`git log -1 --format=%cd --date=format:%Y.%m.%d`.strip} CURRENT_PROJECT_VERSION=#{options[:build_number].to_i + 156}"
+    end
 
     gym(
       scheme: "iosApp",
@@ -418,9 +422,20 @@ platform :ios do
   end
 
   desc "Generate App Store screenshots locally"
-  lane :generate_app_store_screenshots do
+  lane :generate_app_store_screenshots do |options|
     project_root = File.expand_path("..", __dir__)
     device_type = "iPhone 17 Pro"
+    skip_build = options[:skip_build] == "true" || options[:skip_build] == true
+    flow = options[:flow]
+    no_frame = options[:no_frame] == "true" || options[:no_frame] == true
+
+    # Prepend tool dirs missing from the non-interactive SSH PATH
+    ENV["PATH"] = [
+      File.expand_path("~/.maestro/bin"),
+      File.expand_path("~/.rbenv/shims"),
+      File.expand_path("/opt/homebrew/bin"),
+      ENV["PATH"],
+    ].join(":")
 
     # 1. Boot simulator
     booted = `xcrun simctl list devices booted`.include?(device_type)
@@ -434,44 +449,74 @@ platform :ios do
       # 2. Generate fresh backup data
       generate_backup_data
 
-      # 3. Build debug IPA for simulator
-      derived_data = File.join(project_root, "build/generated/derived-data/ios")
-      build_debug(derived_data_path: derived_data)
+      if skip_build
+        UI.message "Skipping build - reusing already-installed app on simulator"
+      else
+        # 3. Build debug IPA for simulator
+        derived_data = File.join(project_root, "build/generated/derived-data/ios")
+        build_debug(derived_data_path: derived_data)
 
-      # 4. Install app on simulator
-      app_path = File.join(derived_data, "Build/Products/Debug-iphonesimulator/Lift Bro.app")
-      UI.user_error!("Built app not found at #{app_path}") unless File.exist?(app_path)
-      sh "xcrun", "simctl", "install", simulator_udid, app_path
+        # 4. Install app on simulator
+        app_path = File.join(derived_data, "Build/Products/Debug-iphonesimulator/Lift Bro.app")
+        UI.user_error!("Built app not found at #{app_path}") unless File.exist?(app_path)
+        sh "xcrun", "simctl", "install", simulator_udid, app_path
+      end
 
       # 5. Push backup file to simulator
       push_backup_to_simulator
 
       # 6. Run Maestro screenshot flows
       Dir.chdir(project_root) do
-        sh "maestro", "test", File.join(project_root, ".maestro/screenshots/")
+        if flow && !flow.empty?
+          flow_path = File.join(project_root, ".maestro/screenshots/#{flow}.yaml")
+          UI.user_error!("Flow not found: #{flow_path}") unless File.exist?(flow_path)
+          sh "maestro", "test", flow_path
+        else
+          sh "maestro", "test", File.join(project_root, ".maestro/screenshots/")
+        end
       end
 
-      # 7. Copy screenshots to frameit directory. Maestro nests each screenshot
-      #    under <session>/<flow>/takeScreenshot/*.png (plus stray step-*.png
-      #    captures elsewhere), so only grab the intended takeScreenshot outputs.
-      phone_screenshots = File.join(project_root, "fastlane/screenshots/en-CA/images/phoneScreenshots")
-      sh "rm", "-rf", phone_screenshots
-      sh "mkdir", "-p", phone_screenshots
-      Dir.glob(File.join(project_root, "build/generated/screenshot-tests/**/takeScreenshot/*.png")).each do |png|
-        sh "cp", png, phone_screenshots
+      if no_frame
+        UI.message "Framing skipped (no_frame). Raw captures in build/generated/screenshot-tests/"
+      else
+        frame_and_copy_screenshots(project_root)
       end
-
-      # 8. Run frameit to add device frames
-      Dir.chdir(File.join(project_root, "fastlane/screenshots")) do
-        sh "fastlane", "frameit", "ios"
-      end
-
-      UI.success "Framed screenshots ready in fastlane/screenshots/en-CA/images/phoneScreenshots/"
     ensure
       # Shut down simulator
       sh "xcrun", "simctl", "shutdown", simulator_udid rescue nil
       UI.message "Simulator shut down."
     end
+  end
+
+  def frame_and_copy_screenshots(project_root)
+    # Stage raw screenshots for frameit. Maestro stores the takeScreenshot
+    # outputs flat under <root>/screenshots/*.png (older setups nest them under
+    # <session>/<flow>/takeScreenshot/*.png, plus stray step-*.png captures).
+    # Grab the intended captures.
+    screenshots_root = File.join(project_root, "build/generated/screenshot-tests")
+    files_root = File.join(screenshots_root, "files")
+    sh "rm", "-rf", files_root
+    sh "mkdir", "-p", files_root
+    staged = []
+    staged += Dir.glob(File.join(screenshots_root, "screenshots/*.png"))
+    staged += Dir.glob(File.join(screenshots_root, "**/takeScreenshot/*.png"))
+    staged.uniq.each { |png| sh "cp", png, files_root }
+
+    # Run frameit to add device frames (reads Framefile.json + ./fonts + ./backgrounds)
+    FileUtils.cp(File.join(project_root, "fastlane/metadata/Framefile.json"), File.join(files_root, "Framefile.json"))
+    FileUtils.cp_r(File.join(project_root, "fastlane/metadata/fonts"), File.join(files_root, "fonts"))
+    FileUtils.cp_r(File.join(project_root, "fastlane/metadata/backgrounds"), File.join(files_root, "backgrounds"))
+    Dir.chdir(files_root) do
+      sh "fastlane", "frameit", "ios"
+    end
+
+    # Copy framed screenshots to the App Store metadata directory (mirrors Android)
+    phone_screenshots = File.join(project_root, "fastlane/metadata/ios/en-US/images/phoneScreenshots")
+    sh "mkdir", "-p", phone_screenshots
+    Dir.glob(File.join(files_root, "*_framed.png")).each do |png|
+      sh "cp", png, phone_screenshots
+    end
+    UI.success "Framed screenshots ready in fastlane/metadata/ios/en-US/images/phoneScreenshots/"
   end
 
   desc "Submit a new version to the App Store for iOS"
