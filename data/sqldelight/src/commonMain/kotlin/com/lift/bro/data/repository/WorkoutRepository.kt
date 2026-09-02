@@ -28,7 +28,7 @@ class WorkoutRepository(
         endDate: LocalDate?,
         limit: Long,
     ): Flow<List<Workout>> =
-        database.workoutDataSource.getAll(startDate = startDate, endDate = endDate, limit = limit)
+        database.workoutQueries.getAll(startDate = startDate, endDate = endDate, limit = limit)
             .asFlowList(dispatcher)
             .flatMapLatest { workouts ->
                 if (workouts.isEmpty()) return@flatMapLatest flow { emit(emptyList()) }
@@ -49,7 +49,7 @@ class WorkoutRepository(
             }
 
     override fun get(date: LocalDate): Flow<Workout?> =
-        database.workoutDataSource.getByDate(date = date)
+        database.workoutQueries.getByDate(date = date)
             .asFlowOneOrNull(dispatcher = dispatcher)
             .flatMapLatest { workout ->
                 exerciseDataSource.listenAll(workout?.id ?: "").map { exercises ->
@@ -67,7 +67,7 @@ class WorkoutRepository(
 
     override suspend fun save(workout: Workout) {
         withContext(dispatcher) {
-            database.workoutDataSource.save(
+            database.workoutQueries.save(
                 id = workout.id,
                 finisher = workout.finisher,
                 warmup = workout.warmup,
@@ -84,7 +84,7 @@ class WorkoutRepository(
 
     override suspend fun delete(workout: Workout) {
         withContext(dispatcher) {
-            database.workoutDataSource.delete(workout.id)
+            database.workoutQueries.delete(workout.id)
             workout.exercises.forEach {
                 exerciseDataSource.delete(it.id)
             }
@@ -93,7 +93,7 @@ class WorkoutRepository(
 
     override suspend fun deleteAll() {
         withContext(dispatcher) {
-            database.workoutDataSource.deleteAll()
+            database.workoutQueries.deleteAll()
         }
     }
 }
