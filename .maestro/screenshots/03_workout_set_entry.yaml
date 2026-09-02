@@ -3,32 +3,64 @@
 appId: com.lift.bro
 
 ---
--   runFlow:
-        file: ../flows/skip_onboarding_with_backup.yaml
--   tapOn: "Deadlift"
--   tapOn: "Conventional Deadlift"
--   tapOn: "Add Set"
+- runFlow:
+    file: ../flows/skip_onboarding_with_backup.yaml
+
+# Navigate to the set entry screen for "Back Squat".
+# iOS: dashboard's bottom "Add Set" opens an exercise picker, and tapping the
+#      row auto-advances to entry.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "Add Set"
+      - tapOn: "Back Squat"
+
+# Android: drill from the dashboard category into a variation, then "Add Set",
+# which opens the exercise picker; tapping the exercise enters the set screen.
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Add Set"
+      - tapOn: "Back Squat"
+
 # Fill in sample data for a realistic screenshot
--   tapOn: "Back Squat"
--   tapOn:
-        id: "reps"
--   inputText: "5"
--   tapOn:
-        id: "weight"
--   inputText: "315"
--   tapOn:
-        id: "notes"
--   inputText: "Lower back tightness"
-    # currently broken since RPE is a list of radio  buttons
-    # need to fix the ids (/content description) of these radio fields then update this
-#- tapOn:
-#    id: "rpe"
-#- inputText: "8"
-- hideKeyboard
--   waitForAnimationToEnd:
-        timeout: 5000
+# (iOS fields are plain text - no resource ids - so tap by visible text)
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn:
+          id: "reps"
+      - inputText: "5"
+      - tapOn:
+          id: "weight"
+      - inputText: "315"
+      - tapOn:
+          id: "notes"
+      - inputText: "Lower back tightness"
+      - hideKeyboard
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          text: "0"
+          index: 0
+      - inputText: "5"
+      - tapOn:
+          text: "0"
+          index: 0
+      - inputText: "315"
+      - tapOn: "Extra Notes: (optional)"
+      - inputText: "Lower back tightness"
+      - pressKey: Enter
+
+- waitForAnimationToEnd:
+    timeout: 5000
 - takeScreenshot:
-        path: "03_workout_set_entry"
--   tapOn: "RPE"
--   takeScreenshot:
-        path: "07_rpe_dialog"
+    path: "03_workout_set_entry"
+- tapOn: "RPE"
+- takeScreenshot:
+    path: "07_rpe_dialog"

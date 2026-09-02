@@ -1,16 +1,19 @@
 package com.lift.bro.data
 
-import io.github.vinceglb.filekit.utils.toByteArray
-import io.github.vinceglb.filekit.utils.toNSData
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.UnsafeNumber
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.convert
+import kotlinx.cinterop.refTo
 import kotlinx.cinterop.usePinned
 import platform.Foundation.NSData
 import platform.Foundation.NSUserDefaults
+import platform.Foundation.create
 import platform.posix.arc4random_buf
+import platform.posix.memcpy
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class, UnsafeNumber::class)
 class EncryptionKeyProviderImpl: EncryptionKeyProvider {
 
     private companion object {
@@ -40,15 +43,16 @@ class EncryptionKeyProviderImpl: EncryptionKeyProvider {
             arc4random_buf(pinned.addressOf(0), KEY_LENGTH_BYTES.convert())
         }
 
-        val nsData = key.toNSData()
+        val nsData = key.usePinned { pinned ->
+            NSData.create(bytes = pinned.addressOf(0), length = key.size.convert())
+        }
         userDefaults.setObject(nsData, forKey = SERVICE_NAME)
         userDefaults.synchronize()
 
         return key
     }
 
-    @OptIn(ExperimentalForeignApi::class)
-    private fun nsDataToByteArray(nsData: NSData): ByteArray {
-        return nsData.toByteArray()
+    private fun nsDataToByteArray(nsData: NSData): ByteArray = ByteArray(nsData.length.toInt()).apply {
+        memcpy(this.refTo(0), nsData.bytes, nsData.length)
     }
 }
