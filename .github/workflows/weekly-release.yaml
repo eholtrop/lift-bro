@@ -127,45 +127,8 @@ jobs:
         run: bundle exec fastlane ios promote app_version:${{ steps.version.outputs.version }}
 
   ios-beta-build:
-    runs-on: macos-latest
     needs: [lint, test, screenshot-validation]
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-      - uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3
-          bundler-cache: true
-      - name: Select Xcode
-        run: |
-          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -r | head -1)
-          if [ -z "$XCODE_PATH" ]; then
-            XCODE_PATH=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -r | head -1)
-          fi
-          if [ -z "$XCODE_PATH" ]; then
-            echo "No Xcode found at /Applications"
-          else
-            sudo xcode-select -s "$XCODE_PATH"
-          fi
-          xcode-select -p
-          xcodebuild -version
-      - uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.MATCH_GIT_PRIVATE_KEY }}
-      - name: Build and Release to TestFlight
-        env:
-          APPSTORE_KEY_ID: ${{ secrets.APPSTORE_KEY_ID }}
-          APPSTORE_ISSUER_ID: ${{ secrets.APPSTORE_ISSUER_ID }
-          REVENUE_CAT_API_KEY: ${{ secrets.REVENUE_CAT_API_KEY_IOS }}
-        run: bundle exec fastlane ios beta build_number:${{ github.run_number }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: ios-ipa
-          path: build/artifacts/ios/
-          if-no-files-found: warn
-          retention-days: 7
+    uses: ./.github/workflows/build-and-release-ios.yaml
+    with:
+      build_number: ${{ github.run_number }}
+    secrets: inherit
