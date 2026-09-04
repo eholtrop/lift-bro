@@ -197,8 +197,12 @@ fun WorkoutSectionCard(
                             val modifier: (LBSet) -> Modifier = { set ->
                                 Modifier.clickable(
                                     onClick = {
-                                        coordinator.present(
-                                            Destination.EditSet(setId = set.id)
+                                        eventHandler(
+                                            CreateWorkoutEvent.DuplicateSet(
+                                                set = set,
+                                                forceToday = true,
+                                                sectionId = section.id
+                                            )
                                         )
                                     },
                                     onClickLabel = "Open"
@@ -244,34 +248,6 @@ fun WorkoutSectionCard(
                                             modifier = modifier(it),
                                             label = {
                                                 Text(title("eMax Rep", it.date))
-                                            },
-                                            set = it,
-                                        ) {
-                                            IconButton(
-                                                onClick = {
-                                                    eventHandler(
-                                                        CreateWorkoutEvent.DuplicateSet(
-                                                            it,
-                                                            true,
-                                                            sectionId = section.id
-                                                        )
-                                                    )
-                                                }
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Default.ContentCopy,
-                                                    contentDescription = "Copy"
-                                                )
-                                            }
-                                        }
-                                    }
-                                }
-                                if (LocalTwmSettings.current) {
-                                    pm.eMax?.let {
-                                        SetInfoRow(
-                                            modifier = modifier(it),
-                                            label = {
-                                                Text(title("Most Weight Moved", it.date))
                                             },
                                             set = it,
                                         ) {
