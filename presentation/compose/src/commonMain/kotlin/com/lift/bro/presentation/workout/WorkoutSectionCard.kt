@@ -1,14 +1,14 @@
 package com.lift.bro.presentation.workout
 
-import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -97,9 +97,7 @@ import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.ThemePreviews
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
@@ -217,7 +215,6 @@ fun WorkoutSectionCard(
             val windowPosition = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
             val windowSize = remember { Animatable(Size.Zero, Size.VectorConverter) }
             val windowAlpha = remember { Animatable(0f) }
-            var windowSnapped by remember { mutableStateOf(false) }
 
             LaunchedEffect(currentAnchor == null) {
                 windowAlpha.animateTo(
@@ -227,37 +224,9 @@ fun WorkoutSectionCard(
             }
 
             LaunchedEffect(currentAnchor) {
-                val target = currentAnchor
-                if (target == null) {
-                    windowSnapped = false
-                    return@LaunchedEffect
-                }
-                if (!windowSnapped) {
-                    windowPosition.snapTo(target.offset)
-                    windowSize.snapTo(target.size)
-                    windowSnapped = true
-                } else {
-                    coroutineScope {
-                        launch {
-                            windowPosition.animateTo(
-                                target.offset,
-                                spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow,
-                                ),
-                            )
-                        }
-                        launch {
-                            windowSize.animateTo(
-                                target.size,
-                                spring(
-                                    dampingRatio = Spring.DampingRatioNoBouncy,
-                                    stiffness = Spring.StiffnessLow,
-                                ),
-                            )
-                        }
-                    }
-                }
+                val target = currentAnchor ?: return@LaunchedEffect
+                windowPosition.snapTo(target.offset)
+                windowSize.snapTo(target.size)
             }
 
             Box(
@@ -278,6 +247,7 @@ fun WorkoutSectionCard(
                         .onLayoutRectChanged(debounceMillis = 1) {
                             containerCoordinates = it
                         }
+                        .animateContentSize()
                 ) {
                     when (section.sets.isEmpty()) {
                         true -> {
@@ -432,7 +402,8 @@ fun WorkoutSectionCard(
                                     )
                                 }
 
-                                AnimatedVisibility(
+                                AnimatedContent(
+                                    targetState = sectionSet,
                                     modifier = Modifier
                                         .onLayoutRectChanged(
                                             debounceMillis = 1
@@ -453,11 +424,11 @@ fun WorkoutSectionCard(
 
                                             }
                                         },
-                                    visible = visibility ?: false,
-                                    enter = fadeIn(),
-                                    exit = fadeOut()
-                                ) {
-                                    when (sectionSet) {
+                                    transitionSpec = {
+                                        (fadeIn() togetherWith fadeOut()).using(SizeTransform(clip = false))
+                                    },
+                                ) { current ->
+                                    when (current) {
                                         is WorkoutSet.Recommended -> {
                                             RecommendedSetRow(
                                                 modifier = Modifier.border(
@@ -468,7 +439,7 @@ fun WorkoutSectionCard(
                                                     width = 1.dp,
                                                     shape = MaterialTheme.shapes.small.listCorners(index, sectionSets),
                                                 ),
-                                                recommendedSet = sectionSet.recommendedSet,
+                                                recommendedSet = current.recommendedSet,
                                                 section = section,
                                             )
                                         }
@@ -480,7 +451,7 @@ fun WorkoutSectionCard(
                                                     .combinedClickable(
                                                         onClick = {
                                                             coordinator.present(
-                                                                EditSet(setId = sectionSet.set.id)
+                                                                EditSet(setId = current.set.id)
                                                             )
                                                         },
                                                         onLongClick = {
@@ -501,7 +472,7 @@ fun WorkoutSectionCard(
                                                         horizontal = MaterialTheme.spacing.one,
                                                         vertical = MaterialTheme.spacing.half,
                                                     ),
-                                                set = sectionSet.set
+                                                set = current.set
                                             )
                                         }
 
@@ -511,7 +482,7 @@ fun WorkoutSectionCard(
                                             }
                                             CurrentSetRow(
                                                 modifier = Modifier,
-                                                set = sectionSet,
+                                                set = current,
                                                 onCheckClicked = { currentSet ->
                                                     eventHandler(
                                                         CreateWorkoutEvent.PerformSet(
