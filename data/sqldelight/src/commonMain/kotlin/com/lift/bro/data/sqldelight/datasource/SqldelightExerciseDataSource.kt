@@ -8,11 +8,14 @@ import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.ExerciseId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
+import com.lift.bro.domain.models.RecommendedSet
 import com.lift.bro.domain.models.Section
+import com.lift.bro.domain.models.SetTarget
 import com.lift.bro.domain.models.Tempo
 import comliftbrodb.ExerciseQueries
 import comliftbrodb.GetAll
 import comliftbrodb.GetAllForWorkout
+import comliftbrodb.GetBySectionId
 import comliftbrodb.GetByWorkoutId
 import comliftbrodb.GetExerciseSectionsByWorkoutId
 import comliftbrodb.MovementQueries
@@ -23,8 +26,10 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
+import kotlin.collections.emptyList
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
 class SqldelightExerciseDataSource(
     private val exerciseQueries: ExerciseQueries,
@@ -51,6 +56,9 @@ class SqldelightExerciseDataSource(
                             sets = sets,
                             movements = movements,
                             sections = sections,
+                            recommendedSets = section.reference_section_id?.let {
+                                setQueries.getBySectionId(section.reference_section_id).executeAsList()
+                            } ?: emptyList()
                         )
                     }
             )
@@ -99,6 +107,7 @@ class SqldelightExerciseDataSource(
 
 private fun GetExerciseSectionsByWorkoutId.toDomain(
     sets: List<GetByWorkoutId>,
+    recommendedSets: List<GetBySectionId>,
     movements: List<GetAll>,
     sections: List<GetExerciseSectionsByWorkoutId>,
 ): Section = Section(
@@ -113,6 +122,7 @@ private fun GetExerciseSectionsByWorkoutId.toDomain(
         sets = sets,
         movements = movements,
         sections = emptyList(), // avoid infinite loop 😭
+        recommendedSets = emptyList(),
     ),
     primaryMovement = movements.firstOrNull { it.id == this.primary_movement_id }?.toDomain(),
     sets = sets.filter { it.exerciseSectionId == this.exercise_section_id }
@@ -134,7 +144,23 @@ private fun GetExerciseSectionsByWorkoutId.toDomain(
                 bodyWeightRep = it.body_weight?.let { it == 1L },
                 failureRep = it.failureRep,
             )
-        }
+        },
+    recommendedSets = recommendedSets.filter {
+        it.exerciseSectionId == this.reference_section_id
+    }.map { set ->
+        RecommendedSet(
+            target = when (set.body_weight == 1L) {
+                true -> SetTarget.Reps(reps = set.reps ?: 0L, addedWeight = set.weight ?: 0.0)
+                false -> SetTarget.Weight(weight = set.weight ?: 0.0, reps = set.reps ?: 0L)
+            },
+            tempo = Tempo(
+                up = set.tempoUp ?: 3L,
+                down = set.tempoDown ?: 1L,
+                hold = set.tempoHold ?: 1L,
+            ),
+            movement = movements.first { it.id == set.movementId }.toDomain(),
+        )
+    },
 )
 
 private fun GetAllForWorkout.toDomain(): Movement = Movement(
@@ -220,7 +246,7 @@ private fun asLBSet(
     tempoDown: Long?,
     tempoHold: Long?,
     tempoUp: Long?,
-    date: kotlin.time.Instant?,
+    date: Instant?,
     notes: String?,
     rpe: Long?,
     videoUri: String?,
