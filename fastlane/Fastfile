@@ -20,9 +20,7 @@ before_all do
 end
     desc "Generate fresh backup data for screenshots"
     lane :generate_backup_data do
-      project_root = File.expand_path("..", __dir__)
-      output_path = File.join(project_root, "build/generated/test-data/screenshot_test_backup.json")
-      sh "python3", File.join(project_root, "scripts/generate_screenshot_backup.py"), output_path
+      gradle(task: "generateTestData")
     end
 
 
