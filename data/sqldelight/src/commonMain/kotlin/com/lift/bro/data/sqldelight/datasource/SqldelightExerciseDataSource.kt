@@ -6,7 +6,6 @@ import com.lift.bro.data.core.datasource.ExerciseDataSource
 import com.lift.bro.domain.models.Category
 import com.lift.bro.domain.models.Exercise
 import com.lift.bro.domain.models.ExerciseId
-import com.lift.bro.domain.models.ExerciseSectionId
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.RecommendedSet
@@ -19,7 +18,6 @@ import comliftbrodb.GetAllForWorkout
 import comliftbrodb.GetBySectionId
 import comliftbrodb.GetByWorkoutId
 import comliftbrodb.GetExerciseSectionsByWorkoutId
-import comliftbrodb.LiftingSet
 import comliftbrodb.MovementQueries
 import comliftbrodb.SetQueries
 import kotlinx.coroutines.CoroutineDispatcher

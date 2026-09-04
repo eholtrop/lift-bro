@@ -2,7 +2,6 @@ package com.lift.bro.domain.models
 
 import com.benasher44.uuid.uuid4
 import kotlinx.serialization.Serializable
-import kotlin.jvm.JvmInline
 
 typealias ExerciseId = String
 
@@ -36,13 +35,11 @@ data class Section(
     val recommendedSets: List<RecommendedSet> = emptyList(),
 ) {
 
-
     val movementSets: List<Pair<Movement?, LBSet>> = sets.map { set ->
         movements.firstOrNull {
             it.id == set.movementId
         } to set
     }
-
 }
 
 @Serializable
@@ -69,8 +66,10 @@ data class RecommendedSet(
 sealed interface SetTarget {
     @Serializable
     data class PercentageMax(val percentage: Float, val reps: Long, val max: Double): SetTarget
+
     @Serializable
     data class Weight(val weight: Double, val reps: Long): SetTarget
+
     @Serializable
     data class Reps(val reps: Long, val addedWeight: Double): SetTarget
 }
