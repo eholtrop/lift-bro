@@ -48,12 +48,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.OnGloballyPositionedModifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.onLayoutRectChanged
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.layout.positionInWindow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.spatial.RelativeLayoutBounds
@@ -67,7 +64,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toOffset
-import androidx.compose.ui.unit.toRect
 import androidx.compose.ui.unit.toSize
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
@@ -97,12 +93,10 @@ import com.lift.bro.utils.PreviewAppTheme
 import com.lift.bro.utils.ThemePreviews
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
-import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
-import lift_bro.core.generated.resources.workout_section_card_item_cta
 import lift_bro.core.generated.resources.workout_section_card_primary_cta
 import lift_bro.core.generated.resources.workout_section_card_secondary_cta
 import lift_bro.core.generated.resources.workout_section_card_warning_dialog_title
@@ -138,11 +132,11 @@ fun WorkoutSectionCard(
             ) {
                 Column(
                     modifier =
-                        Modifier
-                            .padding(
-                                top = MaterialTheme.spacing.threeQuarters,
-                                start = MaterialTheme.spacing.one,
-                            ),
+                    Modifier
+                        .padding(
+                            top = MaterialTheme.spacing.threeQuarters,
+                            start = MaterialTheme.spacing.one,
+                        ),
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
@@ -180,10 +174,10 @@ fun WorkoutSectionCard(
                             Icon(
                                 imageVector = Icons.Default.Delete,
                                 contentDescription =
-                                    stringResource(
-                                        Res.string.workout_section_card_secondary_cta,
-                                        "$prefix Section ${section.primaryMovement?.name}".trim(),
-                                    ),
+                                stringResource(
+                                    Res.string.workout_section_card_secondary_cta,
+                                    "$prefix Section ${section.primaryMovement?.name}".trim(),
+                                ),
                             )
                         }
                     }
@@ -421,7 +415,6 @@ fun WorkoutSectionCard(
                                                     offset = it.positionInRoot() - (containerCoordinates?.positionInRoot?.toOffset() ?: Offset.Zero),
                                                     size = it.size.toSize(),
                                                 )
-
                                             }
                                         },
                                     transitionSpec = {
@@ -510,45 +503,6 @@ fun WorkoutSectionCard(
                             }
                         }
                     }
-
-                    if (section.sets.isEmpty()) {
-                        val coordinator = LocalNavCoordinator.current
-                        IconButton(
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            onClick = {
-                                coordinator.present(
-                                    CreateSet(
-                                        date = date.atStartOfDayIn(TimeZone.currentSystemDefault()),
-                                        movementId = section.primaryMovement?.id,
-                                        sectionId = section.id,
-                                    ),
-                                )
-                            },
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = stringResource(Res.string.workout_section_card_primary_cta),
-                            )
-                        }
-                    } else {
-                        if (copyIndex != -1) {
-                            IconButton(
-                                modifier = Modifier.align(Alignment.CenterHorizontally),
-                                onClick = {
-                                    eventHandler(DuplicateSet(set = (section.sets[copyIndex] as WorkoutSet.Performed).set))
-                                },
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.ContentCopy,
-                                    contentDescription =
-                                        stringResource(
-                                            Res.string.workout_section_card_item_cta,
-                                        ),
-                                )
-                            }
-                        }
-                    }
-                    footer()
                 }
 
                 Box(
@@ -575,6 +529,27 @@ fun WorkoutSectionCard(
                         ),
                 )
             }
+            if (section.sets.isEmpty()) {
+                val coordinator = LocalNavCoordinator.current
+                IconButton(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    onClick = {
+                        coordinator.present(
+                            CreateSet(
+                                date = date.atStartOfDayIn(TimeZone.currentSystemDefault()),
+                                movementId = section.primaryMovement?.id,
+                                sectionId = section.id,
+                            ),
+                        )
+                    },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = stringResource(Res.string.workout_section_card_primary_cta),
+                    )
+                }
+            }
+            footer()
         }
     }
 }
@@ -722,192 +697,192 @@ class SectionItemProvider: PreviewParameterProvider<ExerciseSectionItem> {
                 ExerciseSectionItem(
                     id = "section1",
                     primaryMovement =
-                        Movement(
-                            id = "mov1",
-                            name = "Bench Press",
-                            latestSet =
-                                LBSet(
-                                    id = "latest1",
-                                    movementId = "mov1",
-                                    weight = 185.0,
-                                    reps = 8,
-                                ),
-                            eMax =
-                                LBSet(
-                                    id = "emax1",
-                                    movementId = "mov1",
-                                    weight = 175.0,
-                                    reps = 10,
-                                ),
-                            maxReps =
-                                LBSet(
-                                    id = "maxreps1",
-                                    movementId = "mov1",
-                                    weight = 135.0,
-                                    reps = 20,
-                                ),
+                    Movement(
+                        id = "mov1",
+                        name = "Bench Press",
+                        latestSet =
+                        LBSet(
+                            id = "latest1",
+                            movementId = "mov1",
+                            weight = 185.0,
+                            reps = 8,
                         ),
+                        eMax =
+                        LBSet(
+                            id = "emax1",
+                            movementId = "mov1",
+                            weight = 175.0,
+                            reps = 10,
+                        ),
+                        maxReps =
+                        LBSet(
+                            id = "maxreps1",
+                            movementId = "mov1",
+                            weight = 135.0,
+                            reps = 20,
+                        ),
+                    ),
                     sets =
-                        listOf(
-                            WorkoutSet.Performed(
-                                set =
-                                    LBSet(
-                                        id = "set1",
-                                        movementId = "mov1",
-                                        weight = 225.0,
-                                        reps = 5,
-                                        rpe = 7,
-                                        tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    ),
-                                movement = Movement(id = "mov1", name = "Bench Press"),
+                    listOf(
+                        WorkoutSet.Performed(
+                            set =
+                            LBSet(
+                                id = "set1",
+                                movementId = "mov1",
+                                weight = 225.0,
+                                reps = 5,
+                                rpe = 7,
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
                             ),
-                            WorkoutSet.Performed(
-                                set =
-                                    LBSet(
-                                        id = "set2",
-                                        movementId = "mov1",
-                                        weight = 205.0,
-                                        reps = 8,
-                                        rpe = 8,
-                                        tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    ),
-                                movement = Movement(id = "mov1", name = "Bench Press"),
+                            movement = Movement(id = "mov1", name = "Bench Press"),
+                        ),
+                        WorkoutSet.Performed(
+                            set =
+                            LBSet(
+                                id = "set2",
+                                movementId = "mov1",
+                                weight = 205.0,
+                                reps = 8,
+                                rpe = 8,
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
                             ),
-                            WorkoutSet.Performed(
-                                set =
-                                    LBSet(
-                                        id = "set3",
-                                        movementId = "mov1",
-                                        weight = 185.0,
-                                        reps = 10,
-                                        rpe = 9,
-                                        tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    ),
-                                movement = Movement(id = "mov1", name = "Bench Press"),
+                            movement = Movement(id = "mov1", name = "Bench Press"),
+                        ),
+                        WorkoutSet.Performed(
+                            set =
+                            LBSet(
+                                id = "set3",
+                                movementId = "mov1",
+                                weight = 185.0,
+                                reps = 10,
+                                rpe = 9,
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
                             ),
-                            WorkoutSet.Recommended(
-                                RecommendedSet(
-                                    target = SetTarget.Weight(weight = 205.0, reps = 8),
-                                    tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    movement = Movement(id = "mov1", name = "Bench Press"),
-                                ),
+                            movement = Movement(id = "mov1", name = "Bench Press"),
+                        ),
+                        WorkoutSet.Recommended(
+                            RecommendedSet(
+                                target = SetTarget.Weight(weight = 205.0, reps = 8),
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
+                                movement = Movement(id = "mov1", name = "Bench Press"),
                             ),
                         ),
+                    ),
                 ),
                 ExerciseSectionItem(
                     id = "section2",
                     primaryMovement =
-                        Movement(
-                            id = "mov2",
-                            name = "Squat",
-                            latestSet =
-                                LBSet(
-                                    id = "latest2",
-                                    movementId = "mov2",
-                                    weight = 315.0,
-                                    reps = 3,
-                                ),
-                            eMax =
-                                LBSet(
-                                    id = "emax2",
-                                    movementId = "mov2",
-                                    weight = 275.0,
-                                    reps = 10,
-                                ),
-                            maxReps =
-                                LBSet(
-                                    id = "maxreps2",
-                                    movementId = "mov2",
-                                    weight = 225.0,
-                                    reps = 15,
-                                ),
+                    Movement(
+                        id = "mov2",
+                        name = "Squat",
+                        latestSet =
+                        LBSet(
+                            id = "latest2",
+                            movementId = "mov2",
+                            weight = 315.0,
+                            reps = 3,
                         ),
+                        eMax =
+                        LBSet(
+                            id = "emax2",
+                            movementId = "mov2",
+                            weight = 275.0,
+                            reps = 10,
+                        ),
+                        maxReps =
+                        LBSet(
+                            id = "maxreps2",
+                            movementId = "mov2",
+                            weight = 225.0,
+                            reps = 15,
+                        ),
+                    ),
                     sets = emptyList(),
                 ),
                 ExerciseSectionItem(
                     id = "section3",
                     primaryMovement =
-                        Movement(
-                            id = "mov3",
-                            name = "Deadlift",
-                            latestSet =
-                                LBSet(
-                                    id = "latest3",
-                                    movementId = "mov3",
-                                    weight = 405.0,
-                                    reps = 3,
-                                ),
-                            eMax =
-                                LBSet(
-                                    id = "emax3",
-                                    movementId = "mov3",
-                                    weight = 385.0,
-                                    reps = 10,
-                                ),
-                            maxReps =
-                                LBSet(
-                                    id = "maxreps3",
-                                    movementId = "mov3",
-                                    weight = 315.0,
-                                    reps = 12,
-                                ),
+                    Movement(
+                        id = "mov3",
+                        name = "Deadlift",
+                        latestSet =
+                        LBSet(
+                            id = "latest3",
+                            movementId = "mov3",
+                            weight = 405.0,
+                            reps = 3,
                         ),
+                        eMax =
+                        LBSet(
+                            id = "emax3",
+                            movementId = "mov3",
+                            weight = 385.0,
+                            reps = 10,
+                        ),
+                        maxReps =
+                        LBSet(
+                            id = "maxreps3",
+                            movementId = "mov3",
+                            weight = 315.0,
+                            reps = 12,
+                        ),
+                    ),
                     sets =
-                        listOf(
-                            WorkoutSet.Recommended(
-                                RecommendedSet(
-                                    target = SetTarget.PercentageMax(percentage = 0.85f, reps = 3, max = 405.0),
-                                    tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    movement = Movement(id = "mov3", name = "Deadlift"),
-                                ),
-                            ),
-                            WorkoutSet.Recommended(
-                                RecommendedSet(
-                                    target = SetTarget.PercentageMax(percentage = 0.75f, reps = 5, max = 405.0),
-                                    tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    movement = Movement(id = "mov3", name = "Deadlift"),
-                                ),
+                    listOf(
+                        WorkoutSet.Recommended(
+                            RecommendedSet(
+                                target = SetTarget.PercentageMax(percentage = 0.85f, reps = 3, max = 405.0),
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
+                                movement = Movement(id = "mov3", name = "Deadlift"),
                             ),
                         ),
+                        WorkoutSet.Recommended(
+                            RecommendedSet(
+                                target = SetTarget.PercentageMax(percentage = 0.75f, reps = 5, max = 405.0),
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
+                                movement = Movement(id = "mov3", name = "Deadlift"),
+                            ),
+                        ),
+                    ),
                 ),
                 ExerciseSectionItem(
                     id = "section4",
                     primaryMovement =
-                        Movement(
-                            id = "mov4",
-                            name = "Overhead Press",
-                            latestSet =
-                                LBSet(
-                                    id = "latest4",
-                                    movementId = "mov4",
-                                    weight = 115.0,
-                                    reps = 8,
-                                ),
-                            eMax =
-                                LBSet(
-                                    id = "emax4",
-                                    movementId = "mov4",
-                                    weight = 105.0,
-                                    reps = 10,
-                                ),
-                            maxReps =
-                                LBSet(
-                                    id = "maxreps4",
-                                    movementId = "mov4",
-                                    weight = 95.0,
-                                    reps = 15,
-                                ),
+                    Movement(
+                        id = "mov4",
+                        name = "Overhead Press",
+                        latestSet =
+                        LBSet(
+                            id = "latest4",
+                            movementId = "mov4",
+                            weight = 115.0,
+                            reps = 8,
                         ),
+                        eMax =
+                        LBSet(
+                            id = "emax4",
+                            movementId = "mov4",
+                            weight = 105.0,
+                            reps = 10,
+                        ),
+                        maxReps =
+                        LBSet(
+                            id = "maxreps4",
+                            movementId = "mov4",
+                            weight = 95.0,
+                            reps = 15,
+                        ),
+                    ),
                     sets =
-                        listOf(
-                            WorkoutSet.Recommended(
-                                RecommendedSet(
-                                    target = SetTarget.Reps(reps = 10, addedWeight = 5.0),
-                                    tempo = Tempo(down = 3, hold = 1, up = 1),
-                                    movement = Movement(id = "mov4", name = "Overhead Press"),
-                                ),
+                    listOf(
+                        WorkoutSet.Recommended(
+                            RecommendedSet(
+                                target = SetTarget.Reps(reps = 10, addedWeight = 5.0),
+                                tempo = Tempo(down = 3, hold = 1, up = 1),
+                                movement = Movement(id = "mov4", name = "Overhead Press"),
                             ),
                         ),
+                    ),
                 ),
             )
 }
