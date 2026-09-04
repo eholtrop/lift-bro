@@ -130,9 +130,9 @@ fun WorkoutScreenInternal(
 
                 TextField(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = MaterialTheme.spacing.one),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = MaterialTheme.spacing.one),
                     value = notes,
                     placeholder = { Text(stringResource(Res.string.workout_notes_placeholder)) },
                     onValueChange = {
@@ -166,9 +166,9 @@ fun WorkoutScreenInternal(
                 item {
                     Column(
                         modifier =
-                            Modifier
-                                .animateItem()
-                                .padding(horizontal = MaterialTheme.spacing.one),
+                        Modifier
+                            .animateItem()
+                            .padding(horizontal = MaterialTheme.spacing.one),
                     ) {
                         Text(
                             text = stringResource(Res.string.workout_screen_copy_recent_workout_title),
@@ -187,10 +187,10 @@ fun WorkoutScreenInternal(
                 ) { workout ->
                     RecentWorkoutCard(
                         modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .animateItem()
-                                .padding(horizontal = MaterialTheme.spacing.one),
+                        Modifier
+                            .fillMaxWidth()
+                            .animateItem()
+                            .padding(horizontal = MaterialTheme.spacing.one),
                         workout = workout,
                         recentWorkoutClicked = {
                             eventHandler(CreateWorkoutEvent.CopyWorkout(it))
@@ -236,9 +236,9 @@ fun WorkoutScreenInternal(
                                         Icon(
                                             imageVector = Icons.Default.ChevronLeft,
                                             contentDescription =
-                                                stringResource(
-                                                    Res.string.workout_screen_previous_lift_content_description,
-                                                ),
+                                            stringResource(
+                                                Res.string.workout_screen_previous_lift_content_description,
+                                            ),
                                         )
                                     },
                                 ) {
@@ -258,9 +258,9 @@ fun WorkoutScreenInternal(
                                             Icon(
                                                 imageVector = Icons.Default.Refresh,
                                                 contentDescription =
-                                                    stringResource(
-                                                        Res.string.workout_screen_again_content_description,
-                                                    ),
+                                                stringResource(
+                                                    Res.string.workout_screen_again_content_description,
+                                                ),
                                             )
                                         },
                                     ) {
@@ -279,9 +279,9 @@ fun WorkoutScreenInternal(
                                             Icon(
                                                 imageVector = Icons.Default.ChevronRight,
                                                 contentDescription =
-                                                    stringResource(
-                                                        Res.string.workout_screen_next_content_description,
-                                                    ),
+                                                stringResource(
+                                                    Res.string.workout_screen_next_content_description,
+                                                ),
                                             )
                                         },
                                     ) {
@@ -417,14 +417,14 @@ fun SetOptionsBottomSheet(
         Column {
             Row(
                 modifier =
-                    Modifier
-                        .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                        .clickable(
-                            onClick = onDeleteRequest,
-                            role = Role.Button,
-                        ).padding(
-                            horizontal = MaterialTheme.spacing.one,
-                        ),
+                Modifier
+                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                    .clickable(
+                        onClick = onDeleteRequest,
+                        role = Role.Button,
+                    ).padding(
+                        horizontal = MaterialTheme.spacing.one,
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -436,14 +436,14 @@ fun SetOptionsBottomSheet(
             }
             Row(
                 modifier =
-                    Modifier
-                        .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
-                        .clickable(
-                            onClick = onDuplicateRequest,
-                            role = Role.Button,
-                        ).padding(
-                            horizontal = MaterialTheme.spacing.one,
-                        ),
+                Modifier
+                    .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize)
+                    .clickable(
+                        onClick = onDuplicateRequest,
+                        role = Role.Button,
+                    ).padding(
+                        horizontal = MaterialTheme.spacing.one,
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -498,58 +498,58 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                     notes = "",
                     exercises = emptyList(),
                     recentWorkouts =
-                        listOf(
-                            Workout(
-                                id = "w1",
-                                date = LocalDate(2024, 1, 12),
-                                exercises =
+                    listOf(
+                        Workout(
+                            id = "w1",
+                            date = LocalDate(2024, 1, 12),
+                            exercises =
+                            listOf(
+                                com.lift.bro.domain.models.Exercise(
+                                    id = "ex1",
+                                    workoutId = "w1",
+                                    sections =
                                     listOf(
-                                        com.lift.bro.domain.models.Exercise(
-                                            id = "ex1",
-                                            workoutId = "w1",
-                                            sections =
-                                                listOf(
-                                                    Section(
-                                                        id = "vs1",
-                                                        exerciseId = "",
-                                                        primaryMovement = null,
-                                                        sets =
-                                                            listOf(
-                                                                LBSet(
-                                                                    id = "set1",
-                                                                    movementId = "vs1",
-                                                                ),
-                                                            ),
-                                                    ),
-                                                    Section(
-                                                        id = "vs1",
-                                                        exerciseId = "",
-                                                        primaryMovement = null,
-                                                        sets =
-                                                            listOf(
-                                                                LBSet(
-                                                                    id = "set1",
-                                                                    movementId = "vs1",
-                                                                ),
-                                                            ),
-                                                    ),
+                                        Section(
+                                            id = "vs1",
+                                            exerciseId = "",
+                                            primaryMovement = null,
+                                            sets =
+                                            listOf(
+                                                LBSet(
+                                                    id = "set1",
+                                                    movementId = "vs1",
                                                 ),
+                                            ),
+                                        ),
+                                        Section(
+                                            id = "vs1",
+                                            exerciseId = "",
+                                            primaryMovement = null,
+                                            sets =
+                                            listOf(
+                                                LBSet(
+                                                    id = "set1",
+                                                    movementId = "vs1",
+                                                ),
+                                            ),
                                         ),
                                     ),
-                            ),
-                            Workout(
-                                id = "w2",
-                                date = LocalDate(2024, 1, 10),
-                                exercises =
-                                    listOf(
-                                        com.lift.bro.domain.models.Exercise(
-                                            id = "ex2",
-                                            workoutId = "w2",
-                                            sections = emptyList(),
-                                        ),
-                                    ),
+                                ),
                             ),
                         ),
+                        Workout(
+                            id = "w2",
+                            date = LocalDate(2024, 1, 10),
+                            exercises =
+                            listOf(
+                                com.lift.bro.domain.models.Exercise(
+                                    id = "ex2",
+                                    workoutId = "w2",
+                                    sections = emptyList(),
+                                ),
+                            ),
+                        ),
+                    ),
                 ),
                 // Workout with exercises and sets
                 CreateWorkoutState(
@@ -557,64 +557,64 @@ class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
                     notes = "Heavy squat day",
                     warmup = "10 min warmup",
                     exercises =
-                        listOf(
-                            ExerciseItem(
-                                id = "ex1",
-                                sections =
+                    listOf(
+                        ExerciseItem(
+                            id = "ex1",
+                            sections =
+                            listOf(
+                                ExerciseSectionItem(
+                                    id = "var1",
+                                    sets =
                                     listOf(
-                                        ExerciseSectionItem(
-                                            id = "var1",
-                                            sets =
-                                                listOf(
-                                                    WorkoutSet.Performed(
-                                                        movement =
-                                                            Movement(
-                                                                lift =
-                                                                    com.lift.bro.domain.models.Category(
-                                                                        name = "Squat",
-                                                                        color = 0xFF2196F3uL,
-                                                                    ),
-                                                                name = "Back Squat",
-                                                            ),
-                                                        set = LBSet(
-                                                                id = "set1",
-                                                                movementId = "var1",
-                                                                weight = 225.0,
-                                                                reps = 5,
-                                                                rpe = 7,
-                                                                date =
-                                                                    kotlin.time.Clock.System
-                                                                        .now(),
-                                                            ),
-                                                    ),
-                                                    WorkoutSet.Performed(
-                                                        movement =
-                                                            Movement(
-                                                                lift =
-                                                                    com.lift.bro.domain.models.Category(
-                                                                        name = "Squat",
-                                                                        color = 0xFF2196F3uL,
-                                                                    ),
-                                                                name = "Back Squat",
-                                                            ),
-                                                        set =
-                                                            LBSet(
-                                                                id = "set1",
-                                                                movementId = "var1",
-                                                                weight = 225.0,
-                                                                reps = 5,
-                                                                rpe = 7,
-                                                                date =
-                                                                    kotlin.time.Clock.System
-                                                                        .now(),
-                                                            ),
-                                                    ),
+                                        WorkoutSet.Performed(
+                                            movement =
+                                            Movement(
+                                                lift =
+                                                com.lift.bro.domain.models.Category(
+                                                    name = "Squat",
+                                                    color = 0xFF2196F3uL,
                                                 ),
-                                            primaryMovement = Movement(),
+                                                name = "Back Squat",
+                                            ),
+                                            set = LBSet(
+                                                id = "set1",
+                                                movementId = "var1",
+                                                weight = 225.0,
+                                                reps = 5,
+                                                rpe = 7,
+                                                date =
+                                                kotlin.time.Clock.System
+                                                    .now(),
+                                            ),
+                                        ),
+                                        WorkoutSet.Performed(
+                                            movement =
+                                            Movement(
+                                                lift =
+                                                com.lift.bro.domain.models.Category(
+                                                    name = "Squat",
+                                                    color = 0xFF2196F3uL,
+                                                ),
+                                                name = "Back Squat",
+                                            ),
+                                            set =
+                                            LBSet(
+                                                id = "set1",
+                                                movementId = "var1",
+                                                weight = 225.0,
+                                                reps = 5,
+                                                rpe = 7,
+                                                date =
+                                                kotlin.time.Clock.System
+                                                    .now(),
+                                            ),
                                         ),
                                     ),
+                                    primaryMovement = Movement(),
+                                ),
                             ),
                         ),
+                    ),
                     recentWorkouts = emptyList(),
                 ),
             )
