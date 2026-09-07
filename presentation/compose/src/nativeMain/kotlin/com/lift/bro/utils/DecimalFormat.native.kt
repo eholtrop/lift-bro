@@ -6,7 +6,7 @@ import platform.Foundation.NSNumberFormatterDecimalStyle
 
 actual fun Double?.decimalFormat(showDecimal: Boolean, grouping: Boolean): String {
     return NSNumberFormatter().apply {
-        minimumFractionDigits = 0u
+        minimumFractionDigits = if (showDecimal) 1u else 0u
         maximumFractionDigits = 3u
         numberStyle = NSNumberFormatterDecimalStyle
         usesGroupingSeparator = grouping
