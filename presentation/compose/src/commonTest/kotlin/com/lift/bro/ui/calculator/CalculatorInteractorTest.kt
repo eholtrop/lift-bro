@@ -267,7 +267,7 @@ class CalculatorInteractorTest {
         assertEquals(initialState, result)
     }
 
-    // MARK: - ActionReducer tests
+    // MARK: - actionReducer tests
 
     @Test
     fun `ActionReducer handles Clear action`() = runTest {
@@ -280,7 +280,7 @@ class CalculatorInteractorTest {
         )
         val event = CalculatorEvent.ActionApplied(Action.Clear)
 
-        val result = ActionReducer(initialState, event)
+        val result = actionReducer(UOM.POUNDS)(initialState, event)
 
         assertEquals(emptyList(), result.expression)
     }
@@ -295,7 +295,7 @@ class CalculatorInteractorTest {
         )
         val event = CalculatorEvent.ActionApplied(Action.Backspace)
 
-        val result = ActionReducer(initialState, event)
+        val result = actionReducer(UOM.POUNDS)(initialState, event)
 
         assertEquals(1, result.expression.size)
         assertEquals(12.0, result.expression.first().weight.value)
@@ -311,7 +311,7 @@ class CalculatorInteractorTest {
         )
         val event = CalculatorEvent.ActionApplied(Action.Backspace)
 
-        val result = ActionReducer(initialState, event)
+        val result = actionReducer(UOM.POUNDS)(initialState, event)
 
         assertEquals(1, result.expression.size)
         assertEquals(null, result.expression.first().operation)
@@ -328,7 +328,7 @@ class CalculatorInteractorTest {
         )
         val event = CalculatorEvent.ActionApplied(Action.Backspace)
 
-        val result = ActionReducer(initialState, event)
+        val result = actionReducer(UOM.POUNDS)(initialState, event)
 
         assertEquals(emptyList(), result.expression)
     }
@@ -337,7 +337,7 @@ class CalculatorInteractorTest {
     fun `ActionReducer handles Backspace on empty state`() = runTest {
         val event = CalculatorEvent.ActionApplied(Action.Backspace)
 
-        val result = ActionReducer(emptyState, event)
+        val result = actionReducer(UOM.POUNDS)(emptyState, event)
 
         assertEquals(emptyList(), result.expression)
     }
@@ -353,7 +353,7 @@ class CalculatorInteractorTest {
         )
         val event = CalculatorEvent.ActionApplied(Action.Equals)
 
-        val result = ActionReducer(initialState, event)
+        val result = actionReducer(UOM.POUNDS)(initialState, event)
 
         assertEquals(1, result.expression.size)
         assertEquals(100.5, result.expression.first().weight.value)
@@ -370,7 +370,7 @@ class CalculatorInteractorTest {
         )
         val event = CalculatorEvent.ActionApplied(Action.Decimal)
 
-        val result = ActionReducer(initialState, event)
+        val result = actionReducer(UOM.POUNDS)(initialState, event)
 
         assertEquals(1, result.expression.size)
         assertEquals(true, result.expression.first().decimalApplied)
@@ -380,7 +380,7 @@ class CalculatorInteractorTest {
     fun `ActionReducer handles Decimal on empty state`() = runTest {
         val event = CalculatorEvent.ActionApplied(Action.Decimal)
 
-        val result = ActionReducer(emptyState, event)
+        val result = actionReducer(UOM.POUNDS)(emptyState, event)
 
         assertEquals(1, result.expression.size)
         assertEquals(0.0, result.expression.first().weight.value)
@@ -397,11 +397,27 @@ class CalculatorInteractorTest {
         )
         val event = CalculatorEvent.ActionApplied(Action.Decimal)
 
-        val result = ActionReducer(initialState, event)
+        val result = actionReducer(UOM.POUNDS)(initialState, event)
 
         assertEquals(2, result.expression.size)
         assertEquals(0.0, result.expression.last().weight.value)
         assertEquals(true, result.expression.last().decimalApplied)
+    }
+
+    @Test
+    fun `ActionReducer Decimal creates segment in default UOM`() = runTest {
+        val initialState = CalculatorState(
+            total = "0",
+            expression = listOf(
+                Segment(Weight(10.0, UOM.KG), Operator.Add)
+            )
+        )
+        val event = CalculatorEvent.ActionApplied(Action.Decimal)
+
+        val result = actionReducer(UOM.KG)(initialState, event)
+
+        assertEquals(UOM.KG, result.expression.last().weight.uom)
+        assertEquals(2, result.expression.size)
     }
 
     @Test
@@ -414,7 +430,7 @@ class CalculatorInteractorTest {
         )
         val event = CalculatorEvent.DigitAdded(5)
 
-        val result = ActionReducer(initialState, event)
+        val result = actionReducer(UOM.POUNDS)(initialState, event)
 
         assertEquals(initialState, result)
     }
