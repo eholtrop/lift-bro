@@ -59,7 +59,7 @@ fun digitReducer(defaultUOM: UOM): Reducer<CalculatorState, CalculatorEvent> =
                     expression = state.expression + Segment(
                         Weight(
                             event.digit.toDouble(),
-                            UOM.POUNDS
+                            defaultUOM
                         )
                     )
                 )
@@ -110,81 +110,82 @@ val ToggleUOMReducer: Reducer<CalculatorState, CalculatorEvent> = Reducer { stat
     )
 }
 
-val ActionReducer: Reducer<CalculatorState, CalculatorEvent> = Reducer { state, event ->
-    if (event !is CalculatorEvent.ActionApplied) return@Reducer state
-    when (event.action) {
-        Action.Backspace -> {
-            val lastSegment = state.expression.lastOrNull()
-            val newSegment = when {
-                lastSegment == null -> null
-                // if operation is present nullify it
-                lastSegment.operation != null -> {
-                    lastSegment.copy(operation = null)
-                }
+fun actionReducer(defaultUOM: UOM): Reducer<CalculatorState, CalculatorEvent> =
+    Reducer { state, event ->
+        if (event !is CalculatorEvent.ActionApplied) return@Reducer state
+        when (event.action) {
+            Action.Backspace -> {
+                val lastSegment = state.expression.lastOrNull()
+                val newSegment = when {
+                    lastSegment == null -> null
+                    // if operation is present nullify it
+                    lastSegment.operation != null -> {
+                        lastSegment.copy(operation = null)
+                    }
 
-                else -> {
-                    val newWeight = lastSegment.weight.value
-                        .decimalFormat(lastSegment.decimalApplied)
-                        .dropLast(1)
-                        .toDoubleOrNull()
-                    when (newWeight) {
-                        lastSegment.weight.value -> lastSegment.copy(decimalApplied = false)
-                        null -> null
-                        else -> lastSegment.copy(
-                            weight = lastSegment.weight.copy(
-                                newWeight
+                    else -> {
+                        val newWeight = lastSegment.weight.value
+                            .decimalFormat(lastSegment.decimalApplied)
+                            .dropLast(1)
+                            .toDoubleOrNull()
+                        when (newWeight) {
+                            lastSegment.weight.value -> lastSegment.copy(decimalApplied = false)
+                            null -> null
+                            else -> lastSegment.copy(
+                                weight = lastSegment.weight.copy(
+                                    newWeight
+                                )
                             )
-                        )
+                        }
                     }
                 }
+                state.copy(
+                    expression = state.expression.dropLast(1) + if (newSegment != null) {
+                        listOf(
+                            newSegment
+                        )
+                    } else {
+                        emptyList()
+                    }
+                )
             }
-            state.copy(
-                expression = state.expression.dropLast(1) + if (newSegment != null) {
-                    listOf(
-                        newSegment
-                    )
-                } else {
-                    emptyList()
-                }
-            )
-        }
 
-        Action.Clear -> state.copy(expression = emptyList())
-        Action.Equals -> state.copy(
-            expression = listOf(
-                Segment(
-                    Weight(
-                        state.total.toDoubleOrNull() ?: 0.0,
-                        UOM.POUNDS
-                    ),
-                    null
-                )
-            )
-        )
-
-        Action.Decimal -> {
-            val lastSegment = state.expression.lastOrNull()
-
-            when {
-                lastSegment != null && lastSegment.operation == null -> state.copy(
-                    expression = state.expression.dropLast(1) + lastSegment.copy(
-                        decimalApplied = true
-                    )
-                )
-
-                else -> state.copy(
-                    expression = state.expression + Segment(
-                        weight = Weight(
-                            0.0,
+            Action.Clear -> state.copy(expression = emptyList())
+            Action.Equals -> state.copy(
+                expression = listOf(
+                    Segment(
+                        Weight(
+                            state.total.toDoubleOrNull() ?: 0.0,
                             UOM.POUNDS
                         ),
-                        decimalApplied = true
+                        null
                     )
                 )
+            )
+
+            Action.Decimal -> {
+                val lastSegment = state.expression.lastOrNull()
+
+                when {
+                    lastSegment != null && lastSegment.operation == null -> state.copy(
+                        expression = state.expression.dropLast(1) + lastSegment.copy(
+                            decimalApplied = true
+                        )
+                    )
+
+                    else -> state.copy(
+                        expression = state.expression + Segment(
+                            weight = Weight(
+                                0.0,
+                                defaultUOM
+                            ),
+                            decimalApplied = true
+                        )
+                    )
+                }
             }
         }
     }
-}
 
 fun totalReducer(defaultUOM: UOM): Reducer<CalculatorState, CalculatorEvent> =
     Reducer { state, event ->
@@ -202,7 +203,7 @@ fun totalReducer(defaultUOM: UOM): Reducer<CalculatorState, CalculatorEvent> =
 fun calculatorReducers(defaultUOM: UOM): List<Reducer<CalculatorState, CalculatorEvent>> = listOf(
     digitReducer(defaultUOM),
     OperatorReducer,
-    ActionReducer,
+    actionReducer(defaultUOM),
     ToggleUOMReducer,
     totalReducer(defaultUOM),
 )

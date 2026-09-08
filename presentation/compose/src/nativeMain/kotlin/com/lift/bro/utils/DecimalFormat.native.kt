@@ -10,6 +10,7 @@ actual fun Double?.decimalFormat(showDecimal: Boolean, grouping: Boolean): Strin
         maximumFractionDigits = 3u
         numberStyle = NSNumberFormatterDecimalStyle
         usesGroupingSeparator = grouping
+        alwaysShowsDecimalSeparator = showDecimal
     }.stringFromNumber(NSNumber(this ?: 0.0)) ?: ""
 }
 
