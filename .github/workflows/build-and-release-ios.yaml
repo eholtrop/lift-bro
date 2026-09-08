@@ -6,7 +6,6 @@ on:
       build_number:
         required: false
         type: string
-  pull_request:
   workflow_dispatch:
 
 permissions:
