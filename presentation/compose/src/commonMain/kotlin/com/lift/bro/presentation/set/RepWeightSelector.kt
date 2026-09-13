@@ -110,6 +110,7 @@ fun RepWeightSelector(
     reps: Long?,
     rpe: Int?,
     showRpe: Boolean,
+    showInfo: Boolean = true,
     repChanged: (Long?) -> Unit,
     weightChanged: (Double?) -> Unit,
     rpeChanged: (Int?) -> Unit,
@@ -176,7 +177,9 @@ fun RepWeightSelector(
                     Text(stringResource(Res.string.rep_weight_selector_rpe_placeholder))
                 }
             )
-            RpeInfoDialogButton()
+            if (showInfo) {
+                RpeInfoDialogButton()
+            }
         } else {
             Space(MaterialTheme.spacing.half)
             Text(

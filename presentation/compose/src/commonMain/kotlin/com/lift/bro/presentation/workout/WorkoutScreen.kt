@@ -56,7 +56,6 @@ import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
@@ -94,11 +93,11 @@ fun WorkoutScreen(
 }
 
 sealed class VariationDialogReason {
-    object AddExercise : VariationDialogReason()
+    object AddExercise: VariationDialogReason()
 
     data class Superset(
         val exercise: ExerciseItem,
-    ) : VariationDialogReason()
+    ): VariationDialogReason()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -215,8 +214,7 @@ fun WorkoutScreenInternal(
                     val vSets = exercise.sections[page]
 
                     WorkoutSectionCard(
-                        modifier =
-                        Modifier
+                        modifier = Modifier
                             .animateItem()
                             .variationCardAnimation(pagerState, page),
                         section = vSets,
@@ -244,16 +242,6 @@ fun WorkoutScreenInternal(
                                         )
                                     },
                                 ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.Start,
-                                    ) {
-                                        previous.sets.firstOrNull()?.set?.let {
-                                            Text(
-                                                "${it.reps} x ${weightFormat(it.weight)}",
-                                                style = MaterialTheme.typography.labelMedium,
-                                            )
-                                        }
-                                    }
                                 }
                             }
                             Space()
@@ -276,19 +264,6 @@ fun WorkoutScreenInternal(
                                             )
                                         },
                                     ) {
-                                        val first = exercise.sections.first()
-                                        Column(
-                                            modifier = Modifier.weight(1f),
-                                            horizontalAlignment = Alignment.End,
-                                        ) {
-                                            first.sets.lastOrNull()?.set?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                    maxLines = 1,
-                                                )
-                                            }
-                                        }
                                     }
                                 }
 
@@ -310,16 +285,6 @@ fun WorkoutScreenInternal(
                                             )
                                         },
                                     ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.End,
-                                        ) {
-                                            next.sets.lastOrNull()?.set?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                )
-                                            }
-                                        }
                                     }
                                 }
                             }
@@ -505,7 +470,7 @@ fun WorkoutScreenInternalPreview(
     }
 }
 
-class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
+class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
     override val values: Sequence<CreateWorkoutState>
         get() =
             sequenceOf(
@@ -601,7 +566,7 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                                     id = "var1",
                                     sets =
                                     listOf(
-                                        ExerciseSectionSet(
+                                        WorkoutSet.Performed(
                                             movement =
                                             Movement(
                                                 lift =
@@ -611,8 +576,7 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                                                 ),
                                                 name = "Back Squat",
                                             ),
-                                            set =
-                                            LBSet(
+                                            set = LBSet(
                                                 id = "set1",
                                                 movementId = "var1",
                                                 weight = 225.0,
@@ -622,9 +586,8 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                                                 kotlin.time.Clock.System
                                                     .now(),
                                             ),
-                                            recommended = false,
                                         ),
-                                        ExerciseSectionSet(
+                                        WorkoutSet.Performed(
                                             movement =
                                             Movement(
                                                 lift =
@@ -645,7 +608,6 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                                                 kotlin.time.Clock.System
                                                     .now(),
                                             ),
-                                            recommended = false,
                                         ),
                                     ),
                                     primaryMovement = Movement(),
