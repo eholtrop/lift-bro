@@ -1,5 +1,6 @@
 package com.lift.bro.utils
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +39,7 @@ import tv.dpal.navi.JetpackComposeCoordinator
 
 @Composable
 internal fun PreviewAppTheme(
-    isDarkMode: Boolean,
+    isDarkMode: Boolean = isSystemInDarkTheme(),
     content:
     @Composable()
     () -> Unit,

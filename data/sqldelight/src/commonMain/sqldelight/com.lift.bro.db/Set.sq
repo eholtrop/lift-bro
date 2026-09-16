@@ -75,7 +75,8 @@ LIMIT :limit;
 getBySectionId:
 SELECT * FROM LiftingSet
 JOIN Movement ON Movement.id = LiftingSet.movementId
-WHERE LiftingSet.exerciseSectionId = :sectionId;
+WHERE LiftingSet.exerciseSectionId = :sectionId
+ORDER BY LiftingSet.date DESC;
 
 getByWorkoutId:
 SELECT * FROM LiftingSet

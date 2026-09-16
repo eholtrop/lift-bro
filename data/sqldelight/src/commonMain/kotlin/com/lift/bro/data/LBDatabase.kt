@@ -29,6 +29,8 @@ class LBDatabase(
     val movementQueries get() = database.movementQueries
     val exerciseQueries get() = database.exerciseQueries
 
+    val recommendedSetQueries get() = database.recommendedSetQueries
+
     val workoutQueries get() = database.workoutQueries
     val liftingLogQueries get() = database.liftingLogQueries
 

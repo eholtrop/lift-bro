@@ -50,7 +50,7 @@ fun LegacyBackup.toBackup(): Backup {
                 Section(
                     id = legacyVariationSet.id,
                     exerciseId = legacyExercise.id,
-                    primaryMovement = movementsById[legacyVariationSet.variation.id],
+                    primaryMovement = movementsById[legacyVariationSet.variation.id]!!,
                 )
             }
             Exercise(
