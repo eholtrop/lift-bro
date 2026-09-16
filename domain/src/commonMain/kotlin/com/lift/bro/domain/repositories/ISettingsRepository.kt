@@ -3,7 +3,6 @@ package com.lift.bro.domain.repositories
 import com.lift.bro.domain.models.LiftBro
 import com.lift.bro.domain.models.MERSettings
 import com.lift.bro.domain.models.Settings
-import com.lift.bro.domain.models.ThemeMode
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
@@ -37,6 +36,7 @@ sealed interface Setting<T> {
     data object AnalyticsConsent: Setting<com.lift.bro.domain.models.settings.AnalyticsConsent>
     data object LocaleOverride: Setting<String?>
     data object AITranslationBannerDismissed: Setting<Boolean>
+    data object RecommendedSets: Setting<Boolean>
 }
 
 interface ISettingsRepository {

@@ -52,8 +52,8 @@ class WorkoutRepository(
         database.workoutQueries.getByDate(date = date)
             .asFlowOneOrNull(dispatcher = dispatcher)
             .flatMapLatest { workout ->
-                exerciseDataSource.listenAll(workout?.id ?: "").map { exercises ->
-                    workout?.let {
+                return@flatMapLatest if (workout != null) {
+                    exerciseDataSource.listenAll(workout.id).map { exercises ->
                         Workout(
                             id = workout.id,
                             date = workout.date,
@@ -62,21 +62,27 @@ class WorkoutRepository(
                             finisher = workout.finisher,
                         )
                     }
+                } else {
+                    flow<Workout?> {
+                        emit(workout)
+                    }
                 }
             }
 
     override suspend fun save(workout: Workout) {
         withContext(dispatcher) {
+            val workoutId = database.workoutQueries.getByDate(workout.date).executeAsOneOrNull()?.id ?: workout.id
+
             database.workoutQueries.save(
-                id = workout.id,
+                id = workoutId,
                 finisher = workout.finisher,
                 warmup = workout.warmup,
                 date = workout.date,
             )
             workout.exercises.forEach { exercise ->
-                exerciseDataSource.save(exercise)
-                exercise.sections.forEach { section ->
-                    exerciseDataSource.save(section)
+                exerciseDataSource.save(exercise.copy(workoutId = workoutId))
+                exercise.sections.forEachIndexed { index, section ->
+                    exerciseDataSource.save(section, sortOrder = index.toLong())
                 }
             }
         }
@@ -87,6 +93,9 @@ class WorkoutRepository(
             database.workoutQueries.delete(workout.id)
             workout.exercises.forEach {
                 exerciseDataSource.delete(it.id)
+                it.sections.forEach { section ->
+                    exerciseDataSource.delete(section.id)
+                }
             }
         }
     }

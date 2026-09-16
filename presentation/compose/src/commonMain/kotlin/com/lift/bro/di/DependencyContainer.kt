@@ -182,6 +182,7 @@ private val DependencyContainer.exerciseDataSource: ExerciseDataSource get() =
         exerciseQueries = database.exerciseQueries,
         setQueries = database.setQueries,
         movementQueries = database.movementQueries,
+        recommendedSetQueries = database.recommendedSetQueries
     )
 
 val DependencyContainer.goalsRepository: IGoalRepository
