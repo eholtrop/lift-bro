@@ -45,7 +45,8 @@ getExerciseSectionsByDate:
 SELECT * FROM ExerciseSection
 JOIN Exercise ON Exercise.id = ExerciseSection.exerciseId
 JOIN Workout ON Workout.id = Exercise.workoutId
-WHERE Workout.date < :endDate AND date > :startDate;
+WHERE Workout.date < :endDate AND date > :startDate
+ORDER BY sort_order;
 
 getExerciseSection:
 SELECT * FROM ExerciseSection WHERE id = :sectionId LIMIT 1;
@@ -66,12 +67,25 @@ FROM ExerciseSection
 WHERE ExerciseSection.exerciseId IN (
     SELECT id FROM Exercise WHERE workoutId = :workoutId
 )
+ORDER BY exercise_section_sort_order
 ;
 
 getAllExerciseSections:
-SELECT * FROM ExerciseSection;
+SELECT * FROM ExerciseSection ORDER BY exerciseId, sort_order;
 
+-- sortOrder is the section's position among its siblings. When omitted it is
+-- derived in SQL so callers that only append do not have to compute it.
 saveSection:
 INSERT OR REPLACE
 INTO ExerciseSection(id, exerciseId, referenceSectionId, primaryMovementId, name, sort_order)
-VALUES(?, ?, ?, ?, ?, ?);
+VALUES(
+    :id,
+    :exerciseId,
+    :referenceSectionId,
+    :primaryMovementId,
+    :name,
+    COALESCE(
+        :sortOrder,
+        (SELECT COALESCE(MAX(sort_order) + 1, 0) FROM ExerciseSection WHERE exerciseId = :exerciseId)
+    )
+);

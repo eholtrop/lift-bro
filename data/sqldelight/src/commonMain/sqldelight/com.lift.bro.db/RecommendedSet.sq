@@ -1,0 +1,74 @@
+CREATE TABLE RecommendedSet (
+    id TEXT NOT NULL PRIMARY KEY,
+    type TEXT NOT NULL, -- percentageMax(percentage, reps), weight(weight, reps), reps(reps, weight)
+    movementId TEXT NOT NULL,
+    percentage REAL,
+    weight REAL,
+    reps INTEGER,
+    tempoDown INTEGER,
+    tempoHold INTEGER,
+    tempoUp INTEGER,
+    notes TEXT,
+    exerciseSectionId TEXT NOT NULL,
+    sectionOrder INTEGER NOT NULL DEFAULT 0
+);
+
+getRecommendedSetBySectionId:
+SELECT * FROM RecommendedSet
+JOIN Movement ON Movement.id = RecommendedSet.movementId
+WHERE RecommendedSet.exerciseSectionId = :sectionId
+ORDER BY sectionOrder;
+
+getRecommendedSetByWorkoutId:
+SELECT * FROM RecommendedSet
+JOIN ExerciseSection ON ExerciseSection.id = RecommendedSet.exerciseSectionId
+JOIN Exercise ON Exercise.id = ExerciseSection.exerciseId
+JOIN Workout ON Workout.id = Exercise.workoutId
+JOIN Movement ON Movement.id = RecommendedSet.movementId
+WHERE Workout.id = :workoutId
+ORDER BY sectionOrder
+LIMIT :limit;
+
+get:
+SELECT * FROM RecommendedSet WHERE id = ?;
+
+-- sectionOrder is the recommended set's position within its section. When
+-- omitted it is derived in SQL so callers that only append do not have to
+-- compute it.
+save:
+INSERT OR REPLACE
+INTO RecommendedSet(id, type, movementId, percentage, weight, reps, tempoDown, tempoHold, tempoUp, notes, exerciseSectionId, sectionOrder)
+VALUES(
+    :id,
+    :type,
+    :movementId,
+    :percentage,
+    :weight,
+    :reps,
+    :tempoDown,
+    :tempoHold,
+    :tempoUp,
+    :notes,
+    :exerciseSectionId,
+    COALESCE(
+        :sectionOrder,
+        (SELECT COALESCE(MAX(sectionOrder) + 1, 0) FROM RecommendedSet WHERE exerciseSectionId = :exerciseSectionId)
+    )
+);
+
+deleteAllForExercise:
+DELETE FROM RecommendedSet
+WHERE exerciseSectionId IN (
+    SELECT id
+    FROM ExerciseSection
+    WHERE exerciseId = :exerciseId
+);
+
+deleteAllForSections:
+DELETE FROM RecommendedSet WHERE exerciseSectionId = :sectionId;
+
+delete:
+DELETE FROM RecommendedSet WHERE id = ?;
+
+deleteAll:
+DELETE FROM RecommendedSet;

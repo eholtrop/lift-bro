@@ -57,19 +57,26 @@ sealed interface SectionSet {
 
 @Serializable
 data class RecommendedSet(
+    val id: String = uuid4().toString(),
     val target: SetTarget,
     val tempo: Tempo,
     val movement: Movement,
+    val notes: String?,
+    val sectionId: ExerciseSectionId,
 )
 
 @Serializable
 sealed interface SetTarget {
+
     @Serializable
-    data class PercentageMax(val percentage: Float, val reps: Long, val max: Double): SetTarget
+    data class PercentageMax(val percentage: Float, val reps: Long): SetTarget
 
     @Serializable
     data class Weight(val weight: Double, val reps: Long): SetTarget
 
     @Serializable
     data class Reps(val reps: Long, val addedWeight: Double): SetTarget
+
+    @Serializable
+    data object Unsupported: SetTarget
 }
