@@ -57,7 +57,6 @@ class SettingsRepository(
                 key,
                 (value as BackupSettings).lastBackupDate.toEpochDays().toInt()
             )
-
             Setting.Bro -> dataSource.putString(key, (value as LiftBro).name)
             Setting.ClientUrl -> dataSource.putString(key, value as String?)
             Setting.Consent -> dataSource.putSerializable(key, value as Consent?)
@@ -75,6 +74,7 @@ class SettingsRepository(
             Setting.UnitOfMeasure -> dataSource.putString(key, (value as Settings.UnitOfWeight).uom.toString())
             Setting.LocaleOverride -> dataSource.putString(key, value as String?)
             Setting.AITranslationBannerDismissed -> dataSource.putBool(key, value as Boolean)
+            Setting.RecommendedSets -> dataSource.putBool(key, value as Boolean)
         }
         keyChanged(key)
     }
@@ -99,6 +99,7 @@ class SettingsRepository(
             Setting.AnalyticsConsent -> "analytics_consent"
             Setting.LocaleOverride -> "locale_override"
             Setting.AITranslationBannerDismissed -> "ai_translations_banner_dismissed"
+            Setting.RecommendedSets -> "enable_recent_sets"
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -116,6 +117,7 @@ class SettingsRepository(
             Setting.DashboardV3 -> dataSource.getBool(key, false)
             Setting.DeviceFtux -> dataSource.getBool(key, false)
             Setting.EMaxEnabled -> dataSource.getBool(key, false)
+            Setting.RecommendedSets -> dataSource.getBool(key, true)
             Setting.EditSetVersion -> dataSource.getInt(key, 1)
             Setting.AnalyticsConsent -> dataSource.getSerializable<AnalyticsConsent>(
                 key,

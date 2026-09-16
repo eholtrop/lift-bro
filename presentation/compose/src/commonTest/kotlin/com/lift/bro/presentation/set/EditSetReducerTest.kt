@@ -135,7 +135,7 @@ class EditSetReducerTest {
         // Then
         assertNotNull(result)
         assertNotNull(result.movement)
-        assertEquals("variation-123", result.movement.variation.id)
+        assertEquals("variation-123", (result.movement as? EditSetMovementState.Known)?.movement?.movement?.id)
     }
 
     @Test
@@ -173,7 +173,7 @@ class EditSetReducerTest {
         val variation = Movement(id = "v1", name = "Squat")
         val state = EditSetState(
             id = "1",
-            movement = SetVariation(variation),
+            movement = EditSetMovementState.Known(SetVariation(variation)),
             weight = 100.0,
             reps = 5,
             tempo = TempoState(3, 1, 1),
@@ -188,7 +188,7 @@ class EditSetReducerTest {
         // Then
         assertNotNull(result)
         assertEquals(225.0, result.weight)
-        assertEquals(variation, result.movement?.variation)
+        assertEquals(variation, (result.movement as? EditSetMovementState.Known)?.movement?.movement)
         assertEquals(5L, result.reps)
         assertEquals(3L, result.tempo.ecc)
         assertEquals(1L, result.tempo.iso)

@@ -2,10 +2,8 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ArgumentListWrapping:WorkoutSectionCard.kt$(DuplicateSet(set = (section.sets[copyIndex] as WorkoutSet.Performed).set))</ID>
-    <ID>ArgumentListWrapping:WorkoutSectionCard.kt$(set = (section.sets[copyIndex] as WorkoutSet.Performed).set)</ID>
     <ID>CommentWrapping:GetVariationProgressUseCase.kt$GetVariationProgressUseCase$/* Best Set */</ID>
-    <ID>ComplexCondition:EditSetInteractor.kt$movement != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null &amp;&amp; failureRep != 0L &amp;&amp; reps &gt;= (failureRep ?: 0)</ID>
+    <ID>ComplexCondition:EditSetInteractor.kt$actualMovement != null &amp;&amp; reps != null &amp;&amp; tempo.ecc != null &amp;&amp; tempo.iso != null &amp;&amp; tempo.con != null &amp;&amp; weight != null &amp;&amp; failureRep != 0L &amp;&amp; reps &gt;= (failureRep ?: 0)</ID>
     <ID>CyclomaticComplexMethod:App.kt$@Composable fun App( modifier: Modifier = Modifier, navCoordinator: NavCoordinator&lt;Destination&gt; = rememberNavCoordinator&lt;Destination&gt;(Destination.Unknown), )</ID>
     <ID>CyclomaticComplexMethod:CategoryDetailsScreen.kt$@Composable @OptIn(ExperimentalMaterial3Api::class) fun CategoryDetailsScreen( interactor: Interactor&lt;CategoryDetailsState, CategoryDetailsEvent&gt;, )</ID>
     <ID>CyclomaticComplexMethod:CategoryDetailsScreen.kt$@Composable private fun VariationCard( modifier: Modifier = Modifier, state: MovementCardState, showRpe: Boolean, onClick: (Movement) -&gt; Unit, onSetClicked: (LBSet) -&gt; Unit, favouriteToggled: (Movement) -&gt; Unit, )</ID>
@@ -14,7 +12,7 @@
     <ID>CyclomaticComplexMethod:MovementDetailsInteractor.kt$@Composable fun rememberMovementDetailsInteractor( movementId: String, categoryId: String? = null, navCoordinator: LiftBroNavCoordinator = LocalNavCoordinator.current, ): MovementDetailsInteractor</ID>
     <ID>CyclomaticComplexMethod:RecordingInteractor.kt$@Composable fun rememberRecordingInteractor( setId: String, cameraControllerFactory: CameraControllerFactory = rememberCameraControllerFactory(), navController: LiftBroNavCoordinator = LocalNavCoordinator.current, setRepository: ISetRepository = dependencies.setRepository, ): RecordingInteractor</ID>
     <ID>CyclomaticComplexMethod:WorkoutCalendarScreen.kt$@Composable fun DailyWorkoutDetails( modifier: Modifier = Modifier, date: LocalDate = today, interactor: Interactor&lt;DailyWorkoutDetailsState, DailyWorkoutDetailsEvent&gt; = LocalDailyWorkoutDetailsInteractor.current ?: rememberDailyWorkoutDetailsInteractor(date), strings: WorkoutCalendarScreenStrings = WorkoutCalendarScreenStrings.default(), )</ID>
-    <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftingLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
+    <ID>CyclomaticComplexMethod:WorkoutInteractor.kt$fun workoutSideEffects( workoutRepository: IWorkoutRepository = dependencies.workoutRepository, setRepository: ISetRepository = dependencies.setRepository, liftingLogRepository: ILiftingLogRepository = dependencies.liftingLogRepository, exerciseRepository: IExerciseRepository = dependencies.exerciseRepository, settingsRepository: ISettingsRepository = dependencies.settingsRepository, ): SideEffect&lt;CreateWorkoutState, CreateWorkoutEvent&gt;</ID>
     <ID>CyclomaticComplexMethod:WorkoutSectionCard.kt$@Composable fun WorkoutSectionCard( modifier: Modifier, section: ExerciseSectionItem, eventHandler: (CreateWorkoutEvent) -&gt; Unit, date: LocalDate, index: Int? = null, footer: @Composable () -&gt; Unit = {}, )</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedEvents$()</ID>
     <ID>EmptyDefaultConstructor:WrappedLandingScreen.kt$WrappedPageState$()</ID>
@@ -31,10 +29,6 @@
     <ID>FunctionNaming:MainViewController.kt$fun MainViewController( bannerProvider: () -&gt; UIView )</ID>
     <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForMonth( year: Int, month: Month, ): Flow&lt;List&lt;Pair&lt;Movement, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
     <ID>FunctionNaming:WorkoutCalendarInteractor.kt$fun FetchVariationSetsForRange( startDate: LocalDate, endDate: LocalDate, ): Flow&lt;List&lt;Pair&lt;Movement, List&lt;LBSet&gt;&gt;&gt;&gt;</ID>
-    <ID>Indentation:WorkoutScreen.kt$ </ID>
-    <ID>Indentation:WorkoutScreen.kt$WorkoutStateProvider$ </ID>
-    <ID>Indentation:WorkoutSectionCard.kt$ </ID>
-    <ID>Indentation:WorkoutSectionCard.kt$SectionItemProvider$ </ID>
     <ID>InvalidPackageDeclaration:ServerSettingsRow.android.kt$package com.lift.bro.presentation.settings.server</ID>
     <ID>InvalidPackageDeclaration:Theme.kt$package com.example.compose</ID>
     <ID>LongParameterList:LiftCard.kt$( color: Color, height: Float, targetHeight: Float, width: Float, topLeft: Float, alpha: Float, )</ID>
@@ -47,6 +41,7 @@
     <ID>MaximumLineLength:App.kt$ </ID>
     <ID>MaximumLineLength:CalculatorInteractorTest.kt$CalculatorInteractorTest$ </ID>
     <ID>MaximumLineLength:CategoryDetailsScreen.kt$ </ID>
+    <ID>MaximumLineLength:EditSetInteractor.kt$EditSetState$ </ID>
     <ID>MaximumLineLength:EditSetScreen.kt$ </ID>
     <ID>MaximumLineLength:HomeScreen.kt$ </ID>
     <ID>MaximumLineLength:LiftingScaffold.kt$ </ID>
@@ -54,12 +49,13 @@
     <ID>MaximumLineLength:RecordingScreen.kt$ </ID>
     <ID>MaximumLineLength:Toolbar.kt$ </ID>
     <ID>MaximumLineLength:WorkoutCalendarScreen.kt$ </ID>
+    <ID>MaximumLineLength:WorkoutInteractor.kt$ </ID>
+    <ID>MaximumLineLength:WorkoutScreen.kt$ </ID>
     <ID>MaximumLineLength:WorkoutSectionCard.kt$ </ID>
     <ID>MaximumLineLength:WrappedLandingScreen.kt$ </ID>
     <ID>MaximumLineLength:WrappedProgressInteractor.kt$ </ID>
     <ID>MaximumLineLength:WrappedProgressScreen.kt$ </ID>
     <ID>NestedBlockDepth:ServerSettingsRow.android.kt$actual fun getLocalIPAdderess(): String?</ID>
-    <ID>NoUnusedImports:WorkoutSectionCard.kt$com.lift.bro.presentation.workout.WorkoutSectionCard.kt</ID>
     <ID>NoWildcardImports:WrappedTenureScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>NoWildcardImports:WrappedWeightScreen.kt$import lift_bro.core.generated.resources.*</ID>
     <ID>SwallowedException:CalculatorInteractor.kt$arithmeticException: ArithmeticException</ID>
