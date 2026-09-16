@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
@@ -68,7 +67,6 @@ import androidx.compose.ui.unit.toSize
 import com.lift.bro.domain.models.LBSet
 import com.lift.bro.domain.models.Movement
 import com.lift.bro.domain.models.RecommendedSet
-import com.lift.bro.domain.models.SectionSet
 import com.lift.bro.domain.models.SetTarget
 import com.lift.bro.domain.models.Tempo
 import com.lift.bro.presentation.LocalEMaxSettings
@@ -77,7 +75,6 @@ import com.lift.bro.presentation.LocalTwmSettings
 import com.lift.bro.presentation.LocalUnitOfMeasure
 import com.lift.bro.presentation.category.WarningDialog
 import com.lift.bro.presentation.movement.render
-import com.lift.bro.presentation.set.RepWeightSelector
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.DeleteExerciseSection
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.DeleteSet
 import com.lift.bro.presentation.workout.CreateWorkoutEvent.DuplicateSet
@@ -86,7 +83,6 @@ import com.lift.bro.ui.Card
 import com.lift.bro.ui.SetInfoRow
 import com.lift.bro.ui.Space
 import com.lift.bro.ui.card.lift.weightFormat
-import com.lift.bro.ui.navigation.Destination.CreateSet
 import com.lift.bro.ui.navigation.Destination.EditSet
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
@@ -94,8 +90,6 @@ import com.lift.bro.utils.ThemePreviews
 import com.lift.bro.utils.decimalFormat
 import com.lift.bro.utils.maxText
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
 import lift_bro.core.generated.resources.Res
 import lift_bro.core.generated.resources.workout_section_card_primary_cta
 import lift_bro.core.generated.resources.workout_section_card_secondary_cta
@@ -200,7 +194,7 @@ fun WorkoutSectionCard(
                 }
             }
 
-            val copyIndex = remember(section.sets) { section.sets.indexOfLast { it is SectionSet.Performed } }
+            val copyIndex = remember(section.sets) { section.sets.indexOfLast { it is WorkoutSet.Performed } }
             val previousSetColor = MaterialTheme.colorScheme.onSurface.copy(alpha = .6f)
 
             var containerCoordinates by remember { mutableStateOf<RelativeLayoutBounds?>(null) }
@@ -367,7 +361,7 @@ fun WorkoutSectionCard(
                         false -> {
                             section.sets.forEachIndexed { index, sectionSet ->
                                 var showOptionsDialog by remember(index) { mutableStateOf(false) }
-                                var visibility by rememberSaveable { mutableStateOf<Boolean?>(null) }
+                                var visibility by rememberSaveable(sectionSet) { mutableStateOf<Boolean?>(null) }
 
                                 if (showOptionsDialog) {
                                     SetOptionsBottomSheet(
@@ -386,7 +380,7 @@ fun WorkoutSectionCard(
                                                 }
 
                                                 is WorkoutSet.Current -> {
-                                                    eventHandler(PerformSet(sectionSet))
+                                                    eventHandler(PerformSet(sectionSet, section.id))
                                                 }
                                             }
                                         },
@@ -473,7 +467,7 @@ fun WorkoutSectionCard(
                                             DisposableEffect(Unit) {
                                                 onDispose { currentAnchor = null }
                                             }
-                                            CurrentSetRow(
+                                            WorkoutCardCurrentSetRow(
                                                 modifier = Modifier,
                                                 set = current,
                                                 onCheckClicked = { currentSet ->
@@ -484,6 +478,13 @@ fun WorkoutSectionCard(
                                                         )
                                                     )
                                                 },
+                                                onSetSkipped = {
+                                                    eventHandler(
+                                                        CreateWorkoutEvent.SkipSet(
+                                                            recommendedSetId = current.recommendedSetId
+                                                        )
+                                                    )
+                                                }
                                             )
                                         }
                                     }
@@ -529,94 +530,19 @@ fun WorkoutSectionCard(
                         ),
                 )
             }
-            if (section.sets.isEmpty()) {
-                val coordinator = LocalNavCoordinator.current
-                IconButton(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = {
-                        coordinator.present(
-                            CreateSet(
-                                date = date.atStartOfDayIn(TimeZone.currentSystemDefault()),
-                                movementId = section.primaryMovement?.id,
-                                sectionId = section.id,
-                            ),
-                        )
-                    },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = stringResource(Res.string.workout_section_card_primary_cta),
-                    )
-                }
+            val coordinator = LocalNavCoordinator.current
+            IconButton(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                onClick = {
+                    eventHandler(CreateWorkoutEvent.AddSetToSection(section.id))
+                },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(Res.string.workout_section_card_primary_cta),
+                )
             }
             footer()
-        }
-    }
-}
-
-@Composable
-fun CurrentSetRow(
-    modifier: Modifier = Modifier,
-    set: WorkoutSet.Current,
-    onCheckClicked: (WorkoutSet.Current) -> Unit,
-) {
-    var recommendedSet by remember { mutableStateOf(set) }
-
-    Row(
-        modifier = modifier.padding(
-            start = MaterialTheme.spacing.one,
-            end = MaterialTheme.spacing.half,
-            vertical = MaterialTheme.spacing.threeQuarters
-        ).fillMaxWidth(),
-    ) {
-        Column {
-            Row(
-                verticalAlignment = Alignment.Bottom,
-            ) {
-                RepWeightSelector(
-                    weight = recommendedSet.weight,
-                    weightChanged = {
-                        it?.let {
-                            recommendedSet = recommendedSet.copy(weight = it)
-                        }
-                    },
-                    reps = recommendedSet.reps,
-                    repChanged = {
-                        it?.let {
-                            recommendedSet = recommendedSet.copy(reps = it)
-                        }
-                    },
-                    rpe = recommendedSet.rpe,
-                    rpeChanged = {
-                        it?.let {
-                            recommendedSet = recommendedSet.copy(rpe = it)
-                        }
-                    },
-                    showRpe = true,
-                    showInfo = false,
-                )
-            }
-            Space(MaterialTheme.spacing.quarter)
-            Row {
-                Text(
-                    "Tempo: ",
-                    style = MaterialTheme.typography.labelLarge,
-                )
-                recommendedSet.tempo.render(
-                    style = MaterialTheme.typography.labelLarge
-                )
-            }
-        }
-
-        Space()
-
-        IconButton(
-            onClick = { onCheckClicked(recommendedSet) }
-        ) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = "Crushed!",
-            )
         }
     }
 }
@@ -630,7 +556,7 @@ fun RecommendedSetRow(
     Row(
         modifier = modifier
             .padding(
-                horizontal = MaterialTheme.spacing.one,
+                start = MaterialTheme.spacing.one,
                 vertical = MaterialTheme.spacing.half
             )
             .defaultMinSize(minHeight = Dp.AccessibilityMinimumSize),
@@ -641,35 +567,41 @@ fun RecommendedSetRow(
                 alpha = .6f
             )
         ) {
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                if (recommendedSet.movement.name != section.primaryMovement?.name) {
-                    Text(
-                        text = recommendedSet.movement.name ?: ""
-                    )
-                }
-                Text(
-                    text = when (val target = recommendedSet.target) {
-                        is SetTarget.PercentageMax -> {
-                            "${target.reps} x ${(target.percentage * 100).toInt()}% (${
-                                weightFormat(
-                                    target.percentage * target.max
-                                )
-                            })"
-                        }
-
-                        is SetTarget.Reps -> {
-                            "${target.reps} x bw"
-                        }
-
-                        is SetTarget.Weight -> {
-                            "${target.reps} x ${weightFormat(target.weight)}"
-                        }
+            Row {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    if (recommendedSet.movement.name != section.primaryMovement?.name) {
+                        Text(
+                            text = recommendedSet.movement.name ?: ""
+                        )
                     }
-                )
+                    Text(
+                        text = when (val target = recommendedSet.target) {
+                            is SetTarget.PercentageMax -> {
+                                "${target.reps} x ${(target.percentage * 100).toInt()}% (${
+                                    weightFormat(
+                                        target.percentage * (section.primaryMovement?.oneRepMax?.weight ?: 0.0)
+                                    )
+                                })"
+                            }
 
-                recommendedSet.tempo.render()
+                            is SetTarget.Reps -> {
+                                "${target.reps} x bw"
+                            }
+
+                            is SetTarget.Weight -> {
+                                "${target.reps} x ${weightFormat(target.weight)}"
+                            }
+
+                            is SetTarget.Unsupported -> {
+                                "Unsupported Workout. Try updating!"
+                            }
+                        }
+                    )
+
+                    recommendedSet.tempo.render()
+                }
             }
         }
     }
@@ -765,6 +697,8 @@ class SectionItemProvider: PreviewParameterProvider<ExerciseSectionItem> {
                                 target = SetTarget.Weight(weight = 205.0, reps = 8),
                                 tempo = Tempo(down = 3, hold = 1, up = 1),
                                 movement = Movement(id = "mov1", name = "Bench Press"),
+                                notes = "",
+                                sectionId = ""
                             ),
                         ),
                     ),
@@ -831,24 +765,27 @@ class SectionItemProvider: PreviewParameterProvider<ExerciseSectionItem> {
                     listOf(
                         WorkoutSet.Recommended(
                             RecommendedSet(
-                                target = SetTarget.PercentageMax(percentage = 0.85f, reps = 3, max = 405.0),
+                                target = SetTarget.PercentageMax(percentage = 0.85f, reps = 3),
                                 tempo = Tempo(down = 3, hold = 1, up = 1),
                                 movement = Movement(id = "mov3", name = "Deadlift"),
+                                notes = "",
+                                sectionId = ""
                             ),
                         ),
                         WorkoutSet.Recommended(
                             RecommendedSet(
-                                target = SetTarget.PercentageMax(percentage = 0.75f, reps = 5, max = 405.0),
+                                target = SetTarget.PercentageMax(percentage = 0.75f, reps = 5),
                                 tempo = Tempo(down = 3, hold = 1, up = 1),
                                 movement = Movement(id = "mov3", name = "Deadlift"),
+                                notes = "",
+                                sectionId = ""
                             ),
                         ),
                     ),
                 ),
                 ExerciseSectionItem(
                     id = "section4",
-                    primaryMovement =
-                    Movement(
+                    primaryMovement = Movement(
                         id = "mov4",
                         name = "Overhead Press",
                         latestSet =
@@ -880,6 +817,8 @@ class SectionItemProvider: PreviewParameterProvider<ExerciseSectionItem> {
                                 target = SetTarget.Reps(reps = 10, addedWeight = 5.0),
                                 tempo = Tempo(down = 3, hold = 1, up = 1),
                                 movement = Movement(id = "mov4", name = "Overhead Press"),
+                                notes = "",
+                                sectionId = ""
                             ),
                         ),
                     ),

@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class ExerciseRepositoryTest {
 
@@ -61,9 +62,22 @@ class ExerciseRepositoryTest {
         val dataSource = fakeExerciseDataSource()
         val repository = ExerciseRepository(dataSource)
 
+        repository.save(section, sortOrder = 3)
+
+        assertEquals(section, dataSource.savedSection)
+        assertEquals(3L, dataSource.lastSortOrder)
+    }
+
+    @Test
+    fun `save section without sortOrder delegates null so sql derives the order`() = runTest {
+        val section = Section(id = "s1", exerciseId = "e1", sets = emptyList())
+        val dataSource = fakeExerciseDataSource()
+        val repository = ExerciseRepository(dataSource)
+
         repository.save(section)
 
         assertEquals(section, dataSource.savedSection)
+        assertNull(dataSource.lastSortOrder)
     }
 
     @Test
