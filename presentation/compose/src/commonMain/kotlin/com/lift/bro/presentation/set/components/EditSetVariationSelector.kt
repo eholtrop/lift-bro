@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import com.lift.bro.domain.models.fullName
 import com.lift.bro.presentation.LocalTwmSettings
+import com.lift.bro.presentation.set.EditSetMovementState
 import com.lift.bro.presentation.set.EditSetState
 import com.lift.bro.presentation.set.EditSetStateProvider
 import com.lift.bro.ui.card.lift.weightFormat
@@ -36,7 +37,7 @@ fun EditSetVariationSelector(
     state: EditSetState?,
     showVariationDialog: () -> Unit,
 ) {
-    val variation = state?.movement
+    val variation = (state?.movement as? EditSetMovementState.Known)?.movement
     when {
         variation == null -> {
             Button(
@@ -86,7 +87,7 @@ fun EditSetVariationSelector(
                                                 color = MaterialTheme.colorScheme.primary,
                                             ).toSpanStyle(),
                                     ) {
-                                        append(variation.variation.fullName)
+                                        append(variation.movement.fullName)
                                     }
                                 } else {
                                     variationMaxPercentage?.let {

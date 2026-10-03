@@ -45,6 +45,10 @@ class FakeExerciseDataSource(
         lastDeletedSectionCascading = cascading
     }
 
+    override suspend fun deleteRecommendedSet(recommendedSetId: String) {
+        // TODO write tests
+    }
+
     override suspend fun deleteAll() {
         exercises = emptyList()
     }

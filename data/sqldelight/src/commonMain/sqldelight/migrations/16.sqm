@@ -1,0 +1,14 @@
+CREATE TABLE RecommendedSet (
+    id TEXT NOT NULL PRIMARY KEY,
+    type TEXT NOT NULL, -- percentageMax(percentage, reps), weight(weight, reps), reps(reps, weight)
+    movementId TEXT NOT NULL,
+    percentage REAL,
+    weight REAL,
+    reps INTEGER,
+    tempoDown INTEGER,
+    tempoHold INTEGER,
+    tempoUp INTEGER,
+    notes TEXT,
+    exerciseSectionId TEXT,
+    sectionOrder INTEGER
+);

@@ -67,20 +67,29 @@ data class EditSetState(
     val totalWeightMoved: Double? = null,
     @Serializable(with = InstantSerializer::class)
     val date: Instant = Clock.System.now(),
-    val movement: SetVariation? = null,
+    val movement: EditSetMovementState = EditSetMovementState.Unknown,
     val videoUri: String? = null,
     val timerEnabled: Boolean = false,
     val sectionId: String? = null,
     val workout: Workout? = null,
 ) {
-    val saveEnabled: Boolean get() = movement != null && reps != null && weight != null
+    val saveEnabled: Boolean get() = (movement as? EditSetMovementState.Known)?.movement != null && reps != null && weight != null
 
     val showFailedRepsOutOfBoundsError: Boolean = failureRep == 0L || (reps ?: 0L) < (failureRep ?: 0L)
 }
 
 @Serializable
+sealed interface EditSetMovementState {
+    @Serializable
+    data object Unknown: EditSetMovementState
+
+    @Serializable
+    data class Known(val movement: SetVariation?): EditSetMovementState
+}
+
+@Serializable
 data class SetVariation(
-    val variation: Movement,
+    val movement: Movement,
     val variationMaxPercentage: EditSetMaxPercentageState? = null,
     val liftMaxPercentage: EditSetMaxPercentageState? = null,
 )
@@ -199,7 +208,7 @@ fun rememberCreateSetInteractor(
             editSetSource(
                 setId = id,
                 date = state?.date ?: date,
-                movementId = state?.movement?.variation?.id ?: movementId,
+                movementId = (state?.movement as? EditSetMovementState.Known)?.movement?.movement?.id ?: movementId,
                 sectionId = state?.sectionId ?: sectionId,
             )
         },
@@ -218,10 +227,12 @@ val EditSetReducer: Reducer<EditSetState?, EditSetEvent> = Reducer { state, even
         is EditSetEvent.TempoChanged -> state?.copy(tempo = event.tempo)
         is EditSetEvent.NotesChanged -> state?.copy(notes = event.notes)
         is EditSetEvent.VariationSelected -> state?.copy(
-            movement = SetVariation(
-                variation = event.variation,
-                variationMaxPercentage = null,
-                liftMaxPercentage = null
+            movement = EditSetMovementState.Known(
+                SetVariation(
+                    movement = event.variation,
+                    variationMaxPercentage = null,
+                    liftMaxPercentage = null
+                )
             )
         )
 
@@ -266,23 +277,26 @@ internal suspend fun LBSet.toUiState(
     workout: Workout?,
 ) = EditSetState(
     id = this.id,
-    movement = movement?.let {
-        SetVariation(
-            variation = Movement(id = this.movementId),
-            variationMaxPercentage = maxVariationSet?.let {
-                EditSetMaxPercentageState(
-                    percentage = ((this.weight / max(maxVariationSet.weight, 1.0)) * 100).toInt(),
-                    variationName = movement.fullName
-                )
-            },
-            liftMaxPercentage = maxLiftSet?.let {
-                EditSetMaxPercentageState(
-                    percentage = ((this.weight / max(maxLiftSet.weight, 1.0)) * 100).toInt(),
-                    variationName = dependencies.liftRepository.get(movement.lift?.id).firstOrNull()?.name ?: ""
-                )
-            }
-        )
-    },
+    movement =
+    EditSetMovementState.Known(
+        movement?.let {
+            SetVariation(
+                movement = Movement(id = this.movementId),
+                variationMaxPercentage = maxVariationSet?.let {
+                    EditSetMaxPercentageState(
+                        percentage = ((this.weight / max(maxVariationSet.weight, 1.0)) * 100).toInt(),
+                        variationName = movement.fullName
+                    )
+                },
+                liftMaxPercentage = maxLiftSet?.let {
+                    EditSetMaxPercentageState(
+                        percentage = ((this.weight / max(maxLiftSet.weight, 1.0)) * 100).toInt(),
+                        variationName = dependencies.liftRepository.get(movement.lift?.id).firstOrNull()?.name ?: ""
+                    )
+                }
+            )
+        }
+    ),
     weight = this.weight,
     reps = this.reps,
     failureRep = this.failureRep,
@@ -303,8 +317,9 @@ internal suspend fun LBSet.toUiState(
     videoUri = this.videoUri,
 )
 
-internal fun EditSetState.toDomain(): LBSet? =
-    if (movement != null &&
+internal fun EditSetState.toDomain(): LBSet? {
+    val actualMovement = (movement as? EditSetMovementState.Known)?.movement
+    return if (actualMovement != null &&
         reps != null &&
         tempo.ecc != null &&
         tempo.iso != null &&
@@ -315,7 +330,7 @@ internal fun EditSetState.toDomain(): LBSet? =
     ) {
         LBSet(
             id = this.id,
-            movementId = this.movement.variation.id,
+            movementId = actualMovement.movement.id,
             weight = this.weight,
             reps = this.reps,
             failureRep = this.failureRep,
@@ -332,3 +347,4 @@ internal fun EditSetState.toDomain(): LBSet? =
     } else {
         null
     }
+}

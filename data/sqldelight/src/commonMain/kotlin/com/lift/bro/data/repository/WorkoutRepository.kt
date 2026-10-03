@@ -67,16 +67,18 @@ class WorkoutRepository(
 
     override suspend fun save(workout: Workout) {
         withContext(dispatcher) {
+            val workoutId = database.workoutQueries.getByDate(workout.date).executeAsOneOrNull()?.id ?: workout.id
+
             database.workoutQueries.save(
-                id = workout.id,
+                id = workoutId,
                 finisher = workout.finisher,
                 warmup = workout.warmup,
                 date = workout.date,
             )
             workout.exercises.forEach { exercise ->
-                exerciseDataSource.save(exercise)
+                exerciseDataSource.save(exercise.copy(workoutId = workoutId))
                 exercise.sections.forEach { section ->
-                    exerciseDataSource.save(section)
+                    exerciseDataSource.save(section.copy())
                 }
             }
         }
@@ -87,6 +89,9 @@ class WorkoutRepository(
             database.workoutQueries.delete(workout.id)
             workout.exercises.forEach {
                 exerciseDataSource.delete(it.id)
+                it.sections.forEach { section ->
+                    exerciseDataSource.delete(section.id)
+                }
             }
         }
     }

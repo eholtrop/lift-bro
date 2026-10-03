@@ -16,6 +16,8 @@ class ExerciseRepository(
 
     override suspend fun delete(id: ExerciseId) = local.delete(id)
 
+    override suspend fun deleteRecommendedSet(recommendedSetId: String) = local.deleteRecommendedSet(recommendedSetId)
+
     override suspend fun save(section: Section) = local.save(section)
 
     override suspend fun delete(section: Section, cascading: Boolean) =

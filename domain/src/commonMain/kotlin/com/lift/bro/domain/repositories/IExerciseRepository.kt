@@ -9,7 +9,7 @@ interface IExerciseRepository {
     fun listenAll(workoutId: String?): Flow<List<Exercise>>
     suspend fun save(exercise: Exercise)
     suspend fun delete(id: ExerciseId)
-
+    suspend fun deleteRecommendedSet(recommendedSetId: String)
     suspend fun save(section: Section)
     suspend fun delete(section: Section, cascading: Boolean)
     suspend fun deleteAll()

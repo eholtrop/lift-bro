@@ -246,15 +246,17 @@ fun EditSetScreen(
         }
     }
 
-    VariationSearchDialog(
-        visible = showVariationDialog,
-        textFieldPlaceholder = strings.variationSelectorEmptyState,
-        onDismissRequest = { showVariationDialog = false },
-        onVariationSelected = {
-            showVariationDialog = false
-            onEvent(EditSetEvent.VariationSelected(it))
-        }
-    )
+    if (showVariationDialog) {
+        VariationSearchDialog(
+            visible = showVariationDialog,
+            textFieldPlaceholder = strings.variationSelectorEmptyState,
+            onDismissRequest = { showVariationDialog = false },
+            onVariationSelected = {
+                showVariationDialog = false
+                onEvent(EditSetEvent.VariationSelected(it))
+            }
+        )
+    }
 }
 
 @Composable
@@ -661,13 +663,15 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             // New set with variation but no data
             EditSetState(
                 id = "",
-                movement = SetVariation(
-                    Movement(
-                        lift = Category(
-                            name = "Squat",
-                            color = 0xFF2196F3uL
-                        ),
-                        name = "Back Squat"
+                movement = EditSetMovementState.Known(
+                    SetVariation(
+                        Movement(
+                            lift = Category(
+                                name = "Squat",
+                                color = 0xFF2196F3uL
+                            ),
+                            name = "Back Squat"
+                        )
                     )
                 ),
                 weight = null,
@@ -682,13 +686,15 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             // Partially filled set
             EditSetState(
                 id = "set1",
-                movement = SetVariation(
-                    Movement(
-                        lift = Category(
-                            name = "Bench Press",
-                            color = 0xFF4CAF50uL
-                        ),
-                        name = "Flat Bench"
+                movement = EditSetMovementState.Known(
+                    SetVariation(
+                        Movement(
+                            lift = Category(
+                                name = "Bench Press",
+                                color = 0xFF4CAF50uL
+                            ),
+                            name = "Flat Bench"
+                        )
                     )
                 ),
                 weight = 225.0,
@@ -706,21 +712,23 @@ class EditSetStateProvider: PreviewParameterProvider<EditSetState> {
             // Complete set with all data
             EditSetState(
                 id = "set2",
-                movement = SetVariation(
-                    Movement(
-                        lift = Category(
-                            name = "Deadlift",
-                            color = 0xFFFF5722uL
+                movement = EditSetMovementState.Known(
+                    SetVariation(
+                        Movement(
+                            lift = Category(
+                                name = "Deadlift",
+                                color = 0xFFFF5722uL
+                            ),
+                            name = "Conventional"
                         ),
-                        name = "Conventional"
-                    ),
-                    variationMaxPercentage = EditSetMaxPercentageState(
-                        percentage = 95,
-                        variationName = "Conventional Deadlift"
-                    ),
-                    liftMaxPercentage = EditSetMaxPercentageState(
-                        percentage = 90,
-                        variationName = "Deadlift"
+                        variationMaxPercentage = EditSetMaxPercentageState(
+                            percentage = 95,
+                            variationName = "Conventional Deadlift"
+                        ),
+                        liftMaxPercentage = EditSetMaxPercentageState(
+                            percentage = 90,
+                            variationName = "Deadlift"
+                        )
                     )
                 ),
                 weight = 405.0,
