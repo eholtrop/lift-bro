@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -19,11 +20,13 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Notes
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -48,6 +52,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.lerp
 import androidx.compose.ui.zIndex
 import com.lift.bro.domain.models.LBSet
@@ -56,7 +61,6 @@ import com.lift.bro.domain.models.Section
 import com.lift.bro.domain.models.Workout
 import com.lift.bro.ui.LiftingScaffold
 import com.lift.bro.ui.Space
-import com.lift.bro.ui.card.lift.weightFormat
 import com.lift.bro.ui.dialog.VariationSearchDialog
 import com.lift.bro.ui.theme.spacing
 import com.lift.bro.utils.PreviewAppTheme
@@ -94,11 +98,11 @@ fun WorkoutScreen(
 }
 
 sealed class VariationDialogReason {
-    object AddExercise : VariationDialogReason()
+    object AddExercise: VariationDialogReason()
 
     data class Superset(
         val exercise: ExerciseItem,
-    ) : VariationDialogReason()
+    ): VariationDialogReason()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -114,13 +118,74 @@ fun WorkoutScreenInternal(
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(stringResource(Res.string.workout_screen_title))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(stringResource(Res.string.workout_screen_title))
+                }
                 Text(
                     state.date.toString("EEEE, MMMM d, yyyy"),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
         },
+        trailingContent = {
+            var showRecentSetDescription by remember { mutableStateOf(false) }
+
+            if (showRecentSetDescription) {
+                AlertDialog(
+                    title = { Text("Experimental Feature: Recommended Sets") },
+                    text = {
+                        Column {
+                            Text(
+                                "When copying previous workouts, Lift Bro will remember the previous sets and walk you through the workout"
+                            )
+                            Text("Its experimental! So be warned there may be some bugs!")
+                        }
+                    },
+                    confirmButton = {
+                        Button(
+                            onClick = {
+                                eventHandler(CreateWorkoutEvent.EnableRecommendedSets)
+                                showRecentSetDescription = false
+                            }
+                        ) {
+                            Text("Try it!")
+                        }
+                    },
+                    dismissButton = {
+                        Button(
+                            onClick = {
+                                showRecentSetDescription = false
+                            }
+                        ) {
+                            Text("Im good...")
+                        }
+                    },
+                    onDismissRequest = {
+                        showRecentSetDescription = false
+                    },
+                )
+            }
+
+            Switch(
+                checked = state.recommendedSetsEnabled,
+                onCheckedChange = {
+                    if (it) {
+                        showRecentSetDescription = true
+                    } else {
+                        eventHandler(CreateWorkoutEvent.DisableRecommendedSets)
+                    }
+                },
+                thumbContent = {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        imageVector = Icons.Default.AutoAwesome,
+                        contentDescription = "New Feature!",
+                    )
+                }
+            )
+        }
     ) { padding ->
         LazyColumn(
             modifier = Modifier.padding(padding),
@@ -215,8 +280,7 @@ fun WorkoutScreenInternal(
                     val vSets = exercise.sections[page]
 
                     WorkoutSectionCard(
-                        modifier =
-                        Modifier
+                        modifier = Modifier
                             .animateItem()
                             .variationCardAnimation(pagerState, page),
                         section = vSets,
@@ -244,16 +308,6 @@ fun WorkoutScreenInternal(
                                         )
                                     },
                                 ) {
-                                    Column(
-                                        horizontalAlignment = Alignment.Start,
-                                    ) {
-                                        previous.sets.firstOrNull()?.set?.let {
-                                            Text(
-                                                "${it.reps} x ${weightFormat(it.weight)}",
-                                                style = MaterialTheme.typography.labelMedium,
-                                            )
-                                        }
-                                    }
                                 }
                             }
                             Space()
@@ -276,19 +330,6 @@ fun WorkoutScreenInternal(
                                             )
                                         },
                                     ) {
-                                        val first = exercise.sections.first()
-                                        Column(
-                                            modifier = Modifier.weight(1f),
-                                            horizontalAlignment = Alignment.End,
-                                        ) {
-                                            first.sets.lastOrNull()?.set?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                    maxLines = 1,
-                                                )
-                                            }
-                                        }
                                     }
                                 }
 
@@ -310,16 +351,6 @@ fun WorkoutScreenInternal(
                                             )
                                         },
                                     ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.End,
-                                        ) {
-                                            next.sets.lastOrNull()?.set?.let {
-                                                Text(
-                                                    "${it.reps} x ${weightFormat(it.weight)}",
-                                                    style = MaterialTheme.typography.labelMedium,
-                                                )
-                                            }
-                                        }
                                     }
                                 }
                             }
@@ -505,7 +536,7 @@ fun WorkoutScreenInternalPreview(
     }
 }
 
-class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
+class WorkoutStateProvider: PreviewParameterProvider<CreateWorkoutState> {
     override val values: Sequence<CreateWorkoutState>
         get() =
             sequenceOf(
@@ -601,7 +632,7 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                                     id = "var1",
                                     sets =
                                     listOf(
-                                        ExerciseSectionSet(
+                                        WorkoutSet.Performed(
                                             movement =
                                             Movement(
                                                 lift =
@@ -611,8 +642,7 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                                                 ),
                                                 name = "Back Squat",
                                             ),
-                                            set =
-                                            LBSet(
+                                            set = LBSet(
                                                 id = "set1",
                                                 movementId = "var1",
                                                 weight = 225.0,
@@ -622,9 +652,8 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                                                 kotlin.time.Clock.System
                                                     .now(),
                                             ),
-                                            recommended = false,
                                         ),
-                                        ExerciseSectionSet(
+                                        WorkoutSet.Performed(
                                             movement =
                                             Movement(
                                                 lift =
@@ -645,7 +674,6 @@ class WorkoutStateProvider : PreviewParameterProvider<CreateWorkoutState> {
                                                 kotlin.time.Clock.System
                                                     .now(),
                                             ),
-                                            recommended = false,
                                         ),
                                     ),
                                     primaryMovement = Movement(),

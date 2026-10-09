@@ -18,6 +18,8 @@ class FakeExerciseDataSource(
         private set
     var savedSection: Section? = null
         private set
+    var lastSortOrder: Long? = null
+        private set
     var lastDeletedSection: Section? = null
         private set
     var lastDeletedSectionCascading: Boolean? = null
@@ -36,13 +38,18 @@ class FakeExerciseDataSource(
         deletedId = id
     }
 
-    override suspend fun save(section: Section) {
+    override suspend fun save(section: Section, sortOrder: Long?) {
         savedSection = section
+        lastSortOrder = sortOrder
     }
 
     override suspend fun delete(section: Section, cascading: Boolean) {
         lastDeletedSection = section
         lastDeletedSectionCascading = cascading
+    }
+
+    override suspend fun deleteRecommendedSet(recommendedSetId: String) {
+        // TODO write tests
     }
 
     override suspend fun deleteAll() {
