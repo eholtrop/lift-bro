@@ -10,13 +10,15 @@ import kotlinx.coroutines.flow.Flow
 class ExerciseRepository(
     private val local: ExerciseDataSource,
 ): IExerciseRepository {
-    override fun listenAll(workoutId: String?): Flow<List<Exercise>> = local.listenAll(workoutId)
+    override fun listenAll(workoutId: String): Flow<List<Exercise>> = local.listenAll(workoutId)
 
     override suspend fun save(exercise: Exercise) = local.save(exercise)
 
     override suspend fun delete(id: ExerciseId) = local.delete(id)
 
-    override suspend fun save(section: Section) = local.save(section)
+    override suspend fun deleteRecommendedSet(recommendedSetId: String) = local.deleteRecommendedSet(recommendedSetId)
+
+    override suspend fun save(section: Section, sortOrder: Long?) = local.save(section, sortOrder)
 
     override suspend fun delete(section: Section, cascading: Boolean) =
         local.delete(section = section, cascading = cascading)

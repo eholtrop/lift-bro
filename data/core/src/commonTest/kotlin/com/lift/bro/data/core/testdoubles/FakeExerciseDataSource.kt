@@ -18,12 +18,14 @@ class FakeExerciseDataSource(
         private set
     var savedSection: Section? = null
         private set
+    var lastSortOrder: Long? = null
+        private set
     var lastDeletedSection: Section? = null
         private set
     var lastDeletedSectionCascading: Boolean? = null
         private set
 
-    override fun listenAll(workoutId: String?): Flow<List<Exercise>> {
+    override fun listenAll(workoutId: String): Flow<List<Exercise>> {
         lastWorkoutId = workoutId
         return flowOf(exercises)
     }
@@ -36,13 +38,18 @@ class FakeExerciseDataSource(
         deletedId = id
     }
 
-    override suspend fun save(section: Section) {
+    override suspend fun save(section: Section, sortOrder: Long?) {
         savedSection = section
+        lastSortOrder = sortOrder
     }
 
     override suspend fun delete(section: Section, cascading: Boolean) {
         lastDeletedSection = section
         lastDeletedSectionCascading = cascading
+    }
+
+    override suspend fun deleteRecommendedSet(recommendedSetId: String) {
+        // TODO write tests
     }
 
     override suspend fun deleteAll() {
