@@ -140,10 +140,13 @@ erDiagram
         TEXT id PK
         TEXT workoutId FK
     }
-    ExerciseVariation {
+    ExerciseSection {
         TEXT id PK
         TEXT exerciseId FK
-        TEXT movementId FK
+        TEXT referenceSectionId
+        TEXT primaryMovementId
+        TEXT name
+        INTEGER sort_order
     }
     Movement {
         TEXT id PK
@@ -153,11 +156,27 @@ erDiagram
         INTEGER favourite
         INTEGER body_weight
     }
+    RecommendedSet {
+        TEXT id PK
+        TEXT type
+        percentageMax(percentage --
+        movementId weight)
+        REAL percentage
+        REAL weight
+        INTEGER reps
+        INTEGER tempoDown
+        INTEGER tempoHold
+        INTEGER tempoUp
+        TEXT notes
+        TEXT exerciseSectionId FK
+        INTEGER sectionOrder
+    }
     LiftingSet {
         TEXT id PK
         TEXT movementId FK
         REAL weight
         INTEGER reps
+        INTEGER failureRep
         INTEGER tempoDown
         INTEGER tempoHold
         INTEGER tempoUp
@@ -165,14 +184,16 @@ erDiagram
         TEXT notes
         INTEGER rpe
         TEXT videoUri
+        TEXT exerciseSectionId FK
     }
 
     Filter ||--o{ FilterCondition : ""
     Workout ||--o{ Exercise : ""
-    Exercise ||--o{ ExerciseVariation : ""
-    Movement ||--o{ ExerciseVariation : ""
+    Exercise ||--o{ ExerciseSection : ""
     Category ||--o{ Movement : ""
+    ExerciseSection ||--o{ RecommendedSet : ""
     Movement ||--o{ LiftingSet : ""
+    ExerciseSection ||--o{ LiftingSet : ""
 ```
 <!-- er-diagram-end -->
 
