@@ -7,6 +7,7 @@
 #   1. rsync this project to $REMOTE_HOST:$REMOTE_PATH (same excludes as deploy-ios-device.sh)
 #   2. Run `fastlane ios generate_app_store_screenshots` on the remote
 #   3. Pull framed screenshots + raw maestro captures back locally
+#   4. Mirror the framed screenshots into the marketing website
 #
 # Options:
 #   --skip-build   Reuse the already-installed app (skip Xcode build + install)
@@ -14,6 +15,9 @@
 #   --no-frame     Skip frameit / commit-dir copy (raw captures only)
 
 set -e
+
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$PROJECT_ROOT"
 
 REMOTE_USER="eholtrop"
 REMOTE_HOST="dante.local"
@@ -108,6 +112,16 @@ rsync -a --info=progress2 \
   "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/fastlane/metadata/ios/en-US/images/phoneScreenshots/" \
   "fastlane/metadata/ios/en-US/images/phoneScreenshots/"
 
+# Mirror the framed screenshots into the marketing website (Android is synced by
+# the Android screenshots lane).
+if [ "$NO_FRAME" -eq 0 ]; then
+  echo "Mirroring framed screenshots to marketing website..."
+  rm -rf marketing-website/public/imgs/app_screens/ios
+  mkdir -p marketing-website/public/imgs/app_screens/ios
+  cp fastlane/metadata/ios/en-US/images/phoneScreenshots/*_framed.png \
+    marketing-website/public/imgs/app_screens/ios/
+fi
+
 # Raw maestro captures + command logs, for debugging flow failures
 rsync -a --info=progress2 \
   "$REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/build/generated/screenshot-tests/" \
@@ -116,4 +130,5 @@ rsync -a --info=progress2 \
 echo ""
 echo "=== Done ==="
 echo "Framed screenshots: fastlane/metadata/ios/en-US/images/phoneScreenshots/"
+echo "Marketing website screenshots: marketing-website/public/imgs/app_screens/ios/"
 echo "Raw maestro captures: build/generated/ios-screenshot-tests/"
