@@ -28,6 +28,40 @@
                 -webkit-backdrop-filter: blur(10px);
                 border: 1px solid rgba(255, 255, 255, 0.1);
             }
+            .screenshot-panel {
+                display: none;
+            }
+            .screenshot-tabs label {
+                cursor: pointer;
+                padding: 0.5rem 1.25rem;
+                border-radius: 0.5rem;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                color: #a3a3a3;
+                font-weight: 600;
+                transition:
+                    background-color 0.2s,
+                    border-color 0.2s,
+                    color 0.2s;
+            }
+            .screenshot-tabs label:hover {
+                color: #fff;
+            }
+            #tab-android:checked ~ .screenshot-tabs label[for="tab-android"],
+            #tab-ios:checked ~ .screenshot-tabs label[for="tab-ios"] {
+                background: #fff;
+                border-color: #fff;
+                color: #000;
+            }
+            #tab-android:focus-visible ~ .screenshot-tabs label[for="tab-android"],
+            #tab-ios:focus-visible ~ .screenshot-tabs label[for="tab-ios"] {
+                outline: 2px solid #ff9a01;
+                outline-offset: 2px;
+            }
+            #tab-android:checked ~ .screenshot-panel[data-platform="android"],
+            #tab-ios:checked ~ .screenshot-panel[data-platform="ios"] {
+                display: grid;
+            }
         </style>
     </head>
     <body class="antialiased">
@@ -107,43 +141,161 @@
                             <span>App Store</span>
                         </a>
                     </div>
-                    <div class="grid sm:grid-cols-3 gap-8">
-                        <div>
-                            <p
-                                class="text-lg md:text-xl text-neutral-400 max-w-3xl mx-auto mb-8"
-                            >
-                                Track your Lifts
-                            </p>
+                </div>
+            </section>
+
+            <!-- Screenshots Section -->
+            <section class="py-16 md:py-24">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-3xl md:text-5xl font-bold text-center mb-4">
+                        See it in action
+                    </h2>
+                    <p
+                        class="text-neutral-400 text-center max-w-2xl mx-auto mb-10"
+                    >
+                        The same screenshots you'll find on the Google Play
+                        Store and App Store.
+                    </p>
+
+                    <div>
+                        <input
+                            type="radio"
+                            name="screenshot-platform"
+                            id="tab-android"
+                            class="sr-only"
+                            checked
+                        />
+                        <input
+                            type="radio"
+                            name="screenshot-platform"
+                            id="tab-ios"
+                            class="sr-only"
+                        />
+
+                        <div
+                            class="screenshot-tabs flex justify-center gap-3 mb-8"
+                        >
+                            <label for="tab-android">Android</label>
+                            <label for="tab-ios">iOS</label>
+                        </div>
+
+                        <div
+                            class="screenshot-panel grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+                            data-platform="android"
+                        >
                             <img
-                                src="imgs/app_screen_2.png"
-                                alt="Lift Bro App Screenshot"
-                                class="rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                                src="imgs/app_screens/android/02_dashboard_framed.png"
+                                alt="Lift Bro for Android dashboard — Track Your Way, Custom Categories"
+                                width="1080"
+                                height="2340"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/android/03_workout_set_entry_framed.png"
+                                alt="Lift Bro for Android set entry — Log Every Gain, Quick Set Entry"
+                                width="1080"
+                                height="2340"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/android/04_calendar_view_framed.png"
+                                alt="Lift Bro for Android calendar — Fully Local, No servers, Fully encrypted"
+                                width="1080"
+                                height="2340"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/android/05_movement_details_framed.png"
+                                alt="Lift Bro for Android movement details — Detailed Data"
+                                width="1080"
+                                height="2340"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/android/06_plate_calculator_framed.png"
+                                alt="Lift Bro for Android plate calculator — Never question the bar again"
+                                width="1080"
+                                height="2340"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/android/07_rpe_dialog_framed.png"
+                                alt="Lift Bro for Android RPE dialog — Advanced Tracking Metrics, RPE, MER, TWM, eMax"
+                                width="1080"
+                                height="2340"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
                             />
                         </div>
 
-                        <div>
-                            <p
-                                class="text-lg md:text-xl text-neutral-400 max-w-3xl mx-auto mb-8"
-                            >
-                                Visualize your Progress
-                            </p>
+                        <div
+                            class="screenshot-panel grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+                            data-platform="ios"
+                        >
                             <img
-                                src="imgs/app_screen_1.png"
-                                alt="Lift Bro App Screenshot"
-                                class="rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                                src="imgs/app_screens/ios/02_dashboard_framed.png"
+                                alt="Lift Bro for iOS dashboard — Track Your Way, Custom Categories"
+                                width="1206"
+                                height="2622"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
                             />
-                        </div>
-
-                        <div>
-                            <p
-                                class="text-lg md:text-xl text-neutral-400 max-w-3xl mx-auto mb-8"
-                            >
-                                Celebrate your Successes
-                            </p>
                             <img
-                                src="imgs/app_screen_3.png"
-                                alt="Lift Bro App Screenshot"
-                                class="rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                                src="imgs/app_screens/ios/03_workout_set_entry_framed.png"
+                                alt="Lift Bro for iOS set entry — Log Every Gain, Quick Set Entry"
+                                width="1206"
+                                height="2622"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/ios/04_calendar_view_framed.png"
+                                alt="Lift Bro for iOS calendar — Fully Local, No servers, Fully encrypted"
+                                width="1206"
+                                height="2622"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/ios/05_movement_details_framed.png"
+                                alt="Lift Bro for iOS movement details — Detailed Data"
+                                width="1206"
+                                height="2622"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/ios/06_plate_calculator_framed.png"
+                                alt="Lift Bro for iOS plate calculator — Never question the bar again"
+                                width="1206"
+                                height="2622"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
+                            />
+                            <img
+                                src="imgs/app_screens/ios/07_rpe_dialog_framed.png"
+                                alt="Lift Bro for iOS RPE dialog — Advanced Tracking Metrics, RPE, MER, TWM, eMax"
+                                width="1206"
+                                height="2622"
+                                loading="lazy"
+                                decoding="async"
+                                class="w-full h-auto rounded-2xl shadow-2xl shadow-orange-500/10 border border-neutral-800"
                             />
                         </div>
                     </div>

@@ -56,7 +56,7 @@ platform :android do
       sh File.join(project_root, "scripts/push-test-backup.sh"), "android"
     end
 
-    desc "Generate Play Store screenshots locally"
+    desc "Generate Play Store screenshots and sync them to the marketing website"
     lane :generate_play_store_screenshots do
       project_root = File.expand_path("..", __dir__)
 
@@ -113,12 +113,23 @@ platform :android do
       end
 
       # 7. Copy framed screenshots to the Play Store metadata directory
-      sh "mkdir", "-p", File.join(project_root, "fastlane/metadata/android/en-CA/images/phoneScreenshots")
+      phone_screenshots = File.join(project_root, "fastlane/metadata/android/en-CA/images/phoneScreenshots")
+      sh "mkdir", "-p", phone_screenshots
+      Dir.glob(File.join(phone_screenshots, "*_framed.png")).each { |png| FileUtils.rm_f(png) }
       Dir.glob(File.join(files_root, "*_framed.png")).each do |png|
-        sh "cp", png, File.join(project_root, "fastlane/metadata/android/en-CA/images/phoneScreenshots/")
+        sh "cp", png, phone_screenshots
       end
 
-      UI.success "Framed screenshots ready in fastlane/metadata/android/en-CA/images/phoneScreenshots/"
+      # 8. Mirror the same framed screenshots to the marketing website
+      website_screenshots = File.join(project_root, "marketing-website/public/imgs/app_screens/android")
+      sh "rm", "-rf", website_screenshots
+      sh "mkdir", "-p", website_screenshots
+      Dir.glob(File.join(phone_screenshots, "*_framed.png")).each do |png|
+        sh "cp", png, website_screenshots
+      end
+
+      UI.success "Framed screenshots ready in #{phone_screenshots}"
+      UI.success "Marketing website screenshots updated in #{website_screenshots}"
     end
 
     desc "Build release AAB"
@@ -419,7 +430,7 @@ platform :ios do
     sh File.join(project_root, "scripts/push-test-backup.sh"), "ios"
   end
 
-  desc "Generate App Store screenshots locally"
+  desc "Generate App Store screenshots and sync them to the marketing website"
   lane :generate_app_store_screenshots do |options|
     project_root = File.expand_path("..", __dir__)
     device_type = "iPhone 17 Pro"
@@ -477,7 +488,7 @@ platform :ios do
       if no_frame
         UI.message "Framing skipped (no_frame). Raw captures in build/generated/screenshot-tests/"
       else
-        frame_and_copy_screenshots(project_root)
+        frame_and_copy_screenshots(project_root, full_run: flow.nil? || flow.empty?)
       end
     ensure
       # Shut down simulator
@@ -486,7 +497,7 @@ platform :ios do
     end
   end
 
-  def frame_and_copy_screenshots(project_root)
+  def frame_and_copy_screenshots(project_root, full_run: true)
     # Stage raw screenshots for frameit. Maestro stores the takeScreenshot
     # outputs flat under <root>/screenshots/*.png (older setups nest them under
     # <session>/<flow>/takeScreenshot/*.png, plus stray step-*.png captures).
@@ -511,10 +522,21 @@ platform :ios do
     # Copy framed screenshots to the App Store metadata directory (mirrors Android)
     phone_screenshots = File.join(project_root, "fastlane/metadata/ios/en-US/images/phoneScreenshots")
     sh "mkdir", "-p", phone_screenshots
+    Dir.glob(File.join(phone_screenshots, "*_framed.png")).each { |png| FileUtils.rm_f(png) } if full_run
     Dir.glob(File.join(files_root, "*_framed.png")).each do |png|
       sh "cp", png, phone_screenshots
     end
-    UI.success "Framed screenshots ready in fastlane/metadata/ios/en-US/images/phoneScreenshots/"
+
+    # Mirror the same framed screenshots to the marketing website
+    website_screenshots = File.join(project_root, "marketing-website/public/imgs/app_screens/ios")
+    sh "rm", "-rf", website_screenshots
+    sh "mkdir", "-p", website_screenshots
+    Dir.glob(File.join(phone_screenshots, "*_framed.png")).each do |png|
+      sh "cp", png, website_screenshots
+    end
+
+    UI.success "Framed screenshots ready in #{phone_screenshots}"
+    UI.success "Marketing website screenshots updated in #{website_screenshots}"
   end
 
   desc "Submit a new version to the App Store for iOS"
